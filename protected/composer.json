@@ -1,0 +1,6 @@
+{
+	"require": {
+		"phpmailer/phpmailer": "*",
+		"phpoffice/phpexcel": "dev-develop"
+	}
+}

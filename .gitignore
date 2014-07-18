@@ -1,0 +1,5 @@
+# Ignore everything in this directory
+protected/vendor/*
+protected/composer.lock
+# Except this file
+!.gitignore
