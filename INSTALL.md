@@ -13,7 +13,7 @@
 1. clone本项目至cubingchina目录
 2. 部署yii至与cubingchina同级的framework目录
 3. 数据库创建cubingchina, cubingchina_dev, wca_0, wca_1四个数据库，并赋予空密码用户cubingchina相关权限
-4. 导入本structure.sql及data.sql到cubingchina和cubingchina_dev
+4. 导入项目下structure.sql及data.sql到cubingchina和cubingchina_dev
 5. 执行/path/to/cubingchina/protected/commands/shell/wca_data_sync.sh
 6. 在/path/to/cubingchina/protected目录下执行composer install
 7. nginx/apache的document root指向/path/to/cubingchina/public
