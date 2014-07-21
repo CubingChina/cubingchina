@@ -9,6 +9,7 @@
   <link rel="icon" sizes="196x196" href="/f/images/icon196.png"> 
   <link rel="apple-touch-icon" href="/f/images/icon196.png">
   <link rel="apple-touch-icon-precomposed" sizes="128x128" href="/f/images/icon196.png">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo CHtml::normalizeUrl(array('/feed/index')); ?>" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -94,7 +95,10 @@
     <div class="bottom-bar">
       <div class="container">
         <div class="row">
-          <small class="copyright col-lg-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> 京ICP备14025871号</small>
+          <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> 京ICP备14025871号</small>
+          <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
+            <li class="row-end"><?php echo CHtml::link('<i class="fa fa-rss"></i>', array('/feed/index')); ?></li>
+          </ul>
         </div><!--//row-->
       </div><!--//container-->
     </div><!--//bottom-bar-->

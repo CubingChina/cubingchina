@@ -38,7 +38,7 @@ class FeedController extends Controller {
 			->copyright('Copyright ' . date('Y') . ', Cubing China')
 			->pubDate(isset($competitions[0]) ? $competitions[0]->date : time())
 			->lastBuildDate(time())
-			->ttl(60)
+			->ttl(300)
 			->appendTo($feed);
 		foreach ($competitions as $competition) {
 			$item = new Item();
