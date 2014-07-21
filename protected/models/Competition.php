@@ -98,7 +98,7 @@ class Competition extends ActiveRecord {
 			'status'=>self::STATUS_SHOW,
 		), array(
 			'limit'=>$limit,
-			'order'=>'date ASC',
+			'order'=>'date DESC',
 		));
 	}
 
