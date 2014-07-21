@@ -93,6 +93,15 @@ class Competition extends ActiveRecord {
 		));
 	}
 
+	public static function getPublicCompetitions($limit = 5) {
+		return self::model()->findAllByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'limit'=>$limit,
+			'order'=>'date ASC',
+		));
+	}
+
 	public static function getAllCompetitions() {
 		$model = self::model();
 		if (Yii::app()->controller->user->isOrganizer()) {
