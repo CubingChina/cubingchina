@@ -245,10 +245,8 @@ class Controller extends CController {
 	}
 
 	protected function beforeAction($action) {
-		$browscap = new phpbrowscap\Browscap(Yii::app()->runtimePath);
-		$browscap->localFile = Yii::app()->basePath . '/data/browscap.ini';
-		$browser = $browscap->getBrowser();
-		if ($browser->Browser == 'IE' && version_compare($browser->Version, '8.0', '<')
+		$userAgent = Yii::app()->request->getUserAgent();
+		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($matches[1], '8.0', '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {
 			$this->redirect(array('/site/page', 'view'=>'please-update-your-browser'));

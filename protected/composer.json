@@ -2,7 +2,6 @@
 	"require": {
 		"phpmailer/phpmailer": "*",
 		"phpoffice/phpexcel": "dev-develop",
-		"suin/php-rss-writer": "dev-master",
-		"browscap/browscap-php": "dev-master"
+		"suin/php-rss-writer": "dev-master"
 	}
 }
