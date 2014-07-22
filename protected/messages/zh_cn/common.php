@@ -17,8 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Best of 1/Mean of 3'=>'单次计最好/三次计平均',
-  'Best of 2/Average of 5'=>'两次计最好/五次计平均',
+  'Recommended Browsers:' => '推荐浏览器：',
+  'Please update your browser' => '请升级你的浏览器！',
+  'Best of 1/Mean of 3' => '单次计最好/三次计平均',
+  'Best of 2/Average of 5' => '两次计最好/五次计平均',
   'WCA ID' => '',
   'About us' => '关于本站',
   'Average of 5' => '五次计平均',

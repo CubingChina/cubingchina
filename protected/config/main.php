@@ -10,7 +10,6 @@ $config = array(
 	// preloading 'log' component
 	'preload' => array(
 		'log',
-		// 'adapter'
 	),
 	// autoloading model and component classes
 	'import' => array(
@@ -52,7 +51,7 @@ $config = array(
 				'' => 'site/index',
 				'register/<step:\d>' => 'site/register',
 				'<action:login|logout|register|forgetPassword|resetPassword|activate|reactivate|banned>' => 'site/<action>',
-				'<view:about|contact|links>' => array(
+				'<view:about|contact|links|please-update-your-browser>' => array(
 					'site/page',
 					'urlSuffix' => '.html'
 				),
@@ -132,9 +131,6 @@ $config = array(
 			'packages' => array(
 				'jquery' => false,
 			),
-		),
-		'adapter' => array(
-			'class' => 'Adapter',
 		),
 		'mailer' => array(
 			'class' => 'Mailer',
