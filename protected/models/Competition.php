@@ -77,7 +77,7 @@ class Competition extends ActiveRecord {
 		return self::model()->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		), array(
-			'condition'=>'date>' . time() . ' AND reg_end_day>' . time(),
+			'condition'=>'date>' . time() . ' AND reg_end_day>' . time() - 86400,
 			'limit'=>$limit,
 			'order'=>'date ASC',
 		));
