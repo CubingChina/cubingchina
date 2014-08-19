@@ -158,6 +158,15 @@ class Registration extends ActiveRecord {
 				'value'=>'$data->user->mobile', 
 			),
 			array(
+				'name'=>'fee',
+				'header'=>Yii::t('common', 'Fee'),
+				'headerHtmlOptions'=>array(
+					// 'class'=>'header-mobile',
+				),
+				'type'=>'raw', 
+				'value'=>'$data->getRegistrationFee()', 
+			),
+			array(
 				'headerHtmlOptions'=>array(
 					'class'=>'header-comments',
 				),
@@ -331,7 +340,7 @@ class Registration extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.date';
-		$criteria->with = array('user', 'user.country', 'user.province', 'user.city');
+		$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
 		$criteria->compare('t.id',$this->id,true);
 		$criteria->compare('t.competition_id',$this->competition_id);
