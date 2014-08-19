@@ -18,7 +18,6 @@
  */
 return array (
   'ID' => '',
-  'The schedule is to be determined.' => '赛程正在紧张激烈地安排当中。',
   ' round' => '轮',
   ' rounds' => '轮',
   'Competition List' => '比赛列表',
@@ -57,6 +56,7 @@ return array (
   'Schedule' => '赛程安排',
   'Status' => '状态',
   'The registration has been closed.' => '比赛报名已截止。',
+  'The schedule is to be determined.' => '赛程正在紧张激烈地安排当中。',
   'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.' => '该比赛是世界魔方协会官方认证的比赛，所有选手需要熟知{regulations}。',
   'Travel' => '交通信息',
   'Travel Info' => '交通信息',

@@ -3,26 +3,30 @@
 class AdminController extends Controller {
 	public $layout = '/layouts/main';
 	public $alerts = array();
+	protected $minIEVersion = '9.0';
 
 	public function beforeAction($action) {
-		$criteria = new CDbCriteria();
-		$criteria->with = array(
-			'organizer'=>array(
-				'together'=>true,
-			),
-		);
-		$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
-		$criteria->compare('t.status', Competition::STATUS_SHOW);
-		$competitions = Competition::model()->findAll($criteria);
-		foreach ($competitions as $competition) {
-			if (!$competition->isScheduleFinished()) {
-				$this->alerts[] = array(
-					'url'=>array('/board/competition/edit', 'id'=>$competition->id),
-					'label'=>sprintf('"%s"赛程不完整', $competition->name_zh),
-				);
+		if (parent::beforeAction($action)) {
+			$criteria = new CDbCriteria();
+			$criteria->with = array(
+				'organizer'=>array(
+					'together'=>true,
+				),
+			);
+			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+			$criteria->compare('t.status', Competition::STATUS_SHOW);
+			$competitions = Competition::model()->findAll($criteria);
+			foreach ($competitions as $competition) {
+				if (!$competition->isScheduleFinished()) {
+					$this->alerts[] = array(
+						'url'=>array('/board/competition/edit', 'id'=>$competition->id),
+						'label'=>sprintf('"%s"赛程不完整', $competition->name_zh),
+					);
+				}
 			}
+			return true;
 		}
-		return parent::beforeAction($action);
+		return false;
 	}
 
 	public function accessRules() {

@@ -8,6 +8,7 @@
         array(
           'url'=>array('/user/profile'),
           'label'=>Yii::t('common', 'Profile'),
+          'active'=>in_array($this->action->id, array('profile', 'edit')),
         ),
         // array(
         //   'url'=>array('/user/password'),

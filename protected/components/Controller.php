@@ -18,6 +18,7 @@ class Controller extends CController {
 	protected $captchaAction = 'site/captcha';
 	protected $zh2Hant;
 	protected $logAction = true;
+	protected $minIEVersion = '8.0';
 	private $_user;
 	private $_description;
 	private $_title;
@@ -246,7 +247,7 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
-		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($matches[1], '8.0', '<')
+		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($matches[1], $this->minIEVersion, '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {
 			$this->redirect(array('/site/page', 'view'=>'please-update-your-browser'));
