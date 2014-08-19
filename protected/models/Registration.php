@@ -193,10 +193,10 @@ class Registration extends ActiveRecord {
 		}
 		switch ($this->paid) {
 			case self::UNPAID:
-				$buttons[] = CHtml::link('已付', array('/board/registration/paid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-orange btn-square'));
+				$buttons[] = CHtml::link('付了', array('/board/registration/paid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-orange btn-square'));
 				break;
 			case self::PAID:
-				$buttons[] = CHtml::link('未付', array('/board/registration/unpaid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
+				$buttons[] = CHtml::link('没付', array('/board/registration/unpaid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
 				break;
 		}
 		return implode(' ', $buttons);

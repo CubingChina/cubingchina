@@ -2,6 +2,7 @@
 
 class EventsForm extends Widget {
 	public $model;
+	public $competition;
 	public $name = 'events';
 	public $events = array();
 	public $type = 'checkbox';
@@ -28,10 +29,19 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('label', array(
 					'class'=>'checkbox-inline',
 				));
+				$text = $value;
+				$fee = 0;
+				if ($this->competition instanceof Competition && isset($this->competition->events[$event]) && $this->competition->events[$event]['fee'] > 0) {
+					$text .= ' <i class="fa fa-rmb"></i>' . $this->competition->events[$event]['fee'];
+					$fee = $this->competition->events[$event]['fee'];
+				}
 				echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), in_array("$event", $model->$name), array(
+					'id'=>'Registration_events_' . $event,
+					'class'=>'registration-events',
 					'value'=>$event,
+					'data-fee'=>$fee,
 				));
-				echo $value;
+				echo $text;
 				echo CHtml::closeTag('label');
 				echo '<br>';
 			}

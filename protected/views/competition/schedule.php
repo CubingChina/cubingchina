@@ -58,7 +58,6 @@
   <?php endif; ?>
 </div>
 <?php
-
 Yii::app()->clientScript->registerScript('schedule',
 <<<EOT
   $(document).on('change', '.schedule-event input', function() {
