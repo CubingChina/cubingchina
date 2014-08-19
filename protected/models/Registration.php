@@ -353,12 +353,19 @@ class Registration extends ActiveRecord {
 		$registrations = $this->findAll($criteria);
 		$number = 1;
 		$statistics = array();
-		$statistics['name'] = 0;
+		$statistics['number'] = 0;
+		$statistics['new'] = 0;
+		$statistics[User::GENDER_MALE] = 0;
+		$statistics[User::GENDER_FEMALE] = 0;
 		foreach ($registrations as $registration) {
 			if ($registration->isAccepted()) {
 				$registration->number = $number++;
 			}
-			$statistics['name']++;
+			$statistics['number']++;
+			$statistics[$registration->user->gender]++;
+			if ($registration->user->wcaid === '') {
+				$statistics['new']++;
+			}
 			foreach ($registration->events as $event) {
 				if (!isset($statistics[$event])) {
 					$statistics[$event] = 0;
@@ -366,6 +373,9 @@ class Registration extends ActiveRecord {
 				$statistics[$event]++;
 			}
 		}
+		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];
+		$statistics['old'] = $statistics['number'] - $statistics['new'];
+		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
 		foreach ($columns as $key=>$column) {
 			if (isset($column['name']) && isset($statistics[$column['name']])) {
 				$columns[$key]['footer'] = $statistics[$column['name']];
