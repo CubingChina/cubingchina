@@ -353,10 +353,12 @@ class Registration extends ActiveRecord {
 		$registrations = $this->findAll($criteria);
 		$number = 1;
 		$statistics = array();
+		$statistics['name'] = 0;
 		foreach ($registrations as $registration) {
 			if ($registration->isAccepted()) {
 				$registration->number = $number++;
 			}
+			$statistics['name']++;
 			foreach ($registration->events as $event) {
 				if (!isset($statistics[$event])) {
 					$statistics[$event] = 0;
