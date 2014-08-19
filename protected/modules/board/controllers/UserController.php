@@ -15,7 +15,7 @@ class UserController extends AdminController {
 	}
 
 	public function actionIndex() {
-		$model = new User();
+		$model = new User('search');
 		$model->unsetAttributes();
 		$model->status = array(
 			User::STATUS_NORMAL,

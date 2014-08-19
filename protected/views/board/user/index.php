@@ -28,7 +28,7 @@
                   'class'=>'header-id',
                 ),
                 'name'=>'id',
-                'filter'=>false,
+                // 'filter'=>false,
               ),
               array(
                 'headerHtmlOptions'=>array(

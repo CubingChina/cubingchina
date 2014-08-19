@@ -362,7 +362,7 @@ class User extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('id',$this->id);
 		$criteria->compare('wcaid',$this->wcaid,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('name_zh',$this->name_zh,true);
