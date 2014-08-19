@@ -18,6 +18,7 @@
  */
 return array (
   'CubingChina ID' => '',
+  'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他個人信息請聯繫管理員{email}。',
   'WCA Competition' => '',
   'WCA ID' => '',
   'About us' => '關於本站',
