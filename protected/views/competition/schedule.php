@@ -6,7 +6,7 @@
           continue;
         }
     ?>
-    <div class="col-sm-3">
+    <div class="col-sm-3 col-xs-6">
       <div class="checkbox">
         <label class="label label-info">
           <input type="checkbox" data-event="<?php echo $event; ?>">
@@ -29,7 +29,9 @@
     </div>
     <div class="panel-body">
       <?php foreach ($stages as $stage=>$schedules): ?>
+      <?php if (count($stages) > 1): ?>
       <h3><?php echo Schedule::getStageText($stage); ?></h3>
+      <?php endif; ?>
       <?php $this->widget('GridView', array(
         'dataProvider'=>new CArrayDataProvider($schedules, array(
           'pagination'=>false,

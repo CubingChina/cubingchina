@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  ' (paid)' => '（已付）',
   'CubingChina ID' => '',
-  'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他個人信息請聯繫管理員{email}。',
   'WCA Competition' => '',
   'WCA ID' => '',
   'About us' => '關於本站',
@@ -112,6 +112,7 @@ return array (
   'Password is changed successfully. Log in with your new password.' => '密碼修改成功，請使用新密碼登錄。',
   'Pending' => '待審核',
   'Please choose the correct English name below' => '請在下面選擇正確的英文名',
+  'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他個人信息請聯繫管理員{email}。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '請在下面輸入您的WCA ID。您可以在{here}查詢您的WCA ID。',
   'Please re-check your date of birth and ensure the consistency of ID cards.' => '請檢查您所填寫的出生日期，確保與身份證件上的一致。',
   'Please update your browser' => '請升級你的瀏覽器！',

@@ -63,19 +63,19 @@ class Controller extends CController {
 					),
 				),
 				array(
-					'label'=>'<i class="fa fa-cubes"></i> ' . Yii::t('common', 'Competitions') . ' <i class="fa fa-angle-down"></i>',
+					'label'=>'<i class="fa fa-cubes"></i> ' . Yii::t('common', 'Competitions'),
 					'url'=>array('/competition/index'),
 					'itemOptions'=>array(
 						'class'=>'nav-item dropdown',
 					),
 					'linkOptions'=>array(
-						'class'=>'dropdown-toggle',
+						// 'class'=>'dropdown-toggle',
 						// 'data-toggle'=>'dropdown',
-						'data-hover'=>'dropdown',
-						'data-delay'=>0,
-						'data-close-others'=>'false',
+						// 'data-hover'=>'dropdown',
+						// 'data-delay'=>0,
+						// 'data-close-others'=>'false',
 					),
-					'items'=>Competition::getRecentCompetitionsForNavibar(),
+					// 'items'=>Competition::getRecentCompetitionsForNavibar(),
 				),
 				// array(
 				// 	'label'=>Yii::t('common', 'Statistics'),

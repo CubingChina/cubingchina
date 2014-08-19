@@ -89,4 +89,29 @@ class RegistrationController extends AdminController {
 		Yii::app()->user->setFlash('success', '取消报名成功');
 		$this->redirect(Yii::app()->request->urlReferrer);
 	}
+
+	public function actionPaid() {
+		$id = $this->iGet('id');
+		$model = Registration::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		$model->formatEvents();
+		$model->paid = Registration::PAID;
+		$model->save();
+		Yii::app()->user->setFlash('success', $model->user->name . '已付！');
+		$this->redirect(Yii::app()->request->urlReferrer);
+	}
+
+	public function actionUnpaid() {
+		$id = $this->iGet('id');
+		$model = Registration::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		$model->paid = Registration::UNPAID;
+		$model->save();
+		Yii::app()->user->setFlash('success', $model->user->name . '未付！');
+		$this->redirect(Yii::app()->request->urlReferrer);
+	}
 }

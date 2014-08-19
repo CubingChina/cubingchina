@@ -17,12 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Additional Comments' => '备注',
-  'Competition' => '比赛',
-  'Fee (CNY)' => '报名费(元)',
   'ID' => '',
+  'Registration Date' => '报名时间',
   'User' => '',
   'Date' => '报名时间',
+  'Additional Comments' => '备注',
+  'Competition' => '比赛',
   'Events' => '项目',
+  'Fee (CNY)' => '报名费(元)',
   'Status' => '状态',
 );

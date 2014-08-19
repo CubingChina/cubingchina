@@ -20,6 +20,8 @@ class Registration extends ActiveRecord {
 	public static $sortAttribute = 'number';
 	public static $sortDesc = false;
 
+	const UNPAID = 0;
+	const PAID = 1;
 
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
@@ -87,15 +89,18 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if (count($fees) === 0) {
-			return $this->competition->entry_fee;
+			$fee = $this->competition->entry_fee;
+		} elseif (($total = array_sum($fees)) == 0) {
+			$fee = $this->competition->entry_fee;
+		} else {
+			array_unshift($fees, $this->competition->entry_fee);
+			$total += $this->competition->entry_fee;
+			$fee = implode('+', $fees) . '=' . $total;
 		}
-		$total = array_sum($fees);
-		if ($total == 0) {
-			return $this->competition->entry_fee;
+		if ($this->paid == self::PAID && $fee > 0) {
+			$fee .= Yii::t('common', ' (paid)');
 		}
-		array_unshift($fees, $this->competition->entry_fee);
-		$total += $this->competition->entry_fee;
-		return implode('+', $fees) . '=' . $total;
+		return $fee;
 	}
 
 	public function getAdminColumns() {
@@ -186,6 +191,14 @@ class Registration extends ActiveRecord {
 				$buttons[] = CHtml::link('取消', array('/board/registration/hide', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
 				break;
 		}
+		switch ($this->paid) {
+			case self::UNPAID:
+				$buttons[] = CHtml::link('已付', array('/board/registration/paid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-orange btn-square'));
+				break;
+			case self::PAID:
+				$buttons[] = CHtml::link('未付', array('/board/registration/unpaid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
+				break;
+		}
 		return implode(' ', $buttons);
 	}
 
@@ -262,7 +275,7 @@ class Registration extends ActiveRecord {
 			'user_id' => Yii::t('Registration', 'User'),
 			'events' => Yii::t('Registration', 'Events'),
 			'comments' => Yii::t('Registration', 'Additional Comments'),
-			'date' => Yii::t('Registration', 'Date'),
+			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee (CNY)'),
 		);
