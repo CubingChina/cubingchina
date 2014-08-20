@@ -481,10 +481,25 @@ class Competition extends ActiveRecord {
 		$sheet = $template->getSheet(0);
 		$sheet->setCellValue('A1', $this->wca_competition_id ?: $this->name);
 		$events = $this->getRegistrationEvents();
-		$col = 'H';
+		$col = 'J';
+		$cubecompsEvents = array(
+			'333'=>'3x3',
+			'444'=>'4x4',
+			'555'=>'5x5',
+			'666'=>'6x6',
+			'777'=>'7x7',
+			'222'=>'2x2',
+			'333bf'=>'333bld',
+			'333fm'=>'fmc',
+			'minx'=>'mega',
+			'pyram'=>'pyra',
+			'444bf'=>'444bld',
+			'555bf'=>'555bld',
+			'333mbf'=>'333mlt',
+		);
 		foreach ($events as $event=>$data) {
 			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
-			$sheet->setCellValue($col . 3, $event);
+			$sheet->setCellValue($col . 3, isset($cubecompsEvents[$event]) ? $cubecompsEvents[$event] : $event);
 			$sheet->getColumnDimension($col)->setWidth(5.5);
 			$col++;
 		}
@@ -497,7 +512,7 @@ class Competition extends ActiveRecord {
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
 				->setCellValue('F' . $row, date('Y-m-d', $user->birthday));
-			$col = 'H';
+			$col = 'J';
 			foreach ($events as $event=>$data) {
 				if (in_array("$event", $registration->events)) {
 					$sheet->setCellValue($col . $row, 1);
