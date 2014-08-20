@@ -38,6 +38,25 @@
           <?php endforeach; ?>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
+              <div class="radio">
+                <label>
+                  <input type="radio" value="date" name="order" checked> 按报名顺序排序
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="user.name" name="order"> 按姓名首字母排序
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="random" name="order" disabled> 随机排序
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
               <div class="checkbox">
                 <label>
                   <input type="checkbox" value="1" name="extra"> 导出手机及邮箱

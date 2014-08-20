@@ -426,12 +426,15 @@ class Competition extends ActiveRecord {
 		return Events::getFullEventName($event);
 	}
 
-	public function export($exportFormsts, $all = 0, $xlsx = 0, $extra = 0) {
+	public function export($exportFormsts, $all = 0, $xlsx = 0, $extra = 0, $order = 'date') {
 		$attributes = array(
 			'competition_id'=>$this->id,
 		);
 		if ($all == 0) {
 			$attributes['status'] = Registration::STATUS_ACCEPTED;
+		}
+		if (!in_array($order, array('date', 'user.name'))) {
+			$order = 'date';
 		}
 		$registrations = Registration::model()->with(array(
 			'user'=>array(
@@ -441,6 +444,31 @@ class Competition extends ActiveRecord {
 		))->findAllByAttributes($attributes, array(
 			'order'=>'date',
 		));
+		//计算序号
+		$number = 1;
+		foreach ($registrations as $registration) {
+			if ($registration->isAccepted()) {
+				$registration->number = $number++;
+			}
+		}
+		usort($registrations, function ($rA, $rB) use($order) {
+			if ($rA->number === $rB->number || ($rA->number !== null && $rB->number !== null)) {
+				switch ($order) {
+					case 'user.name':
+						return strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
+					case 'date':
+					default:
+						return $rA->date - $rB->date;
+				}
+			}
+			if ($rA->number === null) {
+				return 1;
+			}
+			if ($rB->number === null) {
+				return -1;
+			}
+			return 0;
+		});
 		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
 		$export = new PHPExcel();
 		$export->getProperties()
@@ -463,7 +491,7 @@ class Competition extends ActiveRecord {
 		foreach ($registrations as $key=>$registration) {
 			$user = $registration->user;
 			$row = $key + 4;
-			$sheet->setCellValue('A' . $row, '=ROW()-3')
+			$sheet->setCellValue('A' . $row, $registration->number)
 				->setCellValue('B' . $row, $user->getCompetitionName())
 				->setCellValue('C' . $row, $user->country->name)
 				->setCellValue('D' . $row, $user->wcaid)

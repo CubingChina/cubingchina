@@ -28,7 +28,7 @@ class RegistrationController extends AdminController {
 		}
 		$model->formatEvents();
 		if (isset($_POST['event'])) {
-			$model->export($this->aPost('event'), $this->iPost('all'), $this->iPost('xlsx'), $this->iPost('extra'));
+			$model->export($this->aPost('event'), $this->iPost('all'), $this->iPost('xlsx'), $this->iPost('extra'), $this->sPost('order'));
 		}
 		$exportFormsts = Events::getAllExportFormats();
 		$this->render('export', array(

@@ -174,6 +174,15 @@ class Registration extends ActiveRecord {
 				'type'=>'raw',
 				'value'=>'$data->getCommentsButton()',
 			),
+			array(
+				'name'=>'date',
+				'header'=>Yii::t('Registration', 'Registration Date'),
+				'headerHtmlOptions'=>array(
+					// 'class'=>'header-mobile',
+				),
+				'type'=>'raw', 
+				'value'=>'date("Y-m-d H:i:s", $data->date)', 
+			),
 		));
 		return $columns;
 	}
