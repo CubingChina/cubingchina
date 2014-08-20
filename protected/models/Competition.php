@@ -352,14 +352,14 @@ class Competition extends ActiveRecord {
 				}
 			}
 			$temp = array(
-				Yii::t('Schedule', 'Start Time')=>date('H:i', $schedule->start_time),
-				Yii::t('Schedule', 'End Time')=>date('H:i', $schedule->end_time),
-				Yii::t('Schedule', 'Event')=>$event,
-				Yii::t('Schedule', 'Group')=>$schedule->group,
-				Yii::t('Schedule', 'Round')=>Yii::t('common', Rounds::getFullRoundName($schedule->round)),
-				Yii::t('Schedule', 'Format')=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
-				Yii::t('Schedule', 'Cut Off')=>self::formatTime($schedule->cut_off),
-				Yii::t('Schedule', 'Time Limit')=>self::formatTime($schedule->time_limit),
+				'Start Time'=>date('H:i', $schedule->start_time),
+				'End Time'=>date('H:i', $schedule->end_time),
+				'Event'=>$event,
+				'Group'=>$schedule->group,
+				'Round'=>Yii::t('common', Rounds::getFullRoundName($schedule->round)),
+				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
+				'Cut Off'=>self::formatTime($schedule->cut_off),
+				'Time Limit'=>self::formatTime($schedule->time_limit),
 				'id'=>$schedule->id,
 				'event'=>$schedule->event,
 				'round'=>$schedule->round,
@@ -377,13 +377,22 @@ class Competition extends ActiveRecord {
 			return array();
 		}
 		$columns = array();
+		// var_dump($schedules[0]);exit;
 		foreach ($schedules[0] as $key=>$value) {
 			if ($key == 'id' || $key == 'event' || $key == 'round') {
 				continue;
 			}
-			$columns[] = array(
+			$column = array(
 				'name'=>$key,
+				'header'=>Yii::t('Schedule', $key),
 			);
+			if ($key == 'Event') {
+				$column['type'] = 'raw';
+				$column['value'] = 'CHtml::tag("span", array(
+					"class"=>"event-icon event-icon-" . $data["event"],
+				), $data["Event"])';
+			}
+			$columns[] = $column;
 		}
 		return $columns;
 	}

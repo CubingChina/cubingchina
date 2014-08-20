@@ -2262,3 +2262,91 @@ table.table th a.desc {
 .page-wrapper .page-sidebar .widget .panel .fa {
   color: #fff;
 }
+.event-icon {
+  padding-left: 26px;
+  position: relative;
+}
+.event-icon:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url('../images/events-icon.png');
+  background-repeat: no-repeat;
+  background-color: transparent;
+  -webkit-background-size: 150px auto;
+  -moz-background-size: 150px auto;
+  -o-background-size: 150px auto;
+  background-size: 150px auto;
+  background-position: -150px -150px;
+}
+.event-icon-222:before {
+  background-position: -5px -5px;
+}
+.event-icon-333:before {
+  background-position: -35px -5px;
+}
+.event-icon-444:before {
+  background-position: -65px -5px;
+}
+.event-icon-555:before {
+  background-position: -95px -5px;
+}
+.event-icon-666:before {
+  background-position: -125px -5px;
+}
+.event-icon-333mbf:before {
+  background-position: -5px -35px;
+}
+.event-icon-333fm:before {
+  background-position: -35px -35px;
+}
+.event-icon-333ft:before {
+  background-position: -65px -35px;
+}
+.event-icon-333oh:before {
+  background-position: -95px -35px;
+}
+.event-icon-777:before {
+  background-position: -125px -35px;
+}
+.event-icon-333bf:before {
+  background-position: -5px -65px;
+}
+.event-icon-444bf:before {
+  background-position: -35px -65px;
+}
+.event-icon-555bf:before {
+  background-position: -65px -65px;
+}
+.event-icon-skewb:before {
+  background-position: -95px -65px;
+}
+.event-icon-sq1:before {
+  background-position: -125px -65px;
+}
+.event-icon-pyram:before {
+  background-position: -5px -95px;
+}
+.event-icon-minx:before {
+  background-position: -35px -95px;
+}
+.event-icon-clock:before {
+  background-position: -65px -95px;
+}
+.event-icon-stack:before {
+  background-position: -5px -125px;
+}
+.event-icon-lunch:before {
+  background-position: -35px -125px;
+}
+.event-icon-lucky:before {
+  background-position: -65px -125px;
+}
+.event-icon-ceremony:before {
+  background-position: -95px -125px;
+}

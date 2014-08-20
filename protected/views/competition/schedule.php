@@ -8,12 +8,12 @@
     ?>
     <div class="col-sm-3 col-xs-6">
       <div class="checkbox">
-        <label class="label label-info">
+        <label class="event-icon event-icon-<?php echo $event; ?>">
           <input type="checkbox" data-event="<?php echo $event; ?>">
           <?php echo Yii::t('event', Events::getFullEventName($event)); ?>
-          (<?php echo $value['round']; ?><?php echo Yii::t('Competition', $value['round'] > 1 ? ' rounds' : ' round'); ?>)
+          - <?php echo $value['round']; ?><?php echo Yii::t('Competition', $value['round'] > 1 ? ' rounds' : ' round'); ?>
           <?php if ($value['fee'] > 0): ?>
-          <i class="fa fa-rmb"></i><?php echo $value['fee']; ?>
+          (<i class="fa fa-rmb"></i><?php echo $value['fee']; ?>)
           <?php endif; ?>
         </label>
       </div>
