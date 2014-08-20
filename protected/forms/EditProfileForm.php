@@ -42,6 +42,8 @@ class EditProfileForm extends CFormModel {
 				if ($name !== $person->name && $user->name !== $person->name) {
 					$this->addError('wcaid', Yii::t('common', 'Wrong WCA ID'));
 				}
+			} else {
+				$this->addError('wcaid', Yii::t('common', 'Wrong WCA ID'));
 			}
 		}
 	}
