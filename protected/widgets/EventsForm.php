@@ -26,8 +26,11 @@ class EventsForm extends Widget {
 		if ($this->type == 'checkbox') {
 			echo CHtml::openTag('div', $htmlOptions);
 			foreach ($events as $event=>$value) {
+				echo CHtml::openTag('div', array(
+					'class'=>'checkbox checkbox-inline',
+				));
 				echo CHtml::openTag('label', array(
-					'class'=>'checkbox-inline',
+					'class'=>'event-icon event-icon-' . $event,
 				));
 				$text = $value;
 				$fee = 0;
@@ -43,6 +46,7 @@ class EventsForm extends Widget {
 				));
 				echo $text;
 				echo CHtml::closeTag('label');
+				echo CHtml::closeTag('div');
 				echo '<br>';
 			}
 			echo CHtml::closeTag('div');

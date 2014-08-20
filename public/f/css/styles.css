@@ -2276,13 +2276,18 @@ table.table th a.desc {
   width: 20px;
   height: 20px;
   background-image: url('../images/events-icon.png');
+  background-image: url('../images/events-icon-half.png')\9;
   background-repeat: no-repeat;
   background-color: transparent;
   -webkit-background-size: 150px auto;
   -moz-background-size: 150px auto;
   -o-background-size: 150px auto;
   background-size: 150px auto;
-  background-position: -150px -150px;
+  background-position: -65px -155px;
+}
+.event-icon-white {
+  background-image: url('../images/events-icon-white.png');
+  background-image: url('../images/events-icon-white-half.png')\9;
 }
 .event-icon-222:before {
   background-position: -5px -5px;
@@ -2338,6 +2343,12 @@ table.table th a.desc {
 .event-icon-clock:before {
   background-position: -65px -95px;
 }
+.event-icon-magic:before {
+  background-position: -95px -95px;
+}
+.event-icon-mmagic:before {
+  background-position: -125px -95px;
+}
 .event-icon-stack:before {
   background-position: -5px -125px;
 }
@@ -2349,4 +2360,13 @@ table.table th a.desc {
 }
 .event-icon-ceremony:before {
   background-position: -95px -125px;
+}
+.event-icon-intro:before {
+  background-position: -125px -125px;
+}
+.event-icon-break:before {
+  background-position: -5px -155px;
+}
+.event-icon-registration:before {
+  background-position: -35px -155px;
 }
