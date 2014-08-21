@@ -36,7 +36,7 @@ Yii::app()->clientScript->registerScript('competitors',
         if (win.height() + win.scrollTop() > tableParent.offset().top + tableParent.height()) {
           scrollParent.hide();
         } else {
-          scrollParent.show();
+          scrollParent.show().scrollLeft(tableParent.scrollLeft());
         }
       }).on('resize', function() {
         scrollParent.width(tableParent.width());
