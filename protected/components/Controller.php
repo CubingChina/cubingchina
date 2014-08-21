@@ -265,7 +265,6 @@ class Controller extends CController {
 		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($this->_IEVersion = $matches[1], $this->minIEVersion, '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {
-			var_dump($matches);exit;
 			$this->redirect(array('/site/page', 'view'=>'please-update-your-browser'));
 		}
 		if ($this->logAction) {
