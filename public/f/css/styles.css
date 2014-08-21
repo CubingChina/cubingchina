@@ -2284,7 +2284,7 @@ table.table th a.desc {
   background-size: 150px auto;
   background-position: -65px -155px;
 }
-.event-icon-white {
+.event-icon-white:before {
   background-image: url('../images/events-icon-white.png');
 }
 .ie8 .event-icon:before {

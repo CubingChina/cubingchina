@@ -161,7 +161,7 @@ $config = array(
 		),
 		'weiboSharePic' => 'http://cubingchina.com/f/images/logo2x.png',
 		'jsVer' => '20140609',
-		'cssVer' => '20140822',
+		'cssVer' => '20140823',
 	),
 );
 

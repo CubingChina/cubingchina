@@ -705,7 +705,10 @@ class Competition extends ActiveRecord {
 			if ($value['round'] > 0) {
 				$columns[] = array(
 					'name'=>(string)$event,
-					'header'=>Events::getColumnName($event),
+					'header'=>CHtml::tag('span', array(
+						'class'=>'event-icon event-icon-white event-icon-' . $event,
+						'title'=>Yii::t('event', Events::getFullEventName($event)),
+					)),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
