@@ -21,6 +21,7 @@ class Controller extends CController {
 	protected $minIEVersion = '8.0';
 	private $_user;
 	private $_description;
+	private $_keywords;
 	private $_title;
 	private $_navibar;
 	private $_weiboShareDefaultText;
@@ -250,6 +251,7 @@ class Controller extends CController {
 		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($matches[1], $this->minIEVersion, '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {
+			var_dump($matches);exit;
 			$this->redirect(array('/site/page', 'view'=>'please-update-your-browser'));
 		}
 		if ($this->logAction) {
@@ -311,9 +313,36 @@ class Controller extends CController {
 
 	public function getDescription() {
 		if ($this->_description === null) {
-			$this->_description = Yii::t('description', Yii::app()->params->description);
+			$this->_description = Yii::t('common', Yii::app()->params->description);
 		}
 		return $this->_description;
+	}
+
+	public function setKeywords($keywords) {
+		if (is_array($keywords)) {
+			$keywords = implode(',', array_map(function($keyword) {
+				return Yii::t('common', $keyword);
+			}, $keywords));
+		}
+		$this->_keywords = $keywords;
+	}
+
+	public function getKeywords() {
+		if ($this->_keywords === null) {
+			$this->setKeywords(Yii::app()->params->keywords);
+		}
+		return $this->_keywords;
+	}
+
+	public function appendKeywords($keywords) {
+		$oldKeywords = explode(',', $this->getKeywords());
+		if (!is_array($keywords)) {
+			$keywords = array($keywords);
+		}
+		foreach ($keywords as $keyword) {
+			$oldKeywords[] = $keyword;
+		}
+		$this->setKeywords($oldKeywords);
 	}
 
 	public function setTitle($title) {

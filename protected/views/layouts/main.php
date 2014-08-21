@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="ie8"> <![endif]-->
+<!--[if lte IE 8]> <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="ie8"> <![endif]-->
 <!--[if IE 9]> <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="ie9"> <![endif]-->
 <!--[if !IE]><!--> <html xmlns:wb="http://open.weibo.com/wb" lang="en"> <!--<![endif]-->
 <head>
@@ -17,6 +17,7 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
   <meta name="description" content="<?php echo CHtml::encode($this->description); ?>">
+  <meta name="keywords" content="<?php echo CHtml::encode($this->keywords); ?>">
   <meta name="author" content="<?php echo Yii::app()->params->author; ?>">
   <meta property="wb:webmaster" content="c86bdd248e65def9" />
   <!-- Theme CSS -->

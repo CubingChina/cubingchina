@@ -142,12 +142,14 @@ class CompetitionController extends Controller {
 		$competition->formatEvents();
 		$this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
+		$name = $competition->getAttributeValue('name');
 		if ($this->action->id === 'detail') {
-			$this->title = $competition->getAttribute($this->getAttributeName('name'));
+			$this->title = $name;
 		} else {
-			$this->title = $competition->getAttribute($this->getAttributeName('name')) . '-' . Yii::t('common', ucfirst($this->action->id));
+			$this->title = $name . '-' . Yii::t('common', ucfirst($this->action->id));
 		}
-		$this->pageTitle = array($competition->getAttribute($this->getAttributeName('name')), ucfirst($this->action->id));
+		$this->pageTitle = array($name, ucfirst($this->action->id));
+		$this->appendKeywords($name);
 		return $competition;
 	}
 

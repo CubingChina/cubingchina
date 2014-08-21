@@ -150,6 +150,14 @@ $config = array(
 		'adminEmail' => 'admin@cubingchina.com',
 		'author' => 'Baiqiang Dong',
 		'description' => 'The Chinese speedcubing website.',
+		'keywords' => array(
+			'Cubing China',
+			'Cubing',
+			'CubingChina Website',
+			"Rubik's Cube",
+			'Speedcubing',
+
+		),
 		'weiboSharePic' => 'http://cubingchina.com/f/images/logo2x.png',
 		'jsVer' => '20140609',
 		'cssVer' => '20140822',

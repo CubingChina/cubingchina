@@ -18,12 +18,12 @@
  */
 return array (
   'ID' => '',
-  'Registration Date' => '报名时间',
   'User' => '',
   'Date' => '报名时间',
   'Additional Comments' => '备注',
   'Competition' => '比赛',
   'Events' => '项目',
   'Fee (CNY)' => '报名费(元)',
+  'Registration Date' => '报名时间',
   'Status' => '状态',
 );
