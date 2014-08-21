@@ -145,7 +145,7 @@ EOT
 ); ?>
   <?php else: ?>
   <p>Founded in 2004, MF8 Chinese Cube Club (bbs.mf8-china.com) is the earliest Chinese website specializing in Rubik’s Cubes and other puzzles. Now it has become the largest and most professional cubing forum in the Chinese cubing community. Over the past ten years, more and more puzzle fans and cubers have gathered here, sharing the fun of puzzles and popularizing Rubik’s Cube.</p>
-  <p>Cubing China (cubingchina.com) is established by Mr. Fok (the founder of MF8), Baiqiang Dong (WCA Results team member), and Ming Zheng (WCA Delegate for China). The predecessor of Cubing China was the MF8 cubing forum and its online competition registration system. Now we are creating a dedicated online platform for speedcubing competitions, to develop cubing activities and promote cube competitions in China.</p>
+  <p>Cubing China (cubingchina.com) is established by Mr. Fok (the founder of MF8), Baiqiang Dong (WCA Results Team member), and Ming Zheng (WCA Delegate for China). The predecessor of Cubing China was the MF8 cubing forum and its online competition registration system. Now we are creating a dedicated online platform for speedcubing competitions, to develop cubing activities and promote cube competitions in China.</p>
   <hr>
   <ul class="timeline">
     <li>

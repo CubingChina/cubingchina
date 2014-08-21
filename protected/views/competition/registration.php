@@ -35,7 +35,7 @@
   <?php $this->endWidget(); ?>
 </div>
 <?php
-Yii::app()->clientScript->registerScript('schedule',
+Yii::app()->clientScript->registerScript('registration',
 <<<EOT
   var basicFee = {$competition->entry_fee};
   var fee = $('#fee');
