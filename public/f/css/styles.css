@@ -2276,7 +2276,6 @@ table.table th a.desc {
   width: 20px;
   height: 20px;
   background-image: url('../images/events-icon.png');
-  background-image: url('../images/events-icon-half.png')\9;
   background-repeat: no-repeat;
   background-color: transparent;
   -webkit-background-size: 150px auto;
@@ -2287,7 +2286,12 @@ table.table th a.desc {
 }
 .event-icon-white {
   background-image: url('../images/events-icon-white.png');
-  background-image: url('../images/events-icon-white-half.png')\9;
+}
+.ie8 .event-icon:before {
+  background-image: url('../images/events-icon-half.png');
+}
+.ie8 .event-icon-white:before {
+  background-image: url('../images/events-icon-white-half.png');
 }
 .event-icon-222:before {
   background-position: -5px -5px;
