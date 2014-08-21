@@ -15,6 +15,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+@media (min-width: 1600px) {
+  .container {
+    width: 1570px;
+  }
+}
 .wrapper {
   min-height: 100%;
   margin-bottom: -46px;

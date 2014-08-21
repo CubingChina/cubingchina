@@ -50,7 +50,9 @@
 		<dd><?php echo date('Y-m-d 23:59:59', $competition->reg_end_day); ?></dd>
 		<?php if (trim(strip_tags($competition->getAttributeValue('information'))) != ''): ?>
 		<dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>
-		<dd><?php echo $competition->getAttributeValue('information'); ?></dd>
+		<dd>
+			<div class="table-responsive"><?php echo $competition->getAttributeValue('information'); ?></div>
+		</dd>
 		<?php endif; ?>
 	</dl>
 </div>

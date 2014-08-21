@@ -23,9 +23,7 @@ Yii::app()->clientScript->registerScript('competitors',
         width: table.width()
       });
       scrollParent.append(scroll).insertAfter(tableParent).css({
-        position: 'fixed',
-        width: tableParent.width(),
-        bottom: 0
+        position: 'fixed'
       }).on('scroll', function() {
         tableParent[0].scrollLeft = this.scrollLeft;
       });
@@ -33,14 +31,18 @@ Yii::app()->clientScript->registerScript('competitors',
         scrollParent[0].scrollLeft = this.scrollLeft;
       });
       win.on('scroll', function() {
-        if (win.height() + win.scrollTop() > tableParent.offset().top + tableParent.height()) {
+        if (table.width() <= tableParent.width() || win.height() + win.scrollTop() > tableParent.offset().top + tableParent.height()) {
           scrollParent.hide();
         } else {
           scrollParent.show().scrollLeft(tableParent.scrollLeft());
         }
       }).on('resize', function() {
-        scrollParent.width(tableParent.width());
-      });
+        scrollParent.css({
+          width: tableParent.width(),
+          bottom: -parseInt(tableParent.css('margin-bottom'))
+        });
+        win.trigger('scroll');
+      }).trigger('scroll').trigger('resize');
     })();
   }
 EOT
