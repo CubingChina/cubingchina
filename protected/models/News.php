@@ -163,6 +163,9 @@ class News extends ActiveRecord {
 			'sort'=>array(
 				'defaultOrder'=>'date DESC',
 			),
+			'pagination'=>array(
+				'pageVar'=>'page',
+			),
 		));
 	}
 

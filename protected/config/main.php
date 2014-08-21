@@ -48,6 +48,7 @@ $config = array(
 		'urlManager' => array(
 			'urlFormat' => 'path',
 			'rules' => array(
+				'<page:\d+>' => 'site/index',
 				'' => 'site/index',
 				'register/<step:\d>' => 'site/register',
 				'<action:login|logout|register|forgetPassword|resetPassword|activate|reactivate|banned>' => 'site/<action>',
