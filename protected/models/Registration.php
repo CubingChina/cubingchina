@@ -108,7 +108,7 @@ class Registration extends ActiveRecord {
 			$columns = array();
 		} else {
 			$this->competition->formatEvents();
-			$columns = $this->competition->getEventsColumns();
+			$columns = $this->competition->getEventsColumns(true);
 			array_splice($columns, 4, 0, array(
 				array(
 					'name'=>'birthday',

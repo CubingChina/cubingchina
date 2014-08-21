@@ -663,7 +663,7 @@ class Competition extends ActiveRecord {
 		return $registrationEvents;
 	}
 
-	public function getEventsColumns() {
+	public function getEventsColumns($headerText = false) {
 		$region = '$data->user->country->getAttributeValue("name")';
 		if (Yii::app()->language == 'zh_cn') {
 			$region .= '.$data->user->getRegionName($data->user->province).$data->user->getRegionName($data->user->city)';
@@ -708,7 +708,7 @@ class Competition extends ActiveRecord {
 					'header'=>CHtml::tag('span', array(
 						'class'=>'event-icon event-icon-white event-icon-' . $event,
 						'title'=>Yii::t('event', Events::getFullEventName($event)),
-					)),
+					), $headerText ? $event : ''),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
