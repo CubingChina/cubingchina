@@ -987,6 +987,10 @@ class Competition extends ActiveRecord {
 			'sort'=>array(
 				'defaultOrder'=>'date DESC',
 			),
+			'pagination'=>array(
+				'pageVar'=>'page',
+				'pageSize'=>50,
+			),
 		));
 	}
 

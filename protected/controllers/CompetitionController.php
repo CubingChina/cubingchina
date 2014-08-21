@@ -55,6 +55,7 @@ class CompetitionController extends Controller {
 		$model->status = Competition::STATUS_SHOW;
 		$this->title = 'Competition List';
 		$this->pageTitle = array('Competition List');
+		$this->appendKeywords('Competition List');
 		$this->breadcrumbs = array(
 			'Competitions',
 		);
