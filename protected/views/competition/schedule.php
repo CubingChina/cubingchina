@@ -6,7 +6,7 @@
           continue;
         }
     ?>
-    <div class="col-sm-3 col-xs-6">
+    <div class="col-lg-3 col-md-4 col-xs-6">
       <div class="checkbox">
         <label class="event-icon event-icon-<?php echo $event; ?>">
           <input type="checkbox" data-event="<?php echo $event; ?>">

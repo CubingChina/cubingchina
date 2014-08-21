@@ -382,11 +382,12 @@ class Competition extends ActiveRecord {
 			if ($key == 'id' || $key == 'event' || $key == 'round') {
 				continue;
 			}
+			$width = $this->getScheduleColumnWidth($key);
 			$column = array(
 				'name'=>$key,
 				'header'=>Yii::t('Schedule', $key),
 				'headerHtmlOptions'=>array(
-					'width'=>$this->getScheduleColumnWidth($key),
+					'style'=>sprintf("width: %dpx;min-width: %dpx", $width, $width),
 				),
 			);
 			if ($key == 'Event') {
