@@ -6,9 +6,9 @@
     <dt><?php echo Yii::t('common', 'CubingChina ID'); ?></dt>
     <dd><?php echo $user->id ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
-    <dd><?php echo $user->name; ?></dd>
+    <dd><?php echo CHtml::encode($user->name); ?></dd>
     <dt><?php echo Yii::t('common', 'Name in Local Character'); ?></dt>
-    <dd><?php echo $user->name_zh ?: '&nbsp;'; ?></dd>
+    <dd><?php echo CHtml::encode($user->name_zh) ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Email'); ?></dt>
     <dd><?php echo $user->email; ?></dd>
     <dt><?php echo Yii::t('common', 'WCA ID'); ?></dt>

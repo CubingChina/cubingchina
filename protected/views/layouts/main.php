@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<!--[if lte IE 8]> <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="ie8"> <![endif]-->
-<!--[if IE 9]> <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="ie9"> <![endif]-->
-<!--[if !IE]><!--> <html xmlns:wb="http://open.weibo.com/wb" lang="en"> <!--<![endif]-->
+<html xmlns:wb="http://open.weibo.com/wb" lang="en" class="<?php echo $this->IEClass; ?>">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,9 +41,9 @@
         </h1><!--//logo-->
         <div class="info col-md-8 col-sm-8 hidden-sm hidden-xs">
           <ul class="menu-top navbar-right">
-            <li class="divider"><a href="?lang=zh_cn">简体中文</a></li>
-            <li class="divider"><a href="?lang=zh_tw">繁体中文</a></li>
-            <li><a href="?lang=en">English</a></li>
+            <li class="divider"><a href="<?php echo $this->getLangUrl('zh_cn'); ?>">简体中文</a></li>
+            <li class="divider"><a href="<?php echo $this->getLangUrl('zh_tw'); ?>">繁体中文</a></li>
+            <li><a href="<?php echo $this->getLangUrl('en'); ?>">English</a></li>
           </ul>
           <br />
           <div class="contact pull-right">

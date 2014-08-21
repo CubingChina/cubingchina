@@ -19,6 +19,7 @@ class Controller extends CController {
 	protected $zh2Hant;
 	protected $logAction = true;
 	protected $minIEVersion = '8.0';
+	private $_IEVersion;
 	private $_user;
 	private $_description;
 	private $_keywords;
@@ -187,15 +188,15 @@ class Controller extends CController {
 			'items'=>array(
 				array(
 					'label'=>'简体中文',
-					'url'=>'?lang=zh_cn',
+					'url'=>$this->getLangUrl('zh_cn'),
 				),
 				array(
 					'label'=>'繁体中文',
-					'url'=>'?lang=zh_tw',
+					'url'=>$this->getLangUrl('zh_tw'),
 				),
 				array(
 					'label'=>'English',
-					'url'=>'?lang=en',
+					'url'=>$this->getLangUrl('en'),
 				),
 			),
 		)));
@@ -228,6 +229,19 @@ class Controller extends CController {
 		return Yii::app()->language == 'zh_cn' || Yii::app()->language == 'zh_tw';
 	}
 
+	public function getIEClass() {
+		if ($this->_IEVersion !== null) {
+				return 'ie' . intval($this->_IEVersion);
+		}
+		return '';
+	}
+
+	public function getLangUrl($lang = 'zh_cn') {
+		$params = $_GET;
+		$params['lang'] = $lang;
+		return $this->createUrl($this->route, $params);
+	}
+
 	public function translateTWInNeed($data) {
 		if (Yii::app()->language !== 'zh_tw') {
 			return $data;
@@ -248,7 +262,7 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
-		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($matches[1], $this->minIEVersion, '<')
+		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($this->_IEVersion = $matches[1], $this->minIEVersion, '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {
 			var_dump($matches);exit;

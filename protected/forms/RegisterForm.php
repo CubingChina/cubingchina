@@ -187,8 +187,8 @@ class RegisterForm extends CFormModel {
 		$user->wcaid = strtoupper($this->wcaid);
 		$user->email = $this->email;
 		$user->password = CPasswordHelper::hashPassword($this->password);
-		$user->name = $this->name;
-		$user->name_zh = $this->local_name;
+		$user->name = trim(strip_tags($this->name));
+		$user->name_zh = trim(strip_tags($this->local_name));
 		$user->gender = $this->gender;
 		$user->mobile = $this->mobile;
 		$user->birthday = $this->birthday;
