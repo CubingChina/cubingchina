@@ -394,6 +394,12 @@ class Competition extends ActiveRecord {
 			}
 			$columns[] = $column;
 		}
+		$width = 100 / count($columns);
+		foreach ($columns as $key=>$column) {
+			$columns[$key]['headerHtmlOptions'] = array(
+				'style'=>'width:' . $width . '%',
+			);
+		}
 		return $columns;
 	}
 
