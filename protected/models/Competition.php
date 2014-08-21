@@ -385,6 +385,9 @@ class Competition extends ActiveRecord {
 			$column = array(
 				'name'=>$key,
 				'header'=>Yii::t('Schedule', $key),
+				'headerHtmlOptions'=>array(
+					'width'=>$this->getScheduleColumnWidth($key),
+				),
 			);
 			if ($key == 'Event') {
 				$column['type'] = 'raw';
@@ -394,13 +397,26 @@ class Competition extends ActiveRecord {
 			}
 			$columns[] = $column;
 		}
-		$width = 100 / count($columns);
-		foreach ($columns as $key=>$column) {
-			$columns[$key]['headerHtmlOptions'] = array(
-				'style'=>'width:' . $width . '%',
-			);
-		}
 		return $columns;
+	}
+
+	private function getScheduleColumnWidth($name) {
+		switch ($name) {
+			case 'Start Time':
+			case 'End Time':
+				return 72;
+			case 'Event':
+				return 236;
+			case 'Group':
+				return 54;
+			case 'Round':
+				return 102;
+			case 'Format':
+				return 156;
+			case 'Cut Off':
+			case 'Time Limit':
+				return 145;
+		}
 	}
 
 	private function sortSchedules($scheduleA, $scheduleB) {
