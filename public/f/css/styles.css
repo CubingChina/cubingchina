@@ -2266,6 +2266,9 @@ table.table th a.desc {
   padding-left: 26px;
   position: relative;
 }
+.header-event .event-icon {
+  padding-left: 20px;
+}
 .event-icon:before {
   content: "";
   position: absolute;
