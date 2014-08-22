@@ -44,7 +44,7 @@ class CompetitionController extends Controller {
 	public function actionDetail() {
 		$competition = $this->getCompetition();
 		$this->pageTitle = array($competition->getAttribute($this->getAttributeName('name')));
-		$this->weiboShareDefaultText = $competition->getDescription();
+		$this->setWeiboShareDefaultText($competition->getDescription(), false);
 		$this->render('detail', array(
 			'competition'=>$competition,
 		));
