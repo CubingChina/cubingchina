@@ -112,9 +112,41 @@ class Competition extends ActiveRecord {
 				),
 			));
 		}
-		return$model->findAllByAttributes(array(
+		return $model->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		));
+	}
+
+	public static function getRegistrationCompetitions() {
+		$with = array();
+		if (Yii::app()->controller->user->isOrganizer()) {
+			$with = array(
+				'organizer'=>array(
+					'together'=>true,
+					'condition'=>'organizer.organizer_id=' . Yii::app()->user->id,
+				),
+			);
+		}
+		$inProgress = self::model()->with($with)->findAllByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'order'=>'t.date DESC',
+			'condition'=>'t.date>' . time(),
+		));
+		$ended = self::model()->with($with)->findAllByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'order'=>'t.date DESC',
+			'condition'=>'t.date<' . time(),
+		));
+		$competitions = array();
+		if ($inProgress !== array()) {
+			$competitions['In Progress'] = CHtml::listData($inProgress, 'id', 'name_zh');
+		}
+		if ($ended !== array()) {
+			$competitions['Ended'] = CHtml::listData($ended, 'id', 'name_zh');
+		}
+		return $competitions;
 	}
 
 	public static function getCompetitionById($id) {
