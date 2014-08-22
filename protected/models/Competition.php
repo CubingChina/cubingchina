@@ -260,7 +260,7 @@ class Competition extends ActiveRecord {
 		if ($isCN) {
 			$venue = $this->province->getAttributeValue('name') . $this->city->getAttributeValue('name') . $this->getAttributeValue('venue');
 		} else {
-			$venue = $this->getAttributeValue('venue') . ', ' . $this->province->getAttributeValue('name') . ', ' . $this->city->getAttributeValue('name');
+			$venue = $this->getAttributeValue('venue') . ', ' . $this->city->getAttributeValue('name') . ', ' . $this->province->getAttributeValue('name');
 		}
 		$params['{venue}'] = $venue;
 		$organizers = '';
