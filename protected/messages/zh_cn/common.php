@@ -56,7 +56,7 @@ return array (
   'The Chinese speedcubing website.' => '中国魔方竞速网站',
   'Travel' => '交通信息',
   '{name} is a speedcubing competition held at {venue} on {date}, organized by {organizers}, and is in the charge of{wca} {delegates}.' => '{name}，举办地点在{venue}，比赛日期是{date}, 由{organizers}主办，{wca}监督代表为{delegates}。',
-  '{name} is a speedcubing competition held at {venue} on {date}, organized by {organizers}.' => '{name}，举办地点在{venue}，比赛日期是{date}, 由{organizers}主办。',
+  '{name} is a speedcubing competition held at {venue} on {date}, organized by {organizers}.' => '{name}，举办地点在{venue}，比赛日期是{date}，由{organizers}主办。',
   ' (paid)' => '（已付）',
   ' and ' => '和',
   ' seconds' => '秒',
