@@ -41,6 +41,7 @@ class Competition extends ActiveRecord {
 	private $_organizers;
 	private $_delegates;
 	private $_schedules;
+	private $_description;
 
 	public static function formatTime($second) {
 		$second = intval($second);
@@ -242,7 +243,51 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getDescription() {
-		
+		if ($this->_description !== null) {
+			return $this->_description;
+		}
+		$description = '{name} is a speedcubing competition held at {venue} on {date}, organized by {organizers}';
+		if ($this->delegate !== array()) {
+			$description .= ', and is in the charge of{wca} {delegates}';
+		}
+		$description .= '.';
+		$params = array(
+			'{name}'=>$this->getAttributeValue('name'),
+			'{date}'=>$this->getDisplayDate(),
+			'{wca}'=>$this->type == self::TYPE_WCA ? Yii::t('common', ' the WCA delegate') : '',
+		);
+		$isCN = Yii::app()->controller->isCN;
+		if ($isCN) {
+			$venue = $this->province->getAttributeValue('name') . $this->city->getAttributeValue('name') . $this->getAttributeValue('venue');
+		} else {
+			$venue = $this->getAttributeValue('venue') . ', ' . $this->province->getAttributeValue('name') . ', ' . $this->city->getAttributeValue('name');
+		}
+		$params['{venue}'] = $venue;
+		$organizers = '';
+		$count = count($this->organizer);
+		foreach ($this->organizer as $key=>$organizer) {
+			if ($key == 0) {
+				$organizers .= $organizer->user->getAttributeValue('name');
+			} elseif ($key < $count - 1) {
+				$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name');
+			} else {
+				$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name');
+			}
+		}
+		$params['{organizers}'] = $organizers;
+		$delegates = '';
+		$count = count($this->delegate);
+		foreach ($this->delegate as $key=>$delegate) {
+			if ($key == 0) {
+				$delegates .= $delegate->user->getAttributeValue('name');
+			} elseif ($key < $count - 1) {
+				$delegates .= Yii::t('common', ', ') . $delegate->user->getAttributeValue('name');
+			} else {
+				$delegates .= Yii::t('common', ' and ') . $delegate->user->getAttributeValue('name');
+			}
+		}
+		$params['{delegates}'] = $delegates;
+		return $this->_description = Yii::t('common', $description, $params);
 	}
 
 	public function getStatusText() {
