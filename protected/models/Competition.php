@@ -793,6 +793,7 @@ class Competition extends ActiveRecord {
 				'value'=>'$data->user->getGenderText()', 
 			),
 			array(
+				'name'=>'country_id',
 				'header'=>Yii::t('common', 'Region'),
 				'headerHtmlOptions'=>array(
 					'class'=>'header-region',

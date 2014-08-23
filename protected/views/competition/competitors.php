@@ -5,6 +5,7 @@
     // 'filter'=>false,
     // 'enableSorting'=>false,
     'front'=>true,
+    'footerOnTop'=>true,
     'columns'=>$columns,
   )); ?>
 </div>
