@@ -218,6 +218,10 @@ class Competition extends ActiveRecord {
 		return time() > strtotime(date('Y-m-d', $this->reg_end_day)) + 86400;
 	}
 
+	public function isEnded() {
+		return time() > $this->date;
+	}
+
 	public function isScheduleFinished() {
 		$this->formatEvents();
 		$events = $this->events;

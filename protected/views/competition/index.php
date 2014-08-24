@@ -5,6 +5,7 @@
     'enableSorting'=>false,
     'front'=>true,
     'emptyText'=>Yii::t('Competition', 'No competitions now.'),
+    'rowCssClassExpression'=>'$data->isEnded() ? "active" : "info"',
     'columns'=>array(
       array(
         'name'=>'date',
