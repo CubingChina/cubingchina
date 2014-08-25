@@ -60,6 +60,10 @@ class Registration extends ActiveRecord {
 		return $this->status == self::STATUS_ACCEPTED;
 	}
 
+	public function isPaid() {
+		return $this->paid == self::PAID;
+	}
+
 	public function getEventsString($event) {
 		if (in_array($event, $this->events)) {
 			return '<span class="fa fa-check"></span>';
@@ -97,10 +101,22 @@ class Registration extends ActiveRecord {
 			$total += $this->competition->entry_fee;
 			$fee = implode('+', $fees) . '=' . $total;
 		}
-		if ($this->paid == self::PAID && $fee > 0) {
+		if ($this->isPaid() && $fee > 0) {
 			$fee .= Yii::t('common', ' (paid)');
 		}
 		return $fee;
+	}
+
+	public function getTotalFee() {
+		$this->competition->formatEvents();
+		$competitionEvents = $this->competition->events;
+		$fees = array();
+		foreach ($this->events as $event) {
+			if (isset($competitionEvents[$event]) && $competitionEvents[$event]['round'] > 0) {
+				$fees[] = $competitionEvents[$event]['fee'];
+			}
+		}
+		return $this->competition->entry_fee + array_sum($fees);
 	}
 
 	public function getAdminColumns() {
@@ -372,6 +388,8 @@ class Registration extends ActiveRecord {
 		$statistics = array();
 		$statistics['number'] = 0;
 		$statistics['new'] = 0;
+		$statistics['paid'] = 0;
+		$statistics['unpaid'] = 0;
 		$statistics[User::GENDER_MALE] = 0;
 		$statistics[User::GENDER_FEMALE] = 0;
 		foreach ($registrations as $registration) {
@@ -389,10 +407,17 @@ class Registration extends ActiveRecord {
 				}
 				$statistics[$event]++;
 			}
+			$fee = $registration->getTotalFee();
+			if ($registration->isPaid()) {
+				$statistics['paid'] += $fee;
+			} else {
+				$statistics['unpaid'] += $fee;
+			}
 		}
 		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];
 		$statistics['old'] = $statistics['number'] - $statistics['new'];
 		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
+		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
 		foreach ($columns as $key=>$column) {
 			if (isset($column['name']) && isset($statistics[$column['name']])) {
 				$columns[$key]['footer'] = $statistics[$column['name']];

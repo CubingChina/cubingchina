@@ -2086,7 +2086,7 @@ form span.required {
     overflow-x: scroll;
 }
 
-.table-responsive table.table td {
+.table-responsive table.table td, .table-responsive table.table th {
     white-space: nowrap;
 }
 
@@ -2142,7 +2142,7 @@ table.table th.header-country {
 }
 
 table.table th.header-event {
-    max-width: 42px;
+    max-width: 82px;
 }
 
 table.table th.header-birthday {
