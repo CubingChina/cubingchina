@@ -51,7 +51,7 @@
 		<?php if (trim(strip_tags($competition->getAttributeValue('information'))) != ''): ?>
 		<dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>
 		<dd>
-			<div class="table-responsive"><?php echo $competition->getAttributeValue('information'); ?></div>
+			<?php echo $competition->getAttributeValue('information'); ?>
 		</dd>
 		<?php endif; ?>
 	</dl>

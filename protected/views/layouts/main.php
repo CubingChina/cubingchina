@@ -103,7 +103,16 @@
     </div><!--//bottom-bar-->
   </footer><!--//footer-->
   <!-- Javascript -->
+  <?php if (DEV): ?>
+  <script type="text/javascript" src="/f/plugins/jquery-1.10.2.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/plugins/bootstrap/js/bootstrap.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/plugins/bootstrap-hover-dropdown.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/plugins/back-to-top.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/plugins/jquery-placeholder/jQuery.placeholder.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/js/main.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <?php else: ?>
   <script type="text/javascript" src="/f/js/main.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <?php endif; ?>
   <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

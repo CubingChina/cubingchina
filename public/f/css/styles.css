@@ -2257,7 +2257,7 @@ table.table th a.desc {
 }
 
 .table-responsive {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .table-responsive table.table td, .table-responsive table.table th {
