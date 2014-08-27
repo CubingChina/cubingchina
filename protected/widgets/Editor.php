@@ -1,0 +1,33 @@
+<?php
+
+class Editor extends Widget {
+
+	public function run() {
+		$clientScript = Yii::app()->clientScript;
+		$clientScript->registerScriptFile('/b/kindeditor/kindeditor-min.js');
+		$clientScript->registerScript('editor',
+<<<EOT
+  $('.editor').each(function(i) {
+    var that = $(this);
+    var id = that.attr('id');
+    if (id === undefined) {
+      id = 'editor_' + i;
+      that.attr('id', id);
+    }
+    var editor = KindEditor.create('#' + id, {
+      height: 300,
+      items: [
+        'source', '|', 'cut', 'copy', 'paste', 'plainpaste', 'wordpaste', '|',
+        'justifyleft', 'justifycenter', 'justifyright', 'justifyfull',
+        'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent',
+        'subscript', 'superscript', 'clearhtml', 'selectall', '|', 'fullscreen', '/',
+        'undo', 'redo', '|', 'formatblock', 'fontname', 'fontsize', '|',
+        'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', 'removeformat', '|',
+        'image', 'multiimage',  'table', 'hr', 'link', 'unlink'
+      ]
+    });
+  });
+EOT
+		);
+	}
+}
