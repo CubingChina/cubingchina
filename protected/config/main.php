@@ -160,6 +160,8 @@ $config = array(
 
 		),
 		'weiboSharePic' => 'http://cubingchina.com/f/images/logo2x.png',
+		'staticPath' => APP_PATH . '/public/static/',
+		'staticUrlPrefix' => 'http://s.cubingchina.com/',
 		'jsVer' => '20140826',
 		'cssVer' => '20140826',
 	),

@@ -286,7 +286,7 @@
                 'label'=>'中文规则',
               )),
               $form->textArea($model, 'regulations_zh', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'regulations_zh', array('class'=>'text-danger'))
             );?>
@@ -298,7 +298,7 @@
                 'label'=>'英文规则',
               )),
               $form->textArea($model, 'regulations', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'regulations', array('class'=>'text-danger'))
             );?>
@@ -311,7 +311,7 @@
                 'label'=>'中文详情',
               )),
               $form->textArea($model, 'information_zh', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'information_zh', array('class'=>'text-danger'))
             );?>
@@ -323,7 +323,7 @@
                 'label'=>'英文详情',
               )),
               $form->textArea($model, 'information', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'information', array('class'=>'text-danger'))
             );?>
@@ -336,7 +336,7 @@
                 'label'=>'中文交通信息',
               )),
               $form->textArea($model, 'travel_zh', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'travel_zh', array('class'=>'text-danger'))
             );?>
@@ -348,7 +348,7 @@
                 'label'=>'英文交通信息',
               )),
               $form->textArea($model, 'travel', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'travel', array('class'=>'text-danger'))
             );?>
@@ -362,14 +362,11 @@
   </div>
 </div>
 <?php
+$this->widget('Editor');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/summernote/summernote.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/summernote/summernote-bs3.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/summernote/summernote.min.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/summernote/summernote-zh-CN.js');
 $allCities = json_encode($cities);
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
@@ -379,18 +376,6 @@ Yii::app()->clientScript->registerScript('competition',
   $('.time-picker').timepicker({
     showMeridian: false,
     defaultTime: null
-  });
-  $('.summernote').summernote({
-    height: 300,
-    lang: 'zh-CN',
-    toolbar: [
-      ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-      ['fontsize', ['fontsize']],
-      ['color', ['color']],
-      ['para', ['ul', 'ol']],
-      ['picture', ['link', 'picture', 'video', 'table']],
-      ['code', ['fullscreen', 'codeview', 'undo', 'redo']]
-    ]
   });
   var allCities = {$allCities};
   $(document).on('change', '#Competition_province_id', function() {
