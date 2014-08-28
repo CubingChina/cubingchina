@@ -78,7 +78,7 @@
                 'label'=>'中文正文',
               )),
               $form->textArea($model, 'content_zh', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'content_zh', array('class'=>'text-danger'))
             );?>
@@ -90,7 +90,7 @@
                 'label'=>'英文正文',
               )),
               $form->textArea($model, 'content', array(
-                'class'=>'summernote form-control'
+                'class'=>'editor form-control'
               )),
               $form->error($model, 'content', array('class'=>'text-danger'))
             );?>
@@ -104,14 +104,11 @@
   </div>
 </div>
 <?php
+$this->widget('Editor');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/summernote/summernote.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/summernote/summernote-bs3.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/summernote/summernote.min.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/summernote/summernote-zh-CN.js');
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
   $('.date-picker').datepicker({
@@ -121,18 +118,6 @@ Yii::app()->clientScript->registerScript('competition',
     showMeridian: false,
     defaultTime: null,
     showSeconds: true
-  });
-  $('.summernote').summernote({
-    height: 300,
-    lang: 'zh-CN',
-    toolbar: [
-      ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-      ['fontsize', ['fontsize']],
-      ['color', ['color']],
-      ['para', ['ul', 'ol']],
-      ['picture', ['link', 'picture', 'video', 'table']],
-      ['code', ['fullscreen', 'codeview', 'undo', 'redo']]
-    ]
   });
 EOT
 );

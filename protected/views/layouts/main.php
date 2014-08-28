@@ -108,7 +108,7 @@
   <script type="text/javascript" src="/f/plugins/bootstrap/js/bootstrap.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
   <script type="text/javascript" src="/f/plugins/bootstrap-hover-dropdown.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
   <script type="text/javascript" src="/f/plugins/back-to-top.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/plugins/jquery-placeholder/jQuery.placeholder.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
+  <script type="text/javascript" src="/f/plugins/jquery-placeholder/jquery.placeholder.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
   <script type="text/javascript" src="/f/js/main.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
   <?php else: ?>
   <script type="text/javascript" src="/f/js/main.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
