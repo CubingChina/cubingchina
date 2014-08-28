@@ -5,6 +5,7 @@ class Editor extends Widget {
 	public function run() {
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('/b/kindeditor/kindeditor-min.js');
+		$uploadUrl = Yii::app()->createUrl('/board/upload/image');
 		$clientScript->registerScript('editor',
 <<<EOT
   $('.editor').each(function(i) {
@@ -16,6 +17,9 @@ class Editor extends Widget {
     }
     var editor = KindEditor.create('#' + id, {
       height: 300,
+      resizeType: 1,
+      uploadJson: '{$uploadUrl}',
+      allowFileManager: false,
       items: [
         'source', '|', 'cut', 'copy', 'paste', 'plainpaste', 'wordpaste', '|',
         'justifyleft', 'justifycenter', 'justifyright', 'justifyfull',
