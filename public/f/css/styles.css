@@ -31,6 +31,10 @@ body {
   height: 46px;
   /* must be the same height as footer */
 }
+.wrapper img {
+  max-width: 100% !important;
+  height: auto !important;
+}
 .footer {
   height: 46px;
   /* must be the same height as footer */
