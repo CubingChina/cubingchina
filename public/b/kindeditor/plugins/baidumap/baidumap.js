@@ -54,7 +54,7 @@ KindEditor.plugin('baidumap', function(K) {
 						'&title=' + encodeURIComponent(K('#kindeditor_plugin_map_title').val())
 					].join('');
 					if (checkbox[0].checked) {
-						self.insertHtml('<iframe src="' + url + '" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
+						self.insertHtml('<iframe class="baidumap" src="' + url + '" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
 					} else {
 						self.exec('insertimage', url);
 					}

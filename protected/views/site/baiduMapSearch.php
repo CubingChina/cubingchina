@@ -52,7 +52,6 @@
       },
       pageCapacity: 30,
       onMarkersSet: function(results) {
-        var lastMarker;
         results.forEach(function(result) {
           var newMarker = new BMap.Marker(result.marker.getPosition());
           map.addOverlay(newMarker);
