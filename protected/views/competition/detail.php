@@ -48,7 +48,7 @@
 		<dd><?php echo $competition->entry_fee; ?></dd>
 		<dt><?php echo Yii::t('Competition', 'Registration Ending Time'); ?></dt>
 		<dd><?php echo date('Y-m-d 23:59:59', $competition->reg_end_day); ?></dd>
-		<?php if (trim(strip_tags($competition->getAttributeValue('information'))) != ''): ?>
+		<?php if (trim(strip_tags($competition->getAttributeValue('information'), '<img>')) != ''): ?>
 		<dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>
 		<dd>
 			<?php echo $competition->getAttributeValue('information'); ?>

@@ -27,7 +27,7 @@ class Editor extends Widget {
         'subscript', 'superscript', 'clearhtml', 'selectall', '|', 'fullscreen', '/',
         'undo', 'redo', '|', 'formatblock', 'fontname', 'fontsize', '|',
         'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', 'removeformat', '|',
-        'image', 'multiimage',  'table', 'hr', 'link', 'unlink'
+        'image', 'multiimage',  'table', 'hr', 'link', 'unlink', 'baidumap'
       ]
     });
   });
