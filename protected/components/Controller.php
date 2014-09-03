@@ -47,6 +47,14 @@ class Controller extends CController {
 		);
 	}
 
+	public function setIsAjaxRequest($isAjaxRequest = true) {
+		if ($isAjaxRequest) {
+			$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		} else {
+			unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		}
+	}
+
 	public function getAttributeName($name = 'name') {
 		if (Yii::app()->language{0} == 'z' && Yii::app()->language{1} == 'h') {
 			$name .= '_zh';

@@ -26,7 +26,7 @@ class FeedController extends Controller {
 	}
 
 	private function renderRss($competitions) {
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->setIsAjaxRequest(true);
 		$baseUrl = Yii::app()->request->getBaseUrl(true);
 		$feed = new Feed();
 		$channel = new Channel();
