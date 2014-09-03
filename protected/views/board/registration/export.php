@@ -77,7 +77,7 @@
             <div class="col-lg-10 col-lg-offset-2">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" value="1" name="xlsx"> 导出2010格式
+                  <input type="checkbox" value="1" name="xlsx" checked> 2010格式（导出更快）
                 </label>
               </div>
             </div>
