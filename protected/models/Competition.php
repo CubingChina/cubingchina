@@ -705,6 +705,7 @@ class Competition extends ActiveRecord {
 			}
 		}
 		$export->setActiveSheetIndex(0);
+		Yii::app()->controller->setIsAjaxRequest(true);
 		if ($xlsx) {
 			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 			header('Content-Disposition: attachment;filename="' . $this->name . '.xlsx"');
@@ -714,6 +715,7 @@ class Competition extends ActiveRecord {
 			header('Content-Disposition: attachment;filename="' . $this->name . '.xls"');
 			$objWriter = PHPExcel_IOFactory::createWriter($export, 'Excel5');
 		}
+		$objWriter->setPreCalculateFormulas(false);
 		$objWriter->save('php://output');
 		exit;
 	}

@@ -30,7 +30,7 @@ class UploadController extends AdminController {
 	}
 
 	private function jsonReturn($error, $message = '', $url = '') {
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->setIsAjaxRequest(true);
 		header('Content-type: text/html; charset=UTF-8');
 		echo CJSON::encode(array(
 			'error' => $error,
