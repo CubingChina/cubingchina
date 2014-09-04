@@ -31,7 +31,7 @@ return array(
 		'url'=>'http://bbs.mf8-china.com/',
 		'logo'=>'/f/images/links/MF8.png',
 		'description'=>'The earliest Chinese cubing forum dedicated to speedcubing, including miscellaneous materials and professional information in twisty puzzles and other puzzles',
-		'description_zh'=>'',
+		'description_zh'=>'魔方吧·中国魔方俱乐部是国内成立最早、内容最专业的中文魔方论坛。其中汇集了众多魔方的玩法与高级教程、定期发布魔方专业资讯与魔方赛事消息，同时还涵盖了各种益智游戏与谜题的玩法。',
 	),
 	array(
 		'name'=>'好骰同盟',
@@ -57,12 +57,5 @@ return array(
 		'logo'=>'/f/images/links/cstimer.png',
 		'description'=>'The professional timer for speedcubing, csTimer supports scrambles of many types of puzzles include all the WCA official puzzle, and integrated with Xcross and eoline solver, time statistics and other functions. The designer, Shuang Chen, is the member of WCA Scrambler Team.',
 		'description_zh'=>'csTimer是专门为魔方爱好者精心设计的一款专业计时软件，是迄今为止功能最全面、界面最友好、使用最便捷的在线网页魔方计时器。其设计者陈霜是世界魔方协会（WCA）魔方打乱程序开发组专员',
-	),
-	array(
-		'name'=>'',
-		'name_zh'=>'',
-		'url'=>'',
-		'description'=>'',
-		'description_zh'=>'',
 	),
 );

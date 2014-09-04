@@ -15,9 +15,6 @@
 	?>
 	<h3><?php echo CHtml::link($this->translateTWInNeed($link[$this->getAttributeName('name')]), $link['url']); ?></h3>
 	<p>
-		<?php if (isset($link['logo'])): ?>
-		<?php echo CHtml::image($link['logo'], $this->translateTWInNeed($link[$this->getAttributeName('name')])); ?><br>
-		<?php endif; ?>
 		<?php echo $this->translateTWInNeed($link[$this->getAttributeName('description')]); ?>
 	</p>
 	<?php endforeach; ?>
