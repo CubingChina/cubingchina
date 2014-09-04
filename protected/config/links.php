@@ -34,8 +34,8 @@ return array(
 		'description_zh'=>'魔方吧·中国魔方俱乐部是国内成立最早、内容最专业的中文魔方论坛。其中汇集了众多魔方的玩法与高级教程、定期发布魔方专业资讯与魔方赛事消息，同时还涵盖了各种益智游戏与谜题的玩法。',
 	),
 	array(
-		'name'=>'好骰同盟',
-		'name_zh'=>'Hong Kong Rubik’s Cube Union',
+		'name'=>'Hong Kong Rubik’s Cube Union',
+		'name_zh'=>'好骰同盟',
 		'url'=>'http://hkrcu.net/',
 		'logo'=>'/f/images/links/HKRCU.png',
 		'description'=>'The cubing community in Hong Kong, for news on cubing activities and speedcubing competitions in Hong Kong.',
