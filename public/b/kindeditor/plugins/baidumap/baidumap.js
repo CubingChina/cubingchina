@@ -22,10 +22,12 @@ KindEditor.plugin('baidumap', function(K) {
 			'<span class="ke-button-common ke-button-outer">',
 			'<input type="button" name="searchBtn" class="ke-button-common ke-button" value="' + lang.search + '" />',
 			'</span>',
+			'<br>',
+			'标题: <input id="kindeditor_plugin_map_title" name="title" class="ke-input-text" value="" style="width:200px;" /> ',
 			'</div>',
 			// right start
 			'<div class="ke-right">',
-			'<input type="checkbox" id="keInsertDynamicMap" name="insertDynamicMap" value="1" /> <label for="keInsertDynamicMap">' + lang.insertDynamicMap + '</label>',
+			'<input type="checkbox" id="keInsertDynamicMap" name="insertDynamicMap" value="1" checked /> <label for="keInsertDynamicMap">' + lang.insertDynamicMap + '</label>',
 			'</div>',
 			'<div class="ke-clearfix"></div>',
 			'</div>',
@@ -40,18 +42,19 @@ KindEditor.plugin('baidumap', function(K) {
 				name : self.lang('yes'),
 				click : function(e) {
 					var map = win.map;
-					var centerObj = map.getCenter();
-					var center = centerObj.lng + ',' + centerObj.lat;
+					var center = map.getCenter();
 					var zoom = map.getZoom();
-					var url = [checkbox[0].checked ? self.pluginsPath + 'baidumap/index.html' : 'http://api.map.baidu.com/staticimage',
-						'?center=' + encodeURIComponent(center),
+					var url = [checkbox[0].checked ? '/site/baiduMap' : 'http://api.map.baidu.com/staticimage',
+						'?longitude=' + center.lng,
+						'&latitude=' + center.lat,
 						'&zoom=' + encodeURIComponent(zoom),
 						'&width=' + mapWidth,
 						'&height=' + mapHeight,
-						'&markers=' + encodeURIComponent(center),
-						'&markerStyles=' + encodeURIComponent('l,A')].join('');
+						'&address=' + encodeURIComponent(K('#kindeditor_plugin_map_address').val()),
+						'&title=' + encodeURIComponent(K('#kindeditor_plugin_map_title').val())
+					].join('');
 					if (checkbox[0].checked) {
-						self.insertHtml('<iframe src="' + url + '" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
+						self.insertHtml('<iframe class="baidumap" src="' + url + '" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
 					} else {
 						self.exec('insertimage', url);
 					}
@@ -71,7 +74,7 @@ KindEditor.plugin('baidumap', function(K) {
 			searchBtn = K('[name="searchBtn"]', div),
 			checkbox = K('[name="insertDynamicMap"]', dialog.div),
 			win, doc;
-		var iframe = K('<iframe class="ke-textarea" frameborder="0" src="' + self.pluginsPath + 'baidumap/map.html" style="width:' + mapWidth + 'px;height:' + mapHeight + 'px;"></iframe>');
+		var iframe = K('<iframe class="ke-textarea" frameborder="0" src="/site/baiduMapSearch" style="width:' + mapWidth + 'px;height:' + mapHeight + 'px;"></iframe>');
 		function ready() {
 			win = iframe[0].contentWindow;
 			doc = K.iframeDoc(iframe);
@@ -84,6 +87,7 @@ KindEditor.plugin('baidumap', function(K) {
 				setTimeout(ready, 0);
 			}
 		});
+		K('#kindeditor_plugin_map_title').val(K('#Competition_name_zh').val());
 		K('.ke-map', div).replaceWith(iframe);
 		// search map
 		searchBtn.click(function() {

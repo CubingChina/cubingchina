@@ -267,20 +267,13 @@ class SiteController extends Controller {
 		));
 	}
 
-	public function actionImportRegion() {
-		include APP_PATH . '/pinyin.php';
-		$regions = Region::model()->findAll('pid>0');
-		$data = array();
-		foreach ($regions as $region) {
-			if (Pinyin($region->name_zh, 1) != strtolower($region->name)
-				&& Pinyin(substr($region->name_zh, 0, -3), 1) != strtolower($region->name)
-				&& Pinyin(substr($region->name_zh, 0, -6), 1) != strtolower($region->name)
-			) {
-				$a = $region->attributes;
-				$a['pinyin'] = Pinyin($region->name_zh, 1);
-				$data[] = $a;
-			}
-		}
-		CVarDumper::dump($data, 10, 1);
+	public function actionBaiduMap() {
+		$this->layout = '/layouts/simple';
+		$this->render('baiduMap');
+	}
+
+	public function actionBaiduMapSearch() {
+		$this->layout = '/layouts/simple';
+		$this->render('baiduMapSearch');
 	}
 }
