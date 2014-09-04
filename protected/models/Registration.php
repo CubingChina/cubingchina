@@ -180,7 +180,7 @@ class Registration extends ActiveRecord {
 					// 'class'=>'header-mobile',
 				),
 				'type'=>'raw', 
-				'value'=>'$data->getRegistrationFee()', 
+				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")', 
 			),
 			array(
 				'headerHtmlOptions'=>array(

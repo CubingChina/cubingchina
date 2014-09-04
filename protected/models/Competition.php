@@ -634,6 +634,12 @@ class Competition extends ActiveRecord {
 			}
 			if ($extra) {
 				$col++;
+				$fee = $registration->getTotalFee();
+				if ($registration->isPaid()) {
+					$fee .= Yii::t('common', ' (paid)');
+				}
+				$sheet->setCellValue($col . $row, $fee);
+				$col++;
 				$sheet->setCellValue($col . $row, $user->mobile);
 				$col++;
 				$sheet->setCellValue($col . $row, $user->email);
