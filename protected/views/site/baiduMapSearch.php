@@ -18,6 +18,7 @@
   map.addControl(new BMap.NavigationControl());
   map.enableScrollWheelZoom();
   map.addOverlay(marker);
+  setAddress(point);
   //标记
   marker.enableDragging();
   marker.addEventListener('dragend', function(e) {
@@ -25,7 +26,7 @@
     map.closeInfoWindow(infoWindow);
   });
   marker.addEventListener('click', function(e) {
-    setAddress(e.point);
+    setAddress(marker.getPosition());
     map.openInfoWindow(infoWindow, marker.getPosition());
   });
   geolocation.getCurrentPosition(function(result) {
@@ -33,6 +34,13 @@
       marker.setPosition(result.point);
       map.openInfoWindow(infoWindow, marker.getPosition());
       setAddress(result.point);
+    } else {
+      var localCity = new BMap.LocalCity();
+      localCity.get(function(result) {
+        marker.setPosition(result.center);
+        map.openInfoWindow(infoWindow, marker.getPosition());
+        setAddress(result.center);
+      });
     }
   }, {enableHighAccuracy: true});
   function setAddress(point) {

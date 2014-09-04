@@ -18,7 +18,7 @@
   });
   var controll = isTouch ? 'ZoomControl' : 'NavigationControl';
   //地图
-  map.centerAndZoom(point, 12);
+  map.centerAndZoom(point, params.zoom || 12);
   map.addControl(new BMap[controll]());
   map.enableScrollWheelZoom && map.enableScrollWheelZoom();
   map.addOverlay(marker);
@@ -26,18 +26,20 @@
     map.openInfoWindow(infoWindow, point);
   });
   map.openInfoWindow(infoWindow, point);
-  var $ = parent.$, maps;
-  $ && (maps = $('.baidumap')) && $(parent).on('resize', function() {
-    maps.each(function() {
-      var map = $(this)
-      if (map.width() > map.parent().width()) {
-        map.data('orig-width', map.width());
-        map.width('100%');
+  if (self != top && parent.jQuery) {
+    var $ = parent.jQuery, iframe = $(window.frameElement), $parent = $(parent);
+    $parent.on('resize', function() {
+      if (iframe.width() > iframe.parent().width()) {
+        iframe.attr('data-orig-width', iframe.width());
+        iframe.width('100%');
       }
-      if (map.data('orig-width') < map.parent().width()) {
-        map.width(map.data('orig-width'));
+      if (iframe.data('orig-width') < iframe.parent().width()) {
+        iframe.width(iframe.data('orig-width'));
       }
     });
-  }) && $(parent).trigger('resize');
+    setTimeout(function() {
+      $parent.trigger('resize');
+    }, 0)
+  }
   //标记
 </script>
