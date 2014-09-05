@@ -183,6 +183,7 @@ class Registration extends ActiveRecord {
 				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")', 
 			),
 			array(
+				'name'=>'comment',
 				'headerHtmlOptions'=>array(
 					'class'=>'header-comments',
 				),
@@ -225,14 +226,14 @@ class Registration extends ActiveRecord {
 				$buttons[] = CHtml::link('取消', array('/board/registration/hide', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
 				break;
 		}
-		switch ($this->paid) {
-			case self::UNPAID:
-				$buttons[] = CHtml::link('付了', array('/board/registration/paid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-orange btn-square'));
-				break;
-			case self::PAID:
-				$buttons[] = CHtml::link('没付', array('/board/registration/unpaid', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
-				break;
-		}
+		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
+			'class'=>'paid tips',
+			'data-toggle'=>'tooltip',
+			'data-placement'=>'top',
+			'title'=>'是否支付报名费',
+			'data-checked-url'=>CHtml::normalizeUrl(array('/board/registration/paid', 'id'=>$this->id)),
+			'data-unchecked-url'=>CHtml::normalizeUrl(array('/board/registration/unpaid', 'id'=>$this->id)),
+		));
 		return implode(' ', $buttons);
 	}
 
