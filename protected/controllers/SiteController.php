@@ -139,7 +139,9 @@ class SiteController extends Controller {
 				}
 				$this->redirect(array('/site/register', 'step'=>$step));
 			}
-			$model->birthday = date($model::$dateFormat, $model->birthday);
+			if (ctype_digit($model->birthday)) {
+				$model->birthday = date($model::$dateFormat, $model->birthday);
+			}
 		}
 		$this->pageTitle = array('Register');
 		$model->verifyCode = '';

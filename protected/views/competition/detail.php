@@ -45,7 +45,7 @@
 			}, array_keys($competition->getRegistrationEvents()))); ?>
 		</dd>
 		<dt><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></dt>
-		<dd><?php echo $competition->entry_fee; ?></dd>
+		<dd><i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></dd>
 		<?php if ($competition->person_num > 0): ?>
 		<dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
 		<dd><?php echo $competition->person_num; ?></dd>
