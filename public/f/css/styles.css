@@ -2189,10 +2189,12 @@ body.competition .main-nav .nav .cube-yellow.active > a, body.competition .main-
 
 .comp-type-other {
   padding-left: 25px;
+  padding-right: 20px;
 }
 
 .comp-type-wca {
   line-height: 20px;
+  padding-right: 20px;
 }
 
 .wca-competition {
