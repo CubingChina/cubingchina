@@ -84,23 +84,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRegistrationFee() {
-		$this->competition->formatEvents();
-		$competitionEvents = $this->competition->events;
-		$fees = array();
-		foreach ($this->events as $event) {
-			if (isset($competitionEvents[$event]) && $competitionEvents[$event]['round'] > 0) {
-				$fees[] = $competitionEvents[$event]['fee'];
-			}
-		}
-		if (count($fees) === 0) {
-			$fee = $this->competition->entry_fee;
-		} elseif (($total = array_sum($fees)) == 0) {
-			$fee = $this->competition->entry_fee;
-		} else {
-			array_unshift($fees, $this->competition->entry_fee);
-			$total += $this->competition->entry_fee;
-			$fee = implode('+', $fees) . '=' . $total;
-		}
+		$fee = $this->getTotalFee();
 		if ($this->isPaid() && $fee > 0) {
 			$fee .= Yii::t('common', ' (paid)');
 		}
