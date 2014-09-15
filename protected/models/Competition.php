@@ -906,7 +906,7 @@ class Competition extends ActiveRecord {
 	}
 
 	protected function afterSave() {
-		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR);
+		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_DELEGATE);
 		//处理代表和主办
 		foreach (array('organizer', 'delegate') as $attribute) {
 			$attributeId = $attribute . '_id';
