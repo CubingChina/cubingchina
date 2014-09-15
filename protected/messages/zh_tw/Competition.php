@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'The registration is not open yet.' => '比賽報名尚未開放。',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
@@ -43,6 +44,7 @@ return array (
   'Events' => '項目',
   'Information' => '詳情',
   'It will be verified by the organisation team soon. Please wait with patience.' => '主辦方會儘快審核您的報名，請耐心等待。',
+  'Limited Number of Competitor' => '報名人數限制',
   'Location' => '地點',
   'Main Page' => '基本信息',
   'Name' => '姓名',
@@ -55,6 +57,7 @@ return array (
   'Regulations' => '比賽規則',
   'Schedule' => '賽程安排',
   'Status' => '狀態',
+  'The limited number of competitor has been reached.' => '報名人數已達到上限。',
   'The registration has been closed.' => '比賽報名已截止。',
   'The schedule is to be determined.' => '賽程正在緊張激烈地安排當中。',
   'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.' => '該比賽是世界魔方協會官方認證的比賽，所有選手需要熟知{regulations}。',
