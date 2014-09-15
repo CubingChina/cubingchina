@@ -67,8 +67,16 @@ class CompetitionController extends Controller {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
 		$registration = Registration::getUserRegistration($competition->id, $user->id);
+		if (!$competition->isPublic()) {
+			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
+			$this->redirect($competition->getUrl('competitors'));
+		}
 		if ($competition->isRegistrationEnded() && $registration === null) {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration has been closed.'));
+			$this->redirect($competition->getUrl('competitors'));
+		}
+		if ($competition->isRegistrationFull() && $registration === null) {
+			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The limited number of competitor has been reached.'));
 			$this->redirect($competition->getUrl('competitors'));
 		}
 		if ($user->isUnchecked()) {
@@ -138,9 +146,9 @@ class CompetitionController extends Controller {
 		if ($competition === null || $name != $competition->getUrlName()) {
 			throw new CHttpException(404, 'Error');
 		}
-		if (!$competition->isPublic() && !Yii::app()->user->checkAccess(User::ROLE_ORGANIZER)) {
-			throw new CHttpException(404, 'Error');
-		}
+		// if (!$competition->isPublic() && !Yii::app()->user->checkAccess(User::ROLE_ORGANIZER)) {
+		// 	throw new CHttpException(404, 'Error');
+		// }
 		$competition->formatEvents();
 		$this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);

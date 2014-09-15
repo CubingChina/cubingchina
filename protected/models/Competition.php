@@ -218,6 +218,13 @@ class Competition extends ActiveRecord {
 		return time() > strtotime(date('Y-m-d', $this->reg_end_day)) + 86400;
 	}
 
+	public function isRegistrationFull() {
+		return $this->person_num > 0 && Registration::model()->countByAttributes(array(
+			'competition_id'=>$this->id,
+			'status'=>Registration::STATUS_ACCEPTED,
+		)) >= $this->person_num;
+	}
+
 	public function isEnded() {
 		return time() > $this->date;
 	}
