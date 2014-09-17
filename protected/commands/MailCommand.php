@@ -9,7 +9,7 @@ class MailCommand extends CConsoleCommand {
 		));
 		$mailer = Yii::app()->mailer;
 		foreach ($mails as $mail) {
-			$result = $mailer->send($mail->to, $mail->subject, $mail->message);
+			$result = $mailer->send($mail);
 			$mail->update_time = time();
 			if ($result == true) {
 				$mail->sent_time = time();

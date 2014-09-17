@@ -1,6 +1,8 @@
 <?php
 
 class Mailer extends CApplicationComponent {
+	const SEPARATOR = ';';
+
 	public $host;
 	public $username;
 	public $password;
@@ -15,31 +17,31 @@ class Mailer extends CApplicationComponent {
 
 	protected $titlePrefix = 'Cubing China (粗饼·中国魔方赛事网) - ';
 	protected $viewPath;
-	private $_mail;
+	private $_mailer;
 
 	public function init() {
 		parent::init();
 		$this->viewPath = dirname(__FILE__) . '/views/';
 	}
 
-	public function getMail() {
-		if ($this->_mail === null) {
-			$this->_mail = $mail = new PHPMailer();
-			$mail->Host = $this->host;
-			$mail->Username = $this->username;
-			$mail->Password = $this->password;
+	public function getMailer() {
+		if ($this->_mailer === null) {
+			$this->_mailer = $mailer = new PHPMailer();
+			$mailer->Host = $this->host;
+			$mailer->Username = $this->username;
+			$mailer->Password = $this->password;
 			if ($this->smtp) {
-				$mail->isSMTP();
+				$mailer->isSMTP();
 			}
-			$mail->SMTPSecure = $this->smtpSecure;
-			$mail->SMTPAuth = $this->smtpAuth;
-			$mail->Port = $this->port;
-			$mail->From = $this->from;
-			$mail->FromName = $this->fromName;
-			$mail->isHTML($this->html);
-			$mail->CharSet = $this->charset;
+			$mailer->SMTPSecure = $this->smtpSecure;
+			$mailer->SMTPAuth = $this->smtpAuth;
+			$mailer->Port = $this->port;
+			$mailer->From = $this->from;
+			$mailer->FromName = $this->fromName;
+			$mailer->isHTML($this->html);
+			$mailer->CharSet = $this->charset;
 		}
-		return $this->_mail;
+		return $this->_mailer;
 	}
 
 	public function sendActivate($user) {
@@ -86,31 +88,50 @@ class Mailer extends CApplicationComponent {
 		return $this->titlePrefix . $title;
 	}
 
-	public function add($to, $subject, $message) {
+	public function add($to, $subject, $message, $replyTo = '', $cc = '', $bcc = '') {
+		foreach (array('to', 'replyTo', 'cc', 'bcc') as $var) {
+			if (is_array($$var)) {
+				$$var = implode(self::SEPARATOR, $$var);
+			}
+		}
 		$mail = new Mail();
 		$mail->to = $to;
+		$mail->reply_to = $replyTo;
+		$mail->cc = $cc;
+		$mail->bcc = $bcc;
 		$mail->subject = $subject;
 		$mail->message = $message;
 		$mail->add_time = $mail->update_time = time();
 		return $mail->save();
 	}
 
-	public function send($to, $subject, $message) {
-		$mail = $this->mail;
-		$mail->addAddress($to);
-		$mail->Subject = $subject;
-		$mail->Body = $message;
-		$mail->AltBody = implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($message)))));
-		$result = $mail->send();
+	public function send($mail) {
+		$mailer = $this->mailer;
+		foreach (explode(self::SEPARATOR, $mail->to) as $to) {
+			$mailer->addAddress($to);
+		}
+		foreach (explode(self::SEPARATOR, $mail->reply_to) as $replyTo) {
+			$mailer->addReplyTo($replyTo);
+		}
+		foreach (explode(self::SEPARATOR, $mail->cc) as $cc) {
+			$mailer->addCC($cc);
+		}
+		foreach (explode(self::SEPARATOR, $mail->bcc) as $bcc) {
+			$mailer->addBCC($bcc);
+		}
+		$mailer->Subject = $mail->subject;
+		$mailer->Body = $mail->message;
+		$mailer->AltBody = implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($mail->message)))));
+		$result = $mailer->send();
 		if ($result == false) {
-			Yii::log(implode('|', array($to, $subject, $message, $mail->ErrorInfo)), 'error', 'sendmail');
+			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $mailer->ErrorInfo)), 'error', 'sendmail');
 		}
 		$this->reset();
 		return $result;
 	}
 
 	public function reset() {
-		$this->_mail = null;
+		$this->_mailer = null;
 	}
 
 	protected function render($_view_, $_data_) {
