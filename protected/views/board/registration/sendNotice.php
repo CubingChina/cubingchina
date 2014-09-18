@@ -19,6 +19,9 @@
               'class'=>'clearfix row',
             ),
             'enableClientValidation'=>true,
+            'clientOptions'=>array(
+              'validateOnSubmit'=>true,
+            ),
           )); ?>
             <?php echo Html::formGroup(
               $model, 'title', array(
