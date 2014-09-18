@@ -8,6 +8,7 @@ class Editor extends Widget {
 		$uploadUrl = Yii::app()->createUrl('/board/upload/image');
 		$clientScript->registerScript('editor',
 <<<EOT
+  var editors = window.editors = {};
   $('.editor').each(function(i) {
     var that = $(this);
     var id = that.attr('id');
@@ -30,6 +31,7 @@ class Editor extends Widget {
         'image', 'multiimage',  'table', 'hr', 'link', 'unlink', 'baidumap'
       ]
     });
+    editors[id] = editor;
   });
 EOT
 		);

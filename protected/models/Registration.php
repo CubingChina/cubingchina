@@ -103,6 +103,39 @@ class Registration extends ActiveRecord {
 		return $this->competition->entry_fee + array_sum($fees);
 	}
 
+	public function getNoticeColumns($model) {
+		if ($this->competition === null) {
+			$columns = array();
+		} else {
+			$this->competition->formatEvents();
+			$columns = $this->competition->getEventsColumns(true);
+		}
+		$modelName = get_class($model);
+		$userLink = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR)
+			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
+			: '$data->user->getWcaLink()';
+		$columns = array_merge(array(
+			array(
+				'name'=>'email',
+				'header'=>Yii::t('common', 'Email'),
+				'headerHtmlOptions'=>array(
+					'class'=>'header-email',
+				),
+				'type'=>'raw', 
+				'value'=>"CHtml::label(CHtml::checkBox('{$modelName}[competitors][]', \$data->isAccepted(), array(
+					'class'=>implode(' ', array_map(function(\$a) {
+						return 'event-' . \$a;
+					}, \$data->events)) . ' competitor',
+					'value'=>\$data->user->email,
+					'data-accepted'=>intval(\$data->isAccepted()),
+				)) . ' ' . \$data->user->email, false, array(
+					'class'=>'checkbox',
+				))", 
+			),
+		), $columns);
+		return $columns;
+	}
+
 	public function getAdminColumns() {
 		if ($this->competition === null) {
 			$columns = array();

@@ -39,6 +39,55 @@ class RegistrationController extends AdminController {
 
 	}
 
+	public function actionSendNotice() {
+		$id = $this->iGet('id');
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$competition->formatEvents();
+		$registration = new Registration();
+		$registration->unsetAttributes();
+		$registration->competition_id = $id;
+		$model = new SendNoticeForm();
+		if (isset($_POST['SendNoticeForm'])) {
+			$model->attributes = $_POST['SendNoticeForm'];
+			if ($model->validate() && $model->send($competition)) {
+				Yii::app()->user->setFlash('success', '发送成功！');
+				$this->redirect(array('/board/registration/index', 'Registration'=>array('competition_id'=>$id)));
+			}
+		}
+		$this->render('sendNotice', array(
+			'model'=>$model,
+			'competition'=>$competition,
+			'registration'=>$registration,
+		));
+	}
+
+	public function actionPreviewNotice() {
+		$id = $this->iGet('id');
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			throw new CHttpException(404, '未知比赛ID');
+		}
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
+			throw new CHttpException(403, '权限不足');
+		}
+		$competition->formatEvents();
+		$registration = new Registration();
+		$registration->unsetAttributes();
+		$registration->competition_id = $id;
+		$model = new SendNoticeForm();
+		if (isset($_POST['SendNoticeForm'])) {
+			$model->attributes = $_POST['SendNoticeForm'];
+		}
+		echo json_encode($model->getPreview($competition));
+	}
+
 	public function actionEdit() {
 		$id = $this->iGet('id');
 		$model = Registration::model()->findByPk($id);
