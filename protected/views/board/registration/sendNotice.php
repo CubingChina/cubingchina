@@ -117,6 +117,7 @@ Yii::app()->clientScript->registerScript('sendNotice',
         $('.competitor[data-accepted="' + (+(type !== 'accepted')) + '"]').prop('checked', false);
         break;
     }
+    updateCount();
   }).on('click', '#preview', function() {
     for (var id in editors) {
       editors[id].sync();
@@ -132,6 +133,13 @@ Yii::app()->clientScript->registerScript('sendNotice',
         $('#preview-modal').modal('show');
       }
     });
+  }).on('change', '.competitor', function() {
+    updateCount();
   });
+  updateCount();
+  function updateCount() {
+    var count = $('.competitor:checked').length;
+    $('table tbody tr:first-child td:first-child, table tfoot tr:first-child td:first-child').text('已选择' + count + '人');
+  }
 EOT
 );
