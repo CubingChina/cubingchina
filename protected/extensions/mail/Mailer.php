@@ -77,11 +77,37 @@ class Mailer extends CApplicationComponent {
 				)
 			),
 		));
+		$to = array();
 		foreach ($registration->competition->organizer as $organizer) {
-			$to = $organizer->user->email;
-			$this->add($to, $subject, $message);
+			$to[] = $organizer->user->email;
 		}
-		return true;
+		return $this->add($to, $subject, $message);
+	}
+
+	public function sendCompetitionNotice($competition, $users, $title, $content, $englishContent = '') {
+		$subject = "【{$competition->name_zh}】$title";
+		$message = $this->render('competitionNotice', array(
+			'title'=>$title,
+			'competition'=>$competition,
+			'content'=>$content,
+			'englishContent'=>$englishContent,
+		));
+		$cc = array();
+		foreach ($competition->organizer as $organizer) {
+			$cc[] = $organizer->user->email;
+		}
+		return $this->add('', $subject, $message, Yii::app()->user->name, $cc, $users);
+	}
+
+	public function getCompetitionNoticePreview($competition, $users, $title, $content, $englishContent = '') {
+		$subject = "【{$competition->name_zh}】$title";
+		$message = $this->render('competitionNotice', array(
+			'title'=>$title,
+			'competition'=>$competition,
+			'content'=>$content,
+			'englishContent'=>$englishContent,
+		));
+		return compact('subject', 'message');
 	}
 
 	private function makeTitle($title) {

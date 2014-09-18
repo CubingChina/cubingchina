@@ -13,7 +13,7 @@
         'action'=>array('/board/registration/index'),
         'method'=>'get',
         'id'=>'registration-form',
-          'htmlOptions'=>array(
+        'htmlOptions'=>array(
         ),
       )); ?>
       <?php echo Html::formGroup(
@@ -25,6 +25,7 @@
       <?php $this->endWidget(); ?>
       <?php if ($model->competition !== null): ?>
       <?php echo CHtml::link('导出到EXCEL', array('/board/registration/export', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-purple')); ?>
+      <?php echo CHtml::link('发邮件给选手', array('/board/registration/sendNotice', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-blue')); ?>
       <?php endif; ?>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
