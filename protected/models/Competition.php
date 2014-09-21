@@ -546,7 +546,7 @@ class Competition extends ActiveRecord {
 		return Events::getFullEventName($event);
 	}
 
-	public function export($exportFormsts, $all = 0, $xlsx = 0, $extra = 0, $order = 'date') {
+	public function export($exportFormsts, $all = false, $xlsx = false, $extra = false, $order = 'date') {
 		$registrations = $this->getRegistrations($all, $order);
 		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
 		$export = new PHPExcel();
@@ -679,7 +679,7 @@ class Competition extends ActiveRecord {
 		$this->exportToExcel($export, $this->name, $xlsx);
 	}
 
-	public function exportScoreCard($all = 0, $order = 'date') {
+	public function exportScoreCard($all = false, $order = 'date') {
 		$registrations = $this->getRegistrations($all, $order);
 		$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
 		$scoreCard->getProperties()
@@ -695,8 +695,8 @@ class Competition extends ActiveRecord {
 			unset($drawingCollection[$i]);
 		}
 		foreach ($drawingCollection as $drawing) {
-			$drawing->setWidth(65)->setHeight(65);
-			$drawing->setOffsetX(2)->setOffsetY(2);
+			$drawing->setWidth(65)->setHeight(63);
+			$drawing->setOffsetX(2)->setOffsetY(1);
 		}
 		$title = "{$this->name_zh} ($this->name) - 成绩记录单 (Score Card)";
 		$rowHeights = array();
@@ -704,16 +704,16 @@ class Competition extends ActiveRecord {
 		for ($row = 1; $row < 15; $row++) {
 			$height = $sheet->getRowDimension($row)->getRowHeight();
 			if ($height === -1) {
-				$height = $rowHeights[$row - 1] - 1;
+				$height = isset($rowHeights[$row - 1]) ? $rowHeights[$row - 1] - 1 : 10;
 			}
 			$rowHeights[$row] = $height;
 			$xfIndexes[$row] = array();
-			for ($col = 'A'; strcmp($col, 'AK') != 0; $col++) {
+			for ($col = 'A'; strcmp($col, 'AL') != 0; $col++) {
 				$xfIndexes[$row][$col] = $sheet->getCell($col . $row)->getXfIndex();
 			}
 		}
 		$staticCells = array(
-			'A3', 'K3', 'O3', 'T3', 'Z3',
+			'A3', 'K3', 'O3', 'S3', 'Z3', 'AK3',
 			'A5', 'B5', 'G5', 'G6', 'S5', 'S6', 'AE5', 'AJ5',
 			'A8', 'A9', 'A10', 'A11', 'A12',
 			'AJ8', 'AJ9', 'AJ10', 'AJ11', 'AJ12',
@@ -735,19 +735,19 @@ class Competition extends ActiveRecord {
 			foreach ($registration->events as $event) {
 				//合并单元格
 				//标题
-				$sheet->mergeCells(sprintf('A%d:AJ%d', $i * 14 + 2, $i * 14 + 2));
+				$sheet->mergeCells(sprintf('A%d:AK%d', $i * 14 + 2, $i * 14 + 2));
 				//项目、轮次等
 				$sheet->mergeCells(sprintf('A%d:B%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('C%d:J%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('K%d:L%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('K%d:L%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('M%d:N%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('O%d:P%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('Q%d:S%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('T%d:U%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('V%d:Y%d', $i * 14 + 3, $i * 14 + 4));
+				$sheet->mergeCells(sprintf('Q%d:R%d', $i * 14 + 3, $i * 14 + 4));
+				$sheet->mergeCells(sprintf('S%d:T%d', $i * 14 + 3, $i * 14 + 4));
+				$sheet->mergeCells(sprintf('U%d:Y%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('Z%d:AA%d', $i * 14 + 3, $i * 14 + 4));
 				$sheet->mergeCells(sprintf('AB%d:AJ%d', $i * 14 + 3, $i * 14 + 4));
+				$sheet->mergeCells(sprintf('AK%d:AK%d', $i * 14 + 3, $i * 14 + 4));
 				//表头
 				$sheet->mergeCells(sprintf('A%d:A%d', $i * 14 + 5, $i * 14 + 7));
 				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 5, $i * 14 + 7));
@@ -824,8 +824,8 @@ class Competition extends ActiveRecord {
 				for ($j = 1; $j < 15; $j++) {
 					$row = $i * 14 + $j;
 					$sheet->getRowDimension($row)->setRowHeight($rowHeights[$j]);
-					for ($col = 'A'; strcmp($col, 'AK') != 0; $col++) {
-						$sheet->getCell($col . $row)->setXfIndex($xfIndexes[$j][$col]);
+					foreach ($xfIndexes[$j] as $col=>$xfIndex) {
+						$sheet->getCell($col . $row)->setXfIndex($xfIndex);
 					}
 				}
 				//填写固定内容
@@ -842,9 +842,9 @@ class Competition extends ActiveRecord {
 				$eventName = Events::getFullEventName($event);
 				$eventName = sprintf('%s (%s)', Yii::t('event', $eventName), $eventName);
 				$sheet->setCellValue("C{$row}", $eventName);
-				$sheet->setCellValue("M{$row}", 1);
+				$sheet->setCellValue("M{$row}", '1st');
 				$sheet->setCellValue("Q{$row}", $registration->number);
-				$sheet->setCellValue("V{$row}", $registration->user->wcaid);
+				$sheet->setCellValue("U{$row}", $registration->user->wcaid);
 				$sheet->setCellValue("AB{$row}", $registration->user->getCompetitionName());
 				//8个图片
 				$row = $i * 14 + 7;
@@ -856,8 +856,8 @@ class Competition extends ActiveRecord {
 					$drawing->setPath($drawingCollection[$j]->getPath(), false);
 					$drawing->setResizeProportional(false);
 					$drawing->setCoordinates("{$col}{$row}");
-					$drawing->setWidth(65)->setHeight(65);
-					$drawing->setOffsetX(2)->setOffsetY(2);
+					$drawing->setWidth($drawingCollection[$j]->getWidth())->setHeight($drawingCollection[$j]->getHeight());
+					$drawing->setOffsetX($drawingCollection[$j]->getOffsetX())->setOffsetY($drawingCollection[$j]->getOffsetY());
 					$col++;
 					$col++;
 					$col++;
@@ -871,11 +871,11 @@ class Competition extends ActiveRecord {
 		$this->exportToExcel($scoreCard, $this->name);
 	}
 
-	public function getRegistrations($all = 0, $order = 'date') {
+	public function getRegistrations($all = false, $order = 'date') {
 		$attributes = array(
 			'competition_id'=>$this->id,
 		);
-		if ($all == 0) {
+		if (!$all) {
 			$attributes['status'] = Registration::STATUS_ACCEPTED;
 		}
 		if (!in_array($order, array('date', 'user.name'))) {
@@ -917,7 +917,7 @@ class Competition extends ActiveRecord {
 		return $registrations;
 	}
 
-	private function exportToExcel($excel, $name, $xlsx = 1) {
+	private function exportToExcel($excel, $name, $xlsx = true, $download = true) {
 		$excel->setActiveSheetIndex(0);
 		Yii::app()->controller->setIsAjaxRequest(true);
 		if ($xlsx) {
@@ -929,9 +929,20 @@ class Competition extends ActiveRecord {
 			header('Content-Disposition: attachment;filename="' . $name . '.xls"');
 			$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 		}
+		if ($download) {
+			if ($xlsx) {
+				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment;filename="' . $name . '.xlsx"');
+			} else {
+				header('Content-Type: application/vnd.ms-excel');
+				header('Content-Disposition: attachment;filename="' . $name . '.xls"');
+			}
+		}
 		$objWriter->setPreCalculateFormulas(false);
 		$objWriter->save('php://output');
-		exit;
+		if ($download) {
+			exit;
+		}
 	}
 
 	public function handleEvents() {
