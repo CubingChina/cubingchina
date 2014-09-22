@@ -680,7 +680,6 @@ class Competition extends ActiveRecord {
 	}
 
 	public function exportScoreCard($all = false, $order = 'date') {
-		ini_set('memory_limit', '192m');
 		$registrations = $this->getRegistrations($all, $order);
 		$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
 		$scoreCard->getProperties()
@@ -698,7 +697,8 @@ class Competition extends ActiveRecord {
 		$title = "{$this->name_zh} ($this->name) - 成绩记录单 (Score Card)";
 		$rowHeights = array();
 		$xfIndexes = array();
-		for ($row = 1; $row < 15; $row++) {
+		$oneCardRow = 13;
+		for ($row = 1; $row <= $oneCardRow; $row++) {
 			$height = $sheet->getRowDimension($row)->getRowHeight();
 			if ($height === -1) {
 				$height = isset($rowHeights[$row - 1]) ? $rowHeights[$row - 1] - 1 : 10;
@@ -734,94 +734,94 @@ class Competition extends ActiveRecord {
 				$i++;
 				//合并单元格
 				//标题
-				$sheet->mergeCells(sprintf('A%d:AK%d', $i * 14 + 2, $i * 14 + 2));
+				$sheet->mergeCells(sprintf('A%d:AK%d', $i * $oneCardRow + 2, $i * $oneCardRow + 2));
 				//项目、轮次等
-				$sheet->mergeCells(sprintf('A%d:B%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('C%d:J%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('K%d:L%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('M%d:N%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('O%d:P%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('Q%d:R%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('S%d:T%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('U%d:Y%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('Z%d:AA%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('AB%d:AJ%d', $i * 14 + 3, $i * 14 + 4));
-				$sheet->mergeCells(sprintf('AK%d:AK%d', $i * 14 + 3, $i * 14 + 4));
+				$sheet->mergeCells(sprintf('A%d:B%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('C%d:J%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('K%d:L%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('M%d:N%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('O%d:P%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('Q%d:R%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('S%d:T%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('U%d:Y%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('Z%d:AA%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('AB%d:AJ%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
+				$sheet->mergeCells(sprintf('AK%d:AK%d', $i * $oneCardRow + 3, $i * $oneCardRow + 4));
 				//表头
-				$sheet->mergeCells(sprintf('A%d:A%d', $i * 14 + 5, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 5, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('G%d:R%d', $i * 14 + 5, $i * 14 + 5));
-				$sheet->mergeCells(sprintf('S%d:AD%d', $i * 14 + 5, $i * 14 + 5));
-				$sheet->mergeCells(sprintf('G%d:R%d', $i * 14 + 6, $i * 14 + 6));
-				$sheet->mergeCells(sprintf('S%d:AD%d', $i * 14 + 6, $i * 14 + 6));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 7, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 5, $i * 14 + 7));
-				$sheet->mergeCells(sprintf('AJ%d:AJ%d', $i * 14 + 5, $i * 14 + 7));
+				$sheet->mergeCells(sprintf('A%d:A%d', $i * $oneCardRow + 5, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 5, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('G%d:R%d', $i * $oneCardRow + 5, $i * $oneCardRow + 5));
+				$sheet->mergeCells(sprintf('S%d:AD%d', $i * $oneCardRow + 5, $i * $oneCardRow + 5));
+				$sheet->mergeCells(sprintf('G%d:R%d', $i * $oneCardRow + 6, $i * $oneCardRow + 6));
+				$sheet->mergeCells(sprintf('S%d:AD%d', $i * $oneCardRow + 6, $i * $oneCardRow + 6));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 7, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 5, $i * $oneCardRow + 7));
+				$sheet->mergeCells(sprintf('AJ%d:AJ%d', $i * $oneCardRow + 5, $i * $oneCardRow + 7));
 				//表身
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('B%d:F%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('J%d:L%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('M%d:O%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('P%d:R%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('S%d:U%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('V%d:X%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * 14 + 12, $i * 14 + 12));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 8, $i * 14 + 8));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 9, $i * 14 + 9));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 10, $i * 14 + 10));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 11, $i * 14 + 11));
-				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * 14 + 12, $i * 14 + 12));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('B%d:F%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('J%d:L%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('M%d:O%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('P%d:R%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('S%d:U%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('V%d:X%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('Y%d:AA%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('AB%d:AD%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 8, $i * $oneCardRow + 8));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 9, $i * $oneCardRow + 9));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 10, $i * $oneCardRow + 10));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 11, $i * $oneCardRow + 11));
+				$sheet->mergeCells(sprintf('AE%d:AI%d', $i * $oneCardRow + 12, $i * $oneCardRow + 12));
 				//表尾
-				$sheet->mergeCells(sprintf('A%d:R%d', $i * 14 + 13, $i * 14 + 13));
-				$sheet->mergeCells(sprintf('S%d:AJ%d', $i * 14 + 13, $i * 14 + 13));
+				$sheet->mergeCells(sprintf('A%d:R%d', $i * $oneCardRow + 13, $i * $oneCardRow + 13));
+				$sheet->mergeCells(sprintf('S%d:AJ%d', $i * $oneCardRow + 13, $i * $oneCardRow + 13));
 
 				//调整各行高度及样式
-				for ($j = 1; $j < 15; $j++) {
-					$row = $i * 14 + $j;
+				for ($j = 1; $j <= $oneCardRow; $j++) {
+					$row = $i * $oneCardRow + $j;
 					$sheet->getRowDimension($row)->setRowHeight($rowHeights[$j]);
 					foreach ($xfIndexes[$j] as $col=>$xfIndex) {
 						$sheet->getCell($col . $row)->setXfIndex($xfIndex);
@@ -829,15 +829,15 @@ class Competition extends ActiveRecord {
 				}
 				//填写固定内容
 				foreach ($values as $value) {
-					$row = $i * 14 + $value['row'];
+					$row = $i * $oneCardRow + $value['row'];
 					$cell = str_replace('{row}', $row, $value['template']);
 					$sheet->setCellValue($cell, $value['value']);
 				}
 				//比赛名字
-				$row = $i * 14 + 2;
+				$row = $i * $oneCardRow + 2;
 				$sheet->setCellValue("A{$row}", $title);
 				//项目、轮次、编号等
-				$row = $i * 14 + 3;
+				$row = $i * $oneCardRow + 3;
 				$eventName = Events::getFullEventName($event);
 				$eventName = sprintf('%s (%s)', Yii::t('event', $eventName), $eventName);
 				$sheet->setCellValue("C{$row}", $eventName);
@@ -846,7 +846,7 @@ class Competition extends ActiveRecord {
 				$sheet->setCellValue("U{$row}", $registration->user->wcaid);
 				$sheet->setCellValue("AB{$row}", $registration->user->getCompetitionName());
 				//8个图片
-				$row = $i * 14 + 7;
+				$row = $i * $oneCardRow + 7;
 				$col = 'G';
 				for ($j = 0; $j < 8; $j++) {
 					$drawing = new PHPExcelDrawing();
@@ -863,7 +863,7 @@ class Competition extends ActiveRecord {
 					$col++;
 					$col++;
 				}
-				//600张一个表
+				//400张一个表
 				if ($i == 399) {
 					$path = Yii::app()->runtimePath . '/' . $this->name . ".$count.xlsx";
 					$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
@@ -1172,7 +1172,7 @@ class Competition extends ActiveRecord {
 		foreach (array('organizer', 'delegate') as $attribute) {
 			$attributeId = $attribute . '_id';
 			$oldValues = array_values(CHtml::listData($this->$attribute, $attributeId, $attributeId));
-			$newValues = array_values($this->{$attribute . 's'});
+			$newValues = array_values((array)$this->{$attribute . 's'});
 			sort($oldValues);
 			sort($newValues);
 			if ($oldValues != $newValues) {
