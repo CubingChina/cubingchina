@@ -676,10 +676,11 @@ class Competition extends ActiveRecord {
 				$export->addExternalSheet($sheet);
 			}
 		}
-		$this->exportToExcel($export, $this->name, $xlsx);
+		$this->exportToExcel($export, 'php://output', $this->name, $xlsx);
 	}
 
 	public function exportScoreCard($all = false, $order = 'date') {
+		ini_set('memory_limit', '192m');
 		$registrations = $this->getRegistrations($all, $order);
 		$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
 		$scoreCard->getProperties()
@@ -690,10 +691,6 @@ class Competition extends ActiveRecord {
 		$sheet = $scoreCard->getSheet(0);
 		//修复图片宽高及偏移
 		$drawingCollection = $sheet->getDrawingCollection();
-		//删除多余的24张
-		for ($i = 8; $i < count($drawingCollection); $i++) {
-			unset($drawingCollection[$i]);
-		}
 		foreach ($drawingCollection as $drawing) {
 			$drawing->setWidth(65)->setHeight(63);
 			$drawing->setOffsetX(2)->setOffsetY(1);
@@ -730,9 +727,11 @@ class Competition extends ActiveRecord {
 				'row'=>$row,
 			);
 		}
-		$i = 1;
+		$i = 0;
+		$count = 0;
 		foreach ($registrations as $registration) {
 			foreach ($registration->events as $event) {
+				$i++;
 				//合并单元格
 				//标题
 				$sheet->mergeCells(sprintf('A%d:AK%d', $i * 14 + 2, $i * 14 + 2));
@@ -856,19 +855,72 @@ class Competition extends ActiveRecord {
 					$drawing->setPath($drawingCollection[$j]->getPath(), false);
 					$drawing->setResizeProportional(false);
 					$drawing->setCoordinates("{$col}{$row}");
-					$drawing->setWidth($drawingCollection[$j]->getWidth())->setHeight($drawingCollection[$j]->getHeight());
-					$drawing->setOffsetX($drawingCollection[$j]->getOffsetX())->setOffsetY($drawingCollection[$j]->getOffsetY());
+					$drawing->setWidth($drawingCollection[$j]->getWidth());
+					$drawing->setHeight($drawingCollection[$j]->getHeight());
+					$drawing->setOffsetX($drawingCollection[$j]->getOffsetX());
+					$drawing->setOffsetY($drawingCollection[$j]->getOffsetY());
 					$col++;
 					$col++;
 					$col++;
 				}
-				$i++;
+				//600张一个表
+				if ($i == 399) {
+					$path = Yii::app()->runtimePath . '/' . $this->name . ".$count.xlsx";
+					$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
+					$this->exportToExcel($scoreCard, $path);
+					$scoreCard->disconnectWorksheets();
+					unset($scoreCard, $sheet);
+					$count++;
+					$i = 0;
+					//新开excel
+					$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
+					$scoreCard->getProperties()
+						->setCreator(Yii::app()->params->author)
+						->setLastModifiedBy(Yii::app()->params->author)
+						->setTitle($this->wca_competition_id ?: $this->name)
+						->setSubject($this->name);
+					$sheet = $scoreCard->getSheet(0);
+					//修复图片宽高及偏移
+					$drawingCollection = $sheet->getDrawingCollection();
+					foreach ($drawingCollection as $drawing) {
+						$drawing->setWidth(65)->setHeight(63);
+						$drawing->setOffsetX(2)->setOffsetY(1);
+					}
+				}
 			}
 		}
-		//修复第四行高度
-		$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
-		// echo 1111;exit;
-		$this->exportToExcel($scoreCard, $this->name);
+		if ($count == 0) {
+			//修复第四行高度
+			$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
+			$this->exportToExcel($scoreCard, 'php://output', $this->name);
+		} else {
+			//压缩成zip
+			$path = Yii::app()->runtimePath . '/' . $this->name . ".$count.xlsx";
+			$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
+			$this->exportToExcel($scoreCard, $path);
+			$count++;
+			$zip = new ZipArchive();
+			$tempName = tempnam(Yii::app()->runtimePath, 'scoreCardTmp');
+			if ($zip->open($tempName, ZipArchive::CREATE) !== true) {
+				throw new CHttpException(500, '创建压缩文件失败');
+			}
+			$dir = 'score-card';
+			$zip->addEmptyDir($dir);
+			for ($i = 0; $i < $count; $i++) {
+				$path = Yii::app()->runtimePath . '/' . $this->name . ".$i.xlsx";
+				$zip->addFile($path, $dir. '/' . basename($path));
+			}
+			$zip->close();
+			header('Content-Type: application/zip');
+			header('Content-Disposition: attachment;filename="' . $this->name . '.zip"');
+			readfile($tempName);
+			//删除临时文件
+			for ($i = 0; $i < $count; $i++) {
+				unlink($path);
+			}
+			unlink($tempName);
+			exit;
+		}
 	}
 
 	public function getRegistrations($all = false, $order = 'date') {
@@ -917,29 +969,26 @@ class Competition extends ActiveRecord {
 		return $registrations;
 	}
 
-	private function exportToExcel($excel, $name, $xlsx = true, $download = true) {
+	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true) {
+		$download = $path === 'php://output';
 		$excel->setActiveSheetIndex(0);
 		Yii::app()->controller->setIsAjaxRequest(true);
 		if ($xlsx) {
-			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-			header('Content-Disposition: attachment;filename="' . $name . '.xlsx"');
-			$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 		} else {
-			header('Content-Type: application/vnd.ms-excel');
-			header('Content-Disposition: attachment;filename="' . $name . '.xls"');
-			$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 		}
 		if ($download) {
 			if ($xlsx) {
 				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="' . $name . '.xlsx"');
+				header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
 			} else {
 				header('Content-Type: application/vnd.ms-excel');
-				header('Content-Disposition: attachment;filename="' . $name . '.xls"');
+				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
 			}
 		}
-		$objWriter->setPreCalculateFormulas(false);
-		$objWriter->save('php://output');
+		$writer->setPreCalculateFormulas(false);
+		$writer->save($path);
 		if ($download) {
 			exit;
 		}
