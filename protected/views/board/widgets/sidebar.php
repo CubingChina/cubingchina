@@ -24,7 +24,7 @@
 						'class'=>'panel',
 					),
 					'submenuOptions'=>array(
-						'class'=>'collapse nav' . ($this->controller->id == 'competition' ? ' in' : ''),
+						'class'=>'collapse nav in',
 						'id'=>'competition',
 					),
 					'items'=>array(
@@ -52,7 +52,7 @@
 						'class'=>'panel',
 					),
 					'submenuOptions'=>array(
-						'class'=>'collapse nav' . ($this->controller->id == 'registration' ? ' in' : ''),
+						'class'=>'collapse nav in',
 						'id'=>'registration',
 					),
 					'items'=>array(
@@ -77,7 +77,7 @@
 						'class'=>'panel',
 					),
 					'submenuOptions'=>array(
-						'class'=>'collapse nav' . ($this->controller->id == 'user' ? ' in' : ''),
+						'class'=>'collapse nav in',
 						'id'=>'user',
 					),
 					'items'=>array(
@@ -110,7 +110,7 @@
 						'class'=>'panel',
 					),
 					'submenuOptions'=>array(
-						'class'=>'collapse nav' . ($this->controller->id == 'news' ? ' in' : ''),
+						'class'=>'collapse nav in',
 						'id'=>'news',
 					),
 					'items'=>array(
