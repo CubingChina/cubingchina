@@ -36,7 +36,25 @@ class RegistrationController extends AdminController {
 			'competition'=>$model,
 			'exportFormsts'=>$exportFormsts,
 		));
+	}
 
+	public function actionScoreCard() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		if (isset($_POST['order'])) {
+			$model->exportScoreCard($this->iPost('all'), $this->sPost('order'));
+		}
+		$this->render('scoreCard', array(
+			'model'=>$model,
+			'competition'=>$model,
+		));
 	}
 
 	public function actionSendNotice() {
