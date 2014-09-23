@@ -22,7 +22,7 @@
           )); ?>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
-              <div class="text-danger">导出需要可能持续2分钟甚至更长时间，请耐心等待，不要反复刷新！</div>
+              <div class="text-danger">导出可能会持续2分钟甚至更长时间，请耐心等待，不要反复刷新！</div>
             </div>
           </div>
           <div class="form-group">

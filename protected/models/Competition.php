@@ -681,7 +681,9 @@ class Competition extends ActiveRecord {
 
 	public function exportScoreCard($all = false, $order = 'date') {
 		$registrations = $this->getRegistrations($all, $order);
-		$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
+		$tempPath = Yii::app()->runtimePath;
+		$templatePath = Yii::getPathOfAlias('application.data.score-card') . '.xlsx';
+		$scoreCard = PHPExcel_IOFactory::load($templatePath);
 		$scoreCard->getProperties()
 			->setCreator(Yii::app()->params->author)
 			->setLastModifiedBy(Yii::app()->params->author)
@@ -689,10 +691,16 @@ class Competition extends ActiveRecord {
 			->setSubject($this->name);
 		$sheet = $scoreCard->getSheet(0);
 		//修复图片宽高及偏移
+		$imageStyle = array(
+			'width'=>65,
+			'height'=>63,
+			'offsetX'=>2,
+			'offsetY'=>1,
+		);
 		$drawingCollection = $sheet->getDrawingCollection();
 		foreach ($drawingCollection as $drawing) {
-			$drawing->setWidth(65)->setHeight(63);
-			$drawing->setOffsetX(2)->setOffsetY(1);
+			$drawing->setWidth($imageStyle['width'])->setHeight($imageStyle['height']);
+			$drawing->setOffsetX($imageStyle['offsetX'])->setOffsetY($imageStyle['offsetY']);
 		}
 		$title = "{$this->name_zh} ($this->name) - 成绩记录单 (Score Card)";
 		$rowHeights = array();
@@ -731,7 +739,9 @@ class Competition extends ActiveRecord {
 		$count = 0;
 		foreach ($registrations as $registration) {
 			foreach ($registration->events as $event) {
-				$i++;
+				if ($event === '333fm') {
+					continue;
+				}
 				//合并单元格
 				//标题
 				$sheet->mergeCells(sprintf('A%d:AK%d', $i * $oneCardRow + 2, $i * $oneCardRow + 2));
@@ -855,25 +865,25 @@ class Competition extends ActiveRecord {
 					$drawing->setPath($drawingCollection[$j]->getPath(), false);
 					$drawing->setResizeProportional(false);
 					$drawing->setCoordinates("{$col}{$row}");
-					$drawing->setWidth($drawingCollection[$j]->getWidth());
-					$drawing->setHeight($drawingCollection[$j]->getHeight());
-					$drawing->setOffsetX($drawingCollection[$j]->getOffsetX());
-					$drawing->setOffsetY($drawingCollection[$j]->getOffsetY());
+					$drawing->setWidth($imageStyle['width'])->setHeight($imageStyle['height']);
+					$drawing->setOffsetX($imageStyle['offsetX'])->setOffsetY($imageStyle['offsetY']);
 					$col++;
 					$col++;
 					$col++;
 				}
+				$i++;
 				//400张一个表
-				if ($i == 399) {
-					$path = Yii::app()->runtimePath . '/' . $this->name . ".$count.xlsx";
+				if ($i == 400) {
+					$path = $tempPath . '/' . $this->name . ".$count.xlsx";
 					$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
 					$this->exportToExcel($scoreCard, $path);
+					//释放内存
 					$scoreCard->disconnectWorksheets();
 					unset($scoreCard, $sheet);
 					$count++;
 					$i = 0;
 					//新开excel
-					$scoreCard = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.score-card') . '.xlsx');
+					$scoreCard = PHPExcel_IOFactory::load($templatePath);
 					$scoreCard->getProperties()
 						->setCreator(Yii::app()->params->author)
 						->setLastModifiedBy(Yii::app()->params->author)
@@ -883,8 +893,8 @@ class Competition extends ActiveRecord {
 					//修复图片宽高及偏移
 					$drawingCollection = $sheet->getDrawingCollection();
 					foreach ($drawingCollection as $drawing) {
-						$drawing->setWidth(65)->setHeight(63);
-						$drawing->setOffsetX(2)->setOffsetY(1);
+						$drawing->setWidth($imageStyle['width'])->setHeight($imageStyle['height']);
+						$drawing->setOffsetX($imageStyle['offsetX'])->setOffsetY($imageStyle['offsetY']);
 					}
 				}
 			}
@@ -895,19 +905,22 @@ class Competition extends ActiveRecord {
 			$this->exportToExcel($scoreCard, 'php://output', $this->name);
 		} else {
 			//压缩成zip
-			$path = Yii::app()->runtimePath . '/' . $this->name . ".$count.xlsx";
+			$path = $tempPath . '/' . $this->name . ".$count.xlsx";
 			$sheet->getRowDimension(4)->setRowHeight($rowHeights[4]);
 			$this->exportToExcel($scoreCard, $path);
+			//释放内存
+			$scoreCard->disconnectWorksheets();
+			unset($scoreCard, $sheet);
 			$count++;
 			$zip = new ZipArchive();
-			$tempName = tempnam(Yii::app()->runtimePath, 'scoreCardTmp');
+			$tempName = tempnam($tempPath, 'scoreCardTmp');
 			if ($zip->open($tempName, ZipArchive::CREATE) !== true) {
 				throw new CHttpException(500, '创建压缩文件失败');
 			}
 			$dir = 'score-card';
 			$zip->addEmptyDir($dir);
 			for ($i = 0; $i < $count; $i++) {
-				$path = Yii::app()->runtimePath . '/' . $this->name . ".$i.xlsx";
+				$path = $tempPath . '/' . $this->name . ".$i.xlsx";
 				$zip->addFile($path, $dir. '/' . basename($path));
 			}
 			$zip->close();
@@ -916,6 +929,7 @@ class Competition extends ActiveRecord {
 			readfile($tempName);
 			//删除临时文件
 			for ($i = 0; $i < $count; $i++) {
+				$path = $tempPath . '/' . $this->name . ".$i.xlsx";
 				unlink($path);
 			}
 			unlink($tempName);
