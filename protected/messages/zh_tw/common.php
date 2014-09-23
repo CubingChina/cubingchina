@@ -18,6 +18,8 @@
  */
 return array (
   'Fee' => '',
+  'Score Card' => '成績條模板',
+  'Tools' => '工具',
   'WCA Competition' => '',
   'WCA ID' => '',
   'About us' => '關於本站',
@@ -78,7 +80,7 @@ return array (
   'CNY' => '元',
   'Change Password' => '修改密碼',
   'City' => '城市',
-  'Competitions' => '賽事信息',
+  'Competitions' => '賽事',
   'Contact' => '聯繫我們',
   'Cubing China' => '粗餅·中國魔方賽事網',
   'CubingChina ID' => '粗餅ID',
@@ -111,7 +113,7 @@ return array (
   'Lost password?' => '忘記密碼？',
   'Male' => '男',
   'Mobile Number' => '手機號碼',
-  'More Info' => '更多信息',
+  'More Info' => '其他',
   'My Competitions' => '我的比賽',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',
