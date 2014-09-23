@@ -18,7 +18,6 @@
  */
 return array (
   'ID' => '',
-  'The registration is not open yet.' => '比赛报名尚未开放。',
   ' round' => '轮',
   ' rounds' => '轮',
   'Competition List' => '比赛列表',
@@ -59,6 +58,7 @@ return array (
   'Status' => '状态',
   'The limited number of competitor has been reached.' => '报名人数已达到上限。',
   'The registration has been closed.' => '比赛报名已截止。',
+  'The registration is not open yet.' => '比赛报名尚未开放。',
   'The schedule is to be determined.' => '赛程正在紧张激烈地安排当中。',
   'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.' => '该比赛是世界魔方协会官方认证的比赛，所有选手需要熟知{regulations}。',
   'Travel' => '交通信息',

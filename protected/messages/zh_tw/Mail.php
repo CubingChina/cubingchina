@@ -18,8 +18,11 @@
  */
 return array (
   'Add Time' => '',
+  'Bcc' => '',
+  'Cc' => '',
   'ID' => '',
   'Message' => '',
+  'Reply To' => '',
   'Sent' => '',
   'Sent Time' => '',
   'Subject' => '',

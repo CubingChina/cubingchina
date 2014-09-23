@@ -18,6 +18,8 @@
  */
 return array (
   'Fee' => '',
+  'Score Card' => '成績條模板',
+  'Tools' => '工具',
   'WCA Competition' => '',
   'WCA ID' => '',
   'About us' => '關於本站',

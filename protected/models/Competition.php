@@ -682,7 +682,7 @@ class Competition extends ActiveRecord {
 	public function exportScoreCard($all = false, $order = 'date') {
 		$registrations = $this->getRegistrations($all, $order);
 		$tempPath = Yii::app()->runtimePath;
-		$templatePath = Yii::getPathOfAlias('application.data.score-card') . '.xlsx';
+		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
 		$scoreCard = PHPExcel_IOFactory::load($templatePath);
 		$scoreCard->getProperties()
 			->setCreator(Yii::app()->params->author)
