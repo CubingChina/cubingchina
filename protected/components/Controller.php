@@ -95,6 +95,26 @@ class Controller extends CController {
 				// 	),
 				// ),
 				array(
+					'label'=>'<i class="fa fa-wrench"></i> ' . Yii::t('common', 'Tools') . ' <i class="fa fa-angle-down"></i>',
+					'url'=>'#',
+					'itemOptions'=>array(
+						'class'=>'nav-item dropdown',
+					),
+					'linkOptions'=>array(
+						'class'=>'dropdown-toggle',
+						'data-toggle'=>'dropdown',
+						'data-hover'=>'dropdown',
+						'data-delay'=>0,
+						'data-close-others'=>'false',
+					),
+					'items'=>array(
+						array(
+							'url'=>'/static/score-card.xlsx',
+							'label'=>Yii::t('common', 'Score Card'),
+						),
+					),
+				),
+				array(
 					'label'=>'<i class="fa fa-info-circle"></i> ' . Yii::t('common', 'More Info') . ' <i class="fa fa-angle-down"></i>',
 					'url'=>'#',
 					'itemOptions'=>array(
@@ -119,26 +139,6 @@ class Controller extends CController {
 						array(
 							'url'=>array('/site/page', 'view'=>'links'),
 							'label'=>Yii::t('common', 'Links'),
-						),
-					),
-				),
-				array(
-					'label'=>'<i class="fa fa-wrench"></i> ' . Yii::t('common', 'Tools') . ' <i class="fa fa-angle-down"></i>',
-					'url'=>'#',
-					'itemOptions'=>array(
-						'class'=>'nav-item dropdown',
-					),
-					'linkOptions'=>array(
-						'class'=>'dropdown-toggle',
-						'data-toggle'=>'dropdown',
-						'data-hover'=>'dropdown',
-						'data-delay'=>0,
-						'data-close-others'=>'false',
-					),
-					'items'=>array(
-						array(
-							'url'=>'/static/score-card.xlsx',
-							'label'=>Yii::t('common', 'Score Card'),
 						),
 					),
 				),
