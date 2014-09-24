@@ -8,7 +8,7 @@ class MailCommand extends CConsoleCommand {
 			'limit'=>20,
 		));
 		$mailer = Yii::app()->mailer;
-		foreach ($mails as $mail) {
+		foreach ($mails as $key=>$mail) {
 			$result = $mailer->send($mail);
 			$mail->update_time = time();
 			if ($result == true) {
@@ -18,6 +18,10 @@ class MailCommand extends CConsoleCommand {
 				$mail->sent = 2;
 			}
 			$mail->save();
+			//发5封后休息一会
+			if ($key % 5 == 4) {
+				sleep(5);
+			}
 		}
 	}
 }

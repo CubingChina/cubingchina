@@ -86,26 +86,36 @@ class Mailer extends CApplicationComponent {
 
 	public function sendCompetitionNotice($competition, $users, $title, $content, $englishContent = '') {
 		$subject = "【{$competition->name_zh}】$title";
+		$organizers = array();
+		foreach ($competition->organizer as $organizer) {
+			$organizers[] = $organizer->user->email;
+		}
 		$message = $this->render('competitionNotice', array(
 			'title'=>$title,
 			'competition'=>$competition,
 			'content'=>$content,
 			'englishContent'=>$englishContent,
+			'organizers'=>$organizers,
 		));
-		$cc = array();
-		foreach ($competition->organizer as $organizer) {
-			$cc[] = $organizer->user->email;
+		//用bcc方式发送会被ban掉。。
+		foreach ($users as $user) {
+			$this->add($user, $subject, $message, Yii::app()->user->name);
 		}
-		return $this->add('', $subject, $message, Yii::app()->user->name, $cc, $users);
+		return true;
 	}
 
 	public function getCompetitionNoticePreview($competition, $users, $title, $content, $englishContent = '') {
 		$subject = "【{$competition->name_zh}】$title";
+		$organizers = array();
+		foreach ($competition->organizer as $organizer) {
+			$organizers[] = $organizer->user->email;
+		}
 		$message = $this->render('competitionNotice', array(
 			'title'=>$title,
 			'competition'=>$competition,
 			'content'=>$content,
 			'englishContent'=>$englishContent,
+			'organizers'=>$organizers,
 		));
 		return compact('subject', 'message');
 	}
