@@ -18,7 +18,7 @@
       )); ?>
       <?php echo Html::formGroup(
         $model, 'competition_id', array(),
-        $form->dropDownList($model, 'competition_id', competition::getRegistrationCompetitions(), array(
+        $form->dropDownList($model, 'competition_id', Competition::getRegistrationCompetitions(), array(
         'prompt'=>'',
         ))
       ); ?>
