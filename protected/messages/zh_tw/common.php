@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Choose a competition' => '選擇異常比賽',
+  'Choose a competition' => '選擇一場比賽',
   'Close' => '關閉',
   'Fee' => '',
   'Logo Url' => 'Logo地址',

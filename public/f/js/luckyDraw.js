@@ -88,12 +88,13 @@
         window.setTimeout(function() {
           TagCanvas.TagToFront(id, {
             index: next.index,
+            time: 300,
             callback: function() {
               a.remove();
               status = 0;
             }
           });
-        }, 10);
+        }, 0);
         break;
     }
   }).on('keydown', function(event) {
@@ -156,6 +157,13 @@
         .attr('id', 'tag-' + i)
         .appendTo(tags);
     });
+    $('<a href="javascript:;">')
+      .text(' ')
+      .css({
+        'font-size': '4.5em'
+      })
+      .attr('id', 'tag-placeholder')
+      .appendTo(tags);
   }
   function buildDrawn() {
     drawn.empty();

@@ -1,6 +1,7 @@
 <div class="container">
   <div class="col-lg-8 col-lg-offset-2">
     <hr>
+    <a href="/" class="pull-right"><?php echo Yii::t('common', 'Cubing China'); ?></a>
     <h1 class="title">
       <img src="" alt="" id="logo">
       <span id="title"><?php echo $this->pageTitle; ?></span>
@@ -8,7 +9,7 @@
     <hr>
     <div class="row">
       <div class="col-lg-2">
-        <ul id="drawn" style="height:600px;overflow-y:auto;font-size:20px" class="list-unstyled"></ul>
+        <ul id="drawn" style="height:600px;overflow-y:auto;font-size:16px" class="list-unstyled"></ul>
       </div>
       <div class="col-lg-8">
         <canvas id="canvas" width="600" height="600" class="center-block"></canvas>
