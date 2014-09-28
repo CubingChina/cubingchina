@@ -26,7 +26,7 @@ class ToolsController extends Controller {
 		));
 		$names = array();
 		foreach ($registrations as $registration) {
-			$names[] = $registration->user->getAttributeValue('name');
+			$names[] = $registration->user->getAttributeValue('name') ?: $registration->user->name;
 		}
 		$this->ajaxOK($names);
 	}
