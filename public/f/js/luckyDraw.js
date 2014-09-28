@@ -103,15 +103,14 @@
         success: function(json) {
           $('#luckyDrawNames').val(json.data.join('\n'));
         }
-      })
+      });
     }
   });
   var luckyDraw = new LuckyDraw();
   var tags = $('<div id="tags">').appendTo($('body')).hide();
   var drawn = $('#drawn');
   var id = 'canvas';
-  var options = {};
-  var status;
+  var status = 0;
   setOptions();
   setTitle(getTitle());
   setLogo(getLogo());
@@ -175,7 +174,7 @@
               status = 0;
             }
           });
-        }, 0);
+        }, 20);
         break;
     }
   }
