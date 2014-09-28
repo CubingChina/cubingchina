@@ -143,8 +143,8 @@
   var options = {};
   var status;
   setOptions();
-  setTitle();
-  setLogo();
+  setTitle(getTitle());
+  setLogo(getLogo());
   restart();
   if (luckyDraw.getAll().length === 0) {
     $('#drawModal').modal('show');
@@ -202,23 +202,17 @@
     TagCanvas.initial = [0, 0];
   }
   function setTitle(title) {
-    title = title || store.get('luckyDrawTitle');
-    if (title) {
-      $('#title').text(title);
-      $('#luckyDrawTitle').val(title);
-      store.set('luckyDrawTitle', title);
-    }
+    $('#title').text(title);
+    $('#luckyDrawTitle').val(title);
+    store.set('luckyDrawTitle', title);
   }
   function getTitle() {
     return store.get('luckyDrawTitle');
   }
   function setLogo(logo) {
-    logo = logo || store.get('luckyDrawLogo');
-    if (logo) {
-      $('#logo').attr('src', logo);
-      $('#luckyDrawLogo').val(logo);
-      store.set('luckyDrawLogo', logo);
-    }
+    $('#logo').attr('src', logo);
+    $('#luckyDrawLogo').val(logo);
+    store.set('luckyDrawLogo', logo);
   }
   function getLogo() {
     return store.get('luckyDrawLogo');

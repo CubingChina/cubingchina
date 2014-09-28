@@ -8,10 +8,10 @@
     </h1>
     <hr>
     <div class="row">
-      <div class="col-lg-2">
+      <div class="col-sm-2">
         <ul id="drawn" style="height:600px;overflow-y:auto;font-size:16px" class="list-unstyled"></ul>
       </div>
-      <div class="col-lg-8">
+      <div class="col-sm-8">
         <canvas id="canvas" width="600" height="600" class="center-block"></canvas>
       </div>
     </div>
