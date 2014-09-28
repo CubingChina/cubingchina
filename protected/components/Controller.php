@@ -109,6 +109,10 @@ class Controller extends CController {
 					),
 					'items'=>array(
 						array(
+							'url'=>array('/tools/luckyDraw'),
+							'label'=>Yii::t('common', 'Lucky Draw'),
+						),
+						array(
 							'url'=>'/static/score-card.xlsx',
 							'label'=>Yii::t('common', 'Score Card'),
 						),
