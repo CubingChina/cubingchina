@@ -1,23 +1,28 @@
 <div class="container">
   <div class="col-lg-8 col-lg-offset-2">
-    <hr>
-    <a href="/" class="pull-right"><?php echo Yii::t('common', 'Cubing China'); ?></a>
+    <div class="pull-right">
+      <a href="/" class="pull-right"><?php echo Yii::t('common', 'Cubing China'); ?></a>
+      <div class="text-right">
+        <button id="reset" class="btn btn-xs btn-danger"><?php echo Yii::t('common', 'Reset'); ?></button>
+        <button id="settings" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#drawModal"><?php echo Yii::t('common', 'Settings'); ?></button>
+      </div>
+    </div>
     <h1 class="title">
       <img src="" alt="" id="logo">
       <span id="title"><?php echo $this->pageTitle; ?></span>
     </h1>
-    <hr>
+    <div class="clearfix"></div>
+    <hr style="margin: 10px 0 0">
     <div class="row">
-      <div class="col-sm-2">
-        <ul id="drawn" style="height:600px;overflow-y:auto;font-size:16px" class="list-unstyled"></ul>
+      <div class="col-sm-2 text-right">
+        <button id="draw" class="btn btn-success"><?php echo Yii::t('common', 'Lucky Draw'); ?></button>
       </div>
       <div class="col-sm-8">
         <canvas id="canvas" width="600" height="600" class="center-block"></canvas>
       </div>
-    </div>
-    <div>
-      <button id="reset" class="btn btn-danger"><?php echo Yii::t('common', 'Reset'); ?></button>
-      <button id="settings" class="btn btn-primary" data-toggle="modal" data-target="#drawModal"><?php echo Yii::t('common', 'Settings'); ?></button>
+      <div class="col-sm-2">
+        <ul id="drawn" style="height:600px;overflow-y:auto;font-size:16px" class="list-unstyled"></ul>
+      </div>
     </div>
   </div>
 </div>

@@ -63,40 +63,8 @@
     if (event.which != 32) {
       return;
     }
-    if (luckyDraw.getRemained().length == 0) {
-      return;
-    }
     event.preventDefault();
-    switch (status) {
-      case 0:
-        TagCanvas.Update(id);
-        status = 1;
-        tc.yaw = 2.1913498628418893;
-        tc.pitch = 4.494216926075424;
-        break;
-      case 1:
-        status = 2;
-        var next = luckyDraw.next();
-        var a = tags.find('a').eq(next.index).css({
-          'font-size': '4.5em',
-          'color': 'red'
-        });
-        drawn.prepend($('<li>').text(next.name));
-        //先停止转动
-        tc.yaw = tc.pitch = 0;
-        TagCanvas.Update(id);
-        window.setTimeout(function() {
-          TagCanvas.TagToFront(id, {
-            index: next.index,
-            time: 300,
-            callback: function() {
-              a.remove();
-              status = 0;
-            }
-          });
-        }, 0);
-        break;
-    }
+    processDraw();
   }).on('keydown', function(event) {
     if (event.which == 32) {
       event.preventDefault();
@@ -107,6 +75,8 @@
   }).on('click', '#settings', function() {
     $('#luckyDrawNames').val(luckyDraw.getAll().join('\n'));
     status = 2;
+  }).on('click', '#draw', function() {
+    processDraw();
   }).on('click', '#save', function() {
     var names = $('#luckyDrawNames').val().split('\n').filter(function(name) {
       return $.trim(name) != '';
@@ -173,6 +143,41 @@
     luckyDraw.getDrawn().forEach(function(name, i) {
       drawn.prepend($('<li>').text(name));
     });
+  }
+  function processDraw() {
+    if (luckyDraw.getRemained().length == 0) {
+      return;
+    }
+    switch (status) {
+      case 0:
+        TagCanvas.Update(id);
+        status = 1;
+        tc.yaw = 2.1913498628418893;
+        tc.pitch = 4.494216926075424;
+        break;
+      case 1:
+        status = 2;
+        var next = luckyDraw.next();
+        var a = tags.find('a').eq(next.index).css({
+          'font-size': '4.5em',
+          'color': 'red'
+        });
+        drawn.prepend($('<li>').text(next.name));
+        //先停止转动
+        tc.yaw = tc.pitch = 0;
+        TagCanvas.Update(id);
+        window.setTimeout(function() {
+          TagCanvas.TagToFront(id, {
+            index: next.index,
+            time: 300,
+            callback: function() {
+              a.remove();
+              status = 0;
+            }
+          });
+        }, 0);
+        break;
+    }
   }
   function restart() {
     status = 0;
