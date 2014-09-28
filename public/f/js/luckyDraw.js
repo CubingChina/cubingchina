@@ -106,6 +106,7 @@
     restart();
   }).on('click', '#settings', function() {
     $('#luckyDrawNames').val(luckyDraw.getAll().join('\n'));
+    status = 2;
   }).on('click', '#save', function() {
     var names = $('#luckyDrawNames').val().split('\n').filter(function(name) {
       return $.trim(name) != '';
@@ -117,6 +118,8 @@
     setLogo(logo);
     $('#drawModal').modal('hide');
     restart();
+  }).on('hidden.bs.modal', '#drawModal', function() {
+    status = 0;
   }).on('change', '#luckyDrawCompetition', function() {
     var id = $(this).val();
     if (id) {
@@ -134,7 +137,7 @@
     }
   });
   var luckyDraw = new LuckyDraw();
-  var tags = $('<div id="tags">').appendTo($('body'));
+  var tags = $('<div id="tags">').appendTo($('body')).hide();
   var drawn = $('#drawn');
   var id = 'canvas';
   var options = {};
