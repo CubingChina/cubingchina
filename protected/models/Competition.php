@@ -590,7 +590,7 @@ class Competition extends ActiveRecord {
 				->setCellValue('C' . $row, $user->country->name)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
-				->setCellValue('F' . $row, date('Y-m-d', $user->birthday));
+				->setCellValue('F' . $row, PHPExcel_Shared_Date::PHPToExcel($user->birthday));
 			$col = 'J';
 			foreach ($events as $event=>$data) {
 				if (in_array("$event", $registration->events)) {
