@@ -357,7 +357,7 @@ class Registration extends ActiveRecord {
 				$temp = $rA->user->city_id - $rB->user->city_id;
 			}
 		} elseif (self::$sortByUserAttribute === true) {
-			if (ctype_digit($rA->user->$attribute)) {
+			if (is_numeric($rA->user->$attribute)) {
 				$temp = $rA->user->$attribute - $rB->user->$attribute;
 			} else {
 				$temp = strcmp($rA->user->$attribute, $rB->user->$attribute);
