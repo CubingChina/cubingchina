@@ -32,12 +32,12 @@
               array(
                 'name'=>'province_id',
                 'type'=>'raw',
-                'value'=>'$data->province->name_zh',
+                'value'=>'isset($data->location[1]) ? "多地点" : $data->location[0]->province->name_zh',
               ),
               array(
                 'name'=>'city_id',
                 'type'=>'raw',
-                'value'=>'$data->city->name_zh',
+                'value'=>'isset($data->location[1]) ? "多地点" : $data->location[0]->city->name_zh',
               ),
               'venue_zh',
               array(

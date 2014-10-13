@@ -90,5 +90,16 @@ class SchedulesForm extends Widget {
 
 		echo CHtml::closeTag('table');
 		echo CHtml::closeTag('div');
+		Yii::app()->clientScript->registerScript('SchedulesForm',
+<<<EOT
+  $(document).on('focus', '#schedules table tbody tr:last-child', function() {
+    $(this).clone().insertAfter(this);
+    $('.time-picker').timepicker({
+      showMeridian: false,
+      defaultTime: null
+    });
+  });
+EOT
+		);
 	}
 }

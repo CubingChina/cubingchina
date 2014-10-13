@@ -11,22 +11,24 @@
  */
 class Region extends ActiveRecord {
 
+	public static $HKMCTW = array(2, 3, 4);
+
 	public static function getRegionById($id) {
 		return self::model()->findByPk($id);
 	}
 
 	public static function getCountries() {
-		$attr = 'name';
-		if (Yii::app()->language{0} == 'z' && Yii::app()->language{1} == 'h') {
-			$attr = 'name_zh';
-		}
 		$attribute = Yii::app()->controller->getAttributeName('name');
 		return CHtml::listData(self::getRegionsByPid(0), 'id', $attribute);
 	}
 
-	public static function getProvinces() {
+	public static function getProvinces($mainland = true) {
 		$attribute = Yii::app()->controller->getAttributeName('name');
-		return CHtml::listData(self::getRegionsByPid(1), 'id', $attribute);
+		$regions = self::getRegionsByPid(1);
+		if (!$mainland) {
+			$regions = array_merge($regions, self::getRegionsById(self::$HKMCTW));
+		}
+		return CHtml::listData($regions, 'id', $attribute);
 	}
 
 	public static function getAllCities() {
@@ -46,7 +48,6 @@ class Region extends ActiveRecord {
 			}
 			$allCities[$city['pid']][$city['id']] = $city[$attribute];
 		}
-		// $allCities = Yii::app()->controller->translateTWInNeed($allCities);
 		return $allCities;
 	}
 
@@ -63,6 +64,12 @@ class Region extends ActiveRecord {
 	public static function getRegionsByPid($pid) {
 		return self::model()->findAllByAttributes(array(
 			'pid'=>$pid,
+		));
+	}
+
+	public static function getRegionsById($id) {
+		return self::model()->findAllByAttributes(array(
+			'id'=>$id,
 		));
 	}
 

@@ -20,12 +20,12 @@
       array(
         'name'=>'province_id',
         'type'=>'raw',
-        'value'=>'$data->province->getAttributeValue("name")',
+        'value'=>'isset($data->location[1]) ? Yii::t("common", "Multiple") : $data->location[0]->province->getAttributeValue("name")',
       ),
       array(
         'name'=>'city_id',
         'type'=>'raw',
-        'value'=>'$data->city->getAttributeValue("name")',
+        'value'=>'isset($data->location[1]) ? Yii::t("common", "Multiple") : $data->location[0]->city->getAttributeValue("name")',
       ),
       array(
         'name'=>'venue',

@@ -121,7 +121,7 @@ $config = array(
 					'class' => 'XWebDebugRouter',
 					'config' => 'alignLeft, opaque, fixedPos, collapsed, yamlStyle',
 					'levels' => 'error, warning, trace, profile, info',
-					'allowedIPs'=>array('127.0.0.1', '10\.\d+\.\d+\.\d+'),
+					'allowedIPs'=>array('127.0.0.1', '^10\.\d+\.\d+\.\d+'),
 					
 				),
 			),

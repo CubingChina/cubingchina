@@ -40,6 +40,7 @@ class Competition extends ActiveRecord {
 
 	private $_organizers;
 	private $_delegates;
+	private $_locations;
 	private $_schedules;
 	private $_description;
 
@@ -163,7 +164,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getCompetitionByName($name) {
-		return self::model()->with('province', 'city')->findByAttributes(array(
+		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
 		));
 	}
@@ -267,11 +268,21 @@ class Competition extends ActiveRecord {
 			'{date}'=>$this->getDisplayDate(),
 			'{wca}'=>$this->type == self::TYPE_WCA ? Yii::t('common', ' the WCA delegate') : '',
 		);
-		$isCN = Yii::app()->controller->isCN;
-		if ($isCN) {
-			$venue = $this->province->getAttributeValue('name') . $this->city->getAttributeValue('name') . $this->getAttributeValue('venue');
+		if (isset($this->location[1])) {
+			$venue = '';
+			$count = count($this->location);
+			foreach ($this->location as $key=>$location) {
+				$address = $location->getFullAddress(false);
+				if ($key == 0) {
+					$venue .= $address;
+				} elseif ($key < $count - 1) {
+					$venue .= Yii::t('common', ', ') . $address;
+				} else {
+					$venue .= Yii::t('common', ' and ') . $address;
+				}
+			}
 		} else {
-			$venue = $this->getAttributeValue('venue') . ', ' . $this->city->getAttributeValue('name') . ', ' . $this->province->getAttributeValue('name');
+			$venue = $this->location[0]->getFullAddress();
 		}
 		$params['{venue}'] = $venue;
 		$organizers = '';
@@ -381,6 +392,19 @@ class Competition extends ActiveRecord {
 
 	public function setDelegates($delegates) {
 		$this->_delegates = $delegates;
+	}
+
+	public function getLocations() {
+		if ($this->_locations === null) {
+			$this->_locations = array_map(function($location) {
+				return $location->attributes;
+			}, $this->location);
+		}
+		return $this->_locations;
+	}
+
+	public function setLocations($locations) {
+		$this->_locations = $locations;
 	}
 
 	public function getSchedules() {
@@ -590,7 +614,11 @@ class Competition extends ActiveRecord {
 				->setCellValue('C' . $row, $user->country->name)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
-				->setCellValue('F' . $row, PHPExcel_Shared_Date::PHPToExcel($user->birthday));
+				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
+					date('Y', $user->birthday),
+					date('m', $user->birthday),
+					date('d', $user->birthday)
+				));
 			$col = 'J';
 			foreach ($events as $event=>$data) {
 				if (in_array("$event", $registration->events)) {
@@ -1095,6 +1123,15 @@ class Competition extends ActiveRecord {
 				'type'=>'raw', 
 				'value'=>$region,
 			),
+			array(
+				'name'=>'location_id',
+				'header'=>Yii::t('common', 'Competition Site'),
+				'headerHtmlOptions'=>array(
+					'class'=>'header-location',
+				),
+				'type'=>'raw', 
+				'value'=>'$data->location->getFullAddress(false)',
+			),
 		);
 		foreach ($this->events as $event=>$value) {
 			if ($value['round'] > 0) {
@@ -1173,8 +1210,8 @@ class Competition extends ActiveRecord {
 		if (date('Y-m-d', $this->date) === date('Y-m-d', $this->end_date)) {
 			$this->end_date = 0;
 		}
-		$this->name = preg_replace('{ +}', ' ', $this->name);
-		$this->name_zh = preg_replace('{ +}', ' ', $this->name_zh);
+		$this->name = trim(preg_replace('{ +}', ' ', $this->name));
+		$this->name_zh = trim(preg_replace('{ +}', ' ', $this->name_zh));
 		$this->alias = str_replace(' ', '-', $this->name);
 		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
 		return parent::beforeSave();
@@ -1234,6 +1271,19 @@ class Competition extends ActiveRecord {
 				$model->save(false);
 			}
 		}
+		//处理地址
+		$oldLocations = $this->location;
+		foreach ($this->locations as $key=>$value) {
+			if (isset($oldLocations[$key])) {
+				$location = $oldLocations[$key];
+			} else {
+				$location = new CompetitionLocation();
+				$location->competition_id = $this->id;
+				$location->location_id = $key;
+			}
+			$location->attributes = $value;
+			$location->save(false);
+		}
 	}
 
 	public function checkRegistrationEnd() {
@@ -1257,6 +1307,50 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkLocations() {
+		$locations = $this->locations;
+		if (!isset($locations['province_id'])) {
+			$locations['province_id'] = array();
+		}
+		$temp = array();
+		$i = 0;
+		$error = false;
+		foreach ($locations['province_id'] as $key=>$provinceId) {
+			if (empty($provinceId) && empty($locations['city_id'][$key])
+				&& empty($locations['venue'][$key])  && empty($locations['venue_zh'][$key])
+			) {
+				continue;
+			}
+			if (empty($provinceId)) {
+				$this->addError('locations.province_id.' . $i, '省份不能为空');
+				$error = true;
+			}
+			if (empty($locations['city_id'][$key])) {
+				$this->addError('locations.city_id.' . $i, '城市不能为空');
+				$error = true;
+			}
+			if (trim($locations['venue'][$key]) == '') {
+				$this->addError('locations.venue.' . $i, '英文地址不能为空');
+				$error = true;
+			}
+			if (trim($locations['venue_zh'][$key]) == '') {
+				$this->addError('locations.venue_zh.' . $i, '中文地址不能为空');
+				$error = true;
+			}
+			$temp[] = array(
+				'province_id'=>$provinceId,
+				'city_id'=>$locations['city_id'][$key],
+				'venue'=>$locations['venue'][$key],
+				'venue_zh'=>$locations['venue_zh'][$key],
+			);
+			$i++;
+		}
+		if ($error) {
+			$this->addError('locations', '地址填写有误，请检查各地址填写！');
+		}
+		$this->locations = $temp;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -1271,7 +1365,7 @@ class Competition extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('organizers, venue, venue_zh, province_id, city_id, name, name_zh, date', 'required'),
+			array('organizers, name, name_zh, date', 'required'),
 			array('province_id, city_id, entry_fee, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
@@ -1284,7 +1378,8 @@ class Competition extends ActiveRecord {
 			array('date, end_date, reg_end_day', 'length', 'max'=>11, 'skipOnError'=>true),
 			array('reg_end_day', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
-			array('organizers, delegates, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
+			array('locations', 'checkLocations', 'skipOnError'=>true),
+			array('organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end_day, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
@@ -1300,9 +1395,8 @@ class Competition extends ActiveRecord {
 		return array(
 			'organizer'=>array(self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'),
 			'delegate'=>array(self::HAS_MANY, 'CompetitionDelegate', 'competition_id'),
+			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
-			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
-			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
 		);
 	}
 
@@ -1356,7 +1450,7 @@ class Competition extends ActiveRecord {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria = new CDbCriteria;
-		$criteria->with = array('province', 'city');
+		$criteria->with = array('location', 'location.province', 'location.city');
 		$criteria->compare('t.id', $this->id,true);
 		$criteria->compare('t.type', $this->type,true);
 		$criteria->compare('t.wca_competition_id', $this->wca_competition_id,true);
