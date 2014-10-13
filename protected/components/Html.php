@@ -24,7 +24,7 @@ class Html extends CHtml {
 	public static function activeTextField($model , $attribute , $htmlOptions = array()) {
 		$type = isset($htmlOptions['type']) ? $htmlOptions['type'] : 'text';
 		if (!isset($htmlOptions['placeholder'])) {
-			$htmlOptions['placeholder'] = $model->getAttributeLabel($attribute);
+			$htmlOptions['placeholder'] = $model->getAttributeLabel(preg_replace('{\[\]$}', '', $attribute));
 		}
 		if (!isset($htmlOptions['class'])) {
 			$htmlOptions['class'] = 'form-control';
