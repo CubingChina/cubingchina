@@ -70,30 +70,24 @@
             );?>
             <div class="clearfix hidden-lg"></div>
             <?php echo Html::formGroup(
-              $model, 'province_id', array(
-                'class'=>'col-lg-3 col-md-6',
+              $model, 'entry_fee', array(
+                'class'=>'col-lg-3 col-md-6'
               ),
-              $form->labelEx($model, 'province_id', array(
-                'label'=>'省份',
+              $form->labelEx($model, 'entry_fee', array(
+                'label'=>'基础报名费',
               )),
-              $form->dropDownList($model, 'province_id', Region::getProvinces(), array(
-                'class'=>'form-control',
-                'prompt'=>'',
-              )),
-              $form->error($model, 'province_id', array('class'=>'text-danger'))
+              Html::activeTextField($model, 'entry_fee'),
+              $form->error($model, 'entry_fee', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
-              $model, 'city_id', array(
+              $model, 'person_num', array(
                 'class'=>'col-lg-3 col-md-6',
               ),
-              $form->labelEx($model, 'city_id', array(
-                'label'=>'城市',
+              $form->labelEx($model, 'person_num', array(
+                'label'=>'人数限制',
               )),
-              $form->dropDownList($model, 'city_id', isset($cities[$model->province_id]) ? $cities[$model->province_id] : array(), array(
-                'prompt'=>'',
-                'class'=>'form-control',
-              )),
-              $form->error($model, 'city_id', array('class'=>'text-danger'))
+              Html::activeTextField($model, 'person_num'),
+              $form->error($model, 'person_num', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
@@ -185,24 +179,14 @@
               $form->error($model, 'delegates', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
-              $model, 'venue_zh', array(
+              $model, 'locations', array(
                 'class'=>'col-lg-12',
               ),
-              $form->labelEx($model, 'venue_zh', array(
-                'label'=>'中文地址',
-              )),
-              Html::activeTextField($model, 'venue_zh'),
-              $form->error($model, 'venue_zh', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'venue', array(
-                'class'=>'col-lg-12',
-              ),
-              $form->labelEx($model, 'venue', array(
-                'label'=>'英文地址',
-              )),
-              Html::activeTextField($model, 'venue'),
-              $form->error($model, 'venue', array('class'=>'text-danger'))
+              $this->widget('MultiLocations', array(
+                'model'=>$model,
+                'cities'=>$cities,
+              ), true),
+              $form->error($model, 'locations', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
               $model, 'events',array(
@@ -242,26 +226,6 @@
                 ),
               ), true),
               $form->error($model, 'events', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'entry_fee', array(
-                'class'=>'col-lg-6'
-              ),
-              $form->labelEx($model, 'entry_fee', array(
-                'label'=>'基础报名费',
-              )),
-              Html::activeTextField($model, 'entry_fee'),
-              $form->error($model, 'entry_fee', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'person_num', array(
-                'class'=>'col-lg-6',
-              ),
-              $form->labelEx($model, 'person_num', array(
-                'label'=>'人数限制',
-              )),
-              Html::activeTextField($model, 'person_num'),
-              $form->error($model, 'person_num', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
@@ -378,20 +342,17 @@ Yii::app()->clientScript->registerScript('competition',
     defaultTime: null
   });
   var allCities = {$allCities};
-  $(document).on('change', '#Competition_province_id', function() {
-    var city = $('#Competition_city_id'),
+  $(document).on('change', '.province', function() {
+    var city = $(this).parents('.location').find('.city'),
       cities = allCities[$(this).val()] || [];
     city.empty();
     $('<option value="">').appendTo(city);
     $.each(cities, function(id, name) {
       $('<option>').val(id).text(name).appendTo(city);
     });
-  }).on('focus', '#schedules table tbody tr:last-child', function() {
-    $(this).clone().insertAfter(this);
-    $('.time-picker').timepicker({
-      showMeridian: false,
-      defaultTime: null
-    });
+    if (city.find('option').length == 2) {
+      city.find('option:last').prop('selected', true);
+    }
   });
 EOT
 );

@@ -86,6 +86,7 @@ class CompetitionController extends AdminController {
 				$model->date = date('Y-m-d', $model->date);
 				$model->end_date = date('Y-m-d', $model->end_date);
 			}
+			// CVarDumper::dump($model->attributes, 10, 1);exit;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
 				$this->redirect(array('/board/competition/index'));
