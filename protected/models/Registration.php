@@ -332,6 +332,7 @@ class Registration extends ActiveRecord {
 		return array(
 			'id' => Yii::t('Registration', 'ID'),
 			'competition_id' => Yii::t('Registration', 'Competition'),
+			'location_id' => Yii::t('common', 'Competition Site'),
 			'user_id' => Yii::t('Registration', 'User'),
 			'events' => Yii::t('Registration', 'Events'),
 			'comments' => Yii::t('Registration', 'Additional Comments'),
