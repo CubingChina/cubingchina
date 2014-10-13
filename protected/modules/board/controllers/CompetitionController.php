@@ -66,13 +66,14 @@ class CompetitionController extends AdminController {
 			'name',
 			'name_zh',
 			'type',
-			'province_id',
-			'city_id',
+			// 'province_id',
+			// 'city_id',
 			'date',
 			'end_date',
 			'delegates',
-			'venue',
-			'venue_zh',
+			'locations',
+			// 'venue',
+			// 'venue_zh',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
