@@ -2,6 +2,7 @@
 	<dl>
 		<dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
 		<dd>
+			<?php if (isset($competition->location[1])): ?>
 			<ol>
 			<?php foreach ($competition->location as $location): ?>
 				<li>
@@ -9,6 +10,9 @@
 				</li>
 			<?php endforeach; ?>
 			</ol>
+			<?php else: ?>
+			<?php echo $competition->location[0]->getFullAddress(); ?>
+			<?php endif; ?>
 		</dd>
 		<dt><?php echo Yii::t('Competition', 'Travel Info'); ?></dt>
 		<dd><?php echo $competition->getAttributeValue('travel'); ?></dd>
