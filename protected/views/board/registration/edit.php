@@ -34,6 +34,7 @@
                 $form->labelEx($model, 'events'),
                 $this->widget('EventsForm', array(
                   'model'=>$model,
+                  'competition'=>$model->competition,
                   'name'=>'events',
                   'events'=>$model->competition->getRegistrationEvents(),
                   'type'=>'checkbox',

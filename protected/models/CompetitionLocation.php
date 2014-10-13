@@ -13,6 +13,29 @@
  * @property string $venue_zh
  */
 class CompetitionLocation extends ActiveRecord {
+
+	public function getFullAddress($includeVenue = true) {
+		$isCN = Yii::app()->controller->isCN;
+		$province = $this->province->getAttributeValue('name');
+		$city = $this->city->getAttributeValue('name');
+		if ($city == $province) {
+			$city = '';
+		}
+		if ($isCN) {
+			$address = $province . $city;
+		} else {
+			$address = ($city ? $city . ', ' : '') . $province;
+		}
+		if ($includeVenue) {
+			if ($isCN) {
+				$address .= $this->getAttributeValue('venue');
+			} else {
+				$address = $this->getAttributeValue('venue') . ', ' . $address;
+			}
+		}
+		return $address;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -56,7 +79,7 @@ class CompetitionLocation extends ActiveRecord {
 		return array(
 			'id' => Yii::t('CompetitionLocation', 'ID'),
 			'competition_id' => Yii::t('CompetitionLocation', 'Competition'),
-			'location_id' => Yii::t('CompetitionLocation', 'Location'),
+			'location_id' => Yii::t('common', 'Competition Site'),
 			'province_id' => Yii::t('CompetitionLocation', 'Province'),
 			'city_id' => Yii::t('CompetitionLocation', 'City'),
 			'venue' => Yii::t('CompetitionLocation', 'Venue'),

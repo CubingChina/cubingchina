@@ -2,11 +2,13 @@
 	<dl>
 		<dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
 		<dd>
-			<?php if ($this->isCN): ?>
-			<?php echo $competition->province->getAttributeValue('name');?><?php echo $competition->city->getAttributeValue('name');?><?php echo $competition->getAttributeValue('venue'); ?>
-			<?php else: ?>
-			<?php echo $competition->getAttributeValue('venue'); ?>, <?php echo $competition->city->getAttributeValue('name');?>, <?php echo $competition->province->getAttributeValue('name');?>
-			<?php endif; ?>
+			<ol>
+			<?php foreach ($competition->location as $location): ?>
+				<li>
+				<?php echo $location->getFullAddress(); ?>
+				</li>
+			<?php endforeach; ?>
+			</ol>
 		</dd>
 		<dt><?php echo Yii::t('Competition', 'Travel Info'); ?></dt>
 		<dd><?php echo $competition->getAttributeValue('travel'); ?></dd>

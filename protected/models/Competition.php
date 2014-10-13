@@ -164,7 +164,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getCompetitionByName($name) {
-		return self::model()->with('province', 'city')->findByAttributes(array(
+		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
 		));
 	}
@@ -268,11 +268,21 @@ class Competition extends ActiveRecord {
 			'{date}'=>$this->getDisplayDate(),
 			'{wca}'=>$this->type == self::TYPE_WCA ? Yii::t('common', ' the WCA delegate') : '',
 		);
-		$isCN = Yii::app()->controller->isCN;
-		if ($isCN) {
-			$venue = $this->province->getAttributeValue('name') . $this->city->getAttributeValue('name') . $this->getAttributeValue('venue');
+		if (isset($this->location[1])) {
+			$venue = '';
+			$count = count($this->location);
+			foreach ($this->location as $key=>$location) {
+				$address = $location->getFullAddress(false);
+				if ($key == 0) {
+					$venue .= $address;
+				} elseif ($key < $count - 1) {
+					$venue .= Yii::t('common', ', ') . $address;
+				} else {
+					$venue .= Yii::t('common', ' and ') . $address;
+				}
+			}
 		} else {
-			$venue = $this->getAttributeValue('venue') . ', ' . $this->city->getAttributeValue('name') . ', ' . $this->province->getAttributeValue('name');
+			$venue = $this->location[0]->getFullAddress();
 		}
 		$params['{venue}'] = $venue;
 		$organizers = '';
@@ -1113,6 +1123,15 @@ class Competition extends ActiveRecord {
 				'type'=>'raw', 
 				'value'=>$region,
 			),
+			array(
+				'name'=>'location_id',
+				'header'=>Yii::t('common', 'Competition Site'),
+				'headerHtmlOptions'=>array(
+					'class'=>'header-location',
+				),
+				'type'=>'raw', 
+				'value'=>'$data->location->getFullAddress(false)',
+			),
 		);
 		foreach ($this->events as $event=>$value) {
 			if ($value['round'] > 0) {
@@ -1431,7 +1450,7 @@ class Competition extends ActiveRecord {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria = new CDbCriteria;
-		$criteria->with = array('province', 'city');
+		$criteria->with = array('location', 'location.province', 'location.city');
 		$criteria->compare('t.id', $this->id,true);
 		$criteria->compare('t.type', $this->type,true);
 		$criteria->compare('t.wca_competition_id', $this->wca_competition_id,true);

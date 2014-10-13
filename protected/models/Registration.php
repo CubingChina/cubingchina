@@ -103,6 +103,13 @@ class Registration extends ActiveRecord {
 		return $this->competition->entry_fee + array_sum($fees);
 	}
 
+	public function getLocation() {
+		return CompetitionLocation::model()->findByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'location_id'=>$this->location_id,
+		));
+	}
+
 	public function getNoticeColumns($model) {
 		if ($this->competition === null) {
 			$columns = array();
@@ -295,13 +302,13 @@ class Registration extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id, user_id, events, date', 'required'),
-			array('status', 'numerical', 'integerOnly'=>true),
+			array('location_id, status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id, date', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, user_id, events, comments, date, status', 'safe', 'on'=>'search'),
+			array('id, competition_id, location_id, user_id, events, comments, date, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -314,6 +321,7 @@ class Registration extends ActiveRecord {
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
+			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
 		);
 	}
 

@@ -95,6 +95,7 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		$model = new Registration();
+		$model->competition = $competition;
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;

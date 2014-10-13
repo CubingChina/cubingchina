@@ -50,6 +50,21 @@ class EventsForm extends Widget {
 				echo '<br>';
 			}
 			echo CHtml::closeTag('div');
+			if (isset($model->competition->location[1])) {
+				echo CHtml::closeTag('div');
+				$locations = array();
+				foreach ($model->competition->location as $location) {
+					$locations[$location->location_id] = $location->getFullAddress(false);
+				}
+				echo CHtml::activeLabelEx($model, 'location_id');
+				echo CHtml::activeDropDownList($model, 'location_id', $locations, array(
+					'class'=>'form-control',
+				));
+				echo CHtml::error($model, 'location_id', array('class'=>'text-danger'));
+				echo CHtml::openTag('div', array(
+					'class'=>'form-group',
+				));
+			}
 		} else {
 			if (!isset($htmlOptions['class'])) {
 				$htmlOptions['class'] = 'row';
