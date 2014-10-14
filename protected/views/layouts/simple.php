@@ -45,6 +45,5 @@
   <?php else: ?>
   <script type="text/javascript" src="/f/js/main.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
   <?php endif; ?>
-  <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

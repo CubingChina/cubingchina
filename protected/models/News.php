@@ -79,6 +79,7 @@ class News extends ActiveRecord {
 		$this->handleDate();
 		return parent::beforeValidate();
 	}
+
 	/**
 	 * @return string the associated database table name
 	 */

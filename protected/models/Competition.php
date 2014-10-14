@@ -250,6 +250,20 @@ class Competition extends ActiveRecord {
 		return true;
 	}
 
+	public function getLocationInfo($type) {
+		if (isset($this->location[1])) {
+			return Yii::t('common', 'Multiple');
+		} else {
+			switch ($type) {
+				case 'city':
+				case 'province':
+					return $this->location[0]->$type->getAttributeValue('name');
+				default:
+					return $this->location[0]->getAttributeValue($type);
+			}
+		}
+	}
+
 	public function getRegistrationDoneWeiboText() {
 		return sprintf('我已报名 #%s# 时间：%s (%s)', $this->name_zh, date('m月d日', $this->date), $this->venue_zh);
 	}
