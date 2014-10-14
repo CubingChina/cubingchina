@@ -467,6 +467,7 @@ class Registration extends ActiveRecord {
 					self::$sortByUserAttribute = true;
 				case 'number':
 				case 'user_id':
+				case 'location_id':
 					self::$sortAttribute = $sort;
 					break;
 				
