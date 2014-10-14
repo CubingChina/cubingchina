@@ -24,6 +24,7 @@ class AdminController extends Controller {
 					);
 				}
 			}
+			Yii::app()->language = 'zh_cn';
 			return true;
 		}
 		return false;

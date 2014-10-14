@@ -32,14 +32,21 @@
               array(
                 'name'=>'province_id',
                 'type'=>'raw',
-                'value'=>'isset($data->location[1]) ? "多地点" : $data->location[0]->province->name_zh',
+                'value'=>'$data->getLocationInfo("province")',
+                'sortable'=>false,
               ),
               array(
                 'name'=>'city_id',
                 'type'=>'raw',
-                'value'=>'isset($data->location[1]) ? "多地点" : $data->location[0]->city->name_zh',
+                'value'=>'$data->getLocationInfo("city")',
+                'sortable'=>false,
               ),
-              'venue_zh',
+              array(
+                'name'=>'venue',
+                'type'=>'raw',
+                'value'=>'$data->getLocationInfo("venue")',
+                'sortable'=>false,
+              ),
               array(
                 'name'=>'status',
                 'type'=>'raw',
