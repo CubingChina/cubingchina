@@ -301,7 +301,7 @@ class Registration extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competition_id, user_id, events, date', 'required'),
+			array('location_id, competition_id, user_id, events, date', 'required'),
 			array('location_id, status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id, date', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),

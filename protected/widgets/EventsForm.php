@@ -59,6 +59,7 @@ class EventsForm extends Widget {
 				echo CHtml::activeLabelEx($model, 'location_id');
 				echo CHtml::activeDropDownList($model, 'location_id', $locations, array(
 					'class'=>'form-control',
+					'prompt'=>'',
 				));
 				echo CHtml::error($model, 'location_id', array('class'=>'text-danger'));
 				echo CHtml::openTag('div', array(

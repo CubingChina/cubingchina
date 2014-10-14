@@ -96,6 +96,9 @@ class CompetitionController extends Controller {
 		}
 		$model = new Registration();
 		$model->competition = $competition;
+		if (isset($competition->location[1])) {
+			$model->location_id = null;
+		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
