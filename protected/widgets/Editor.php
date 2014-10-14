@@ -19,6 +19,7 @@ class Editor extends Widget {
     var editor = KindEditor.create('#' + id, {
       height: 300,
       resizeType: 1,
+      filterMode: false,
       uploadJson: '{$uploadUrl}',
       allowFileManager: false,
       items: [
