@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 07 月 18 日 12:09
+-- 生成日期: 2014 年 10 月 15 日 11:46
 -- 服务器版本: 5.5.37-log
--- PHP 版本: 5.5.13
+-- PHP 版本: 5.5.16
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -71,6 +71,24 @@ CREATE TABLE IF NOT EXISTS `competition_delegate` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `competition_location`
+--
+
+CREATE TABLE IF NOT EXISTS `competition_location` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` int(10) unsigned NOT NULL,
+  `location_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `province_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `city_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `venue` varchar(512) NOT NULL DEFAULT '',
+  `venue_zh` varchar(512) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `competition_organizer`
 --
 
@@ -120,7 +138,10 @@ CREATE TABLE IF NOT EXISTS `logs` (
 
 CREATE TABLE IF NOT EXISTS `mail` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `to` char(128) NOT NULL,
+  `to` text,
+  `reply_to` text,
+  `cc` text,
+  `bcc` text,
   `subject` varchar(256) NOT NULL,
   `message` text NOT NULL,
   `sent` tinyint(1) NOT NULL DEFAULT '0',
@@ -128,7 +149,6 @@ CREATE TABLE IF NOT EXISTS `mail` (
   `update_time` int(11) NOT NULL,
   `sent_time` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `to` (`to`,`add_time`),
   KEY `sent` (`sent`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
@@ -197,9 +217,11 @@ CREATE TABLE IF NOT EXISTS `region` (
 CREATE TABLE IF NOT EXISTS `registration` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) unsigned NOT NULL,
+  `location_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL,
   `events` varchar(512) NOT NULL,
   `comments` varchar(2048) NOT NULL DEFAULT '',
+  `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `date` int(10) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
