@@ -17,6 +17,14 @@ class CompetitionController extends AdminController {
 		$model = new Competition();
 		$model->date = $model->end_date = $model->reg_end_day = '';
 		$model->province_id = $model->city_id = '';
+		if ($this->user->isOrganizer()) {
+			$organizer = new CompetitionOrganizer();
+			$organizer->organizer_id = $this->user->id;
+			$organizer->user = $this->user;
+			$model->organizer = array(
+				$organizer,
+			);
+		}
 		// $model->unsetAttributes();
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
