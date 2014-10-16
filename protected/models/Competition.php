@@ -79,7 +79,7 @@ class Competition extends ActiveRecord {
 		return self::model()->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		), array(
-			'condition'=>'date>' . time() . ' AND reg_end_day>' . (time() - 86400),
+			'condition'=>'date>' . time() . ' AND reg_end_day>' . time(),
 			'limit'=>$limit,
 			'order'=>'date ASC',
 		));
@@ -216,7 +216,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationEnded() {
-		return time() > strtotime(date('Y-m-d', $this->reg_end_day)) + 86400;
+		return time() > $this->reg_end_day;
 	}
 
 	public function isRegistrationFull() {
@@ -1182,12 +1182,17 @@ class Competition extends ActiveRecord {
 	}
 
 	public function formatDate() {
-		foreach (array('date', 'end_date', 'reg_end_day') as $attribute) {
+		foreach (array('date', 'end_date') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d', $this->$attribute);
 			} else {
 				$this->$attribute = '';
 			}
+		}
+		if (!empty($this->reg_end_day)) {
+			$this->reg_end_day = date('Y-m-d H:i:s', $this->reg_end_day);
+		} else {
+			$this->reg_end_day = '';
 		}
 	}
 
@@ -1301,7 +1306,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkRegistrationEnd() {
-		if (date('Ymd', $this->reg_end_day) >= date('Ymd', $this->date)) {
+		if ($this->reg_end_day >= $this->date) {
 			$this->addError('reg_end_day', '注册截止时间必须早于比赛开始至少一天');
 		}
 	}
@@ -1389,7 +1394,7 @@ class Competition extends ActiveRecord {
 			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true),
 			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true),
 			array('type', 'checkType', 'skipOnError'=>true),
-			array('date, end_date, reg_end_day', 'length', 'max'=>11, 'skipOnError'=>true),
+			// array('date, end_date, reg_end_day', 'length', 'max'=>11, 'skipOnError'=>true),
 			array('reg_end_day', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),

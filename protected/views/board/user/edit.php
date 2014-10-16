@@ -116,8 +116,9 @@
               'label'=>'生日',
             )),
             Html::activeTextField($model, 'birthday', array(
-              'class'=>'date-picker',
+              'class'=>'datetime-picker',
               'data-date-format'=>'yyyy-mm-dd',
+              'data-min-view'=>'2',
             )),
             $form->error($model, 'birthday', array('class'=>'text-danger'))
           );?>
@@ -154,12 +155,12 @@
   </div>
 </div>
 <?php
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
 $allCities = json_encode($cities);
 Yii::app()->clientScript->registerScript('user',
 <<<EOT
-  $('.date-picker').datepicker({
+  $('.datetime-picker').datetimepicker({
     autoclose: true
   });
   var allCities = {$allCities};

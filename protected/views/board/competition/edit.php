@@ -98,8 +98,9 @@
                 'label'=>'日期',
               )),
               Html::activeTextField($model, 'date', array(
-                'class'=>'date-picker',
+                'class'=>'datetime-picker',
                 'data-date-format'=>'yyyy-mm-dd',
+                'data-min-view'=>'2',
               )),
               $form->error($model, 'date', array('class'=>'text-danger'))
             );?>
@@ -111,8 +112,9 @@
                 'label'=>'结束日期',
               )),
               Html::activeTextField($model, 'end_date', array(
-                'class'=>'date-picker',
+                'class'=>'datetime-picker',
                 'data-date-format'=>'yyyy-mm-dd',
+                'data-min-view'=>'2',
               )),
               $form->error($model, 'end_date', array('class'=>'text-danger'))
             );?>
@@ -125,8 +127,8 @@
                 'label'=>'注册截止时间',
               )),
               Html::activeTextField($model, 'reg_end_day', array(
-                'class'=>'date-picker',
-                'data-date-format'=>'yyyy-mm-dd',
+                'class'=>'datetime-picker',
+                'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
               )),
               $form->error($model, 'reg_end_day', array('class'=>'text-danger'))
             );?>
@@ -331,12 +333,10 @@
 </div>
 <?php
 $this->widget('Editor');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/tokenfield-typeahead.min.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js');
 $allCities = json_encode($cities);
@@ -356,12 +356,8 @@ $datum = json_encode(array_map(function($user) {
 $organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
-  $('.date-picker').datepicker({
+  $('.datetime-picker').datetimepicker({
     autoclose: true
-  });
-  $('.time-picker').timepicker({
-    showMeridian: false,
-    defaultTime: null
   });
   var allCities = {$allCities};
   $(document).on('change', '.province', function() {
@@ -379,7 +375,15 @@ Yii::app()->clientScript->registerScript('competition',
     if (e.which == 13) {
       e.preventDefault();
     }
+  }).on('changeDate', '#Competition_date', function() {
+    var date = $(this).datetimepicker('getDate');
+    $('#Competition_end_date').datetimepicker('setStartDate', date);
+    date.setDate(date.getDate() - 1);
+    date.setHours(23);
+    date.setMinutes(59);
+    $('#Competition_reg_end_day').datetimepicker('setEndDate', date);
   });
+  $('#Competition_date').trigger('changeDate')
   var organizers = {$organizerNames};
   var engine = new Bloodhound({
     local: {$datum},

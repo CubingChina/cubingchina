@@ -46,28 +46,16 @@
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'date', array(
-                'class'=>'col-lg-6',
+                'class'=>'col-lg-12',
               ),
               $form->labelEx($model, 'date', array(
-                'label'=>'日期',
-              )),
-              Html::activeTextField($model, 'date', array(
-                'class'=>'date-picker',
-                'data-date-format'=>'yyyy-mm-dd',
-              )),
-              $form->error($model, 'date', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'time', array(
-                'class'=>'col-lg-6',
-              ),
-              $form->labelEx($model, 'time', array(
                 'label'=>'时间',
               )),
-              Html::activeTextField($model, 'time', array(
-                'class'=>'time-picker',
+              Html::activeTextField($model, 'date', array(
+                'class'=>'datetime-picker',
+                'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
               )),
-              $form->error($model, 'time', array('class'=>'text-danger'))
+              $form->error($model, 'date', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
@@ -105,13 +93,11 @@
 </div>
 <?php
 $this->widget('Editor');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
-  $('.date-picker').datepicker({
+  $('.datetime-picker').datetimepicker({
     autoclose: true
   });
   $('.time-picker').timepicker({
