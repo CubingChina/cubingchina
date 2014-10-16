@@ -45,8 +45,20 @@
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
+              $model, 'check_person', array(
+                'class'=>'col-lg-2 col-md-4',
+              ),
+              $form->labelEx($model, 'check_person', array(
+                'label'=>'报名自动审核',
+              )),
+              $form->dropDownList($model, 'check_person', $checkPersons, array(
+                'class'=>'form-control',
+              )),
+              $form->error($model, 'check_person', array('class'=>'text-danger'))
+            );?>
+            <?php echo Html::formGroup(
               $model, 'type', array(
-                'class'=>'col-lg-3 col-md-6',
+                'class'=>'col-lg-2 col-md-4',
               ),
               $form->labelEx($model, 'type', array(
                 'label'=>'类型',
@@ -57,16 +69,14 @@
               $form->error($model, 'type', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
-              $model, 'check_person', array(
-                'class'=>'col-lg-3 col-md-6',
+              $model, 'wca_competition_id', array(
+                'class'=>'col-lg-2 col-md-4',
               ),
-              $form->labelEx($model, 'check_person', array(
-                'label'=>'报名自动审核',
+              $form->labelEx($model, 'wca_competition_id', array(
+                'label'=>'WCA比赛ID',
               )),
-              $form->dropDownList($model, 'check_person', $checkPersons, array(
-                'class'=>'form-control',
-              )),
-              $form->error($model, 'check_person', array('class'=>'text-danger'))
+              Html::activeTextField($model, 'wca_competition_id'),
+              $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
             );?>
             <div class="clearfix hidden-lg"></div>
             <?php echo Html::formGroup(
@@ -120,27 +130,27 @@
             );?>
             <div class="clearfix hidden-lg"></div>
             <?php echo Html::formGroup(
-              $model, 'reg_end_day', array(
+              $model, 'reg_start', array(
                 'class'=>'col-lg-3 col-md-6',
               ),
-              $form->labelEx($model, 'reg_end_day', array(
-                'label'=>'注册截止时间',
+              $form->labelEx($model, 'reg_start'),
+              Html::activeTextField($model, 'reg_start', array(
+                'class'=>'datetime-picker',
+                'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
+                'placeholder'=>'留空默认公示后即开放报名',
               )),
-              Html::activeTextField($model, 'reg_end_day', array(
+              $form->error($model, 'reg_start', array('class'=>'text-danger'))
+            );?>
+            <?php echo Html::formGroup(
+              $model, 'reg_end', array(
+                'class'=>'col-lg-3 col-md-6',
+              ),
+              $form->labelEx($model, 'reg_end'),
+              Html::activeTextField($model, 'reg_end', array(
                 'class'=>'datetime-picker',
                 'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
               )),
-              $form->error($model, 'reg_end_day', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'wca_competition_id', array(
-                'class'=>'col-lg-3 col-md-6',
-              ),
-              $form->labelEx($model, 'wca_competition_id', array(
-                'label'=>'WCA比赛ID',
-              )),
-              Html::activeTextField($model, 'wca_competition_id'),
-              $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
+              $form->error($model, 'reg_end', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
               $model, 'organizers', array(
@@ -381,7 +391,8 @@ Yii::app()->clientScript->registerScript('competition',
     date.setDate(date.getDate() - 1);
     date.setHours(23);
     date.setMinutes(59);
-    $('#Competition_reg_end_day').datetimepicker('setEndDate', date);
+    $('#Competition_reg_start').datetimepicker('setEndDate', date);
+    $('#Competition_reg_end').datetimepicker('setEndDate', date);
   });
   $('#Competition_date').trigger('changeDate')
   var organizers = {$organizerNames};

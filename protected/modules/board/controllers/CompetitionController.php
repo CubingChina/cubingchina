@@ -15,7 +15,7 @@ class CompetitionController extends AdminController {
 		// 	$this->redirect(array('/board/competition/index'));
 		// }
 		$model = new Competition();
-		$model->date = $model->end_date = $model->reg_end_day = '';
+		$model->date = $model->end_date = $model->reg_start = $model->reg_end = '';
 		$model->province_id = $model->city_id = '';
 		if ($this->user->isOrganizer()) {
 			$organizer = new CompetitionOrganizer();
