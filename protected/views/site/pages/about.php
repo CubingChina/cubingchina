@@ -17,6 +17,14 @@
     <li>
       <div class="timeline-badge">2014</div>
     </li>
+    <li class="timeline-inverted">
+      <div class="timeline-badge">十月</div>
+      <div class="timeline-panel">
+        <div class="timeline-heading">
+          <h4 class="timeline-title">世界魔方协会的中国选手达到五千人</h4>
+        </div>
+      </div>
+    </li>
     <li>
       <div class="timeline-badge">六月</div>
       <div class="timeline-panel">
@@ -62,7 +70,7 @@
       <div class="timeline-badge info">十月</div>
       <div class="timeline-panel">
         <div class="timeline-heading">
-          <h4 class="timeline-title">中国魔方爱好者首次参加世界魔方锦标赛</h4>
+          <h4 class="timeline-title">中国选手首次参加世界魔方锦标赛</h4>
         </div>
       </div>
     </li>
@@ -150,6 +158,14 @@ EOT
   <ul class="timeline">
     <li>
       <div class="timeline-badge">2014</div>
+    </li>
+    <li class="timeline-inverted">
+      <div class="timeline-badge">Oct</div>
+      <div class="timeline-panel">
+        <div class="timeline-heading">
+          <h4 class="timeline-title">Chinese WCA competitors hit five thousand.</h4>
+        </div>
+      </div>
     </li>
     <li>
       <div class="timeline-badge">Jun</div>
