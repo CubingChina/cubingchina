@@ -107,6 +107,7 @@ class Events extends ActiveRecord {
 			'magic'=>'Rubik\'s Magic',
 			'mmagic'=>'Master Magic',
 			'stack'=>'Sport Stacking',
+			'funny'=>'Funny Event',
 		);
 	}
 

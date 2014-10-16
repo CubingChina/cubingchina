@@ -45,4 +45,5 @@ return array (
   'Rubik\'s Magic'=>'八板',
   'Master Magic'=>'十二板',
   'Sport Stacking'=>'竞技叠杯',
+  'Funny Event'=>'趣味项目',
 );
