@@ -151,11 +151,15 @@
                 'uncheckValue'=>'',
                 'container'=>'div',
                 'separator'=>'',
-                'class'=>'form-control',
+                'class'=>'form-control organizer',
                 'labelOptions'=>array(
-                  'class'=>'checkbox-inline',
+                  'class'=>'checkbox-inline hidden',
                 ),
                 'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
+              )),
+              CHtml::textField('', '', array(
+                'class'=>'form-control tokenfield',
+                'placeholder'=>'输入名字或拼音',
               )),
               $form->error($model, 'organizers', array('class'=>'text-danger'))
             );?>
@@ -329,9 +333,27 @@
 $this->widget('Editor');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/tokenfield-typeahead.min.css');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.css');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.js');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js');
 $allCities = json_encode($cities);
+$tokens = json_encode(array_map(function($organizer) {
+  return array(
+    'value'=>$organizer->user->id . '-' . $organizer->user->name_zh,
+    'label'=>$organizer->user->name_zh,
+  );
+}, $model->organizer));
+$datum = json_encode(array_map(function($user) {
+  return array(
+    'full'=>$user->getCompetitionName() . ' ' . $user->id,
+    'value'=>$user->id . '-' . $user->name_zh,
+    'label'=>$user->name_zh,
+  );
+}, $organizers));
+$organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
   $('.date-picker').datepicker({
@@ -353,6 +375,51 @@ Yii::app()->clientScript->registerScript('competition',
     if (city.find('option').length == 2) {
       city.find('option:last').prop('selected', true);
     }
+  }).on('keydown', '.token-input', function(e) {
+    if (e.which == 13) {
+      e.preventDefault();
+    }
+  });
+  var organizers = {$organizerNames};
+  var engine = new Bloodhound({
+    local: {$datum},
+    datumTokenizer: function(d) {
+      return d.full.split('');
+    },
+    queryTokenizer: function(d) {
+      return d.split('');
+    }
+  });
+  engine.initialize();
+  $('.tokenfield').tokenfield({
+    tokens: {$tokens},
+    typeahead: [
+      null,
+      {
+        source: engine.ttAdapter()
+      }
+    ]
+  }).on('tokenfield:createtoken', function(e) {
+    var id = e.attrs.value.split('-')[0];
+    if (!organizers[id] || organizers[id] != e.attrs.value.split('-')[1]) {
+      e.preventDefault();
+    }
+    //防止重复的
+    $.each($(this).tokenfield('getTokens'), function(index, token) {
+      if (token.value === e.attrs.value) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    if (e.attrs.value == e.attrs.label) {
+      e.attrs.label = e.attrs.value.split('-')[1];
+    }
+  }).on('tokenfield:createdtoken', function(e) {
+    $('input.organizer[value="' + e.attrs.value.split('-')[0] + '"]').prop('checked', true);
+  }).on('tokenfield:removedtoken', function(e) {
+    $('input.organizer[value="' + e.attrs.value.split('-')[0] + '"]').prop('checked', false);
+  }).on('tokenfield:edittoken', function(e) {
+    e.preventDefault();
   });
 EOT
 );

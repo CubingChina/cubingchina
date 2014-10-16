@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 07 月 18 日 12:10
+-- 生成日期: 2014 年 10 月 15 日 11:46
 -- 服务器版本: 5.5.37-log
--- PHP 版本: 5.5.13
+-- PHP 版本: 5.5.16
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -34,7 +34,10 @@ INSERT INTO `delegate` (`id`, `name`, `name_zh`, `email`) VALUES
 (7, 'Xiaobo Jin', '金晓波', 'wavelet1988@gmail.com'),
 (8, 'Chan Tak Chuen', '陳德泉', 'kimchikoon@hkrcu.net'),
 (9, 'Zhili Zhang', '张志立', '563257311@qq.com'),
-(10, 'Hung Lo', '羅鴻', 'austin.lohong@gmail.com');
+(10, 'Hung Lo', '羅鴻', 'austin.lohong@gmail.com'),
+(11, 'Ming Jiao', '焦明', 'jm2904413@qq.com'),
+(12, 'Jian Ma', '马建', '9656510@qq.com'),
+(13, 'Huaiyu Shao', '邵怀禹', '597947578@qq.com');
 
 --
 -- 转存表中的数据 `region`
@@ -722,7 +725,10 @@ INSERT INTO `region` (`id`, `name`, `name_zh`, `pid`) VALUES
 (679, 'Zhongxian', '忠县', 642),
 (680, 'Tongnan', '潼南县', 642),
 (681, 'Bishan', '璧山县', 642),
-(682, 'Qijiang', '綦江区', 642);
+(682, 'Qijiang', '綦江区', 642),
+(683, 'Hong Kong', '香港', 2),
+(684, 'Macau', '澳門', 3),
+(685, 'Taiwan', '台灣', 4);
 
 --
 -- 转存表中的数据 `rounds`

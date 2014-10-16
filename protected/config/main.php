@@ -127,8 +127,8 @@ $config = array(
 			),
 		),
 		'clientScript' => array(
-			'defaultScriptFilePosition' => 2,
-			'coreScriptPosition' => 2,
+			'defaultScriptFilePosition' => CClientScript::POS_END,
+			'coreScriptPosition' => CClientScript::POS_END,
 			'packages' => array(
 				'jquery' => false,
 			),

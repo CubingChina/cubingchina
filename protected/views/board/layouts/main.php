@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title><?php echo CHtml::encode($this->pageTitle); ?></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Cubing China">
@@ -17,6 +16,7 @@
 
   <!-- THEME STYLES - Include these on every page. -->
   <link href="/b/css/style.css" rel="stylesheet">
+  <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
   <!--[if lt IE 9]>
     <script src="/b/js/html5shiv.js"></script>
