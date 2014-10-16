@@ -123,6 +123,7 @@
 .tokenfield .twitter-typeahead .tt-hint {
   padding: 0;
   height: 20px;
+  max-width: 100% !important;
 }
 .tokenfield.input-sm .twitter-typeahead .tt-input,
 .tokenfield.input-sm .twitter-typeahead .tt-hint {
