@@ -64,6 +64,22 @@ class Mailer extends CApplicationComponent {
 		return $this->add($to, $subject, $message);
 	}
 
+	public function sendAddCompetitionNotice($competition) {
+		$to = Yii::app()->params->adminEmail;
+		$subject = $this->makeTitle('新增比赛通知');
+		$message = $this->render('addCompetitionNotice', array(
+			'user'=>Yii::app()->controller->user,
+			'competition'=>$competition,
+			'url'=>Yii::app()->request->getBaseUrl(true) . Yii::app()->createUrl(
+				'/board/competition/edit',
+				array(
+					'id'=>$competition->id,
+				)
+			),
+		));
+		return $this->add($to, $subject, $message);
+	}
+
 	public function sendRegistrationNotice($registration) {
 		$subject = $this->makeTitle('选手报名通知');
 		$message = $this->render('registrationNotice', array(

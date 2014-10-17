@@ -75,6 +75,17 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public static function getUnpublicCount() {
+		return self::model()->with(array(
+			'organizer'=>array(
+				'together'=>true,
+				'condition'=>'organizer.organizer_id=' . Yii::app()->user->id,
+			),
+		))->countByAttributes(array(
+			'status'=>self::STATUS_HIDE,
+		));
+	}
+
 	public static function getUpcomingRegistrableCompetitions($limit = 5) {
 		return self::model()->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,

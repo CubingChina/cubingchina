@@ -10,29 +10,32 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionAdd() {
-		// if ($this->user->isOrganizer() && Competition::getUnpublicCount()) {
-		// 	Yii::app()->user->setFlash('danger', '同时最多允许创建三场比赛');
-		// 	$this->redirect(array('/board/competition/index'));
-		// }
+		if ($this->user->isOrganizer() && Competition::getUnpublicCount() >= 2) {
+			Yii::app()->user->setFlash('danger', '仅可同时创建两场比赛，如有疑问，请与管理员联系 admin@cubingchina.com');
+			$this->redirect(array('/board/competition/index'));
+		}
 		$model = new Competition();
 		$model->date = $model->end_date = $model->reg_start = $model->reg_end = '';
 		$model->province_id = $model->city_id = '';
-		if ($this->user->isOrganizer() && !isset($_POST['Competition'])) {
+		// $model->unsetAttributes();
+		if (isset($_POST['Competition'])) {
+			$model->attributes = $_POST['Competition'];
+			if ($model->save()) {
+				if ($this->user->isOrganizer()) {
+					Yii::app()->mailer->sendAddCompetitionNotice($model);
+				}
+				Yii::app()->user->setFlash('success', '新加比赛成功');
+				$this->redirect(array('/board/competition/index'));
+			}
+			$model->formatSchedule();
+		}
+		if ($this->user->isOrganizer()) {
 			$organizer = new CompetitionOrganizer();
 			$organizer->organizer_id = $this->user->id;
 			$organizer->user = $this->user;
 			$model->organizer = array(
 				$organizer,
 			);
-		}
-		// $model->unsetAttributes();
-		if (isset($_POST['Competition'])) {
-			$model->attributes = $_POST['Competition'];
-			if ($model->save()) {
-				Yii::app()->user->setFlash('success', '新加比赛成功');
-				$this->redirect(array('/board/competition/index'));
-			}
-			$model->formatSchedule();
 		}
 		$model->formatEvents();
 		$model->formatDate();
