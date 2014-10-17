@@ -67,7 +67,7 @@ class CompetitionController extends Controller {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
 		$registration = Registration::getUserRegistration($competition->id, $user->id);
-		if (!$competition->isPublic()) {
+		if (!$competition->isPublic() || !$competition->isRegistrationStarted()) {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
 			$this->redirect($competition->getUrl('competitors'));
 		}

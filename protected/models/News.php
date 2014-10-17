@@ -14,7 +14,6 @@
  * @property integer $status
  */
 class News extends ActiveRecord {
-	public $time;
 
 	const STATUS_HIDE = 0;
 	const STATUS_SHOW = 1;
@@ -34,9 +33,6 @@ class News extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		if ($this->time != '') {
-			$this->date .= ' ' . $this->time;
-		}
 		if (trim($this->date) != '') {
 			$date = strtotime($this->date);
 			if ($date !== false) {
@@ -51,11 +47,9 @@ class News extends ActiveRecord {
 
 	public function formatDate() {
 		if (!empty($this->date)) {
-			$this->time = date('H:i:s',  $this->date);
-			$this->date = date('Y-m-d',  $this->date);
+			$this->date = date('Y-m-d H:i:s',  $this->date);
 		} else {
 			$this->date = '';
-			$this->time = '';
 		}
 	}
 
@@ -97,7 +91,7 @@ class News extends ActiveRecord {
 			array('user_id, title, title_zh, content, content_zh, date', 'required'),
 			array('user_id, status', 'numerical', 'integerOnly'=>true),
 			array('title, title_zh', 'length', 'max'=>1024),
-			array('date', 'length', 'max'=>10),
+			// array('date', 'length', 'max'=>10),
 			array('time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

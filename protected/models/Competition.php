@@ -11,7 +11,7 @@
  * @property string $name_zh
  * @property string $date
  * @property string $end_date
- * @property string $reg_end_day
+ * @property string $reg_end
  * @property integer $province_id
  * @property integer $city_id
  * @property string $venue
@@ -79,7 +79,7 @@ class Competition extends ActiveRecord {
 		return self::model()->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		), array(
-			'condition'=>'date>' . time() . ' AND reg_end_day>' . (time() - 86400),
+			'condition'=>'date>' . time() . ' AND reg_end>' . time(),
 			'limit'=>$limit,
 			'order'=>'date ASC',
 		));
@@ -215,8 +215,12 @@ class Competition extends ActiveRecord {
 		return $this->status == self::STATUS_SHOW;
 	}
 
+	public function isRegistrationStarted() {
+		return time() > $this->reg_start;
+	}
+
 	public function isRegistrationEnded() {
-		return time() > strtotime(date('Y-m-d', $this->reg_end_day)) + 86400;
+		return time() > $this->reg_end;
 	}
 
 	public function isRegistrationFull() {
@@ -1167,7 +1171,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_end_day') as $attribute) {
+		foreach (array('date', 'end_date', 'reg_start', 'reg_end') as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -1182,9 +1186,16 @@ class Competition extends ActiveRecord {
 	}
 
 	public function formatDate() {
-		foreach (array('date', 'end_date', 'reg_end_day') as $attribute) {
+		foreach (array('date', 'end_date') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d', $this->$attribute);
+			} else {
+				$this->$attribute = '';
+			}
+		}
+		foreach (array('reg_start', 'reg_end') as $attribute) {
+			if (!empty($this->$attribute)) {
+				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
 				$this->$attribute = '';
 			}
@@ -1300,9 +1311,15 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkRegistrationStart() {
+		if ($this->reg_start >= $this->reg_end) {
+			$this->addError('reg_start', '报名起始时间必须早于报名截止时间');
+		}
+	}
+
 	public function checkRegistrationEnd() {
-		if (date('Ymd', $this->reg_end_day) >= date('Ymd', $this->date)) {
-			$this->addError('reg_end_day', '注册截止时间必须早于比赛开始至少一天');
+		if ($this->reg_end >= $this->date) {
+			$this->addError('reg_end', '报名截止时间必须早于比赛开始至少一天');
 		}
 	}
 
@@ -1379,7 +1396,7 @@ class Competition extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('organizers, name, name_zh, date', 'required'),
+			array('organizers, name, name_zh, date, reg_end', 'required'),
 			array('province_id, city_id, entry_fee, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
@@ -1389,14 +1406,15 @@ class Competition extends ActiveRecord {
 			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true),
 			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true),
 			array('type', 'checkType', 'skipOnError'=>true),
-			array('date, end_date, reg_end_day', 'length', 'max'=>11, 'skipOnError'=>true),
-			array('reg_end_day', 'checkRegistrationEnd', 'skipOnError'=>true),
+			// array('date, end_date, reg_end', 'length', 'max'=>11, 'skipOnError'=>true),
+			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
+			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
 			array('organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end_day, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
+			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -1426,7 +1444,8 @@ class Competition extends ActiveRecord {
 			'name_zh' => Yii::t('Competition', 'Competition Name'),
 			'date' => Yii::t('Competition', 'Date'),
 			'end_date' => Yii::t('Competition', 'End Date'),
-			'reg_end_day' => Yii::t('Competition', 'Registration Ending Time'),
+			'reg_start' => Yii::t('Competition', 'Registration Starting Time'),
+			'reg_end' => Yii::t('Competition', 'Registration Ending Time'),
 			'province_id' => Yii::t('Competition', 'Province'),
 			'city_id' => Yii::t('Competition', 'City'),
 			'venue' => Yii::t('Competition', 'Venue'),
@@ -1472,7 +1491,7 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.name_zh', $this->name_zh,true);
 		$criteria->compare('t.date', $this->date,true);
 		$criteria->compare('t.end_date', $this->end_date,true);
-		$criteria->compare('t.reg_end_day', $this->reg_end_day,true);
+		$criteria->compare('t.reg_end', $this->reg_end,true);
 		$criteria->compare('t.province_id', $this->province_id);
 		$criteria->compare('t.city_id', $this->city_id);
 		$criteria->compare('t.venue', $this->venue,true);
@@ -1511,7 +1530,7 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.name_zh', $this->name_zh,true);
 		$criteria->compare('t.date', $this->date,true);
 		$criteria->compare('t.end_date', $this->end_date,true);
-		$criteria->compare('t.reg_end_day', $this->reg_end_day,true);
+		$criteria->compare('t.reg_end', $this->reg_end,true);
 		$criteria->compare('t.province_id', $this->province_id);
 		$criteria->compare('t.city_id', $this->city_id);
 		$criteria->compare('t.venue', $this->venue,true);

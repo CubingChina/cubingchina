@@ -45,8 +45,20 @@
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
+              $model, 'check_person', array(
+                'class'=>'col-lg-2 col-md-4',
+              ),
+              $form->labelEx($model, 'check_person', array(
+                'label'=>'报名自动审核',
+              )),
+              $form->dropDownList($model, 'check_person', $checkPersons, array(
+                'class'=>'form-control',
+              )),
+              $form->error($model, 'check_person', array('class'=>'text-danger'))
+            );?>
+            <?php echo Html::formGroup(
               $model, 'type', array(
-                'class'=>'col-lg-3 col-md-6',
+                'class'=>'col-lg-2 col-md-4',
               ),
               $form->labelEx($model, 'type', array(
                 'label'=>'类型',
@@ -57,16 +69,14 @@
               $form->error($model, 'type', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
-              $model, 'check_person', array(
-                'class'=>'col-lg-3 col-md-6',
+              $model, 'wca_competition_id', array(
+                'class'=>'col-lg-2 col-md-4',
               ),
-              $form->labelEx($model, 'check_person', array(
-                'label'=>'报名自动审核',
+              $form->labelEx($model, 'wca_competition_id', array(
+                'label'=>'WCA比赛ID',
               )),
-              $form->dropDownList($model, 'check_person', $checkPersons, array(
-                'class'=>'form-control',
-              )),
-              $form->error($model, 'check_person', array('class'=>'text-danger'))
+              Html::activeTextField($model, 'wca_competition_id'),
+              $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
             );?>
             <div class="clearfix hidden-lg"></div>
             <?php echo Html::formGroup(
@@ -98,8 +108,9 @@
                 'label'=>'日期',
               )),
               Html::activeTextField($model, 'date', array(
-                'class'=>'date-picker',
+                'class'=>'datetime-picker',
                 'data-date-format'=>'yyyy-mm-dd',
+                'data-min-view'=>'2',
               )),
               $form->error($model, 'date', array('class'=>'text-danger'))
             );?>
@@ -111,34 +122,35 @@
                 'label'=>'结束日期',
               )),
               Html::activeTextField($model, 'end_date', array(
-                'class'=>'date-picker',
+                'class'=>'datetime-picker',
                 'data-date-format'=>'yyyy-mm-dd',
+                'data-min-view'=>'2',
               )),
               $form->error($model, 'end_date', array('class'=>'text-danger'))
             );?>
             <div class="clearfix hidden-lg"></div>
             <?php echo Html::formGroup(
-              $model, 'reg_end_day', array(
+              $model, 'reg_start', array(
                 'class'=>'col-lg-3 col-md-6',
               ),
-              $form->labelEx($model, 'reg_end_day', array(
-                'label'=>'注册截止时间',
+              $form->labelEx($model, 'reg_start'),
+              Html::activeTextField($model, 'reg_start', array(
+                'class'=>'datetime-picker',
+                'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
+                'placeholder'=>'留空默认公示后即开放报名',
               )),
-              Html::activeTextField($model, 'reg_end_day', array(
-                'class'=>'date-picker',
-                'data-date-format'=>'yyyy-mm-dd',
-              )),
-              $form->error($model, 'reg_end_day', array('class'=>'text-danger'))
+              $form->error($model, 'reg_start', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
-              $model, 'wca_competition_id', array(
+              $model, 'reg_end', array(
                 'class'=>'col-lg-3 col-md-6',
               ),
-              $form->labelEx($model, 'wca_competition_id', array(
-                'label'=>'WCA比赛ID',
+              $form->labelEx($model, 'reg_end'),
+              Html::activeTextField($model, 'reg_end', array(
+                'class'=>'datetime-picker',
+                'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
               )),
-              Html::activeTextField($model, 'wca_competition_id'),
-              $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
+              $form->error($model, 'reg_end', array('class'=>'text-danger'))
             );?>
             <?php echo Html::formGroup(
               $model, 'organizers', array(
@@ -331,12 +343,10 @@
 </div>
 <?php
 $this->widget('Editor');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datepicker/datepicker3.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css');
+Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/tokenfield-typeahead.min.css');
 Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js');
+Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.js');
 Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js');
 $allCities = json_encode($cities);
@@ -356,12 +366,8 @@ $datum = json_encode(array_map(function($user) {
 $organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
-  $('.date-picker').datepicker({
+  $('.datetime-picker').datetimepicker({
     autoclose: true
-  });
-  $('.time-picker').timepicker({
-    showMeridian: false,
-    defaultTime: null
   });
   var allCities = {$allCities};
   $(document).on('change', '.province', function() {
@@ -379,7 +385,16 @@ Yii::app()->clientScript->registerScript('competition',
     if (e.which == 13) {
       e.preventDefault();
     }
+  }).on('changeDate', '#Competition_date', function() {
+    var date = $(this).datetimepicker('getDate');
+    $('#Competition_end_date').datetimepicker('setStartDate', date);
+    date.setDate(date.getDate() - 1);
+    date.setHours(23);
+    date.setMinutes(59);
+    $('#Competition_reg_start').datetimepicker('setEndDate', date);
+    $('#Competition_reg_end').datetimepicker('setEndDate', date);
   });
+  $('#Competition_date').trigger('changeDate')
   var organizers = {$organizerNames};
   var engine = new Bloodhound({
     local: {$datum},

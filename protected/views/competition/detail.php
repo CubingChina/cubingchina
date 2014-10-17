@@ -56,8 +56,12 @@
 		<dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
 		<dd><?php echo $competition->person_num; ?></dd>
 		<?php endif; ?>
+		<?php if ($competition->reg_start > 0): ?>
+		<dt><?php echo Yii::t('Competition', 'Registration Starting Time'); ?></dt>
+		<dd><?php echo date('Y-m-d H:i:s', $competition->reg_start); ?></dd>
+		<?php endif; ?>
 		<dt><?php echo Yii::t('Competition', 'Registration Ending Time'); ?></dt>
-		<dd><?php echo date('Y-m-d 23:59:59', $competition->reg_end_day); ?></dd>
+		<dd><?php echo date('Y-m-d H:i:s', $competition->reg_end); ?></dd>
 		<?php if (trim(strip_tags($competition->getAttributeValue('information'), '<img>')) != ''): ?>
 		<dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>
 		<dd>

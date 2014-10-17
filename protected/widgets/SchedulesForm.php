@@ -65,11 +65,17 @@ class SchedulesForm extends Widget {
 			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][]"), $stage, $stages));
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[start_time][]", array(
 				'value'=>$start_time ? date('H:i', $start_time) : '',
-				'class'=>'time-picker'
+				'class'=>'datetime-picker',
+				'data-date-format'=>'hh:ii',
+				'data-max-view'=>'1',
+				'data-start-view'=>'1',
 			)));
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[end_time][]", array(
 				'value'=>$end_time ? date('H:i', $end_time) : '',
-				'class'=>'time-picker'
+				'class'=>'datetime-picker',
+				'data-date-format'=>'hh:ii',
+				'data-max-view'=>'1',
+				'data-start-view'=>'1',
 			)));
 			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][]"), $event, $events, array('prompt'=>'')));
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][]", array(
@@ -94,9 +100,8 @@ class SchedulesForm extends Widget {
 <<<EOT
   $(document).on('focus', '#schedules table tbody tr:last-child', function() {
     $(this).clone().insertAfter(this);
-    $('.time-picker').timepicker({
-      showMeridian: false,
-      defaultTime: null
+    $('.datetime-picker').datetimepicker({
+      autoclose: true
     });
   });
 EOT

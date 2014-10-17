@@ -17,9 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competition Site' => '分賽場',
   'Fee' => '',
-  'Multiple' => '多地',
   'WCA Competition' => '',
   'WCA ID' => '',
   'About us' => '關於本站',
@@ -82,6 +80,7 @@ return array (
   'Choose a competition' => '選擇一場比賽',
   'City' => '城市',
   'Close' => '關閉',
+  'Competition Site' => '分賽場',
   'Competitions' => '賽事',
   'Contact' => '聯繫我們',
   'Cubing China' => '粗餅·中國魔方賽事網',
@@ -118,6 +117,7 @@ return array (
   'Male' => '男',
   'Mobile Number' => '手機號碼',
   'More Info' => '其他',
+  'Multiple' => '多地',
   'My Competitions' => '我的比賽',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',
