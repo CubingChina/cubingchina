@@ -124,7 +124,6 @@ class RegistrationController extends AdminController {
 					'competition_id'=>$model->competition_id,
 				)));
 			}
-			$model->formatSchedule();
 		}
 		$model->competition->formatEvents();
 		$this->render('edit', array(
