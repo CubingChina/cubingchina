@@ -162,18 +162,6 @@ class Competition extends ActiveRecord {
 		return $competitions;
 	}
 
-	public static function getCompetitionById($id) {
-		if (ctype_digit($id)) {
-			$attribute = 'id';
-		} else {
-			$attribute = 'wca_competition_id';
-		}
-		$competition = self::model()->findByAttributes(array(
-			$attribute=>$id,
-		));
-		return $competition;
-	}
-
 	public static function getCompetitionByName($name) {
 		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
@@ -191,7 +179,6 @@ class Competition extends ActiveRecord {
 		$attribute = Yii::app()->controller->getAttributeName('name');
 		$items = array();
 		foreach ($competitions as $competition) {
-			$id = trim($competition->wca_competition_id) ?: $competition->id;
 			$items[] = array(
 				'label'=>$competition->$attribute,
 				'url'=>$competition->getUrl('detail'),
@@ -518,8 +505,7 @@ class Competition extends ActiveRecord {
 			return array();
 		}
 		$columns = array();
-		// var_dump($schedules[0]);exit;
-		foreach ($schedules[0] as $key=>$value) {
+		foreach (array_keys($schedules[0]) as $key) {
 			if ($key == 'id' || $key == 'event' || $key == 'round') {
 				continue;
 			}
@@ -567,9 +553,9 @@ class Competition extends ActiveRecord {
 		} elseif ($scheduleA['day'] > $scheduleB['day']) {
 			return 1;
 		} else {
-			$s = date('Hi', $scheduleA['start_time']) - date('Hi', $scheduleB['start_time']);
-			if ($s != 0) {
-				return $s;
+			$temp = date('Hi', $scheduleA['start_time']) - date('Hi', $scheduleB['start_time']);
+			if ($temp != 0) {
+				return $temp;
 			}
 			return date('Hi', $scheduleA['end_time']) - date('Hi', $scheduleB['end_time']);
 		}
@@ -1019,7 +1005,7 @@ class Competition extends ActiveRecord {
 				$registration->number = $number++;
 			}
 		}
-		usort($registrations, function ($rA, $rB) use($order) {
+		usort($registrations, function ($rA, $rB) use ($order) {
 			if ($rA->number === $rB->number || ($rA->number !== null && $rB->number !== null)) {
 				switch ($order) {
 					case 'user.name':
@@ -1222,9 +1208,9 @@ class Competition extends ActiveRecord {
 		foreach ($oldSchedules['start_time'] as $key=>$value) {
 			$schedules[] = array(
 				'day'=>$oldSchedules['day'][$key],
-				'stage'=>$oldSchedules['start_time'][$key],
+				'stage'=>$oldSchedules['stage'][$key],
 				'start_time'=>strtotime($oldSchedules['start_time'][$key]),
-				'end_time'=>strtotime($oldSchedules['start_time'][$key]),
+				'end_time'=>strtotime($oldSchedules['end_time'][$key]),
 				'event'=>$oldSchedules['event'][$key],
 				'group'=>$oldSchedules['group'][$key],
 				'round'=>$oldSchedules['round'][$key],
