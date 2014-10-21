@@ -1556,7 +1556,10 @@ class Competition extends ActiveRecord {
 			'criteria'=>$criteria,
 			'sort'=>array(
 				'defaultOrder'=>'t.date DESC',
-			)
+			),
+			'pagination'=>array(
+				'pageSize'=>50,
+			),
 		));
 	}
 
