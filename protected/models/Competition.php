@@ -232,6 +232,10 @@ class Competition extends ActiveRecord {
 		return time() > $this->date;
 	}
 
+	public function isMultiLocation() {
+		return isset($this->location[1]);
+	}
+
 	public function isScheduleFinished() {
 		$this->formatEvents();
 		$events = $this->events;
@@ -253,7 +257,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getLocationInfo($type) {
-		if (isset($this->location[1])) {
+		if ($this->isMultiLocation()) {
 			return Yii::t('common', 'Multiple');
 		} else {
 			switch ($type) {
@@ -284,7 +288,7 @@ class Competition extends ActiveRecord {
 			'{date}'=>$this->getDisplayDate(),
 			'{wca}'=>$this->type == self::TYPE_WCA ? Yii::t('common', ' the WCA delegate') : '',
 		);
-		if (isset($this->location[1])) {
+		if ($this->isMultiLocation()) {
 			$venue = '';
 			$count = count($this->location);
 			foreach ($this->location as $key=>$location) {
@@ -1138,7 +1142,9 @@ class Competition extends ActiveRecord {
 				'type'=>'raw', 
 				'value'=>$region,
 			),
-			array(
+		);
+		if ($this->isMultiLocation()) {
+			$columns[] = array(
 				'name'=>'location_id',
 				'header'=>Yii::t('common', 'Competition Site'),
 				'headerHtmlOptions'=>array(
@@ -1146,8 +1152,8 @@ class Competition extends ActiveRecord {
 				),
 				'type'=>'raw', 
 				'value'=>'$data->location->getFullAddress(false)',
-			),
-		);
+			);
+		}
 		foreach ($this->events as $event=>$value) {
 			if ($value['round'] > 0) {
 				$columns[] = array(
@@ -1341,7 +1347,7 @@ class Competition extends ActiveRecord {
 			$locations['province_id'] = array();
 		}
 		$temp = array();
-		$i = 0;
+		$index = 0;
 		$error = false;
 		foreach ($locations['province_id'] as $key=>$provinceId) {
 			if (empty($provinceId) && empty($locations['city_id'][$key])
@@ -1350,19 +1356,19 @@ class Competition extends ActiveRecord {
 				continue;
 			}
 			if (empty($provinceId)) {
-				$this->addError('locations.province_id.' . $i, '省份不能为空');
+				$this->addError('locations.province_id.' . $index, '省份不能为空');
 				$error = true;
 			}
 			if (empty($locations['city_id'][$key])) {
-				$this->addError('locations.city_id.' . $i, '城市不能为空');
+				$this->addError('locations.city_id.' . $index, '城市不能为空');
 				$error = true;
 			}
 			if (trim($locations['venue'][$key]) == '') {
-				$this->addError('locations.venue.' . $i, '英文地址不能为空');
+				$this->addError('locations.venue.' . $index, '英文地址不能为空');
 				$error = true;
 			}
 			if (trim($locations['venue_zh'][$key]) == '') {
-				$this->addError('locations.venue_zh.' . $i, '中文地址不能为空');
+				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 				$error = true;
 			}
 			$temp[] = array(
@@ -1371,7 +1377,7 @@ class Competition extends ActiveRecord {
 				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
 			);
-			$i++;
+			$index++;
 		}
 		if ($error) {
 			$this->addError('locations', '地址填写有误，请检查各地址填写！');
@@ -1556,7 +1562,10 @@ class Competition extends ActiveRecord {
 			'criteria'=>$criteria,
 			'sort'=>array(
 				'defaultOrder'=>'t.date DESC',
-			)
+			),
+			'pagination'=>array(
+				'pageSize'=>50,
+			),
 		));
 	}
 

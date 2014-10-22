@@ -2,7 +2,7 @@
 	<dl>
 		<dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
 		<dd>
-			<?php if (isset($competition->location[1])): ?>
+			<?php if ($competition->isMultiLocation()): ?>
 			<ol>
 			<?php foreach ($competition->location as $location): ?>
 				<li>
