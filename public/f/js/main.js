@@ -58,5 +58,11 @@ $(function() {
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-3512083-6', 'cubingchina.com');
     ga('send', 'pageview');
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2ba93b9ebfb91795df4f4859b4ec9716";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
   }
 });
