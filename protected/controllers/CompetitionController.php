@@ -96,7 +96,7 @@ class CompetitionController extends Controller {
 		}
 		$model = new Registration();
 		$model->competition = $competition;
-		if (isset($competition->location[1])) {
+		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}
 		if (isset($_POST['Registration'])) {

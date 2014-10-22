@@ -50,7 +50,7 @@ class EventsForm extends Widget {
 				echo '<br>';
 			}
 			echo CHtml::closeTag('div');
-			if (isset($model->competition->location[1])) {
+			if ($model->competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
 				$locations = array();
 				foreach ($model->competition->location as $location) {

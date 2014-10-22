@@ -16,7 +16,7 @@
 		<dd><?php echo date('Y-m-d', $competition->date) . ($competition->end_date > 0 ? '~' . date('Y-m-d', $competition->end_date) : ''); ?></dd>
 		<dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
 		<dd>
-			<?php if (isset($competition->location[1])): ?>
+			<?php if ($competition->isMultiLocation()): ?>
 			<ol>
 			<?php foreach ($competition->location as $location): ?>
 				<li>
