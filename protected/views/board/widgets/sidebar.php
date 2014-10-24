@@ -66,7 +66,6 @@
 					'label'=>'<i class="fa fa-group"></i> 用户 <i class="fa fa-caret-down"></i>',
 					'url'=>'javascript:;',
 					'active'=>$this->controller->id == 'user',
-					'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
 					'linkOptions'=>array(
 						'data-parent'=>'#side',
 						'data-toggle'=>'collapse',
@@ -84,6 +83,7 @@
 						array(
 							'label'=>'<i class="fa fa-angle-double-right"></i> 用户管理',
 							'url'=>array('/board/user/index'),
+							'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
 						),
 						array(
 							'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
