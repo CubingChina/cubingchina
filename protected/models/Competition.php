@@ -656,6 +656,8 @@ class Competition extends ActiveRecord {
 				$sheet->setCellValue($col . $row, $user->mobile);
 				$col++;
 				$sheet->setCellValue($col . $row, $user->email);
+				$col++;
+				$sheet->setCellValue($col . $row, $registration->comments);
 			}
 			if (!$registration->isAccepted()) {
 				$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(

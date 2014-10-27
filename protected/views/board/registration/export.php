@@ -59,7 +59,7 @@
             <div class="col-lg-10 col-lg-offset-2">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" value="1" name="extra"> 导出报名费、手机及邮箱
+                  <input type="checkbox" value="1" name="extra"> 导出报名费、手机、邮箱及备注
                 </label>
               </div>
             </div>
