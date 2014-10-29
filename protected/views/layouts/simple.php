@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
   <title><?php echo CHtml::encode($this->pageTitle); ?></title>
   <link rel="icon" sizes="196x196" href="/f/images/icon196.png"> 
   <link rel="apple-touch-icon" href="/f/images/icon196.png">

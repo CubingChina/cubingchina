@@ -1527,7 +1527,7 @@ class Competition extends ActiveRecord {
 	public function adminSearch() {
 
 		$criteria = new CDbCriteria;
-
+		$criteria->with = array('location', 'location.province', 'location.city');
 		$criteria->compare('t.id', $this->id,true);
 		$criteria->compare('t.type', $this->type,true);
 		$criteria->compare('t.wca_competition_id', $this->wca_competition_id,true);
@@ -1556,6 +1556,7 @@ class Competition extends ActiveRecord {
 				'organizer'=>array(
 					'together'=>true,
 				),
+				'location', 'location.province', 'location.city'
 			);
 			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
 		}

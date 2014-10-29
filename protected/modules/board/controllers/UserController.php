@@ -32,6 +32,15 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionRegistration() {
+		$model = new Registration();
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('Registration');
+		$this->renderPartial('registration', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionStatistics() {
 		$totalUser = User::model()->countByAttributes(array(
 			'status'=>User::STATUS_NORMAL,
