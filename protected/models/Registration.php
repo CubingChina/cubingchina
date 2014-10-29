@@ -104,7 +104,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getLocation() {
-		return CompetitionLocation::model()->findByAttributes(array(
+		return CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
 			'competition_id'=>$this->competition_id,
 			'location_id'=>$this->location_id,
 		));
@@ -200,9 +200,6 @@ class Registration extends ActiveRecord {
 			array(
 				'name'=>'fee',
 				'header'=>Yii::t('common', 'Fee'),
-				'headerHtmlOptions'=>array(
-					// 'class'=>'header-mobile',
-				),
 				'type'=>'raw', 
 				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")', 
 			),
@@ -218,9 +215,6 @@ class Registration extends ActiveRecord {
 			array(
 				'name'=>'date',
 				'header'=>Yii::t('Registration', 'Registration Date'),
-				'headerHtmlOptions'=>array(
-					// 'class'=>'header-mobile',
-				),
 				'type'=>'raw', 
 				'value'=>'date("Y-m-d H:i:s", $data->date)', 
 			),

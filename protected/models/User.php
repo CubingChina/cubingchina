@@ -221,19 +221,38 @@ class User extends ActiveRecord {
 
 	public function getOperationButton() {
 		$buttons = array();
-		$buttons[] = CHtml::link('编辑', array('/board/user/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
+		$buttons[] = CHtml::tag('button', array(
+			'class'=>'btn btn-xs btn-blue btn-square js-user-registration',
+			'data-id'=>$this->id,
+		), '报名管理');
+		$buttonGroups = array();
+		$buttonGroups[] = '<div class="btn-group">';
+		$buttonGroups[] = CHtml::tag(
+			'button',
+			array(
+				'class'=>'btn btn-default btn-square btn-xs dropdown-toggle',
+				'type'=>'button',
+				'data-toggle'=>'dropdown',
+			),
+			'更多 <span class="caret"></span>'
+		);
+		$buttonGroups[] = '<ul class="dropdown-menu" role="menu">';
+		$buttonGroups[] = CHtml::tag('li', array(), CHtml::link('编辑', array('/board/user/edit', 'id'=>$this->id)));
 		switch ($this->status) {
 			case self::STATUS_BANNED:
-				$buttons[] = CHtml::link('洗白', array('/board/user/enable', 'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+				$buttonGroups[] = CHtml::tag('li', array(), CHtml::link('洗白', array('/board/user/enable', 'id'=>$this->id)));
 				break;
 			case self::STATUS_NORMAL:
-				$buttons[] = CHtml::link('拉黑', array('/board/user/disable', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
-				$buttons[] = CHtml::link('删除', array('/board/user/delete', 'id'=>$this->id), array('class'=>'btn btn-xs btn-orange btn-square delete'));
+				$buttonGroups[] = CHtml::tag('li', array(), CHtml::link('拉黑', array('/board/user/disable', 'id'=>$this->id)));
+				$buttonGroups[] = CHtml::tag('li', array(), CHtml::link('删除', array('/board/user/delete', 'id'=>$this->id), array('class'=>'delete')));
 				break;
 			// case self::STATUS_DELETED:
 			// 	$buttons[] = CHtml::link('恢复', array('/board/user/enable', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
 			// 	break;
 		}
+		$buttonGroups[] = '</ul>';
+		$buttonGroups[] = '</div>';
+		$buttons[] = implode("\n", $buttonGroups);
 		return implode(' ', $buttons);
 	}
 
@@ -362,27 +381,29 @@ class User extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('wcaid',$this->wcaid,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('name_zh',$this->name_zh,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('birthday',$this->birthday,true);
-		$criteria->compare('gender',$this->gender);
-		$criteria->compare('mobile',$this->mobile,true);
-		$criteria->compare('country_id',$this->country_id);
-		$criteria->compare('province_id',$this->province_id);
-		$criteria->compare('city_id',$this->city_id);
-		$criteria->compare('role',$this->role);
-		$criteria->compare('reg_time',$this->reg_time,true);
-		$criteria->compare('reg_ip',$this->reg_ip,true);
-		$criteria->compare('status',$this->status);
+		$criteria->with = array('country', 'province', 'city');
+
+		$criteria->compare('t.id', $this->id);
+		$criteria->compare('t.wcaid', $this->wcaid, true);
+		$criteria->compare('t.name', $this->name, true);
+		$criteria->compare('t.name_zh', $this->name_zh, true);
+		$criteria->compare('t.email', $this->email, true);
+		$criteria->compare('t.password', $this->password, true);
+		$criteria->compare('t.birthday', $this->birthday, true);
+		$criteria->compare('t.gender', $this->gender);
+		$criteria->compare('t.mobile', $this->mobile, true);
+		$criteria->compare('t.country_id', $this->country_id);
+		$criteria->compare('t.province_id', $this->province_id);
+		$criteria->compare('t.city_id', $this->city_id);
+		$criteria->compare('t.role', $this->role);
+		$criteria->compare('t.reg_time', $this->reg_time, true);
+		$criteria->compare('t.reg_ip', $this->reg_ip, true);
+		$criteria->compare('t.status', $this->status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'reg_time DESC',
+				'defaultOrder'=>'t.reg_time DESC',
 			),
 			'pagination'=>array(
 				'pageSize'=>50,

@@ -127,3 +127,39 @@
     </div>
   </div>
 </div>
+<div tabindex="-1" id="modal" class="modal fade">
+  <div class="modal-dialog" style="width: 800px; max-width: 100%">
+    <div class="modal-content">
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+<?php
+$url = $this->createUrl('/board/user/registration');
+Yii::app()->clientScript->registerScript('user',
+<<<EOT
+  var modal = $('#modal');
+  var modalBody = $('#modal .modal-body');
+  $(document).on('click', '.js-user-registration', function() {
+    $.ajax({
+      url: '{$url}',
+      data: {
+        Registration: {
+          user_id: $(this).data('id')
+        }
+      },
+      success: function(data) {
+        modalBody.html(data);
+        modal.modal('show');
+      }
+    })
+  });
+  if ('ontouchstart' in window) {
+    $('.modal.fade').removeClass('fade');
+  }
+EOT
+);
