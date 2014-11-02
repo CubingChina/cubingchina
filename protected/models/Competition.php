@@ -1381,7 +1381,7 @@ class Competition extends ActiveRecord {
 			);
 			$index++;
 		}
-		if ($error) {
+		if ($error || count($temp) == 0) {
 			$this->addError('locations', '地址填写有误，请检查各地址填写！');
 		}
 		$this->locations = $temp;
