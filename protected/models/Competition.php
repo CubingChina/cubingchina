@@ -1345,6 +1345,9 @@ class Competition extends ActiveRecord {
 
 	public function checkLocations() {
 		$locations = $this->locations;
+		if (isset($locations[0]['province_id'])) {
+			return;
+		}
 		if (!isset($locations['province_id'])) {
 			$locations['province_id'] = array();
 		}
