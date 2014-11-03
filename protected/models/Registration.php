@@ -26,9 +26,20 @@ class Registration extends ActiveRecord {
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
 
+	public static function getDailyRegistration() {
+		$data = Yii::app()->db->createCommand()
+			->select('FROM_UNIXTIME(MIN(r.date), "%Y-%m-%d") as day, COUNT(1) AS registration')
+			->from('registration r')
+			->leftJoin('user u', 'r.user_id=u.id')
+			->where('u.status=' . User::STATUS_NORMAL)
+			->group('FROM_UNIXTIME(r.date, "%Y-%m-%d")')
+			->queryAll();
+		return $data;
+	}
+
 	public static function getHourlyRegistration() {
 		$data = Yii::app()->db->createCommand()
-			->select('FROM_UNIXTIME(MIN(r.date), "%k") as hour, COUNT(1) AS registration ')
+			->select('FROM_UNIXTIME(MIN(r.date), "%k") as hour, COUNT(1) AS registration')
 			->from('registration r')
 			->leftJoin('user u', 'r.user_id=u.id')
 			->where('u.status=' . User::STATUS_NORMAL)
