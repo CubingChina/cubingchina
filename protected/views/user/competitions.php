@@ -13,6 +13,11 @@
         'value'=>'$data->competition->getCompetitionLink()',
       ),
       array(
+        'name'=>'competition.date',
+        'type'=>'raw',
+        'value'=>'$data->competition->getDisplayDate()',
+      ),
+      array(
         'name'=>'events',
         'type'=>'raw',
         'value'=>'$data->getRegistrationEvents()',
