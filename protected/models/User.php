@@ -41,7 +41,7 @@ class User extends ActiveRecord {
 
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
-			->select('FROM_UNIXTIME(MIN(reg_time), "%Y-%m-%d") as day, COUNT(1) AS count')
+			->select('FROM_UNIXTIME(MIN(reg_time), "%Y-%m-%d") as day, COUNT(1) AS user')
 			->from('user')
 			->where('status=' . self::STATUS_NORMAL)
 			->group('FROM_UNIXTIME(reg_time, "%Y-%m-%d")')
@@ -104,6 +104,16 @@ class User extends ActiveRecord {
 			->from('user')
 			->where('status=' . self::STATUS_NORMAL)
 			->group('FROM_UNIXTIME(UNIX_TIMESTAMP() - birthday, "%Y")')
+			->queryAll();
+		return $data;
+	}
+
+	public static function getUserWca() {
+		$data = Yii::app()->db->createCommand()
+			->select('CASE WHEN wcaid="" THEN "非WCA" ELSE "WCA" END AS label, COUNT(1) AS value')
+			->from('user')
+			->where('status=' . self::STATUS_NORMAL)
+			->group('(wcaid="")')
 			->queryAll();
 		return $data;
 	}
