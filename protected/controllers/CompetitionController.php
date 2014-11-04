@@ -52,6 +52,9 @@ class CompetitionController extends Controller {
 	public function actionIndex() {
 		$model = new Competition('search');
 		$model->unsetAttributes();
+		$model->year = $this->sGet('year', 'current');
+		$model->type = $this->sGet('type', '');
+		$model->province = $this->sGet('province', '');
 		$model->status = Competition::STATUS_SHOW;
 		$this->title = 'Competition List';
 		$this->pageTitle = array('Competition List');

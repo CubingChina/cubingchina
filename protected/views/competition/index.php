@@ -1,4 +1,38 @@
 <div class="col-lg-12">
+  <?php $form = $this->beginWidget('CActiveForm', array(
+    'htmlOptions'=>array(
+      'role'=>'form',
+      'class'=>'form-inline',
+    ),
+    'method'=>'get',
+    'action'=>array('/competition/index'),
+  )); ?>
+  <?php echo Html::formGroup(
+    $model, 'year', array(),
+    $form->labelEx($model, 'year'),
+    CHtml::dropDownList('year', $model->year, Competition::getYears(), array(
+      'class'=>'form-control',
+      'prompt'=>Yii::t('common', 'All'),
+    ))
+  );?>
+  <?php echo Html::formGroup(
+    $model, 'type', array(),
+    $form->labelEx($model, 'type'),
+    CHtml::dropDownList('type', $model->type, Competition::getTypes(), array(
+      'class'=>'form-control',
+      'prompt'=>Yii::t('common', 'All'),
+    ))
+  );?>
+  <?php echo Html::formGroup(
+    $model, 'province', array(),
+    $form->labelEx($model, 'province'),
+    CHtml::dropDownList('province', $model->province, Region::getProvinces(), array(
+      'class'=>'form-control',
+      'prompt'=>Yii::t('common', 'All'),
+    ))
+  );?>
+  <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
+  <?php $this->endWidget(); ?>
   <?php $this->widget('GridView', array(
     'dataProvider'=>$model->search(),
     // 'filter'=>false,

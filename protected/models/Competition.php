@@ -44,6 +44,9 @@ class Competition extends ActiveRecord {
 	private $_schedules;
 	private $_description;
 
+	public $year;
+	public $province;
+
 	public static function formatTime($second) {
 		$second = intval($second);
 		if ($second <= 0) {
@@ -194,6 +197,22 @@ class Competition extends ActiveRecord {
 		);
 	}
 
+	public static function getYears() {
+		$years = array(
+			'current'=>Yii::t('common', 'Current'),
+		);
+		$lastCompetition = self::model()->findByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'order'=>'date DESC',
+			'select'=>'date',
+		));
+		for ($year = intval(date('Y', $lastCompetition->date)); $year >= 2006; $year--) {
+			$years[$year] = $year;
+		}
+		return $years;
+	}
+
 	public static function getAllStatus() {
 		return array(
 			self::STATUS_HIDE=>'隐藏', 
@@ -234,6 +253,10 @@ class Competition extends ActiveRecord {
 
 	public function isMultiLocation() {
 		return isset($this->location[1]);
+	}
+
+	public function isOld() {
+		return $this->old_competition_id > 0;
 	}
 
 	public function isScheduleFinished() {
@@ -401,6 +424,38 @@ class Competition extends ActiveRecord {
 
 	public function setOrganizers($organizers) {
 		$this->_organizers = $organizers;
+	}
+
+	public function getOldOrganizer() {
+		return $this->old->organizer;
+	}
+
+	public function setOldOrganizerZh($organizerZh) {
+		$this->old->organizer_zh = $organizerZh;
+	}
+
+	public function getOldOrganizerZh() {
+		return $this->old->organizer_zh;
+	}
+
+	public function setOldOrganizer($organizer) {
+		$this->old->organizer = $organizer;
+	}
+
+	public function getOldDelegate() {
+		return $this->old->delegate;
+	}
+
+	public function setOldDelegateZh($delegateZh) {
+		$this->old->delegate_zh = $delegateZh;
+	}
+
+	public function getOldDelegateZh() {
+		return $this->old->delegate_zh;
+	}
+
+	public function setOldDelegate($delegate) {
+		$this->old->delegate = $delegate;
 	}
 
 	public function getDelegates() {
@@ -1248,6 +1303,9 @@ class Competition extends ActiveRecord {
 	}
 
 	protected function afterSave() {
+		if (Yii::app() instanceof CConsoleApplication) {
+			return;
+		}
 		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_DELEGATE);
 		//处理代表和主办
 		foreach (array('organizer', 'delegate') as $attribute) {
@@ -1313,6 +1371,9 @@ class Competition extends ActiveRecord {
 			}
 			$location->attributes = $value;
 			$location->save(false);
+		}
+		if ($this->isOld()) {
+			$this->old->save(false);
 		}
 	}
 
@@ -1403,8 +1464,8 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		return array(
-			array('organizers, name, name_zh, date, reg_end', 'required'),
+		$rules = array(
+			array('name, name_zh, date, reg_end', 'required'),
 			array('province_id, city_id, entry_fee, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
@@ -1419,11 +1480,17 @@ class Competition extends ActiveRecord {
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
-			array('organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
+			array('oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
+			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
+		if (!$this->isOld()) {
+			$rules[] = array('organizers', 'required');
+		} else {
+			$rules[] = array('oldOrganizer, oldOrganizerZh', 'required');
+		}
+		return $rules;
 	}
 
 	/**
@@ -1436,6 +1503,7 @@ class Competition extends ActiveRecord {
 			'organizer'=>array(self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'),
 			'delegate'=>array(self::HAS_MANY, 'CompetitionDelegate', 'competition_id'),
 			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id'),
+			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
 		);
 	}
@@ -1472,6 +1540,8 @@ class Competition extends ActiveRecord {
 			'status' => Yii::t('Competition', 'Status'),
 			'organizers' => Yii::t('Competition', 'Organizers'),
 			'delegates' => Yii::t('Competition', 'Delegates'),
+			'year' => Yii::t('common', 'Year'),
+			'province' => Yii::t('common', 'Province'),
 		);
 	}
 
@@ -1487,7 +1557,7 @@ class Competition extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search() {
+	public function search($admin = false) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria = new CDbCriteria;
@@ -1515,46 +1585,25 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.check_person', $this->check_person);
 		$criteria->compare('t.status', $this->status);
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'sort'=>array(
-				'defaultOrder'=>'date DESC',
-			),
-			'pagination'=>array(
-				'pageVar'=>'page',
-				'pageSize'=>50,
-			),
-		));
-	}
+		if (!$admin) {
+			if ($this->year === 'current') {
+				$criteria->compare('t.date', '>=' . (time() - 86400 * 184));
+			} elseif (in_array($this->year, self::getYears())) {
+				$criteria->compare('t.date', '>=' . strtotime($this->year . '-01-01'));
+				$criteria->compare('t.date', '<=' . strtotime($this->year . '-12-31'));
+			}
+			if ($this->province > 0) {
+				unset($criteria->with[0]);
+				$criteria->with = array(
+					'location'=>array(
+						'together'=>true,
+					),
+				);
+				$criteria->compare('location.province_id', $this->province);
+			}
+		}
 
-	public function adminSearch() {
-
-		$criteria = new CDbCriteria;
-		$criteria->with = array('location', 'location.province', 'location.city');
-		$criteria->compare('t.id', $this->id,true);
-		$criteria->compare('t.type', $this->type,true);
-		$criteria->compare('t.wca_competition_id', $this->wca_competition_id,true);
-		$criteria->compare('t.name', $this->name,true);
-		$criteria->compare('t.name_zh', $this->name_zh,true);
-		$criteria->compare('t.date', $this->date,true);
-		$criteria->compare('t.end_date', $this->end_date,true);
-		$criteria->compare('t.reg_end', $this->reg_end,true);
-		$criteria->compare('t.province_id', $this->province_id);
-		$criteria->compare('t.city_id', $this->city_id);
-		$criteria->compare('t.venue', $this->venue,true);
-		$criteria->compare('t.venue_zh', $this->venue_zh,true);
-		$criteria->compare('t.events', $this->events,true);
-		$criteria->compare('t.entry_fee', $this->entry_fee);
-		$criteria->compare('t.alipay_url', $this->alipay_url,true);
-		$criteria->compare('t.information', $this->information,true);
-		$criteria->compare('t.information_zh', $this->information_zh,true);
-		$criteria->compare('t.travel', $this->travel,true);
-		$criteria->compare('t.travel_zh', $this->travel_zh,true);
-		$criteria->compare('t.person_num', $this->person_num);
-		$criteria->compare('t.check_person', $this->check_person);
-		$criteria->compare('t.status', $this->status);
-
-		if (Yii::app()->controller->user->isOrganizer()) {
+		if ($admin && Yii::app()->controller->user->isOrganizer()) {
 			$criteria->with = array(
 				'organizer'=>array(
 					'together'=>true,
@@ -1567,10 +1616,11 @@ class Competition extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'t.date DESC',
+				'defaultOrder'=>'date DESC',
 			),
 			'pagination'=>array(
-				'pageSize'=>50,
+				'pageVar'=>'page',
+				'pageSize'=>100,
 			),
 		));
 	}

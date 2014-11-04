@@ -17,9 +17,12 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'All' => '所有',
+  'Current' => '近期',
   'Fee' => '',
   'WCA Competition' => '',
   'WCA ID' => '',
+  'Year' => '年份',
   'About us' => '關於本站',
   'Average of 5' => '五次計平均',
   'Best of 1' => '單次計最好',

@@ -10,7 +10,7 @@
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
           <?php $this->widget('GridView', array(
-            'dataProvider'=>$model->adminSearch(),
+            'dataProvider'=>$model->search(true),
             'columns'=>array(
               array(
                 'header'=>'操作',

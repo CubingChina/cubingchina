@@ -152,35 +152,58 @@
               )),
               $form->error($model, 'reg_end', array('class'=>'text-danger'))
             );?>
-            <?php echo Html::formGroup(
-              $model, 'organizers', array(
-                'class'=>'col-lg-12',
-              ),
-              $form->labelEx($model, 'organizers', array(
-                'label'=>'主办方',
-              )),
-              $form->checkBoxList($model, 'organizers', CHtml::listData($organizers, 'id', 'name_zh'), array(
-                'uncheckValue'=>'',
-                'container'=>'div',
-                'separator'=>'',
-                'class'=>'form-control organizer',
-                'labelOptions'=>array(
-                  'class'=>'checkbox-inline hidden',
+            <?php
+            if ($model->isOld()) {
+              echo Html::formGroup(
+                $model, 'organizers', array(
+                  'class'=>'col-lg-12',
                 ),
-                'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-              )),
-              CHtml::textField('', '', array(
-                'class'=>'form-control tokenfield',
-                'placeholder'=>'输入名字或拼音',
-              )),
-              $form->error($model, 'organizers', array('class'=>'text-danger'))
-            );?>
+                $form->labelEx($model, 'oldOrganizer', array(
+                  'label'=>'主办方',
+                )),
+                Html::activeTextField($model, 'oldOrganizerZh'),
+                $form->error($model, 'oldOrganizerZh', array('class'=>'text-danger')),
+                Html::activeTextField($model, 'oldOrganizer'),
+                $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
+              );
+            } else {
+              echo Html::formGroup(
+                $model, 'organizers', array(
+                  'class'=>'col-lg-12',
+                ),
+                $form->labelEx($model, 'organizers', array(
+                  'label'=>'主办方',
+                )),
+                $form->checkBoxList($model, 'organizers', CHtml::listData($organizers, 'id', 'name_zh'), array(
+                  'uncheckValue'=>'',
+                  'container'=>'div',
+                  'separator'=>'',
+                  'class'=>'form-control organizer',
+                  'labelOptions'=>array(
+                    'class'=>'checkbox-inline hidden',
+                  ),
+                  'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
+                )),
+                CHtml::textField('', '', array(
+                  'class'=>'form-control tokenfield',
+                  'placeholder'=>'输入名字或拼音',
+                )),
+                $form->error($model, 'organizers', array('class'=>'text-danger'))
+              );
+            } ?>
             <?php echo Html::formGroup(
               $model, 'delegates', array(
                 'class'=>'col-lg-12',
               ),
               $form->labelEx($model, 'delegates', array(
                 'label'=>'代表',
+              )),
+              !$model->isOld() ? '' : implode('', array(
+                CHtml::tag('span', array(), $model->old->delegate_zh),
+                Html::activeTextField($model, 'oldDelegateZh'),
+                $form->error($model, 'oldDelegateZh', array('class'=>'text-danger')),
+                Html::activeTextField($model, 'oldDelegate'),
+                $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
               )),
               $form->checkBoxList($model, 'delegates', CHtml::listData($delegates, 'id', 'name_zh'), array(
                 'uncheckValue'=>'',

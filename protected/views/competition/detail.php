@@ -30,18 +30,27 @@
 		</dd>
 		<dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
 		<dd>
+			<?php if ($competition->isOld()): ?>
+			<?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('organizer')); ?>
+			<?php else: ?>
 			<?php foreach ($competition->organizer as $key=>$organizer): ?>
 			<?php if ($key > 0) echo Yii::t('common', ', '); ?>
-			<span><?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $organizer->user->getAttributeValue('name'), $organizer->user->email); ?></span>
+			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $organizer->user->getAttributeValue('name'), $organizer->user->email); ?>
 			<?php endforeach; ?>
+			<?php endif; ?>
 		</dd>
 		<?php if ($competition->delegate !== array()): ?>
 		<dt><?php echo Yii::t('Competition', 'Delegates'); ?></dt>
 		<dd>
 			<?php foreach ($competition->delegate as $key=>$delegate): ?>
 			<?php if ($key > 0) echo Yii::t('common', ', '); ?>
-			<span><?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $delegate->user->getAttributeValue('name'), $delegate->user->email); ?></span>
+			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $delegate->user->getAttributeValue('name'), $delegate->user->email); ?>
 			<?php endforeach; ?>
+		</dd>
+		<?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
+		<dt><?php echo Yii::t('Competition', 'Delegates'); ?></dt>
+		<dd>
+			<?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('delegate')); ?>
 		</dd>
 		<?php endif; ?>
 		<dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
