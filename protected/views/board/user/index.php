@@ -13,6 +13,7 @@
             'dataProvider'=>$model->search(),
             'template'=>'{pager}{items}{pager}',
             'afterAjaxUpdate'=>'js:function(){$(".tips").tooltip()}',
+            'rowCssClassExpression'=>'$data->isBanned() ? "danger" : ""',
             'filter'=>$model,
             'columns'=>array(
               array(
