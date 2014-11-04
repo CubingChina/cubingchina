@@ -44,6 +44,9 @@ class Competition extends ActiveRecord {
 	private $_schedules;
 	private $_description;
 
+	public $year;
+	public $province;
+
 	public static function formatTime($second) {
 		$second = intval($second);
 		if ($second <= 0) {
@@ -192,6 +195,22 @@ class Competition extends ActiveRecord {
 			self::TYPE_WCA=>self::TYPE_WCA,
 			self::TYPE_OTHER=>'其它',
 		);
+	}
+
+	public static function getYears() {
+		$years = array(
+			'current'=>Yii::t('common', 'Current'),
+		);
+		$lastCompetition = self::model()->findByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'order'=>'date DESC',
+			'select'=>'date',
+		));
+		for ($year = intval(date('Y', $lastCompetition->date)); $year >= 2006; $year--) {
+			$years[$year] = $year;
+		}
+		return $years;
 	}
 
 	public static function getAllStatus() {
@@ -1464,7 +1483,7 @@ class Competition extends ActiveRecord {
 			array('oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
+			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
 		if (!$this->isOld()) {
 			$rules[] = array('organizers', 'required');
@@ -1521,6 +1540,8 @@ class Competition extends ActiveRecord {
 			'status' => Yii::t('Competition', 'Status'),
 			'organizers' => Yii::t('Competition', 'Organizers'),
 			'delegates' => Yii::t('Competition', 'Delegates'),
+			'year' => Yii::t('common', 'Year'),
+			'province' => Yii::t('common', 'Province'),
 		);
 	}
 
@@ -1563,6 +1584,24 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.person_num', $this->person_num);
 		$criteria->compare('t.check_person', $this->check_person);
 		$criteria->compare('t.status', $this->status);
+
+		if (!$admin) {
+			if ($this->year === 'current') {
+				$criteria->compare('t.date', '>=' . (time() - 86400 * 184));
+			} elseif (in_array($this->year, self::getYears())) {
+				$criteria->compare('t.date', '>=' . strtotime($this->year . '-01-01'));
+				$criteria->compare('t.date', '<=' . strtotime($this->year . '-12-31'));
+			}
+			if ($this->province > 0) {
+				unset($criteria->with[0]);
+				$criteria->with = array(
+					'location'=>array(
+						'together'=>true,
+					),
+				);
+				$criteria->compare('location.province_id', $this->province);
+			}
+		}
 
 		if ($admin && Yii::app()->controller->user->isOrganizer()) {
 			$criteria->with = array(
