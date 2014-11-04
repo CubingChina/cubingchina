@@ -198,7 +198,13 @@
               $form->labelEx($model, 'delegates', array(
                 'label'=>'代表',
               )),
-              $model->isOld() ? $model->old->delegate : '',
+              !$model->isOld() ? '' : implode('', array(
+                CHtml::tag('span', array(), $model->old->delegate_zh),
+                Html::activeTextField($model, 'oldDelegateZh'),
+                $form->error($model, 'oldDelegateZh', array('class'=>'text-danger')),
+                Html::activeTextField($model, 'oldDelegate'),
+                $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
+              )),
               $form->checkBoxList($model, 'delegates', CHtml::listData($delegates, 'id', 'name_zh'), array(
                 'uncheckValue'=>'',
                 'container'=>'div',

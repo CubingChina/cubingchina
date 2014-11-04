@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'old_competition':
  * @property string $id
  * @property string $delegate
+ * @property string $delegate_zh
  * @property string $organizer
  * @property string $organizer_zh
  */
@@ -63,11 +64,11 @@ class OldCompetition extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('delegate, organizer, organizer_zh', 'required'),
-			array('delegate, organizer, organizer_zh', 'length', 'max'=>255),
+			array('delegate, delegate_zh, organizer, organizer_zh', 'required'),
+			array('delegate, delegate_zh, organizer, organizer_zh', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, delegate, organizer, organizer_zh', 'safe', 'on'=>'search'),
+			array('id, delegate, delegate_zh, organizer, organizer_zh', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -88,6 +89,7 @@ class OldCompetition extends ActiveRecord {
 		return array(
 			'id'=>'ID',
 			'delegate'=>'Delegate',
+			'delegate_zh'=>'Delegate Zh',
 			'organizer'=>'Organizer',
 			'organizer_zh'=>'Organizer Zh',
 		);
@@ -105,6 +107,7 @@ class OldCompetition extends ActiveRecord {
 
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('delegate', $this->delegate, true);
+		$criteria->compare('delegate_zh', $this->delegate_zh, true);
 		$criteria->compare('organizer', $this->organizer, true);
 		$criteria->compare('organizer_zh', $this->organizer_zh, true);
 

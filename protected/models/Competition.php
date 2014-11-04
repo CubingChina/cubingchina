@@ -423,6 +423,22 @@ class Competition extends ActiveRecord {
 		$this->old->organizer = $organizer;
 	}
 
+	public function getOldDelegate() {
+		return $this->old->delegate;
+	}
+
+	public function setOldDelegateZh($delegateZh) {
+		$this->old->delegate_zh = $delegateZh;
+	}
+
+	public function getOldDelegateZh() {
+		return $this->old->delegate_zh;
+	}
+
+	public function setOldDelegate($delegate) {
+		$this->old->delegate = $delegate;
+	}
+
 	public function getDelegates() {
 		if ($this->_delegates === null) {
 			$this->_delegates = CHtml::listData($this->delegate, 'delegate_id', 'delegate_id');
@@ -1445,7 +1461,7 @@ class Competition extends ActiveRecord {
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
-			array('oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
+			array('oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
@@ -1565,7 +1581,7 @@ class Competition extends ActiveRecord {
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',
-				'pageSize'=>50,
+				'pageSize'=>100,
 			),
 		));
 	}

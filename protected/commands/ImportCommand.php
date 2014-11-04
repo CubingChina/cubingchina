@@ -4,6 +4,23 @@ class ImportCommand extends CConsoleCommand {
 	private $_cityId = 217;
 
 	public function actionCompetition() {
+		$provinces = CHtml::listData(Region::getRegionsByPid(1), 'id', 'name_zh');
+		$cities = Yii::app()->db
+			->cache(86400)
+			->createCommand()
+			->select('*')
+			->from('region')
+			->where('pid>1')
+			->order('id')
+			->queryAll();
+		$allCities = array();
+		foreach ($cities as $city) {
+			if (!isset($allCities[$city['pid']])) {
+				$allCities[$city['pid']] = array();
+			}
+			$allCities[$city['pid']][$city['id']] = $city['name_zh'];
+		}
+		$cities = $allCities;
 		$db = Yii::app()->db;
 		$db->createCommand()->truncateTable('old_competition');
 		$oldEvents = $db->createCommand()
@@ -22,7 +39,7 @@ class ImportCommand extends CConsoleCommand {
 		foreach ($oldCompetitions as $oldCompetition) {
 			$competition = new Competition();
 			//基本信息
-			$competition->name_zh = $oldCompetition['比赛名称'];
+			$competition->name_zh = str_replace(' ', '', $oldCompetition['比赛名称']);
 			$competition->date = strtotime($oldCompetition['比赛日期']);
 			if ($oldCompetition['天数'] > 1) {
 				$competition->end_date = $competition->date + 86400 * ($oldCompetition['天数'] - 1);
@@ -31,8 +48,29 @@ class ImportCommand extends CConsoleCommand {
 			$competition->old_competition_id = $oldCompetition['比赛id'];
 			//地点
 			$location = new CompetitionLocation();
-			$location->province_id = $this->_provinceId;
-			$location->city_id = $this->_cityId;
+			$detected = false;
+			$address = $oldCompetition['地址'] . $oldCompetition['比赛名称'];
+			foreach ($provinces as $provinceId=>$province) {
+				if (strpos($address, $province) !== false) {
+					$location->province_id = $provinceId;
+					$location->city_id = $this->_cityId;
+					foreach ($cities[$provinceId] as $cityId=>$city) {
+						if (mb_strlen($city, 'utf-8') > 2) {
+							$city = mb_substr($city, 0, -1, 'utf-8');
+						}
+						if (strpos($address, $city) !== false) {
+							$location->city_id = $cityId;
+							break;
+						}
+					}
+					$detected = true;
+					break;
+				}
+			}
+			if (!$detected) {
+				$location->province_id = $this->_provinceId;
+				$location->city_id = $this->_cityId;
+			}
 			$location->venue_zh = $oldCompetition['地址'];
 			$competition->location = array($location);
 
@@ -66,7 +104,7 @@ class ImportCommand extends CConsoleCommand {
 			//代表和主办
 			$oldComp = new OldCompetition();
 			$oldComp->id = $oldCompetition['比赛id'];
-			$oldComp->delegate = OldCompetition::generateInfo($this->makeInfo($oldCompetition['监督代表']));
+			$oldComp->delegate_zh = OldCompetition::generateInfo($this->makeInfo($oldCompetition['监督代表']));
 			$organizer = $this->makeInfo($oldCompetition['主办方']);
 			if ($oldCompetition['主办电邮']) {
 				$organizer[0]['email'] = $oldCompetition['主办电邮'];
@@ -80,18 +118,41 @@ class ImportCommand extends CConsoleCommand {
 				->from('cubingchina_mf8.比赛成绩')
 				->leftJoin('cubingchina_mf8.比赛项目', '比赛项目.项目id=比赛成绩.项目id')
 				->where('比赛成绩.事件id=' . $oldCompetition['比赛id'])
-				->group('比赛成绩.项目id')
+				->group('比赛成绩.项目id, 比赛成绩.第N轮')
 				->queryAll();
 			if ($resultEvents !== array()) {
 				foreach ($resultEvents as $value) {
 					$eventName = $value['项目名'];
 					$event = isset($this->_eventsMap[$eventName]) ? $this->_eventsMap[$eventName] : 'funny';
-					$events[$event] = array(
-						'round'=>1,
-						'fee'=>0,
-					);
+					if (!isset($events[$event])) {
+						$events[$event] = array(
+							'round'=>0,
+							'fee'=>0,
+						);
+					}
+					$events[$event]['round']++;
 				}
-			} else {
+			}
+			if ($events === array() && $competition->wca_competition_id !== '') {
+				$resultEvents = Results::model()->findAllByAttributes(array(
+					'competitionId'=>$competition->wca_competition_id,
+				), array(
+					'group'=>'eventId,roundId',
+				));
+				if ($resultEvents !== array()) {
+					foreach ($resultEvents as $value) {
+						$event = $value->eventId;
+						if (!isset($events[$event])) {
+							$events[$event] = array(
+								'round'=>0,
+								'fee'=>0,
+							);
+						}
+						$events[$event]['round']++;
+					}
+				}
+			}
+			if ($events === array()) {
 				for ($i = 0; $i < strlen($oldCompetition['比赛项目']); $i++) {
 					if ($oldCompetition['比赛项目']{$i}) {
 						$eventName = $oldEvents[$i + 1]['项目名'];
