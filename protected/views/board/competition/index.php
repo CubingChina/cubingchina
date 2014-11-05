@@ -11,22 +11,24 @@
         <div class="portlet-body">
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(true),
+            'filter'=>$model,
             'columns'=>array(
               array(
                 'header'=>'操作',
                 'type'=>'raw',
                 'value'=>'$data->operationButton',
               ),
-              'id',
               array(
                 'name'=>'date',
                 'type'=>'raw',
                 'value'=>'$data->getDisplayDate()',
+                'filter'=>false,
               ),
               array(
                 'name'=>'type',
                 'type'=>'raw',
                 'value'=>'$data->getTypeText()',
+                'filter'=>Competition::getTypes(),
               ),
               'name_zh',
               array(
@@ -34,23 +36,27 @@
                 'type'=>'raw',
                 'value'=>'$data->getLocationInfo("province")',
                 'sortable'=>false,
+                'filter'=>false,
               ),
               array(
                 'name'=>'city_id',
                 'type'=>'raw',
                 'value'=>'$data->getLocationInfo("city")',
                 'sortable'=>false,
+                'filter'=>false,
               ),
               array(
                 'name'=>'venue',
                 'type'=>'raw',
                 'value'=>'$data->getLocationInfo("venue")',
                 'sortable'=>false,
+                'filter'=>false,
               ),
               array(
                 'name'=>'status',
                 'type'=>'raw',
                 'value'=>'$data->getStatusText()',
+                'filter'=>Competition::getAllStatus(),
               ),
             ),
           )); ?>
