@@ -62,6 +62,38 @@ class Controller extends CController {
 		return $name;
 	}
 
+	public function setReferrer($section = null, $referrer = null) {
+		if ($referrer === null) {
+			$referrer = Yii::app()->request->getUrlReferrer();
+		}
+		$referrer = CHtml::normalizeUrl($referrer);
+		if ($section === null) {
+			$section = md5(serialize(array(
+				$this->id,
+				$this->action->id,
+				$_GET,
+			)));
+		}
+		if (!isset($_SESSION['referrer'][$section])) {
+			$_SESSION['referrer'][$section] = $referrer;
+		}
+	}
+
+	public function getReferrer($section = null, $destroy = true) {
+		if ($section === null) {
+			$section = md5(serialize(array(
+				$this->id,
+				$this->action->id,
+				$_GET,
+			)));
+		}
+		$referrer = isset($_SESSION['referrer'][$section]) ? $_SESSION['referrer'][$section] : Yii::app()->request->getUrlReferrer();
+		if ($destroy) {
+			unset($_SESSION['referrer'][$section]);
+		}
+		return $referrer;
+	}
+
 	public function getNavibar() {
 		if ($this->_navibar === null) {
 			$this->setNavibar(array(
