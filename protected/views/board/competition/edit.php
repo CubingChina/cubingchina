@@ -217,6 +217,7 @@
                 'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
               )),
               $form->checkBoxList($model, 'delegates', CHtml::listData($ccaDelegates, 'id', 'name_zh'), array(
+                'uncheckValue'=>null,
                 'container'=>'div',
                 'baseID'=>'cca_delegates',
                 'separator'=>'',
