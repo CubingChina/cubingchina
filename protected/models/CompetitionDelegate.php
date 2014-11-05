@@ -38,7 +38,7 @@ class CompetitionDelegate extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'user'=>array(self::BELONGS_TO, 'Delegate', 'delegate_id'),
+			'user'=>array(self::BELONGS_TO, 'User', 'delegate_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 		);
 	}

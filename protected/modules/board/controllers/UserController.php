@@ -159,30 +159,6 @@ class UserController extends AdminController {
 		return $temp;
 	}
 
-	public function actionAdd() {
-		$model = new User();
-		$model->birthday = '';
-		$model->province_id = $model->city_id = '';
-		if (isset($_POST['User'])) {
-			$model->attributes = $_POST['User'];
-			$model->handleDate();
-			if ($model->save()) {
-				Yii::app()->user->setFlash('success', '新加用户成功');
-				$this->redirect(array('/board/user/index'));
-			}
-		}
-		$model->formatDate();
-		$roles = User::getRoles();
-		$genders = User::getGenders();
-		$cities = Region::getAllCities();
-		$this->render('edit', array(
-			'model'=>$model,
-			'roles'=>$roles,
-			'genders'=>$genders,
-			'cities'=>$cities,
-		));
-	}
-
 	public function actionEdit() {
 		$id = $this->iGet('id');
 		$model = User::model()->findByPk($id);
@@ -199,11 +175,13 @@ class UserController extends AdminController {
 		}
 		$model->formatDate();
 		$roles = User::getRoles();
+		$identities = User::getIdentities();
 		$genders = User::getGenders();
 		$cities = Region::getAllCities();
 		$this->render('edit', array(
 			'model'=>$model,
 			'roles'=>$roles,
+			'identities'=>$identities,
 			'genders'=>$genders,
 			'cities'=>$cities,
 		));

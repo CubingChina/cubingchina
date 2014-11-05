@@ -205,9 +205,20 @@
                 Html::activeTextField($model, 'oldDelegate'),
                 $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
               )),
-              $form->checkBoxList($model, 'delegates', CHtml::listData($delegates, 'id', 'name_zh'), array(
+              $form->checkBoxList($model, 'delegates', CHtml::listData($wcaDelegates, 'id', 'name_zh'), array(
                 'uncheckValue'=>'',
+                'baseID'=>'wca_delegates',
                 'container'=>'div',
+                'separator'=>'',
+                'class'=>'form-control',
+                'labelOptions'=>array(
+                  'class'=>'checkbox-inline',
+                ),
+                'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
+              )),
+              $form->checkBoxList($model, 'delegates', CHtml::listData($ccaDelegates, 'id', 'name_zh'), array(
+                'container'=>'div',
+                'baseID'=>'cca_delegates',
                 'separator'=>'',
                 'class'=>'form-control',
                 'labelOptions'=>array(
@@ -404,6 +415,15 @@ Yii::app()->clientScript->registerScript('competition',
     if (city.find('option').length == 2) {
       city.find('option:last').prop('selected', true);
     }
+  }).on('change', '#Competition_type', function() {
+    var type = $(this).val();
+    if (type === 'WCA') {
+      $('#wca_delegates').show();
+      $('#cca_delegates').hide();
+    } else {
+      $('#cca_delegates').show();
+      $('#wca_delegates').hide();
+    }
   }).on('keydown', '.token-input', function(e) {
     if (e.which == 13) {
       e.preventDefault();
@@ -417,7 +437,8 @@ Yii::app()->clientScript->registerScript('competition',
     $('#Competition_reg_start').datetimepicker('setEndDate', date);
     $('#Competition_reg_end').datetimepicker('setEndDate', date);
   });
-  $('#Competition_date').trigger('changeDate')
+  $('#Competition_date').trigger('changeDate');
+  $('#Competition_type').trigger('change');
   var organizers = {$organizerNames};
   var engine = new Bloodhound({
     local: {$datum},

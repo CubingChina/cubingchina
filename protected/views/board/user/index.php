@@ -121,6 +121,15 @@
                 'type'=>'raw',
                 'value'=>'$data->getRoleName()',
               ),
+              array(
+                'headerHtmlOptions'=>array(
+                  'class'=>'header-role',
+                ),
+                'filter'=>User::getIdentities(),
+                'name'=>'identity',
+                'type'=>'raw',
+                'value'=>'$data->getIdentityName()',
+              ),
             ),
           )); ?>
         </div>
