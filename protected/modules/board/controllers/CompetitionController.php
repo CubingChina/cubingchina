@@ -39,7 +39,8 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$delegates = Delegate::getDelegates();
+		$wcaDelegates = User::getDelegates(User::IDENTITY_WCA_DELEGATE);
+		$ccaDelegates = User::getDelegates(User::IDENTITY_CCA_DELEGATE);
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$checkPersons = Competition::getCheckPersons();
@@ -51,7 +52,8 @@ class CompetitionController extends AdminController {
 			'normalEvents'=>$normalEvents,
 			'otherEvents'=>$otherEvents,
 			'cities'=>$cities,
-			'delegates'=>$delegates,
+			'wcaDelegates'=>$wcaDelegates,
+			'ccaDelegates'=>$ccaDelegates,
 			'organizers'=>$organizers,
 			'types'=>$types,
 			'checkPersons'=>$checkPersons,
@@ -107,7 +109,8 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$delegates = Delegate::getDelegates();
+		$wcaDelegates = User::getDelegates(User::IDENTITY_WCA_DELEGATE);
+		$ccaDelegates = User::getDelegates(User::IDENTITY_CCA_DELEGATE);
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$checkPersons = Competition::getCheckPersons();
@@ -122,7 +125,8 @@ class CompetitionController extends AdminController {
 			'normalEvents'=>$normalEvents,
 			'otherEvents'=>$otherEvents,
 			'cities'=>$cities,
-			'delegates'=>$delegates,
+			'wcaDelegates'=>$wcaDelegates,
+			'ccaDelegates'=>$ccaDelegates,
 			'organizers'=>$organizers,
 			'types'=>$types,
 			'checkPersons'=>$checkPersons,

@@ -25,7 +25,7 @@
           )); ?>
           <?php echo Html::formGroup(
             $model, 'name_zh', array(
-              'class'=>'col-lg-6',
+              'class'=>'col-lg-3 col-md-6',
             ),
             $form->labelEx($model, 'name_zh', array(
               'label'=>'中文名',
@@ -35,13 +35,34 @@
           );?>
           <?php echo Html::formGroup(
             $model, 'name', array(
-              'class'=>'col-lg-6',
+              'class'=>'col-lg-3 col-md-6',
             ),
             $form->labelEx($model, 'name', array(
               'label'=>'英文名',
             )),
             Html::activeTextField($model, 'name'),
             $form->error($model, 'name', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix hidden-lg"></div>
+          <?php echo Html::formGroup(
+            $model, 'email', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'email', array(
+              'label'=>'邮箱',
+            )),
+            Html::activeTextField($model, 'email'),
+            $form->error($model, 'email', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'mobile', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'mobile', array(
+              'label'=>'手机号码',
+            )),
+            Html::activeTextField($model, 'mobile'),
+            $form->error($model, 'mobile', array('class'=>'text-danger'))
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
@@ -124,14 +145,16 @@
           );?>
           <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
-            $model, 'mobile', array(
+            $model, 'identity', array(
               'class'=>'col-lg-3 col-md-6',
             ),
-            $form->labelEx($model, 'mobile', array(
-              'label'=>'手机号码',
+            $form->labelEx($model, 'identity', array(
+              'label'=>'身份',
             )),
-            Html::activeTextField($model, 'mobile'),
-            $form->error($model, 'mobile', array('class'=>'text-danger'))
+            $form->dropDownList($model, 'identity', $identities, array(
+              'class'=>'form-control',
+            )),
+            $form->error($model, 'identity', array('class'=>'text-danger'))
           );?>
           <?php echo Html::formGroup(
             $model, 'role', array(
