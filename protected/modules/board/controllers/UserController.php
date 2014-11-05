@@ -194,7 +194,7 @@ class UserController extends AdminController {
 			$model->handleDate();
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '编辑用户成功');
-				$this->redirect(array('/board/user/index'));
+				$this->redirect($this->getReferrer());
 			}
 		}
 		$model->formatDate();

@@ -25,6 +25,7 @@ class AdminController extends Controller {
 				}
 			}
 			Yii::app()->language = 'zh_cn';
+			$this->setReferrer();
 			return true;
 		}
 		return false;

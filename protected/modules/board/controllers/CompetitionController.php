@@ -66,11 +66,11 @@ class CompetitionController extends AdminController {
 		}
 		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
-			$this->redirect(array('/board/competition/index'));
+			$this->redirect($this->getReferrer());
 		}
 		// if ($this->user->isOrganizer() && $model->isPublic()) {
 		// 	Yii::app()->user->setFlash('warning', '该比赛已公示，编辑请联系代表');
-		// 	$this->redirect(array('/board/competition/index'));
+		// 	$this->redirect($this->getReferrer());
 		// }
 		// $model->unsetAttributes();
 		$cannotEditAttr = array(
@@ -101,7 +101,7 @@ class CompetitionController extends AdminController {
 			// CVarDumper::dump($model->attributes, 10, 1);exit;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
-				$this->redirect(array('/board/competition/index'));
+				$this->redirect($this->getReferrer());
 			}
 			$model->formatSchedule();
 		}

@@ -40,7 +40,7 @@ class NewsController extends AdminController {
 			$model->attributes = $_POST['News'];
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新新闻成功');
-				$this->redirect(array('/board/news/index'));
+				$this->redirect($this->getReferrer());
 			}
 		}
 		$model->formatDate();
