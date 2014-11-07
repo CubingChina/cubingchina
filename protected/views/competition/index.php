@@ -36,6 +36,7 @@
   <?php $this->widget('GridView', array(
     'dataProvider'=>$model->search(),
     // 'filter'=>false,
+    'template'=>'{summary}{items}{pager}',
     'enableSorting'=>false,
     'front'=>true,
     'emptyText'=>Yii::t('Competition', 'No competitions now.'),
