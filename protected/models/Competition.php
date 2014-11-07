@@ -193,7 +193,7 @@ class Competition extends ActiveRecord {
 	public static function getTypes() {
 		return array(
 			self::TYPE_WCA=>self::TYPE_WCA,
-			self::TYPE_OTHER=>'其它',
+			self::TYPE_OTHER=>Yii::t('common', 'Other'),
 		);
 	}
 
