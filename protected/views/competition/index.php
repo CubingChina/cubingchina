@@ -26,7 +26,7 @@
   <?php echo Html::formGroup(
     $model, 'province', array(),
     $form->labelEx($model, 'province'),
-    CHtml::dropDownList('province', $model->province, Region::getProvinces(), array(
+    CHtml::dropDownList('province', $model->province, Region::getProvinces(false), array(
       'class'=>'form-control',
       'prompt'=>Yii::t('common', 'All'),
     ))
