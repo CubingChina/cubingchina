@@ -133,23 +133,18 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionShow() {
-		if ($this->user->isOrganizer()) {
-			throw new CHttpException(403, '权限不足');
-		}
-		$id = $this->iGet('id');
-		$model = Competition::model()->findByPk($id);
-		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}
-		$model->formatEvents();
-		$model->formatDate();
-		$model->status = Competition::STATUS_SHOW;
-		$model->save();
-		Yii::app()->user->setFlash('success', '公示比赛成功');
-		$this->redirect(Yii::app()->request->urlReferrer);
+		$this->toggleStatus(Competition::STATUS_SHOW, '公示比赛');
 	}
 
 	public function actionHide() {
+		$this->toggleStatus(Competition::STATUS_HIDE, '隐藏比赛');
+	}
+
+	public function actionDelete() {
+		$this->toggleStatus(Competition::STATUS_DELETE, '删除比赛');
+	}
+
+	private function toggleStatus($status, $messsage) {
 		if ($this->user->isOrganizer()) {
 			throw new CHttpException(403, '权限不足');
 		}
@@ -160,9 +155,13 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$model->status = Competition::STATUS_HIDE;
-		$model->save();
-		Yii::app()->user->setFlash('success', '隐藏比赛成功');
+		$model->status = $status;
+		if ($model->save()) {
+			Yii::app()->user->setFlash('success', $messsage . '成功');
+		} else {
+			Yii::app()->user->setFlash('danger', $messsage . '失败');
+		}
 		$this->redirect(Yii::app()->request->urlReferrer);
+
 	}
 }

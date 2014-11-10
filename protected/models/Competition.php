@@ -628,6 +628,7 @@ class Competition extends ActiveRecord {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
 					$buttons[] = CHtml::link('公示', array('/board/competition/show', 'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+					$buttons[] = CHtml::link('删除', array('/board/competition/delete', 'id'=>$this->id), array('class'=>'btn btn-xs btn-default btn-square delete'));
 					break;
 				case self::STATUS_SHOW:
 					$buttons[] = CHtml::link('隐藏', array('/board/competition/hide', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
@@ -1583,7 +1584,14 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.travel_zh', $this->travel_zh,true);
 		$criteria->compare('t.person_num', $this->person_num);
 		$criteria->compare('t.check_person', $this->check_person);
-		$criteria->compare('t.status', $this->status);
+		if ($this->status) {
+			$criteria->compare('t.status', $this->status);
+		} else {
+			$criteria->compare('t.status', array(
+				Competition::STATUS_SHOW,
+				Competition::STATUS_HIDE,
+			));
+		}
 
 		if (!$admin) {
 			if ($this->year === 'current') {
