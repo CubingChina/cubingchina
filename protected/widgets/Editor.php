@@ -36,6 +36,10 @@ class Editor extends Widget {
       ]
     });
     editors[id] = editor;
+    this.blur();
+    window.setTimeout(function() {
+      editor.focus();
+    }, 10);
     that.off('focus');
   });
 EOT
