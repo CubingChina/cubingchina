@@ -116,10 +116,6 @@ class CompetitionController extends AdminController {
 		$this->toggleStatus(Competition::STATUS_HIDE, '隐藏比赛');
 	}
 
-	public function actionDelete() {
-		$this->toggleStatus(Competition::STATUS_DELETE, '删除比赛');
-	}
-
 	private function toggleStatus($status, $messsage) {
 		if ($this->user->isOrganizer()) {
 			throw new CHttpException(403, '权限不足');
