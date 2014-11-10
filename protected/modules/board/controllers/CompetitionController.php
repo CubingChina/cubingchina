@@ -17,7 +17,6 @@ class CompetitionController extends AdminController {
 		$model = new Competition();
 		$model->date = $model->end_date = $model->reg_start = $model->reg_end = '';
 		$model->province_id = $model->city_id = '';
-		// $model->unsetAttributes();
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
 			if ($model->save()) {
@@ -39,25 +38,7 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$wcaDelegates = User::getDelegates(User::IDENTITY_WCA_DELEGATE);
-		$ccaDelegates = User::getDelegates(User::IDENTITY_CCA_DELEGATE);
-		$organizers = User::getOrganizers();
-		$types = Competition::getTypes();
-		$checkPersons = Competition::getCheckPersons();
-		$normalEvents = Events::getNormalEvents();
-		$otherEvents = Events::getOtherEvents();
-		$cities = Region::getAllCities();
-		$this->render('edit', array(
-			'model'=>$model,
-			'normalEvents'=>$normalEvents,
-			'otherEvents'=>$otherEvents,
-			'cities'=>$cities,
-			'wcaDelegates'=>$wcaDelegates,
-			'ccaDelegates'=>$ccaDelegates,
-			'organizers'=>$organizers,
-			'types'=>$types,
-			'checkPersons'=>$checkPersons,
-		));
+		$this->render('edit', $this->getCompetitionData($model));
 	}
 
 	public function actionEdit() {
@@ -70,23 +51,14 @@ class CompetitionController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
-		// if ($this->user->isOrganizer() && $model->isPublic()) {
-		// 	Yii::app()->user->setFlash('warning', '该比赛已公示，编辑请联系代表');
-		// 	$this->redirect($this->getReferrer());
-		// }
-		// $model->unsetAttributes();
 		$cannotEditAttr = array(
 			'name',
 			'name_zh',
 			'type',
-			// 'province_id',
-			// 'city_id',
 			'date',
 			'end_date',
 			'delegates',
 			'locations',
-			// 'venue',
-			// 'venue_zh',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
@@ -108,6 +80,13 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
+		if ($this->user->isOrganizer() && $model->isPublic()) {
+			Yii::app()->user->setFlash('warning', '该比赛已公示，名字、时间等部分信息不能修改，如需修改请联系管理员');
+		}
+		$this->render('edit', $this->getCompetitionData($model));
+	}
+
+	private function getCompetitionData($model) {
 		$wcaDelegates = User::getDelegates(User::IDENTITY_WCA_DELEGATE);
 		$ccaDelegates = User::getDelegates(User::IDENTITY_CCA_DELEGATE);
 		$organizers = User::getOrganizers();
@@ -116,10 +95,7 @@ class CompetitionController extends AdminController {
 		$normalEvents = Events::getNormalEvents();
 		$otherEvents = Events::getOtherEvents();
 		$cities = Region::getAllCities();
-		if ($this->user->isOrganizer() && $model->isPublic()) {
-			Yii::app()->user->setFlash('warning', '该比赛已公示，名字、时间等部分信息不能修改，如需修改请联系管理员');
-		}
-		$this->render('edit', array(
+		return array(
 			'model'=>$model,
 			'normalEvents'=>$normalEvents,
 			'otherEvents'=>$otherEvents,
@@ -129,27 +105,22 @@ class CompetitionController extends AdminController {
 			'organizers'=>$organizers,
 			'types'=>$types,
 			'checkPersons'=>$checkPersons,
-		));
+		);
 	}
 
 	public function actionShow() {
-		if ($this->user->isOrganizer()) {
-			throw new CHttpException(403, '权限不足');
-		}
-		$id = $this->iGet('id');
-		$model = Competition::model()->findByPk($id);
-		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}
-		$model->formatEvents();
-		$model->formatDate();
-		$model->status = Competition::STATUS_SHOW;
-		$model->save();
-		Yii::app()->user->setFlash('success', '公示比赛成功');
-		$this->redirect(Yii::app()->request->urlReferrer);
+		$this->toggleStatus(Competition::STATUS_SHOW, '公示比赛');
 	}
 
 	public function actionHide() {
+		$this->toggleStatus(Competition::STATUS_HIDE, '隐藏比赛');
+	}
+
+	public function actionDelete() {
+		$this->toggleStatus(Competition::STATUS_DELETE, '删除比赛');
+	}
+
+	private function toggleStatus($status, $messsage) {
 		if ($this->user->isOrganizer()) {
 			throw new CHttpException(403, '权限不足');
 		}
@@ -160,9 +131,13 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$model->status = Competition::STATUS_HIDE;
-		$model->save();
-		Yii::app()->user->setFlash('success', '隐藏比赛成功');
+		$model->status = $status;
+		if ($model->save()) {
+			Yii::app()->user->setFlash('success', $messsage . '成功');
+		} else {
+			Yii::app()->user->setFlash('danger', $messsage . '失败');
+		}
 		$this->redirect(Yii::app()->request->urlReferrer);
+
 	}
 }
