@@ -1111,7 +1111,7 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.travel_zh', $this->travel_zh,true);
 		$criteria->compare('t.person_num', $this->person_num);
 		$criteria->compare('t.check_person', $this->check_person);
-		if ($this->status) {
+		if ($this->status !== '') {
 			$criteria->compare('t.status', $this->status);
 		} else {
 			$criteria->compare('t.status', array(
