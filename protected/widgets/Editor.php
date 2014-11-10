@@ -9,12 +9,15 @@ class Editor extends Widget {
 		$clientScript->registerScript('editor',
 <<<EOT
   var editors = window.editors = {};
-  $('.editor').each(function(i) {
+  $('.editor').on('focus', function(e) {
     var that = $(this);
     var id = that.attr('id');
     if (id === undefined) {
-      id = 'editor_' + i;
+      id = 'editor_' + that.index('.editor');
       that.attr('id', id);
+    }
+    if (editors[id]) {
+      return;
     }
     var editor = KindEditor.create('#' + id, {
       height: 300,
@@ -33,6 +36,7 @@ class Editor extends Widget {
       ]
     });
     editors[id] = editor;
+    that.off('focus');
   });
 EOT
 		);

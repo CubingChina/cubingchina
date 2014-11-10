@@ -17,19 +17,20 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'ID' => '',
+  'Identity' => '身份',
+  'Password' => '',
   'Birthday' => '生日',
   'City' => '城市',
-  'Region' => '地區',
   'Email' => '郵箱',
   'Gender' => '性別',
-  'ID' => '',
   'Local Name' => '中文名',
   'Mobile' => '手機號',
   'Name' => '英文名',
-  'Password' => '',
   'Province' => '省份',
   'Reg Ip' => '註冊IP',
   'Reg Time' => '註冊時間',
+  'Region' => '地區',
   'Role' => '角色',
   'Status' => '狀態',
   'Wcaid' => 'WCA ID',
