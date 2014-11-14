@@ -34,7 +34,7 @@ a,
 a:hover,
 a:active,
 a:focus {
-    color: #34495e;
+    /*color: #34495e;*/
 }
 
 @media(min-width:768px) {
