@@ -922,7 +922,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkName() {
-		if (!preg_match('{^[\'-a-z0-9 ]+$}i', $this->name)) {
+		if (!preg_match('{^[\'-a-z0-9& ]+$}i', $this->name)) {
 			$this->addError('name', '英文名只能由字母、数字、空格、短杠-和单引号\'组成');
 		}
 		if (!preg_match('{^[a-z0-9 \x{4e00}-\x{9fc0}“”]+$}iu', $this->name_zh)) {
