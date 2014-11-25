@@ -241,7 +241,11 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationFull() {
-		return $this->person_num > 0 && Registration::model()->countByAttributes(array(
+		return $this->person_num > 0 && Registration::model()->with(array(
+			'user'=>array(
+				'condition'=>'user.status=' . User::STATUS_NORMAL,
+			),
+		))->countByAttributes(array(
 			'competition_id'=>$this->id,
 			'status'=>Registration::STATUS_ACCEPTED,
 		)) >= $this->person_num;
