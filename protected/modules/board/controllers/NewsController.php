@@ -92,22 +92,115 @@ class NewsController extends AdminController {
 		$competition = Competition::model()->findByPk($this->iRequest('competition_id'));
 		$template = NewsTemplate::model()->findByPk($this->iRequest('template_id'));
 		if ($competition === null || $template === null) {
-			$this->ajaxOK(array());
+			$this->ajaxOK(null);
 		}
 		$attributes = $template->attributes;
+		$data = $this->generateTemplateData($competition);
+		set_error_handler(function($errno, $errstr) {
+			throw new Exception($errstr);
+		});
+		try {
+			foreach ($attributes as $key=>$attribute) {
+				$attributes[$key] = preg_replace_callback('|\{([^}]+)\}|i', function($matches) use($data) {
+					$result = $this->evaluateExpression($matches[1], $data);
+					if (is_array($result)) {
+						$result = CHtml::normalizeUrl($result);
+					}
+					return $result;
+				}, $attribute);
+			}
+		} catch (Exception $e) {
+			throw $e;
+			$this->ajaxOK(null);
+		}
+		$this->ajaxOK($attributes);
+	}
+
+	private function generateTemplateData($competition) {
 		$data = array(
 			'competition'=>$competition,
 		);
-		foreach ($attributes as $key=>$attribute) {
-			$attributes[$key] = preg_replace_callback('|\{([^}]+)\}|i', function($matches) use($data) {
-				$result = $this->evaluateExpression($matches[1], $data);
-				if (is_array($result)) {
-					$result = CHtml::normalizeUrl($result);
-				}
-				return $result;
-			}, $attribute);
+		if ($competition->wca_competition_id == '') {
+			return $data;
 		}
-		$this->ajaxOK($attributes);
+		$events = CHtml::listData(Results::model()->findAllByAttributes(array(
+			'competitionId'=>$competition->wca_competition_id,
+		), array(
+			'group'=>'eventId',
+			'select'=>'eventId,COUNT(1) AS average'
+		)), 'eventId', 'average');
+		if ($events === array()) {
+			return $data;
+		}
+		arsort($events);
+		$eventId = array_keys($events)[0];
+		$primaryEvents = array(
+			'333',
+			'777',
+			'666',
+			'555',
+			'444',
+			'222',
+			'333fm',
+			'333oh',
+			'333ft',
+			'333bf',
+			'444bf',
+			'555bf',
+		);
+		foreach ($primaryEvents as $event) {
+			if (isset($events[$event])) {
+				$eventId = $event;
+				break;
+			}
+		}
+		$results = Results::model()->findAllByAttributes(array(
+			'competitionId'=>$competition->wca_competition_id,
+			'roundId'=>array(
+				'c',
+				'f',
+			),
+			'eventId'=>$eventId,
+			'pos'=>array(1, 2, 3),
+		), array(
+			'order'=>'eventId, pos',
+		));
+		if (count($results) < 3) {
+			return $data;
+		}
+		$event = new stdClass();
+		$event->name = Events::getFullEventName($eventId);
+		$event->name_zh = Yii::t('event', $event->name);
+		$data['event'] = $event;
+		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
+		foreach ($winners as $key=>$top3) {
+			$temp = $$top3 = new stdClass();
+			$result = $results[$key];
+			$temp->name = $result->personName;
+			$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
+			$temp->link = CHtml::link($temp->name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $result->personId, array('target'=>'_blank'));
+			$temp->link_zh = CHtml::link($temp->name_zh, 'https://www.worldcubeassociation.org/results/p.php?i=' . $result->personId, array('target'=>'_blank'));
+			$temp->score = Results::formatTime($result->average, $result->eventId);
+			$temp->score_zh = Results::formatTime($result->average, $result->eventId);
+			if ($top3 === 'winner') {
+				switch ($eventId) {
+					case '333fm':
+						$temp->score .= ' turns';
+						$temp->score_zh .= '步';
+						break;
+					default:
+						if (is_numeric($temp->score)) {
+							$temp->score .= ' seconds';
+							$temp->score_zh .= '秒';
+						}
+						break;
+				}
+			}
+			$data[$top3] = $$top3;
+		}
+		$data['records'] = '';
+		$data['records_zh'] = '';
+		return $data;
 	}
 
 	public function actionShow() {
