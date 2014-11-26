@@ -100,10 +100,11 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getUpcomingCompetitions($limit = 5) {
+		$yesterday = strtotime('yesterday');
 		return self::model()->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		), array(
-			'condition'=>'date>' . time(),
+			'condition'=>"date > {$yesterday} OR end_date > {$yesterday}",
 			'limit'=>$limit,
 			'order'=>'date ASC',
 		));
@@ -251,8 +252,13 @@ class Competition extends ActiveRecord {
 		)) >= $this->person_num;
 	}
 
+	public function isInProgress() {
+		$now = time();
+		return $now > $this->date && $now - 86400 < max($this->date, $this->end_date + 86400);
+	}
+
 	public function isEnded() {
-		return time() > $this->date;
+		return time() - 86400 > max($this->date, $this->end_date);
 	}
 
 	public function isMultiLocation() {
