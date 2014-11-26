@@ -24,6 +24,60 @@
  * @property string $regionalAverageRecord
  */
 class Results extends ActiveRecord {
+
+	public static function formatTime($result, $eventId, $encode = true) {
+		if ($result == -1) {
+			return 'DNF';
+		}
+		if ($result == -2) {
+			return 'DNS';
+		}
+		if ($result == 0) {
+			return '';
+		}
+		if($eventId == '333fm') {
+			if ($result > 1000) {
+				$time = sprintf('%.2f', $result / 100);
+			} else {
+				$time = $result;
+			}
+		} elseif($eventId == '333mbf' || ($eventId == '333mbo' && strlen($result) == 9)) {
+			$difference = 99 - substr($result, 0, 2);
+			$missed = intval(substr($result, -2));
+			$time = self::formatGMTime(substr($result, 3, -2), true);
+			$solved = $difference + $missed;
+			$attempted = $solved + $missed;
+			$time = $solved . '/' . $attempted . ' ' . $time;
+		} elseif($eventId == '333mbo') {
+			$solved = 99 - substr($result, 1, 2);
+			$attempted = intval(substr($result, 3, 2));
+			$time = self::formatGMTime(substr($result, -5), true);
+			$time = $solved . '/' . $attempted . ' ' . $time;
+		} else {
+			$msecond = substr($result, -2);
+			$second = substr($result, 0, -2);
+			$time = self::formatGMTime(intval($second)) . '.' . $msecond;
+		}
+		if ($encode) {
+			$time = CHtml::encode($time);
+		}
+		return $time;
+	}
+	
+	/**
+	 * 
+	 * @param int $time 要被格式化的时间
+	 * @param boolean $multi 是否是多盲
+	 */
+	private static function formatGMTime($time, $multi = false) {
+		if ($multi && $time == '99999') {
+			return 'unknown';
+		} else if ($time == 0) {
+			return '0';
+		}
+		return ltrim(gmdate('G:i:s', $time), '0:');
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

@@ -122,6 +122,10 @@
 							'label'=>'<i class="fa fa-angle-double-right"></i> 发布新闻',
 							'url'=>array('/board/news/add'),
 						),
+						array(
+							'label'=>'<i class="fa fa-angle-double-right"></i> 新闻模板',
+							'url'=>array('/board/news/template'),
+						),
 					),
 				),
 			)
