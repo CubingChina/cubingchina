@@ -13,7 +13,7 @@
  * @property integer $average
  * @property string $personName
  * @property string $personId
- * @property string $countryId
+ * @property string $countryCountryId
  * @property string $formatId
  * @property integer $value1
  * @property integer $value2
@@ -98,11 +98,11 @@ class Results extends ActiveRecord {
 			array('roundId, formatId', 'length', 'max'=>1),
 			array('personName', 'length', 'max'=>80),
 			array('personId', 'length', 'max'=>10),
-			array('countryId', 'length', 'max'=>50),
+			array('countryCountryId', 'length', 'max'=>50),
 			array('regionalSingleRecord, regionalAverageRecord', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competitionId, eventId, roundId, pos, best, average, personName, personId, countryId, formatId, value1, value2, value3, value4, value5, regionalSingleRecord, regionalAverageRecord', 'safe', 'on'=>'search'),
+			array('id, competitionId, eventId, roundId, pos, best, average, personName, personId, countryCountryId, formatId, value1, value2, value3, value4, value5, regionalSingleRecord, regionalAverageRecord', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -130,7 +130,7 @@ class Results extends ActiveRecord {
 			'average' => Yii::t('Results', 'Average'),
 			'personName' => Yii::t('Results', 'Person Name'),
 			'personId' => Yii::t('Results', 'Person'),
-			'countryId' => Yii::t('Results', 'Country'),
+			'countryCountryId' => Yii::t('Results', 'Country'),
 			'formatId' => Yii::t('Results', 'Format'),
 			'value1' => Yii::t('Results', 'Value1'),
 			'value2' => Yii::t('Results', 'Value2'),
@@ -168,7 +168,7 @@ class Results extends ActiveRecord {
 		$criteria->compare('average',$this->average);
 		$criteria->compare('personName',$this->personName,true);
 		$criteria->compare('personId',$this->personId,true);
-		$criteria->compare('countryId',$this->countryId,true);
+		$criteria->compare('countryCountryId',$this->countryCountryId,true);
 		$criteria->compare('formatId',$this->formatId,true);
 		$criteria->compare('value1',$this->value1);
 		$criteria->compare('value2',$this->value2);
