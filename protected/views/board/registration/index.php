@@ -19,7 +19,7 @@
       <?php echo Html::formGroup(
         $model, 'competition_id', array(),
         $form->dropDownList($model, 'competition_id', Competition::getRegistrationCompetitions(), array(
-        'prompt'=>'',
+          'prompt'=>'',
         ))
       ); ?>
       <?php $this->endWidget(); ?>

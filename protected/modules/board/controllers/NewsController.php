@@ -1,5 +1,6 @@
 <?php
 class NewsController extends AdminController {
+
 	public function accessRules() {
 		return array(
 			array(
@@ -12,6 +13,7 @@ class NewsController extends AdminController {
 			),
 		);
 	}
+
 	public function actionAdd() {
 		$model = new News();
 		$model->user_id = $this->user->id;
@@ -30,6 +32,7 @@ class NewsController extends AdminController {
 			'model'=>$model,
 		));
 	}
+
 	public function actionEdit() {
 		$id = $this->iGet('id');
 		$model = News::model()->findByPk($id);
@@ -48,6 +51,7 @@ class NewsController extends AdminController {
 			'model'=>$model,
 		));
 	}
+
 	public function actionIndex() {
 		$model = new News();
 		$model->unsetAttributes();
@@ -56,6 +60,56 @@ class NewsController extends AdminController {
 			'model'=>$model,
 		));
 	}
+
+	public function actionEditTemplate() {
+		$id = $this->iGet('id');
+		$model = NewsTemplate::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if (isset($_POST['NewsTemplate'])) {
+			$model->attributes = $_POST['NewsTemplate'];
+			if ($model->save()) {
+				Yii::app()->user->setFlash('success', '更新新闻模板成功');
+				$this->redirect($this->getReferrer());
+			}
+		}
+		$this->render('editTemplate', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionTemplate() {
+		$model = new NewsTemplate();
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('NewsTemplate');
+		$this->render('template', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionRender() {
+		$competition = Competition::model()->findByPk($this->iRequest('competition_id'));
+		$template = NewsTemplate::model()->findByPk($this->iRequest('template_id'));
+		if ($competition === null || $template === null) {
+			$this->ajaxOK(array());
+		}
+		$attributes = $template->attributes;
+		$data = array(
+			'competition'=>$competition,
+		);
+		foreach ($attributes as $key=>$attribute) {
+			$attributes[$key] = preg_replace_callback('|\{([^}]+)\}|i', function($matches) use($data) {
+				$result = $this->evaluateExpression($matches[1], $data);
+				if (is_array($result)) {
+					$result = CHtml::normalizeUrl($result);
+				}
+				return $result;
+			}, $attribute);
+		}
+		$this->ajaxOK($attributes);
+	}
+
 	public function actionShow() {
 		$id = $this->iGet('id');
 		$model = News::model()->findByPk($id);
@@ -68,6 +122,7 @@ class NewsController extends AdminController {
 		Yii::app()->user->setFlash('success', '发布新闻成功');
 		$this->redirect(Yii::app()->request->urlReferrer);
 	}
+
 	public function actionHide() {
 		$id = $this->iGet('id');
 		$model = News::model()->findByPk($id);
