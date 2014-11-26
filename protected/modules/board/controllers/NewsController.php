@@ -173,6 +173,20 @@ class NewsController extends AdminController {
 		$event->name_zh = Yii::t('event', $event->name);
 		$data['event'] = $event;
 		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
+		switch ($eventId) {
+			case '333fm':
+				$unit = array(
+					'en'=>' turns',
+					'zh'=>'步',
+				);
+				break;
+			default:
+				$unit = array(
+					'en'=>' seconds',
+					'zh'=>'秒',
+				);
+				break;
+		}
 		foreach ($winners as $key=>$top3) {
 			$temp = $$top3 = new stdClass();
 			$result = $results[$key];
@@ -183,24 +197,139 @@ class NewsController extends AdminController {
 			$temp->score = Results::formatTime($result->average, $result->eventId);
 			$temp->score_zh = Results::formatTime($result->average, $result->eventId);
 			if ($top3 === 'winner') {
-				switch ($eventId) {
-					case '333fm':
-						$temp->score .= ' turns';
-						$temp->score_zh .= '步';
-						break;
-					default:
-						if (is_numeric($temp->score)) {
-							$temp->score .= ' seconds';
-							$temp->score_zh .= '秒';
-						}
-						break;
+				if (is_numeric($temp->score)) {
+					$temp->score .= $unit['en'];
+					$temp->score_zh .= $unit['zh'];
 				}
+			} elseif (is_numeric($temp->score)) {
+				$temp->score_zh .= $unit['zh'];
 			}
 			$data[$top3] = $$top3;
 		}
-		$data['records'] = '';
-		$data['records_zh'] = '';
+		$data['records'] = array();
+		$data['records_zh'] = array();
+		$recordResults = Results::model()->findAllByAttributes(array(
+			'competitionId'=>$competition->wca_competition_id,
+		), array(
+			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
+			'order'=>'best, average',
+		));
+		$records = array();
+		foreach ($recordResults as $record) {
+			if ($record->regionalSingleRecord) {
+				$records[$record->regionalSingleRecord]['single'][] = $record;
+			}
+			if ($record->regionalAverageRecord) {
+				$records[$record->regionalAverageRecord]['average'][] = $record;
+			}
+		}
+		if (isset($records['WR'])) {
+			$rec = $this->makeRecords($records['WR']);
+			$data['records'][] = sprintf('World records: %s.', $rec['en']);
+			$data['records_zh'][] = sprintf('世界纪录：%s。', $rec['zh']);
+		}
+		$continents = array(
+			'AfR'=>array(
+				'en'=>'Africa',
+				'zh'=>'非洲',
+			),
+			'AsR'=>array(
+				'en'=>'Asia',
+				'zh'=>'亚洲',
+			),
+			'OcR'=>array(
+				'en'=>'Oceania',
+				'zh'=>'大洋洲',
+			),
+			'ER'=>array(
+				'en'=>'Europe',
+				'zh'=>'欧洲',
+			),
+			'NAR'=>array(
+				'en'=>'North America',
+				'zh'=>'北美洲',
+			),
+			'SAR'=>array(
+				'en'=>'South America',
+				'zh'=>'南美洲',
+			),
+		);
+		foreach ($continents as $cr=>$continent) {
+			if (isset($records[$cr])) {
+				$rec = $this->makeRecords($records[$cr]);
+				$data['records'][] = sprintf('%s records: %s.', $continent['en'], $rec['en']);
+				$data['records_zh'][] = sprintf('%s纪录：%s。', $continent['zh'], $rec['zh']);
+			}
+		}
+		if (isset($records['NR'])) {
+			$rec = $this->makeRecords($records['NR'], true);
+			foreach ($rec['en'] as $country=>$re) {
+				$re = implode(', ', $re);
+				$data['records'][] =sprintf('%s records: %s.', $country, $re);
+			}
+			foreach ($rec['zh'] as $country=>$re) {
+				$re = implode('；', $re);
+				switch ($country) {
+					case 'China':
+						$country = '中国';
+						break;
+					case 'Hong Kong':
+						$country = '香港';
+						break;
+					case 'Macau':
+						$country = '澳门';
+						break;
+					case 'Taiwan':
+						$country = '台湾';
+						break;
+				}
+				$data['records_zh'][] =sprintf('%s纪录：%s.', $country, $re);
+			}
+		}
+		$data['records'] = implode('<br>', $data['records']);
+		$data['records_zh'] = implode('<br>', $data['records_zh']);
+		if (!empty($data['records'])) {
+			$data['records'] = '<br>' . $data['records'];
+			$data['records_zh'] = '<br>' . $data['records_zh'];
+		}
 		return $data;
+	}
+
+	private function makeRecords($records, $isNR = false) {
+		$rec = array(
+			'en'=>array(),
+			'zh'=>array(),
+		);
+		foreach ($records as $type=>$recs) {
+			foreach ($recs as $result) {
+				$eventName = Events::getFullEventName($result->eventId);
+				$time = Results::formatTime($type === 'average' ? $result->average : $result->best, $result->eventId);
+				$temp = new stdClass();
+				$temp->name = $result->personName;
+				$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
+				$temp->link = CHtml::link($temp->name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $result->personId, array('target'=>'_blank'));
+				$temp->link_zh = CHtml::link($temp->name_zh, 'https://www.worldcubeassociation.org/results/p.php?i=' . $result->personId, array('target'=>'_blank'));
+				if ($result->eventId === '333fm') {
+					$unit = '步';
+				} elseif (is_numeric($time)) {
+					$unit = '秒';
+				} else {
+					$unit = '';
+				}
+				if ($isNR) {
+					$rec['en'][$result->personCountryId][] = sprintf('%s %s %s (%s)', $temp->link, $eventName, $time, $type);
+					$rec['zh'][$result->personCountryId][] = sprintf('%s的%s记录（%s%s），创造者%s', Yii::t('event', $eventName), $type === 'average' ? '平均' : '单次', $time, $unit, $temp->link_zh);
+				} else {
+					$rec['en'][] = sprintf('%s %s %s (%s)', $temp->link, $eventName, $time, $type);
+					$rec['zh'][] = sprintf('%s的%s记录（%s%s），创造者%s', Yii::t('event', $eventName), $type === 'average' ? '平均' : '单次', $time, $unit, $temp->link_zh);
+				}
+			}
+		}
+		if (!$isNR) {
+			$rec['en'] = implode(', ', $rec['en']);
+			$rec['zh'] = implode('；', $rec['zh']);
+		}
+		return $rec;
 	}
 
 	public function actionShow() {
