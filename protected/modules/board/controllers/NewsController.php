@@ -203,7 +203,7 @@ class NewsController extends AdminController {
 		if (isset($records['WR'])) {
 			$rec = $this->makeRecords($records['WR']);
 			$data['records'][] = sprintf('World records: %s.', $rec['en']);
-			$data['records_zh'][] = sprintf('世界记录：%s。', $rec['zh']);
+			$data['records_zh'][] = sprintf('世界纪录：%s。', $rec['zh']);
 		}
 		$continents = array(
 			'AfR'=>array(
@@ -235,7 +235,7 @@ class NewsController extends AdminController {
 			if (isset($records[$cr])) {
 				$rec = $this->makeRecords($records[$cr]);
 				$data['records'][] = sprintf('%s records: %s.', $continent['en'], $rec['en']);
-				$data['records_zh'][] = sprintf('%s记录：%s。', $continent['zh'], $rec['zh']);
+				$data['records_zh'][] = sprintf('%s纪录：%s。', $continent['zh'], $rec['zh']);
 			}
 		}
 		if (isset($records['NR'])) {
@@ -260,7 +260,7 @@ class NewsController extends AdminController {
 						$country = '台湾';
 						break;
 				}
-				$data['records_zh'][] =sprintf('%s记录：%s.', $country, $re);
+				$data['records_zh'][] =sprintf('%s纪录：%s.', $country, $re);
 			}
 		}
 		$data['records'] = implode('<br>', $data['records']);
@@ -350,7 +350,7 @@ class NewsController extends AdminController {
 					$temp->score,
 					$type
 				);
-				$zhRec = sprintf('%s的%s记录（%s），创造者%s',
+				$zhRec = sprintf('%s的%s纪录（%s），创造者%s',
 					Yii::t('event', $eventName),
 					$type === 'average' ? '平均' : '单次',
 					$temp->score_zh,
