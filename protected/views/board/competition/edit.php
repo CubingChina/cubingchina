@@ -214,7 +214,7 @@
                     Html::activeTextField($model, 'oldDelegate'),
                     $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
                   )),
-                  $form->checkBoxList($model, 'delegates', CHtml::listData($wcaDelegates, 'id', 'name_zh'), array(
+                  $form->checkBoxList($model, 'delegates', $wcaDelegates, array(
                     'uncheckValue'=>'',
                     'baseID'=>'wca_delegates',
                     'container'=>'div',
@@ -225,7 +225,7 @@
                     ),
                     'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
                   )),
-                  $form->checkBoxList($model, 'delegates', CHtml::listData($ccaDelegates, 'id', 'name_zh'), array(
+                  $form->checkBoxList($model, 'delegates', $ccaDelegates, array(
                     'uncheckValue'=>null,
                     'container'=>'div',
                     'baseID'=>'cca_delegates',
