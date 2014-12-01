@@ -3,6 +3,7 @@ protected/vendor/*
 protected/composer.lock
 protected/config/wcaDb
 protected/commands/shell/last
+.tag*
 
 # Except this file
 !.gitignore

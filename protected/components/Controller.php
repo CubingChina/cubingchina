@@ -186,7 +186,7 @@ class Controller extends CController {
 	public function setNavibar($navibar) {
 		$navibar = array_merge($navibar, array(
 			array(
-				'label'=>sprintf('<i class="fa fa-user"></i> %s <i class="fa fa-angle-down"></i>', Yii::app()->user->isGuest ? '' : $this->user->getAttributeValue('name')),
+				'label'=>sprintf('<i class="fa fa-user"></i> %s <i class="fa fa-angle-down"></i>', Yii::app()->user->isGuest ? '' : $this->user->getAttributeValue('name', true)),
 				'url'=>'#',
 				'active'=>$this->id === 'user',
 				'itemOptions'=>array(
