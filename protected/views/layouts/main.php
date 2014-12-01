@@ -17,7 +17,7 @@
           <p class="phone"><?php echo CHtml::link('<i class="fa fa-sign-in"></i>' . Yii::t('common', 'Login'), array('/site/login')); ?></p>
           <p class="email"><?php echo CHtml::link('<i class="fa fa-user"></i>' . Yii::t('common', 'Register'), array('/site/register')); ?></p>
           <?php else: ?>
-          <p class="phone"><?php echo CHtml::link('<i class="fa fa-user"></i>' . $this->user->getAttributeValue('name'), array('/user/profile')); ?></p>
+          <p class="phone"><?php echo CHtml::link('<i class="fa fa-user"></i>' . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
           <p class="email"><?php echo CHtml::link('<i class="fa fa-sign-out"></i>' . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
           <?php endif; ?>
         </div>

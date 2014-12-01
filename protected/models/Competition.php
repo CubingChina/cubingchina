@@ -342,11 +342,11 @@ class Competition extends ActiveRecord {
 		$count = count($this->organizer);
 		foreach ($this->organizer as $key=>$organizer) {
 			if ($key == 0) {
-				$organizers .= $organizer->user->getAttributeValue('name');
+				$organizers .= $organizer->user->getAttributeValue('name', true);
 			} elseif ($key < $count - 1) {
-				$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name');
+				$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name', true);
 			} else {
-				$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name');
+				$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name', true);
 			}
 		}
 		$params['{organizers}'] = $organizers;
@@ -354,11 +354,11 @@ class Competition extends ActiveRecord {
 		$count = count($this->delegate);
 		foreach ($this->delegate as $key=>$delegate) {
 			if ($key == 0) {
-				$delegates .= $delegate->user->getAttributeValue('name');
+				$delegates .= $delegate->user->getAttributeValue('name', true);
 			} elseif ($key < $count - 1) {
-				$delegates .= Yii::t('common', ', ') . $delegate->user->getAttributeValue('name');
+				$delegates .= Yii::t('common', ', ') . $delegate->user->getAttributeValue('name', true);
 			} else {
-				$delegates .= Yii::t('common', ' and ') . $delegate->user->getAttributeValue('name');
+				$delegates .= Yii::t('common', ' and ') . $delegate->user->getAttributeValue('name', true);
 			}
 		}
 		$params['{delegates}'] = $delegates;

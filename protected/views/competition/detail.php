@@ -35,7 +35,7 @@
 			<?php else: ?>
 			<?php foreach ($competition->organizer as $key=>$organizer): ?>
 			<?php if ($key > 0) echo Yii::t('common', ', '); ?>
-			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $organizer->user->getAttributeValue('name'), $organizer->user->email); ?>
+			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $organizer->user->getAttributeValue('name', true), $organizer->user->email); ?>
 			<?php endforeach; ?>
 			<?php endif; ?>
 		</dd>
@@ -44,7 +44,7 @@
 		<dd>
 			<?php foreach ($competition->delegate as $key=>$delegate): ?>
 			<?php if ($key > 0) echo Yii::t('common', ', '); ?>
-			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . ($delegate->user->getAttributeValue('name') ?: $delegate->user->name), $delegate->user->email); ?>
+			<?php echo CHtml::mailto('<i class="fa fa-envelope"></i> ' . $delegate->user->getAttributeValue('name', true), $delegate->user->email); ?>
 			<?php endforeach; ?>
 		</dd>
 		<?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
