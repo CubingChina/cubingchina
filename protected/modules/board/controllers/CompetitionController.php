@@ -87,8 +87,14 @@ class CompetitionController extends AdminController {
 	}
 
 	private function getCompetitionData($model) {
-		$wcaDelegates = User::getDelegates(User::IDENTITY_WCA_DELEGATE);
-		$ccaDelegates = User::getDelegates(User::IDENTITY_CCA_DELEGATE);
+		$wcaDelegates = array();
+		foreach (User::getDelegates(User::IDENTITY_WCA_DELEGATE) as $delegate) {
+			$wcaDelegates[$delegate->id] = $delegate->name_zh ?: $delegate->name;
+		}
+		$ccaDelegates = array();
+		foreach (User::getDelegates(User::IDENTITY_CCA_DELEGATE) as $delegate) {
+			$ccaDelegates[$delegate->id] = $delegate->name_zh ?: $delegate->name;
+		}
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$checkPersons = Competition::getCheckPersons();
