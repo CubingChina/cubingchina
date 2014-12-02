@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 class TwCommand extends CConsoleCommand {
 	public function actionIndex() {
 		$files = CFileHelper::findFiles(Yii::getPathOfAlias('application.messages.zh_cn'));

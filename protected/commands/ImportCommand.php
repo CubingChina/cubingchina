@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 class ImportCommand extends CConsoleCommand {
 	private $_provinceId = 215;
 	private $_cityId = 217;

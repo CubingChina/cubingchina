@@ -49,5 +49,5 @@ echo "import additional"
 mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql
 rm -f export.html* WCA_export*
 echo "build some data and clean cache"
-#../../yiic wca update
 echo -n $db_num > $db_config   
+../../yiic wca update
