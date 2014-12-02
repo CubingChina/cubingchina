@@ -185,7 +185,7 @@ class RegisterForm extends CFormModel {
 	public function register() {
 		$user = new User();
 		$user->wcaid = strtoupper($this->wcaid);
-		$user->email = $this->email;
+		$user->email = strtolower($this->email);
 		$user->password = CPasswordHelper::hashPassword($this->password);
 		$user->name = trim(strip_tags($this->name));
 		$user->name_zh = trim(strip_tags($this->local_name));

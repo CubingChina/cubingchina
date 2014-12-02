@@ -74,7 +74,7 @@ class EditProfileForm extends CFormModel {
 	public function update() {
 		$user = Yii::app()->controller->user;
 		if ($user->wcaid == '') {
-			$user->wcaid = $this->wcaid;
+			$user->wcaid = strtoupper($this->wcaid);
 		}
 		$user->province_id = $this->province_id;
 		$user->city_id = $this->city_id;
