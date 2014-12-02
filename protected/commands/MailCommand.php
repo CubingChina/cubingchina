@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 class MailCommand extends CConsoleCommand {
 	public function actionIndex() {
 		$mails = Mail::model()->findAllByAttributes(array(
