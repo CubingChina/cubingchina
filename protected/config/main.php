@@ -134,7 +134,7 @@ $config = array(
 		),
 		'mailer' => array(
 			'class' => 'Mailer',
-			'from' => '请勿回复DO NO REPLY <noreply@cubingchina.com>',
+			'from' => '请勿回复DO NOT REPLY <noreply@cubingchina.com>',
 			'domain' => 'mail.cubingchina.com',
 			'api' => '',
 		),
