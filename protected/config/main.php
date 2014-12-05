@@ -134,9 +134,12 @@ $config = array(
 		),
 		'mailer' => array(
 			'class' => 'Mailer',
-			'from' => '请勿回复DO NOT REPLY <noreply@cubingchina.com>',
-			'domain' => 'mail.cubingchina.com',
-			'api' => '',
+			'from' => 'noreply@cubingchina.com',
+			'fromname' => '请勿回复DO NOT REPLY',
+			'api' => array(
+				'user' => '',
+				'key' => '',
+			),
 		),
 	),
 	// application-level parameters that can be accessed

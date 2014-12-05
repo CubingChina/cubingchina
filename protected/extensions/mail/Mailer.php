@@ -5,8 +5,8 @@ class Mailer extends CApplicationComponent {
 
 	//mailgun
 	public $from;
-	public $domain = '';
-	public $api = '';
+	public $fromname;
+	public $api;
 
 	protected $titlePrefix = 'Cubing China (粗饼·中国魔方赛事网) - ';
 	protected $viewPath;
@@ -138,30 +138,41 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function send($mail) {
-		$mailer = $this->mailer;
-		$params = array(
-			'from'=>$this->from,
-			'to'=>str_replace(self::SEPARATOR, ',', $mail->to),
-			'subject'=>$mail->subject,
-			'html'=>$mail->message,
-			'text'=>implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($mail->message))))),
-
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_URL, 'https://sendcloud.sohu.com/webapi/mail.send.json');
+		curl_setopt($ch, CURLOPT_POSTFIELDS,
+			array(
+				'api_user'=>$this->api['user'],
+				'api_key'=>$this->api['key'],
+				'from'=>$this->from,
+				'fromname'=>$this->fromname,
+				'to'=>$mail->to,
+				'subject'=>$mail->subject,
+				'html'=>$mail->message,
+			)
 		);
-		// if ($mail->cc) {
-		// 	$params['cc'] = str_replace(self::SEPARATOR, ',', $mail->cc);
-		// }
-		// if ($mail->bcc) {
-		// 	$params['bcc'] = str_replace(self::SEPARATOR, ',', $mail->bcc);
-		// }
-		try {
-			$result = $mailer->sendMessage($this->domain, $params);
-			if (isset($result->http_response_body->id)) {
-				return true;
-			} else {
-				return false;
+
+		$result = curl_exec($ch);
+
+		if($result === false) {
+			$error = curl_error($ch);
+			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $error)), 'error', 'sendmail');
+			return false;
+		}
+		curl_close($ch);
+		$result = json_decode($result);
+		if ($result === false) {
+			return false;
+		}
+		if (isset($result->message) && $result->message == 'success') {
+			return true;
+		} else {
+			if (isset($result->errors)) {
+				Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, json_encode($result->errors))), 'error', 'sendmail');
 			}
-		} catch (Exception $e) {
-			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $e->getMessage())), 'error', 'sendmail');
 			return false;
 		}
 	}
