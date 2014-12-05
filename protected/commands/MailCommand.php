@@ -5,8 +5,8 @@ class MailCommand extends CConsoleCommand {
 		$mails = Mail::model()->findAllByAttributes(array(
 			'sent'=>0,
 		), array(
-			'order'=>'update_time ASC',
-			'limit'=>10,
+			'order'=>'subject LIKE  "%注册%" DESC , subject LIKE  "%密码%" DESC , subject LIKE  "%报名%" DESC , update_time ASC',
+			'limit'=>30,
 		));
 		$mailer = Yii::app()->mailer;
 		foreach ($mails as $key=>$mail) {
@@ -19,7 +19,7 @@ class MailCommand extends CConsoleCommand {
 				$mail->sent = 2;
 			}
 			$mail->save();
-			sleep(4);
+			sleep(1);
 		}
 	}
 }
