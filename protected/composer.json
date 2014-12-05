@@ -1,6 +1,7 @@
 {
 	"require": {
 		"phpmailer/phpmailer": "*",
+		"mailgun/mailgun-php": "*",
 		"phpoffice/phpexcel": "dev-develop",
 		"suin/php-rss-writer": "dev-master"
 	}

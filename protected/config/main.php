@@ -134,13 +134,9 @@ $config = array(
 		),
 		'mailer' => array(
 			'class' => 'Mailer',
-			'host' => 'smtp.qq.com',
-			// 'smtpSecure'=>'ssl',
-			// 'port'=>465,
-			'username' => 'noreply@s.cubingchina.com',
-			'password' => '',
-			'from' => 'noreply@s.cubingchina.com',
-			'fromName' => 'noreply',
+			'from' => '请勿回复DO NO REPLY <noreply@cubingchina.com>',
+			'domain' => 'mail.cubingchina.com',
+			'api' => '',
 		),
 	),
 	// application-level parameters that can be accessed

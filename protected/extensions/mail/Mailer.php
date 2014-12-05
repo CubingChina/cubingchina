@@ -3,17 +3,10 @@
 class Mailer extends CApplicationComponent {
 	const SEPARATOR = ';';
 
-	public $host;
-	public $username;
-	public $password;
-	public $smtp = true;
-	public $smtpSecure = '';
-	public $smtpAuth = true;
-	public $port = 25;
+	//mailgun
 	public $from;
-	public $fromName;
-	public $html = true;
-	public $charset = 'utf-8';
+	public $domain = '';
+	public $api = '';
 
 	protected $titlePrefix = 'Cubing China (粗饼·中国魔方赛事网) - ';
 	protected $viewPath;
@@ -26,20 +19,7 @@ class Mailer extends CApplicationComponent {
 
 	public function getMailer() {
 		if ($this->_mailer === null) {
-			$this->_mailer = $mailer = new PHPMailer();
-			$mailer->Host = $this->host;
-			$mailer->Username = $this->username;
-			$mailer->Password = $this->password;
-			if ($this->smtp) {
-				$mailer->isSMTP();
-			}
-			$mailer->SMTPSecure = $this->smtpSecure;
-			$mailer->SMTPAuth = $this->smtpAuth;
-			$mailer->Port = $this->port;
-			$mailer->From = $this->from;
-			$mailer->FromName = $this->fromName;
-			$mailer->isHTML($this->html);
-			$mailer->CharSet = $this->charset;
+			$this->_mailer = new \Mailgun\Mailgun($this->api);
 		}
 		return $this->_mailer;
 	}
@@ -159,27 +139,26 @@ class Mailer extends CApplicationComponent {
 
 	public function send($mail) {
 		$mailer = $this->mailer;
-		foreach (explode(self::SEPARATOR, $mail->to) as $to) {
-			$mailer->addAddress($to);
+		$params = array(
+			'from'=>$this->from,
+			'to'=>str_replace(self::SEPARATOR, ',', $mail->to),
+			// 'cc'=>str_replace(self::SEPARATOR, ',', $mail->cc),
+			// 'bcc'=>str_replace(self::SEPARATOR, ',', $mail->bcc),
+			'subject'=>$mail->subject,
+			'html'=>$mail->message,
+			'text'=>implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($mail->message))))),
+
+		);
+		try {
+			$result = $mailer->sendMessage($this->domain, $params);
+			var_dump($result);
+			return true;
+		} catch (Exception $e) {
+			var_dump($e->getMessage());
+			throw $e;
+			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $e->getMessage())), 'error', 'sendmail');
+			return false;
 		}
-		foreach (explode(self::SEPARATOR, $mail->reply_to) as $replyTo) {
-			$mailer->addReplyTo($replyTo);
-		}
-		foreach (explode(self::SEPARATOR, $mail->cc) as $cc) {
-			$mailer->addCC($cc);
-		}
-		foreach (explode(self::SEPARATOR, $mail->bcc) as $bcc) {
-			$mailer->addBCC($bcc);
-		}
-		$mailer->Subject = $mail->subject;
-		$mailer->Body = $mail->message;
-		$mailer->AltBody = implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($mail->message)))));
-		$result = $mailer->send();
-		if ($result == false) {
-			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $mailer->ErrorInfo)), 'error', 'sendmail');
-		}
-		$this->reset();
-		return $result;
 	}
 
 	public function reset() {
