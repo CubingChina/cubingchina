@@ -142,20 +142,25 @@ class Mailer extends CApplicationComponent {
 		$params = array(
 			'from'=>$this->from,
 			'to'=>str_replace(self::SEPARATOR, ',', $mail->to),
-			// 'cc'=>str_replace(self::SEPARATOR, ',', $mail->cc),
-			// 'bcc'=>str_replace(self::SEPARATOR, ',', $mail->bcc),
 			'subject'=>$mail->subject,
 			'html'=>$mail->message,
 			'text'=>implode("\r\n", array_filter(array_map(function($value) {return trim($value, " \t\r\n");}, explode("\n", strip_tags($mail->message))))),
 
 		);
+		// if ($mail->cc) {
+		// 	$params['cc'] = str_replace(self::SEPARATOR, ',', $mail->cc);
+		// }
+		// if ($mail->bcc) {
+		// 	$params['bcc'] = str_replace(self::SEPARATOR, ',', $mail->bcc);
+		// }
 		try {
 			$result = $mailer->sendMessage($this->domain, $params);
-			var_dump($result);
-			return true;
+			if (isset($result->http_response_body->id)) {
+				return true;
+			} else {
+				return false;
+			}
 		} catch (Exception $e) {
-			var_dump($e->getMessage());
-			throw $e;
 			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $e->getMessage())), 'error', 'sendmail');
 			return false;
 		}
