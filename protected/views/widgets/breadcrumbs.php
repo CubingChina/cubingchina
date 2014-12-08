@@ -14,7 +14,7 @@
       }
       $options = array();
       if ($i !== count($this->breadcrumbs)) {
-        $crumb .= '<i class="fa fa-angle-right"></i>';
+        $crumb .= Html::fontAwesome('angle-right');
       } else {
         $options['class'] = 'current';
       }

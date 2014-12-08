@@ -51,7 +51,7 @@ $this->renderPartial('side', $_data_);
     $form->error($model, 'mobile', array('class'=>'text-danger'))
   );?>
   <p class="text-info"><?php echo Yii::t('common', 'Please contact the adminstrator via {email} for changing the other personal information.', array(
-    '{email}'=>CHtml::mailto('<i class="fa fa-envelope"></i> ' . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
+    '{email}'=>CHtml::mailto(Html::fontAwesome('envelope', 'a') . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
   )); ?></p>
   <button type="submit" class="btn btn-theme btn-lg"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>

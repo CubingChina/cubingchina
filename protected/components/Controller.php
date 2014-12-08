@@ -98,36 +98,49 @@ class Controller extends CController {
 		if ($this->_navibar === null) {
 			$this->setNavibar(array(
 				array(
-					'label'=>'<i class="fa fa-home"></i> ' . Yii::t('common', 'Home'),
+					'label'=>Html::fontAwesome('home', 'a') . Yii::t('common', 'Home'),
 					'url'=>array('/site/index'),
 					'itemOptions'=>array(
 						'class'=>'nav-item',
 					),
 				),
 				array(
-					'label'=>'<i class="fa fa-cubes"></i> ' . Yii::t('common', 'Competitions'),
+					'label'=>Html::fontAwesome('cubes', 'a') . Yii::t('common', 'Competitions'),
 					'url'=>array('/competition/index'),
 					'itemOptions'=>array(
 						'class'=>'nav-item dropdown',
 					),
-					'linkOptions'=>array(
-						// 'class'=>'dropdown-toggle',
-						// 'data-toggle'=>'dropdown',
-						// 'data-hover'=>'dropdown',
-						// 'data-delay'=>0,
-						// 'data-close-others'=>'false',
-					),
-					// 'items'=>Competition::getRecentCompetitionsForNavibar(),
 				),
-				// array(
-				// 	'label'=>Yii::t('common', 'Statistics'),
-				// 	'url'=>array('/statistics/index'),
-				// 	'itemOptions'=>array(
-				// 		'class'=>'nav-item',
-				// 	),
-				// ),
 				array(
-					'label'=>'<i class="fa fa-wrench"></i> ' . Yii::t('common', 'Tools') . ' <i class="fa fa-angle-down"></i>',
+					'label'=>Html::fontAwesome('newspaper-o', 'a') . Yii::t('common', 'Results') . Html::fontAwesome('angle-down', 'b'),
+					'url'=>'#',
+					'itemOptions'=>array(
+						'class'=>'nav-item dropdown',
+					),
+					'linkOptions'=>array(
+						'class'=>'dropdown-toggle',
+						'data-toggle'=>'dropdown',
+						'data-hover'=>'dropdown',
+						'data-delay'=>0,
+						'data-close-others'=>'false',
+					),
+					'items'=>array(
+						array(
+							'url'=>array('/results/ranking'),
+							'label'=>Html::fontAwesome('trophy', 'a') . Yii::t('common', 'Ranking'),
+						),
+						array(
+							'url'=>array('/results/records'),
+							'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),
+						),
+						array(
+							'url'=>array('/results/statistics'),
+							'label'=>Html::fontAwesome('bar-chart', 'a') . Yii::t('common', 'Statistics'),
+						),
+					),
+				),
+				array(
+					'label'=>Html::fontAwesome('wrench', 'a') . Yii::t('common', 'Tools') . Html::fontAwesome('angle-down', 'b'),
 					'url'=>'#',
 					'itemOptions'=>array(
 						'class'=>'nav-item dropdown',
@@ -142,16 +155,16 @@ class Controller extends CController {
 					'items'=>array(
 						array(
 							'url'=>array('/tools/luckyDraw'),
-							'label'=>Yii::t('common', 'Lucky Draw'),
+							'label'=>Html::fontAwesome('gift', 'a') . Yii::t('common', 'Lucky Draw'),
 						),
 						array(
 							'url'=>'/static/score-card.xlsx',
-							'label'=>Yii::t('common', 'Score Card'),
+							'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('common', 'Score Card'),
 						),
 					),
 				),
 				array(
-					'label'=>'<i class="fa fa-info-circle"></i> ' . Yii::t('common', 'More Info') . ' <i class="fa fa-angle-down"></i>',
+					'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('common', 'More Info') . Html::fontAwesome('angle-down', 'b'),
 					'url'=>'#',
 					'itemOptions'=>array(
 						'class'=>'nav-item dropdown',
@@ -166,15 +179,15 @@ class Controller extends CController {
 					'items'=>array(
 						array(
 							'url'=>array('/site/page', 'view'=>'about'),
-							'label'=>Yii::t('common', 'About'),
+							'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'contact'),
-							'label'=>Yii::t('common', 'Contact'),
+							'label'=>Html::fontAwesome('pencil-square-o', 'a') . Yii::t('common', 'Contact'),
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'links'),
-							'label'=>Yii::t('common', 'Links'),
+							'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
 						),
 					),
 				),
@@ -237,7 +250,7 @@ class Controller extends CController {
 				'visible'=>Yii::app()->user->isGuest,
 			),
 			array(
-			'label'=>Yii::t('common', 'Language') . ' <i class="fa fa-angle-down"></i>',
+			'label'=>Yii::t('common', 'Language') . Html::fontAwesome('angle-down', 'b'),
 			'url'=>'#',
 			'itemOptions'=>array(
 				'class'=>'nav-item dropdown visible-sm visible-xs',

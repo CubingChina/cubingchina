@@ -189,49 +189,49 @@ class CompetitionController extends Controller {
 	private function setCompetitionNavibar($competition) {
 		$navibar = array(
 			array(
-				'label'=>'<i class="fa fa-home"></i> ' . Yii::t('Competition', 'Cubing China'),
+				'label'=>Html::fontAwesome('home', 'a') . Yii::t('Competition', 'Cubing China'),
 				'url'=>array('/site/index'),
 				'itemOptions'=>array(
 					'class'=>'nav-item',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-info-circle"></i> ' . Yii::t('Competition', 'Main Page'),
+				'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('Competition', 'Main Page'),
 				'url'=>$competition->getUrl('detail'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-red',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-calendar"></i> ' . Yii::t('Competition', 'Schedule'),
+				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-orange',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-taxi"></i> ' . Yii::t('Competition', 'Travel'),
+				'label'=>Html::fontAwesome('taxi', 'a') . Yii::t('Competition', 'Travel'),
 				'url'=>$competition->getUrl('travel'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-yellow',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-tasks"></i> ' . Yii::t('Competition', 'Regulations'),
+				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
 				'url'=>$competition->getUrl('regulations'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-green',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-users"></i> ' . Yii::t('Competition', 'Competitors'),
+				'label'=>Html::fontAwesome('users', 'a') . Yii::t('Competition', 'Competitors'),
 				'url'=>$competition->getUrl('competitors'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-blue',
 				),
 			),
 			array(
-				'label'=>'<i class="fa fa-sign-in"></i> ' . Yii::t('Competition', 'Registration'),
+				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),
 				'url'=>$competition->getUrl('registration'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-white',
