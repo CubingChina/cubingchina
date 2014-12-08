@@ -138,22 +138,30 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function send($mail) {
+		$fields = array(
+			'api_user'=>$this->api['user'],
+			'api_key'=>$this->api['key'],
+			'from'=>$this->from,
+			'fromname'=>$this->fromname,
+			'to'=>$mail->to,
+			'subject'=>$mail->subject,
+			'html'=>$mail->message,
+		);
+		if ($mail->reply_to) {
+			$fields['replyto'] = $mail->reply_to;
+		}
+		if ($mail->cc) {
+			$fields['cc'] = $mail->cc;
+		}
+		if ($mail->bcc) {
+			$fields['bcc'] = $mail->bcc;
+		}
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($ch, CURLOPT_URL, 'https://sendcloud.sohu.com/webapi/mail.send.json');
-		curl_setopt($ch, CURLOPT_POSTFIELDS,
-			array(
-				'api_user'=>$this->api['user'],
-				'api_key'=>$this->api['key'],
-				'from'=>$this->from,
-				'fromname'=>$this->fromname,
-				'to'=>$mail->to,
-				'subject'=>$mail->subject,
-				'html'=>$mail->message,
-			)
-		);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 
 		$result = curl_exec($ch);
 
