@@ -252,7 +252,7 @@ class User extends ActiveRecord {
 		if ($this->wcaid === '' || $name === '') {
 			return $name;
 		}
-		return CHtml::link($name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $this->wcaid, array('target'=>'_blank'));
+		return Persons::getLinkByNameNId($name, $this->wcaid);
 	}
 
 	public function getEmailLink() {

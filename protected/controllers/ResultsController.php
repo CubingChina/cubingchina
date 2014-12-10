@@ -10,6 +10,13 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
-		$this->render('statistics');
+		$statistics = Results::getStatistics();
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			ucfirst($this->action->id),
+		);
+		$this->render('statistics', array(
+			'statistics' => $statistics,
+		));
 	}
 }

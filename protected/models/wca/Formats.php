@@ -26,9 +26,6 @@ class Formats extends ActiveRecord {
 			'1'=>'Best of 1',
 			'2'=>'Best of 2',
 		);
-		$formats = self::model()->cache(86400 * 7)->findAll();
-		$formats = CHtml::listData($formats, 'id', 'name');
-		return $formats;
 	}
 	/**
 	 * @return string the associated database table name

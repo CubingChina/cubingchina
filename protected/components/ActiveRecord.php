@@ -10,7 +10,7 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	protected function afterSave() {
-		Yii::app()->cache->flush();
+		// Yii::app()->cache->flush();
 		parent::afterSave();
 	}
 }

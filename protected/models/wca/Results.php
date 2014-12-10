@@ -25,6 +25,164 @@
  */
 class Results extends ActiveRecord {
 
+	public static $statisticList = array(
+		'Sum of all single ranks'=>array(
+			'type'=>'single',
+			'method'=>'getSumOfRanks',
+		),
+		'Sum of all average ranks'=>array(
+			'type'=>'average',
+			'method'=>'getSumOfRanks',
+		),
+		'Sum of 2x2 to 5x5 single ranks'=>array(
+			'type'=>'single',
+			'method'=>'getSumOfRanks',
+			'eventIds'=>array('222', '333', '444', '555'),
+			'class'=>'col-md-6',
+		),
+		'Sum of 2x2 to 5x5 average ranks'=>array(
+			'type'=>'average',
+			'method'=>'getSumOfRanks',
+			'eventIds'=>array('222', '333', '444', '555'),
+			'class'=>'col-md-6',
+		),
+		'Best "medal collection" of all events'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Best "medal collection" in each event'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Best Podiums in Rubik\'s Cube event'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Records set by Chinese competitors'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Records set in Chinese competitions'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Oldest Standing of current Chinese records in all events'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Most Persons in one competition'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Most competitions by one person'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Most solves in one competition'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+		'Most solves per year'=>array(
+			'type'=>'single',
+			'method'=>'',
+		),
+	);
+
+	private static $_ranks = array();
+
+	public static function getStatistics() {
+		$statistics = array();
+		foreach (self::$statisticList as $name=>$statistic) {
+			if (is_callable('self::' . $statistic['method'])) {
+				$statistics[$name] = self::$statistic['method']($statistic);
+			}
+		}
+		return $statistics;
+	}
+
+	public static function getSumOfRanks($statistic) {
+		$ranks = self::getRanks($statistic['type']);
+		$eventIds = isset($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
+		$limit = isset($statistic['limit']) ? $statistic['limit'] : 10;
+		$columns = array(
+			array(
+				'header'=>Yii::t('common', 'Person'),
+				'value'=>'Persons::getLinkById($data["personId"])',
+				'type'=>'raw',
+			),
+			array(
+				'header'=>Yii::t('common', 'Sum'),
+				'name'=>'sum',
+			),
+		);
+		//计算未参赛的项目应该排第几
+		$allPenalties = 0;
+		foreach ($eventIds as $key=>$eventId) {
+			if (!isset($ranks[$eventId])) {
+				unset($eventIds[$key]);
+				continue;
+			}
+			$allPenalties += $penalty[$eventId] = count($ranks[$eventId]) + 1;
+		}
+		//计算每个人的排名
+		foreach ($eventIds as $eventId) {
+			foreach ($ranks[$eventId] as $personId=>$rank) {
+				if(!isset($rankSum[$personId])) {
+					$rankSum[$personId] = $allPenalties;
+				}
+				$rankSum[$personId] += $rank - $penalty[$eventId];
+			}
+			$columns[] = array(
+				'header'=>Yii::t('event', Events::getFullEventName($eventId)),
+				'name'=>$eventId,
+				'type'=>'raw',
+			);
+		}
+		asort($rankSum);
+		$rows = array();
+		foreach (array_slice($rankSum, 0, $limit ) as $personId=>$sum) {
+			$row = array(
+				'personId'=>$personId,
+				'sum'=>$sum,
+			);
+			foreach ($eventIds as $eventId) {
+				$row[$eventId] = isset($ranks[$eventId][$personId])
+								 ? $ranks[$eventId][$personId]
+								 : '<span class="penalty">' . $penalty[$eventId] . '</span>';
+			}
+			$rows[] = $row;
+		}
+		return array(
+			'columns'=>$columns,
+			'rows'=>$rows,
+			'class'=>isset($statistic['class']) ? $statistic['class'] : 'col-md-12',
+		);
+	}
+
+	public static function getRanks($type, $region = 'China') {
+		if (isset(self::$_ranks[$type][$region])) {
+			return self::$_ranks[$type][$region];
+		}
+		$command = Yii::app()->wcaDb->createCommand();
+		$command->select('eventId, personId, countryRank')->from('Ranks' . ucfirst($type) . ' r');
+		if ($region !== '') {
+			$command->leftJoin('Persons p', 'r.personId=p.id')->where("p.countryId='{$region}'");
+		}
+		$ranks = array();
+		foreach ($command->queryAll() as $row) {
+			$ranks[$row['eventId']][$row['personId']] = $row['countryRank'];
+		}
+		return self::$_ranks[$type][$region] = $ranks;
+	}
+
 	public static function formatTime($result, $eventId, $encode = true) {
 		if ($result == -1) {
 			return 'DNF';
