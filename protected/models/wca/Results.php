@@ -141,7 +141,7 @@ class Results extends ActiveRecord {
 				$rankSum[$personId] += $rank - $penalty[$eventId];
 			}
 			$columns[] = array(
-				'header'=>Yii::t('event', Events::getFullEventName($eventId)),
+				'header'=>Yii::app()->language == 'en' ? $eventId : Yii::t('event', Events::getFullEventName($eventId)),
 				'name'=>$eventId,
 				'type'=>'raw',
 			);

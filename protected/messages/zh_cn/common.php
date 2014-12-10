@@ -18,6 +18,8 @@
  */
 return array (
   'Fee' => '',
+  'Person' => '姓名',
+  'Sum' => '排名总和',
   'WCA ID' => '',
   'About us' => '关于本站',
   'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速百大平均成绩占席',
