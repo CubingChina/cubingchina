@@ -2363,3 +2363,9 @@ table.table th a.desc {
 .event-icon-registration:before {
   background-position: -35px -155px;
 }
+span.top10 {
+  color: #00B700;
+}
+span.penalty {
+  color: #9F0000;
+}

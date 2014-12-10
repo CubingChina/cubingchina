@@ -156,7 +156,12 @@ class Results extends ActiveRecord {
 			foreach ($eventIds as $eventId) {
 				$row[$eventId] = isset($ranks[$eventId][$personId])
 								 ? $ranks[$eventId][$personId]
-								 : '<span class="penalty">' . $penalty[$eventId] . '</span>';
+								 : $penalty[$eventId];
+				if (isset($ranks[$eventId][$personId]) && $ranks[$eventId][$personId] <= 10) {
+					$row[$eventId] = CHtml::tag('span', array('class'=>'top10'), $row[$eventId]);
+				} elseif (!isset($ranks[$eventId][$personId])) {
+					$row[$eventId] = CHtml::tag('span', array('class'=>'penalty'), $row[$eventId]);
+				}
 			}
 			$rows[] = $row;
 		}
