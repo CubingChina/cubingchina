@@ -60,7 +60,7 @@ class BestPodiums extends Statistics {
 		);
 		$rows = array();
 		foreach ($command->queryAll() as $row) {
-			$row = array_merge($row, self::getCompetition($row));
+			$row = self::getCompetition($row);
 			$row["first"] = self::getPodiumsAverage($row['competitionId'], $row['roundId'], 1);
 			$row["second"] = self::getPodiumsAverage($row['competitionId'], $row['roundId'], 2);
 			$row["third"] = self::getPodiumsAverage($row['competitionId'], $row['roundId'], 3);

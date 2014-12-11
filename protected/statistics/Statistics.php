@@ -56,8 +56,7 @@ class Statistics {
 			'width'=>6,
 		),
 		'Oldest Standing of current Chinese records in all events'=>array(
-			'type'=>'single',
-			'class'=>'',
+			'class'=>'OldestStandingRecords',
 		),
 		'Most Persons in one competition'=>array(
 			'type'=>'single',

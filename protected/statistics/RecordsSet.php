@@ -24,7 +24,9 @@ class RecordsSet extends Statistics {
 		$score = implode(' + ', $score) . ' AS score';
 		$select[] = $score;
 		$columns[] = array(
-			'header'=>Yii::t('common', 'score'),
+			'header'=>CHtml::tag('span', array(
+				'title'=>"WR: 10\nAsR: 5\nNR: 1",
+			), Yii::t('common', 'Score') . Html::fontAwesome('question-circle')),
 			'value'=>'CHtml::tag("b", array(), $data["score"])',
 			'type'=>'raw',
 		);
@@ -58,7 +60,7 @@ class RecordsSet extends Statistics {
 		$rows = $command->select($select)->queryAll();
 		if ($statistic['group'] === 'competitionId') {
 			$rows = array_map(function($row) {
-				return array_merge($row, self::getCompetition($row));
+				return self::getCompetition($row);
 			}, $rows);
 		}
 		return self::makeStatisticsData($statistic, $columns, $rows);
