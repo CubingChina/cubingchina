@@ -18,6 +18,9 @@
  */
 return array (
   'Fee' => '',
+  'NR' => '国家纪录',
+  'AsR' => '亚洲纪录',
+  'WR' => '世界纪录',
   'First' => '冠军',
   'Second' => '亚军',
   'Third' => '季军',
@@ -28,7 +31,7 @@ return array (
   'Average of 5' => '五次计平均',
   'Best "medal collection" in each event' => '官方赛事分项目累计奖牌榜',
   'Best "medal collection" of all events' => '官方赛事全项目累计奖牌榜',
-  'Best Podiums in Rubik\'s Cube event' => '中国三阶领奖台成绩总和榜',
+  'Best Podiums in Rubik\'s Cube event' => '中国赛事三阶领奖台成绩榜',
   'Best of 1' => '单次计最好',
   'Best of 1/Mean of 3' => '单次计最好/三次计平均',
   'Best of 2' => '两次计最好',

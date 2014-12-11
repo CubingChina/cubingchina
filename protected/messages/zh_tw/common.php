@@ -18,6 +18,9 @@
  */
 return array (
   'Fee' => '',
+  'NR' => '國家紀錄',
+  'AsR' => '亞洲紀錄',
+  'WR' => '世界紀錄',
   'First' => '冠軍',
   'Second' => '亞軍',
   'Third' => '季軍',
@@ -28,7 +31,7 @@ return array (
   'Average of 5' => '五次計平均',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
   'Best "medal collection" of all events' => '官方賽事全項目累計獎牌榜',
-  'Best Podiums in Rubik\'s Cube event' => '中國三階領獎台成績總和榜',
+  'Best Podiums in Rubik\'s Cube event' => '中國賽事三階領獎台成績榜',
   'Best of 1' => '單次計最好',
   'Best of 1/Mean of 3' => '單次計最好/三次計平均',
   'Best of 2' => '兩次計最好',
@@ -179,7 +182,7 @@ return array (
   'Step Three' => '第三步',
   'Step Two' => '第二步',
   'Submit' => '提交',
-  'Sum' => '排名總和',
+  'Sum' => '總和',
   'The WCA ID {wcaid} has been registered.' => '該WCA ID已被註冊。',
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
   'Title' => '標題',

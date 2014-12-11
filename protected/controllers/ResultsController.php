@@ -21,7 +21,8 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
-		$statistics = Results::getStatistics();
+		Yii::import('application.statistics.*');
+		$statistics = Statistics::getData();
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			ucfirst($this->action->id),
