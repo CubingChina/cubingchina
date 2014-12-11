@@ -121,7 +121,7 @@ class Results extends ActiveRecord {
 		->from('Results')
 		->where('personCountryId="China" AND best>0')
 		->group('personId')
-		->order('gold DESC, silver DESC, bronze DESC')
+		->order('gold DESC, silver DESC, bronze DESC, personName ASC')
 		->limit(10);
 		$columns = array(
 			array(

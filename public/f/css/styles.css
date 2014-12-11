@@ -2369,6 +2369,8 @@ span.top10 {
 span.penalty {
   color: #9F0000;
 }
-.mt20 {
+.stat-select {
   margin-top: 20px;
+  margin-left: 5px;
+  font-size: 16px;
 }

@@ -11,8 +11,8 @@
       )); ?>
     <?php else: ?>
       <h3 class="pull-left"><?php echo Yii::t('common', $name); ?></h3>
-      <div class="pull-left mt20">
-        <?php echo CHtml::dropdownList($statistic['id'], '333', Events::getNormalEvents()); ?>
+      <div class="pull-left stat-select">
+        <?php echo CHtml::dropdownList($statistic['id'], '333', Events::getNormalTranslatedEvents()); ?>
       </div>
       <div class="clearfix"></div>
       <?php foreach ($statistic['statistic'] as $eventId=>$stat): ?>
