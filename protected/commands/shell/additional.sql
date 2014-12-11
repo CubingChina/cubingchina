@@ -18,6 +18,7 @@ ALTER TABLE `Results` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `Results` ADD INDEX ( `personCountryId` );
 ALTER TABLE `Results` ADD INDEX ( `regionalSingleRecord` );
 ALTER TABLE `Results` ADD INDEX ( `regionalAverageRecord` );
+ALTER TABLE `Results` ADD INDEX `event_round_pos` ( `eventId` , `roundId` , `pos` );
 ALTER TABLE `Results` ADD INDEX `event_best_person` ( `eventId` , `best` , `personId` , `personCountryId` );
 ALTER TABLE `Results` ADD INDEX `event_avg_person` ( `eventId` , `average` , `personId` , `personCountryId` );
 ALTER TABLE `Rounds` ADD PRIMARY KEY ( `id` );

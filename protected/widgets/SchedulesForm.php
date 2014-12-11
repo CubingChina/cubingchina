@@ -50,7 +50,7 @@ class SchedulesForm extends Widget {
 		}
 		$rounds = Rounds::getAllRounds();
 		foreach ($rounds as $key=>$value) {
-			$rounds[$key] = Yii::t('common', $value);
+			$rounds[$key] = Yii::t('Rounds', $value);
 		}
 		$stages = Schedule::getStages();
 		echo CHtml::openTag('tbody');

@@ -2,9 +2,13 @@
 
 class ActiveRecord extends CActiveRecord {
 	public function getAttributeValue($name, $forceValue = false) {
-		$value = $this->getAttribute(Yii::app()->controller->getAttributeName($name));
+		return self::getModelAttributeValue($this, $name, $forceValue);
+	}
+
+	public static function getModelAttributeValue($model, $name, $forceValue = false) {
+		$value = $model[Yii::app()->controller->getAttributeName($name)];
 		if ($forceValue) {
-			$value = $value ?: $this->getAttribute($name);
+			$value = $value ?: $model[$name];
 		}
 		return Yii::app()->controller->translateTWInNeed($value);
 	}

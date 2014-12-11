@@ -1,6 +1,17 @@
 <?php
 
 class ResultsController extends Controller {
+	protected $logAction = false;
+
+	public function accessRules() {
+		return array(
+			array(
+				'allow',
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	public function actionRanking() {
 		$this->render('ranking');
 	}
