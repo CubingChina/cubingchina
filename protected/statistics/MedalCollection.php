@@ -17,24 +17,24 @@ class MedalCollection extends Statistics {
 		->limit(10);
 		$columns = array(
 			array(
-				'header'=>Yii::t('common', 'Person'),
+				'header'=>Yii::t('statistics', 'Person'),
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'Gold'),
+				'header'=>Yii::t('statistics', 'Gold'),
 				'name'=>'gold',
 			),
 			array(
-				'header'=>Yii::t('common', 'Silver'),
+				'header'=>Yii::t('statistics', 'Silver'),
 				'name'=>'silver',
 			),
 			array(
-				'header'=>Yii::t('common', 'Bronze'),
+				'header'=>Yii::t('statistics', 'Bronze'),
 				'name'=>'bronze',
 			),
 			array(
-				'header'=>Yii::t('common', 'Sum'),
+				'header'=>Yii::t('statistics', 'Sum'),
 				'value'=>'CHtml::tag("b", array(), $data["gold"] + $data["silver"] + $data["bronze"])',
 				'type'=>'raw',
 			),

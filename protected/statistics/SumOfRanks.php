@@ -10,12 +10,12 @@ class SumOfRanks extends Statistics {
 		$limit = isset($statistic['limit']) ? $statistic['limit'] : 10;
 		$columns = array(
 			array(
-				'header'=>Yii::t('common', 'Person'),
+				'header'=>Yii::t('statistics', 'Person'),
 				'value'=>'Persons::getLinkById($data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'Sum'),
+				'header'=>Yii::t('statistics', 'Sum'),
 				'value'=>'CHtml::tag("b", array(), $data["sum"])',
 				'type'=>'raw',
 			),

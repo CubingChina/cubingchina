@@ -3,14 +3,14 @@
     <?php foreach ($statistics as $name=>$statistic): ?>
     <div class="<?php echo $statistic['class']; ?>">
     <?php if (isset($statistic['columns'])): ?>
-      <h3><?php echo Yii::t('common', $name); ?></h3>
+      <h3><?php echo Yii::t('statistics', $name); ?></h3>
       <?php $this->renderPartial('statistic', array(
         'statistic'=>$statistic,
         'id'=>$statistic['id'],
         'class'=>' ' . $statistic['id'],
       )); ?>
     <?php else: ?>
-      <h3 class="pull-left"><?php echo Yii::t('common', $name); ?></h3>
+      <h3 class="pull-left"><?php echo Yii::t('statistics', $name); ?></h3>
       <div class="pull-left stat-select">
         <?php echo CHtml::dropdownList($statistic['id'], '333', Events::getNormalTranslatedEvents()); ?>
       </div>

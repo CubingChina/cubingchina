@@ -26,7 +26,7 @@ class RecordsSet extends Statistics {
 		$columns[] = array(
 			'header'=>CHtml::tag('span', array(
 				'title'=>"WR: 10\nAsR: 5\nNR: 1",
-			), Yii::t('common', 'Score') . Html::fontAwesome('question-circle')),
+			), Yii::t('statistics', 'Score') . Html::fontAwesome('question-circle')),
 			'value'=>'CHtml::tag("b", array(), $data["score"])',
 			'type'=>'raw',
 		);
@@ -38,7 +38,7 @@ class RecordsSet extends Statistics {
 				));
 				$command->andWhere('personCountryId="China"');
 				array_unshift($columns, array(
-					'header'=>Yii::t('common', 'Person'),
+					'header'=>Yii::t('statistics', 'Person'),
 					'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 					'type'=>'raw',
 				));

@@ -51,13 +51,14 @@ class OldestStandingRecords extends Statistics {
 		//person days event type result record competition
 		$columns = array(
 			array(
-				'header'=>Yii::t('common', 'Person'),
+				'header'=>Yii::t('statistics', 'Person'),
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'Days'),
-				'value'=>'floor((time() - strtotime(sprintf("%s-%s-%s", $data["year"], $data["month"], $data["day"]))) / 86400)',
+				'header'=>Yii::t('statistics', 'Days'),
+				'value'=>'CHtml::tag("b", array(), floor((time() - strtotime(sprintf("%s-%s-%s", $data["year"], $data["month"], $data["day"]))) / 86400))',
+				'type'=>'raw',
 			),
 			array(
 				'header'=>Yii::t('common', 'Event'),

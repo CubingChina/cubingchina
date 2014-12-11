@@ -41,7 +41,7 @@ class Statistics {
 			'type'=>'single',
 			'class'=>'',
 		),
-		'Best Podiums in Rubik\'s Cube event'=>array(
+		'Best podiums in Rubik\'s Cube event'=>array(
 			'class'=>'BestPodiums',
 			'eventId'=>'333',
 		),
@@ -55,16 +55,18 @@ class Statistics {
 			'group'=>'competitionId',
 			'width'=>6,
 		),
-		'Oldest Standing of current Chinese records in all events'=>array(
+		'Oldest standing of current Chinese records in all events'=>array(
 			'class'=>'OldestStandingRecords',
 		),
-		'Most Persons in one competition'=>array(
-			'type'=>'single',
-			'class'=>'',
-		),
 		'Most competitions by one person'=>array(
-			'type'=>'single',
-			'class'=>'',
+			'class'=>'MostNumber',
+			'group'=>'personId',
+			'width'=>6,
+		),
+		'Most persons in one competition'=>array(
+			'class'=>'MostNumber',
+			'group'=>'competitionId',
+			'width'=>6,
 		),
 		'Most solves in one competition'=>array(
 			'type'=>'single',
@@ -99,8 +101,12 @@ class Statistics {
 		if (!isset($statistic['width'])) {
 			$statistic['width'] = 12;
 		}
+		$class = 'col-md-' . $statistic['width'];
+		if ($statistic['width'] < 12 && $statistic['width'] % 3 == 0) {
+			$class .= ' col-sm-' . ($statistic['width'] * 2);
+		}
 		return array_merge($data, array(
-			'class'=>'col-md-' . $statistic['width'],
+			'class'=>$class,
 			'id'=>strtolower(preg_replace('/(?<!\b)(?=[A-Z])/', '_', substr($statistic['class'], 3))) . '_' . $i++,
 		));
 	}

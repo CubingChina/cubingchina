@@ -26,12 +26,12 @@ class BestPodiums extends Statistics {
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'Sum'),
+				'header'=>Yii::t('statistics', 'Sum'),
 				'value'=>'CHtml::tag("b", array(), Results::formatTime($data["sum"], "333"))',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'First'),
+				'header'=>Yii::t('statistics', 'First'),
 				'value'=>'Persons::getLinkByNameNId($data["first"]["personName"], $data["first"]["personId"])',
 				'type'=>'raw',
 			),
@@ -40,7 +40,7 @@ class BestPodiums extends Statistics {
 				'value'=>'Results::formatTime($data["first"]["average"], "333")',
 			),
 			array(
-				'header'=>Yii::t('common', 'Second'),
+				'header'=>Yii::t('statistics', 'Second'),
 				'value'=>'Persons::getLinkByNameNId($data["second"]["personName"], $data["second"]["personId"])',
 				'type'=>'raw',
 			),
@@ -49,7 +49,7 @@ class BestPodiums extends Statistics {
 				'value'=>'Results::formatTime($data["second"]["average"], "333")',
 			),
 			array(
-				'header'=>Yii::t('common', 'Third'),
+				'header'=>Yii::t('statistics', 'Third'),
 				'value'=>'Persons::getLinkByNameNId($data["third"]["personName"], $data["third"]["personId"])',
 				'type'=>'raw',
 			),
