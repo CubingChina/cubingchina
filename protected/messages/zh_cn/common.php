@@ -17,9 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Bronze' => '铜',
   'Fee' => '',
-  'Person' => '姓名',
-  'Sum' => '排名总和',
+  'Gold' => '金',
+  'Silver' => '银',
   'WCA ID' => '',
   'About us' => '关于本站',
   'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速百大平均成绩占席',
@@ -149,6 +150,7 @@ return array (
   'Password' => '密码',
   'Password is changed successfully. Log in with your new password.' => '密码修改成功，请使用新密码登录。',
   'Pending' => '待审核',
+  'Person' => '姓名',
   'Please choose the correct English name below' => '请在下面选择正确的英文名',
   'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他个人信息请联系管理员{email}。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '请在下面输入您的WCA ID。您可以在{here}查询您的WCA ID。',
@@ -182,6 +184,7 @@ return array (
   'Step Three' => '第三步',
   'Step Two' => '第二步',
   'Submit' => '提交',
+  'Sum' => '排名总和',
   'The WCA ID {wcaid} has been registered.' => '该WCA ID已被注册。',
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
   'Title' => '标题',

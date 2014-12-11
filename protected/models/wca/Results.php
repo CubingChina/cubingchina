@@ -47,12 +47,14 @@ class Results extends ActiveRecord {
 			'class'=>'col-md-6',
 		),
 		'Best "medal collection" of all events'=>array(
-			'type'=>'single',
-			'method'=>'',
+			'type'=>'all',
+			'method'=>'getMedalCollection',
+			'class'=>'col-md-6',
 		),
 		'Best "medal collection" in each event'=>array(
-			'type'=>'single',
-			'method'=>'',
+			'type'=>'each',
+			'method'=>'getMedalCollection',
+			'class'=>'col-md-6',
 		),
 		'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube'=>array(
 			'type'=>'single',
@@ -108,6 +110,55 @@ class Results extends ActiveRecord {
 		return $statistics;
 	}
 
+	public static function getMedalCollection($statistic) {
+		$command = Yii::app()->wcaDb->createCommand();
+		$command->select(array(
+			'personId', 'personName',
+			'sum(CASE WHEN pos=1 THEN 1 ELSE 0 END) AS gold',
+			'sum(CASE WHEN pos=2 THEN 1 ELSE 0 END) AS silver',
+			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
+		))
+		->from('Results')
+		->where('personCountryId="China" AND best>0')
+		->group('personId')
+		->order('gold DESC, silver DESC, bronze DESC')
+		->limit(10);
+		$columns = array(
+			array(
+				'header'=>Yii::t('common', 'Person'),
+				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'type'=>'raw',
+			),
+			array(
+				'header'=>Yii::t('common', 'Gold'),
+				'name'=>'gold',
+			),
+			array(
+				'header'=>Yii::t('common', 'Silver'),
+				'name'=>'silver',
+			),
+			array(
+				'header'=>Yii::t('common', 'Bronze'),
+				'name'=>'bronze',
+			),
+		);
+		if ($statistic['type'] === 'all') {
+			$rows = $command->queryAll();
+			return self::makeStatisticsData($statistic, $columns, $rows);
+		} else {
+			$medals = array();
+			$eventIds =array_keys(Events::getNormalEvents());
+			foreach ($eventIds as $eventId) {
+				$cmd = clone $command;
+				$rows = $cmd->andWhere("eventId='{$eventId}'")->queryAll();
+				$medals[$eventId] = self::makeStatisticsData($statistic, $columns, $rows);
+			}
+			return self::makeStatisticsData($statistic, array(
+				'statistic'=>$medals,
+			));
+		}
+	}
+
 	public static function getSumOfRanks($statistic) {
 		$ranks = self::getRanks($statistic['type']);
 		$eventIds = isset($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
@@ -120,7 +171,8 @@ class Results extends ActiveRecord {
 			),
 			array(
 				'header'=>Yii::t('common', 'Sum'),
-				'name'=>'sum',
+				'value'=>'CHtml::tag("b", array(), $data["sum"])',
+				'type'=>'raw',
 			),
 		);
 		//计算未参赛的项目应该排第几
@@ -165,11 +217,7 @@ class Results extends ActiveRecord {
 			}
 			$rows[] = $row;
 		}
-		return array(
-			'columns'=>$columns,
-			'rows'=>$rows,
-			'class'=>isset($statistic['class']) ? $statistic['class'] : 'col-md-12',
-		);
+		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 
 	public static function getRanks($type, $region = 'China') {
@@ -186,6 +234,21 @@ class Results extends ActiveRecord {
 			$ranks[$row['eventId']][$row['personId']] = $row['countryRank'];
 		}
 		return self::$_ranks[$type][$region] = $ranks;
+	}
+
+	private static function makeStatisticsData($statistic, $columns, $rows = null) {
+		if ($rows === null) {
+			$data = $columns;
+		} else {
+			$data = array(
+				'columns'=>$columns,
+				'rows'=>$rows,
+			);
+		}
+		return array_merge($data, array(
+			'class'=>isset($statistic['class']) ? $statistic['class'] : 'col-md-12',
+			'id'=>strtolower(preg_replace('/(?<!\b)(?=[A-Z])/', '_', substr($statistic['method'], 3))) . '_' . array_search($statistic, array_values(self::$statisticList)),
+		));
 	}
 
 	public static function formatTime($result, $eventId, $encode = true) {
