@@ -15,7 +15,7 @@
     <?php echo Yii::t('common', 'An activation mail was sent to your email address, please follow the description to activate your account.'); ?>
     <br>
     <?php echo Yii::t('common', 'If you have got problems in activating your account, please contact the administrator via {email}.', array(
-      '{email}'=>CHtml::mailto('<i class="fa fa-envelope"></i> ' . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
+      '{email}'=>CHtml::mailto(Html::fontAwesome('envelope', 'a') . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
     )); ?>
     <?php endif; ?>
   </div>

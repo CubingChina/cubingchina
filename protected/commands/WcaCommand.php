@@ -22,6 +22,10 @@ class WcaCommand extends CConsoleCommand {
 		foreach ($competitions as $competition) {
 			$num[$competition->id] = $db->createCommand(str_replace('%id%', $competition->id, $sql))->execute();
 		}
-		var_dump($num);
+		echo 'updated wcaid: ', array_sum($num), PHP_EOL;
+		Yii::import('application.statistics.*');
+		$statistics = Statistics::getData();
+		$result = Yii::app()->cache->set('results_statistics_data', $statistics, 86400 * 7);
+		echo 'set results_statistics_data: ', $result ? 1 : 0, PHP_EOL;
 	}
 }

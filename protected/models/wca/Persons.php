@@ -11,6 +11,33 @@
  * @property string $gender
  */
 class Persons extends ActiveRecord {
+
+	public static function getPersonNameById($id) {
+		$person = self::model()->findByAttributes(array(
+			'id'=>$id,
+			'subid'=>1,
+		));
+		if ($person === null) {
+			return '';
+		}
+		return $person->name;
+	}
+
+	public static function getLinkById($id) {
+		$person = self::model()->findByAttributes(array(
+			'id'=>$id,
+			'subid'=>1,
+		));
+		if ($person === null) {
+			return '';
+		}
+		return self::getLinkByNameNId($person->name, $id);
+	}
+
+	public static function getLinkByNameNId($name, $id) {
+		return CHtml::link($name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $id, array('target'=>'_blank'));
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -43,6 +70,7 @@ class Persons extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'country'=>array(self::BELONGS_TO, 'Countries', 'countryId'),
 		);
 	}
 
