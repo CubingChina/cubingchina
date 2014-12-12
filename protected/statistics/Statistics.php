@@ -35,11 +35,13 @@ class Statistics {
 		),
 		'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube'=>array(
 			'type'=>'single',
-			'class'=>'',
+			'class'=>'Top100',
+			'width'=>6,
 		),
 		'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube'=>array(
-			'type'=>'single',
-			'class'=>'',
+			'type'=>'average',
+			'class'=>'Top100',
+			'width'=>6,
 		),
 		'Best podiums in Rubik\'s Cube event'=>array(
 			'class'=>'BestPodiums',

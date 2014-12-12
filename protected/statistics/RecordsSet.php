@@ -23,13 +23,13 @@ class RecordsSet extends Statistics {
 		}
 		$score = implode(' + ', $score) . ' AS score';
 		$select[] = $score;
-		$columns[] = array(
+		array_unshift($columns, array(
 			'header'=>CHtml::tag('span', array(
 				'title'=>"WR: 10\nAsR: 5\nNR: 1",
 			), Yii::t('statistics', 'Score') . Html::fontAwesome('question-circle')),
 			'value'=>'CHtml::tag("b", array(), $data["score"])',
 			'type'=>'raw',
-		);
+		));
 		switch ($statistic['group']) {
 			case 'personId':
 				$select = array_merge($select, array(

@@ -16,7 +16,7 @@ class MostSolves extends Statistics {
 			+sum(CASE WHEN value3>-2 AND value3!=0 THEN 1 ELSE 0 END)
 			+sum(CASE WHEN value4>-2 AND value4!=0 THEN 1 ELSE 0 END)
 			+sum(CASE WHEN value5>-2 AND value5!=0 THEN 1 ELSE 0 END)
-			AS try',
+			AS attempt',
 			'competitionId',
 			'personId',
 			'personName',
@@ -26,7 +26,7 @@ class MostSolves extends Statistics {
 		->leftJoin('Competitions c', 'r.competitionId=c.id')
 		->where('personCountryId="China"')
 		->group('personId')
-		->order('solve DESC, try ASC')
+		->order('solve DESC, attempt ASC')
 		->limit(10);
 		$columns = array(
 			array(
@@ -35,8 +35,8 @@ class MostSolves extends Statistics {
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Solve/Try'),
-				'value'=>'$data["solve"] . "/" . $data["try"]',
+				'header'=>Yii::t('statistics', 'Solves/Attempts'),
+				'value'=>'$data["solve"] . "/" . $data["attempt"]',
 			),
 		);
 		switch ($statistic['type']) {

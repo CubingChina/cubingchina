@@ -17,17 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速百大平均成绩占席',
-  'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube' => '中国三速百大单次成绩占席',
+  'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
+  'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
   'Best "medal collection" in each event' => '官方赛事分项目累计奖牌榜',
   'Best "medal collection" of all events' => '官方赛事全项目累计奖牌榜',
   'Best podiums in Rubik\'s Cube event' => '中国赛事三阶领奖台成绩榜',
   'Most competitions by one person' => '中国选手的比赛次数排行榜',
-  'Most personal solves' => '个人总复原次数排行榜',
-  'Most personal solves in each year' => '个人年度累计复原次数排行榜',
-  'Most personal solves in one competition' => '个人单场比赛总复原次数排行榜',
+  'Most personal solves' => '个人累积总复原次数排行榜',
+  'Most personal solves in each year' => '个人年度总复原次数排行榜',
+  'Most personal solves in one competition' => '个人单场总复原次数排行榜',
   'Most persons in one competition' => '中国赛事的选手人数排行榜',
-  'Most solves in one competition' => '单场比赛总复原次数排行榜',
+  'Most solves in one competition' => '中国赛事总复原次数排行榜',
   'Oldest standing of current Chinese records in all events' => '中国纪录现保持时间排行榜',
   'Records set by Chinese competitors' => '中国选手创纪录数量排行榜',
   'Records set in Chinese competitions' => '中国赛事创纪录数量排行榜',
@@ -45,7 +45,7 @@ return array (
   'Score' => '计分',
   'Second' => '亚军',
   'Silver' => '银',
-  'Solve/Try' => '复原/尝试',
+  'Solves/Attempts' => '复原/尝试',
   'Sum' => '总和',
   'Third' => '季军',
 );
