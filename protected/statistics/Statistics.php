@@ -68,12 +68,22 @@ class Statistics {
 			'group'=>'competitionId',
 			'width'=>6,
 		),
+		'Most personal solves in one competition'=>array(
+			'class'=>'MostSolves',
+			'type'=>'person',
+			'width'=>6,
+		),
 		'Most solves in one competition'=>array(
+			'class'=>'MostSolves',
+			'type'=>'competition',
+			'width'=>6,
+		),
+		'Most personal solves'=>array(
 			'class'=>'MostSolves',
 			'type'=>'all',
 			'width'=>6,
 		),
-		'Most solves in each year'=>array(
+		'Most personal solves in each year'=>array(
 			'class'=>'MostSolves',
 			'type'=>'year',
 			'width'=>6,

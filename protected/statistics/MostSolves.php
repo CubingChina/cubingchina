@@ -25,6 +25,7 @@ class MostSolves extends Statistics {
 		->from('Results r')
 		->leftJoin('Competitions c', 'r.competitionId=c.id')
 		->where('personCountryId="China"')
+		->group('personId')
 		->order('solve DESC, try ASC')
 		->limit(10);
 		$columns = array(
@@ -37,48 +38,63 @@ class MostSolves extends Statistics {
 				'header'=>Yii::t('statistics', 'Solve/Try'),
 				'value'=>'$data["solve"] . "/" . $data["try"]',
 			),
-			array(
-				'header'=>Yii::t('common', 'Competitions'),
-				'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
-				'type'=>'raw',
-			),
 		);
-		if ($statistic['type'] === 'all') {
-			$rows = $command->group('competitionId, personId')->limit(50)->queryAll();
-			$temp = array();
-			foreach ($rows as $row) {
-				if (!isset($temp[$row['personId']])) {
-					$temp[$row['personId']] = $row;
-				}
-				if (count($temp) == 10) {
-					break;
-				}
-			}
-			$rows = array_map(function($row) {
-				return self::getCompetition($row);
-			}, array_values($temp));
-			return self::makeStatisticsData($statistic, $columns, $rows);
-		} else {
-			$years = Competition::getYears();
-			$years = array_slice($years, 1);
-			$solves = array();
-			$command->group('personId');
-			foreach ($years as $key=>$year) {
-				$cmd = clone $command;
-				$rows = $cmd->andWhere("year={$year}")->queryAll();
-				if (count($rows) < 10) {
-					unset($years[$key]);
-					continue;
+		switch ($statistic['type']) {
+			case 'competition':
+				$columns[0] = array(
+					'header'=>Yii::t('common', 'Competition'),
+					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
+					'type'=>'raw',
+				);
+				$rows = array_map(function($row) {
+					return self::getCompetition($row);
+				}, $command->where('c.countryId="China"')->group('competitionId')->queryAll());
+				return self::makeStatisticsData($statistic, $columns, $rows);
+			case 'person':
+				$rows = $command->group('competitionId, personId')->limit(50)->queryAll();
+				$temp = array();
+				foreach ($rows as $row) {
+					if (!isset($temp[$row['personId']])) {
+						$temp[$row['personId']] = $row;
+					}
+					if (count($temp) == 10) {
+						break;
+					}
 				}
 				$rows = array_map(function($row) {
 					return self::getCompetition($row);
-				}, $rows);
-				$solves[$year] = self::makeStatisticsData($statistic, $columns, $rows);
-			}
-			return self::makeStatisticsData($statistic, array(
-				'statistic'=>$solves,
-				'select'=>array_combine($years, $years),
-			));
+				}, array_values($temp));
+				$columns[] = array(
+					'header'=>Yii::t('common', 'Competition'),
+					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
+					'type'=>'raw',
+				);
+				return self::makeStatisticsData($statistic, $columns, $rows);
+			case 'all':
+				$rows = array_map(function($row) {
+					return self::getCompetition($row);
+				}, $command->queryAll());
+				return self::makeStatisticsData($statistic, $columns, $rows);
+			case 'year':
+				$years = Competition::getYears();
+				$years = array_slice($years, 1);
+				$solves = array();
+				foreach ($years as $key=>$year) {
+					$cmd = clone $command;
+					$rows = $cmd->andWhere("year={$year}")->queryAll();
+					if (count($rows) < 10) {
+						unset($years[$key]);
+						continue;
+					}
+					$rows = array_map(function($row) {
+						return self::getCompetition($row);
+					}, $rows);
+					$solves[$year] = self::makeStatisticsData($statistic, $columns, $rows);
+				}
+				return self::makeStatisticsData($statistic, array(
+					'statistic'=>$solves,
+					'select'=>array_combine($years, $years),
+				));
 		}
 	}
 

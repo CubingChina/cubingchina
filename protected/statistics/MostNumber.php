@@ -38,7 +38,7 @@ class MostNumber extends Statistics {
 				$command->andWhere('c.countryId="China"');
 				$columns = array(
 					array(
-						'header'=>Yii::t('common', 'Competitions'),
+						'header'=>Yii::t('common', 'Competition'),
 						'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 						'type'=>'raw',
 					),
