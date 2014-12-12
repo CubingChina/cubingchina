@@ -33,12 +33,12 @@ class Statistics {
 			'class'=>'MedalCollection',
 			'width'=>'6',
 		),
-		'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube'=>array(
+		'Appearances in top 100 Chinese single results of Rubik\'s Cube'=>array(
 			'type'=>'single',
 			'class'=>'Top100',
 			'width'=>6,
 		),
-		'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube'=>array(
+		'Appearances in top 100 Chinese average results of Rubik\'s Cube'=>array(
 			'type'=>'average',
 			'class'=>'Top100',
 			'width'=>6,
