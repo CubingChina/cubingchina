@@ -11,7 +11,7 @@ class MedalCollection extends Statistics {
 			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
 		))
 		->from('Results')
-		->where('personCountryId="China" AND best>0')
+		->where('personCountryId="China" AND roundId IN ("c", "f") AND best>0')
 		->group('personId')
 		->order('gold DESC, silver DESC, bronze DESC, personName ASC')
 		->limit(10);
