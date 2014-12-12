@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Solve/Try' => '复原/尝试',
   'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速百大平均成绩占席',
   'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube' => '中国三速百大单次成绩占席',
   'Best "medal collection" in each event' => '官方赛事分项目累计奖牌榜',
@@ -24,8 +25,8 @@ return array (
   'Best podiums in Rubik\'s Cube event' => '中国赛事三阶领奖台成绩榜',
   'Most competitions by one person' => '中国选手的比赛次数排行榜',
   'Most persons in one competition' => '中国赛事的选手人数排行榜',
+  'Most solves in each year' => '各年度累计复原次数排行榜',
   'Most solves in one competition' => '单场比赛总复原次数排行榜',
-  'Most solves per year' => '全年度累计复原次数排行榜',
   'Oldest standing of current Chinese records in all events' => '中国纪录现保持时间排行榜',
   'Records set by Chinese competitors' => '中国选手创纪录数量排行榜',
   'Records set in Chinese competitions' => '中国赛事创纪录数量排行榜',

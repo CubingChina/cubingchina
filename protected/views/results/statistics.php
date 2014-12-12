@@ -12,13 +12,13 @@
     <?php else: ?>
       <h3 class="pull-left"><?php echo Yii::t('statistics', $name); ?></h3>
       <div class="pull-left stat-select">
-        <?php echo CHtml::dropdownList($statistic['id'], '333', Events::getNormalTranslatedEvents()); ?>
+        <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
       </div>
       <div class="clearfix"></div>
-      <?php foreach ($statistic['statistic'] as $eventId=>$stat): ?>
+      <?php foreach ($statistic['statistic'] as $key=>$stat): ?>
       <?php $this->renderPartial('statistic', array(
         'statistic'=>$stat,
-        'id'=>$statistic['id'] . '_' . $eventId,
+        'id'=>$statistic['id'] . '_' . $key,
         'class'=>' hide ' . $statistic['id'],
       )); ?>
       <?php endforeach; ?>

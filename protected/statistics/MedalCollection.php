@@ -52,6 +52,7 @@ class MedalCollection extends Statistics {
 			}
 			return self::makeStatisticsData($statistic, array(
 				'statistic'=>$medals,
+				'select'=>Events::getNormalEvents(),
 			));
 		}
 	}

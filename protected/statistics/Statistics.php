@@ -15,13 +15,13 @@ class Statistics {
 			'type'=>'single',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
-			'width'=>'6',
+			'width'=>6,
 		),
 		'Sum of 2x2 to 5x5 average ranks'=>array(
 			'type'=>'average',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
-			'width'=>'6',
+			'width'=>6,
 		),
 		'Best "medal collection" of all events'=>array(
 			'type'=>'all',
@@ -69,12 +69,14 @@ class Statistics {
 			'width'=>6,
 		),
 		'Most solves in one competition'=>array(
-			'type'=>'single',
-			'class'=>'',
+			'class'=>'MostSolves',
+			'type'=>'all',
+			'width'=>6,
 		),
-		'Most solves per year'=>array(
-			'type'=>'single',
-			'class'=>'',
+		'Most solves in each year'=>array(
+			'class'=>'MostSolves',
+			'type'=>'year',
+			'width'=>6,
 		),
 	);
 
@@ -107,7 +109,7 @@ class Statistics {
 		}
 		return array_merge($data, array(
 			'class'=>$class,
-			'id'=>strtolower(preg_replace('/(?<!\b)(?=[A-Z])/', '_', substr($statistic['class'], 3))) . '_' . $i++,
+			'id'=>strtolower(preg_replace('/(?<!\b)(?=[A-Z])/', '_', $statistic['class'])) . '_' . $i++,
 		));
 	}
 

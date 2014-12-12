@@ -36,6 +36,7 @@ return array (
   'CubingChina Website' => '粗餅網',
   'Forget Password' => '忘記密碼',
   'Mean of 3' => '三次計平均',
+  'NR' => '國家紀錄',
   'Not found' => '未找到',
   'Registration' => '在線報名',
   'Regulations' => '比賽規則',

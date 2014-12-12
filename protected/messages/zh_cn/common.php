@@ -36,6 +36,7 @@ return array (
   'CubingChina Website' => '粗饼网',
   'Forget Password' => '忘记密码',
   'Mean of 3' => '三次计平均',
+  'NR' => '国家纪录',
   'Not found' => '未找到',
   'Registration' => '在线报名',
   'Regulations' => '比赛规则',
