@@ -339,14 +339,18 @@ class Competition extends ActiveRecord {
 		}
 		$params['{venue}'] = $venue;
 		$organizers = '';
-		$count = count($this->organizer);
-		foreach ($this->organizer as $key=>$organizer) {
-			if ($key == 0) {
-				$organizers .= $organizer->user->getAttributeValue('name', true);
-			} elseif ($key < $count - 1) {
-				$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name', true);
-			} else {
-				$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name', true);
+		if ($this->isOld()) {
+			$organizers = strip_tags(OldCompetition::formatInfo($this->old->getAttributeValue('organizer')));
+		} else {
+			$count = count($this->organizer);
+			foreach ($this->organizer as $key=>$organizer) {
+				if ($key == 0) {
+					$organizers .= $organizer->user->getAttributeValue('name', true);
+				} elseif ($key < $count - 1) {
+					$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name', true);
+				} else {
+					$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name', true);
+				}
 			}
 		}
 		$params['{organizers}'] = $organizers;
@@ -553,7 +557,7 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('common', Rounds::getFullRoundName($schedule->round)),
+				'Round'=>Yii::t('Rounds', Rounds::getFullRoundName($schedule->round)),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),

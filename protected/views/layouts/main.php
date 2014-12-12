@@ -14,11 +14,11 @@
         <br />
         <div class="contact pull-right">
           <?php if (Yii::app()->user->isGuest): ?>
-          <p class="phone"><?php echo CHtml::link('<i class="fa fa-sign-in"></i>' . Yii::t('common', 'Login'), array('/site/login')); ?></p>
-          <p class="email"><?php echo CHtml::link('<i class="fa fa-user"></i>' . Yii::t('common', 'Register'), array('/site/register')); ?></p>
+          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('sign-in') . Yii::t('common', 'Login'), array('/site/login')); ?></p>
+          <p class="email"><?php echo CHtml::link(Html::fontAwesome('user') . Yii::t('common', 'Register'), array('/site/register')); ?></p>
           <?php else: ?>
-          <p class="phone"><?php echo CHtml::link('<i class="fa fa-user"></i>' . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
-          <p class="email"><?php echo CHtml::link('<i class="fa fa-sign-out"></i>' . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
+          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('user') . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
+          <p class="email"><?php echo CHtml::link(Html::fontAwesome('sign-out') . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
           <?php endif; ?>
         </div>
       </div><!--//info-->
@@ -62,7 +62,7 @@
       <div class="row">
         <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> 京ICP备14025871号</small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
-          <li class="row-end"><?php echo CHtml::link('<i class="fa fa-rss"></i>', array('/feed/index')); ?></li>
+          <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>
       </div><!--//row-->
     </div><!--//container-->

@@ -35,7 +35,7 @@
       <a href="<?php echo $this->createUrl('/site/reactivate'); ?>" class="btn btn-xs btn-theme"><?php echo Yii::t('common', 'Activate my account'); ?></a>
       <br>
       <?php echo Yii::t('common', 'If you have got problems in activating your account, please contact the administrator via {email}.', array(
-        '{email}'=>CHtml::mailto('<i class="fa fa-envelope"></i> ' . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
+        '{email}'=>CHtml::mailto(Html::fontAwesome('envelope', 'a') . Yii::app()->params->adminEmail, Yii::app()->params->adminEmail),
       )); ?>
       <?php endif; ?>
     </dd>

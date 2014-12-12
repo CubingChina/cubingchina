@@ -30,7 +30,7 @@ class OldCompetition extends ActiveRecord {
 			$info = array();
 			foreach ($matches[2] as $value) {
 				if (preg_match('{\{([^\}]+)\}\{([^\}]+)\}}', $value, $match)) {
-					$info[] = CHtml::mailto('<i class="fa fa-envelope"></i> ' . $match[1], $match[2]);
+					$info[] = CHtml::mailto(Html::fontAwesome('envelope', 'a') . $match[1], $match[2]);
 				} else {
 					$info[] = $value;
 				}

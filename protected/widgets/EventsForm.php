@@ -35,7 +35,7 @@ class EventsForm extends Widget {
 				$text = $value;
 				$fee = 0;
 				if ($this->competition instanceof Competition && isset($this->competition->events[$event]) && $this->competition->events[$event]['fee'] > 0) {
-					$text .= ' <i class="fa fa-rmb"></i>' . $this->competition->events[$event]['fee'];
+					$text .= Html::fontAwesome('rmb', 'b') . $this->competition->events[$event]['fee'];
 					$fee = $this->competition->events[$event]['fee'];
 				}
 				echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), in_array("$event", $model->$name), array(

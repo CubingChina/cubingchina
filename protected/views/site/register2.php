@@ -3,7 +3,7 @@ $allCities = Region::getAllCities();
 $this->renderPartial('registerSide', $_data_);
 ?>
 <div class="content-wrapper col-md-10 col-sm-9">
-  <?php echo CHtml::link('<i class="fa fa-arrow-left"></i> ' . Yii::t('common', 'Previous step'), array('/site/register', 'step'=>1), array('class'=>'btn btn-theme')); ?>
+  <?php echo CHtml::link(Html::fontAwesome('arrow-left', 'a') . Yii::t('common', 'Previous step'), array('/site/register', 'step'=>1), array('class'=>'btn btn-theme')); ?>
   <h3 class="has-divider text-highlight">
     <?php echo Yii::t('common', 'Step 2. Fill out the following information.'); ?>
   </h3>

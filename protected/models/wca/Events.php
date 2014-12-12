@@ -119,6 +119,15 @@ class Events extends ActiveRecord {
 		$events = CHtml::listData($events, 'id', 'cellName');
 		return $events;
 	}
+
+	public static function getNormalTranslatedEvents() {
+		$events = self::getNormalEvents();
+		foreach ($events as $eventId=>$eventName) {
+			$events[$eventId] = Yii::t('event', $eventName);
+		}
+		return $events;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

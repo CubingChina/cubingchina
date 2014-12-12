@@ -21,4 +21,12 @@ return array (
   'ID' => '',
   'Name' => '',
   'Rank' => '',
+  'Combined Final' => '组合制决赛',
+  'Combined First' => '组合制初赛',
+  'Combined Second' => '组合制复赛',
+  'Combined Third' => '组合制半决赛',
+  'Final' => '决赛',
+  'First' => '初赛',
+  'Second' => '复赛',
+  'Semi Final' => '半决赛',
 );

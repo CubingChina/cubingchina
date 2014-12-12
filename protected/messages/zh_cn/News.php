@@ -17,12 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'ID' => '',
+  'name' => '',
   'Content' => '正文',
   'Content Zh' => '中文正文',
   'Date' => '日期',
-  'Time' => '时间',
-  'ID' => '',
   'Status' => '状态',
+  'Time' => '时间',
   'Title' => '标题',
   'Title Zh' => '中文标题',
   'User' => '发布人',

@@ -21,6 +21,7 @@ return array(
 		'yiilite.php',
 		'yiit.php',
 		'/messages',
+		'/statistics',
 		'/vendors',
 	),
 );
