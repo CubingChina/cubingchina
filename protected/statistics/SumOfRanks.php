@@ -11,7 +11,7 @@ class SumOfRanks extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personId"], $data["personName"])',
+				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(

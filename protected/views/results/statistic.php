@@ -2,7 +2,7 @@
   'dataProvider'=>new CArrayDataProvider($statistic['rows'], array(
     'pagination'=>false,
   )),
-  'id'=>$id,
+  'id'=>'statistic_' . $id,
   'enableSorting'=>false,
   'front'=>true,
   'columns'=>array_map(function($column) {

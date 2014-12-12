@@ -132,14 +132,14 @@ class Controller extends CController {
 						'data-close-others'=>'false',
 					),
 					'items'=>array(
-						array(
-							'url'=>array('/results/ranking'),
-							'label'=>Html::fontAwesome('trophy', 'a') . Yii::t('common', 'Ranking'),
-						),
-						array(
-							'url'=>array('/results/records'),
-							'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),
-						),
+						// array(
+						// 	'url'=>array('/results/ranking'),
+						// 	'label'=>Html::fontAwesome('trophy', 'a') . Yii::t('common', 'Ranking'),
+						// ),
+						// array(
+						// 	'url'=>array('/results/records'),
+						// 	'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),
+						// ),
 						array(
 							'url'=>array('/results/statistics'),
 							'label'=>Html::fontAwesome('bar-chart', 'a') . Yii::t('common', 'Statistics'),

@@ -2374,3 +2374,6 @@ span.penalty {
   margin-left: 5px;
   font-size: 16px;
 }
+.results-statistics div:target {
+  border: 1px solid #6091BA;
+}
