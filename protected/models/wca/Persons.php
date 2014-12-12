@@ -12,6 +12,17 @@
  */
 class Persons extends ActiveRecord {
 
+	public static function getPersonNameById($id) {
+		$person = self::model()->findByAttributes(array(
+			'id'=>$id,
+			'subid'=>1,
+		));
+		if ($person === null) {
+			return '';
+		}
+		return $person->name;
+	}
+
 	public static function getLinkById($id) {
 		$person = self::model()->findByAttributes(array(
 			'id'=>$id,

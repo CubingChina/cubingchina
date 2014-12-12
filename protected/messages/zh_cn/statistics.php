@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Appearances' => '席位',
   'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
   'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
   'Best "medal collection" in each event' => '官方赛事分项目累计奖牌榜',
@@ -41,7 +42,7 @@ return array (
   'First' => '冠军',
   'Gold' => '金',
   'Person' => '姓名',
-  'Persons' => '人次',
+  'Persons' => '人数',
   'Score' => '计分',
   'Second' => '亚军',
   'Silver' => '银',

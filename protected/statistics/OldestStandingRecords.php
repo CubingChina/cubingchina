@@ -51,33 +51,33 @@ class OldestStandingRecords extends Statistics {
 		//person days event type result record competition
 		$columns = array(
 			array(
-				'header'=>Yii::t('statistics', 'Person'),
+				'header'=>'Yii::t("statistics", "Person")',
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Days'),
+				'header'=>'Yii::t("statistics", "Days")',
 				'value'=>'CHtml::tag("b", array(), floor((time() - strtotime(sprintf("%s-%s-%s", $data["year"], $data["month"], $data["day"]))) / 86400))',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('common', 'Event'),
+				'header'=>'Yii::t("common", "Event")',
 				'value'=>'Yii::t("event", Events::getFullEventName($data["eventId"]))',
 			),
 			array(
-				'header'=>Yii::t('common', 'Type'),
+				'header'=>'Yii::t("common", "Type")',
 				'value'=>'Yii::t("common", ucfirst($data["type"]))',
 			),
 			array(
-				'header'=>Yii::t('common', 'Result'),
+				'header'=>'Yii::t("common", "Result")',
 				'value'=>'Results::formatTime($data["best"], $data["eventId"])',
 			),
 			array(
-				'header'=>Yii::t('common', 'Records'),
+				'header'=>'Yii::t("common", "Records")',
 				'value'=>'Yii::t("common", $data["worldRank"] == 1 ? "WR" : ($data["continentRank"] == 1 ? "AsR" : "NR"))',
 			),
 			array(
-				'header'=>Yii::t('common', 'Competition'),
+				'header'=>'Yii::t("common", "Competition")',
 				'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 				'type'=>'raw',
 			),

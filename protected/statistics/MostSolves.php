@@ -30,19 +30,19 @@ class MostSolves extends Statistics {
 		->limit(10);
 		$columns = array(
 			array(
-				'header'=>Yii::t('statistics', 'Person'),
+				'header'=>'Yii::t("statistics", "Person")',
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Solves/Attempts'),
+				'header'=>'Yii::t("statistics", "Solves/Attempts")',
 				'value'=>'$data["solve"] . "/" . $data["attempt"]',
 			),
 		);
 		switch ($statistic['type']) {
 			case 'competition':
 				$columns[0] = array(
-					'header'=>Yii::t('common', 'Competition'),
+					'header'=>'Yii::t("common", "Competition")',
 					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 					'type'=>'raw',
 				);
@@ -65,7 +65,7 @@ class MostSolves extends Statistics {
 					return self::getCompetition($row);
 				}, array_values($temp));
 				$columns[] = array(
-					'header'=>Yii::t('common', 'Competition'),
+					'header'=>'Yii::t("common", "Competition")',
 					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 					'type'=>'raw',
 				);

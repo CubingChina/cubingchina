@@ -55,6 +55,13 @@ class Controller extends CController {
 		}
 	}
 
+	public function getCacheKey() {
+		$args = func_get_args();
+		array_unshift($args, $this->action->id);
+		array_unshift($args, $this->id);
+		return implode('_', $args);
+	}
+
 	public function getAttributeName($name = 'name') {
 		if (Yii::app()->language{0} == 'z' && Yii::app()->language{1} == 'h') {
 			$name .= '_zh';

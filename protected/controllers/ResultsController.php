@@ -21,8 +21,13 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
-		Yii::import('application.statistics.*');
-		$statistics = Statistics::getData();
+		$cacheKey = $this->getCacheKey('data');
+		$cache = Yii::app()->cache;
+		if (($statistics = $cache->get($cacheKey)) === false) {
+			Yii::import('application.statistics.*');
+			$statistics = Statistics::getData();
+			$cache->set($cacheKey, $statistics, 86400 * 7);
+		}
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			ucfirst($this->action->id),

@@ -10,12 +10,12 @@ class SumOfRanks extends Statistics {
 		$limit = isset($statistic['limit']) ? $statistic['limit'] : 10;
 		$columns = array(
 			array(
-				'header'=>Yii::t('statistics', 'Person'),
-				'value'=>'Persons::getLinkById($data["personId"])',
+				'header'=>'Yii::t("statistics", "Person")',
+				'value'=>'Persons::getLinkByNameNId($data["personId"], $data["personName"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Sum'),
+				'header'=>'Yii::t("statistics", "Sum")',
 				'value'=>'CHtml::tag("b", array(), $data["sum"])',
 				'type'=>'raw',
 			),
@@ -38,7 +38,7 @@ class SumOfRanks extends Statistics {
 				$rankSum[$personId] += $rank - $penalty[$eventId];
 			}
 			$columns[] = array(
-				'header'=>Yii::app()->language == 'en' ? $eventId : Yii::t('event', Events::getFullEventName($eventId)),
+				'header'=>"Yii::app()->language == 'en' ? '$eventId' : Yii::t('event', Events::getFullEventName('$eventId'))",
 				'name'=>$eventId,
 				'type'=>'raw',
 			);
@@ -48,6 +48,7 @@ class SumOfRanks extends Statistics {
 		foreach (array_slice($rankSum, 0, $limit ) as $personId=>$sum) {
 			$row = array(
 				'personId'=>$personId,
+				'personName'=>Persons::getPersonNameById($personId),
 				'sum'=>$sum,
 			);
 			foreach ($eventIds as $eventId) {

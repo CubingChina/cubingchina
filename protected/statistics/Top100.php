@@ -60,12 +60,12 @@ class Top100 extends Statistics {
 		});
 		$columns = array(
 			array(
-				'header'=>Yii::t('statistics', 'Person'),
+				'header'=>'Yii::t("statistics", "Person")',
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>'',
+				'header'=>'Yii::t("statistics", "Appearances")',
 				'value'=>'CHtml::tag("b", array(), $data["count"])',
 				'type'=>'raw',
 			),

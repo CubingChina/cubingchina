@@ -21,17 +21,17 @@ class BestPodiums extends Statistics {
 		->limit(10);
 		$columns = array(
 			array(
-				'header'=>Yii::t('common', 'Competition'),
+				'header'=>'Yii::t("common", "Competition")',
 				'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Sum'),
+				'header'=>'Yii::t("statistics", "Sum")',
 				'value'=>'CHtml::tag("b", array(), Results::formatTime($data["sum"], "333"))',
 				'type'=>'raw',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'First'),
+				'header'=>'Yii::t("statistics", "First")',
 				'value'=>'Persons::getLinkByNameNId($data["first"]["personName"], $data["first"]["personId"])',
 				'type'=>'raw',
 			),
@@ -40,7 +40,7 @@ class BestPodiums extends Statistics {
 				'value'=>'Results::formatTime($data["first"]["average"], "333")',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Second'),
+				'header'=>'Yii::t("statistics", "Second")',
 				'value'=>'Persons::getLinkByNameNId($data["second"]["personName"], $data["second"]["personId"])',
 				'type'=>'raw',
 			),
@@ -49,7 +49,7 @@ class BestPodiums extends Statistics {
 				'value'=>'Results::formatTime($data["second"]["average"], "333")',
 			),
 			array(
-				'header'=>Yii::t('statistics', 'Third'),
+				'header'=>'Yii::t("statistics", "Third")',
 				'value'=>'Persons::getLinkByNameNId($data["third"]["personName"], $data["third"]["personId"])',
 				'type'=>'raw',
 			),

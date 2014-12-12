@@ -15,11 +15,12 @@
         <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
       </div>
       <div class="clearfix"></div>
+      <?php $keys = array_keys($statistic['statistic']); ?>
       <?php foreach ($statistic['statistic'] as $key=>$stat): ?>
       <?php $this->renderPartial('statistic', array(
         'statistic'=>$stat,
         'id'=>$statistic['id'] . '_' . $key,
-        'class'=>' hide ' . $statistic['id'],
+        'class'=>($key === $keys[0] ? ' ' : ' hide ') . $statistic['id'],
       )); ?>
       <?php endforeach; ?>
     <?php endif; ?>

@@ -17,16 +17,16 @@ class RecordsSet extends Statistics {
 			$select[] = sprintf('%s AS %s', $temp, $record);
 			$score[] = sprintf('(%s) * %d', $temp, $weight);
 			$columns[] = array(
-				'header'=>Yii::t('common', $record),
+				'header'=>"Yii::t('common', '$record')",
 				'name'=>$record,
 			);
 		}
 		$score = implode(' + ', $score) . ' AS score';
 		$select[] = $score;
 		array_unshift($columns, array(
-			'header'=>CHtml::tag('span', array(
-				'title'=>"WR: 10\nAsR: 5\nNR: 1",
-			), Yii::t('statistics', 'Score') . Html::fontAwesome('question-circle')),
+			'header'=>"CHtml::tag('span', array(
+				'title'=>'WR: 10\nAsR: 5\nNR: 1',
+			), Yii::t('statistics', 'Score') . Html::fontAwesome('question-circle'))",
 			'value'=>'CHtml::tag("b", array(), $data["score"])',
 			'type'=>'raw',
 		));
@@ -38,7 +38,7 @@ class RecordsSet extends Statistics {
 				));
 				$command->andWhere('personCountryId="China"');
 				array_unshift($columns, array(
-					'header'=>Yii::t('statistics', 'Person'),
+					'header'=>'Yii::t("statistics", "Person")',
 					'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 					'type'=>'raw',
 				));
@@ -51,7 +51,7 @@ class RecordsSet extends Statistics {
 				$command->leftJoin('Competitions c', 'r.competitionId=c.id');
 				$command->andWhere('c.countryId="China"');
 				array_unshift($columns, array(
-					'header'=>Yii::t('common', 'Competitions'),
+					'header'=>'Yii::t("common", "Competitions")',
 					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 					'type'=>'raw',
 				));

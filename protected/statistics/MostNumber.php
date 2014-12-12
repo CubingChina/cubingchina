@@ -18,12 +18,12 @@ class MostNumber extends Statistics {
 				$command->andWhere('personCountryId="China"');
 				$columns = array(
 					array(
-						'header'=>Yii::t('statistics', 'Person'),
+						'header'=>'Yii::t("statistics", "Person")',
 						'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 						'type'=>'raw',
 					),
 					array(
-						'header'=>Yii::t('statistics', 'Competitions'),
+						'header'=>'Yii::t("statistics", "Competitions")',
 						'name'=>'count',
 					),
 				);
@@ -38,12 +38,12 @@ class MostNumber extends Statistics {
 				$command->andWhere('c.countryId="China"');
 				$columns = array(
 					array(
-						'header'=>Yii::t('common', 'Competition'),
+						'header'=>'Yii::t("common", "Competition")',
 						'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 						'type'=>'raw',
 					),
 					array(
-						'header'=>Yii::t('statistics', 'Persons'),
+						'header'=>'Yii::t("statistics", "Persons")',
 						'name'=>'count',
 					),
 				);

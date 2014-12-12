@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Appearances' => '席位',
   'Appearances in top 100 Chinese competitors\' average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese competitors\' single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
