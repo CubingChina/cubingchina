@@ -161,7 +161,7 @@ $config = array(
 		'staticPath' => dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix' => 'http://s.cubingchina.com/',
 		'jsVer' => '20140826',
-		'cssVer' => '20141212',
+		'cssVer' => '20141216',
 	),
 );
 

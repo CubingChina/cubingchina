@@ -2375,5 +2375,6 @@ span.penalty {
   font-size: 16px;
 }
 .results-statistics div:target {
-  border: 1px solid #6091BA;
+  -webkit-box-shadow: inset 0 0 1px 1px #6091BA;
+  box-shadow: inset 0 0 1px 1px #6091BA;
 }

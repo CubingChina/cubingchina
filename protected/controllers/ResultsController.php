@@ -21,13 +21,9 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
-		$cacheKey = $this->getCacheKey('data');
-		$cache = Yii::app()->cache;
-		if (($statistics = $cache->get($cacheKey)) === false) {
-			Yii::import('application.statistics.*');
-			$statistics = Statistics::getData();
-			$cache->set($cacheKey, $statistics, 86400 * 7);
-		}
+		Yii::import('application.statistics.*');
+		$data = Statistics::getData();
+		extract($data);
 		$this->breadcrumbs = array(
 			// 'Results'=>array('/results/index'),
 			'Results',
@@ -39,6 +35,7 @@ class ResultsController extends Controller {
 		$this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
 		$this->render('statistics', array(
 			'statistics' => $statistics,
+			'time' => $time,
 		));
 	}
 }

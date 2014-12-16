@@ -3,6 +3,7 @@
 class MostSolves extends Statistics {
 
 	public static function build($statistic) {
+		$limit = self::$limit;
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
 			'sum(CASE WHEN value1>0 THEN 1 ELSE 0 END)
@@ -27,7 +28,7 @@ class MostSolves extends Statistics {
 		->where('personCountryId="China"')
 		->group('personId')
 		->order('solve DESC, attempt ASC')
-		->limit(10);
+		->limit($limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
@@ -46,18 +47,19 @@ class MostSolves extends Statistics {
 					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 					'type'=>'raw',
 				);
+				$rows = $command->where('c.countryId="China"')->group('competitionId')->queryAll();
 				$rows = array_map(function($row) {
 					return self::getCompetition($row);
-				}, $command->where('c.countryId="China"')->group('competitionId')->queryAll());
+				}, $rows);
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'person':
-				$rows = $command->group('competitionId, personId')->limit(50)->queryAll();
+				$rows = $command->group('competitionId, personId')->limit($limit + 50)->queryAll();
 				$temp = array();
 				foreach ($rows as $row) {
 					if (!isset($temp[$row['personId']])) {
 						$temp[$row['personId']] = $row;
 					}
-					if (count($temp) == 10) {
+					if (count($temp) == $limit) {
 						break;
 					}
 				}
@@ -71,9 +73,7 @@ class MostSolves extends Statistics {
 				);
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'all':
-				$rows = array_map(function($row) {
-					return self::getCompetition($row);
-				}, $command->queryAll());
+				$rows = $command->queryAll();
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'year':
 				$years = Competition::getYears();
@@ -82,13 +82,10 @@ class MostSolves extends Statistics {
 				foreach ($years as $key=>$year) {
 					$cmd = clone $command;
 					$rows = $cmd->andWhere("year={$year}")->queryAll();
-					if (count($rows) < 10) {
+					if (count($rows) < $limit) {
 						unset($years[$key]);
 						continue;
 					}
-					$rows = array_map(function($row) {
-						return self::getCompetition($row);
-					}, $rows);
 					$solves[$year] = self::makeStatisticsData($statistic, $columns, $rows);
 				}
 				return self::makeStatisticsData($statistic, array(
