@@ -70,7 +70,7 @@ class Top100 extends Statistics {
 				'type'=>'raw',
 			),
 		);
-		return self::makeStatisticsData($statistic, $columns, array_slice($top100, 0, 10));
+		return self::makeStatisticsData($statistic, $columns, array_slice($top100, 0, self::$limit));
 	}
 
 }

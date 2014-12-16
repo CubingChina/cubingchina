@@ -7,7 +7,6 @@ class SumOfRanks extends Statistics {
 	public static function build($statistic) {
 		$ranks = self::getRanks($statistic['type']);
 		$eventIds = isset($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
-		$limit = isset($statistic['limit']) ? $statistic['limit'] : 10;
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
@@ -45,7 +44,7 @@ class SumOfRanks extends Statistics {
 		}
 		asort($rankSum);
 		$rows = array();
-		foreach (array_slice($rankSum, 0, $limit ) as $personId=>$sum) {
+		foreach (array_slice($rankSum, 0, self::$limit) as $personId=>$sum) {
 			$row = array(
 				'personId'=>$personId,
 				'personName'=>Persons::getPersonNameById($personId),

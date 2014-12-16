@@ -7,7 +7,7 @@ class MostNumber extends Statistics {
 		->from('Results r')
 		->group($statistic['group'])
 		->order('count DESC')
-		->limit(10);
+		->limit(self::$limit);
 		switch ($statistic['group']) {
 			case 'personId':
 				$select = array(

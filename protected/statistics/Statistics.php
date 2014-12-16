@@ -2,6 +2,8 @@
 
 class Statistics {
 
+	public static $limit = 10;
+
 	public static $lists = array(
 		'Sum of all single ranks'=>array(
 			'type'=>'single',

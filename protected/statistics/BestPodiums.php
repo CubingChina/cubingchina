@@ -18,7 +18,7 @@ class BestPodiums extends Statistics {
 		->andWhere('c.countryId="China"')
 		->group('r.competitionId')
 		->order('sum ASC')
-		->limit(10);
+		->limit(self::$limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("common", "Competition")',

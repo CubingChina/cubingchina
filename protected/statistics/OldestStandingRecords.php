@@ -47,7 +47,7 @@ class OldestStandingRecords extends Statistics {
 			}
 			return $temp;
 		});
-		$rows = array_slice($rows, 0, 10);
+		$rows = array_slice($rows, 0, self::$limit);
 		//person days event type result record competition
 		$columns = array(
 			array(
