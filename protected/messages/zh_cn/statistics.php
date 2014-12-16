@@ -17,8 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自{url}。',
-  'official WCA competition results' => 'WCA赛事的官方成绩',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
@@ -52,4 +50,7 @@ return array (
   'Sum of all single ranks' => '官方全项目单次综合排行榜',
   'Third' => '季军',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自WCA赛事的官方成绩。',
+  'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自{url}。',
+  'Generated on {time}.' => '生成于{time}。',
+  'official WCA competition results' => 'WCA赛事的官方成绩',
 );
