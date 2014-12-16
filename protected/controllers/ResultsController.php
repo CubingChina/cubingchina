@@ -12,6 +12,20 @@ class ResultsController extends Controller {
 		);
 	}
 
+	protected function beforeAction($action) {
+		if (parent::beforeAction($action)) {
+			$this->breadcrumbs = array(
+				'Results'=>array('/results/index'),
+				ucfirst($this->action->id),
+			);
+			return true;
+		}
+	}
+
+	public function actionIndex() {
+		
+	}
+
 	public function actionRanking() {
 		$this->render('ranking');
 	}
@@ -24,11 +38,6 @@ class ResultsController extends Controller {
 		Yii::import('application.statistics.*');
 		$data = Statistics::getData();
 		extract($data);
-		$this->breadcrumbs = array(
-			// 'Results'=>array('/results/index'),
-			'Results',
-			ucfirst($this->action->id),
-		);
 		$this->pageTitle = array('Fun Statistics');
 		$this->title = 'Fun Statistics';
 		$this->description = Yii::t('statistics', 'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.');
