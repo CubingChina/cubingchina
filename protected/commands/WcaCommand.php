@@ -24,8 +24,7 @@ class WcaCommand extends CConsoleCommand {
 		}
 		echo 'updated wcaid: ', array_sum($num), PHP_EOL;
 		Yii::import('application.statistics.*');
-		$statistics = Statistics::getData();
-		$result = Yii::app()->cache->set('results_statistics_data', $statistics, 86400 * 7);
-		echo 'set results_statistics_data: ', $result ? 1 : 0, PHP_EOL;
+		$data = Statistics::getData(true);
+		echo 'set results_statistics_data: ', $data ? 1 : 0, PHP_EOL;
 	}
 }

@@ -92,14 +92,24 @@ class Statistics {
 		),
 	);
 
-	public static function getData() {
+	public static function getData($removeCache = false) {
+		$cache = Yii::app()->cache;
+		$cacheKey = 'results_statistics_data';
+		if (!$removeCache && ($data = $cache->get($cacheKey)) !== false) {
+			return $data;
+		}
 		$statistics = array();
 		foreach (self::$lists as $name=>$statistic) {
 			if ($statistic['class'] !== '') {
 				$statistics[$name] = $statistic['class']::build($statistic);
 			}
 		}
-		return $statistics;
+		$data = array(
+			'statistics'=>$statistics,
+			'time'=>time(),
+		);
+		$cache->set($cacheKey, $data, 86400 * 7);
+		return $data;
 	}
 
 	protected static function makeStatisticsData($statistic, $columns, $rows = null) {

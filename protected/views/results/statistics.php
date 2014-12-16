@@ -4,6 +4,9 @@
       <p><?php echo Yii::t('statistics', 'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.', array(
         '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA competition results'), 'https://www.worldcubeassociation.org/results/statistics.php', array('target'=>'_blank')),
       )); ?></p>
+      <p class="text-muted"><small><?php echo Yii::t('statistics', 'Generated on {time}', array(
+        '{time}'=>date('Y-m-d H:i:s', $time),
+      )); ?></small></p>
     </div>
     <div class="col-lg-3 col-md-4 col-sm-6">
       <?php echo CHtml::dropdownList('statistics', '', array_combine(array_map(function($statistic) {
