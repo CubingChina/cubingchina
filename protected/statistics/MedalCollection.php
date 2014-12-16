@@ -14,7 +14,7 @@ class MedalCollection extends Statistics {
 		->where('personCountryId="China" AND roundId IN ("c", "f") AND best>0')
 		->group('personId')
 		->order('gold DESC, silver DESC, bronze DESC, personName ASC')
-		->limit(10);
+		->limit(self::$limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',

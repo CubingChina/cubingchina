@@ -8,7 +8,7 @@ class RecordsSet extends Statistics {
 		->where('regionalSingleRecord!="" OR regionalAverageRecord!=""')
 		->group($statistic['group'])
 		->order('score DESC, WR DESC, AsR DESC, NR DESC')
-		->limit(10);
+		->limit(self::$limit);
 		$select = array();
 		$score = array();
 		$columns = array();
