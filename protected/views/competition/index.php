@@ -31,6 +31,14 @@
       'prompt'=>Yii::t('common', 'All'),
     ))
   );?>
+  <?php echo Html::formGroup(
+    $model, 'event', array(),
+    $form->labelEx($model, 'event'),
+    CHtml::dropDownList('event', $model->event, Events::getNormalTranslatedEvents(), array(
+      'class'=>'form-control',
+      'prompt'=>Yii::t('common', 'All'),
+    ))
+  );?>
   <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
   <?php $this->widget('GridView', array(
