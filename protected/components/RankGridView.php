@@ -2,6 +2,8 @@
 
 class RankGridView extends GridView {
 	public $rank = 0;
+	public $lastRank;
+	public $count;
 	public $rankKey;
 	public $lastRankValue;
 
@@ -24,17 +26,21 @@ class RankGridView extends GridView {
 		if ($hasRankColumn === false) {
 			array_unshift($this->columns, Yii::createComponent(array(
 				'class'=>'RankColumn',
-				'value'=>'$rank',
+				'value'=>'$displayRank',
+				'header'=>Yii::t('statistics', 'Rank'),
 			), $this));
 		}
+		$this->lastRank = $this->count = $this->rank;
 	}
 
 	public function renderTableRow($row) {
 		$data = $this->dataProvider->data[$row];
 		$value = CHtml::value($data, $this->rankKey);
+		$this->count++;
 		if ($this->lastRankValue != $value) {
 			$this->lastRankValue = $value;
-			$this->rank++;
+			$this->lastRank = $this->rank;
+			$this->rank = $this->count;
 		}
 		$htmlOptions = array();
 		if ($this->rowHtmlOptionsExpression !== null) {
@@ -71,5 +77,9 @@ class RankGridView extends GridView {
 			$column->renderDataCell($row);
 		}
 		echo "</tr>\n";
+	}
+
+	public function getDisplayRank() {
+		return $this->count === $this->rank ? $this->rank : '';
 	}
 }

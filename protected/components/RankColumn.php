@@ -8,6 +8,8 @@ class RankColumn extends CDataColumn {
 				'data'=>$data,
 				'row'=>$row,
 				'rank'=>$this->grid->rank,
+				'lastRank'=>$this->grid->lastRank,
+				'displayRank'=>$this->grid->displayRank,
 			));
 		} elseif ($this->name !== null) {
 			$value = CHtml::value($data, $this->name);
