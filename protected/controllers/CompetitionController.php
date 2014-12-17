@@ -55,6 +55,7 @@ class CompetitionController extends Controller {
 		$model->year = $this->sGet('year', 'current');
 		$model->type = $this->sGet('type', '');
 		$model->province = $this->sGet('province', '');
+		$model->event = $this->sGet('event', '');
 		$model->status = Competition::STATUS_SHOW;
 		$this->title = 'Competition List';
 		$this->pageTitle = array('Competition List');

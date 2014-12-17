@@ -46,6 +46,7 @@ class Competition extends ActiveRecord {
 
 	public $year;
 	public $province;
+	public $event;
 
 	public static function formatTime($second) {
 		$second = intval($second);
@@ -1082,6 +1083,7 @@ class Competition extends ActiveRecord {
 			'organizers' => Yii::t('Competition', 'Organizers'),
 			'delegates' => Yii::t('Competition', 'Delegates'),
 			'year' => Yii::t('common', 'Year'),
+			'event' => Yii::t('common', 'Event'),
 			'province' => Yii::t('common', 'Province'),
 		);
 	}
@@ -1139,6 +1141,9 @@ class Competition extends ActiveRecord {
 			} elseif (in_array($this->year, self::getYears())) {
 				$criteria->compare('t.date', '>=' . strtotime($this->year . '-01-01'));
 				$criteria->compare('t.date', '<=' . strtotime($this->year . '-12-31'));
+			}
+			if ($this->event !== '') {
+				$criteria->compare('t.events', '"' . $this->event . '"', true);
 			}
 			if ($this->province > 0) {
 				unset($criteria->with[0]);
