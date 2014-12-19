@@ -33,7 +33,7 @@ return array (
   'Competitors' => '參賽選手',
   'Contact us' => '聯繫我們',
   'Country' => '國家',
-  'CR' => '洲際記錄',
+  'CR' => '洲際紀錄',
   'Cubing' => '粗餅',
   'CubingChina Website' => '粗餅網',
   'Event' => '項目',
