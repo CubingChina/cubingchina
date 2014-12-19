@@ -33,6 +33,7 @@ return array (
   'Competitors' => '参赛选手',
   'Contact us' => '联系我们',
   'Country' => '国家',
+  'CR' => '洲际记录',
   'Cubing' => '粗饼',
   'CubingChina Website' => '粗饼网',
   'Event' => '项目',
