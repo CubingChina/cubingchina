@@ -26,12 +26,30 @@
 class Results extends ActiveRecord {
 
 	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
-		switch ($type) {
-			case 'history':
-				return self::getHistoryRecords($region, $event);
-			default:
-				return self::getCurrentRecords($region);
+		if (!in_array($type, array('current', 'history'))) {
+			$type = 'current';
 		}
+		if (!in_array($event, array_keys(Events::getNormalEvents()))) {
+			$event = '333';
+		}
+		if ($type !== 'history') {
+			$event = '';
+		}
+		$cache = Yii::app()->cache;
+		$cacheKey = "results_records_{$type}_{$region}_{$event}";
+		$expire = 86400 * 7;
+		if (($data = $cache->get($cacheKey)) === false) {
+			switch ($type) {
+				case 'history':
+					$data = self::getHistoryRecords($region, $event);
+					break;
+				default:
+					$data = self::getCurrentRecords($region);
+					break;
+			}
+			$cache->set($cacheKey, $data, $expire);
+		}
+		return $data;
 	}
 
 	public static function getHistoryRecords($region = 'China', $event = '333') {
@@ -130,6 +148,7 @@ class Results extends ActiveRecord {
 			'c.day',
 		))
 		->leftJoin('Events e', 'r.eventId=e.id')
+		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
 		->order('e.rank ASC');
 		switch ($region) {
 			case 'World':
@@ -141,7 +160,7 @@ class Results extends ActiveRecord {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				$command->leftJoin('Countries country', 'p.countryId=country.id');
 				$command->where('r.continentRank=1 AND country.continentId=:region', array(
 					':region'=>'_' . $region,
 				));
