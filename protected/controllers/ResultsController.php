@@ -13,6 +13,7 @@ class ResultsController extends Controller {
 	}
 
 	protected function beforeAction($action) {
+		Yii::import('application.statistics.*');
 		if (parent::beforeAction($action)) {
 			$this->breadcrumbs = array(
 				'Results'=>array('/results/index'),
@@ -26,12 +27,24 @@ class ResultsController extends Controller {
 		
 	}
 
-	public function actionRanking() {
-		$this->render('ranking');
+	public function actionRankings() {
+		$type = $this->sGet('type', 'single');
+		$event = $this->sGet('event', '333');
+		$gender = $this->sGet('gender', 'all');
+		$page = $this->iGet('page', 1);
+		$rankings = Results::getRankings($type, $event, $gender, $page);
+		$this->title = 'Rankings';
+		$this->pageTitle = array('Rankings');
+		$this->render('rankings', array(
+			'rankings'=>$rankings,
+			'type'=>$type,
+			'event'=>$event,
+			'gender'=>$gender,
+			'page'=>$page,
+		));
 	}
 
 	public function actionRecords() {
-		Yii::import('application.statistics.*');
 		$type = $this->sGet('type', 'current');
 		$region = $this->sGet('region', 'China');
 		$event = $this->sGet('event', '333');
@@ -47,7 +60,6 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
-		Yii::import('application.statistics.*');
 		$data = Statistics::getData();
 		extract($data);
 		$this->pageTitle = array('Fun Statistics');

@@ -73,7 +73,7 @@
       ),
       array(
         'header'=>Yii::t('Competition', 'Date'),
-        'value'=>'sprintf("%s-%s-%s", $data["year"], $data["month"], $data["day"])',
+        'value'=>'date("Y-m-d", strtotime(sprintf("%s-%s-%s", $data["year"], $data["month"], $data["day"])))',
         'type'=>'raw',
       ),
       array(

@@ -21,10 +21,8 @@ return array (
   'Best' => '',
   'Competition' => '',
   'Country' => '',
-  'Current' => '当前纪录',
   'Event' => '',
   'Format' => '',
-  'History' => '历史纪录',
   'ID' => '',
   'Person' => '',
   'Person Name' => '',
@@ -37,4 +35,6 @@ return array (
   'Value3' => '',
   'Value4' => '',
   'Value5' => '',
+  'Current' => '当前纪录',
+  'History' => '历史纪录',
 );

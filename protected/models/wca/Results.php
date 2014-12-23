@@ -25,6 +25,81 @@
  */
 class Results extends ActiveRecord {
 
+	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
+		if (!in_array($type, array('single', 'average'))) {
+			$type = 'single';
+		}
+		if (!in_array($gender, array_keys(Persons::getGenders()))) {
+			$gender = 'all';
+		}
+		if (!in_array($event, array_keys(Events::getNormalEvents()))) {
+			$event = '333';
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
+		$cache = Yii::app()->cache;
+		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
+		$expire = 86400 * 7;
+		if (($data = $cache->get($cacheKey)) === false) {
+			$command = Yii::app()->wcaDb->createCommand()
+			->select(array(
+				'r.*',
+				'rs.personName',
+				'rs.personCountryId',
+				'rs.competitionId',
+				'rs.value1',
+				'rs.value2',
+				'rs.value3',
+				'rs.value4',
+				'rs.value5',
+				'c.cellName',
+				'c.year',
+				'c.month',
+				'c.day',
+			))
+			->from(sprintf('Ranks%s r', ucfirst($type)))
+			->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
+			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
+			->leftJoin('Competitions c', 'rs.competitionId=c.id')
+			->where('r.countryRank>0')
+			->andWhere('r.eventId=:eventId', array(
+				':eventId'=>$event,
+			))
+			->andWhere('rs.personCountryId="China"')
+			->order('r.countryRank ASC');
+			switch ($gender) {
+				case 'female':
+					$command->andWhere('p.gender="f"');
+					break;
+				case 'male':
+					$command->andWhere('p.gender="m"');
+					break;
+			}
+			$cmd1 = clone $command;
+			$cmd2 = clone $command;
+			$count = $cmd1->select('COUNT(DISTINCT r.personId) AS count')
+			->queryScalar();
+			$rows = array();
+			$command->group('r.personId')->limit(100, ($page - 1) * 100);
+			foreach ($command->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[] = $row;
+			}
+			$rank = $cmd2->select('COUNT(DISTINCT r.personId) AS count')
+			->andWhere('r.best<' . $rows[0]['best'])
+			->queryScalar();
+			$data = array(
+				'count'=>$count,
+				'rows'=>$rows,
+				'rank'=>$rank,
+			);
+			$cache->set($cacheKey, $data, $expire);
+		}
+		return $data;
+	}
+
 	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
 		if (!in_array($type, array('current', 'history'))) {
 			$type = 'current';

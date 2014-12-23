@@ -12,6 +12,14 @@
  */
 class Persons extends ActiveRecord {
 
+	public static function getGenders() {
+		return array(
+			'all'=>Yii::t('common', 'All'),
+			'female'=>Yii::t('common', 'Female'),
+			'male'=>Yii::t('common', 'Male'),
+		);
+	}
+
 	public static function getPersonNameById($id) {
 		$person = self::model()->findByAttributes(array(
 			'id'=>$id,
