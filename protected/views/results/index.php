@@ -1,4 +1,4 @@
-<div class="col-lg-12">
+<div class="col-lg-12 competition-wca">
   <p><?php echo Yii::t('statistics', 'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.'); ?></p>
   <ul>
     <li>

@@ -1,4 +1,4 @@
-<div class="col-lg-12">
+<div class="col-lg-12 competition-wca">
   <div class="row">
     <div class="col-lg-12">
       <p><?php echo Yii::t('statistics', 'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.', array(

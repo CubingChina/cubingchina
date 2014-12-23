@@ -1,4 +1,4 @@
-<div class="col-lg-12">
+<div class="col-lg-12 competition-wca">
   <div>
     <p><?php echo Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the {url}.', array(
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
