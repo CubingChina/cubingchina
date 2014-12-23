@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Rank' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
@@ -25,7 +26,6 @@ return array (
   'Best podiums in Rubik\'s Cube event' => '中国赛事三阶领奖台成绩榜',
   'Bronze' => '铜',
   'Competitions' => '比赛次数',
-  'Days' => '天数',
   'First' => '冠军',
   'Gold' => '金',
   'Most competitions by one person' => '中国选手的比赛次数排行榜',
@@ -35,7 +35,6 @@ return array (
   'Most persons in one competition' => '中国赛事的选手人数排行榜',
   'Most solves in one competition' => '中国赛事总复原次数排行榜',
   'Oldest standing of current Chinese records in all events' => '中国纪录现保持时间排行榜',
-  'Person' => '姓名',
   'Persons' => '人数',
   'Records set by Chinese competitors' => '中国选手创纪录数量排行榜',
   'Records set in Chinese competitions' => '中国赛事创纪录数量排行榜',
@@ -51,6 +50,8 @@ return array (
   'Third' => '季军',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自WCA赛事的官方成绩。',
   'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自{url}。',
+  'Days' => '天数',
   'Generated on {time}.' => '生成于{time}。',
+  'Person' => '姓名',
   'official WCA competition results' => 'WCA赛事的官方成绩',
 );

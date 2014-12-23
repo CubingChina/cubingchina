@@ -31,7 +31,19 @@ class ResultsController extends Controller {
 	}
 
 	public function actionRecords() {
-		$this->render('records');
+		Yii::import('application.statistics.*');
+		$type = $this->sGet('type', 'current');
+		$region = $this->sGet('region', 'China');
+		$event = $this->sGet('event', '333');
+		$records = Results::getRecords($type, $region, $event);
+		$this->title = 'Records';
+		$this->pageTitle = array('Records');
+		$this->render('records', array(
+			'records'=>$records,
+			'type'=>$type,
+			'region'=>$region,
+			'event'=>$event,
+		));
 	}
 
 	public function actionStatistics() {

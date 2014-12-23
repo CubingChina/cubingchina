@@ -249,6 +249,7 @@ class User extends ActiveRecord {
 		if ($name === null) {
 			$name = $this->getCompetitionName();
 		}
+		$name = mb_convert_encoding($name, 'HTML-ENTITIES', 'UTF-8');
 		if ($this->wcaid === '' || $name === '') {
 			return $name;
 		}

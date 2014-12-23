@@ -137,7 +137,7 @@ class Statistics {
 		));
 	}
 
-	protected static function getCompetition($row) {
+	public static function getCompetition($row) {
 		$competition = Competition::model()->findByAttributes(array(
 			'wca_competition_id'=>$row['competitionId'],
 		));

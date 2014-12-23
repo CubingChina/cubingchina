@@ -25,6 +25,148 @@
  */
 class Results extends ActiveRecord {
 
+	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
+		switch ($type) {
+			case 'history':
+				return self::getHistoryRecords($region, $event);
+			default:
+				return self::getCurrentRecords($region);
+		}
+	}
+
+	public static function getHistoryRecords($region = 'China', $event = '333') {
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'rs.eventId',
+			'rs.best',
+			'rs.average',
+			'rs.personId',
+			'rs.personName',
+			'rs.personCountryId',
+			'rs.competitionId',
+			'rs.value1',
+			'rs.value2',
+			'rs.value3',
+			'rs.value4',
+			'rs.value5',
+			'rs.regionalSingleRecord',
+			'rs.regionalAverageRecord',
+			'c.cellName',
+			'c.year',
+			'c.month',
+			'c.day',
+		))
+		->from('Results rs')
+		->leftJoin('Competitions c', 'rs.competitionId=c.id')
+		->where('rs.eventId=:eventId', array(
+			':eventId'=>$event,
+		))
+		->order('c.year DESC, c.month DESC, c.day DESC, rs.personName ASC');
+		switch ($region) {
+			case 'World':
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				$command->andWhere('country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->andWhere('rs.personCountryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		$rows = array();
+		foreach (array('single', 'average') as $type) {
+			$cmd = clone $command;
+			switch ($region) {
+				case 'World':
+					$cmd->andWhere(sprintf('rs.regional%sRecord="WR"', ucfirst($type)));
+					break;
+				case 'Africa':
+				case 'Asia':
+				case 'Oceania':
+				case 'Europe':
+				case 'North America':
+				case 'South America':
+					$cmd->leftJoin('Continents continent', 'country.continentId=continent.id');
+					$cmd->andWhere(sprintf('rs.regional%sRecord IN (continent.recordName, "WR")', ucfirst($type)));
+					break;
+				default:
+					$cmd->andWhere(sprintf('rs.regional%sRecord!=""', ucfirst($type)));
+					break;
+			}
+			foreach ($cmd->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[$type][] = $row;
+			}
+		}
+		return call_user_func_array('array_merge', $rows);
+
+	}
+
+	public static function getCurrentRecords($region = 'China') {
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'r.*',
+			'rs.personName',
+			'rs.personCountryId',
+			'rs.competitionId',
+			'rs.value1',
+			'rs.value2',
+			'rs.value3',
+			'rs.value4',
+			'rs.value5',
+			'c.cellName',
+			'c.year',
+			'c.month',
+			'c.day',
+		))
+		->leftJoin('Events e', 'r.eventId=e.id')
+		->order('e.rank ASC');
+		switch ($region) {
+			case 'World':
+				$command->where('r.worldRank=1');
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				$command->where('r.continentRank=1 AND country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->where('r.countryRank=1 AND rs.personCountryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		$rows = array();
+		foreach (array('single', 'average') as $type) {
+			$cmd = clone $command;
+			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
+			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
+			->leftJoin('Competitions c', 'rs.competitionId=c.id');
+			foreach ($cmd->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[$row['eventId']][] = $row;
+			}
+		}
+		return call_user_func_array('array_merge', $rows);
+	}
+
 	public static function formatTime($result, $eventId, $encode = true) {
 		if ($result == -1) {
 			return 'DNF';
