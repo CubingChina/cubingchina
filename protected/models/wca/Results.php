@@ -41,29 +41,18 @@ class Results extends ActiveRecord {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
 		$expire = 86400 * 7;
+		$field = $type === 'single' ? 'best' : 'average';
 		if (($data = $cache->get($cacheKey)) === false) {
 			$command = Yii::app()->wcaDb->createCommand()
 			->select(array(
-				'r.*',
-				'rs.personName',
-				'rs.personCountryId',
-				'rs.competitionId',
-				'rs.value1',
-				'rs.value2',
-				'rs.value3',
-				'rs.value4',
-				'rs.value5',
-				'c.cellName',
-				'c.year',
-				'c.month',
-				'c.day',
+				'rs.eventId',
+				sprintf('MIN(rs.%s) AS best', $field),
+				'rs.personId',
 			))
-			->from(sprintf('Ranks%s r', ucfirst($type)))
-			->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
-			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
-			->leftJoin('Competitions c', 'rs.competitionId=c.id')
-			->where('r.countryRank>0')
-			->andWhere('r.eventId=:eventId', array(
+			->from('Results rs')
+			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+			->where(sprintf('rs.%s>0', $field))
+			->andWhere('rs.eventId=:eventId', array(
 				':eventId'=>$event,
 			))
 			->andWhere('rs.personCountryId="China"');
@@ -77,22 +66,52 @@ class Results extends ActiveRecord {
 			}
 			$cmd1 = clone $command;
 			$cmd2 = clone $command;
-			$count = $cmd1->select('COUNT(DISTINCT r.personId) AS count')
+			$count = $cmd1->select('COUNT(DISTINCT rs.personId) AS count')
 			->queryScalar();
 			if ($page > ceil($count / 100)) {
 				$page = ceil($count / 100);
 			}
 			$rows = array();
-			$command->group('r.personId')
-			->order('r.countryRank ASC, p.name ASC')
+			$command->group('rs.personId')
+			->order(sprintf('best ASC, p.name ASC', $field))
 			->limit(100, ($page - 1) * 100);
+			$eventBestPerson = array_map(function($row) {
+				return sprintf('("%s", %d, "%s")', $row['eventId'], $row['best'], $row['personId']);
+			}, $command->queryAll());
+			$command = Yii::app()->wcaDb->createCommand()
+			->select(array(
+				'rs.eventId',
+				sprintf('rs.%s AS best', $field),
+				'rs.personId',
+				'rs.personName',
+				'rs.personCountryId',
+				'rs.competitionId',
+				'rs.value1',
+				'rs.value2',
+				'rs.value3',
+				'rs.value4',
+				'rs.value5',
+				'c.cellName',
+				'c.year',
+				'c.month',
+				'c.day',
+			))
+			->from('Results rs')
+			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+			->leftJoin('Competitions c', 'rs.competitionId=c.id')
+			->where(sprintf('(rs.eventId, rs.%s, rs.personId) IN (%s)',
+				$field,
+				implode(',', $eventBestPerson)
+			))
+			->order(sprintf('rs.%s ASC, p.name ASC', $field));
 			foreach ($command->queryAll() as $row) {
 				$row['type'] = $type;
 				$row = Statistics::getCompetition($row);
-				$rows[] = $row;
+				$rows[$row['personId']] = $row;
 			}
-			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT r.personId) AS count')
-			->andWhere('r.best<' . $rows[0]['best'])
+			$rows = array_values($rows);
+			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT rs.personId) AS count')
+			->andWhere(sprintf('rs.%s<' . $rows[0]['best'], $field))
 			->queryScalar() : 0;
 			$data = array(
 				'count'=>$count,
