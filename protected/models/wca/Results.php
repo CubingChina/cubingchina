@@ -197,6 +197,7 @@ class Results extends ActiveRecord {
 					$cmd->andWhere(sprintf('rs.regional%sRecord!=""', ucfirst($type)));
 					break;
 			}
+			$rows[$type] = array();
 			foreach ($cmd->queryAll() as $row) {
 				$row['type'] = $type;
 				$row = Statistics::getCompetition($row);
@@ -249,7 +250,9 @@ class Results extends ActiveRecord {
 				));
 				break;
 		}
-		$rows = array();
+		$rows = array(
+			'333'=>array(),
+		);
 		foreach (array('single', 'average') as $type) {
 			$cmd = clone $command;
 			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
