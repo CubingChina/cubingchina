@@ -95,6 +95,8 @@
     'front'=>true,
     'rankKey'=>'best',
     'rank'=>$rankings['rank'],
+    'count'=>($page - 1) * 100,
     'columns'=>$columns,
-  )); ?>
+  )); echo $rankings['rank'];?>
+
 </div>
