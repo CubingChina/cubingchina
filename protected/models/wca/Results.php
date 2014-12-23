@@ -25,7 +25,7 @@
  */
 class Results extends ActiveRecord {
 
-	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
+	public static function getRankings($type = 'single', &$event = '333', &$gender = 'all', &$page = 1) {
 		if (!in_array($type, array('single', 'average'))) {
 			$type = 'single';
 		}
@@ -84,7 +84,7 @@ class Results extends ActiveRecord {
 			}
 			$rows = array();
 			$command->group('r.personId')
-			->order('r.countryRank ASC')
+			->order('r.countryRank ASC, p.name ASC')
 			->limit(100, ($page - 1) * 100);
 			foreach ($command->queryAll() as $row) {
 				$row['type'] = $type;
@@ -104,7 +104,7 @@ class Results extends ActiveRecord {
 		return $data;
 	}
 
-	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
+	public static function getRecords($type = 'current', $region = 'China', &$event = '333') {
 		if (!in_array($type, array('current', 'history'))) {
 			$type = 'current';
 		}

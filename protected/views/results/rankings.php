@@ -12,27 +12,38 @@
     'method'=>'get',
     'action'=>array('/results/rankings'),
   )); ?>
-  <div class="form-group">
-    <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
-    <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
-      'class'=>'form-control',
-    )); ?>
-  </div>
-  <div class="form-group">
-    <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
-    <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
-      'class'=>'form-control',
-    )); ?>
-  </div>
-  <?php foreach (array('single', 'average') as $_type): ?>
-  <?php echo CHtml::tag('button', array(
-    'type'=>'submit',
-    'name'=>'type',
-    'value'=>$_type,
-    'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
-  ), Yii::t('common', ucfirst($_type))); ?>
-  <?php endforeach; ?>
+    <div class="form-group">
+      <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
+      <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+    <div class="form-group">
+      <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
+      <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+    <?php foreach (array('single', 'average') as $_type): ?>
+    <?php echo CHtml::tag('button', array(
+      'type'=>'submit',
+      'name'=>'type',
+      'value'=>$_type,
+      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
+    ), Yii::t('common', ucfirst($_type))); ?>
+    <?php endforeach; ?>
   <?php $this->endWidget(); ?>
+  <div class="event-title">
+    <?php echo CHtml::tag('span', array(
+      'class'=>'event-icon event-icon event-icon-' . $event,
+    ), Yii::t('event', Events::getFullEventName($event))); ?>
+    &nbsp;&nbsp;
+    <?php echo Yii::t('Region', 'China'); ?>
+    &nbsp;&nbsp;
+    <?php echo Yii::t('common', ucfirst($gender)); ?>
+    &nbsp;&nbsp;
+    <?php echo Yii::t('common', ucfirst($type)); ?>
+  </div>
   <?php
   $columns = array(
     array(

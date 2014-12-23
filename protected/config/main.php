@@ -58,6 +58,7 @@ $config = array(
 				),
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
+				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -161,7 +162,7 @@ $config = array(
 		'staticPath' => dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix' => 'http://s.cubingchina.com/',
 		'jsVer' => '20140826',
-		'cssVer' => '20141216',
+		'cssVer' => '20141223',
 	),
 );
 

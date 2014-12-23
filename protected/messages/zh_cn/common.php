@@ -41,7 +41,7 @@ return array (
   'NR' => '国家纪录',
   'Not found' => '未找到',
   'Official Records' => '官方纪录',
-  'Personal Rankings' => '官方排名',
+  'Personal Rankings' => '个人排名',
   'Registration' => '在线报名',
   'Regulations' => '比赛规则',
   'Reset Password' => '重设密码',

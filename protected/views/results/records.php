@@ -12,28 +12,28 @@
     'method'=>'get',
     'action'=>array('/results/records'),
   )); ?>
-  <div class="form-group">
-    <label for="Competition_year"><?php echo Yii::t('common', 'Region'); ?></label>
-    <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions(), array(
-      'class'=>'form-control',
-    )); ?>
-  </div>
-  <?php if ($type === 'history'): ?>
-  <div class="form-group">
-    <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
-    <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
-      'class'=>'form-control',
-    )); ?>
-  </div>
-  <?php endif; ?>
-  <?php foreach (array('current', 'history') as $_type): ?>
-  <?php echo CHtml::tag('button', array(
-    'type'=>'submit',
-    'name'=>'type',
-    'value'=>$_type,
-    'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
-  ), Yii::t('Results', ucfirst($_type))); ?>
-  <?php endforeach; ?>
+    <div class="form-group">
+      <label for="Competition_year"><?php echo Yii::t('common', 'Region'); ?></label>
+      <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+    <?php if ($type === 'history'): ?>
+    <div class="form-group">
+      <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
+      <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+    <?php endif; ?>
+    <?php foreach (array('current', 'history') as $_type): ?>
+    <?php echo CHtml::tag('button', array(
+      'type'=>'submit',
+      'name'=>'type',
+      'value'=>$_type,
+      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
+    ), Yii::t('Results', ucfirst($_type))); ?>
+    <?php endforeach; ?>
   <?php $this->endWidget(); ?>
   <?php $this->widget('GroupGridView', array(
     'dataProvider'=>new CArrayDataProvider($records, array(

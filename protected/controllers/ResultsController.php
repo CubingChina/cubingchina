@@ -41,7 +41,12 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$rankings = Results::getRankings($type, $event, $gender, $page);
 		$this->title = 'Personal Rankings';
-		$this->pageTitle = array('Personal Rankings');
+		$this->pageTitle = array(
+			'Personal Rankings',
+			Yii::t('event', Events::getFullEventName($event)),
+			ucfirst($gender),
+			ucfirst($type),
+		);
 		$this->description = Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.');
 		$this->setWeiboShareDefaultText('中国魔方选手在各官方项目的个人成绩排名展示');
 		$this->render('rankings', array(
@@ -59,7 +64,15 @@ class ResultsController extends Controller {
 		$event = $this->sGet('event', '333');
 		$records = Results::getRecords($type, $region, $event);
 		$this->title = 'Official Records';
-		$this->pageTitle = array('Official Records');
+		$pageTitle = array(
+			'Official Records',
+			Yii::t('Region', $region),
+		);
+		if ($type === 'history') {
+			$pageTitle[] = Yii::t('event', Events::getFullEventName($event));
+		}
+		$pageTitle[] = Yii::t('Results', ucfirst($type));
+		$this->pageTitle = $pageTitle;
 		$this->description = Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the official WCA records.');
 		$this->setWeiboShareDefaultText('世界魔方协会（WCA）所有官方项目的纪录展示');
 		$this->render('records', array(
