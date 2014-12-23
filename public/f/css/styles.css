@@ -2378,3 +2378,9 @@ span.penalty {
   -webkit-box-shadow: inset 0 0 1px 1px #6091BA;
   box-shadow: inset 0 0 1px 1px #6091BA;
 }
+.results-rankings .event-title {
+  border: 1px solid #6091BA;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+}

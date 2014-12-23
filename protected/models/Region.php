@@ -13,6 +13,14 @@ class Region extends ActiveRecord {
 
 	public static $HKMCTW = array(2, 3, 4);
 
+	public static function getWACRegions() {
+		return array(
+			'World'=>Yii::t('Region', 'World'),
+			'Asia'=>Yii::t('Region', 'Asia'),
+			'China'=>Yii::t('Region', 'China'),
+		);
+	}
+
 	public static function getRegionById($id) {
 		return self::model()->findByPk($id);
 	}

@@ -35,4 +35,6 @@ return array (
   'Value3' => '',
   'Value4' => '',
   'Value5' => '',
+  'Current' => '當前紀錄',
+  'History' => '歷史紀錄',
 );
