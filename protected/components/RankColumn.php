@@ -9,7 +9,7 @@ class RankColumn extends CDataColumn {
 				'row'=>$row,
 				'rank'=>$this->grid->rank,
 				'lastRank'=>$this->grid->lastRank,
-				'displayRank'=>$this->grid->displayRank,
+				'displayRank'=>$this->grid->getDisplayRank($row),
 			));
 		} elseif ($this->name !== null) {
 			$value = CHtml::value($data, $this->name);

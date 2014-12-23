@@ -3,7 +3,7 @@
 class RankGridView extends GridView {
 	public $rank = 0;
 	public $lastRank;
-	public $count;
+	public $count = 0;
 	public $rankKey;
 	public $lastRankValue;
 
@@ -30,7 +30,14 @@ class RankGridView extends GridView {
 				'header'=>Yii::t('statistics', 'Rank'),
 			), $this));
 		}
-		$this->lastRank = $this->count = $this->rank;
+		$this->lastRank = $this->rank;
+		if ($this->count != $this->rank && $this->rankKey !== null) {
+			$this->rank++;
+			if ($this->dataProvider->getItemCount() > 0) {
+				$data = $this->dataProvider->data[0];
+				$this->lastRankValue = CHtml::value($data, $this->rankKey);
+			}
+		}
 	}
 
 	public function renderTableRow($row) {
@@ -79,7 +86,7 @@ class RankGridView extends GridView {
 		echo "</tr>\n";
 	}
 
-	public function getDisplayRank() {
-		return $this->count === $this->rank ? $this->rank : '';
+	public function getDisplayRank($row = 0) {
+		return $this->count === $this->rank || $row === 0 ? $this->rank : '';
 	}
 }
