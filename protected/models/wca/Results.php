@@ -88,9 +88,9 @@ class Results extends ActiveRecord {
 				$row = Statistics::getCompetition($row);
 				$rows[] = $row;
 			}
-			$rank = $cmd2->select('COUNT(DISTINCT r.personId) AS count')
+			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT r.personId) AS count')
 			->andWhere('r.best<' . $rows[0]['best'])
-			->queryScalar();
+			->queryScalar() : 0;
 			$data = array(
 				'count'=>$count,
 				'rows'=>$rows,
@@ -152,10 +152,11 @@ class Results extends ActiveRecord {
 		))
 		->from('Results rs')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id')
+		->leftJoin('Rounds round', 'rs.roundId=round.id')
 		->where('rs.eventId=:eventId', array(
 			':eventId'=>$event,
 		))
-		->order('c.year DESC, c.month DESC, c.day DESC, rs.personName ASC');
+		->order('c.year DESC, c.month DESC, c.day DESC, round.rank DESC, rs.personName ASC');
 		switch ($region) {
 			case 'World':
 				break;
@@ -210,6 +211,7 @@ class Results extends ActiveRecord {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
 			'r.*',
+			'r.best AS average',
 			'rs.personName',
 			'rs.personCountryId',
 			'rs.competitionId',

@@ -53,7 +53,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Average'),
-        'value'=>'$data["type"] === "average" ? Results::formatTime($data["best"], $data["eventId"]) : ""',
+        'value'=>'$data["type"] === "average" ? Results::formatTime($data["average"], $data["eventId"]) : ""',
         'type'=>'raw',
       ),
       array(
