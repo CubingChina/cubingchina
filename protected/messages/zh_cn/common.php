@@ -18,6 +18,8 @@
  */
 return array (
   'Fee' => '',
+  'Official Rankings' => '官方排名',
+  'Official Records' => '官方纪录',
   'WCA ID' => '',
   'About us' => '关于本站',
   'AsR' => '亚洲纪录',

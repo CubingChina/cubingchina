@@ -4,6 +4,8 @@ class Statistics {
 
 	public static $limit = 10;
 
+	private static $_competitions = array();
+
 	public static $lists = array(
 		'Sum of all single ranks'=>array(
 			'type'=>'single',
@@ -140,19 +142,23 @@ class Statistics {
 	public static function getCompetition($row) {
 		$cacheKey = 'results_competition_data_' . $row['competitionId'];
 		$cache = Yii::app()->cache;
-		if (($data = $cache->get($cacheKey)) === false) {
-			$competition = Competition::model()->findByAttributes(array(
-				'wca_competition_id'=>$row['competitionId'],
-			));
-			if ($competition === null) {
-				$data['name'] = $data['name_zh'] = $data['cellName'];
-				$data['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
-			} else {
-				$data['name'] = $competition->name;
-				$data['name_zh'] = $competition->name_zh;
-				$data['url'] = $competition->url;
+		if (self::$_competitions === array()) {
+			$competitions = Competition::model()->cache(86400 * 7)->findAll('wca_competition_id!=""');
+			foreach ($competitions as $competition) {
+				self::$_competitions[$competition->wca_competition_id] = array(
+					'name'=>$competition->name,
+					'name_zh'=>$competition->name_zh,
+					'url'=>$competition->url,
+				);
 			}
+		}
+		if (isset(self::$_competitions[$row['competitionId']])) {
+			$data = self::$_competitions[$row['competitionId']];
+		} elseif (($data = $cache->get($cacheKey)) === false) {
+			$data['name'] = $data['name_zh'] = $row['cellName'];
+			$data['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
 			$cache->set($cacheKey, $data, 86400 * 7);
+			self::$_competitions[$row['competitionId']] = $data;
 		}
 		return array_merge($row, $data);
 	}

@@ -33,8 +33,8 @@ class ResultsController extends Controller {
 		$gender = $this->sGet('gender', 'all');
 		$page = $this->iGet('page', 1);
 		$rankings = Results::getRankings($type, $event, $gender, $page);
-		$this->title = 'Rankings';
-		$this->pageTitle = array('Rankings');
+		$this->title = 'Official Rankings';
+		$this->pageTitle = array('Official Rankings');
 		$this->render('rankings', array(
 			'rankings'=>$rankings,
 			'type'=>$type,
@@ -49,8 +49,8 @@ class ResultsController extends Controller {
 		$region = $this->sGet('region', 'China');
 		$event = $this->sGet('event', '333');
 		$records = Results::getRecords($type, $region, $event);
-		$this->title = 'Records';
-		$this->pageTitle = array('Records');
+		$this->title = 'Official Records';
+		$this->pageTitle = array('Official Records');
 		$this->render('records', array(
 			'records'=>$records,
 			'type'=>$type,

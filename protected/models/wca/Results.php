@@ -66,8 +66,7 @@ class Results extends ActiveRecord {
 			->andWhere('r.eventId=:eventId', array(
 				':eventId'=>$event,
 			))
-			->andWhere('rs.personCountryId="China"')
-			->order('r.countryRank ASC');
+			->andWhere('rs.personCountryId="China"');
 			switch ($gender) {
 				case 'female':
 					$command->andWhere('p.gender="f"');
@@ -81,7 +80,9 @@ class Results extends ActiveRecord {
 			$count = $cmd1->select('COUNT(DISTINCT r.personId) AS count')
 			->queryScalar();
 			$rows = array();
-			$command->group('r.personId')->limit(100, ($page - 1) * 100);
+			$command->group('r.personId')
+			->order('r.countryRank ASC')
+			->limit(100, ($page - 1) * 100);
 			foreach ($command->queryAll() as $row) {
 				$row['type'] = $type;
 				$row = Statistics::getCompetition($row);
