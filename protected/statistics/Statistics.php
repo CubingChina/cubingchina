@@ -138,18 +138,23 @@ class Statistics {
 	}
 
 	public static function getCompetition($row) {
-		$competition = Competition::model()->findByAttributes(array(
-			'wca_competition_id'=>$row['competitionId'],
-		));
-		if ($competition === null) {
-			$row['name'] = $row['name_zh'] = $row['cellName'];
-			$row['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
-		} else {
-			$row['name'] = $competition->name;
-			$row['name_zh'] = $competition->name_zh;
-			$row['url'] = $competition->url;
+		$cacheKey = 'results_competition_data_' . $row['competitionId'];
+		$cache = Yii::app()->cache;
+		if (($data = $cache->get($cacheKey)) === false) {
+			$competition = Competition::model()->findByAttributes(array(
+				'wca_competition_id'=>$row['competitionId'],
+			));
+			if ($competition === null) {
+				$data['name'] = $data['name_zh'] = $data['cellName'];
+				$data['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
+			} else {
+				$data['name'] = $competition->name;
+				$data['name_zh'] = $competition->name_zh;
+				$data['url'] = $competition->url;
+			}
+			$cache->set($cacheKey, $data, 86400 * 7);
 		}
-		return $row;
+		return array_merge($row, $data);
 	}
 
 }
