@@ -32,6 +32,7 @@ class RankGridView extends GridView {
 		}
 		$this->lastRank = $this->rank;
 		if ($this->count != $this->rank && $this->rankKey !== null) {
+			$this->rank++;
 			if ($this->dataProvider->getItemCount() > 0) {
 				$data = $this->dataProvider->data[0];
 				$this->lastRankValue = CHtml::value($data, $this->rankKey);
