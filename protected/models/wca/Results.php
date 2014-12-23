@@ -29,10 +29,10 @@ class Results extends ActiveRecord {
 		if (!in_array($type, array('single', 'average'))) {
 			$type = 'single';
 		}
-		if (!in_array($gender, array_keys(Persons::getGenders()))) {
+		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
-		if (!in_array($event, array_keys(Events::getNormalEvents()))) {
+		if (!array_key_exists($event, Events::getNormalEvents())) {
 			$event = '333';
 		}
 		if ($page < 1) {
@@ -79,6 +79,9 @@ class Results extends ActiveRecord {
 			$cmd2 = clone $command;
 			$count = $cmd1->select('COUNT(DISTINCT r.personId) AS count')
 			->queryScalar();
+			if ($page > ceil($count / 100)) {
+				$page = ceil($count / 100);
+			}
 			$rows = array();
 			$command->group('r.personId')
 			->order('r.countryRank ASC')
@@ -105,7 +108,7 @@ class Results extends ActiveRecord {
 		if (!in_array($type, array('current', 'history'))) {
 			$type = 'current';
 		}
-		if (!in_array($event, array_keys(Events::getNormalEvents()))) {
+		if (!array_key_exists($event, Events::getNormalEvents())) {
 			$event = '333';
 		}
 		if ($type !== 'history') {

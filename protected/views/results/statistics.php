@@ -1,8 +1,8 @@
 <div class="col-lg-12">
   <div class="row">
     <div class="col-lg-12">
-      <p><?php echo Yii::t('statistics', 'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.', array(
-        '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA competition results'), 'https://www.worldcubeassociation.org/results/statistics.php', array('target'=>'_blank')),
+      <p><?php echo Yii::t('statistics', 'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.', array(
+        '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA statistics'), 'https://www.worldcubeassociation.org/results/statistics.php', array('target'=>'_blank')),
       )); ?></p>
       <p class="text-muted"><small><?php echo Yii::t('statistics', 'Generated on {time}.', array(
         '{time}'=>date('Y-m-d H:i:s', $time),
@@ -21,14 +21,24 @@
     <?php foreach ($statistics as $name=>$statistic): ?>
     <div class="<?php echo $statistic['class']; ?>" id= "<?php echo $statistic['id']; ?>">
     <?php if (isset($statistic['columns'])): ?>
-      <h3><?php echo Yii::t('statistics', $name); ?></h3>
+      <h3>
+        <?php echo Yii::t('statistics', $name); ?>
+        <?php if (isset($statistic['more'])): ?>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <?php endif; ?>
+      </h3>
       <?php $this->renderPartial('statistic', array(
         'statistic'=>$statistic,
         'id'=>$statistic['id'],
         'class'=>' ' . $statistic['id'],
       )); ?>
     <?php else: ?>
-      <h3 class="pull-left"><?php echo Yii::t('statistics', $name); ?></h3>
+      <h3 class="pull-left">
+        <?php echo Yii::t('statistics', $name); ?>
+        <?php if (isset($statistic['more'])): ?>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <?php endif; ?>
+      </h3>
       <div class="pull-left stat-select">
         <?php if (isset($statistic['selectHandler'])) {
           $statistic['select'] = array_map(function($name) use($statistic) {

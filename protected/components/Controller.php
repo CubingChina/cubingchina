@@ -121,6 +121,7 @@ class Controller extends CController {
 				array(
 					'label'=>Html::fontAwesome('newspaper-o', 'a') . Yii::t('common', 'Results') . Html::fontAwesome('angle-down', 'b'),
 					'url'=>'#',
+					'active'=>$this->id === 'results',
 					'itemOptions'=>array(
 						'class'=>'nav-item dropdown',
 					),

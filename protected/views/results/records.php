@@ -1,4 +1,9 @@
 <div class="col-lg-12">
+  <div>
+    <p><?php echo Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the {url}.', array(
+      '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA records'), 'https://www.worldcubeassociation.org/results/regions.php', array('target'=>'_blank')),
+    )); ?></p>
+  </div>
   <?php $form = $this->beginWidget('CActiveForm', array(
     'htmlOptions'=>array(
       'role'=>'form',

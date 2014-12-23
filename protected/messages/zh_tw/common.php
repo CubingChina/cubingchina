@@ -18,9 +18,8 @@
  */
 return array (
   'Fee' => '',
-  'Official Rankings' => '官方排名',
-  'Official Records' => '官方紀錄',
   'WCA ID' => '',
+  'more' => '',
   'About us' => '關於本站',
   'AsR' => '亞洲紀錄',
   'Average of 5' => '五次計平均',
@@ -41,6 +40,8 @@ return array (
   'Mean of 3' => '三次計平均',
   'NR' => '國家紀錄',
   'Not found' => '未找到',
+  'Official Records' => '官方紀錄',
+  'Personal Rankings' => '官方排名',
   'Registration' => '在線報名',
   'Regulations' => '比賽規則',
   'Reset Password' => '重設密碼',

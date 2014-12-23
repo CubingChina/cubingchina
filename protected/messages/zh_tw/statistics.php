@@ -17,9 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
+  'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自{url}。',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
   'Best "medal collection" of all events' => '官方賽事全項目累計獎牌榜',
   'Best podiums in Rubik\'s Cube event' => '中國賽事三階領獎台成績榜',
@@ -48,10 +50,17 @@ return array (
   'Sum of all average ranks' => '官方全項目平均排名總和榜',
   'Sum of all single ranks' => '官方全項目單次綜合排行榜',
   'Third' => '季軍',
+  'official WCA competition results' => 'WCA賽事的官方成績',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自WCA賽事的官方成績。',
-  'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自{url}。',
+  'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自WCA賽事的官方排名。',
+  'Chinese personal rankings in each official event are listed, based on the {url}.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自{url}。',
   'Generated on {time}.' => '生成於{time}。',
   'Person' => '姓名',
   'Rank' => '排名',
-  'official WCA competition results' => 'WCA賽事的官方成績',
+  'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本頁面列出了與官方賽事及中國選手相關的趣味統計，所有的統計數據源自{url}。',
+  'World, Asian and Chinese records are displayed on the page, based on the official WCA records.' => '本頁面列出了所有WCA項目的世界、亞洲與中國紀錄，所有的成績紀錄源自WCA賽事的官方紀錄。',
+  'World, Asian and Chinese records are displayed on the page, based on the {url}.' => '本頁面列出了所有WCA項目的世界、亞洲與中國紀錄，所有的成績紀錄源自{url}。',
+  'official WCA rankings' => 'WCA賽事的官方排名',
+  'official WCA records' => 'WCA賽事的官方紀錄',
+  'official WCA statistics' => 'WCA賽事的官方成績',
 );
