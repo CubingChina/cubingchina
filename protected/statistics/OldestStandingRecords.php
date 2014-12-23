@@ -74,7 +74,7 @@ class OldestStandingRecords extends Statistics {
 			),
 			array(
 				'header'=>'Yii::t("common", "Records")',
-				'value'=>'Yii::t("common", $data["worldRank"] == 1 ? "WR" : ($data["continentRank"] == 1 ? "AsR" : "NR"))',
+				'value'=>'$data["worldRank"] == 1 ? "WR" : ($data["continentRank"] == 1 ? "AsR" : "NR")',
 			),
 			array(
 				'header'=>'Yii::t("common", "Competition")',

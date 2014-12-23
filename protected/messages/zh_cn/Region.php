@@ -21,5 +21,8 @@ return array (
   'Name' => '',
   'Name Zh' => '',
   'Pid' => '',
-  'Name En' => '@@@@',
+  'Name En' => '',
+  'Asia' => '亚洲',
+  'China' => '中国',
+  'World' => '世界',
 );

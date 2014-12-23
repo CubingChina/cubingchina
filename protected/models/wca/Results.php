@@ -25,6 +25,251 @@
  */
 class Results extends ActiveRecord {
 
+	public static function getRankings($type = 'single', &$event = '333', &$gender = 'all', &$page = 1) {
+		if (!in_array($type, array('single', 'average'))) {
+			$type = 'single';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!array_key_exists($event, Events::getNormalEvents())) {
+			$event = '333';
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
+		$cache = Yii::app()->cache;
+		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
+		$expire = 86400 * 7;
+		if (($data = $cache->get($cacheKey)) === false) {
+			$command = Yii::app()->wcaDb->createCommand()
+			->select(array(
+				'r.*',
+				'rs.personName',
+				'rs.personCountryId',
+				'rs.competitionId',
+				'rs.value1',
+				'rs.value2',
+				'rs.value3',
+				'rs.value4',
+				'rs.value5',
+				'c.cellName',
+				'c.year',
+				'c.month',
+				'c.day',
+			))
+			->from(sprintf('Ranks%s r', ucfirst($type)))
+			->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
+			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
+			->leftJoin('Competitions c', 'rs.competitionId=c.id')
+			->where('r.countryRank>0')
+			->andWhere('r.eventId=:eventId', array(
+				':eventId'=>$event,
+			))
+			->andWhere('rs.personCountryId="China"');
+			switch ($gender) {
+				case 'female':
+					$command->andWhere('p.gender="f"');
+					break;
+				case 'male':
+					$command->andWhere('p.gender="m"');
+					break;
+			}
+			$cmd1 = clone $command;
+			$cmd2 = clone $command;
+			$count = $cmd1->select('COUNT(DISTINCT r.personId) AS count')
+			->queryScalar();
+			if ($page > ceil($count / 100)) {
+				$page = ceil($count / 100);
+			}
+			$rows = array();
+			$command->group('r.personId')
+			->order('r.countryRank ASC, p.name ASC')
+			->limit(100, ($page - 1) * 100);
+			foreach ($command->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[] = $row;
+			}
+			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT r.personId) AS count')
+			->andWhere('r.best<' . $rows[0]['best'])
+			->queryScalar() : 0;
+			$data = array(
+				'count'=>$count,
+				'rows'=>$rows,
+				'rank'=>$rank,
+			);
+			$cache->set($cacheKey, $data, $expire);
+		}
+		return $data;
+	}
+
+	public static function getRecords($type = 'current', $region = 'China', &$event = '333') {
+		if (!in_array($type, array('current', 'history'))) {
+			$type = 'current';
+		}
+		if (!array_key_exists($event, Events::getNormalEvents())) {
+			$event = '333';
+		}
+		if ($type !== 'history') {
+			$event = '';
+		}
+		$cache = Yii::app()->cache;
+		$cacheKey = "results_records_{$type}_{$region}_{$event}";
+		$expire = 86400 * 7;
+		if (($data = $cache->get($cacheKey)) === false) {
+			switch ($type) {
+				case 'history':
+					$data = self::getHistoryRecords($region, $event);
+					break;
+				default:
+					$data = self::getCurrentRecords($region);
+					break;
+			}
+			$cache->set($cacheKey, $data, $expire);
+		}
+		return $data;
+	}
+
+	public static function getHistoryRecords($region = 'China', $event = '333') {
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'rs.eventId',
+			'rs.best',
+			'rs.average',
+			'rs.personId',
+			'rs.personName',
+			'rs.personCountryId',
+			'rs.competitionId',
+			'rs.value1',
+			'rs.value2',
+			'rs.value3',
+			'rs.value4',
+			'rs.value5',
+			'rs.regionalSingleRecord',
+			'rs.regionalAverageRecord',
+			'c.cellName',
+			'c.year',
+			'c.month',
+			'c.day',
+		))
+		->from('Results rs')
+		->leftJoin('Competitions c', 'rs.competitionId=c.id')
+		->leftJoin('Rounds round', 'rs.roundId=round.id')
+		->where('rs.eventId=:eventId', array(
+			':eventId'=>$event,
+		))
+		->order('c.year DESC, c.month DESC, c.day DESC, round.rank DESC, rs.personName ASC');
+		switch ($region) {
+			case 'World':
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				$command->andWhere('country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->andWhere('rs.personCountryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		$rows = array();
+		foreach (array('single', 'average') as $type) {
+			$cmd = clone $command;
+			switch ($region) {
+				case 'World':
+					$cmd->andWhere(sprintf('rs.regional%sRecord="WR"', ucfirst($type)));
+					break;
+				case 'Africa':
+				case 'Asia':
+				case 'Oceania':
+				case 'Europe':
+				case 'North America':
+				case 'South America':
+					$cmd->leftJoin('Continents continent', 'country.continentId=continent.id');
+					$cmd->andWhere(sprintf('rs.regional%sRecord IN (continent.recordName, "WR")', ucfirst($type)));
+					break;
+				default:
+					$cmd->andWhere(sprintf('rs.regional%sRecord!=""', ucfirst($type)));
+					break;
+			}
+			$rows[$type] = array();
+			foreach ($cmd->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[$type][] = $row;
+			}
+		}
+		return call_user_func_array('array_merge', $rows);
+
+	}
+
+	public static function getCurrentRecords($region = 'China') {
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'r.*',
+			'r.best AS average',
+			'rs.personName',
+			'rs.personCountryId',
+			'rs.competitionId',
+			'rs.value1',
+			'rs.value2',
+			'rs.value3',
+			'rs.value4',
+			'rs.value5',
+			'c.cellName',
+			'c.year',
+			'c.month',
+			'c.day',
+		))
+		->leftJoin('Events e', 'r.eventId=e.id')
+		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
+		->order('e.rank ASC');
+		switch ($region) {
+			case 'World':
+				$command->where('r.worldRank=1');
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->leftJoin('Countries country', 'p.countryId=country.id');
+				$command->where('r.continentRank=1 AND country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->where('r.countryRank=1 AND rs.personCountryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		$rows = array(
+			'333'=>array(),
+		);
+		foreach (array('single', 'average') as $type) {
+			$cmd = clone $command;
+			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
+			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
+			->leftJoin('Competitions c', 'rs.competitionId=c.id');
+			foreach ($cmd->queryAll() as $row) {
+				$row['type'] = $type;
+				$row = Statistics::getCompetition($row);
+				$rows[$row['eventId']][] = $row;
+			}
+		}
+		return call_user_func_array('array_merge', $rows);
+	}
+
 	public static function formatTime($result, $eventId, $encode = true) {
 		if ($result == -1) {
 			return 'DNF';

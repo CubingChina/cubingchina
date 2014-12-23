@@ -7,13 +7,16 @@ class RecordsSet extends Statistics {
 		->from('Results r')
 		->where('regionalSingleRecord!="" OR regionalAverageRecord!=""')
 		->group($statistic['group'])
-		->order('score DESC, WR DESC, AsR DESC, NR DESC')
+		->order('score DESC, WR DESC, CR DESC, NR DESC')
 		->limit(self::$limit);
 		$select = array();
 		$score = array();
 		$columns = array();
-		foreach (array('WR'=>10, 'AsR'=>5, 'NR'=>1) as $record=>$weight) {
-			$temp = sprintf('sum(CASE WHEN regionalSingleRecord="%s" THEN 1 ELSE 0 END) + sum(CASE WHEN regionalAverageRecord="%s" THEN 1 ELSE 0 END)', $record, $record, $record);
+		foreach (array('WR'=>10, 'CR'=>5, 'NR'=>1) as $record=>$weight) {
+			$temp = sprintf('sum(CASE WHEN regionalSingleRecord="%s" THEN 1 ELSE 0 END) + sum(CASE WHEN regionalAverageRecord="%s" THEN 1 ELSE 0 END)', $record, $record);
+			if ($record === 'CR') {
+				$temp = 'sum(CASE WHEN regionalSingleRecord NOT IN ("WR", "NR", "") THEN 1 ELSE 0 END) + sum(CASE WHEN regionalAverageRecord NOT IN ("WR", "NR", "") THEN 1 ELSE 0 END)';
+			}
 			$select[] = sprintf('%s AS %s', $temp, $record);
 			$score[] = sprintf('(%s) * %d', $temp, $weight);
 			$columns[] = array(
@@ -25,13 +28,15 @@ class RecordsSet extends Statistics {
 		$select[] = $score;
 		array_unshift($columns, array(
 			'header'=>"CHtml::tag('span', array(
-				'title'=>'WR: 10\nAsR: 5\nNR: 1',
+				'title'=>'WR: 10\nCR: 5\nNR: 1',
 			), Yii::t('statistics', 'Score') . Html::fontAwesome('question-circle'))",
 			'value'=>'CHtml::tag("b", array(), $data["score"])',
 			'type'=>'raw',
 		));
 		switch ($statistic['group']) {
 			case 'personId':
+				$columns[0]['header'] = str_replace('CR', 'AsR', $columns[0]['header']);
+				$columns[2]['header'] = "Yii::t('common', 'AsR')";
 				$select = array_merge($select, array(
 					'personId',
 					'personName',

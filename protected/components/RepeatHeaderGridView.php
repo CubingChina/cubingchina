@@ -1,4 +1,5 @@
 <?php
+
 class RepeatHeaderGridView extends GridView {
 	public $footerOnTop = false;
 	public $repeatNum = 20;
