@@ -10,7 +10,7 @@
     'method'=>'get',
     'action'=>array(
       '/results/statistics',
-      'name'=>'sum-of-ranks',
+      'name'=>'medal-collection',
     ),
   )); ?>
     <div class="form-group row">
@@ -35,14 +35,7 @@
       </div>
       <?php endforeach; ?>
     </div>
-    <?php foreach (Results::getRankingTypes() as $_type): ?>
-    <?php echo CHtml::tag('button', array(
-      'type'=>'submit',
-      'name'=>'type',
-      'value'=>$_type,
-      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
-    ), Yii::t('common', ucfirst($_type))); ?>
-    <?php endforeach; ?>
+    <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
   <?php
   $this->widget('RankGridView', array(
