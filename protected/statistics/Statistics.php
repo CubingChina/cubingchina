@@ -44,6 +44,10 @@ class Statistics {
 			'type'=>'all',
 			'class'=>'MedalCollection',
 			'width'=>'6',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'medal-collection',
+			),
 		),
 		'Best "medal collection" in each event'=>array(
 			'type'=>'each',

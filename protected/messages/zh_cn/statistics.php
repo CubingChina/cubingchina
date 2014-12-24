@@ -17,8 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Sum of Ranks' => '排名总和',
-  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看中国魔方选手的个人排名、官方纪录与趣味统计等信息。',
+  'Medal Collection' => '奖牌榜',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
@@ -33,7 +32,6 @@ return array (
   'Gold' => '金',
   'Most competitions by one person' => '中国选手的比赛次数排行榜',
   'Most personal solves' => '个人累积总复原次数排行榜',
-  'Most Personal Solves' => '个人累积总复原次数排行榜',
   'Most personal solves in each year' => '个人年度总复原次数排行榜',
   'Most personal solves in one competition' => '个人单场总复原次数排行榜',
   'Most persons in one competition' => '中国赛事的选手人数排行榜',
@@ -57,9 +55,12 @@ return array (
   'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.' => '本页面列出了中国选手在所有WCA项目的个人排名，所有的排名成绩源自WCA赛事的官方排名。',
   'Chinese personal rankings in each official event are listed, based on the {url}.' => '本页面列出了中国选手在所有WCA项目的个人排名，所有的排名成绩源自{url}。',
   'Generated on {time}.' => '生成于{time}。',
+  'Most Personal Solves' => '个人累积总复原次数排行榜',
   'Person' => '姓名',
   'Rank' => '排名',
+  'Sum of Ranks' => '排名总和',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本页面列出了与官方赛事及中国选手相关的趣味统计，所有的统计数据源自{url}。',
+  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看中国魔方选手的个人排名、官方纪录与趣味统计等信息。',
   'World, Asian and Chinese records are displayed on the page, based on the official WCA records.' => '本页面列出了所有WCA项目的世界、亚洲与中国纪录，所有的成绩纪录源自WCA赛事的官方纪录。',
   'World, Asian and Chinese records are displayed on the page, based on the {url}.' => '本页面列出了所有WCA项目的世界、亚洲与中国纪录，所有的成绩纪录源自{url}。',
   'official WCA rankings' => 'WCA赛事的官方排名',

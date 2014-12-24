@@ -88,6 +88,8 @@ class MostSolves extends Statistics {
 					foreach (array_reverse($stat['rows']) as $row) {
 						if ($row['rank'] === $rows[0]['rank']) {
 							$statistic['rank']--;
+						} else {
+							break;
 						}
 					}
 				}
