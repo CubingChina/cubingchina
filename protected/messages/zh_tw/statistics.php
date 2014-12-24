@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '歡迎瀏覽粗餅網的官方成績頁面！你可以在此查看中國魔方選手的個人排名、官方紀錄與趣味統計等信息。',
+  'Medal Collection' => '獎牌榜',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
@@ -55,9 +55,12 @@ return array (
   'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自WCA賽事的官方排名。',
   'Chinese personal rankings in each official event are listed, based on the {url}.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自{url}。',
   'Generated on {time}.' => '生成於{time}。',
+  'Most Personal Solves' => '個人累積總復原次數排行榜',
   'Person' => '姓名',
   'Rank' => '排名',
+  'Sum of Ranks' => '排名總和',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本頁面列出了與官方賽事及中國選手相關的趣味統計，所有的統計數據源自{url}。',
+  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '歡迎瀏覽粗餅網的官方成績頁面！你可以在此查看中國魔方選手的個人排名、官方紀錄與趣味統計等信息。',
   'World, Asian and Chinese records are displayed on the page, based on the official WCA records.' => '本頁面列出了所有WCA項目的世界、亞洲與中國紀錄，所有的成績紀錄源自WCA賽事的官方紀錄。',
   'World, Asian and Chinese records are displayed on the page, based on the {url}.' => '本頁面列出了所有WCA項目的世界、亞洲與中國紀錄，所有的成績紀錄源自{url}。',
   'official WCA rankings' => 'WCA賽事的官方排名',

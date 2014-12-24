@@ -38,7 +38,9 @@ class SumOfRanks extends Statistics {
 				$rankSum[$personId] += $rank - $penalty[$eventId];
 			}
 			$columns[] = array(
-				'header'=>"Yii::app()->language == 'en' ? '$eventId' : Yii::t('event', Events::getFullEventName('$eventId'))",
+				'header'=>"CHtml::tag('span', array(
+					'class'=>'event-icon event-icon-white event-icon-$eventId'
+				), '&nbsp;')",
 				'name'=>$eventId,
 				'type'=>'raw',
 			);

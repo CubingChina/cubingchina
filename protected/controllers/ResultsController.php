@@ -149,14 +149,14 @@ class ResultsController extends Controller {
 		if ($page < 1) {
 			$page = 1;
 		}
-		$this->title = 'Sum Of Ranks';
+		$this->title = Yii::t('statistics', 'Sum of Ranks');
 		$this->pageTitle = array('Fun Statistics', $this->title);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Statistics'=>array('/results/statistics'),
 			$this->title,
 		);
-		$data = SumOfRanks::buildRankings($statistic, $page);
+		$data = Statistics::buildRankings($statistic, $page);
 		extract($data);
 		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
 			$page = ceil($statistic['count'] / Statistics::$limit);
@@ -179,14 +179,14 @@ class ResultsController extends Controller {
 		if ($page < 1) {
 			$page = 1;
 		}
-		$this->title = Yii::t('statistics', 'Most personal solves');
+		$this->title = Yii::t('statistics', 'Most Personal Solves');
 		$this->pageTitle = array('Fun Statistics', $this->title);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Statistics'=>array('/results/statistics'),
 			$this->title,
 		);
-		$data = MostSolves::buildRankings($statistic, $page);
+		$data = Statistics::buildRankings($statistic, $page);
 		extract($data);
 		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
 			$page = ceil($statistic['count'] / Statistics::$limit);
@@ -196,6 +196,39 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 		));
+	}
 
+	private function statMedalCollection() {
+		$page = $this->iGet('page', 1);
+		$eventIds = $this->aGet('event');
+		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
+			$eventIds = array();
+		}
+		$statistic = array(
+			'class'=>'MedalCollection',
+			'type'=>'all',
+			'eventIds'=>$eventIds,
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Medal Collection');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/medalCollection', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'eventIds'=>$eventIds,
+		));
 	}
 }
