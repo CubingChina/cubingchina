@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Sum Of Ranks' => '排名總和',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',

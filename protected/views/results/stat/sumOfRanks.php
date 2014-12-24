@@ -5,7 +5,7 @@
   <?php $form = $this->beginWidget('CActiveForm', array(
     'htmlOptions'=>array(
       'role'=>'form',
-      'class'=>'form-inline',
+      'class'=>'form',
     ),
     'method'=>'get',
     'action'=>array(
@@ -14,15 +14,23 @@
     ),
   )); ?>
     <div class="form-group row">
-      <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$name): ?>
-      <div class="col-lg-2 col-sm-3 col-xs-6">
-        <div class="checkbox">
-          <label>
-            <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
-              'value'=>$eventId,
-            )); ?>
-            <?php echo $name; ?>
-          </label>
+      <?php foreach (array_chunk(Events::getNormalTranslatedEvents(), 3, true) as $events): ?>
+      <div class="col-md-4 col-xs-6">
+        <div class="row">
+        <?php foreach ($events as $eventId=>$name): ?>
+          <div class="col-xs-4">
+            <div class="checkbox">
+              <label>
+                <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
+                  'value'=>$eventId,
+                )); ?>
+                <?php echo CHtml::tag('span', array(
+                  'class'=>'event-icon event-icon event-icon-' . $eventId,
+                ), '&nbsp;'); ?>
+              </label>
+            </div>
+          </div>
+        <?php endforeach; ?>
         </div>
       </div>
       <?php endforeach; ?>

@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Sum of Ranks' => '排名总和',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看中国魔方选手的个人排名、官方纪录与趣味统计等信息。',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
@@ -32,6 +33,7 @@ return array (
   'Gold' => '金',
   'Most competitions by one person' => '中国选手的比赛次数排行榜',
   'Most personal solves' => '个人累积总复原次数排行榜',
+  'Most Personal Solves' => '个人累积总复原次数排行榜',
   'Most personal solves in each year' => '个人年度总复原次数排行榜',
   'Most personal solves in one competition' => '个人单场总复原次数排行榜',
   'Most persons in one competition' => '中国赛事的选手人数排行榜',

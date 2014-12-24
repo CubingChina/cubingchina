@@ -149,7 +149,7 @@ class ResultsController extends Controller {
 		if ($page < 1) {
 			$page = 1;
 		}
-		$this->title = 'Sum Of Ranks';
+		$this->title = Yii::t('statistics', 'Sum of Ranks');
 		$this->pageTitle = array('Fun Statistics', $this->title);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
@@ -179,7 +179,7 @@ class ResultsController extends Controller {
 		if ($page < 1) {
 			$page = 1;
 		}
-		$this->title = Yii::t('statistics', 'Most personal solves');
+		$this->title = Yii::t('statistics', 'Most Personal Solves');
 		$this->pageTitle = array('Fun Statistics', $this->title);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
