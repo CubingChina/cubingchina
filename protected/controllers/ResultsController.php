@@ -52,6 +52,9 @@ class ResultsController extends Controller {
 			$page = 1;
 		}
 		$rankings = Results::getRankings($type, $event, $gender, $page);
+		if ($page > ceil($rankings['count'] / 100)) {
+			$page = ceil($rankings['count'] / 100);
+		}
 		$this->title = 'Personal Rankings';
 		$this->pageTitle = array(
 			'Personal Rankings',

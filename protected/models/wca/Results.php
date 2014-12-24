@@ -25,7 +25,7 @@
  */
 class Results extends ActiveRecord {
 
-	public static function getRankings($type = 'single', $event = '333', $gender = 'all', &$page = 1) {
+	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
 		$expire = 86400 * 7;
