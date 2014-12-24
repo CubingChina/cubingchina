@@ -153,6 +153,9 @@ class ResultsController extends Controller {
 		);
 		$data = SumOfRanks::buildRankings($statistic, $page);
 		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
 		$this->render('stat/sumOfRanks', array(
 			'statistic'=>$statistic,
 			'time'=>$time,
@@ -160,5 +163,34 @@ class ResultsController extends Controller {
 			'type'=>$type,
 			'eventIds'=>$eventIds,
 		));
+	}
+
+	public function actionStatMostSolves() {
+		$page = $this->iGet('page', 1);
+		$statistic = array(
+			'class'=>'MostSolves',
+			'type'=>'all',
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Most personal solves');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = MostSolves::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/mostSolves', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+		));
+
 	}
 }

@@ -101,10 +101,10 @@ class Statistics {
 			'class'=>'MostSolves',
 			'type'=>'all',
 			'width'=>6,
-			// 'more'=>array(
-			// 	'/results/statistics',
-			// 	'name'=>'most-solves',
-			// ),
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'most-solves',
+			),
 		),
 		'Most personal solves in each year'=>array(
 			'class'=>'MostSolves',
