@@ -39,6 +39,18 @@ class ResultsController extends Controller {
 		$event = $this->sGet('event', '333');
 		$gender = $this->sGet('gender', 'all');
 		$page = $this->iGet('page', 1);
+		if (!in_array($type, array('single', 'average'))) {
+			$type = 'single';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!array_key_exists($event, Events::getNormalEvents())) {
+			$event = '333';
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
 		$rankings = Results::getRankings($type, $event, $gender, $page);
 		$this->title = 'Personal Rankings';
 		$this->pageTitle = array(
@@ -62,6 +74,15 @@ class ResultsController extends Controller {
 		$type = $this->sGet('type', 'current');
 		$region = $this->sGet('region', 'China');
 		$event = $this->sGet('event', '333');
+		if (!in_array($type, array('current', 'history'))) {
+			$type = 'current';
+		}
+		if (!array_key_exists($event, Events::getNormalEvents())) {
+			$event = '333';
+		}
+		if ($type !== 'history') {
+			$event = '';
+		}
 		$records = Results::getRecords($type, $region, $event);
 		$this->title = 'Official Records';
 		$pageTitle = array(

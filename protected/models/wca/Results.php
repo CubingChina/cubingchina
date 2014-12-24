@@ -25,19 +25,7 @@
  */
 class Results extends ActiveRecord {
 
-	public static function getRankings($type = 'single', &$event = '333', &$gender = 'all', &$page = 1) {
-		if (!in_array($type, array('single', 'average'))) {
-			$type = 'single';
-		}
-		if (!array_key_exists($gender, Persons::getGenders())) {
-			$gender = 'all';
-		}
-		if (!array_key_exists($event, Events::getNormalEvents())) {
-			$event = '333';
-		}
-		if ($page < 1) {
-			$page = 1;
-		}
+	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
 		$expire = 86400 * 7;
@@ -123,16 +111,7 @@ class Results extends ActiveRecord {
 		return $data;
 	}
 
-	public static function getRecords($type = 'current', $region = 'China', &$event = '333') {
-		if (!in_array($type, array('current', 'history'))) {
-			$type = 'current';
-		}
-		if (!array_key_exists($event, Events::getNormalEvents())) {
-			$event = '333';
-		}
-		if ($type !== 'history') {
-			$event = '';
-		}
+	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_records_{$type}_{$region}_{$event}";
 		$expire = 86400 * 7;
