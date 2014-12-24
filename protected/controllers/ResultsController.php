@@ -111,6 +111,7 @@ class ResultsController extends Controller {
 		$name = $this->sGet('name');
 		$names = array_map('ucfirst', explode('-', $name));
 		$class = implode('', $names);
+		$this->description = Yii::t('statistics', 'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.');
 		if ($class !== '') {
 			if (method_exists($this, $method = 'stat' . $class)) {
 				$this->$method();
@@ -123,7 +124,6 @@ class ResultsController extends Controller {
 		extract($data);
 		$this->pageTitle = array('Fun Statistics');
 		$this->title = 'Fun Statistics';
-		$this->description = Yii::t('statistics', 'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.');
 		$this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
 		$this->render('statistics', array(
 			'statistics'=>$statistics,

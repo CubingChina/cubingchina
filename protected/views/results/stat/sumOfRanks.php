@@ -13,15 +13,17 @@
       'name'=>'sum-of-ranks',
     ),
   )); ?>
-    <div class="form-group">
+    <div class="form-group row">
       <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$name): ?>
-      <div class="checkbox">
-        <label>
-          <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
-            'value'=>$eventId,
-          )); ?>
-          <?php echo $name; ?>
-        </label>
+      <div class="col-lg-2 col-sm-3 col-xs-6">
+        <div class="checkbox">
+          <label>
+            <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
+              'value'=>$eventId,
+            )); ?>
+            <?php echo $name; ?>
+          </label>
+        </div>
       </div>
       <?php endforeach; ?>
     </div>
