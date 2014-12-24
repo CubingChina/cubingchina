@@ -112,7 +112,12 @@ class ResultsController extends Controller {
 		$names = array_map('ucfirst', explode('-', $name));
 		$class = implode('', $names);
 		if ($class !== '') {
-			$this->forward('/results/stat' . $class);
+			if (method_exists($this, $method = 'stat' . $class)) {
+				$this->$method();
+				Yii::app()->end();
+			} else {
+				throw new CHttpException(404);
+			}
 		}
 		$data = Statistics::getData();
 		extract($data);
@@ -126,7 +131,7 @@ class ResultsController extends Controller {
 		));
 	}
 
-	public function actionStatSumOfRanks() {
+	private function statSumOfRanks() {
 		$page = $this->iGet('page', 1);
 		$type = $this->sGet('type', 'single');
 		$eventIds = $this->aGet('event');
@@ -165,7 +170,7 @@ class ResultsController extends Controller {
 		));
 	}
 
-	public function actionStatMostSolves() {
+	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
 		$statistic = array(
 			'class'=>'MostSolves',
