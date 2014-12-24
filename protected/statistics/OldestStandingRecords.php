@@ -16,7 +16,7 @@ class OldestStandingRecords extends Statistics {
 		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
 		->where('r.countryRank=1 AND rs.personCountryId="China"');
 		$rows = array();
-		foreach (array('single', 'average') as $type) {
+		foreach (Results::getRankingTypes() as $type) {
 			$cmd = clone $command;
 			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
 			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))

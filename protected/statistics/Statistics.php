@@ -2,7 +2,10 @@
 
 class Statistics {
 
+	const CACHE_EXPIRE = 604800;
+
 	public static $limit = 10;
+	public static $offset = 0;
 
 	private static $_competitions = array();
 
@@ -10,10 +13,20 @@ class Statistics {
 		'Sum of all single ranks'=>array(
 			'type'=>'single',
 			'class'=>'SumOfRanks',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'sum-of-ranks',
+				'type'=>'single',
+			),
 		),
 		'Sum of all average ranks'=>array(
 			'type'=>'average',
 			'class'=>'SumOfRanks',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'sum-of-ranks',
+				'type'=>'average'
+			),
 		),
 		'Sum of 2x2 to 5x5 single ranks'=>array(
 			'type'=>'single',
@@ -88,6 +101,10 @@ class Statistics {
 			'class'=>'MostSolves',
 			'type'=>'all',
 			'width'=>6,
+			// 'more'=>array(
+			// 	'/results/statistics',
+			// 	'name'=>'most-solves',
+			// ),
 		),
 		'Most personal solves in each year'=>array(
 			'class'=>'MostSolves',
@@ -112,7 +129,22 @@ class Statistics {
 			'statistics'=>$statistics,
 			'time'=>time(),
 		);
-		$cache->set($cacheKey, $data, 86400 * 7);
+		$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
+		return $data;
+	}
+
+	public static function buildRankings($statistic, $page = 1) {
+		self::$limit = 100;
+		$cacheKey = 'results_statistics_data_' . serialize($statistic) . '_' . $page;
+		$cache = Yii::app()->cache;
+		if (($data = $cache->get($cacheKey)) === false) {
+			$statistic = $statistic['class']::build($statistic, $page);
+			$data = array(
+				'statistic'=>$statistic,
+				'time'=>time(),
+			);
+			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
+		}
 		return $data;
 	}
 
@@ -133,7 +165,7 @@ class Statistics {
 		if ($statistic['width'] < 12 && $statistic['width'] % 3 == 0) {
 			$class .= ' col-sm-' . ($statistic['width'] * 2);
 		}
-		return array_merge($data, array(
+		return array_merge($statistic, $data, array(
 			'class'=>$class,
 			'id'=>strtolower(preg_replace('/(?<!\b)(?=[A-Z])/', '_', $statistic['class'])) . '_' . $i++,
 		));
@@ -143,7 +175,7 @@ class Statistics {
 		$cacheKey = 'results_competition_data_' . $row['competitionId'];
 		$cache = Yii::app()->cache;
 		if (self::$_competitions === array()) {
-			$competitions = Competition::model()->cache(86400 * 7)->findAll('wca_competition_id!=""');
+			$competitions = Competition::model()->cache(self::CACHE_EXPIRE)->findAll('wca_competition_id!=""');
 			foreach ($competitions as $competition) {
 				self::$_competitions[$competition->wca_competition_id] = array(
 					'name'=>$competition->name,
@@ -157,10 +189,9 @@ class Statistics {
 		} elseif (($data = $cache->get($cacheKey)) === false) {
 			$data['name'] = $data['name_zh'] = $row['cellName'];
 			$data['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
-			$cache->set($cacheKey, $data, 86400 * 7);
+			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
 			self::$_competitions[$row['competitionId']] = $data;
 		}
 		return array_merge($row, $data);
 	}
-
 }

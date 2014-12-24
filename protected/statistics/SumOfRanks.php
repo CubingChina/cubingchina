@@ -4,9 +4,9 @@ class SumOfRanks extends Statistics {
 
 	private static $_ranks = array();
 
-	public static function build($statistic) {
+	public static function build($statistic, $page = 1) {
 		$ranks = self::getRanks($statistic['type']);
-		$eventIds = isset($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
+		$eventIds = !empty($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
@@ -43,8 +43,12 @@ class SumOfRanks extends Statistics {
 			);
 		}
 		asort($rankSum);
+		$count = count($rankSum);
+		if ($page > ceil($count / self::$limit)) {
+			$page = ceil($count / self::$limit);
+		}
 		$rows = array();
-		foreach (array_slice($rankSum, 0, self::$limit) as $personId=>$sum) {
+		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $personId=>$sum) {
 			$row = array(
 				'personId'=>$personId,
 				'personName'=>Persons::getPersonNameById($personId),
@@ -62,6 +66,11 @@ class SumOfRanks extends Statistics {
 			}
 			$rows[] = $row;
 		}
+		$statistic['count'] = $count;
+		$statistic['rank'] = isset($rows[0]) ? count(array_filter($rankSum, function($row) use ($rows) {
+			return $row < $rows[0]['sum'];
+		})) : 0;
+		$statistic['rankKey'] = 'sum';
 		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 

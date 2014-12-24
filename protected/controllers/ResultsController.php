@@ -39,7 +39,7 @@ class ResultsController extends Controller {
 		$event = $this->sGet('event', '333');
 		$gender = $this->sGet('gender', 'all');
 		$page = $this->iGet('page', 1);
-		if (!in_array($type, array('single', 'average'))) {
+		if (!in_array($type, Results::getRankingTypes())) {
 			$type = 'single';
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
@@ -109,12 +109,10 @@ class ResultsController extends Controller {
 
 	public function actionStatistics() {
 		$name = $this->sGet('name');
-		if (in_array(preg_replace_callback('{(\b|-)(\w)}', function($matches) {
-			return strtoupper($matches[2]);
-		}, $name), array_map(function($statistic) {
-			return $statistic['class'];
-		}, Statistics::$lists))) {
-			echo 1;exit;
+		$names = array_map('ucfirst', explode('-', $name));
+		$class = implode('', $names);
+		if ($class !== '') {
+			$this->forward('/results/stat' . $class);
 		}
 		$data = Statistics::getData();
 		extract($data);
@@ -123,8 +121,44 @@ class ResultsController extends Controller {
 		$this->description = Yii::t('statistics', 'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.');
 		$this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
 		$this->render('statistics', array(
-			'statistics' => $statistics,
-			'time' => $time,
+			'statistics'=>$statistics,
+			'time'=>$time,
+		));
+	}
+
+	public function actionStatSumOfRanks() {
+		$page = $this->iGet('page', 1);
+		$type = $this->sGet('type', 'single');
+		$eventIds = $this->aGet('event');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
+		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
+			$eventIds = array();
+		}
+		$statistic = array(
+			'class'=>'SumOfRanks',
+			'type'=>$type,
+			'eventIds'=>$eventIds,
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = 'Sum Of Ranks';
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = SumOfRanks::buildRankings($statistic, $page);
+		extract($data);
+		$this->render('stat/sumOfRanks', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'type'=>$type,
+			'eventIds'=>$eventIds,
 		));
 	}
 }
