@@ -66,38 +66,40 @@ class Results extends ActiveRecord {
 			$eventBestPerson = array_map(function($row) {
 				return sprintf('("%s", %d, "%s")', $row['eventId'], $row['best'], $row['personId']);
 			}, $command->queryAll());
-			$command = Yii::app()->wcaDb->createCommand()
-			->select(array(
-				'rs.eventId',
-				sprintf('rs.%s AS best', $field),
-				'rs.personId',
-				'rs.personName',
-				'rs.personCountryId',
-				'rs.competitionId',
-				'rs.value1',
-				'rs.value2',
-				'rs.value3',
-				'rs.value4',
-				'rs.value5',
-				'c.cellName',
-				'c.year',
-				'c.month',
-				'c.day',
-			))
-			->from('Results rs')
-			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-			->leftJoin('Competitions c', 'rs.competitionId=c.id')
-			->where(sprintf('(rs.eventId, rs.%s, rs.personId) IN (%s)',
-				$field,
-				implode(',', $eventBestPerson)
-			))
-			->order(sprintf('rs.%s ASC, p.name ASC', $field));
-			foreach ($command->queryAll() as $row) {
-				$row['type'] = $type;
-				$row = Statistics::getCompetition($row);
-				$rows[$row['personId']] = $row;
+			if ($eventBestPerson !== array()) {
+				$command = Yii::app()->wcaDb->createCommand()
+				->select(array(
+					'rs.eventId',
+					sprintf('rs.%s AS best', $field),
+					'rs.personId',
+					'rs.personName',
+					'rs.personCountryId',
+					'rs.competitionId',
+					'rs.value1',
+					'rs.value2',
+					'rs.value3',
+					'rs.value4',
+					'rs.value5',
+					'c.cellName',
+					'c.year',
+					'c.month',
+					'c.day',
+				))
+				->from('Results rs')
+				->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+				->leftJoin('Competitions c', 'rs.competitionId=c.id')
+				->where(sprintf('(rs.eventId, rs.%s, rs.personId) IN (%s)',
+					$field,
+					implode(',', $eventBestPerson)
+				))
+				->order(sprintf('rs.%s ASC, p.name ASC', $field));
+				foreach ($command->queryAll() as $row) {
+					$row['type'] = $type;
+					$row = Statistics::getCompetition($row);
+					$rows[$row['personId']] = $row;
+				}
+				$rows = array_values($rows);
 			}
-			$rows = array_values($rows);
 			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT rs.personId) AS count')
 			->andWhere(sprintf('rs.%s<' . $rows[0]['best'], $field))
 			->queryScalar() : 0;
