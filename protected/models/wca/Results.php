@@ -25,6 +25,10 @@
  */
 class Results extends ActiveRecord {
 
+	public static function getRankingTypes() {
+		return array('single', 'average');
+	}
+
 	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
@@ -181,7 +185,7 @@ class Results extends ActiveRecord {
 				break;
 		}
 		$rows = array();
-		foreach (array('single', 'average') as $type) {
+		foreach (self::getRankingTypes() as $type) {
 			$cmd = clone $command;
 			switch ($region) {
 				case 'World':
@@ -256,7 +260,7 @@ class Results extends ActiveRecord {
 		$rows = array(
 			'333'=>array(),
 		);
-		foreach (array('single', 'average') as $type) {
+		foreach (self::getRankingTypes() as $type) {
 			$cmd = clone $command;
 			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
 			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))

@@ -2,7 +2,7 @@
 
 class MostSolves extends Statistics {
 
-	public static function build($statistic) {
+	public static function build($statistic, $page = 1, $recursive = true) {
 		$limit = self::$limit;
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
@@ -25,10 +25,12 @@ class MostSolves extends Statistics {
 		))
 		->from('Results r')
 		->leftJoin('Competitions c', 'r.competitionId=c.id')
-		->where('personCountryId="China"')
-		->group('personId')
+		->where('personCountryId="China"');
+		$cmd = clone $command;
+		$command->group('personId')
 		->order('solve DESC, attempt ASC')
-		->limit($limit);
+		->limit($limit)
+		->offset(($page - 1) * $limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
@@ -73,7 +75,22 @@ class MostSolves extends Statistics {
 				);
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'all':
-				$rows = $command->queryAll();
+				$rows = array();
+				foreach ($command->queryAll() as $row) {
+					$row['rank'] = $row['solve'] . '_' . $row['attempt'];
+					$rows[] = $row;
+				}
+				$statistic['count'] = $cmd->select('count(DISTINCT personId) AS count')->queryScalar();
+				$statistic['rank'] = ($page - 1) * $limit;
+				$statistic['rankKey'] = 'rank'; 
+				if ($page > 1 && $rows !== array() && $recursive) {
+					$stat = self::build($statistic, $page - 1, false);
+					foreach (array_reverse($stat['rows']) as $row) {
+						if ($row['rank'] === $rows[0]['rank']) {
+							$statistic['rank']--;
+						}
+					}
+				}
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'year':
 				$years = Competition::getYears();

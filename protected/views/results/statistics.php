@@ -1,4 +1,4 @@
-<div class="col-lg-12 competition-wca">
+<div class="col-lg-12">
   <div class="row">
     <div class="col-lg-12">
       <p><?php echo Yii::t('statistics', 'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.', array(
@@ -33,22 +33,21 @@
         'class'=>' ' . $statistic['id'],
       )); ?>
     <?php else: ?>
-      <div class="clearfix">
-        <h3 class="pull-left">
-          <?php echo Yii::t('statistics', $name); ?>
-          <?php if (isset($statistic['more'])): ?>
-          <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
-          <?php endif; ?>
-        </h3>
-        <div class="pull-left stat-select">
-          <?php if (isset($statistic['selectHandler'])) {
-            $statistic['select'] = array_map(function($name) use($statistic) {
-              return $this->evaluateExpression($statistic['selectHandler'], compact('name'));
-            }, $statistic['select']);
-          }?>
-          <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
-        </div>
+      <h3 class="pull-left">
+        <?php echo Yii::t('statistics', $name); ?>
+        <?php if (isset($statistic['more'])): ?>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <?php endif; ?>
+      </h3>
+      <div class="pull-left stat-select">
+        <?php if (isset($statistic['selectHandler'])) {
+          $statistic['select'] = array_map(function($name) use($statistic) {
+            return $this->evaluateExpression($statistic['selectHandler'], compact('name'));
+          }, $statistic['select']);
+        }?>
+        <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
       </div>
+      <div class="clearfix"></div>
       <?php $keys = array_keys($statistic['statistic']); ?>
       <?php foreach ($statistic['statistic'] as $key=>$stat): ?>
       <?php $this->renderPartial('statistic', array(
