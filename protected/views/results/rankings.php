@@ -1,4 +1,4 @@
-<div class="col-lg-12 competition-wca">
+<div class="col-lg-12">
   <div>
     <p><?php echo Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the {url}.', array(
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
@@ -24,7 +24,7 @@
         'class'=>'form-control',
       )); ?>
     </div>
-    <?php foreach (array('single', 'average') as $_type): ?>
+    <?php foreach (Results::getRankingTypes() as $_type): ?>
     <?php echo CHtml::tag('button', array(
       'type'=>'submit',
       'name'=>'type',
