@@ -14,11 +14,16 @@
     ),
   )); ?>
     <div class="form-group">
-      <?php echo CHtml::checkBoxList('event[]', $eventIds, Events::getNormalTranslatedEvents(), array(
-        'container'=>'div',
-        'separator'=>' ',
-        'template'=>'<div class="checkbox">{beginLabel}{input} {labelTitle}{endLabel}</div>',
-      )); ?>
+      <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$name): ?>
+      <div class="checkbox">
+        <label>
+          <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
+            'value'=>$eventId,
+          )); ?>
+          <?php echo $name; ?>
+        </label>
+      </div>
+      <?php endforeach; ?>
     </div>
     <?php foreach (Results::getRankingTypes() as $_type): ?>
     <?php echo CHtml::tag('button', array(

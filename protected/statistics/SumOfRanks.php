@@ -29,6 +29,7 @@ class SumOfRanks extends Statistics {
 			$allPenalties += $penalty[$eventId] = count($ranks[$eventId]) + 1;
 		}
 		//计算每个人的排名
+		$rankSum = array();
 		foreach ($eventIds as $eventId) {
 			foreach ($ranks[$eventId] as $personId=>$rank) {
 				if(!isset($rankSum[$personId])) {
