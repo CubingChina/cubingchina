@@ -35,7 +35,7 @@
   <?php $this->endWidget(); ?>
   <div class="event-title">
     <?php echo CHtml::tag('span', array(
-      'class'=>'event-icon event-icon event-icon-' . $event,
+      'class'=>'event-icon event-icon-' . $event,
     ), Yii::t('event', Events::getFullEventName($event))); ?>
     &nbsp;&nbsp;
     <?php echo Yii::t('Region', 'China'); ?>

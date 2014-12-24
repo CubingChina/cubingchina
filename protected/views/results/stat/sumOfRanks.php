@@ -25,7 +25,7 @@
                   'value'=>$eventId,
                 )); ?>
                 <?php echo CHtml::tag('span', array(
-                  'class'=>'event-icon event-icon event-icon-' . $eventId,
+                  'class'=>'event-icon event-icon-' . $eventId,
                 ), '&nbsp;'); ?>
               </label>
             </div>
