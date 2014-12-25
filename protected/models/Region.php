@@ -13,12 +13,16 @@ class Region extends ActiveRecord {
 
 	public static $HKMCTW = array(2, 3, 4);
 
-	public static function getWACRegions() {
-		return array(
+	public static function getWACRegions($region = 'China') {
+		$regions = array(
 			'World'=>Yii::t('Region', 'World'),
 			'Asia'=>Yii::t('Region', 'Asia'),
 			'China'=>Yii::t('Region', 'China'),
 		);
+		if (!isset($regions[$region])) {
+			$regions[$region] = $region;
+		}
+		return $regions;
 	}
 
 	public static function getRegionById($id) {

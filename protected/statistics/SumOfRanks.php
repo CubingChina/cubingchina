@@ -5,6 +5,7 @@ class SumOfRanks extends Statistics {
 	private static $_ranks = array();
 
 	public static function build($statistic, $page = 1) {
+		$gender = isset($statistic['gender']) ? $statistic['gender'] : 'all';
 		$ranks = self::getRanks($statistic['type']);
 		$eventIds = !empty($statistic['eventIds']) ? $statistic['eventIds'] : array_keys(Events::getNormalEvents());
 		$columns = array(
@@ -31,11 +32,12 @@ class SumOfRanks extends Statistics {
 		//计算每个人的排名
 		$rankSum = array();
 		foreach ($eventIds as $eventId) {
-			foreach ($ranks[$eventId] as $personId=>$rank) {
+			foreach ($ranks[$eventId] as $personId=>$row) {
 				if(!isset($rankSum[$personId])) {
-					$rankSum[$personId] = $allPenalties;
+					$rankSum[$personId] = $row;
+					$rankSum[$personId]['sum'] = $allPenalties;
 				}
-				$rankSum[$personId] += $rank - $penalty[$eventId];
+				$rankSum[$personId]['sum'] += $row['countryRank'] - $penalty[$eventId];
 			}
 			$columns[] = array(
 				'header'=>"CHtml::tag('span', array(
@@ -45,23 +47,32 @@ class SumOfRanks extends Statistics {
 				'type'=>'raw',
 			);
 		}
-		asort($rankSum);
+		uasort($rankSum, function($rankA, $rankB) {
+			return $rankA['sum'] - $rankB['sum'];
+		});
+		switch ($gender) {
+			case 'female':
+				$rankSum = array_filter($rankSum, function($row) {
+					return $row['gender'] == 'f';
+				});
+				break;
+			case 'male':
+				$rankSum = array_filter($rankSum, function($row) {
+					return $row['gender'] == 'm';
+				});
+				break;
+		}
 		$count = count($rankSum);
 		if ($page > ceil($count / self::$limit)) {
 			$page = ceil($count / self::$limit);
 		}
 		$rows = array();
-		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $personId=>$sum) {
-			$row = array(
-				'personId'=>$personId,
-				'personName'=>Persons::getPersonNameById($personId),
-				'sum'=>$sum,
-			);
+		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $personId=>$row) {
 			foreach ($eventIds as $eventId) {
 				$row[$eventId] = isset($ranks[$eventId][$personId])
-								 ? $ranks[$eventId][$personId]
+								 ? $ranks[$eventId][$personId]['countryRank']
 								 : $penalty[$eventId];
-				if (isset($ranks[$eventId][$personId]) && $ranks[$eventId][$personId] <= 10) {
+				if (isset($ranks[$eventId][$personId]) && $ranks[$eventId][$personId]['countryRank'] <= 10) {
 					$row[$eventId] = CHtml::tag('span', array('class'=>'top10'), $row[$eventId]);
 				} elseif (!isset($ranks[$eventId][$personId])) {
 					$row[$eventId] = CHtml::tag('span', array('class'=>'penalty'), $row[$eventId]);
@@ -71,7 +82,7 @@ class SumOfRanks extends Statistics {
 		}
 		$statistic['count'] = $count;
 		$statistic['rank'] = isset($rows[0]) ? count(array_filter($rankSum, function($row) use ($rows) {
-			return $row < $rows[0]['sum'];
+			return $row['sum'] < $rows[0]['sum'];
 		})) : 0;
 		$statistic['rankKey'] = 'sum';
 		return self::makeStatisticsData($statistic, $columns, $rows);
@@ -81,14 +92,16 @@ class SumOfRanks extends Statistics {
 		if (isset(self::$_ranks[$type][$region])) {
 			return self::$_ranks[$type][$region];
 		}
-		$command = Yii::app()->wcaDb->createCommand();
-		$command->select('eventId, personId, countryRank')->from('Ranks' . ucfirst($type) . ' r');
-		if ($region !== '') {
-			$command->leftJoin('Persons p', 'r.personId=p.id')->where("p.countryId='{$region}'");
-		}
+		$command = Yii::app()->wcaDb->createCommand()
+		->select('eventId, personId, countryRank, p.gender, p.name AS personName')
+		->from('Ranks' . ucfirst($type) . ' r')
+		->leftJoin('Persons p', 'r.personId=p.id and p.subid=1')
+		->where('p.countryId=:region', array(
+			':region'=>$region,
+		));
 		$ranks = array();
 		foreach ($command->queryAll() as $row) {
-			$ranks[$row['eventId']][$row['personId']] = $row['countryRank'];
+			$ranks[$row['eventId']][$row['personId']] = $row;
 		}
 		return self::$_ranks[$type][$region] = $ranks;
 	}

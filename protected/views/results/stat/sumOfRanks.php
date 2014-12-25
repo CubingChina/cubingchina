@@ -35,14 +35,22 @@
       </div>
       <?php endforeach; ?>
     </div>
-    <?php foreach (Results::getRankingTypes() as $_type): ?>
-    <?php echo CHtml::tag('button', array(
-      'type'=>'submit',
-      'name'=>'type',
-      'value'=>$_type,
-      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
-    ), Yii::t('common', ucfirst($_type))); ?>
-    <?php endforeach; ?>
+    <div class="form-inline">
+      <div class="form-group">
+        <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
+        <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
+          'class'=>'form-control',
+        )); ?>
+      </div>
+      <?php foreach (Results::getRankingTypes() as $_type): ?>
+      <?php echo CHtml::tag('button', array(
+        'type'=>'submit',
+        'name'=>'type',
+        'value'=>$_type,
+        'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
+      ), Yii::t('common', ucfirst($_type))); ?>
+      <?php endforeach; ?>
+    </div>
   <?php $this->endWidget(); ?>
   <?php
   $this->widget('RankGridView', array(

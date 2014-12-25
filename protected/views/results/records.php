@@ -14,7 +14,7 @@
   )); ?>
     <div class="form-group">
       <label for="Competition_year"><?php echo Yii::t('common', 'Region'); ?></label>
-      <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions(), array(
+      <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions($region), array(
         'class'=>'form-control',
       )); ?>
     </div>
@@ -49,7 +49,7 @@
     'columns'=>array(
       array(
         'header'=>Yii::t('common', 'Records'),
-        'value'=>'isset($data["worldRank"]) ? ($data["worldRank"] == 1 ? "WR" : ($data["continentRank"] == 1 ? "AsR" : "NR")) : $data["regional" . ucfirst($data["type"]) . "Record"]',
+        'value'=>'isset($data["record"]) ? $data["record"] : $data["regional" . ucfirst($data["type"]) . "Record"]',
       ),
       array(
         'header'=>Yii::t('common', 'Single'),
@@ -68,7 +68,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Region'),
-        'value'=>'Yii::t("common", $data["personCountryId"])',
+        'value'=>'Yii::t("common", $data["countryName"])',
         'type'=>'raw',
       ),
       array(
