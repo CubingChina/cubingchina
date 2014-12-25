@@ -1,7 +1,7 @@
 <nav class="main-nav" role="navigation">
   <div class="container">
-    <div class="navbar-header">
-      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+    <div class="navbar-header" data-toggle="collapse" data-target="#navbar-collapse">
+      <button class="navbar-toggle" type="button">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
