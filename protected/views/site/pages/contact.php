@@ -9,7 +9,7 @@
   <?php echo Yii::app()->controller->translateTWInNeed(
 <<<EOT
   <p>
-    如果你想采用我们的比赛管理系统并公示一场魔方竞速，或者给我们网站以更多更好的意见和建议，欢迎通过以下邮件联系我们：
+    如果你想采用我们的比赛管理系统并公示一场魔方竞速比赛，或者给我们网站以更多更好的意见和建议，欢迎通过以下邮件联系我们：
     <br><i class="fa fa-envelope"></i> <a href="mailto:admin@cubingchina.com">admin@cubingchina.com</a>。
   </p>
   <p>
@@ -53,11 +53,6 @@
         <td><i class="fa fa-user"></i> 王皓</td>
         <td><i class="fa fa-building"></i> 沈阳</td>
         <td><i class="fa fa-envelope"></i> <a href="mailto:wanghao@yoercn.com">wanghao@yoercn.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 路义亮</td>
-        <td><i class="fa fa-building"></i> 郑州</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:mangosteen@vip.sina.com">mangosteen@vip.sina.com</a></td>
       </tr>
       <tr>
         <td><i class="fa fa-user"></i> 陳德泉</td>
@@ -113,11 +108,6 @@ EOT
         <td><i class="fa fa-user"></i> Hao Wang</td>
         <td><i class="fa fa-building"></i> Shenyang</td>
         <td><i class="fa fa-envelope"></i> <a href="mailto:wanghao@yoercn.com">wanghao@yoercn.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Yiliang Lu</td>
-        <td><i class="fa fa-building"></i> Zhengzhou</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:mangosteen@vip.sina.com">mangosteen@vip.sina.com</a></td>
       </tr>
       <tr>
         <td><i class="fa fa-user"></i> Chan Tak Chuen (Kim)</td>
