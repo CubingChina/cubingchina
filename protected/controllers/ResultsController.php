@@ -134,9 +134,13 @@ class ResultsController extends Controller {
 	private function statSumOfRanks() {
 		$page = $this->iGet('page', 1);
 		$type = $this->sGet('type', 'single');
+		$gender = $this->sGet('gender', 'all');
 		$eventIds = $this->aGet('event');
 		if (!in_array($type, Results::getRankingTypes())) {
 			$type = 'single';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
 		}
 		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
 			$eventIds = array();
@@ -145,6 +149,7 @@ class ResultsController extends Controller {
 			'class'=>'SumOfRanks',
 			'type'=>$type,
 			'eventIds'=>$eventIds,
+			'gender'=>$gender,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -166,6 +171,7 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'type'=>$type,
+			'gender'=>$gender,
 			'eventIds'=>$eventIds,
 		));
 	}

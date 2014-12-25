@@ -82,7 +82,7 @@ class SumOfRanks extends Statistics {
 		}
 		$statistic['count'] = $count;
 		$statistic['rank'] = isset($rows[0]) ? count(array_filter($rankSum, function($row) use ($rows) {
-			return $row < $rows[0]['sum'];
+			return $row['sum'] < $rows[0]['sum'];
 		})) : 0;
 		$statistic['rankKey'] = 'sum';
 		return self::makeStatisticsData($statistic, $columns, $rows);
