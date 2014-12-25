@@ -143,7 +143,6 @@ class Results extends ActiveRecord {
 			'rs.average',
 			'rs.personId',
 			'rs.personName',
-			'rs.personCountryId',
 			'rs.competitionId',
 			'rs.value1',
 			'rs.value2',
@@ -156,10 +155,12 @@ class Results extends ActiveRecord {
 			'c.year',
 			'c.month',
 			'c.day',
+			'country.name AS countryName',
 		))
 		->from('Results rs')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id')
 		->leftJoin('Rounds round', 'rs.roundId=round.id')
+		->leftJoin('Countries country', 'rs.personCountryId=country.id')
 		->where('rs.eventId=:eventId', array(
 			':eventId'=>$event,
 		))
@@ -173,7 +174,6 @@ class Results extends ActiveRecord {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
 				$command->andWhere('country.continentId=:region', array(
 					':region'=>'_' . $region,
 				));
@@ -220,8 +220,12 @@ class Results extends ActiveRecord {
 		->select(array(
 			'r.*',
 			'r.best AS average',
+			'(CASE 
+				WHEN r.worldRank=1 THEN "WR"
+				WHEN r.continentRank=1 THEN continent.recordName
+				ELSE "NR"
+			END) AS record',
 			'rs.personName',
-			'rs.personCountryId',
 			'rs.competitionId',
 			'rs.value1',
 			'rs.value2',
@@ -232,9 +236,12 @@ class Results extends ActiveRecord {
 			'c.year',
 			'c.month',
 			'c.day',
+			'country.name AS countryName',
 		))
 		->leftJoin('Events e', 'r.eventId=e.id')
 		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
+		->leftJoin('Countries country', 'p.countryId=country.id')
+		->leftJoin('Continents continent', 'country.continentId=continent.id')
 		->order('e.rank ASC');
 		switch ($region) {
 			case 'World':
@@ -246,7 +253,6 @@ class Results extends ActiveRecord {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$command->leftJoin('Countries country', 'p.countryId=country.id');
 				$command->where('r.continentRank=1 AND country.continentId=:region', array(
 					':region'=>'_' . $region,
 				));
