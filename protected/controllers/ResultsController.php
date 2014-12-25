@@ -178,9 +178,19 @@ class ResultsController extends Controller {
 
 	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
+		$gender = $this->sGet('gender', 'all');
+		$eventIds = $this->aGet('event');
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
+			$eventIds = array();
+		}
 		$statistic = array(
 			'class'=>'MostSolves',
 			'type'=>'all',
+			'eventIds'=>$eventIds,
+			'gender'=>$gender,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -201,6 +211,8 @@ class ResultsController extends Controller {
 			'statistic'=>$statistic,
 			'time'=>$time,
 			'page'=>$page,
+			'gender'=>$gender,
+			'eventIds'=>$eventIds,
 		));
 	}
 
