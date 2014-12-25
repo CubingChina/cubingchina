@@ -23,9 +23,23 @@ class MostSolves extends Statistics {
 			'personName',
 			'cellName',
 		))
-		->from('Results r')
-		->leftJoin('Competitions c', 'r.competitionId=c.id')
+		->from('Results rs')
+		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+		->leftJoin('Competitions c', 'rs.competitionId=c.id')
 		->where('personCountryId="China"');
+		if (!empty($statistic['eventIds'])) {
+			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
+		}
+		if (isset($statistic['gender'])) {
+			switch ($statistic['gender']) {
+				case 'female':
+					$command->andWhere('p.gender="f"');
+					break;
+				case 'male':
+					$command->andWhere('p.gender="m"');
+					break;
+			}
+		}
 		$cmd = clone $command;
 		$command->group('personId')
 		->order('solve DESC, attempt ASC')

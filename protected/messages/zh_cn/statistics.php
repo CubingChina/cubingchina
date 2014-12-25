@@ -55,7 +55,7 @@ return array (
   'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.' => '本页面列出了中国选手在所有WCA项目的个人排名，所有的排名成绩源自WCA赛事的官方排名。',
   'Chinese personal rankings in each official event are listed, based on the {url}.' => '本页面列出了中国选手在所有WCA项目的个人排名，所有的排名成绩源自{url}。',
   'Generated on {time}.' => '生成于{time}。',
-  'Most Personal Solves' => '个人累积总复原次数排行榜',
+  'Most Personal Solves' => '复原榜',
   'Person' => '姓名',
   'Rank' => '排名',
   'Sum of Ranks' => '排名总和',
