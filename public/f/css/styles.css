@@ -765,7 +765,6 @@ body.competition .main-nav button {
 }
 .main-nav .nav .nav-item {
   /*font-weight: 600;*/
-  text-transform: uppercase;
   z-index: 100;
 }
 .main-nav .nav .nav-item a {
