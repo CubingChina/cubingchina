@@ -19,11 +19,15 @@
           <span class="month"><?php echo Yii::t('date', strtoupper(date('M', $competition->date))); ?></span>
           <span class="date-number"><?php echo date('d', $competition->date); ?></span>
         </p>
-      </div><!--//date-label-wrapper-->
+      </div>
       <div class="details col-md-9 col-sm-8 col-xs-10">
-        <h5 class="title"><?php echo CHtml::link($competition->getAttributeValue('name'), $competition->getUrl('detail')); ?></h5>
+        <h5 class="title">
+          <?php echo CHtml::link($competition->logo . $competition->getAttributeValue('name'), $competition->getUrl('detail'), array(
+            'class'=>'comp-type-' . strtolower($competition->type),
+          )); ?>
+        </h5>
         <p class="time text-muted"><?php echo $competition->isMultiLocation() ? $competition->getLocationInfo('venue') : $competition->location[0]->getFullAddress(); ?></p>
-      </div><!--//details-->
+      </div>
     </article>
     <?php endforeach; ?>
   </section>

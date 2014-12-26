@@ -47,7 +47,7 @@ return array (
   'Sum' => '總和',
   'Sum of 2x2 to 5x5 average ranks' => '二階至五階平均綜合排行榜',
   'Sum of 2x2 to 5x5 single ranks' => '二階至五階單次綜合排行榜',
-  'Sum of all average ranks' => '官方全項目平均排名總和榜',
+  'Sum of all average ranks' => '官方全項目平均綜合排行榜',
   'Sum of all single ranks' => '官方全項目單次綜合排行榜',
   'Third' => '季軍',
   'official WCA competition results' => 'WCA賽事的官方成績',

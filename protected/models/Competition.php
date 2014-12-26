@@ -290,6 +290,16 @@ class Competition extends ActiveRecord {
 		return true;
 	}
 
+	public function getLogo() {
+		$logo = '';
+		switch ($this->type) {
+			case self::TYPE_WCA:
+				$logo = CHtml::image('/f/images/wca.png', Yii::t('common', 'WCA Competition'), array('class'=>'wca-competition'));
+				break;
+		}
+		return $logo;
+	}
+
 	public function getLocationInfo($type) {
 		if ($this->isMultiLocation()) {
 			return Yii::t('common', 'Multiple');
@@ -382,12 +392,8 @@ class Competition extends ActiveRecord {
 
 	public function getCompetitionLink() {
 		$name = $this->getAttributeValue('name');
-		switch ($this->type) {
-			case self::TYPE_WCA:
-				$name = CHtml::image('/f/images/wca.png', Yii::t('common', 'WCA Competition'), array('class'=>'wca-competition')) . $name;
-				break;
-		}
-		return CHtml::link($name, $this->getUrl(), array('class'=>'comp-type-' . strtolower($this->type)));
+		$logo = $this->getLogo();
+		return CHtml::link($logo . $name, $this->getUrl(), array('class'=>'comp-type-' . strtolower($this->type)));
 	}
 
 	public function getWcaRegulationUrl() {
