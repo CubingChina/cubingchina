@@ -162,7 +162,7 @@ $config = array(
 		'staticPath' => dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix' => 'http://s.cubingchina.com/',
 		'jsVer' => '20140826',
-		'cssVer' => '20141223',
+		'cssVer' => '20141226',
 	),
 );
 

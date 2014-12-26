@@ -207,7 +207,7 @@ class Controller extends CController {
 	public function setNavibar($navibar) {
 		$navibar = array_merge($navibar, array(
 			array(
-				'label'=>sprintf('<i class="fa fa-user"></i> %s <i class="fa fa-angle-down"></i>', Yii::app()->user->isGuest ? '' : $this->user->getAttributeValue('name', true)),
+				'label'=>'<i class="fa fa-user"></i> <i class="fa fa-angle-down"></i>',
 				'url'=>'#',
 				'active'=>$this->id === 'user',
 				'itemOptions'=>array(
@@ -245,7 +245,7 @@ class Controller extends CController {
 				'label'=>Yii::t('common', 'Login'),
 				'url'=>array('/site/login'),
 				'itemOptions'=>array(
-					'class'=>'nav-item visible-sm visible-xs',
+					'class'=>'nav-item visible-xs',
 				),
 				'visible'=>Yii::app()->user->isGuest,
 			),
@@ -253,7 +253,7 @@ class Controller extends CController {
 				'label'=>Yii::t('common', 'Register'),
 				'url'=>array('/site/register'),
 				'itemOptions'=>array(
-					'class'=>'nav-item visible-sm visible-xs',
+					'class'=>'nav-item visible-xs',
 				),
 				'visible'=>Yii::app()->user->isGuest,
 			),
@@ -261,7 +261,7 @@ class Controller extends CController {
 			'label'=>Yii::t('common', 'Language') . Html::fontAwesome('angle-down', 'b'),
 			'url'=>'#',
 			'itemOptions'=>array(
-				'class'=>'nav-item dropdown visible-sm visible-xs',
+				'class'=>'nav-item dropdown visible-xs',
 			),
 			'linkOptions'=>array(
 				'class'=>'dropdown-toggle',

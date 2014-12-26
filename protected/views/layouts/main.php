@@ -5,7 +5,7 @@
       <h1 class="logo col-md-4 col-sm-4">
           <a href="<?php echo $this->createUrl('/site/index'); ?>"><img id="logo" src="/f/images/logo.png" alt="Logo"></a>
       </h1><!--//logo-->
-      <div class="info col-md-8 col-sm-8 hidden-sm hidden-xs">
+      <div class="info col-md-8 col-sm-8 hidden-xs">
         <ul class="menu-top navbar-right">
           <li class="divider"><a href="<?php echo $this->getLangUrl('zh_cn'); ?>">简体中文</a></li>
           <li class="divider"><a href="<?php echo $this->getLangUrl('zh_tw'); ?>">繁体中文</a></li>
