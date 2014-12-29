@@ -50,6 +50,9 @@ class SumOfRanks extends Statistics {
 		uasort($rankSum, function($rankA, $rankB) {
 			return $rankA['sum'] - $rankB['sum'];
 		});
+		$rankSum = array_filter($rankSum, function($row) {
+			return $row['subid'] == '1';
+		});
 		switch ($gender) {
 			case 'female':
 				$rankSum = array_filter($rankSum, function($row) {
@@ -93,10 +96,10 @@ class SumOfRanks extends Statistics {
 			return self::$_ranks[$type][$region];
 		}
 		$command = Yii::app()->wcaDb->createCommand()
-		->select('eventId, personId, countryRank, p.gender, p.name AS personName')
+		->select('eventId, personId, countryRank, p.gender, p.name AS personName, p.subid')
 		->from('Ranks' . ucfirst($type) . ' r')
-		->leftJoin('Persons p', 'r.personId=p.id and p.subid=1')
-		->where('p.countryId=:region', array(
+		->leftJoin('Persons p', 'r.personId=p.id')
+		->where('((countryRank>0 AND p.subid=1) OR p.subid>1) AND p.countryId=:region', array(
 			':region'=>$region,
 		));
 		$ranks = array();
