@@ -258,33 +258,34 @@ class Controller extends CController {
 				'visible'=>Yii::app()->user->isGuest,
 			),
 			array(
-			'label'=>Yii::t('common', 'Language') . Html::fontAwesome('angle-down', 'b'),
-			'url'=>'#',
-			'itemOptions'=>array(
-				'class'=>'nav-item dropdown visible-xs',
-			),
-			'linkOptions'=>array(
-				'class'=>'dropdown-toggle',
-				'data-toggle'=>'dropdown',
-				'data-hover'=>'dropdown',
-				'data-delay'=>0,
-				'data-close-others'=>'false',
-			),
-			'items'=>array(
-				array(
-					'label'=>'简体中文',
-					'url'=>$this->getLangUrl('zh_cn'),
+				'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),
+				'url'=>'#',
+				'itemOptions'=>array(
+					'class'=>'nav-item dropdown visible-xs',
 				),
-				array(
-					'label'=>'繁体中文',
-					'url'=>$this->getLangUrl('zh_tw'),
+				'linkOptions'=>array(
+					'class'=>'dropdown-toggle',
+					'data-toggle'=>'dropdown',
+					'data-hover'=>'dropdown',
+					'data-delay'=>0,
+					'data-close-others'=>'false',
 				),
-				array(
-					'label'=>'English',
-					'url'=>$this->getLangUrl('en'),
+				'items'=>array(
+					array(
+						'label'=>'简体中文',
+						'url'=>$this->getLangUrl('zh_cn'),
+					),
+					array(
+						'label'=>'繁体中文',
+						'url'=>$this->getLangUrl('zh_tw'),
+					),
+					array(
+						'label'=>'English',
+						'url'=>$this->getLangUrl('en'),
+					),
 				),
-			),
-		)));
+			)
+		));
 		$this->_navibar = $navibar;
 	}
 
@@ -294,13 +295,26 @@ class Controller extends CController {
 		} else if(isset($_COOKIE['language']) && $_COOKIE['language'] != '') {
 			$this->setLanguage($_COOKIE['language']);
 		} else if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
-			$this->setLanguage(strtolower(str_replace('-', '_', current(explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'])))));
+			$languages = Yii::app()->params->languages;
+			$acceptLanguage = str_replace('-', '_', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			$pos = strlen($acceptLanguage);
+			$userLanguage = false;
+			foreach ($languages as $language) {
+				$temp = strpos($acceptLanguage, $language);
+				if ($temp !== false && $temp < $pos) {
+					$pos = $temp;
+					$userLanguage = $language;
+				}
+			}
+			if ($userLanguage !== false) {
+				$this->setLanguage($userLanguage);
+			}
 		}
 		parent::init();
 	}
 
 	public function setLanguage($language, $setCookie = false) {
-		if (!in_array($language, array('en', 'zh_cn', 'zh_tw'))) {
+		if (!in_array($language, Yii::app()->params->languages)) {
 			return;
 		}
 		Yii::app()->language = $language;
