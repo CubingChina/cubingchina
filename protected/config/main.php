@@ -148,6 +148,7 @@ $config = array(
 	'params' => array(
 		// this is used in contact page
 		'adminEmail' => 'admin@cubingchina.com',
+		'languages' => array('en', 'zh_cn', 'zh_tw'),
 		'author' => 'Baiqiang Dong',
 		'description' => 'The Chinese speedcubing website.',
 		'keywords' => array(
