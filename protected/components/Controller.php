@@ -296,7 +296,7 @@ class Controller extends CController {
 			$this->setLanguage($_COOKIE['language']);
 		} else if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
 			$languages = Yii::app()->params->languages;
-			$acceptLanguage = str_replace('-', '_', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			$acceptLanguage = strtolower(str_replace('-', '_', $_SERVER['HTTP_ACCEPT_LANGUAGE']));
 			$pos = strlen($acceptLanguage);
 			$userLanguage = false;
 			foreach ($languages as $language) {
