@@ -107,6 +107,7 @@ class CompetitionController extends Controller {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
 			$model->competition_id = $competition->id;
+			$model->ip = Yii::app()->request->getUserHostAddress();
 			$model->date = time();
 			$model->status = Registration::STATUS_WAITING;
 			if ($competition->check_person == Competition::NOT_CHECK_PERSON) {
