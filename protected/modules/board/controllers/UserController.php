@@ -41,6 +41,15 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionLoginHistory() {
+		$model = new LoginHistory();
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('LoginHistory');
+		$this->renderPartial('loginHistory', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionStatistics() {
 		$totalUser = User::model()->countByAttributes(array(
 			'status'=>User::STATUS_NORMAL,
