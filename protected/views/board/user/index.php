@@ -150,6 +150,7 @@
 </div>
 <?php
 $url = $this->createUrl('/board/user/registration');
+$historyUrl = $this->createUrl('/board/user/loginHistory');
 Yii::app()->clientScript->registerScript('user',
 <<<EOT
   var modal = $('#modal');
@@ -165,6 +166,20 @@ Yii::app()->clientScript->registerScript('user',
       success: function(data) {
         modalBody.html(data);
         modal.modal('show');
+      }
+    })
+  }).on('click', '.js-user-login-history', function() {
+    $.ajax({
+      url: '{$historyUrl}',
+      data: {
+        LoginHistory: {
+          user_id: $(this).data('id')
+        }
+      },
+      success: function(data) {
+        modalBody.html(data);
+        modal.modal('show');
+        $('.tips').tooltip();
       }
     })
   });

@@ -259,6 +259,10 @@ class User extends ActiveRecord {
 			// 	$buttons[] = CHtml::link('恢复', array('/board/user/enable', 'id'=>$this->id), array('class'=>'btn btn-xs btn-purple btn-square'));
 			// 	break;
 		}
+		$buttonGroups[] = CHtml::tag('li', array(
+			'class'=>'js-user-login-history',
+			'data-id'=>$this->id,
+		), CHtml::link('登录记录', '#'));
 		$buttonGroups[] = '</ul>';
 		$buttonGroups[] = '</div>';
 		$buttons[] = implode("\n", $buttonGroups);
