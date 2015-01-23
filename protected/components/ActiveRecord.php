@@ -18,7 +18,7 @@ class ActiveRecord extends CActiveRecord {
 
 	public static function getQQWRY() {
 		if (self::$_qqwry === null) {
-			self::$_qqwry = new qqwry($this->getQQWRYFile());
+			self::$_qqwry = new qqwry(self::getQQWRYFile());
 		}
 		return self::$_qqwry;
 	}
