@@ -172,9 +172,17 @@ class Registration extends ActiveRecord {
 				)
 			));
 		}
-		$userLink = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR)
+		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR);
+		$userLink = $isAdmin
 			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
 			: '$data->user->getWcaLink()';
+		$ipColumn = $isAdmin ? array(
+			array(
+				'name'=>'ip',
+				'type'=>'raw',
+				'value'=>'$data->getRegIpDisplay()',
+			),
+		) : array();
 		$columns = array_merge(array(
 			array(
 				'header'=>'操作',
@@ -229,7 +237,7 @@ class Registration extends ActiveRecord {
 				'type'=>'raw', 
 				'value'=>'date("Y-m-d H:i:s", $data->date)', 
 			),
-		));
+		), $ipColumn);
 		return $columns;
 	}
 
@@ -341,6 +349,7 @@ class Registration extends ActiveRecord {
 			'user_id' => Yii::t('Registration', 'User'),
 			'events' => Yii::t('Registration', 'Events'),
 			'comments' => Yii::t('Registration', 'Additional Comments'),
+			'ip' => 'IP',
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee (CNY)'),

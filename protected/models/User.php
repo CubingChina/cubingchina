@@ -41,9 +41,6 @@ class User extends ActiveRecord {
 	const STATUS_BANNED = 1;
 	const STATUS_DELETED = 2;
 
-	private $_qqwry;
-	private $_qqwryFile;
-
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
 			->select('FROM_UNIXTIME(MIN(reg_time), "%Y-%m-%d") as day, COUNT(1) AS user')
@@ -192,35 +189,6 @@ class User extends ActiveRecord {
 
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
-	}
-
-	public function getRegIpDisplay() {
-		if (!extension_loaded('qqwry') || !class_exists('qqwry', false)) {
-			return $this->reg_ip;
-		}
-		$result = $this->getQQWRY()->q($this->reg_ip);
-		return CHtml::tag('button', array(
-			'class'=>'btn btn-xs btn-orange tips',
-			'data-toggle'=>'tooltip',
-			'data-placement'=>'left',
-			'title'=>implode('|', array_map(function($a) {
-				return iconv('gbk', 'utf-8', $a);
-			}, $result)),
-		), $this->reg_ip);
-	}
-
-	public function getQQWRY() {
-		if ($this->_qqwry === null) {
-			$this->_qqwry = new qqwry($this->getQQWRYFile());
-		}
-		return $this->_qqwry;
-	}
-
-	public function getQQWRYFile() {
-		if ($this->_qqwryFile === null) {
-			$this->_qqwryFile = Yii::getPathOfAlias('application.data.qqwry').'.dat';
-		}
-		return $this->_qqwryFile;
 	}
 
 	public function getRoleName() {
