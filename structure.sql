@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.1
+-- version 3.5.8.1
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 10 月 15 日 11:46
--- 服务器版本: 5.5.37-log
--- PHP 版本: 5.5.16
+-- 生成日期: 2015 年 01 月 23 日 17:57
+-- 服务器版本: 5.5.37
+-- PHP 版本: 5.4.34
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- 数据库: `cubingchina`
+-- 数据库: `cubingchina_dev`
 --
 
 -- --------------------------------------------------------
@@ -26,13 +26,15 @@ SET time_zone = "+00:00";
 -- 表的结构 `competition`
 --
 
+DROP TABLE IF EXISTS `competition`;
 CREATE TABLE IF NOT EXISTS `competition` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `type` char(10) NOT NULL DEFAULT '',
   `wca_competition_id` char(32) NOT NULL DEFAULT '',
-  `name` char(50) NOT NULL DEFAULT '',
+  `old_competition_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `name` char(128) NOT NULL DEFAULT '',
   `name_zh` char(50) NOT NULL DEFAULT '',
-  `alias` char(50) NOT NULL,
+  `alias` char(128) NOT NULL,
   `date` int(11) unsigned NOT NULL,
   `end_date` int(11) unsigned NOT NULL DEFAULT '0',
   `reg_start` int(11) unsigned NOT NULL DEFAULT '0',
@@ -53,7 +55,8 @@ CREATE TABLE IF NOT EXISTS `competition` (
   `person_num` mediumint(6) unsigned NOT NULL DEFAULT '0',
   `check_person` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`date`,`status`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -62,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `competition` (
 -- 表的结构 `competition_delegate`
 --
 
+DROP TABLE IF EXISTS `competition_delegate`;
 CREATE TABLE IF NOT EXISTS `competition_delegate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) unsigned NOT NULL,
@@ -75,6 +79,7 @@ CREATE TABLE IF NOT EXISTS `competition_delegate` (
 -- 表的结构 `competition_location`
 --
 
+DROP TABLE IF EXISTS `competition_location`;
 CREATE TABLE IF NOT EXISTS `competition_location` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) unsigned NOT NULL,
@@ -93,6 +98,7 @@ CREATE TABLE IF NOT EXISTS `competition_location` (
 -- 表的结构 `competition_organizer`
 --
 
+DROP TABLE IF EXISTS `competition_organizer`;
 CREATE TABLE IF NOT EXISTS `competition_organizer` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) unsigned NOT NULL,
@@ -108,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `competition_organizer` (
 -- 表的结构 `delegate`
 --
 
+DROP TABLE IF EXISTS `delegate`;
 CREATE TABLE IF NOT EXISTS `delegate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(128) NOT NULL,
@@ -119,9 +126,27 @@ CREATE TABLE IF NOT EXISTS `delegate` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `login_history`
+--
+
+DROP TABLE IF EXISTS `login_history`;
+CREATE TABLE IF NOT EXISTS `login_history` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `ip` char(15) NOT NULL DEFAULT '',
+  `date` int(10) unsigned NOT NULL,
+  `from_cookie` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `logs`
 --
 
+DROP TABLE IF EXISTS `logs`;
 CREATE TABLE IF NOT EXISTS `logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `level` varchar(128) DEFAULT NULL,
@@ -129,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `logtime` int(11) DEFAULT NULL,
   `message` text,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -137,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `logs` (
 -- 表的结构 `mail`
 --
 
+DROP TABLE IF EXISTS `mail`;
 CREATE TABLE IF NOT EXISTS `mail` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `to` text,
@@ -159,6 +185,7 @@ CREATE TABLE IF NOT EXISTS `mail` (
 -- 表的结构 `news`
 --
 
+DROP TABLE IF EXISTS `news`;
 CREATE TABLE IF NOT EXISTS `news` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
@@ -175,13 +202,48 @@ CREATE TABLE IF NOT EXISTS `news` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `news_template`
+--
+
+DROP TABLE IF EXISTS `news_template`;
+CREATE TABLE IF NOT EXISTS `news_template` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `title` varchar(1024) NOT NULL,
+  `title_zh` varchar(1024) NOT NULL,
+  `content` longtext NOT NULL,
+  `content_zh` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`name`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `old_competition`
+--
+
+DROP TABLE IF EXISTS `old_competition`;
+CREATE TABLE IF NOT EXISTS `old_competition` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `delegate` varchar(255) NOT NULL,
+  `delegate_zh` varchar(255) NOT NULL,
+  `organizer` varchar(255) NOT NULL,
+  `organizer_zh` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `Persons`
 --
 
+DROP TABLE IF EXISTS `Persons`;
 CREATE TABLE IF NOT EXISTS `Persons` (
   `id` varchar(10) NOT NULL DEFAULT '',
   `subId` tinyint(6) NOT NULL DEFAULT '1',
-  `name` varchar(80) DEFAULT NULL,
+  `name` varchar(80) CHARACTER SET utf8 DEFAULT NULL,
   `countryId` varchar(50) NOT NULL DEFAULT '',
   `gender` char(1) NOT NULL DEFAULT '',
   `year` smallint(6) NOT NULL DEFAULT '0',
@@ -192,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `Persons` (
   KEY `fk_country` (`countryId`),
   KEY `id` (`id`),
   KEY `name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -200,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `Persons` (
 -- 表的结构 `region`
 --
 
+DROP TABLE IF EXISTS `region`;
 CREATE TABLE IF NOT EXISTS `region` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` char(128) NOT NULL,
@@ -215,6 +278,7 @@ CREATE TABLE IF NOT EXISTS `region` (
 -- 表的结构 `registration`
 --
 
+DROP TABLE IF EXISTS `registration`;
 CREATE TABLE IF NOT EXISTS `registration` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) unsigned NOT NULL,
@@ -223,6 +287,7 @@ CREATE TABLE IF NOT EXISTS `registration` (
   `events` varchar(512) NOT NULL,
   `comments` varchar(2048) NOT NULL DEFAULT '',
   `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `ip` char(15) NOT NULL DEFAULT '',
   `date` int(10) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -232,9 +297,47 @@ CREATE TABLE IF NOT EXISTS `registration` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `result`
+--
+
+DROP TABLE IF EXISTS `result`;
+CREATE TABLE IF NOT EXISTS `result` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competitionId` varchar(32) NOT NULL DEFAULT '',
+  `eventId` varchar(6) NOT NULL DEFAULT '',
+  `roundId` char(1) NOT NULL DEFAULT '',
+  `pos` smallint(6) NOT NULL DEFAULT '0',
+  `best` int(11) NOT NULL DEFAULT '0',
+  `average` int(11) NOT NULL DEFAULT '0',
+  `personName` varchar(80) DEFAULT NULL,
+  `personId` varchar(10) NOT NULL DEFAULT '',
+  `personCountryId` varchar(50) DEFAULT NULL,
+  `formatId` char(1) NOT NULL DEFAULT '',
+  `value1` int(11) NOT NULL DEFAULT '0',
+  `value2` int(11) NOT NULL DEFAULT '0',
+  `value3` int(11) NOT NULL DEFAULT '0',
+  `value4` int(11) NOT NULL DEFAULT '0',
+  `value5` int(11) NOT NULL DEFAULT '0',
+  `regionalSingleRecord` char(3) DEFAULT NULL,
+  `regionalAverageRecord` char(3) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `competitionId` (`competitionId`),
+  KEY `eventId` (`eventId`),
+  KEY `personId` (`personId`) USING BTREE,
+  KEY `personCountryId` (`personCountryId`),
+  KEY `regionalSingleRecord` (`regionalSingleRecord`),
+  KEY `regionalAverageRecord` (`regionalAverageRecord`),
+  KEY `event_best_person` (`eventId`,`best`,`personId`,`personCountryId`),
+  KEY `event_avg_person` (`eventId`,`average`,`personId`,`personCountryId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `rounds`
 --
 
+DROP TABLE IF EXISTS `rounds`;
 CREATE TABLE IF NOT EXISTS `rounds` (
   `id` char(1) NOT NULL DEFAULT '',
   `rank` int(11) NOT NULL DEFAULT '0',
@@ -249,6 +352,7 @@ CREATE TABLE IF NOT EXISTS `rounds` (
 -- 表的结构 `schedule`
 --
 
+DROP TABLE IF EXISTS `schedule`;
 CREATE TABLE IF NOT EXISTS `schedule` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) NOT NULL,
@@ -272,13 +376,14 @@ CREATE TABLE IF NOT EXISTS `schedule` (
 -- 表的结构 `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `wcaid` char(10) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `wcaid` char(10) NOT NULL DEFAULT '',
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL DEFAULT '',
-  `email` char(128) CHARACTER SET latin1 NOT NULL,
-  `password` char(128) CHARACTER SET latin1 NOT NULL,
+  `email` char(128) NOT NULL,
+  `password` char(128) NOT NULL,
   `birthday` bigint(20) NOT NULL DEFAULT '0',
   `gender` tinyint(1) unsigned NOT NULL,
   `mobile` char(20) NOT NULL DEFAULT '',
@@ -286,8 +391,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `province_id` smallint(3) unsigned NOT NULL DEFAULT '0',
   `city_id` smallint(3) unsigned NOT NULL DEFAULT '0',
   `role` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `identity` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `reg_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `reg_ip` char(15) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `reg_ip` char(15) NOT NULL DEFAULT '',
   `status` tinyint(4) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `wcaid` (`wcaid`)
@@ -299,6 +405,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- 表的结构 `user_action`
 --
 
+DROP TABLE IF EXISTS `user_action`;
 CREATE TABLE IF NOT EXISTS `user_action` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
