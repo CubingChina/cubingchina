@@ -206,7 +206,7 @@ class ResultsController extends Controller {
 			'Statistics'=>array('/results/statistics'),
 			$this->title,
 		);
-		$data = Statistics::buildRankings($statistic, $page);
+		$data = Statistics::buildRankings($statistic, $page, 200);
 		extract($data);
 		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
 			$page = ceil($statistic['count'] / Statistics::$limit);
