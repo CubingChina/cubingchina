@@ -11,7 +11,7 @@ class SumOfCountryRanks extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Yii::t("Region", $data["countryId"])',
+				'value'=>'CHtml::image("http://s.cubingchina.com/flag/" . strtolower($data["iso2"]) . ".png", $data["countryId"], array("class"=>"flag-icon")) . Yii::t("Region", $data["countryId"])',
 				'type'=>'raw',
 			),
 			array(
@@ -82,9 +82,10 @@ class SumOfCountryRanks extends Statistics {
 			return self::$_ranks[$type];
 		}
 		$command = Yii::app()->wcaDb->createCommand()
-		->select('eventId, countryId, min(worldRank) AS worldRank')
+		->select('eventId, countryId, min(worldRank) AS worldRank, c.iso2')
 		->from('Ranks' . ucfirst($type) . ' r')
 		->leftJoin('Persons p', 'r.personId=p.id')
+		->leftJoin('Countries c', 'p.countryId=c.id')
 		->where('p.subid=1')
 		->group('eventId, countryId');
 		switch ($gender) {

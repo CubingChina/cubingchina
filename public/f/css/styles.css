@@ -35,6 +35,11 @@ body {
   max-width: 100% !important;
   height: auto !important;
 }
+img.flag-icon {
+  display: inline-block;
+  margin-top: -3px;
+  margin-right: 2px;
+}
 .footer {
   height: 46px;
   /* must be the same height as footer */
