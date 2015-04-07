@@ -403,7 +403,11 @@ class Controller extends CController {
 
 	public function setWeiboSharePic($weiboSharePic) {
 		if (is_array($weiboSharePic)) {
-			$weiboSharePic = urlencode(implode('||', $weiboSharePic));
+			$weiboSharePic[] = Yii::app()->params->weiboSharePic;
+			$weiboSharePic = array_map(function($pic) {
+				return urlencode($pic);
+			}, $weiboSharePic);
+			$weiboSharePic = implode('||', $weiboSharePic);
 		} else {
 			$weiboSharePic = urlencode($weiboSharePic);
 		}
