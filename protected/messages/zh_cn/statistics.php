@@ -60,7 +60,7 @@ return array (
   'Most Personal Solves' => '复原榜',
   'Person' => '姓名',
   'Rank' => '排名',
-  'Sum of Country Ranks' => '各国排名总和',
+  'Sum of Country Ranks' => '各国综合排行榜',
   'Sum of Ranks' => '排名总和',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本页面列出了与官方赛事及中国选手相关的趣味统计，所有的统计数据源自{url}。',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看中国魔方选手的个人排名、官方纪录与趣味统计等信息。',
