@@ -30,6 +30,7 @@ class RegisterForm extends CFormModel {
 			array('gender, country_id, birthday, name, email, password, repeatPassword, verifyCode', 'required', 'on'=>'step2'),
 			array('local_name, province_id, city_id', 'safe', 'on'=>'step2'),
 			array('email', 'email'),
+			array('email', 'match', 'pattern'=>'{^www\..+@.+$}i', 'not'=>true),
 			array('wcaid', 'checkWcaId'),
 			array('birthday', 'checkBirthday', 'on'=>'step2'),
 			array('country_id', 'checkRegion', 'on'=>'step2'),
