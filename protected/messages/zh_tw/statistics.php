@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Medal Collection' => '獎牌榜',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
@@ -49,15 +48,19 @@ return array (
   'Sum of 2x2 to 5x5 single ranks' => '二階至五階單次綜合排行榜',
   'Sum of all average ranks' => '官方全項目平均綜合排行榜',
   'Sum of all single ranks' => '官方全項目單次綜合排行榜',
+  'Sum of country average ranks' => '各國全項目平均綜合排行榜',
+  'Sum of country single ranks' => '各國全項目單次綜合排行榜',
   'Third' => '季軍',
   'official WCA competition results' => 'WCA賽事的官方成績',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自WCA賽事的官方成績。',
   'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自WCA賽事的官方排名。',
   'Chinese personal rankings in each official event are listed, based on the {url}.' => '本頁面列出了中國選手在所有WCA項目的個人排名，所有的排名成績源自{url}。',
   'Generated on {time}.' => '生成於{time}。',
+  'Medal Collection' => '獎牌榜',
   'Most Personal Solves' => '復原榜',
   'Person' => '姓名',
   'Rank' => '排名',
+  'Sum of Country Ranks' => '各國綜合排行榜',
   'Sum of Ranks' => '排名總和',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本頁面列出了與官方賽事及中國選手相關的趣味統計，所有的統計數據源自{url}。',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '歡迎瀏覽粗餅網的官方成績頁面！你可以在此查看中國魔方選手的個人排名、官方紀錄與趣味統計等信息。',
