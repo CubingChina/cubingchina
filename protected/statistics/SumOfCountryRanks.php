@@ -82,7 +82,7 @@ class SumOfCountryRanks extends Statistics {
 			return self::$_ranks[$type];
 		}
 		$command = Yii::app()->wcaDb->createCommand()
-		->select('eventId, countryId, min(worldRank) AS worldRank, c.iso2')
+		->select('eventId, c.name AS countryId, min(worldRank) AS worldRank, c.iso2')
 		->from('Ranks' . ucfirst($type) . ' r')
 		->leftJoin('Persons p', 'r.personId=p.id')
 		->leftJoin('Countries c', 'p.countryId=c.id')
