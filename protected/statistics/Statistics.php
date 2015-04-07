@@ -40,6 +40,24 @@ class Statistics {
 			'eventIds'=>array('222', '333', '444', '555'),
 			'width'=>6,
 		),
+		'Sum of country single ranks'=>array(
+			'type'=>'single',
+			'class'=>'SumOfCountryRanks',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'sum-of-country-ranks',
+				'type'=>'single',
+			),
+		),
+		'Sum of country average ranks'=>array(
+			'type'=>'average',
+			'class'=>'SumOfCountryRanks',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'sum-of-country-ranks',
+				'type'=>'average'
+			),
+		),
 		'Best "medal collection" of all events'=>array(
 			'type'=>'all',
 			'class'=>'MedalCollection',

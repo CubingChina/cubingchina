@@ -176,6 +176,51 @@ class ResultsController extends Controller {
 		));
 	}
 
+	private function statSumOfCountryRanks() {
+		$page = $this->iGet('page', 1);
+		$type = $this->sGet('type', 'single');
+		$gender = $this->sGet('gender', 'all');
+		$eventIds = $this->aGet('event');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
+			$eventIds = array();
+		}
+		$statistic = array(
+			'class'=>'SumOfCountryRanks',
+			'type'=>$type,
+			'eventIds'=>$eventIds,
+			'gender'=>$gender,
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Sum of Country Ranks');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/sumOfCountryRanks', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'type'=>$type,
+			'gender'=>$gender,
+			'eventIds'=>$eventIds,
+		));
+	}
+
 	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');
