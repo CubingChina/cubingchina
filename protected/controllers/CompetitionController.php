@@ -44,6 +44,9 @@ class CompetitionController extends Controller {
 	public function actionDetail() {
 		$competition = $this->getCompetition();
 		$this->pageTitle = array($competition->getAttribute($this->getAttributeName('name')));
+		if (preg_match_all('|<img[^>]+src="([^"]+)"[^>]*>|i', $competition->information_zh, $matches)) {
+			$this->setWeiboSharePic($matches[1]);
+		}
 		$this->setWeiboShareDefaultText($competition->getDescription(), false);
 		$this->render('detail', array(
 			'competition'=>$competition,

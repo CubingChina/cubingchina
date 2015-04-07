@@ -5,7 +5,7 @@ class WcaCommand extends CConsoleCommand {
 		$competitions = Competition::model()->findAllByAttributes(array(
 			'type'=>Competition::TYPE_WCA,
 		), array(
-			'condition'=>'date < unix_timestamp() AND date > unix_timestamp() - 86400 * 7',
+			'condition'=>'date < unix_timestamp() AND date > unix_timestamp() - 86400 * 20',
 			'order'=>'date ASC',
 		));
 		$wcaDb = intval(file_get_contents(dirname(__DIR__) . '/config/wcaDb'));

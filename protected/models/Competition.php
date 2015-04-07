@@ -255,7 +255,7 @@ class Competition extends ActiveRecord {
 
 	public function isInProgress() {
 		$now = time();
-		return $now > $this->date && $now - 86400 < max($this->date, $this->end_date + 86400);
+		return $now > $this->date && $now - 86400 < max($this->date, $this->end_date);
 	}
 
 	public function isEnded() {

@@ -3,16 +3,16 @@
 class MailCommand extends CConsoleCommand {
 	public function actionIndex() {
 		$condition = '';
-		$count = Mail::model()->countByAttributes(array(
-			'sent'=>1,
-		), array(
-			'condition'=>'update_time>' . strtotime('today'),
-		));
-		if ($count >= 200) {
-			$condition = '0';
-		} elseif ($count >= 185) {
-			$condition = 'subject LIKE "%注册%" OR subject LIKE "%密码%" DESC';
-		}
+		// $count = Mail::model()->countByAttributes(array(
+		// 	'sent'=>1,
+		// ), array(
+		// 	'condition'=>'update_time>' . strtotime('today'),
+		// ));
+		// if ($count >= 200) {
+		// 	$condition = '0';
+		// } elseif ($count >= 185) {
+		// 	$condition = 'subject LIKE "%注册%" OR subject LIKE "%密码%"';
+		// }
 		$mails = Mail::model()->findAllByAttributes(array(
 			'sent'=>0,
 		), array(
