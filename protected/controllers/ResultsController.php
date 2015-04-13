@@ -221,6 +221,39 @@ class ResultsController extends Controller {
 		));
 	}
 
+	private function statBestPodiums() {
+		$page = $this->iGet('page', 1);
+		$eventId = $this->sGet('event');
+		if (!in_array($eventId, array_keys(Events::getNormalEvents()))) {
+			$eventId = '333';
+		}
+		$statistic = array(
+			'class'=>'BestPodiums',
+			'eventId'=>$eventId,
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Best Podiums');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page, 200);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/bestPodiums', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'event'=>$eventId,
+		));
+	}
+
 	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');

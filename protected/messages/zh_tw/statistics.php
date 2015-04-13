@@ -62,6 +62,7 @@ return array (
   'Rank' => '排名',
   'Sum of Country Ranks' => '各國綜合排行榜',
   'Sum of Ranks' => '排名總和',
+  'Best Podiums' => '領獎台成績榜',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本頁面列出了與官方賽事及中國選手相關的趣味統計，所有的統計數據源自{url}。',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '歡迎瀏覽粗餅網的官方成績頁面！你可以在此查看中國魔方選手的個人排名、官方紀錄與趣味統計等信息。',
   'World, Asian and Chinese records are displayed on the page, based on the official WCA records.' => '本頁面列出了所有WCA項目的世界、亞洲與中國紀錄，所有的成績紀錄源自WCA賽事的官方紀錄。',
