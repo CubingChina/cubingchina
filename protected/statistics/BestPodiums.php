@@ -28,7 +28,7 @@ class BestPodiums extends Statistics {
 		$cmd = clone $command;
 		$command->group('r.competitionId')
 		->order('sum ASC')
-		->having('count(DISTINCT pos)=3')
+		->having('count(DISTINCT pos)<=3 AND count(pos)>=3')
 		->limit(self::$limit)
 		->offset(($page - 1) * self::$limit);
 		$columns = array(
@@ -54,7 +54,7 @@ class BestPodiums extends Statistics {
 			),
 			array(
 				'header'=>'',
-				'value'=>'Results::formatTime($data["first"][0]["average"], $data["eventId"])',
+				'value'=>self::makePosResultValue('first'),
 			),
 			array(
 				'header'=>'Yii::t("statistics", "Second")',
@@ -63,7 +63,7 @@ class BestPodiums extends Statistics {
 			),
 			array(
 				'header'=>'',
-				'value'=>'Results::formatTime($data["second"][0]["average"], $data["eventId"])',
+				'value'=>self::makePosResultValue('second'),
 			),
 			array(
 				'header'=>'Yii::t("statistics", "Third")',
@@ -72,7 +72,7 @@ class BestPodiums extends Statistics {
 			),
 			array(
 				'header'=>'',
-				'value'=>'Results::formatTime($data["third"][0]["average"], $data["eventId"])',
+				'value'=>self::makePosResultValue('third'),
 			),
 		);
 		$rows = array();
@@ -93,10 +93,11 @@ class BestPodiums extends Statistics {
 
 	private static function getSelectSum($eventId, $type) {
 		if ($eventId === '333fm') {
-			return "sum(DISTINCT CASE WHEN c.year<2014 THEN best*100 ELSE (CASE WHEN average=0 THEN best*100 ELSE average END) END) AS sum";
+			$str = 'CASE WHEN c.year<2014 THEN best*100 ELSE (CASE WHEN average=0 THEN best*100 ELSE average END) END';
 		} else {
-			return "sum(DISTINCT r.{$type}) AS sum";
+			$str = $type;
 		}
+		return sprintf('CASE WHEN count(pos)>3 THEN sum(DISTINCT %s) ELSE sum(%s) END AS sum', $str, $str);
 	}
 
 	private static function formatSum($row) {
@@ -118,6 +119,10 @@ class BestPodiums extends Statistics {
 		return 'implode(" / ", array_map(function($row) {
 			return Persons::getLinkByNameNId($row["personName"], $row["personId"]);
 		}, $data["' . $pos . '"]))';
+	}
+
+	private static function makePosResultValue($pos) {
+		return sprintf('isset($data["%s"][0]) ? Results::formatTime($data["%s"][0]["average"], $data["eventId"]) : ""', $pos, $pos);
 	}
 
 	private static function getType($eventId) {
