@@ -69,7 +69,9 @@ Yii::app()->clientScript->registerScript('statistics',
   $('.stat-select select').on('change', function() {
     var that = $(this),
       value = that.val(),
-      name = that.attr('name');
+      name = that.attr('name'),
+      key = that.data('key'),
+      more = that.parent().find('.more');
     $('.' + name).addClass('hide').filter('#statistic_' + name + '_' + value).removeClass('hide');
     if (key && more.length > 0) {
       if (!more.data('href')) {
