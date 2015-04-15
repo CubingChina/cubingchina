@@ -99,9 +99,7 @@ class BestPodiums extends Statistics {
 		$rows = array();
 		foreach ($command->queryAll() as $row) {
 			$row = self::getCompetition($row);
-			$row["first"] = self::getPodiumsAverage($row['competitionId'], $eventId, $row['roundId'], 1, $type);
-			$row["second"] = self::getPodiumsAverage($row['competitionId'], $eventId, $row['roundId'], 2, $type);
-			$row["third"] = self::getPodiumsAverage($row['competitionId'], $eventId, $row['roundId'], 3, $type);
+			self::setPodiumsResults($row, $type);
 			$row['formatedSum'] = self::formatSum($row);
 			$row['formatedAverage'] = self::formatAverage($row);
 			$row['date'] = sprintf("%d-%02d-%02d", $row['year'], $row['month'], $row['day']);
@@ -169,18 +167,27 @@ class BestPodiums extends Statistics {
 		return 'average';
 	}
 
-	private static function getPodiumsAverage($competitionId, $eventId, $roundId, $pos, $type) {
-		if ($eventId === '333fm') {
+	private static function setPodiumsResults(&$row, $type) {
+		if ($row['eventId'] === '333fm') {
 			$type = 'CASE WHEN year<2014 THEN best ELSE (CASE WHEN average=0 THEN best ELSE average END) END';
 		}
-		return Yii::app()->wcaDb->createCommand()
-		->select("personId, personName, {$type} AS average")
+		$results = Yii::app()->wcaDb->createCommand()
+		->select("personId, personName, {$type} AS average, pos")
 		->from('Results r')
 		->leftJoin('Competitions c', 'r.competitionId=c.id')
-		->where("competitionId='{$competitionId}'")
-		->andWhere("eventId='{$eventId}'")
-		->andWhere("roundId='{$roundId}'")
-		->andWhere("pos={$pos}")
+		->where('competitionId=:competitionId AND eventId=:eventId AND roundId=:roundId AND pos IN (1,2,3)', array(
+			':competitionId'=>$row['competitionId'],
+			':eventId'=>$row['eventId'],
+			':roundId'=>$row['roundId'],
+		))
 		->queryAll();
+		$keys = array(
+			1=>'first',
+			2=>'second',
+			3=>'third',
+		);
+		foreach ($results as $result) {
+			$row[$keys[$result['pos']]][] = $result;
+		}
 	}
 }
