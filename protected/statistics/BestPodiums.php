@@ -186,6 +186,7 @@ class BestPodiums extends Statistics {
 			2=>'second',
 			3=>'third',
 		);
+		$rows['first'] = $rows['second'] = $rows['third'] = array();
 		foreach ($results as $result) {
 			$row[$keys[$result['pos']]][] = $result;
 		}
