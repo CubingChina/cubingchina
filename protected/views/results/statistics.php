@@ -35,9 +35,6 @@
     <?php else: ?>
       <h3 class="pull-left">
         <?php echo Yii::t('statistics', $name); ?>
-        <?php if (isset($statistic['more'])): ?>
-        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
-        <?php endif; ?>
       </h3>
       <div class="pull-left stat-select">
         <?php if (isset($statistic['selectHandler'])) {
@@ -46,6 +43,9 @@
           }, $statistic['select']);
         }?>
         <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
+        <?php if (isset($statistic['more'])): ?>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <?php endif; ?>
       </div>
       <div class="clearfix"></div>
       <?php $keys = array_keys($statistic['statistic']); ?>

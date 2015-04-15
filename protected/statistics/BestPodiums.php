@@ -3,6 +3,21 @@
 class BestPodiums extends Statistics {
 
 	public static function build($statistic, $page = 1) {
+		if ($statistic['type'] === 'all') {
+			$bestPodiums = array();
+			$eventIds = array_keys(Events::getNormalEvents());
+			$temp = $statistic;
+			$temp['type'] = 'single';
+			foreach ($eventIds as $eventId) {
+				$temp['eventId'] = $eventId;
+				$bestPodiums[$eventId] = self::build($temp);
+			}
+			return self::makeStatisticsData($statistic, array(
+				'statistic'=>$bestPodiums,
+				'select'=>Events::getNormalEvents(),
+				'selectHandler'=>'Yii::t("event", "$name")',
+			));
+		}
 		$eventId = $statistic['eventId'];
 		$type = self::getType($eventId);
 		$command = Yii::app()->wcaDb->createCommand();
@@ -122,7 +137,7 @@ class BestPodiums extends Statistics {
 	}
 
 	private static function makePosResultValue($pos) {
-		return sprintf('isset($data["%s"][0]) ? Results::formatTime($data["%s"][0]["average"], $data["eventId"]) : ""', $pos, $pos);
+		return sprintf('isset($data["%s"][0]) ? Results::formatTime($data["%s"][0]["average"], $data["eventId"]) : "-"', $pos, $pos);
 	}
 
 	private static function getType($eventId) {

@@ -229,6 +229,7 @@ class ResultsController extends Controller {
 		}
 		$statistic = array(
 			'class'=>'BestPodiums',
+			'type'=>'single',
 			'eventId'=>$eventId,
 		);
 		if ($page < 1) {
