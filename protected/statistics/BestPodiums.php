@@ -16,6 +16,7 @@ class BestPodiums extends Statistics {
 				'statistic'=>$bestPodiums,
 				'select'=>Events::getNormalEvents(),
 				'selectHandler'=>'Yii::t("event", "$name")',
+				'selectKey'=>'event',
 			));
 		}
 		$eventId = $statistic['eventId'];

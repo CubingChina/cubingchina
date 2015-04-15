@@ -24,7 +24,7 @@
       <h3>
         <?php echo Yii::t('statistics', $name); ?>
         <?php if (isset($statistic['more'])): ?>
-        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more'], array('class'=>'more')); ?></small>
         <?php endif; ?>
       </h3>
       <?php $this->renderPartial('statistic', array(
@@ -42,9 +42,11 @@
             return $this->evaluateExpression($statistic['selectHandler'], compact('name'));
           }, $statistic['select']);
         }?>
-        <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select']); ?>
+        <?php echo CHtml::dropdownList($statistic['id'], '', $statistic['select'], array(
+          'data-key'=>isset($statistic['selectKey']) ? $statistic['selectKey'] : '',
+        )); ?>
         <?php if (isset($statistic['more'])): ?>
-        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more']); ?></small>
+        <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more'], array('class'=>'more')); ?></small>
         <?php endif; ?>
       </div>
       <div class="clearfix"></div>
@@ -68,8 +70,13 @@ Yii::app()->clientScript->registerScript('statistics',
     var that = $(this),
       value = that.val(),
       name = that.attr('name');
-      console.log(value, name)
     $('.' + name).addClass('hide').filter('#statistic_' + name + '_' + value).removeClass('hide');
+    if (key && more.length > 0) {
+      if (!more.data('href')) {
+        more.data('href', more.attr('href'));
+      }
+      more.attr('href', more.data('href') + '?' + key + '=' + value);
+    }
   }).trigger('change');
   $('select[name="statistics"]').on('change', function() {
     location.href = '#' + $(this).val();
