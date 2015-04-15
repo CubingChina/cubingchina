@@ -69,7 +69,7 @@ class MedalCollection extends Statistics {
 			return self::makeStatisticsData($statistic, $columns, $rows);
 		} else {
 			$medals = array();
-			$eventIds =array_keys(Events::getNormalEvents());
+			$eventIds = array_keys(Events::getNormalEvents());
 			foreach ($eventIds as $eventId) {
 				$cmd = clone $command;
 				$rows = $cmd->andWhere("eventId='{$eventId}'")->queryAll();

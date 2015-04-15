@@ -82,9 +82,14 @@ class Statistics {
 			'class'=>'Top100',
 			'width'=>6,
 		),
-		'Best podiums in Rubik\'s Cube event'=>array(
+		'Best podiums'=>array(
 			'class'=>'BestPodiums',
 			'eventId'=>'333',
+			'type'=>'all',
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'best-podiums',
+			),
 		),
 		'Records set by Chinese competitors'=>array(
 			'class'=>'RecordsSet',
