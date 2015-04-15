@@ -23,7 +23,7 @@ return array (
   'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自{url}。',
   'Best "medal collection" in each event' => '官方赛事分项目累计奖牌榜',
   'Best "medal collection" of all events' => '官方赛事全项目累计奖牌榜',
-  'Best podiums in Rubik\'s Cube event' => '中国赛事三阶领奖台成绩榜',
+  'Best podiums' => '中国赛事领奖台成绩榜',
   'Bronze' => '铜',
   'Competitions' => '比赛次数',
   'Days' => '天数',
