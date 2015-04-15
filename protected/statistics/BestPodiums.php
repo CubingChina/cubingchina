@@ -63,6 +63,11 @@ class BestPodiums extends Statistics {
 				'type'=>'raw',
 			),
 			array(
+				'header'=>'Yii::t("common", "Average")',
+				'value'=>'$data["formatedAverage"]',
+				'type'=>'raw',
+			),
+			array(
 				'header'=>'Yii::t("statistics", "First")',
 				'value'=>self::makePosValue('first'),
 				'type'=>'raw',
@@ -97,6 +102,7 @@ class BestPodiums extends Statistics {
 			$row["second"] = self::getPodiumsAverage($row['competitionId'], $eventId, $row['roundId'], 2, $type);
 			$row["third"] = self::getPodiumsAverage($row['competitionId'], $eventId, $row['roundId'], 3, $type);
 			$row['formatedSum'] = self::formatSum($row);
+			$row['formatedAverage'] = self::formatAverage($row);
 			$row['date'] = sprintf("%d-%02d-%02d", $row['year'], $row['month'], $row['day']);
 			$rows[] = $row;
 		}
@@ -113,6 +119,21 @@ class BestPodiums extends Statistics {
 			$str = $type;
 		}
 		return sprintf('CASE WHEN count(pos)>3 THEN sum(DISTINCT %s) ELSE sum(%s) END AS sum', $str, $str);
+	}
+
+	private static function formatAverage($row) {
+		switch ($row['eventId']) {
+			case '333mbf':
+				return round(array_sum(array_map(function($row) {
+					$result = $row[0]['average'];
+					$difference = 99 - substr($result, 0, 2);
+					return $difference;
+				}, array($row['first'], $row['second'], $row['third']))) / 3, 2);
+			case '333fm':
+				return round($row['sum'] / 300, 2);
+			default:
+				return Results::formatTime(round($row['sum'] / 3), $row['eventId']);
+		}
 	}
 
 	private static function formatSum($row) {
@@ -141,7 +162,7 @@ class BestPodiums extends Statistics {
 	}
 
 	private static function getType($eventId) {
-		if (in_array($eventId, array('333fm', '333bf', '444bf', '555bf', '333mbf'))) {
+		if (in_array("$eventId", array('333fm', '333bf', '444bf', '555bf', '333mbf'))) {
 			return 'best';
 		}
 		return 'average';
