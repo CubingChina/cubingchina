@@ -274,6 +274,19 @@ class Registration extends ActiveRecord {
 		return implode(' ', $buttons);
 	}
 
+	public function getUserNumber() {
+		if ($this->isAccepted()) {
+			return self::model()->countByAttributes(array(
+				'competition_id'=>$this->competition_id,
+				'status'=>self::STATUS_ACCEPTED,
+			), array(
+				'condition'=>'date<=' . $this->date,
+			));
+		} else {
+			return '-';
+		}
+	}
+
 	public function handleEvents() {
 		if ($this->events !== null) {
 			$this->events = json_encode($this->events);
