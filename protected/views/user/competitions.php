@@ -6,6 +6,7 @@
     'enableSorting'=>false,
     'front'=>true,
     'emptyText'=>Yii::t('Competition', 'You have not registered for any competition.'),
+    'rowCssClassExpression'=>'$data->competition->isInProgress() ? "success" : ($data->competition->isEnded() ? "active" : "info")',
     'columns'=>array(
       array(
         'name'=>'competition.name',
@@ -16,6 +17,11 @@
         'name'=>'competition.date',
         'type'=>'raw',
         'value'=>'$data->competition->getDisplayDate()',
+      ),
+      array(
+        'header'=>'No.',
+        'type'=>'raw',
+        'value'=>'$data->userNumber',
       ),
       array(
         'name'=>'events',
