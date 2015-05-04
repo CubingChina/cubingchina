@@ -13,6 +13,20 @@
  * @property string $iso2
  */
 class Countries extends ActiveRecord {
+
+	public static function getUsedCountries() {
+		$countries = $command = Yii::app()->wcaDb
+		->cache(86400)
+		->createCommand()
+		->select('rs.personCountryId, c.name')
+		->from('Results rs')
+		->leftJoin('Countries c', 'rs.personCountryId=c.id')
+		->group('rs.personCountryId')
+		->order('rs.personCountryId')
+		->queryAll();
+		return CHtml::listData($countries, 'personCountryId', 'name');
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

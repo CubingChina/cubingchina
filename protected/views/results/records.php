@@ -13,14 +13,14 @@
     'action'=>array('/results/records'),
   )); ?>
     <div class="form-group">
-      <label for="Competition_year"><?php echo Yii::t('common', 'Region'); ?></label>
-      <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions($region), array(
+      <label for="region"><?php echo Yii::t('common', 'Region'); ?></label>
+      <?php echo CHtml::dropDownList('region', $region, Region::getWCARegions(), array(
         'class'=>'form-control',
       )); ?>
     </div>
     <?php if ($type === 'history'): ?>
     <div class="form-group">
-      <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
+      <label for="event"><?php echo Yii::t('common', 'Event'); ?></label>
       <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
         'class'=>'form-control',
       )); ?>
@@ -68,7 +68,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Region'),
-        'value'=>'Yii::t("common", $data["countryName"])',
+        'value'=>'Yii::t("common", Yii::t("Region", $data["countryName"]))',
         'type'=>'raw',
       ),
       array(

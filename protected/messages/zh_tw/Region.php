@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Continents' => '洲',
   'ID' => '',
   'Name' => '',
   'Name Zh' => '',
@@ -220,6 +221,11 @@ return array (
   'Zambia' => '贊比亞',
   'Zimbabwe' => '津巴布韋',
   'Asia' => '亞洲',
+  'Africa' => '非洲',
+  'Oceania' => '大洋洲',
+  'Europe' => '歐洲',
+  'North America' => '北美洲',
+  'South America' => '南美洲',
   'China' => '中國',
   'World' => '世界',
 );
