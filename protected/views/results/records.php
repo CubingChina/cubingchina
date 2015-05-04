@@ -1,6 +1,6 @@
 <div class="col-lg-12">
   <div>
-    <p><?php echo Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the {url}.', array(
+    <p><?php echo Yii::t('statistics', 'Regional records are displayed on the page, based on the {url}.', array(
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA records'), 'https://www.worldcubeassociation.org/results/regions.php', array('target'=>'_blank')),
     )); ?></p>
   </div>
@@ -14,7 +14,7 @@
   )); ?>
     <div class="form-group">
       <label for="region"><?php echo Yii::t('common', 'Region'); ?></label>
-      <?php echo CHtml::dropDownList('region', $region, Region::getWACRegions($region), array(
+      <?php echo CHtml::dropDownList('region', $region, Region::getWCARegions(), array(
         'class'=>'form-control',
       )); ?>
     </div>
@@ -68,7 +68,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Region'),
-        'value'=>'Yii::t("common", $data["countryName"])',
+        'value'=>'Yii::t("common", Yii::t("Region", $data["countryName"]))',
         'type'=>'raw',
       ),
       array(

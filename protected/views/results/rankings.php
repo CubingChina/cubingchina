@@ -1,6 +1,6 @@
 <div class="col-lg-12">
   <div>
-    <p><?php echo Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the {url}.', array(
+    <p><?php echo Yii::t('statistics', 'Global personal rankings in each official event are listed, based on the {url}.', array(
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
     )); ?></p>
   </div>
@@ -13,13 +13,19 @@
     'action'=>array('/results/rankings'),
   )); ?>
     <div class="form-group">
-      <label for="Competition_year"><?php echo Yii::t('common', 'Event'); ?></label>
+      <label for="region"><?php echo Yii::t('common', 'Region'); ?></label>
+      <?php echo CHtml::dropDownList('region', $region, Region::getWCARegions(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+    <div class="form-group">
+      <label for="event"><?php echo Yii::t('common', 'Event'); ?></label>
       <?php echo CHtml::dropDownList('event', $event, Events::getNormalTranslatedEvents(), array(
         'class'=>'form-control',
       )); ?>
     </div>
     <div class="form-group">
-      <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
+      <label for="gender"><?php echo Yii::t('common', 'Gender'); ?></label>
       <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
         'class'=>'form-control',
       )); ?>
@@ -38,7 +44,7 @@
       'class'=>'event-icon event-icon-' . $event,
     ), Yii::t('event', Events::getFullEventName($event))); ?>
     &nbsp;&nbsp;
-    <?php echo Yii::t('Region', 'China'); ?>
+    <?php echo Yii::t('Region', $region); ?>
     &nbsp;&nbsp;
     <?php echo Yii::t('common', ucfirst($gender)); ?>
     &nbsp;&nbsp;

@@ -29,9 +29,9 @@ class Results extends ActiveRecord {
 		return array('single', 'average');
 	}
 
-	public static function getRankings($type = 'single', $event = '333', $gender = 'all', $page = 1) {
+	public static function getRankings($region = 'China', $type = 'single', $event = '333', $gender = 'all', $page = 1) {
 		$cache = Yii::app()->cache;
-		$cacheKey = "results_rankings_{$type}_{$event}_{$gender}_{$page}";
+		$cacheKey = "results_rankings_{$region}_{$type}_{$event}_{$gender}_{$page}";
 		$expire = 86400 * 7;
 		$field = $type === 'single' ? 'best' : 'average';
 		if (($data = $cache->get($cacheKey)) === false) {
@@ -43,11 +43,30 @@ class Results extends ActiveRecord {
 			))
 			->from('Results rs')
 			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-			->where(sprintf('rs.%s>0', $field))
-			->andWhere('rs.eventId=:eventId', array(
+			->leftJoin('Countries country', 'rs.personCountryId=country.id')
+			->where('rs.eventId=:eventId', array(
 				':eventId'=>$event,
 			))
-			->andWhere('rs.personCountryId="China"');
+			->andWhere(sprintf('rs.%s>0', $field));
+			switch ($region) {
+				case 'World':
+					break;
+				case 'Africa':
+				case 'Asia':
+				case 'Oceania':
+				case 'Europe':
+				case 'North America':
+				case 'South America':
+					$command->andWhere('country.continentId=:region', array(
+						':region'=>'_' . $region,
+					));
+					break;
+				default:
+					$command->andWhere('rs.personCountryId=:region', array(
+						':region'=>$region,
+					));
+					break;
+			}
 			switch ($gender) {
 				case 'female':
 					$command->andWhere('p.gender="f"');
