@@ -1,6 +1,6 @@
 <div class="col-lg-12">
   <div>
-    <p><?php echo Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the {url}.', array(
+    <p><?php echo Yii::t('statistics', 'Regional records are displayed on the page, based on the {url}.', array(
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA records'), 'https://www.worldcubeassociation.org/results/regions.php', array('target'=>'_blank')),
     )); ?></p>
   </div>
