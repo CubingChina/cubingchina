@@ -13,6 +13,7 @@ class Region extends ActiveRecord {
 
 	public static $HKMCTW = array(2, 3, 4);
 
+	//wca stands for Wolrd, Asia and China
 	public static function getWACRegions($region = 'China') {
 		$regions = array(
 			'World'=>Yii::t('Region', 'World'),
@@ -21,6 +22,40 @@ class Region extends ActiveRecord {
 		);
 		if (!isset($regions[$region])) {
 			$regions[$region] = $region;
+		}
+		return $regions;
+	}
+
+	public static function isValidRegion($region) {
+		$regions = self::getWCARegions();
+		return $region === 'World' || isset($regions[Yii::t('Region', 'Continents')][$region]) || isset($regions[Yii::t('common', 'Region')][$region]);
+	}
+
+	public static function getWCARegions() {
+		$countriesKey = Yii::t('common', 'Region');
+		$regions = array(
+			'World'=>Yii::t('Region', 'World'),
+			Yii::t('Region', 'Continents')=>array(
+				'Asia'=>Yii::t('Region', 'Asia'),
+				'Africa'=>Yii::t('Region', 'Africa'),
+				'Europe'=>Yii::t('Region', 'Europe'),
+				'North America'=>Yii::t('Region', 'North America'),
+				'Oceania'=>Yii::t('Region', 'Oceania'),
+				'South America'=>Yii::t('Region', 'South America'),
+			),
+			$countriesKey=>array(
+				'China'=>Yii::t('Region', 'China'),
+				'Hong Kong'=>Yii::t('Region', 'Hong Kong'),
+				'Macau'=>Yii::t('Region', 'Macau'),
+				'Taiwan'=>Yii::t('Region', 'Taiwan'),
+			),
+		);
+		$countries = Countries::getUsedCountries();
+		uksort($countries, function($countryA, $countryB) {
+			return strcmp(iconv('UTF-8', 'GBK', Yii::t('Region', $countryA)), iconv('UTF-8', 'GBK', Yii::t('Region', $countryB)));
+		});
+		foreach ($countries as $id=>$country) {
+			$regions[$countriesKey][$id] = Yii::t('Region', $country);
 		}
 		return $regions;
 	}

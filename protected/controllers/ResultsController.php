@@ -35,6 +35,7 @@ class ResultsController extends Controller {
 	}
 
 	public function actionRankings() {
+		$region = $this->sGet('region', 'China');
 		$type = $this->sGet('type', 'single');
 		$event = $this->sGet('event', '333');
 		$gender = $this->sGet('gender', 'all');
@@ -48,24 +49,29 @@ class ResultsController extends Controller {
 		if (!array_key_exists($event, Events::getNormalEvents())) {
 			$event = '333';
 		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
 		if ($page < 1) {
 			$page = 1;
 		}
-		$rankings = Results::getRankings($type, $event, $gender, $page);
+		$rankings = Results::getRankings($region, $type, $event, $gender, $page);
 		if ($page > ceil($rankings['count'] / 100)) {
 			$page = ceil($rankings['count'] / 100);
 		}
 		$this->title = 'Personal Rankings';
 		$this->pageTitle = array(
 			'Personal Rankings',
+			Yii::t('Region', $region),
 			Yii::t('event', Events::getFullEventName($event)),
 			ucfirst($gender),
 			ucfirst($type),
 		);
-		$this->description = Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the the official WCA rankings.');
-		$this->setWeiboShareDefaultText('中国魔方选手在各官方项目的个人成绩排名展示');
+		$this->description = Yii::t('statistics', 'Global personal rankings in each official event are listed, based on the the official WCA rankings.');
+		$this->setWeiboShareDefaultText('各国魔方选手在各官方项目的个人成绩排名展示');
 		$this->render('rankings', array(
 			'rankings'=>$rankings,
+			'region'=>$region,
 			'type'=>$type,
 			'event'=>$event,
 			'gender'=>$gender,
@@ -86,6 +92,9 @@ class ResultsController extends Controller {
 		if ($type !== 'history') {
 			$event = '';
 		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
 		$records = Results::getRecords($type, $region, $event);
 		$this->title = 'Official Records';
 		$pageTitle = array(
@@ -97,7 +106,7 @@ class ResultsController extends Controller {
 		}
 		$pageTitle[] = Yii::t('Results', ucfirst($type));
 		$this->pageTitle = $pageTitle;
-		$this->description = Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the official WCA records.');
+		$this->description = Yii::t('statistics', 'Regional records are displayed on the page, based on the official WCA records.');
 		$this->setWeiboShareDefaultText('世界魔方协会（WCA）所有官方项目的纪录展示');
 		$this->render('records', array(
 			'records'=>$records,
