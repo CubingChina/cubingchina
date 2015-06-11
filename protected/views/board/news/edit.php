@@ -69,7 +69,7 @@
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'date', array(
-                'class'=>'col-lg-12',
+                'class'=>'col-lg-6',
               ),
               $form->labelEx($model, 'date', array(
                 'label'=>'时间',
@@ -79,6 +79,18 @@
                 'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
               )),
               $form->error($model, 'date', array('class'=>'text-danger'))
+            );?>
+            <?php echo Html::formGroup(
+              $model, 'weight', array(
+                'class'=>'col-lg-6',
+              ),
+              $form->labelEx($model, 'weight', array(
+                'label'=>'是否置顶',
+              )),
+              $form->dropDownList($model, 'weight', News::getWeights(), array(
+                'class'=>'form-control',
+              )),
+              $form->error($model, 'weight', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(

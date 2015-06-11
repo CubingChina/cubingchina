@@ -10,7 +10,7 @@
 )); ?>
 <aside class="page-sidebar col-md-3 col-sm-4">
   <?php if (count($upcomingCompetitions) > 0): ?>
-  <section class="widget has-divider">
+  <section class="widget">
     <h3 class="title"><?php echo Yii::t('common', 'Upcoming Competitions'); ?></h3>
     <?php foreach ($upcomingCompetitions as $competition): ?>
     <article class="events-item row page-row">
@@ -32,7 +32,7 @@
     <?php endforeach; ?>
   </section>
   <?php endif; ?>
-  <section class="widget has-divider">
+  <section class="widget">
     <div class="panel panel-theme weibo-widget">
       <div class="panel-heading">
         <h3 class="panel-title"><i class="fa fa-weibo"></i> 微博</h3>
