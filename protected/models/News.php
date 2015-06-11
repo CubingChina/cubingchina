@@ -10,6 +10,7 @@
  * @property string $title_zh
  * @property string $content
  * @property string $content_zh
+ * @property integer $weight
  * @property string $date
  * @property integer $status
  */
@@ -19,12 +20,29 @@ class News extends ActiveRecord {
 	const STATUS_SHOW = 1;
 	const STATUS_DELETE = 2;
 
+	const WEIGHT_TOP1 = 10;
+	const WEIGHT_TOP2 = 5;
+	const WEIGHT_NORMAL = 0;
+
 	public static function getAllStatus() {
 		return array(
 			self::STATUS_HIDE=>'隐藏', 
 			self::STATUS_SHOW=>'发布', 
 			// self::STATUS_DELETE=>'删除', 
 		);
+	}
+
+	public static function getWeights() {
+		return array(
+			self::WEIGHT_NORMAL=>'不置顶',
+			self::WEIGHT_TOP1=>'一级置顶',
+			self::WEIGHT_TOP2=>'二级置顶',
+		);
+	}
+
+	public function getWeightText() {
+		$weights = self::getWeights();
+		return isset($weights[$this->weight]) ? $weights[$this->weight] : $this->weight;
 	}
 
 	public function getStatusText() {
@@ -89,13 +107,13 @@ class News extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('user_id, title, title_zh, content, content_zh, date', 'required'),
-			array('user_id, status', 'numerical', 'integerOnly'=>true),
+			array('user_id, weight, status', 'numerical', 'integerOnly'=>true),
 			array('title, title_zh', 'length', 'max'=>1024),
 			// array('date', 'length', 'max'=>10),
 			array('time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, title, title_zh, content, content_zh, date, status', 'safe', 'on'=>'search'),
+			array('id, user_id, title, title_zh, content, content_zh, weight, date, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -121,6 +139,7 @@ class News extends ActiveRecord {
 			'title_zh' => Yii::t('News', 'Title Zh'),
 			'content' => Yii::t('News', 'Content'),
 			'content_zh' => Yii::t('News', 'Content Zh'),
+			'weight' => Yii::t('News', 'Weight'),
 			'date' => Yii::t('News', 'Date'),
 			'time' => Yii::t('News', 'Time'),
 			'status' => Yii::t('News', 'Status'),
@@ -156,7 +175,7 @@ class News extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'date DESC',
+				'defaultOrder'=>'weight DESC, date DESC',
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',

@@ -23,7 +23,7 @@ $this->renderPartial('registerSide', $_data_);
     $model, 'email', array(),
     $form->labelEx($model, 'email'),
     Html::activeTextField($model, 'email', array('type'=>'email')),
-    Yii::app()->language === 'zh_cn' ? '<div class="text-info">请检查所填写的邮箱正确并有效。QQ邮箱请注意不要带“<strong>www.</strong>”。</div>' : '',
+    Yii::app()->language === 'zh_cn' ? '<div class="text-danger">请检查所填写的邮箱正确并有效。QQ邮箱请注意不要带“<strong>www.</strong>”。</div>' : '',
     $form->error($model, 'email', array('class'=>'text-danger'))
   );?>
   <?php echo Html::formGroup(
@@ -64,6 +64,7 @@ $this->renderPartial('registerSide', $_data_);
     $model, 'local_name', array('id'=>'local_name'),
     $form->labelEx($model, 'local_name'),
     Html::activeTextField($model, 'local_name', array('readonly'=>$model->wcaid != '' && $model->local_name != '')),
+    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-danger">请使用真实姓名注册粗饼网并报名比赛。</div>' : '',
     $form->error($model, 'local_name', array('class'=>'text-danger'))
   );?>
   <?php echo Html::formGroup(

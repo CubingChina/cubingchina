@@ -24,6 +24,11 @@
               ),
               'title_zh',
               array(
+                'name'=>'weight',
+                'type'=>'raw',
+                'value'=>'$data->getWeightText()',
+              ),
+              array(
                 'name'=>'date',
                 'type'=>'raw',
                 'value'=>'date("Y-m-d H:i:s", $data->date)',

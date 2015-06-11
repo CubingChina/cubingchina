@@ -260,7 +260,7 @@ class NewsController extends AdminController {
 						$country = '台湾';
 						break;
 				}
-				$data['records_zh'][] =sprintf('%s纪录：%s.', $country, $re);
+				$data['records_zh'][] =sprintf('%s纪录：%s。', $country, $re);
 			}
 		}
 		$data['records'] = implode('<br>', $data['records']);
