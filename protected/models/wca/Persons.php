@@ -50,6 +50,8 @@ class Persons extends ActiveRecord {
 	}
 
 	public static function getResults($id) {
+		$db = Yii::app()->wcaDb;
+		//个人排名
 		$ranks = RanksSingle::model()->with(array(
 			'average',
 			'event',
@@ -62,7 +64,8 @@ class Persons extends ActiveRecord {
 		foreach ($ranks as $rank) {
 			$personRanks[$rank->eventId] = $rank;
 		}
-		$command = Yii::app()->wcaDb->createCommand();
+		//奖牌数量
+		$command = $db->createCommand();
 		$command->select(array(
 			'eventId',
 			'sum(CASE WHEN pos=1 THEN 1 ELSE 0 END) AS gold',
@@ -79,6 +82,7 @@ class Persons extends ActiveRecord {
 				$personRanks[$row['eventId']]->medals = $row;
 			}
 		}
+		//历史成绩
 		$personResults = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
@@ -108,9 +112,22 @@ class Persons extends ActiveRecord {
 			}
 			$personResults[$eventId][] = $result;
 		}
+		//世锦赛获奖记录
+		$wcPodiums = Results::model()->with(array(
+			'competition',
+			'event',
+		))->findAllByAttributes(array(
+			'personId'=>$id,
+			'roundId'=>array('c', 'f'),
+			'pos'=>array(1, 2, 3),
+		), array(
+			'condition'=>'competitionId LIKE "WC%"',
+			'order'=>'competition.year DESC, event.rank ASC',
+		));
 		return array(
 			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
+			'wcPodiums'=>$wcPodiums,
 		);
 	}
 

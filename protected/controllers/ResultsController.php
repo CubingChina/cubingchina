@@ -126,7 +126,8 @@ class ResultsController extends Controller {
 		if ($person == null) {
 			$this->redirect(array('/results/persons'));
 		}
-		extract(Yii::app()->cache->getData(array('Persons', 'getResults'), $id));
+		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
+		$data['person'] = $person;
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Persons'=>array('/results/person'),
@@ -135,12 +136,7 @@ class ResultsController extends Controller {
 		$this->pageTitle = array($person->name);
 		$this->title = $person->name;
 		// $this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
-		$this->render('p', array(
-			'person'=>$person,
-			'personRanks'=>$personRanks,
-			'personResults'=>$personResults,
-			'events'=>Events::getNormalTranslatedEvents(),
-		));
+		$this->render('p', $data);
 	}
 
 	public function actionStatistics() {

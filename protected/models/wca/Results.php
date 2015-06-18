@@ -356,15 +356,6 @@ class Results extends ActiveRecord {
 	}
 
 	public function getTime($attribute) {
-		if ($this->$attribute == 0) {
-			return '';
-		}
-		if ($this->$attribute == -1) {
-			return 'DNF';
-		}
-		if ($this->$attribute == -2) {
-			return 'DNS';
-		}
 		$time = self::formatTime($this->$attribute, $this->eventId);
 		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
 			$time = '<span class="new-best">' . $time . '</strong>';

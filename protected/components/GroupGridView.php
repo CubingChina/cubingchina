@@ -5,6 +5,7 @@ class GroupGridView extends GridView {
 	public $groupHeader;
 	public $lastGroup;
 	public $repeatHeader = false;
+	public $front = true;
 	private $_currentRow = -1;
 
 	public function renderTableRow($row) {

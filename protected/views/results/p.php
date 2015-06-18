@@ -6,7 +6,6 @@
       'pagination'=>false,
       'sort'=>false,
     )),
-    'enableSorting'=>false,
     'front'=>true,
     'template'=>'{items}',
     'columns'=>array(
@@ -78,8 +77,56 @@
         'header'=>Yii::t('statistics', 'Bronze'),
         'value'=>'$data->medals["bronze"]',
       ),
-    )
+    ),
   )); ?>
+  <?php if (!empty($wcPodiums)): ?>
+  <h2><?php echo Yii::t('Results', 'World Championship Podiums'); ?></h2>
+  <?php
+  $this->widget('GroupGridView', array(
+    'dataProvider'=>new CArrayDataProvider($wcPodiums, array(
+      'pagination'=>false,
+      'sort'=>false,
+    )),
+    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+    'groupKey'=>'competition.year',
+    'groupHeader'=>'$group',
+    'columns'=>array(
+      array(
+        'name'=>Yii::t('common', 'Event'),
+        'type'=>'raw',
+        'value'=>'CHtml::link(CHtml::tag("span", array(
+          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+          "title"=>Yii::t("event", $data->event->cellName),
+        ), Yii::t("event", $data->event->cellName)), "#" . $data->event->id)',
+      ),
+      array(
+        'name'=>Yii::t('Results', 'Place'),
+        'type'=>'raw',
+        'value'=>'$data->pos',
+        'headerHtmlOptions'=>array('class'=>'place'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Single'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("best")',
+        'headerHtmlOptions'=>array('class'=>'result'),
+        'htmlOptions'=>array('class'=>'result'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Average'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("average")',
+        'headerHtmlOptions'=>array('class'=>'result'),
+        'htmlOptions'=>array('class'=>'result'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Detail'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
+      ),
+    ),
+  )); ?>
+  <?php endif; ?>
   <h2><?php echo Yii::t('Persons', 'History'); ?></h2>
   <?php
   $this->widget('GroupGridView', array(
@@ -96,8 +143,6 @@
         "title"=>Yii::t("event", $data->event->cellName),
       ), Yii::t("event", $data->event->cellName))',
     'repeatHeader'=>true,
-    'enableSorting'=>false,
-    'front'=>true,
     'columns'=>array(
       array(
         'name'=>Yii::t('Results', 'Competition'),
@@ -148,6 +193,6 @@
         'type'=>'raw',
         'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
       ),
-    )
+    ),
   )); ?>
 </div>
