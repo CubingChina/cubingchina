@@ -50,7 +50,7 @@ class Persons extends ActiveRecord {
 	}
 
 	public static function getResults($id) {
-		$personRanks = RanksSingle::model()->with(array(
+		$ranks = RanksSingle::model()->with(array(
 			'average',
 			'event',
 		))->findAllByAttributes(array(
@@ -58,6 +58,27 @@ class Persons extends ActiveRecord {
 		), array(
 			'order'=>'event.rank ASC',
 		));
+		$personRanks = array();
+		foreach ($ranks as $rank) {
+			$personRanks[$rank->eventId] = $rank;
+		}
+		$command = Yii::app()->wcaDb->createCommand();
+		$command->select(array(
+			'eventId',
+			'sum(CASE WHEN pos=1 THEN 1 ELSE 0 END) AS gold',
+			'sum(CASE WHEN pos=2 THEN 1 ELSE 0 END) AS silver',
+			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
+		))
+		->from('Results')
+		->where('personId=:personId AND roundId IN ("c", "f") AND best>0', array(
+			':personId'=>$id,
+		))
+		->group('eventId');
+		foreach ($command->queryAll() as $row) {
+			if (isset($personRanks[$row['eventId']])) {
+				$personRanks[$row['eventId']]->medals = $row;
+			}
+		}
 		$personResults = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
@@ -88,7 +109,7 @@ class Persons extends ActiveRecord {
 			$personResults[$eventId][] = $result;
 		}
 		return array(
-			'personRanks'=>$personRanks,
+			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 		);
 	}

@@ -13,6 +13,11 @@
  * @property integer $countryRank
  */
 class RanksSingle extends ActiveRecord {
+	public $medals = array(
+		'gold'=>0,
+		'silver'=>0,
+		'bronze'=>0,
+	);
 
 	//获取average数据
 	public function average($attribute) {
@@ -20,9 +25,20 @@ class RanksSingle extends ActiveRecord {
 			return '';
 		}
 		if($attribute == 'best') {
-			return CHtml::link(Results::formatTime($this->average->$attribute, $this->eventId), array('wca/events', 'eventId'=>$this->eventId));
+			return CHtml::link(Results::formatTime($this->average->$attribute, $this->eventId), array(
+				'/results/rankings',
+				'event'=>$this->eventId,
+				'type'=>'average',
+			));
 		}
-		return $this->average->$attribute;
+		return $this->average->getRank($attribute);
+	}
+
+	public function getRank($attribute) {
+		if ($this->$attribute <= 10) {
+			return CHtml::tag('span', array('class'=>'top10'), $this->$attribute);
+		}
+		return $this->$attribute;
 	}
 
 	/**

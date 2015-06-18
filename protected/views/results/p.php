@@ -13,24 +13,27 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Yii::t("event", Events::getFullEventName($data->eventId)), "#" . $data->event->id)',
+        'value'=>'CHtml::link(CHtml::tag("span", array(
+          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+          "title"=>Yii::t("event", $data->event->cellName),
+        ), Yii::t("event", $data->event->cellName)), "#" . $data->event->id)',
       ),
       array(
         'name'=>'NR',
         'type'=>'raw',
-        'value'=>'$data->countryRank',
+        'value'=>'$data->getRank("countryRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>'CR',
         'type'=>'raw',
-        'value'=>'$data->continentRank',
+        'value'=>'$data->getRank("continentRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>'WR',
         'type'=>'raw',
-        'value'=>'$data->worldRank',
+        'value'=>'$data->getRank("worldRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
@@ -63,9 +66,21 @@
         'value'=>'$data->average("countryRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
+      array(
+        'header'=>Yii::t('statistics', 'Gold'),
+        'value'=>'$data->medals["gold"]',
+      ),
+      array(
+        'header'=>Yii::t('statistics', 'Silver'),
+        'value'=>'$data->medals["silver"]',
+      ),
+      array(
+        'header'=>Yii::t('statistics', 'Bronze'),
+        'value'=>'$data->medals["bronze"]',
+      ),
     )
   )); ?>
-  <h2><?php echo Yii::t('Results', 'History'); ?></h2>
+  <h2><?php echo Yii::t('Persons', 'History'); ?></h2>
   <?php
   $this->widget('GroupGridView', array(
     'dataProvider'=>new CArrayDataProvider($personResults, array(

@@ -2395,6 +2395,9 @@ span.penalty {
 .results-person .new-best {
   color: #f60;
 }
+.results-person .record {
+  /*width: 60px;*/
+}
 .results-person .result {
   text-align: right;
 }
