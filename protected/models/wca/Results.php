@@ -367,7 +367,7 @@ class Results extends ActiveRecord {
 		}
 		$time = self::formatTime($this->$attribute, $this->eventId);
 		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
-			$time = '<strong class="text-danger">' . $time . '</strong>';
+			$time = '<span class="new-best">' . $time . '</strong>';
 		}
 		return $time;
 	}
@@ -377,7 +377,7 @@ class Results extends ActiveRecord {
 			'competitionId'=>$this->competitionId,
 			'cellName'=>$this->competition->cellName,
 		));
-		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url'], array('target'=>'_blank'));
 	}
 
 	/**

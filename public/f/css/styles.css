@@ -2392,3 +2392,9 @@ span.penalty {
   margin-bottom: 10px;
   padding: 10px;
 }
+.results-person .new-best {
+  color: #f60;
+}
+.results-person .result {
+  text-align: right;
+}

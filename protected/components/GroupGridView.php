@@ -5,8 +5,10 @@ class GroupGridView extends GridView {
 	public $groupHeader;
 	public $lastGroup;
 	public $repeatHeader = false;
+	private $_currentRow = -1;
 
 	public function renderTableRow($row) {
+		$this->_currentRow = $row;
 		if ($this->groupKey !== null) {
 			$data = $this->dataProvider->data[$row];
 			$group = CHtml::value($data, $this->groupKey);
@@ -20,7 +22,7 @@ class GroupGridView extends GridView {
 
 	public function renderGroupHeader($row) {
 		if ($this->repeatHeader && $row > 0) {
-			$this->renderTableHeader();
+			$this->renderEmptyRow();
 		}
 		$data = $this->dataProvider->data[$row];
 		echo "<tr>\n";
@@ -32,5 +34,26 @@ class GroupGridView extends GridView {
 			'group'=>$this->lastGroup,
 		)));
 		echo "</tr>\n";
+		if ($this->repeatHeader) {
+			echo "<tr>\n";
+			foreach ($this->columns as $column) {
+				$column->renderHeaderCell();
+			}
+			echo "</tr>\n";
+		}
+	}
+
+	public function renderEmptyRow() {
+		echo "<tr>\n";
+		echo CHtml::tag('td', array(
+			'colspan'=>count($this->columns),
+		), '&nbsp;');
+		echo "</tr>\n";
+	}
+
+	public function renderTableHeader() {
+		if (!$this->repeatHeader || $this->_currentRow > -1) {
+			parent::renderTableHeader();
+		}
 	}
 }

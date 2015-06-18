@@ -1,4 +1,4 @@
-<div class="col-lg-12">
+<div class="col-lg-12 results-person">
   <h2><?php echo Yii::t('Results', 'Current Personal Records'); ?></h2>
   <?php
   $this->widget('GridView', array(
@@ -37,13 +37,13 @@
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
         'value'=>'CHtml::link(Results::formatTime($data->best, $data->eventId), array("/results/rankings", "event"=>$data->eventId))',
-        'headerHtmlOptions'=>array('class'=>'best'),
+        // 'headerHtmlOptions'=>array('class'=>'best'),
       ),
       array(
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
         'value'=>'$data->average("best")',
-        'headerHtmlOptions'=>array('class'=>'best'),
+        // 'headerHtmlOptions'=>array('class'=>'best'),
       ),
       array(
         'name'=>'WR',
@@ -106,7 +106,8 @@
         'name'=>Yii::t('common', 'Best'),
         'type'=>'raw',
         'value'=>'$data->getTime("best")',
-        'headerHtmlOptions'=>array('class'=>'best'),
+        'headerHtmlOptions'=>array('class'=>'result'),
+        'htmlOptions'=>array('class'=>'result'),
       ),
       array(
         'name'=>'',
@@ -118,7 +119,8 @@
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
         'value'=>'$data->getTime("average")',
-        'headerHtmlOptions'=>array('class'=>'average'),
+        'headerHtmlOptions'=>array('class'=>'result'),
+        'htmlOptions'=>array('class'=>'result'),
       ),
       array(
         'name'=>'',
