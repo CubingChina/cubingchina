@@ -44,7 +44,7 @@ class Persons extends ActiveRecord {
 
 	public static function getLinkByNameNId($name, $id) {
 		return CHtml::link($name, array(
-			'/results/person',
+			'/results/p',
 			'id'=>$id,
 		));
 	}
