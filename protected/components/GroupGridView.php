@@ -4,6 +4,7 @@ class GroupGridView extends GridView {
 	public $groupKey;
 	public $groupHeader;
 	public $lastGroup;
+	public $repeatHeader = false;
 
 	public function renderTableRow($row) {
 		if ($this->groupKey !== null) {
@@ -18,6 +19,9 @@ class GroupGridView extends GridView {
 	}
 
 	public function renderGroupHeader($row) {
+		if ($this->repeatHeader && $row > 0) {
+			$this->renderTableHeader();
+		}
 		$data = $this->dataProvider->data[$row];
 		echo "<tr>\n";
 		echo CHtml::tag('td', array(

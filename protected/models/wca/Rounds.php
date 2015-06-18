@@ -26,11 +26,12 @@ class Rounds extends ActiveRecord {
 		$rounds = CHtml::listData($rounds, 'id', 'cellName');
 		return $rounds;
 	}
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'rounds';
+		return 'Rounds';
 	}
 
 	/**
@@ -97,6 +98,13 @@ class Rounds extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	/**
+	 * @return CDbConnection the database connection used for this class
+	 */
+	public function getDbConnection() {
+		return Yii::app()->wcaDb;
 	}
 
 	/**

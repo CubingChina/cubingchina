@@ -59,6 +59,7 @@ $config = array(
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
+				'results/person/<id:(1983|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -67,7 +68,7 @@ $config = array(
 			'showScriptName' => false,
 		),
 		'cache' => array(
-			'class' => DEV ? 'CDummyCache' : 'CFileCache',
+			'class' => 'CustomCache',
 		),
 		'db' => array(
 			'connectionString' => 'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
@@ -157,7 +158,6 @@ $config = array(
 			'CubingChina Website',
 			"Rubik's Cube",
 			'Speedcubing',
-
 		),
 		'weiboSharePic' => 'http://cubingchina.com/f/images/logo2x.png',
 		'staticPath' => dirname(dirname(__DIR__)) . '/public/static/',

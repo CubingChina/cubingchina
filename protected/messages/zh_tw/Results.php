@@ -37,4 +37,7 @@ return array (
   'Value5' => '',
   'Current' => '當前紀錄',
   'History' => '歷史紀錄',
+  'Current Personal Records' => '當前個人紀錄',
+  'Place' => '排名',
+  'Competition' => '賽事',
 );

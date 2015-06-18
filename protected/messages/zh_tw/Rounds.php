@@ -29,4 +29,7 @@ return array (
   'First' => '初賽',
   'Second' => '複賽',
   'Semi Final' => '半決賽',
+  'Combined qualification' => '組合制資格賽',
+  'Qualification' => '資格賽',
+  'B Final' => 'B組決賽',
 );

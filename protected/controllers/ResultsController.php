@@ -116,6 +116,33 @@ class ResultsController extends Controller {
 		));
 	}
 
+	public function actionPersons() {
+
+	}
+
+	public function actionP() {
+		$id = $this->sGet('id');
+		$person = Persons::model()->findByAttributes(array('id' => $id));
+		if ($person == null) {
+			$this->redirect(array('/results/persons'));
+		}
+		extract(Yii::app()->cache->getData(array('Persons', 'getResults'), $id));
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Persons'=>array('/results/person'),
+			$person->name,
+		);
+		$this->pageTitle = array($person->name);
+		$this->title = $person->name;
+		// $this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
+		$this->render('p', array(
+			'person'=>$person,
+			'personRanks'=>$personRanks,
+			'personResults'=>$personResults,
+			'events'=>Events::getNormalTranslatedEvents(),
+		));
+	}
+
 	public function actionStatistics() {
 		$name = $this->sGet('name');
 		$names = array_map('ucfirst', explode('-', $name));

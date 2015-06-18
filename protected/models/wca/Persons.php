@@ -43,7 +43,54 @@ class Persons extends ActiveRecord {
 	}
 
 	public static function getLinkByNameNId($name, $id) {
-		return CHtml::link($name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $id, array('target'=>'_blank'));
+		return CHtml::link($name, array(
+			'/results/person',
+			'id'=>$id,
+		));
+	}
+
+	public static function getResults($id) {
+		$personRanks = RanksSingle::model()->with(array(
+			'average',
+			'event',
+		))->findAllByAttributes(array(
+			'personId'=>$id
+		), array(
+			'order'=>'event.rank ASC',
+		));
+		$personResults = array();
+		$eventId = '';
+		$best = $average = PHP_INT_MAX;
+		$results = Results::model()->with(array(
+			'competition',
+			'round',
+			'event',
+		))->findAllByAttributes(array(
+			'personId'=>$id
+		), array(
+			'order'=>'event.rank, competition.year, competition.month, competition.day, round.rank'
+		));
+		foreach($results as $result) {
+			if ($eventId != $result->eventId) {
+				//重置各值
+				$eventId = $result->eventId;
+				$best = $average = PHP_INT_MAX;
+				$personResults[$eventId] = array();
+			}
+			if ($result->best > 0 && $result->best <= $best) {
+				$result->newBest = true;
+				$best = $result->best;
+			}
+			if ($result->average > 0 && $result->average <= $average) {
+				$result->newAverage = true;
+				$average = $result->average;
+			}
+			$personResults[$eventId][] = $result;
+		}
+		return array(
+			'personRanks'=>$personRanks,
+			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
+		);
 	}
 
 	/**
@@ -87,11 +134,11 @@ class Persons extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Persons', 'ID'),
-			'subid' => Yii::t('Persons', 'Subid'),
-			'name' => Yii::t('Persons', 'Name'),
-			'countryId' => Yii::t('Persons', 'Country'),
-			'gender' => Yii::t('Persons', 'Gender'),
+			'id'=>Yii::t('Persons', 'ID'),
+			'subid'=>Yii::t('Persons', 'Subid'),
+			'name'=>Yii::t('Persons', 'Name'),
+			'countryId'=>Yii::t('Persons', 'Country'),
+			'gender'=>Yii::t('Persons', 'Gender'),
 		);
 	}
 

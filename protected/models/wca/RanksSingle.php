@@ -13,6 +13,18 @@
  * @property integer $countryRank
  */
 class RanksSingle extends ActiveRecord {
+
+	//获取average数据
+	public function average($attribute) {
+		if($this->average == null) {
+			return '';
+		}
+		if($attribute == 'best') {
+			return CHtml::link(Results::formatTime($this->average->$attribute, $this->eventId), array('wca/events', 'eventId'=>$this->eventId));
+		}
+		return $this->average->$attribute;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -44,6 +56,11 @@ class RanksSingle extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'person'=>array(self::BELONGS_TO, 'Persons', 'personId', 'on'=>'person.subid=1'),
+			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
+			'average'=>array(self::BELONGS_TO, 'RanksAverage', array(
+				'personId'=>'personId',
+				'eventId'=>'eventId',
+			)),
 		);
 	}
 
