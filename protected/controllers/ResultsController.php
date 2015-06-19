@@ -133,8 +133,8 @@ class ResultsController extends Controller {
 			'Persons'=>array('/results/person'),
 			$person->name,
 		);
-		$this->pageTitle = array($person->name);
-		$this->title = $person->name;
+		$this->pageTitle = array($person->name, 'Personal Page');
+		$this->title = Yii::t('common', 'Personal Page');
 		// $this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
 		$this->render('p', $data);
 	}

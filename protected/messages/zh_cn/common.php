@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Personal Page' => '选手主页',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',

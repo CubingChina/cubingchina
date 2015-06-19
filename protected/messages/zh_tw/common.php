@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Personal Page' => '選手主頁',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -43,6 +44,7 @@ return array (
   'Not found' => '未找到',
   'Official Records' => '官方紀錄',
   'Personal Rankings' => '個人排名',
+  'Persons' => '選手',
   'Registration' => '在線報名',
   'Regulations' => '比賽規則',
   'Reset Password' => '重設密碼',

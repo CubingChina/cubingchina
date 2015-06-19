@@ -2407,3 +2407,6 @@ span.penalty {
   width: 100px;
   font-weight: bold;
 }
+.results-person .person-detail {
+  line-height: 1.8;
+}
