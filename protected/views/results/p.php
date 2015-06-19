@@ -1,5 +1,8 @@
 <div class="col-lg-12 results-person">
-  <h1 class="text-center"><?php echo $person->name; ?></h1>
+  <h1 class="text-center"><?php echo $user ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
+  <?php if ($user && $user->avatar): ?>
+  <div class="text-center"><?php echo $user->avatar->img; ?></div>
+  <?php endif ?>
   <div class="panel panel-info person-detail">
     <div class="panel-body">
       <div class="row">

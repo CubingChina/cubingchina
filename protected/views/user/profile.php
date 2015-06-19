@@ -3,6 +3,25 @@
   <dl class="dl-horizontal">
     <dt>&nbsp;</dt>
     <dd><?php echo CHtml::link(Yii::t('common', 'Edit'), array('/user/edit'), array('class'=>'btn btn-theme')); ?></dd>
+    <dt><?php echo Yii::t('User', 'Avatar'); ?></dt>
+    <dd>
+      <div class="user-avatar-container">
+        <?php $form = $this->beginWidget('CActiveForm', array(
+          'action'=>array('/user/upload'),
+          'htmlOptions'=>array(
+            'role'=>'form',
+            'enctype'=>'multipart/form-data',
+            'target'=>'avatar-upload',
+          ),
+        )); ?>
+        <input type="file" name="avatar" accept="image/*" class="image-uploader">
+        <div class="help-block">
+          <span class="text-danger"><?php echo Yii::t('common', 'Limit: '), $avatar['width'], 'x', $avatar['height'], ', ', sprintf('%.2fMB', $avatar['size'] / 1048576); ?></span>
+        </div>
+        <?php $this->endWidget(); ?>
+        <?php echo $user->avatar ? $user->avatar->img : CHtml::link(CHtml::image('', '', array('class'=>'user-avatar')), ''); ?>
+      </div>
+    </dd>
     <dt><?php echo Yii::t('common', 'CubingChina ID'); ?></dt>
     <dd><?php echo $user->id ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
@@ -41,3 +60,15 @@
     </dd>
   </dl>
 </div>
+<iframe src="" class="hide" name="avatar-upload"></iframe>
+<?php
+Yii::app()->clientScript->registerScript('profile',
+<<<EOT
+  $('input[type="file"]').on('change', function() {
+    if ($(this).val() !== '') {
+      $(this).parent().submit();
+      $('.user-avatar-container').addClass('loading');
+    }
+  });
+EOT
+);

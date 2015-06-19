@@ -17,22 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Avatar' => '头像',
+  'Add Time' => '',
+  'Extension' => '',
+  'Height' => '',
   'ID' => '',
-  'Password' => '',
-  'Birthday' => '生日',
-  'City' => '城市',
-  'Email' => '邮箱',
-  'Gender' => '性别',
-  'Identity' => '身份',
-  'Local Name' => '中文名',
-  'Mobile' => '手机号',
-  'Name' => '英文名',
-  'Province' => '省份',
-  'Reg Ip' => '注册IP',
-  'Reg Time' => '注册时间',
-  'Region' => '地区',
-  'Role' => '角色',
-  'Status' => '状态',
-  'Wcaid' => 'WCA ID',
+  'Md5' => '',
+  'User' => '',
+  'Width' => '',
 );

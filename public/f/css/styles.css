@@ -661,7 +661,7 @@ ul.custom-list-style li {
   padding: 0;
 }
 .header .header-main {
-  padding: 30px 0;
+  padding: 30px 0 10px;
 }
 .header h1.logo {
   margin-top: 0;
@@ -2408,4 +2408,20 @@ span.penalty {
 }
 .results-person .person-detail {
   line-height: 1.8;
+}
+.user-avatar {
+  max-height: 450px;
+  margin-bottom: 15px;
+}
+.user-avatar-container.loading {
+  position: relative;
+}
+.user-avatar-container.loading:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 }

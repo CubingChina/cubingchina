@@ -128,6 +128,10 @@ class ResultsController extends Controller {
 		}
 		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
 		$data['person'] = $person;
+		$data['user'] = User::model()->findByAttributes(array(
+			'wcaid'=>$person->id,
+			'status'=>User::STATUS_NORMAL,
+		));
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Persons',

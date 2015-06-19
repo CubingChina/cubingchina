@@ -18,7 +18,12 @@
  */
 return array (
   'Fee' => '',
-  'My Homepage' => '我的主页',
+  'File is too large, the limited size is {size}' => '文件太大，最大允许{size}',
+  'Image height or width exceeded, the limited width is {width} and height is {height}' => '图像宽度或高度过大，最大宽度是{width}，最大高度是{height}',
+  'Invalid file type of image' => '图像文件格式不规范',
+  'Limit: ' => '限制：',
+  'No file uploaded' => '没有文件上传',
+  'Upload failed, please contact the administrator' => '上传失败，请联系管理员',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -127,6 +132,7 @@ return array (
   'More Info' => '其他',
   'Multiple' => '多地',
   'My Competitions' => '我的比赛',
+  'My Homepage' => '我的主页',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',
   'Names (One name per line)' => '名字（一行一个）',

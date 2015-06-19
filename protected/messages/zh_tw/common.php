@@ -18,7 +18,12 @@
  */
 return array (
   'Fee' => '',
-  'My Homepage' => '我的主頁',
+  'File is too large, the limit size is {size}' => '',
+  'Image height or width exceeded, the limit width is {width} and height is {height}' => '',
+  'Invalid file type of image' => '',
+  'Limit: ' => '',
+  'No file uploaded' => '',
+  'Upload failed, please contact the administrator' => '',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -127,6 +132,7 @@ return array (
   'More Info' => '其他',
   'Multiple' => '多地',
   'My Competitions' => '我的比賽',
+  'My Homepage' => '我的主頁',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',
   'Names (One name per line)' => '名字（一行一個）',
