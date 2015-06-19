@@ -1,4 +1,34 @@
 <div class="col-lg-12 results-person">
+  <div class="panel panel-info">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('Results', 'Name'); ?>:</span>
+          <span class="info-value"><?php echo $person->name; ?></span>
+        </div>
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('common', 'Region'); ?>:</span>
+          <span class="info-value"><?php echo Yii::t('Region', $person->country->name); ?></span>
+        </div>
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('common', 'Gender'); ?>:</span>
+          <span class="info-value"><?php echo strtolower($person->gender) == 'f' ? Yii::t('common', 'Female') : Yii::t('common', 'Male'); ?></span>
+        </div>
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('common', 'WCA ID'); ?>:</span>
+          <span class="info-value"><?php echo $person->id; ?></span>
+        </div>
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('Results', 'Competitions'); ?>:</span>
+          <span class="info-value"><?php echo $person->competitionNum; ?></span>
+        </div>
+        <div class="col-md-4 col-xs-6">
+          <span class="info-title"><?php echo Yii::t('Results', 'Emulation'); ?>:</span>
+          <span class="info-value"><?php echo sprintf('%d-%02d-%02d - %d-%02d-%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->month, $lastCompetition->day); ?></span>
+        </div>
+      </div>
+    </div>
+  </div>
   <h2><?php echo Yii::t('Results', 'Current Personal Records'); ?></h2>
   <?php
   $this->widget('GridView', array(

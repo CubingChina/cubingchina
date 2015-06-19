@@ -2401,3 +2401,9 @@ span.penalty {
 .results-person .result {
   text-align: right;
 }
+.results-person .info-title {
+  display: inline-block;
+  text-align: right;
+  width: 100px;
+  font-weight: bold;
+}

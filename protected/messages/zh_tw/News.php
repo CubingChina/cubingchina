@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'Weight' => '',
   'name' => '',
   'Content' => '正文',
   'Content Zh' => '中文正文',

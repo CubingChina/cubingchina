@@ -146,13 +146,38 @@ class Persons extends ActiveRecord {
 			'condition'=>'regionalSingleRecord NOT IN ("WR", "NR", "") OR regionalAverageRecord NOT IN ("WR", "NR", "")',
 			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
 		));
+		//
+		$firstCompetitionResult = Results::model()->with(array(
+			'competition',
+		))->findByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'order'=>'competition.year ASC, competition.month ASC, competition.day ASC',
+		));
+		$lastCompetitionResult = Results::model()->with(array(
+			'competition',
+		))->findByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'order'=>'competition.year DESC, competition.month DESC, competition.day DESC',
+		));
 		return array(
 			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
+			'firstCompetition'=>$firstCompetitionResult->competition,
+			'lastCompetition'=>$lastCompetitionResult->competition,
 		);
+	}
+
+	public function getCompetitionNum() {
+		return Results::model()->countByAttributes(array(
+			'personId'=>$this->id,
+		), array(
+			'select'=>'COUNT(DISTINCT competitionId)',
+		));
 	}
 
 	/**
