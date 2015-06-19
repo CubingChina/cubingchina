@@ -1,5 +1,5 @@
 <div class="col-lg-12 results-person">
-  <h1 class="text-center"><?php echo $user && $user->id === $this->user->id ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
+  <h1 class="text-center"><?php echo $user && $user->id === Yii::app()->user->id ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
   <?php if ($user && $user->avatar): ?>
   <div class="text-center"><?php echo $user->avatar->img; ?></div>
   <?php endif ?>
