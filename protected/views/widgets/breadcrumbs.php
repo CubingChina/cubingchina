@@ -10,7 +10,7 @@
         $text = Yii::t('common', $label);
         $crumb = CHtml::link($text, $url);
       } else {
-        $crumb = Yii::t('common', $url);
+        $crumb = CHtml::tag('span', array(), Yii::t('common', $url));
       }
       $options = array();
       if ($i !== count($this->breadcrumbs)) {

@@ -130,12 +130,12 @@ class ResultsController extends Controller {
 		$data['person'] = $person;
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
-			'Persons'=>array('/results/person'),
+			'Persons',
 			$person->name,
 		);
 		$this->pageTitle = array($person->name, 'Personal Page');
 		$this->title = Yii::t('common', 'Personal Page');
-		// $this->setWeiboShareDefaultText('关于中国WCA官方比赛及选手成绩的一系列趣味统计', false);
+		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
 		$this->render('p', $data);
 	}
 

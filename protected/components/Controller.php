@@ -227,8 +227,8 @@ class Controller extends CController {
 					),
 					array(
 						'label'=>Yii::t('common', 'My Homepage'),
-						'url'=>array('/results/p', 'id'=>$this->user->wcaid),
-						'visible'=>$this->user->wcaid != '',
+						'url'=>Yii::app()->user->isGuest ? '' : array('/results/p', 'id'=>$this->user->wcaid),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
 						'label'=>Yii::t('common', 'My Competitions'),

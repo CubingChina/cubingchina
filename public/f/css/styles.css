@@ -1034,7 +1034,7 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
   list-style: none;
   display: inline-block;
 }
-.page-wrapper .breadcrumbs ul li a {
+.page-wrapper .breadcrumbs ul li a, .page-wrapper .breadcrumbs ul li span {
   display: inline-block;
   padding: 0 5px;
 }
@@ -1049,7 +1049,6 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 5px;
 }
 .page-wrapper .breadcrumbs ul li .fa {
   margin-right: 0;
