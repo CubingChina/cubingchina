@@ -371,6 +371,19 @@ class Results extends ActiveRecord {
 		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url'], array('target'=>'_blank'));
 	}
 
+	public function getDetail($boldBest = false) {
+		$detail = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$attribute = 'value' . $i;
+			$time = $this->getTime($attribute);
+			if ($boldBest && $this->$attribute === $this->best) {
+				$time = CHtml::Tag('b', array(), $time);
+			}
+			$detail[] = $time;
+		}
+		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

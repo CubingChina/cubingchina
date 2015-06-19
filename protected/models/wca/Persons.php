@@ -49,6 +49,10 @@ class Persons extends ActiveRecord {
 		));
 	}
 
+	public function getWCALink() {
+		return CHtml::link($this->name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $this->id, array('target'=>'_blank'));
+	}
+
 	public static function getResults($id) {
 		$db = Yii::app()->wcaDb;
 		//个人排名
@@ -146,6 +150,17 @@ class Persons extends ActiveRecord {
 			'condition'=>'regionalSingleRecord NOT IN ("WR", "NR", "") OR regionalAverageRecord NOT IN ("WR", "NR", "")',
 			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
 		));
+		//NR们
+		$historyNR = Results::model()->with(array(
+			'competition',
+			'event',
+			'round',
+		))->findAllByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'condition'=>'regionalSingleRecord="NR" OR regionalAverageRecord="NR"',
+			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+		));
 		//
 		$firstCompetitionResult = Results::model()->with(array(
 			'competition',
@@ -167,6 +182,7 @@ class Persons extends ActiveRecord {
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
+			'historyNR'=>$historyNR,
 			'firstCompetition'=>$firstCompetitionResult->competition,
 			'lastCompetition'=>$lastCompetitionResult->competition,
 		);

@@ -24,7 +24,7 @@
         </div>
         <div class="col-md-4 col-xs-6">
           <span class="info-title"><?php echo Yii::t('Results', 'Emulation'); ?>:</span>
-          <span class="info-value"><?php echo sprintf('%d-%02d-%02d - %d-%02d-%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->month, $lastCompetition->day); ?></span>
+          <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->month, $lastCompetition->day); ?></span>
         </div>
       </div>
     </div>
@@ -97,15 +97,15 @@
       ),
       array(
         'header'=>Yii::t('statistics', 'Gold'),
-        'value'=>'$data->medals["gold"]',
+        'value'=>'$data->medals["gold"] ?: ""',
       ),
       array(
         'header'=>Yii::t('statistics', 'Silver'),
-        'value'=>'$data->medals["silver"]',
+        'value'=>'$data->medals["silver"] ?: ""',
       ),
       array(
         'header'=>Yii::t('statistics', 'Bronze'),
-        'value'=>'$data->medals["bronze"]',
+        'value'=>'$data->medals["bronze"] ?: ""',
       ),
     ),
   )); ?>
@@ -148,7 +148,7 @@
       array(
         'name'=>Yii::t('common', 'Detail'),
         'type'=>'raw',
-        'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
+        'value'=>'$data->detail',
       ),
     ),
   )); ?>
@@ -198,7 +198,7 @@
       array(
         'name'=>Yii::t('common', 'Detail'),
         'type'=>'raw',
-        'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
+        'value'=>'$data->getDetail(true)',
       ),
     ),
   )); ?>
@@ -248,7 +248,57 @@
       array(
         'name'=>Yii::t('common', 'Detail'),
         'type'=>'raw',
-        'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
+        'value'=>'$data->getDetail(true)',
+      ),
+    ),
+  )); ?>
+  <?php endif; ?>
+  <?php if (!empty($historyNR)): ?>
+  <h2><?php echo Yii::t('Results', 'History of National Records'); ?></h2>
+  <?php
+  $this->widget('GroupGridView', array(
+    'dataProvider'=>new CArrayDataProvider($historyNR, array(
+      'pagination'=>false,
+      'sort'=>false,
+    )),
+    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+    'groupKey'=>'eventId',
+    'groupHeader'=>'CHtml::tag("span", array(
+        "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+        "title"=>Yii::t("event", $data->event->cellName),
+      ), Yii::t("event", $data->event->cellName))',
+    'columns'=>array(
+      array(
+        'name'=>Yii::t('common', 'Event'),
+        'type'=>'raw',
+        'value'=>'',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Single'),
+        'type'=>'raw',
+        'value'=>'$data->regionalSingleRecord == "NR" ? $data->getTime("best") : ""',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Average'),
+        'type'=>'raw',
+        'value'=>'$data->regionalAverageRecord == "NR" ? $data->getTime("average"): ""',
+      ),
+      array(
+        'name'=>Yii::t('Results', 'Competition'),
+        'type'=>'raw',
+        'value'=>'$data->competitionLink',
+        'headerHtmlOptions'=>array('class'=>'competition_name'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Round'),
+        'type'=>'raw',
+        'value'=>'Yii::t("Rounds", $data->round->cellName)',
+        'headerHtmlOptions'=>array('class'=>'round'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Detail'),
+        'type'=>'raw',
+        'value'=>'$data->getDetail(true)',
       ),
     ),
   )); ?>
@@ -317,7 +367,7 @@
       array(
         'name'=>Yii::t('common', 'Detail'),
         'type'=>'raw',
-        'value'=>'$data->getTime("value1") . "&nbsp;" . $data->getTime("value2") . "&nbsp;" . $data->getTime("value3") . "&nbsp;" . $data->getTime("value4") . "&nbsp;" . $data->getTime("value5")',
+        'value'=>'$data->detail',
       ),
     ),
   )); ?>
