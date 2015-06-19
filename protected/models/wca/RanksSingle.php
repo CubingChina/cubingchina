@@ -29,6 +29,7 @@ class RanksSingle extends ActiveRecord {
 				'/results/rankings',
 				'event'=>$this->eventId,
 				'type'=>'average',
+				'region'=>$this->person->countryId,
 			));
 		}
 		return $this->average->getRank($attribute);

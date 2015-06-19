@@ -69,7 +69,11 @@
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Results::formatTime($data->best, $data->eventId), array("/results/rankings", "event"=>$data->eventId))',
+        'value'=>'CHtml::link(Results::formatTime($data->best, $data->eventId), array(
+          "/results/rankings",
+          "event"=>$data->eventId,
+          "region"=>$data->person->countryId,
+        ))',
         // 'headerHtmlOptions'=>array('class'=>'best'),
       ),
       array(
