@@ -1,7 +1,7 @@
 $(function() {
   $('input, textarea').placeholder();
   $.fn.dropdownHover && $('[data-hover="dropdown"]').dropdownHover();
-  $('.wrapper table').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
+  $('.wrapper table:not(.table)').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
   if (!('ontouchstart' in window)) {
     (function() {
       var win = $(window);

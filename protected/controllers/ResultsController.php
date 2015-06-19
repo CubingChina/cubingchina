@@ -116,6 +116,33 @@ class ResultsController extends Controller {
 		));
 	}
 
+	public function actionPerson() {
+
+	}
+
+	public function actionP() {
+		$id = $this->sGet('id');
+		$person = Persons::model()->findByAttributes(array('id' => $id));
+		if ($person == null) {
+			$this->redirect(array('/results/persons'));
+		}
+		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
+		$data['person'] = $person;
+		$data['user'] = User::model()->findByAttributes(array(
+			'wcaid'=>$person->id,
+			'status'=>User::STATUS_NORMAL,
+		));
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Persons',
+			$person->name,
+		);
+		$this->pageTitle = array($person->name, 'Personal Page');
+		$this->title = Yii::t('common', 'Personal Page');
+		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
+		$this->render('p', $data);
+	}
+
 	public function actionStatistics() {
 		$name = $this->sGet('name');
 		$names = array_map('ucfirst', explode('-', $name));

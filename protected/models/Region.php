@@ -13,7 +13,7 @@ class Region extends ActiveRecord {
 
 	public static $HKMCTW = array(2, 3, 4);
 
-	//wca stands for Wolrd, Asia and China
+	//wac stands for Wolrd, Asia and China
 	public static function getWACRegions($region = 'China') {
 		$regions = array(
 			'World'=>Yii::t('Region', 'World'),

@@ -17,13 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Avatar' => '头像',
   'ID' => '',
-  'Identity' => '身份',
   'Password' => '',
   'Birthday' => '生日',
   'City' => '城市',
   'Email' => '邮箱',
   'Gender' => '性别',
+  'Identity' => '身份',
   'Local Name' => '中文名',
   'Mobile' => '手机号',
   'Name' => '英文名',
