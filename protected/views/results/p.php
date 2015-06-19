@@ -2,27 +2,27 @@
   <div class="panel panel-info">
     <div class="panel-body">
       <div class="row">
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('Results', 'Name'); ?>:</span>
-          <span class="info-value"><?php echo $person->wcaLink; ?></span>
+          <span class="info-value"><?php echo $person->name; ?></span>
         </div>
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('common', 'Region'); ?>:</span>
           <span class="info-value"><?php echo Yii::t('Region', $person->country->name); ?></span>
         </div>
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('common', 'Gender'); ?>:</span>
           <span class="info-value"><?php echo strtolower($person->gender) == 'f' ? Yii::t('common', 'Female') : Yii::t('common', 'Male'); ?></span>
         </div>
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('common', 'WCA ID'); ?>:</span>
-          <span class="info-value"><?php echo $person->id; ?></span>
+          <span class="info-value"><?php echo $person->getWCALink($person->id); ?></span>
         </div>
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('Results', 'Competitions'); ?>:</span>
           <span class="info-value"><?php echo $person->competitionNum; ?></span>
         </div>
-        <div class="col-md-4 col-xs-6">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <span class="info-title"><?php echo Yii::t('Results', 'Emulation'); ?>:</span>
           <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->month, $lastCompetition->day); ?></span>
         </div>
@@ -48,19 +48,19 @@
         ), Yii::t("event", $data->event->cellName)), "#" . $data->event->id)',
       ),
       array(
-        'name'=>'NR',
+        'name'=>Yii::t('Results', 'NR'),
         'type'=>'raw',
         'value'=>'$data->getRank("countryRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
-        'name'=>'CR',
+        'name'=>Yii::t('Results', 'CR'),
         'type'=>'raw',
         'value'=>'$data->getRank("continentRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
-        'name'=>'WR',
+        'name'=>Yii::t('Results', 'WR'),
         'type'=>'raw',
         'value'=>'$data->getRank("worldRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
@@ -78,19 +78,19 @@
         // 'headerHtmlOptions'=>array('class'=>'best'),
       ),
       array(
-        'name'=>'WR',
+        'name'=>Yii::t('Results', 'WR'),
         'type'=>'raw',
         'value'=>'$data->average("worldRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
-        'name'=>'CR',
+        'name'=>Yii::t('Results', 'CR'),
         'type'=>'raw',
         'value'=>'$data->average("continentRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
-        'name'=>'NR',
+        'name'=>Yii::t('Results', 'NR'),
         'type'=>'raw',
         'value'=>'$data->average("countryRank")',
         'headerHtmlOptions'=>array('class'=>'record'),
@@ -152,6 +152,67 @@
       ),
     ),
   )); ?>
+  <?php endif; ?>
+  <?php if (array_sum($overAll) > 0): ?>
+  <div class="row">
+    <?php $overAllDataProvider = new CArrayDataProvider(array($overAll), array(
+      'pagination'=>false,
+      'sort'=>false,
+    )); ?>
+    <?php if ($overAll['gold'] + $overAll['silver'] + $overAll['bronze'] > 0): ?>
+    <div class="col-sm-6 col-xs-12">
+      <h2><?php echo Yii::t('Results', 'Overall Medal Collection'); ?></h2>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>$overAllDataProvider,
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'header'=>Yii::t('statistics', 'Gold'),
+            'value'=>'$data["gold"] ?: ""',
+          ),
+          array(
+            'header'=>Yii::t('statistics', 'Silver'),
+            'value'=>'$data["silver"] ?: ""',
+          ),
+          array(
+            'header'=>Yii::t('statistics', 'Bronze'),
+            'value'=>'$data["bronze"] ?: ""',
+          ),
+        ),
+      )); ?>
+    </div>
+    <?php endif; ?>
+    <?php if ($overAll['WR'] + $overAll['CR'] + $overAll['NR'] > 0): ?>
+    <div class="col-sm-6 col-xs-12">
+      <h2><?php echo Yii::t('Results', 'Overall Record Collection'); ?></h2>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>$overAllDataProvider,
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'name'=>Yii::t('Results', 'WR'),
+            'type'=>'raw',
+            'value'=>'$data["WR"] ?: ""',
+          ),
+          array(
+            'name'=>Yii::t('Results', 'CR'),
+            'type'=>'raw',
+            'value'=>'$data["CR"] ?: ""',
+          ),
+          array(
+            'name'=>Yii::t('Results', 'NR'),
+            'type'=>'raw',
+            'value'=>'$data["NR"] ?: ""',
+          ),
+        ),
+      )); ?>
+    </div>
+    <?php endif; ?>
+  </div>
   <?php endif; ?>
   <?php if (!empty($historyWR)): ?>
   <h2><?php echo Yii::t('Results', 'History of World Records'); ?></h2>

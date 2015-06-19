@@ -49,8 +49,8 @@ class Persons extends ActiveRecord {
 		));
 	}
 
-	public function getWCALink() {
-		return CHtml::link($this->name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $this->id, array('target'=>'_blank'));
+	public function getWCALink($linkName = '') {
+		return CHtml::link($linkName ?: $this->name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $this->id, array('target'=>'_blank'));
 	}
 
 	public static function getResults($id) {
@@ -176,6 +176,32 @@ class Persons extends ActiveRecord {
 		), array(
 			'order'=>'competition.year DESC, competition.month DESC, competition.day DESC',
 		));
+		$overAll = array(
+			'gold'=>array_sum(array_map(function($result) {
+				return $result->medals['gold'];
+			}, $personRanks)),
+			'silver'=>array_sum(array_map(function($result) {
+				return $result->medals['silver'];
+			}, $personRanks)),
+			'bronze'=>array_sum(array_map(function($result) {
+				return $result->medals['bronze'];
+			}, $personRanks)),
+			'WR'=>count(array_filter($historyWR, function($result) {
+				return $result->regionalSingleRecord == 'WR';
+			})) + count(array_filter($historyWR, function($result) {
+				return $result->regionalAverageRecord == 'WR';
+			})),
+			'CR'=>count(array_filter($historyCR, function($result) {
+				return !in_array($result->regionalSingleRecord, array('WR', 'NR', ''));
+			})) + count(array_filter($historyCR, function($result) {
+				return !in_array($result->regionalAverageRecord, array('WR', 'NR', ''));
+			})),
+			'NR'=>count(array_filter($historyNR, function($result) {
+				return $result->regionalSingleRecord == 'NR';
+			})) + count(array_filter($historyNR, function($result) {
+				return $result->regionalAverageRecord == 'NR';
+			})),
+		);
 		return array(
 			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
@@ -183,6 +209,7 @@ class Persons extends ActiveRecord {
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,
+			'overAll'=>$overAll,
 			'firstCompetition'=>$firstCompetitionResult->competition,
 			'lastCompetition'=>$lastCompetitionResult->competition,
 		);

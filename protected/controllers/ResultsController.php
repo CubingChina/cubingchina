@@ -116,7 +116,7 @@ class ResultsController extends Controller {
 		));
 	}
 
-	public function actionPersons() {
+	public function actionPerson() {
 
 	}
 

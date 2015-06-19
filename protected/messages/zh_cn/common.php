@@ -43,6 +43,7 @@ return array (
   'Not found' => '未找到',
   'Official Records' => '官方纪录',
   'Personal Rankings' => '个人排名',
+  'Persons' => '选手',
   'Registration' => '在线报名',
   'Regulations' => '比赛规则',
   'Reset Password' => '重设密码',
