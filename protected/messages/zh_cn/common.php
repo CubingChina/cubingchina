@@ -18,7 +18,7 @@
  */
 return array (
   'Fee' => '',
-  'Personal Page' => '选手主页',
+  'My Homepage' => '我的主页',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -138,6 +138,7 @@ return array (
   'Password' => '密码',
   'Password is changed successfully. Log in with your new password.' => '密码修改成功，请使用新密码登录。',
   'Pending' => '待审核',
+  'Personal Page' => '选手主页',
   'Please choose the correct English name below' => '请在下面选择正确的英文名',
   'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他个人信息请联系管理员{email}。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '请在下面输入您的WCA ID。您可以在{here}查询您的WCA ID。',

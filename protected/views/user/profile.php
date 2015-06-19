@@ -12,7 +12,7 @@
     <dt><?php echo Yii::t('common', 'Email'); ?></dt>
     <dd><?php echo $user->email; ?></dd>
     <dt><?php echo Yii::t('common', 'WCA ID'); ?></dt>
-    <dd><?php echo $user->getWcaLink($user->wcaid) ?: '&nbsp;'; ?></dd>
+    <dd><?php echo $user->wcaid ? Persons::getWCALinkByNameNId(CHtml::image('/f/images/wca.png', $user->getCompetitionName(), array('class'=>'wca-competition')), $user->wcaid) . $user->wcaid : '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Birthday'); ?></dt>
     <dd><?php echo date('Y-m-d', $user->birthday); ?></dd>
     <dt><?php echo Yii::t('common', 'Gender'); ?></dt>
