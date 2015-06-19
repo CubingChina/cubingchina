@@ -215,7 +215,7 @@ class Statistics {
 			$data = self::$_competitions[$row['competitionId']];
 		} elseif (($data = $cache->get($cacheKey)) === false) {
 			$data['name'] = $data['name_zh'] = $row['cellName'];
-			$data['url'] = 'http://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
+			$data['url'] = 'https://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
 			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
 			self::$_competitions[$row['competitionId']] = $data;
 		}

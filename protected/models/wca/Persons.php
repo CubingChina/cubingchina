@@ -124,10 +124,34 @@ class Persons extends ActiveRecord {
 			'condition'=>'competitionId LIKE "WC%"',
 			'order'=>'competition.year DESC, event.rank ASC',
 		));
+		//WR们
+		$historyWR = Results::model()->with(array(
+			'competition',
+			'event',
+			'round',
+		))->findAllByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'condition'=>'regionalSingleRecord="WR" OR regionalAverageRecord="WR"',
+			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+		));
+		//CR们
+		$historyCR = Results::model()->with(array(
+			'competition',
+			'event',
+			'round',
+		))->findAllByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'condition'=>'regionalSingleRecord NOT IN ("WR", "NR", "") OR regionalAverageRecord NOT IN ("WR", "NR", "")',
+			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+		));
 		return array(
 			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
+			'historyWR'=>$historyWR,
+			'historyCR'=>$historyCR,
 		);
 	}
 
