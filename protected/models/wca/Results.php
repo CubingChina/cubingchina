@@ -25,6 +25,9 @@
  */
 class Results extends ActiveRecord {
 
+	public $newBest = false;
+	public $newAverage = false;
+
 	public static function getRankingTypes() {
 		return array('single', 'average');
 	}
@@ -352,6 +355,35 @@ class Results extends ActiveRecord {
 		return ltrim(gmdate('G:i:s', $time), '0:');
 	}
 
+	public function getTime($attribute) {
+		$time = self::formatTime($this->$attribute, $this->eventId);
+		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
+			$time = '<span class="new-best">' . $time . '</strong>';
+		}
+		return $time;
+	}
+
+	public function getCompetitionLink() {
+		$competition = Statistics::getCompetition(array(
+			'competitionId'=>$this->competitionId,
+			'cellName'=>$this->competition->cellName,
+		));
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url'], array('target'=>'_blank'));
+	}
+
+	public function getDetail($boldBest = false) {
+		$detail = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$attribute = 'value' . $i;
+			$time = $this->getTime($attribute);
+			if ($boldBest && $this->$attribute === $this->best) {
+				$time = CHtml::Tag('b', array(), $time);
+			}
+			$detail[] = $time;
+		}
+		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -387,6 +419,10 @@ class Results extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
+			'round'=>array(self::BELONGS_TO, 'Rounds', 'roundId'),
+			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
+			'format'=>array(self::BELONGS_TO, 'Formats', 'formatId'),
 		);
 	}
 

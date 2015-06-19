@@ -10,6 +10,7 @@
  * @property string $name_zh
  * @property string $email
  * @property string $password
+ * @property string $avatar_id
  * @property string $birthday
  * @property integer $gender
  * @property string $mobile
@@ -217,7 +218,6 @@ class User extends ActiveRecord {
 		if ($name === null) {
 			$name = $this->getCompetitionName();
 		}
-		$name = mb_convert_encoding($name, 'HTML-ENTITIES', 'UTF-8');
 		if ($this->wcaid === '' || $name === '') {
 			return $name;
 		}
@@ -329,14 +329,14 @@ class User extends ActiveRecord {
 		return array(
 			array('name, country_id, birthday, email, password, gender', 'required'),
 			array('gender, country_id, province_id, city_id, role, identity, status', 'numerical', 'integerOnly'=>true),
-			array('wcaid', 'length', 'max'=>10),
+			array('wcaid, avatar_id', 'length', 'max'=>10),
 			array('name, name_zh, email, password', 'length', 'max'=>128),
 			array('birthday, mobile', 'length', 'max'=>20),
 			array('reg_time', 'length', 'max'=>11),
 			array('reg_ip', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, wcaid, name, name_zh, email, password, birthday, gender, mobile, country_id, province_id, city_id, role, identity, reg_time, reg_ip, status', 'safe', 'on'=>'search'),
+			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, identity, reg_time, reg_ip, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -350,6 +350,7 @@ class User extends ActiveRecord {
 			'country'=>array(self::BELONGS_TO, 'Region', 'country_id'),
 			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
 			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
+			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
 		);
 	}
 
@@ -364,6 +365,7 @@ class User extends ActiveRecord {
 			'name_zh' => Yii::t('User', 'Local Name'),
 			'email' => Yii::t('User', 'Email'),
 			'password' => Yii::t('User', 'Password'),
+			'avatar_id' => Yii::t('User', 'Avatar'),
 			'birthday' => Yii::t('User', 'Birthday'),
 			'gender' => Yii::t('User', 'Gender'),
 			'mobile' => Yii::t('User', 'Mobile'),

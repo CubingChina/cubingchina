@@ -22,4 +22,5 @@ return array (
   'ID' => '',
   'Name' => '',
   'Subid' => '',
+  'History' => '歷史成績',
 );

@@ -1,31 +1,40 @@
 <?php
 
 /**
- * This is the model class for table "RanksAverage".
+ * This is the model class for table "user_avatar".
  *
- * The followings are the available columns in table 'RanksAverage':
- * @property integer $id
- * @property string $personId
- * @property string $eventId
- * @property integer $best
- * @property integer $worldRank
- * @property integer $continentRank
- * @property integer $countryRank
+ * The followings are the available columns in table 'user_avatar':
+ * @property string $id
+ * @property string $user_id
+ * @property string $md5
+ * @property string $extension
+ * @property integer $width
+ * @property integer $height
+ * @property string $add_time
  */
-class RanksAverage extends ActiveRecord {
+class UserAvatar extends ActiveRecord {
 
-	public function getRank($attribute) {
-		if ($this->$attribute <= 10) {
-			return CHtml::tag('span', array('class'=>'top10'), $this->$attribute);
-		}
-		return $this->$attribute;
+	public function getImg() {
+		return CHtml::link(CHtml::image($this->fullUrl, $this->user->getCompetitionName(), array(
+			'class'=>'user-avatar',
+		)), $this->fullUrl, array(
+			'target'=>'_blank',
+		));
+	}
+
+	public function getFullUrl() {
+		return implode('/', array(
+			Yii::app()->params->staticUrlPrefix . 'upload',
+			$this->md5{0},
+			$this->md5 . $this->extension,
+		));
 	}
 
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'RanksAverage';
+		return 'user_avatar';
 	}
 
 	/**
@@ -35,12 +44,13 @@ class RanksAverage extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('best, worldRank, continentRank, countryRank', 'numerical', 'integerOnly'=>true),
-			array('personId', 'length', 'max'=>10),
-			array('eventId', 'length', 'max'=>6),
+			array('user_id, md5, extension, width, height', 'required'),
+			array('width, height', 'numerical', 'integerOnly'=>true),
+			array('user_id, extension, add_time', 'length', 'max'=>10),
+			array('md5', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, personId, eventId, best, worldRank, continentRank, countryRank', 'safe', 'on'=>'search'),
+			array('id, user_id, md5, extension, width, height, add_time', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,7 +61,7 @@ class RanksAverage extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'person'=>array(self::BELONGS_TO, 'Persons', 'personId', 'on'=>'person.subid=1'),
+			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 		);
 	}
 
@@ -60,13 +70,13 @@ class RanksAverage extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('RanksAverage', 'ID'),
-			'personId' => Yii::t('RanksAverage', 'Person'),
-			'eventId' => Yii::t('RanksAverage', 'Event'),
-			'best' => Yii::t('RanksAverage', 'Best'),
-			'worldRank' => Yii::t('RanksAverage', 'World Rank'),
-			'continentRank' => Yii::t('RanksAverage', 'Continent Rank'),
-			'countryRank' => Yii::t('RanksAverage', 'Country Rank'),
+			'id' => Yii::t('UserAvatar', 'ID'),
+			'user_id' => Yii::t('UserAvatar', 'User'),
+			'md5' => Yii::t('UserAvatar', 'Md5'),
+			'extension' => Yii::t('UserAvatar', 'Extension'),
+			'width' => Yii::t('UserAvatar', 'Width'),
+			'height' => Yii::t('UserAvatar', 'Height'),
+			'add_time' => Yii::t('UserAvatar', 'Add Time'),
 		);
 	}
 
@@ -87,13 +97,13 @@ class RanksAverage extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('personId',$this->personId,true);
-		$criteria->compare('eventId',$this->eventId,true);
-		$criteria->compare('best',$this->best);
-		$criteria->compare('worldRank',$this->worldRank);
-		$criteria->compare('continentRank',$this->continentRank);
-		$criteria->compare('countryRank',$this->countryRank);
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('user_id',$this->user_id,true);
+		$criteria->compare('md5',$this->md5,true);
+		$criteria->compare('extension',$this->extension,true);
+		$criteria->compare('width',$this->width);
+		$criteria->compare('height',$this->height);
+		$criteria->compare('add_time',$this->add_time,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -101,17 +111,10 @@ class RanksAverage extends ActiveRecord {
 	}
 
 	/**
-	 * @return CDbConnection the database connection used for this class
-	 */
-	public function getDbConnection() {
-		return Yii::app()->wcaDb;
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return RanksAverage the static model class
+	 * @return UserAvatar the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);
