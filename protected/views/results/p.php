@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-4 col-xs-6">
           <span class="info-title"><?php echo Yii::t('Results', 'Name'); ?>:</span>
-          <span class="info-value"><?php echo $person->name; ?></span>
+          <span class="info-value"><?php echo $person->wcaLink; ?></span>
         </div>
         <div class="col-md-4 col-xs-6">
           <span class="info-title"><?php echo Yii::t('common', 'Region'); ?>:</span>
