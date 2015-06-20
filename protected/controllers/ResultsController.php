@@ -117,6 +117,38 @@ class ResultsController extends Controller {
 	}
 
 	public function actionPerson() {
+		$region = $this->sGet('region', 'China');
+		$gender = $this->sGet('gender', 'all');
+		$name = $this->sGet('name', '');
+		$page = $this->iGet('page', 1);
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
+		$persons = Yii::app()->cache->getData('Persons::getPersons', array($region, $gender, $name, $page));
+		if ($page > ceil($persons['count'] / 100)) {
+			$page = ceil($persons['count'] / 100);
+		}
+		$this->title = 'Persons';
+		$this->pageTitle = array(
+			'Persons',
+		);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Persons',
+		);
+		$this->render('person', array(
+			'persons'=>$persons,
+			'region'=>$region,
+			'gender'=>$gender,
+			'name'=>$name,
+			'page'=>$page,
+		));
 
 	}
 
@@ -134,7 +166,7 @@ class ResultsController extends Controller {
 		));
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
-			'Persons',
+			'Persons'=>array('/results/person'),
 			$person->name,
 		);
 		$this->pageTitle = array($person->name, 'Personal Page');

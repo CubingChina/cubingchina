@@ -11,7 +11,7 @@ class SumOfCountryRanks extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'CHtml::image("http://s.cubingchina.com/flag/" . strtolower($data["iso2"]) . ".png", $data["countryId"], array("class"=>"flag-icon")) . Yii::t("Region", $data["countryId"])',
+				'value'=>'Region::getIconName($data["countryId"], $data["iso2"])',
 				'type'=>'raw',
 			),
 			array(

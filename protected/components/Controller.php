@@ -134,6 +134,10 @@ class Controller extends CController {
 					),
 					'items'=>array(
 						array(
+							'url'=>array('/results/person'),
+							'label'=>Html::fontAwesome('users', 'a') . Yii::t('common', 'Persons'),
+						),
+						array(
 							'url'=>array('/results/rankings'),
 							'label'=>Html::fontAwesome('trophy', 'a') . Yii::t('common', 'Rankings'),
 						),
