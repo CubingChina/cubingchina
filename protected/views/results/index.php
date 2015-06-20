@@ -3,13 +3,13 @@
   <ul>
     <li>
       <p><?php echo CHtml::link(Yii::t('common', 'Rankings'), array('/results/rankings')); ?></p>
-      <p><?php echo Yii::t('statistics', 'Chinese personal rankings in each official event are listed, based on the {url}.', array(
+      <p><?php echo Yii::t('statistics', 'Global personal rankings in each official event are listed, based on the {url}.', array(
         '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
       )); ?></p>
     </li>
     <li>
       <p><?php echo CHtml::link(Yii::t('common', 'Records'), array('/results/records')); ?></p>
-      <p><?php echo Yii::t('statistics', 'World, Asian and Chinese records are displayed on the page, based on the {url}.', array(
+      <p><?php echo Yii::t('statistics', 'Regional records are displayed on the page, based on the {url}.', array(
         '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA records'), 'https://www.worldcubeassociation.org/results/regions.php', array('target'=>'_blank')),
       )); ?></p>
     </li>

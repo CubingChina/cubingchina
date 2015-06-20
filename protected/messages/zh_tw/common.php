@@ -18,12 +18,12 @@
  */
 return array (
   'Fee' => '',
-  'File is too large, the limit size is {size}' => '',
-  'Image height or width exceeded, the limit width is {width} and height is {height}' => '',
-  'Invalid file type of image' => '',
-  'Limit: ' => '',
-  'No file uploaded' => '',
-  'Upload failed, please contact the administrator' => '',
+  'File is too large, the limited size is {size}' => '文件太大，最大允許{size}',
+  'Image height or width exceeded, the limited width is {width} and height is {height}' => '圖像寬度或高度過大，最大寬度是{width}，最大高度是{height}',
+  'Invalid file type of image' => '圖像文件格式不規範',
+  'Limit: ' => '限制：',
+  'No file uploaded' => '沒有文件上傳',
+  'Upload failed, please contact the administrator' => '上傳失敗，請聯繫管理員',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',

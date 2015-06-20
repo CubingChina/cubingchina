@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Avatar' => '',
+  'Avatar' => '頭像',
   'ID' => '',
   'Password' => '',
   'Birthday' => '生日',

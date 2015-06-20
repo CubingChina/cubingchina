@@ -374,7 +374,7 @@
   <?php endif; ?>
   <h2><?php echo Yii::t('Persons', 'History'); ?></h2>
   <?php
-  $this->widget('GroupGridView', array(
+  $this->widget('GroupRankGridView', array(
     'dataProvider'=>new CArrayDataProvider($personResults, array(
       'pagination'=>false,
       'sort'=>false,
@@ -387,12 +387,14 @@
         "class"=>"event-icon event-icon event-icon-" . $data->eventId,
         "title"=>Yii::t("event", $data->event->cellName),
       ), Yii::t("event", $data->event->cellName))',
+    'rankKey'=>'competitionId',
     'repeatHeader'=>true,
     'columns'=>array(
       array(
+        'class'=>'RankColumn',
         'name'=>Yii::t('Results', 'Competition'),
         'type'=>'raw',
-        'value'=>'$data->competitionLink',
+        'value'=>'$displayRank ? $data->competitionLink : ""',
         'headerHtmlOptions'=>array('class'=>'competition_name'),
       ),
       array(

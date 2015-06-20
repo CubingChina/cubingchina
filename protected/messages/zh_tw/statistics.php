@@ -17,8 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Chinese personal rankings in each official event are listed, based on the {url}.' => '',
-  'World, Asian and Chinese records are displayed on the page, based on the {url}.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
