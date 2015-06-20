@@ -12,6 +12,70 @@
  */
 class Persons extends ActiveRecord {
 
+	public static function getPersons($region = 'China', $gender = 'all', $name = '', $page = 1) {
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'p.*',
+			'country.iso2',
+			'country.name AS countryName',
+		))
+		->from('Persons p')
+		->leftJoin('Countries country', 'p.countryId=country.id')
+		->where('p.subid=1');
+		switch ($gender) {
+			case 'female':
+				$command->andWhere('p.gender="f"');
+				break;
+			case 'male':
+				$command->andWhere('p.gender="m"');
+				break;
+		}
+		switch ($region) {
+			case 'World':
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->andWhere('country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->andWhere('p.countryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		if ($name) {
+			$names = explode(' ', $name);
+			foreach ($names as $key=>$value) {
+				if (trim($value) === '') {
+					continue;
+				}
+				$paramKey = ':name' . $key;
+				$command->andWhere("p.name LIKE {$paramKey} or p.id LIKE {$paramKey}", array(
+					$paramKey=>'%' . $value . '%',
+				));
+			}
+		}
+		$cmd1 = clone $command;
+		$count = $cmd1->select('COUNT(DISTINCT p.id) AS count')
+		->queryScalar();
+		if ($page > ceil($count / 100)) {
+			$page = ceil($count / 100);
+		}
+		$rows = array();
+		$command->order('p.name ASC')
+		->limit(100, ($page - 1) * 100);
+		return array(
+			'count'=>$count,
+			'rows'=>$command->queryAll(),
+		);
+	}
+
 	public static function getGenders() {
 		return array(
 			'all'=>Yii::t('common', 'All'),
@@ -51,6 +115,10 @@ class Persons extends ActiveRecord {
 
 	public static function getWCALinkByNameNId($name, $id) {
 		return CHtml::link($name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $id, array('target'=>'_blank'));
+	}
+
+	public static function getWCAIconLinkByNameNId($name, $id) {
+		return self::getWCALinkByNameNId(CHtml::image('/f/images/wca.png', $name, array('class'=>'wca-competition')), $id) . $id;
 	}
 
 	public static function getResults($id) {
