@@ -46,6 +46,7 @@ return array (
   'History of World Records' => '歷史世界紀錄',
   'NR' => '地區紀錄',
   'Name' => '姓名',
+  'Name, parts or WCA ID' => '姓名或WCAID',
   'Overall Medal Collection' => '獎牌匯總',
   'Overall Record Collection' => '紀錄匯總',
   'Place' => '排名',

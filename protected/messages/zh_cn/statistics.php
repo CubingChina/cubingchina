@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Here you can find WCA competitors.' => '你可以在这里查看WCA选手们。',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中国三速单次成绩前100占席',
@@ -69,7 +70,7 @@ return array (
   'Sum of Ranks' => '排名总和',
   'WR' => '世界排名',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本页面列出了与官方赛事及中国选手相关的趣味统计，所有的统计数据源自{url}。',
-  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看中国魔方选手的个人排名、官方纪录与趣味统计等信息。',
+  'Welcome to the Cubing China results page, where you can find the personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看魔方选手的个人排名、官方纪录与趣味统计等信息。',
   'official WCA rankings' => 'WCA赛事的官方排名',
   'official WCA records' => 'WCA赛事的官方纪录',
   'official WCA statistics' => 'WCA赛事的官方成绩',

@@ -1,6 +1,10 @@
 <div class="col-lg-12 competition-wca">
-  <p><?php echo Yii::t('statistics', 'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.'); ?></p>
+  <p><?php echo Yii::t('statistics', 'Welcome to the Cubing China results page, where you can find the personal rankings, official records, and fun statistics.'); ?></p>
   <ul>
+    <li>
+      <p><?php echo CHtml::link(Yii::t('common', 'Persons'), array('/results/person')); ?></p>
+      <p><?php echo Yii::t('statistics', 'Here you can find WCA competitors.'); ?></p>
+    </li>
     <li>
       <p><?php echo CHtml::link(Yii::t('common', 'Rankings'), array('/results/rankings')); ?></p>
       <p><?php echo Yii::t('statistics', 'Global personal rankings in each official event are listed, based on the {url}.', array(

@@ -20,7 +20,7 @@
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('common', 'WCA ID'); ?>:</span>
-          <span class="info-value"><?php echo Persons::getWCALinkByNameNId(CHtml::image('/f/images/wca.png', $person->name, array('class'=>'wca-competition')), $person->id), $person->id; ?></span>
+          <span class="info-value"><?php echo Persons::getWCAIconLinkByNameNId($person->name, $person->id); ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('common', 'Gender'); ?>:</span>
