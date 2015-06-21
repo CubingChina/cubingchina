@@ -2180,3 +2180,16 @@ tr.filters input, tr.filters select {
 body.modal-open {
     overflow: initial;
 }
+
+.user-avatar {
+    max-width: 100%;
+    height: auto;
+}
+
+.user-avatar-option {
+    width: 320px;
+}
+
+table .user-avatar {
+    max-width: 120px;
+}

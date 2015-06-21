@@ -168,6 +168,21 @@
             )),
             $form->error($model, 'role', array('class'=>'text-danger'))
           );?>
+          <?php echo Html::formGroup(
+            $model, 'avatar_id', array(
+              'class'=>'col-lg-12',
+            ),
+            $form->labelEx($model, 'avatar_id', array(
+              'label'=>'头像',
+            )),
+            $form->radioButtonList($model, 'avatar_id', $model->avatarList, array(
+              'class'=>'form-control',
+              'container'=>'div',
+              'separator'=>'',
+              'template'=>'<div class="radio user-avatar-option">{beginLabel}{input}{labelTitle}{endLabel}</div>',
+            )),
+            $form->error($model, 'avatar_id', array('class'=>'text-danger'))
+          );?>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
           </div>
