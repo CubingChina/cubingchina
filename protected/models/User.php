@@ -175,6 +175,13 @@ class User extends ActiveRecord {
 		);
 	}
 
+	public static function getHasAvatars() {
+		return array(
+			'>0'=>'有',
+			'0'=>'无',
+		);
+	}
+
 	public function getGenderText() {
 		$genders = self::getGenders();
 		return isset($genders[$this->gender]) ? $genders[$this->gender] : Yii::t('common', 'Unknown');
@@ -313,6 +320,19 @@ class User extends ActiveRecord {
 		return Yii::app()->request->getBaseUrl(true) . $url;
 	}
 
+	public function getAvatarList() {
+		$avatars = $this->avatars;
+		$avatarList = array(
+			0=>'无',
+		);
+		foreach ($avatars as $avatar) {
+			$avatarList[$avatar->id] = CHtml::image($avatar->fullUrl, '', array(
+				'class'=>'user-avatar img-thumbnail',
+			));
+		}
+		return $avatarList;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -351,6 +371,7 @@ class User extends ActiveRecord {
 			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
 			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
 			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
+			'avatars'=>array(self::HAS_MANY, 'UserAvatar', 'user_id'),
 		);
 	}
 
@@ -405,6 +426,7 @@ class User extends ActiveRecord {
 		$criteria->compare('t.name_zh', $this->name_zh, true);
 		$criteria->compare('t.email', $this->email, true);
 		$criteria->compare('t.password', $this->password, true);
+		$criteria->compare('t.avatar_id', $this->avatar_id, true);
 		$criteria->compare('t.birthday', $this->birthday, true);
 		$criteria->compare('t.gender', $this->gender);
 		$criteria->compare('t.mobile', $this->mobile, true);
