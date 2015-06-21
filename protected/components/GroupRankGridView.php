@@ -16,6 +16,7 @@ class GroupRankGridView extends RankGridView {
 			if ($this->lastGroup != $group) {
 				$this->lastGroup = $group;
 				$this->renderGroupHeader($row);
+				$this->lastRankValue = '';
 			}
 		}
 		parent::renderTableRow($row);
