@@ -68,6 +68,15 @@
                 'value'=>'$data->getGenderText()',
               ),
               array(
+                'headerHtmlOptions'=>array(
+                  'class'=>'header-avatar',
+                ),
+                'filter'=>User::getHasAvatars(),
+                'name'=>'avatar_id',
+                'value'=>'$data->avatar ? $data->avatar->img : ""',
+                'type'=>'raw',
+              ),
+              array(
                 'name'=>'birthday',
                 'headerHtmlOptions'=>array(
                   'class'=>'header-birthday',

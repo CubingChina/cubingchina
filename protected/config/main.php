@@ -161,7 +161,7 @@ $config = array(
 		),
 		'weiboSharePic' => 'http://cubingchina.com/f/images/logo2x.png',
 		'staticPath' => dirname(dirname(__DIR__)) . '/public/static/',
-		'staticUrlPrefix' => DEV ? '/static/' : 'http://s.cubingchina.com/',
+		'staticUrlPrefix' => 0 ? '/static/' : 'http://s.cubingchina.com/',
 		'jsVer' => '20150620',
 		'cssVer' => '20150620',
 		'avatar' => array(
