@@ -22,11 +22,36 @@ class MostSolves extends Statistics {
 			'personId',
 			'personName',
 			'cellName',
+			'p.countryId',
+			'country.iso2',
 		))
 		->from('Results rs')
 		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-		->leftJoin('Competitions c', 'rs.competitionId=c.id')
-		->where('personCountryId="China"');
+		->leftJoin('Countries country', 'p.countryId=country.id')
+		->leftJoin('Competitions c', 'rs.competitionId=c.id');
+		if (isset($statistic['region'])) {
+			switch ($statistic['region']) {
+				case 'World':
+					break;
+				case 'Africa':
+				case 'Asia':
+				case 'Oceania':
+				case 'Europe':
+				case 'North America':
+				case 'South America':
+					$command->where('country.continentId=:region', array(
+						':region'=>'_' . $statistic['region'],
+					));
+					break;
+				default:
+					$command->where('rs.personCountryId=:region', array(
+						':region'=>$statistic['region'],
+					));
+					break;
+			}
+		} else {
+			$command->where('personCountryId="China"');
+		}
 		if (!empty($statistic['eventIds'])) {
 			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
 		}
@@ -56,6 +81,13 @@ class MostSolves extends Statistics {
 				'value'=>'$data["solve"] . "/" . $data["attempt"]',
 			),
 		);
+		if (isset($statistic['region'])) {
+			$columns[] = array(
+				'header'=>'Yii::t("common", "Region")',
+				'value'=>'Region::getIconName($data["countryId"], $data["iso2"])',
+				'type'=>'raw',
+			);
+		}
 		switch ($statistic['type']) {
 			case 'competition':
 				$columns[0] = array(
