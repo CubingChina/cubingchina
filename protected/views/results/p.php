@@ -115,6 +115,10 @@
         'header'=>Yii::t('statistics', 'Bronze'),
         'value'=>'$data->medals["bronze"] ?: ""',
       ),
+      array(
+        'header'=>Yii::t('statistics', 'Solves/Attempts'),
+        'value'=>'$data->medals["solve"] . "/" . $data->medals["attempt"]',
+      ),
     ),
   )); ?>
   <?php if (!empty($wcPodiums)): ?>
