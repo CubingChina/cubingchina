@@ -327,6 +327,10 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');
 		$eventIds = $this->aGet('event');
+		$region = $this->sGet('region', 'China');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
@@ -338,6 +342,7 @@ class ResultsController extends Controller {
 			'type'=>'all',
 			'eventIds'=>$eventIds,
 			'gender'=>$gender,
+			'region'=>$region,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -360,6 +365,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'gender'=>$gender,
 			'eventIds'=>$eventIds,
+			'region'=>$region,
 		));
 	}
 

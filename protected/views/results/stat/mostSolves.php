@@ -37,7 +37,13 @@
     </div>
     <div class="form-inline">
       <div class="form-group">
-        <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
+        <label for="region"><?php echo Yii::t('common', 'Region'); ?></label>
+        <?php echo CHtml::dropDownList('region', $region, Region::getWCARegions(), array(
+          'class'=>'form-control',
+        )); ?>
+      </div>
+      <div class="form-group">
+        <label for="gender"><?php echo Yii::t('common', 'Gender'); ?></label>
         <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
           'class'=>'form-control',
         )); ?>
