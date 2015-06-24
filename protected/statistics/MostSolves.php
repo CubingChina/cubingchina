@@ -44,13 +44,13 @@ class MostSolves extends Statistics {
 					));
 					break;
 				default:
-					$command->where('rs.personCountryId=:region', array(
+					$command->where('p.countryId=:region', array(
 						':region'=>$statistic['region'],
 					));
 					break;
 			}
 		} else {
-			$command->where('personCountryId="China"');
+			$command->where('p.countryId="China"');
 		}
 		if (!empty($statistic['eventIds'])) {
 			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
