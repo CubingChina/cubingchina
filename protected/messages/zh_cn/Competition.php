@@ -67,6 +67,7 @@ return array (
   'Type' => '类型',
   'Venue' => '地点',
   'WCA Competition' => '世界魔方协会认证比赛',
+  'WCA Link' => 'WCA链接',
   'WCA Official Page' => 'WCA官方页面',
   'WCA regulations' => 'WCA比赛规则',
   'Wca Competition ID' => 'WCA比赛ID',

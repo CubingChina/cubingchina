@@ -156,7 +156,7 @@ class ResultsController extends Controller {
 		$id = $this->sGet('id');
 		$person = Persons::model()->findByAttributes(array('id' => $id));
 		if ($person == null) {
-			$this->redirect(array('/results/persons'));
+			$this->redirect(array('/results/person'));
 		}
 		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
 		$data['person'] = $person;
@@ -173,6 +173,31 @@ class ResultsController extends Controller {
 		$this->title = Yii::t('common', 'Personal Page');
 		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
 		$this->render('p', $data);
+	}
+
+	public function actionC() {
+		$id = $this->sGet('id');
+		$type = $this->sGet('type', 'winners');
+		$competition = Competitions::model()->findByAttributes(array('id' => $id));
+		if ($competition == null) {
+			$this->redirect(array('/results/competition'));
+		}
+		if (($c = Competition::model()->findByAttributes(array('wca_competition_id' => $id))) !== null) {
+			$competition->name = $c->getAttributeValue('name');
+			$competition->location = $c->isMultiLocation() ? $c->getLocationInfo('venue') : $c->location[0]->getFullAddress(false);
+		}
+		$data = Yii::app()->cache->getData(array('Competitions', 'getResults'), $id);
+		$data['competition'] = $competition;
+		$data['type'] = $type;
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Competitions'=>array('/results/competition'),
+			$competition->name,
+		);
+		$this->pageTitle = array($competition->name, 'Competition Page');
+		$this->title = $competition->name;
+		// $this->setWeiboShareDefaultText($competition->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
+		$this->render('c', $data);
 	}
 
 	public function actionStatistics() {

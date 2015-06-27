@@ -26,6 +26,105 @@
  * @property integer $longitude
  */
 class Competitions extends ActiveRecord {
+	private $_location;
+
+	public static function getResultsTypes() {
+		return array(
+			'winners'=>Yii::t('Competitions', 'Winners'),
+			'top3'=>Yii::t('Competitions', 'Top 3'),
+			'all'=>Yii::t('Competitions', 'All Results'),
+		);
+	}
+
+	public static function getResults($id) {
+		//比赛成绩
+		$winners = Results::model()->with(array(
+			'person',
+			'person.country',
+			'round',
+			'event',
+			'format',
+		))->findAllByAttributes(array(
+			'competitionId'=>$id,
+			'pos'=>1,
+			'roundId'=>array('c', 'f'),
+		), array(
+			'order'=>'event.rank, round.rank, t.pos'
+		));
+		$top3 = Results::model()->with(array(
+			'person',
+			'person.country',
+			'round',
+			'event',
+			'format',
+		))->findAllByAttributes(array(
+			'competitionId'=>$id,
+			'pos'=>array(1, 2, 3),
+			'roundId'=>array('c', 'f'),
+		), array(
+			'order'=>'event.rank, round.rank, t.pos'
+		));
+		$all = Results::model()->with(array(
+			'person',
+			'person.country',
+			'round',
+			'event',
+			'format',
+		))->findAllByAttributes(array(
+			'competitionId'=>$id,
+		), array(
+			'order'=>'event.rank, round.rank, t.pos'
+		));
+		return array(
+			'winners'=>$winners,
+			'top3'=>$top3,
+			'all'=>$all,
+		);
+	}
+
+	public static function getDisplayDate($date, $endDate) {
+		$displayDate = date("Y-m-d", $date);
+		if ($endDate > 0) {
+			if (date('Y', $endDate) != date('Y', $date)) {
+				$displayDate .= date('~Y-m-d', $endDate);
+			} elseif (date('m', $endDate) != date('m', $date)) {
+				$displayDate .= date('~m-d', $endDate);
+			} else {
+				$displayDate .= date('~d', $endDate);
+			}
+		}
+		return $displayDate;
+	}
+
+	public static function getWcaUrl($id) {
+		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $id;
+	}
+
+	public function getWcaLink() {
+		return CHtml::link($this->name, self::getWcaUrl($this->id), array('target'=>'_blank'));
+	}
+
+	public function getDate() {
+		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
+		if ($this->endMonth > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		} else {
+			$endDate = 0;
+		}
+		return self::getDisplayDate($date, $endDate);
+	}
+
+	public function setLocation($location) {
+		$this->_location = $location;
+	}
+
+	public function getLocation() {
+		if ($this->_location === null) {
+			$this->_location = $this->cityName . ', ' . $this->country->name;
+		}
+		return $this->_location;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -62,6 +161,7 @@ class Competitions extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'country'=>array(self::BELONGS_TO, 'Countries', 'countryId'),
 		);
 	}
 

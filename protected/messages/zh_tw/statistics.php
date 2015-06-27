@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Here you can find WCA competitors.' => '你可以在這裡查看WCA選手們。',
+  'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
   'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
@@ -40,7 +40,6 @@ return array (
   'Records set in Chinese competitions' => '中國賽事創紀錄數量排行榜',
   'Score' => '計分',
   'Second' => '亞軍',
-  'Solves/Attempts' => '復原/嘗試',
   'Sum' => '總和',
   'Sum of 2x2 to 5x5 average ranks' => '二階至五階平均綜合排行榜',
   'Sum of 2x2 to 5x5 single ranks' => '二階至五階單次綜合排行榜',
@@ -58,6 +57,7 @@ return array (
   'Global personal rankings in each official event are listed, based on the the official WCA rankings.' => '本頁面列出了各國選手在所有WCA項目的個人排名，所有的排名成績源自WCA賽事的官方排名。',
   'Global personal rankings in each official event are listed, based on the {url}.' => '本頁面列出了各國選手在所有WCA項目的個人排名，所有的排名成績源自{url}。',
   'Gold' => '金',
+  'Here you can find WCA competitors.' => '你可以在這裡查看WCA選手們。',
   'Medal Collection' => '獎牌榜',
   'Most Personal Solves' => '復原榜',
   'NR' => '地區排名',
@@ -66,6 +66,7 @@ return array (
   'Regional records are displayed on the page, based on the official WCA records.' => '本頁面列出了所有WCA項目的各地區紀錄，所有的成績紀錄源自WCA賽事的官方紀錄。',
   'Regional records are displayed on the page, based on the {url}.' => '本頁面列出了所有WCA項目的各地區紀錄，所有的成績紀錄源自{url}。',
   'Silver' => '銀',
+  'Solves/Attempts' => '復原/嘗試',
   'Sum of Country Ranks' => '各國綜合排行榜',
   'Sum of Ranks' => '排名總和',
   'WR' => '世界排名',

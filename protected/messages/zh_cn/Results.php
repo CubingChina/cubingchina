@@ -23,7 +23,7 @@ return array (
   'Event' => '',
   'Format' => '',
   'ID' => '',
-  'Person' => '',
+  'Person' => '选手',
   'Person Name' => '',
   'Pos' => '',
   'Regional Average Record' => '',
