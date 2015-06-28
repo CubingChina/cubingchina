@@ -408,7 +408,13 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getWcaUrl() {
-		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $this->wca_competition_id;
+		return Competitions::getWcaUrl($this->wca_competition_id);
+	}
+
+	public function getHasResults() {
+		return $this->type == self::TYPE_WCA && Results::model()->countByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		)) > 0;
 	}
 
 	public function getUrl($type = 'detail') {
@@ -423,17 +429,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getDisplayDate() {
-		$date = date("Y-m-d", $this->date);
-		if ($this->end_date > 0) {
-			if (date('Y', $this->end_date) != date('Y', $this->date)) {
-				$date .= date('~Y-m-d', $this->end_date);
-			} elseif (date('m', $this->end_date) != date('m', $this->date)) {
-				$date .= date('~m-d', $this->end_date);
-			} else {
-				$date .= date('~d', $this->end_date);
-			}
-		}
-		return $date;
+		return Competitions::getDisplayDate($this->date, $this->end_date);
 	}
 
 	public function getOrganizers() {

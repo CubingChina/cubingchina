@@ -45,7 +45,7 @@
     'groupHeader'=>'CHtml::tag("span", array(
         "class"=>"event-icon event-icon event-icon-" . $data["eventId"],
         "title"=>Yii::t("event", Events::getFullEventName($data["eventId"])),
-      ), Yii::t("event", Events::getFullEventName($group)))',
+      ), Yii::t("event", Events::getFullEventName($data["eventId"])))',
     'columns'=>array(
       array(
         'header'=>Yii::t('common', 'Records'),

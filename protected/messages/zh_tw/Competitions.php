@@ -19,6 +19,7 @@
 return array (
   'Cell Name' => '',
   'City Name' => '',
+  'Competitions' => '比賽',
   'Country' => '',
   'Day' => '',
   'End Day' => '',
@@ -37,4 +38,7 @@ return array (
   'Wca Delegate' => '',
   'Website' => '',
   'Year' => '',
+  'All Results' => '所有',
+  'Top 3' => '前三',
+  'Winners' => '冠軍',
 );

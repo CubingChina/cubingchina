@@ -2012,6 +2012,13 @@ body.competition .main-nav .nav .cube-yellow.active > a, body.competition .main-
   background-color: #ffea00;
   color: #999;
 }
+body.competition .main-nav .nav .cube-purple > a {
+  background-color: #C222BA;
+  color: #fff;
+}
+body.competition .main-nav .nav .cube-purple.active > a, body.competition .main-nav .nav .cube-purple:hover > a {
+  background-color: #CD3BC6;
+}
 .timeline {
   list-style: none;
   padding: 20px 0 20px;
@@ -2307,6 +2314,9 @@ table.table th a.desc {
 .event-icon-333mbf:before {
   background-position: -5px -35px;
 }
+.event-icon-333mbo:before {
+  background-position: -5px -35px;
+}
 .event-icon-333fm:before {
   background-position: -35px -35px;
 }
@@ -2391,14 +2401,14 @@ span.penalty {
   margin-bottom: 10px;
   padding: 10px;
 }
-.results-person .new-best {
+table .new-best {
   color: #f60;
 }
-.results-person .record {
-  /*width: 60px;*/
-}
-.results-person .result {
+table .result {
   text-align: right;
+}
+body.results table .region {
+  padding-right: 20px;
 }
 .results-person .info-title {
   display: inline-block;
@@ -2408,6 +2418,9 @@ span.penalty {
 }
 .results-person .person-detail {
   line-height: 1.8;
+}
+.results-competition form {
+  margin-bottom: 20px;
 }
 .user-avatar {
   max-height: 450px;

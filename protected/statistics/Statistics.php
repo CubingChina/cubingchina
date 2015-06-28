@@ -207,7 +207,7 @@ class Statistics {
 				self::$_competitions[$competition->wca_competition_id] = array(
 					'name'=>$competition->name,
 					'name_zh'=>$competition->name_zh,
-					'url'=>$competition->url,
+					'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
 				);
 			}
 		}
@@ -215,7 +215,7 @@ class Statistics {
 			$data = self::$_competitions[$row['competitionId']];
 		} elseif (($data = $cache->get($cacheKey)) === false) {
 			$data['name'] = $data['name_zh'] = $row['cellName'];
-			$data['url'] = 'https://www.worldcubeassociation.org/results/c.php?i=' . $row['competitionId'];
+			$data['url'] = array('/results/c', 'id'=>$row['competitionId']);
 			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
 			self::$_competitions[$row['competitionId']] = $data;
 		}

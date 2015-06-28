@@ -12,7 +12,11 @@ class GroupGridView extends GridView {
 		$this->_currentRow = $row;
 		if ($this->groupKey !== null) {
 			$data = $this->dataProvider->data[$row];
-			$group = CHtml::value($data, $this->groupKey);
+			$group = $this->evaluateExpression($this->groupHeader, array(
+				'data'=>$data,
+				'row'=>$row,
+				'group'=>$this->lastGroup,
+			));
 			if ($this->lastGroup != $group) {
 				$this->lastGroup = $group;
 				$this->renderGroupHeader($row);
@@ -29,11 +33,7 @@ class GroupGridView extends GridView {
 		echo "<tr>\n";
 		echo CHtml::tag('td', array(
 			'colspan'=>count($this->columns),
-		), $this->evaluateExpression($this->groupHeader, array(
-			'data'=>$data,
-			'row'=>$row,
-			'group'=>$this->lastGroup,
-		)));
+		), $this->lastGroup);
 		echo "</tr>\n";
 		if ($this->repeatHeader) {
 			echo "<tr>\n";
