@@ -60,6 +60,7 @@
         'header'=>Yii::t('common', 'Region'),
         'type'=>'raw',
         'value'=>'Region::getIconName($data->country->name, $data->country->iso2)',
+        'htmlOptions'=>array('class'=>'region'),
       ),
       array(
         'name'=>'cityName',
