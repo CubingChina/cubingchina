@@ -6,7 +6,7 @@
       <p><?php echo Yii::t('statistics', 'Here you can find WCA competitors.'); ?></p>
     </li>
     <li>
-      <p><?php echo CHtml::link(Yii::t('common', 'Competitions'), array('/results/competition')); ?></p>
+      <p><?php echo CHtml::link(Yii::t('Competitions', 'Competitions'), array('/results/competition')); ?></p>
       <p><?php echo Yii::t('statistics', 'Here you can find WCA competitions.'); ?></p>
     </li>
     <li>
