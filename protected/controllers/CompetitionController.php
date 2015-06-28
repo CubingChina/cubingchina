@@ -208,6 +208,13 @@ class CompetitionController extends Controller {
 				),
 			),
 			array(
+				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
+				'url'=>$competition->getUrl('regulations'),
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-green',
+				),
+			),
+			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),
 				'itemOptions'=>array(
@@ -219,13 +226,6 @@ class CompetitionController extends Controller {
 				'url'=>$competition->getUrl('travel'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-yellow',
-				),
-			),
-			array(
-				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
-				'url'=>$competition->getUrl('regulations'),
-				'itemOptions'=>array(
-					'class'=>'nav-item cube-green',
 				),
 			),
 			array(
@@ -243,6 +243,15 @@ class CompetitionController extends Controller {
 				),
 			),
 		);
+		if ($competition->hasResults) {
+			array_splice($navibar, 6, 0, array(array(
+				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),
+				'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-purple',
+				),
+			)));
+		}
 		$this->navibar = $navibar;
 	}
 }

@@ -2012,6 +2012,13 @@ body.competition .main-nav .nav .cube-yellow.active > a, body.competition .main-
   background-color: #ffea00;
   color: #999;
 }
+body.competition .main-nav .nav .cube-purple > a {
+  background-color: #C222BA;
+  color: #fff;
+}
+body.competition .main-nav .nav .cube-purple.active > a, body.competition .main-nav .nav .cube-purple:hover > a {
+  background-color: #CD3BC6;
+}
 .timeline {
   list-style: none;
   padding: 20px 0 20px;

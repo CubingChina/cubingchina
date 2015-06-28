@@ -411,6 +411,12 @@ class Competition extends ActiveRecord {
 		return Competitions::getWcaUrl($this->wca_competition_id);
 	}
 
+	public function getHasResults() {
+		return $this->type == self::TYPE_WCA && Results::model()->countByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		)) > 0;
+	}
+
 	public function getUrl($type = 'detail') {
 		return array(
 			'/competition/' . $type,
