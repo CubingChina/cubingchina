@@ -368,7 +368,7 @@ class Results extends ActiveRecord {
 			'competitionId'=>$this->competitionId,
 			'cellName'=>$this->competition->cellName,
 		));
-		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url'], array('target'=>'_blank'));
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}
 
 	public function getDetail($boldBest = false) {
@@ -419,6 +419,7 @@ class Results extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'person'=>array(self::BELONGS_TO, 'Persons', 'personId'),
 			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
 			'round'=>array(self::BELONGS_TO, 'Rounds', 'roundId'),
 			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),

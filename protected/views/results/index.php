@@ -6,6 +6,10 @@
       <p><?php echo Yii::t('statistics', 'Here you can find WCA competitors.'); ?></p>
     </li>
     <li>
+      <p><?php echo CHtml::link(Yii::t('Competitions', 'Competitions'), array('/results/competition')); ?></p>
+      <p><?php echo Yii::t('statistics', 'Here you can find WCA competitions.'); ?></p>
+    </li>
+    <li>
       <p><?php echo CHtml::link(Yii::t('common', 'Rankings'), array('/results/rankings')); ?></p>
       <p><?php echo Yii::t('statistics', 'Global personal rankings in each official event are listed, based on the {url}.', array(
         '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
