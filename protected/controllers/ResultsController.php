@@ -182,6 +182,9 @@ class ResultsController extends Controller {
 		if ($competition == null) {
 			$this->redirect(array('/results/competition'));
 		}
+		if (!array_key_exists($type, Competitions::getResultsTypes())) {
+			$type = 'winners';
+		}
 		if (($c = Competition::model()->findByAttributes(array('wca_competition_id' => $id))) !== null) {
 			$competition->name = $c->getAttributeValue('name');
 			$competition->location = $c->isMultiLocation() ? $c->getLocationInfo('venue') : $c->location[0]->getFullAddress(false);

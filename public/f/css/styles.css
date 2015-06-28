@@ -2307,6 +2307,9 @@ table.table th a.desc {
 .event-icon-333mbf:before {
   background-position: -5px -35px;
 }
+.event-icon-333mbo:before {
+  background-position: -5px -35px;
+}
 .event-icon-333fm:before {
   background-position: -35px -35px;
 }
@@ -2394,11 +2397,11 @@ span.penalty {
 table .new-best {
   color: #f60;
 }
-table .record {
-  /*width: 60px;*/
-}
 table .result {
   text-align: right;
+}
+body.results table .region {
+  padding-right: 20px;
 }
 .results-person .info-title {
   display: inline-block;
@@ -2408,6 +2411,9 @@ table .result {
 }
 .results-person .person-detail {
   line-height: 1.8;
+}
+.results-competition form {
+  margin-bottom: 20px;
 }
 .user-avatar {
   max-height: 450px;

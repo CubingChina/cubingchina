@@ -52,6 +52,7 @@ $this->widget('GroupGridView', array(
       'name'=>Yii::t('common', 'Region'),
       'value'=>'Region::getIconName($data->person->country->name, $data->person->country->iso2)',
       'type'=>'raw',
+      'htmlOptions'=>array('class'=>'region'),
     ),
     array(
       'name'=>Yii::t('common', 'Detail'),
