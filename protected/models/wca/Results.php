@@ -368,7 +368,7 @@ class Results extends ActiveRecord {
 			'competitionId'=>$this->competitionId,
 			'cellName'=>$this->competition->cellName,
 		));
-		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url'], array('target'=>'_blank'));
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}
 
 	public function getDetail($boldBest = false) {

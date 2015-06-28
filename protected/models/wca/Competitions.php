@@ -30,12 +30,29 @@ class Competitions extends ActiveRecord {
 	public $c;
 	private $_location;
 
+	public $region;
+	public $event;
+
 	public static function getResultsTypes() {
 		return array(
 			'winners'=>Yii::t('Competitions', 'Winners'),
 			'top3'=>Yii::t('Competitions', 'Top 3'),
 			'all'=>Yii::t('Competitions', 'All Results'),
 		);
+	}
+
+	public static function getYears() {
+		$years = array(
+			'current'=>Yii::t('common', 'Current'),
+		);
+		$lastCompetition = self::model()->find(array(
+			'order'=>'year DESC',
+		));
+		for ($year = $lastCompetition->year; $year >= 2003; $year--) {
+			$years[$year] = $year;
+		}
+		$years[1982] = 1982;
+		return $years;
 	}
 
 	public static function getResults($id) {
@@ -91,7 +108,7 @@ class Competitions extends ActiveRecord {
 				$displayDate .= date('~Y-m-d', $endDate);
 			} elseif (date('m', $endDate) != date('m', $date)) {
 				$displayDate .= date('~m-d', $endDate);
-			} else {
+			} elseif (date('d', $endDate) != date('d', $date)) {
 				$displayDate .= date('~d', $endDate);
 			}
 		}
@@ -112,6 +129,14 @@ class Competitions extends ActiveRecord {
 
 	public function getWcaLink() {
 		return CHtml::link(CHtml::image('/f/images/wca.png', $this->name, array('class'=>'wca-competition')), self::getWcaUrl($this->id), array('target'=>'_blank'));
+	}
+
+	public function getCompetitionLink() {
+		$competition = Statistics::getCompetition(array(
+			'competitionId'=>$this->id,
+			'cellName'=>$this->cellName,
+		));
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}
 
 	public function getDate() {
@@ -220,29 +245,75 @@ class Competitions extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('cityName',$this->cityName,true);
-		$criteria->compare('countryId',$this->countryId,true);
-		$criteria->compare('information',$this->information,true);
-		$criteria->compare('year',$this->year);
-		$criteria->compare('month',$this->month);
-		$criteria->compare('day',$this->day);
-		$criteria->compare('endMonth',$this->endMonth);
-		$criteria->compare('endDay',$this->endDay);
-		$criteria->compare('eventSpecs',$this->eventSpecs,true);
-		$criteria->compare('wcaDelegate',$this->wcaDelegate,true);
-		$criteria->compare('organiser',$this->organiser,true);
-		$criteria->compare('venue',$this->venue,true);
-		$criteria->compare('venueAddress',$this->venueAddress,true);
-		$criteria->compare('venueDetails',$this->venueDetails,true);
-		$criteria->compare('website',$this->website,true);
-		$criteria->compare('cellName',$this->cellName,true);
-		$criteria->compare('latitude',$this->latitude);
-		$criteria->compare('longitude',$this->longitude);
+		$criteria->with = 'country';
+
+		$criteria->compare('t.id',$this->id,true);
+		// $criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.cityName',$this->cityName,true);
+		$criteria->compare('t.countryId',$this->countryId,true);
+		$criteria->compare('t.information',$this->information,true);
+		// $criteria->compare('t.year',$this->year);
+		// $criteria->compare('t.month',$this->month);
+		// $criteria->compare('t.day',$this->day);
+		$criteria->compare('t.endMonth',$this->endMonth);
+		$criteria->compare('t.endDay',$this->endDay);
+		$criteria->compare('t.eventSpecs',$this->eventSpecs,true);
+		$criteria->compare('t.wcaDelegate',$this->wcaDelegate,true);
+		$criteria->compare('t.organiser',$this->organiser,true);
+		$criteria->compare('t.venue',$this->venue,true);
+		$criteria->compare('t.venueAddress',$this->venueAddress,true);
+		$criteria->compare('t.venueDetails',$this->venueDetails,true);
+		$criteria->compare('t.website',$this->website,true);
+		$criteria->compare('t.cellName',$this->cellName,true);
+		$criteria->compare('t.latitude',$this->latitude);
+		$criteria->compare('t.longitude',$this->longitude);
+
+		$pageSize = 100;
+		if (in_array($this->year, self::getYears())) {
+			$criteria->compare('year', $this->year);
+		} elseif ($this->year === 'current') {
+			$time = time() - 86400 * 90;
+			$criteria->addCondition('UNIX_TIMESTAMP(CONCAT(year, "-", month, "-", day))>=' . $time);
+			$pageSize = 10000;
+		}
+		switch ($this->region) {
+			case 'World':
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$criteria->compare('country.continentId', $this->region);
+				break;
+			default:
+				$criteria->compare('t.countryId', $this->region);
+				break;
+		}
+		if ($this->event && in_array($this->event, array_keys(Events::getNormalEvents()))) {
+			$criteria->addCondition("eventSpecs REGEXP '[[:<:]]{$this->event}[[:>:]]'");
+		}
+		if ($this->name) {
+			$names = explode(' ', $this->name);
+			foreach ($names as $key=>$value) {
+				if (trim($value) === '') {
+					continue;
+				}
+				$paramKey = ':name' . $key;
+				$criteria->addCondition("t.cellName LIKE {$paramKey} or t.cityName LIKE {$paramKey} or t.venue LIKE {$paramKey}");
+				$criteria->params[$paramKey] = '%' . $value . '%';
+			}
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>$pageSize,
+			),
+			'sort'=>array(
+				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC',
+			),
 		));
 	}
 

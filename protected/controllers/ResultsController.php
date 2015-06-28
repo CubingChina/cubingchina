@@ -149,7 +149,6 @@ class ResultsController extends Controller {
 			'name'=>$name,
 			'page'=>$page,
 		));
-
 	}
 
 	public function actionP() {
@@ -173,6 +172,26 @@ class ResultsController extends Controller {
 		$this->title = Yii::t('common', 'Personal Page');
 		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
 		$this->render('p', $data);
+	}
+
+	public function actionCompetition() {
+		$model = new Competitions('search');
+		$model->unsetAttributes();
+		$model->year = $this->sGet('year', 'current');
+		$model->region = $this->sGet('region', 'China');
+		$model->event = $this->sGet('event');
+		$model->name = $this->sGet('name', '');
+		$this->title = 'Competitions';
+		$this->pageTitle = array(
+			'Competitions',
+		);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Competitions',
+		);
+		$this->render('competition', array(
+			'model'=>$model,
+		));
 	}
 
 	public function actionC() {
