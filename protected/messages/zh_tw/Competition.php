@@ -67,7 +67,7 @@ return array (
   'Type' => '類型',
   'Venue' => '地點',
   'WCA Competition' => '世界魔方協會認證比賽',
-  'WCA Link' => 'WCA鏈接',
+  'Links' => '鏈接',
   'WCA Official Page' => 'WCA官方頁面',
   'WCA regulations' => 'WCA比賽規則',
   'Wca Competition ID' => 'WCA比賽ID',

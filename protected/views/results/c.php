@@ -11,8 +11,8 @@
           <span class="info-value"><?php echo $competition->location; ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
-          <span class="info-title"><?php echo Yii::t('Competition', 'WCA Link'); ?>:</span>
-          <span class="info-value"><?php echo $competition->wcaLink; ?></span>
+          <span class="info-title"><?php echo Yii::t('Competition', 'Links'); ?>:</span>
+          <span class="info-value"><?php echo $competition->links; ?></span>
         </div>
       </div>
     </div>

@@ -207,7 +207,7 @@ class Statistics {
 				self::$_competitions[$competition->wca_competition_id] = array(
 					'name'=>$competition->name,
 					'name_zh'=>$competition->name_zh,
-					'url'=>$competition->url,
+					'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
 				);
 			}
 		}

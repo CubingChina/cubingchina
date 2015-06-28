@@ -188,6 +188,7 @@ class ResultsController extends Controller {
 		if (($c = Competition::model()->findByAttributes(array('wca_competition_id' => $id))) !== null) {
 			$competition->name = $c->getAttributeValue('name');
 			$competition->location = $c->isMultiLocation() ? $c->getLocationInfo('venue') : $c->location[0]->getFullAddress(false);
+			$competition->c = $c;
 		}
 		$data = Yii::app()->cache->getData(array('Competitions', 'getResults'), $id);
 		$data['competition'] = $competition;

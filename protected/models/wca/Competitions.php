@@ -26,6 +26,8 @@
  * @property integer $longitude
  */
 class Competitions extends ActiveRecord {
+	//粗饼比赛
+	public $c;
 	private $_location;
 
 	public static function getResultsTypes() {
@@ -100,8 +102,16 @@ class Competitions extends ActiveRecord {
 		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $id;
 	}
 
+	public function getLinks() {
+		if ($this->c) {
+			$links[] = CHtml::link(CHtml::image('/f/images/icon64.png', $this->name, array('class'=>'wca-competition')), $this->c->url);
+		}
+		$links[] = $this->getWcaLink();
+		return implode(' ', $links);
+	}
+
 	public function getWcaLink() {
-		return CHtml::link($this->name, self::getWcaUrl($this->id), array('target'=>'_blank'));
+		return CHtml::link(CHtml::image('/f/images/wca.png', $this->name, array('class'=>'wca-competition')), self::getWcaUrl($this->id), array('target'=>'_blank'));
 	}
 
 	public function getDate() {
