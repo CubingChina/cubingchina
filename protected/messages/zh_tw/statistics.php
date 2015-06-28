@@ -57,6 +57,7 @@ return array (
   'Global personal rankings in each official event are listed, based on the the official WCA rankings.' => '本頁面列出了各國選手在所有WCA項目的個人排名，所有的排名成績源自WCA賽事的官方排名。',
   'Global personal rankings in each official event are listed, based on the {url}.' => '本頁面列出了各國選手在所有WCA項目的個人排名，所有的排名成績源自{url}。',
   'Gold' => '金',
+  'Here you can find WCA competitions.' => '你可以在這裡查看WCA比賽',
   'Here you can find WCA competitors.' => '你可以在這裡查看WCA選手們。',
   'Medal Collection' => '獎牌榜',
   'Most Personal Solves' => '復原榜',

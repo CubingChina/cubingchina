@@ -41,6 +41,7 @@
     'template'=>'{items}{pager}',
     'enableSorting'=>false,
     'front'=>true,
+    'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
     'columns'=>array(
       array(
         'name'=>'date',

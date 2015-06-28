@@ -160,6 +160,27 @@ class Competitions extends ActiveRecord {
 		return $this->_location;
 	}
 
+	public function isInProgress() {
+		$now = time();
+		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
+		if ($this->endMonth > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		} else {
+			$endDate = 0;
+		}
+		return $now > $date && $now - 86400 < max($date, $endDate);
+	}
+
+	public function isEnded() {
+		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
+		if ($this->endMonth > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		} else {
+			$endDate = 0;
+		}
+		return time() - 86400 > max($date, $endDate);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -312,7 +333,7 @@ class Competitions extends ActiveRecord {
 				'pageSize'=>$pageSize,
 			),
 			'sort'=>array(
-				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC',
+				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.endMonth DESC, t.endDay DESC',
 			),
 		));
 	}

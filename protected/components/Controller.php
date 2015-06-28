@@ -139,7 +139,7 @@ class Controller extends CController {
 						),
 						array(
 							'url'=>array('/results/competition'),
-							'label'=>Html::fontAwesome('table', 'a') . Yii::t('common', 'Competitions'),
+							'label'=>Html::fontAwesome('archive', 'a') . Yii::t('Competitions', 'Competitions'),
 						),
 						array(
 							'url'=>array('/results/rankings'),

@@ -183,11 +183,11 @@ class ResultsController extends Controller {
 		$model->name = $this->sGet('name', '');
 		$this->title = 'Competitions';
 		$this->pageTitle = array(
-			'Competitions',
+			Yii::t('Competitions', 'Competitions'),
 		);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
-			'Competitions',
+			Yii::t('Competitions', 'Competitions'),
 		);
 		$this->render('competition', array(
 			'model'=>$model,
