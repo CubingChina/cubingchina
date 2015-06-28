@@ -181,7 +181,7 @@ class ResultsController extends Controller {
 		$model->region = $this->sGet('region', 'China');
 		$model->event = $this->sGet('event');
 		$model->name = $this->sGet('name', '');
-		$this->title = 'Competitions';
+		$this->title = Yii::t('Competitions', 'Competitions');
 		$this->pageTitle = array(
 			Yii::t('Competitions', 'Competitions'),
 		);

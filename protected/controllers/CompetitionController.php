@@ -211,21 +211,21 @@ class CompetitionController extends Controller {
 				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
 				'url'=>$competition->getUrl('regulations'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-green',
+					'class'=>'nav-item cube-orange',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-orange',
+					'class'=>'nav-item cube-yellow',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('taxi', 'a') . Yii::t('Competition', 'Travel'),
 				'url'=>$competition->getUrl('travel'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-yellow',
+					'class'=>'nav-item cube-green',
 				),
 			),
 			array(
