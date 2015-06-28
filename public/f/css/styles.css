@@ -2006,11 +2006,11 @@ body.competition .main-nav .nav .cube-white.active > a, body.competition .main-n
 }
 body.competition .main-nav .nav .cube-yellow > a {
   background-color: #fee700;
-  color: #aaa;
+  color: #999;
 }
 body.competition .main-nav .nav .cube-yellow.active > a, body.competition .main-nav .nav .cube-yellow:hover > a {
   background-color: #ffea00;
-  color: #999;
+  color: #888;
 }
 body.competition .main-nav .nav .cube-purple > a {
   background-color: #C222BA;
