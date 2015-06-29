@@ -68,7 +68,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Region'),
-        'value'=>'Yii::t("common", Yii::t("Region", $data["countryName"]))',
+        'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
         'type'=>'raw',
       ),
       array(

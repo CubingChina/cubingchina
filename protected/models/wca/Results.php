@@ -178,6 +178,7 @@ class Results extends ActiveRecord {
 			'c.month',
 			'c.day',
 			'country.name AS countryName',
+			'country.iso2',
 		))
 		->from('Results rs')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id')
@@ -259,6 +260,7 @@ class Results extends ActiveRecord {
 			'c.month',
 			'c.day',
 			'country.name AS countryName',
+			'country.iso2',
 		))
 		->leftJoin('Events e', 'r.eventId=e.id')
 		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
