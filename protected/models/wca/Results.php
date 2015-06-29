@@ -110,10 +110,13 @@ class Results extends ActiveRecord {
 					'c.year',
 					'c.month',
 					'c.day',
+					'country.name AS countryName',
+					'country.iso2',
 				))
 				->from('Results rs')
 				->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
 				->leftJoin('Competitions c', 'rs.competitionId=c.id')
+				->leftJoin('Countries country', 'rs.personCountryId=country.id')
 				->where(sprintf('(rs.eventId, rs.%s, rs.personId) IN (%s)',
 					$field,
 					implode(',', $eventBestPerson)
@@ -178,6 +181,7 @@ class Results extends ActiveRecord {
 			'c.month',
 			'c.day',
 			'country.name AS countryName',
+			'country.iso2',
 		))
 		->from('Results rs')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id')
@@ -259,6 +263,7 @@ class Results extends ActiveRecord {
 			'c.month',
 			'c.day',
 			'country.name AS countryName',
+			'country.iso2',
 		))
 		->leftJoin('Events e', 'r.eventId=e.id')
 		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
