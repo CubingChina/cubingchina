@@ -306,7 +306,7 @@ class Competitions extends ActiveRecord {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$criteria->compare('country.continentId', $this->region);
+				$criteria->compare('country.continentId', '_' . $this->region);
 				break;
 			default:
 				$criteria->compare('t.countryId', $this->region);
