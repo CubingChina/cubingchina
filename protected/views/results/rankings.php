@@ -66,6 +66,7 @@
       'header'=>Yii::t('common', 'Region'),
       'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
       'type'=>'raw',
+      'htmlOptions'=>array('class'=>'region'),
     ),
     array(
       'header'=>Yii::t('common', 'Result'),
