@@ -63,6 +63,11 @@
       'type'=>'raw',
     ),
     array(
+      'header'=>Yii::t('common', 'Region'),
+      'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+      'type'=>'raw',
+    ),
+    array(
       'header'=>Yii::t('common', 'Result'),
       'value'=>'Results::formatTime($data["best"], $data["eventId"])',
       'type'=>'raw',
