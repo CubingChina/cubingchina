@@ -37,7 +37,7 @@
       'sliceData'=>false,
       'totalItemCount'=>$persons['count'],
     )),
-    'template'=>'{items}{pager}',
+    'template'=>'{summary}{items}{pager}',
     'enableSorting'=>false,
     'front'=>true,
     'columns'=>array(
