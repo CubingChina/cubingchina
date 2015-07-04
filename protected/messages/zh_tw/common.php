@@ -30,6 +30,7 @@ return array (
   'Best of 3' => '三次計最好',
   'CR' => '洲際紀錄',
   'Competition List' => '賽事列表',
+  'Competition Results' => '賽果展示',
   'Competitors' => '參賽選手',
   'Contact us' => '聯繫我們',
   'Country' => '國家',
