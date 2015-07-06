@@ -217,7 +217,7 @@ class ResultsController extends Controller {
 			'Competitions'=>array('/results/competition'),
 			$competition->name,
 		);
-		$this->pageTitle = array($competition->name, 'Competition Page');
+		$this->pageTitle = array($competition->name, 'Competition Results');
 		$this->title = $competition->name;
 		// $this->setWeiboShareDefaultText($competition->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
 		$this->render('c', $data);
