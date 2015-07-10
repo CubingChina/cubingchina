@@ -64,7 +64,11 @@ class Top100 extends Statistics {
 				}
 				$top200 = call_user_func_array('array_merge', $temp);
 				usort($top200, function($resultA, $resultB) {
-					return $resultA['value'] - $resultB['value'];
+					$temp = $resultA['value'] - $resultB['value'];
+					if ($temp == 0) {
+						$temp = strcmp($resultA['personName'], $resultB['personName']);
+					}
+					return $temp;
 				});
 				break;
 			case 'average':
