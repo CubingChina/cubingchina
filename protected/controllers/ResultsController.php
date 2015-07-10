@@ -441,7 +441,7 @@ class ResultsController extends Controller {
 			'gender'=>$gender,
 			'region'=>$region,
 		);
-		$this->title = Yii::t('statistics', 'Top 100 Results');
+		$this->title = Yii::t('statistics', 'Chinese Top 100 Results');
 		$this->pageTitle = array('Fun Statistics', $this->title);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
