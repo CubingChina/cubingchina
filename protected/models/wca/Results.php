@@ -317,20 +317,20 @@ class Results extends ActiveRecord {
 		if ($result == 0) {
 			return '';
 		}
-		if($eventId == '333fm') {
+		if ($eventId == '333fm') {
 			if ($result > 1000) {
 				$time = sprintf('%.2f', $result / 100);
 			} else {
 				$time = $result;
 			}
-		} elseif($eventId == '333mbf' || ($eventId == '333mbo' && strlen($result) == 9)) {
+		} elseif ($eventId == '333mbf' || ($eventId == '333mbo' && strlen($result) == 9)) {
 			$difference = 99 - substr($result, 0, 2);
 			$missed = intval(substr($result, -2));
 			$time = self::formatGMTime(substr($result, 3, -2), true);
 			$solved = $difference + $missed;
 			$attempted = $solved + $missed;
 			$time = $solved . '/' . $attempted . ' ' . $time;
-		} elseif($eventId == '333mbo') {
+		} elseif ($eventId == '333mbo') {
 			$solved = 99 - substr($result, 1, 2);
 			$attempted = intval(substr($result, 3, 2));
 			$time = self::formatGMTime(substr($result, -5), true);
@@ -360,6 +360,19 @@ class Results extends ActiveRecord {
 		return ltrim(gmdate('G:i:s', $time), '0:');
 	}
 
+	public static function getDisplayDetail($data, $boldBest = false) {
+		$detail = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$value = $data['value' . $i];
+			$time = self::formatTime($value, $data['eventId']);
+			if ($boldBest && $value === $data['best']) {
+				$time = CHtml::Tag('b', array(), $time);
+			}
+			$detail[] = $time;
+		}
+		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+	}
+
 	public function getTime($attribute) {
 		$time = self::formatTime($this->$attribute, $this->eventId);
 		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
@@ -377,16 +390,7 @@ class Results extends ActiveRecord {
 	}
 
 	public function getDetail($boldBest = false) {
-		$detail = array();
-		for ($i = 1; $i <= 5; $i++) {
-			$attribute = 'value' . $i;
-			$time = $this->getTime($attribute);
-			if ($boldBest && $this->$attribute === $this->best) {
-				$time = CHtml::Tag('b', array(), $time);
-			}
-			$detail[] = $time;
-		}
-		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+		return self::getDisplayDetail($this->attributes, $boldBest);
 	}
 
 	/**

@@ -73,14 +73,32 @@ class Statistics {
 			'width'=>'6',
 		),
 		'Appearances in top 100 Chinese single results of Rubik\'s Cube'=>array(
+			'count'=>true,
+			'region'=>'China',
 			'type'=>'single',
 			'class'=>'Top100',
+			'event'=>'333',
 			'width'=>6,
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'top-100',
+				'event'=>'333',
+				'type'=>'single',
+			),
 		),
 		'Appearances in top 100 Chinese average results of Rubik\'s Cube'=>array(
+			'count'=>true,
+			'region'=>'China',
 			'type'=>'average',
 			'class'=>'Top100',
+			'event'=>'333',
 			'width'=>6,
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'top-100',
+				'event'=>'333',
+				'type'=>'average',
+			),
 		),
 		'Best podiums'=>array(
 			'class'=>'BestPodiums',

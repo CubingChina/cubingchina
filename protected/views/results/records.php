@@ -84,9 +84,7 @@
       ),
       array(
         'header'=>Yii::t('common', 'Detail'),
-        'value'=>'$data["type"] === "single" ? "" : implode("&nbsp;&nbsp;", array_map(function($i) use($data) {
-          return Results::formatTime($data["value" . $i], $data["eventId"]);
-        }, range(1, 5)))',
+        'value'=>'$data["type"] === "single" ? "" : Results::getDisplayDetail($data)',
         'type'=>'raw',
       ),
     ),
