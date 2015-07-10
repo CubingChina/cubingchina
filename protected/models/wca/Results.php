@@ -317,20 +317,20 @@ class Results extends ActiveRecord {
 		if ($result == 0) {
 			return '';
 		}
-		if($eventId == '333fm') {
+		if ($eventId == '333fm') {
 			if ($result > 1000) {
 				$time = sprintf('%.2f', $result / 100);
 			} else {
 				$time = $result;
 			}
-		} elseif($eventId == '333mbf' || ($eventId == '333mbo' && strlen($result) == 9)) {
+		} elseif ($eventId == '333mbf' || ($eventId == '333mbo' && strlen($result) == 9)) {
 			$difference = 99 - substr($result, 0, 2);
 			$missed = intval(substr($result, -2));
 			$time = self::formatGMTime(substr($result, 3, -2), true);
 			$solved = $difference + $missed;
 			$attempted = $solved + $missed;
 			$time = $solved . '/' . $attempted . ' ' . $time;
-		} elseif($eventId == '333mbo') {
+		} elseif ($eventId == '333mbo') {
 			$solved = 99 - substr($result, 1, 2);
 			$attempted = intval(substr($result, 3, 2));
 			$time = self::formatGMTime(substr($result, -5), true);
