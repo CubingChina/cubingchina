@@ -360,6 +360,19 @@ class Results extends ActiveRecord {
 		return ltrim(gmdate('G:i:s', $time), '0:');
 	}
 
+	public static function getDisplayDetail($data, $boldBest = false) {
+		$detail = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$value = $data['value' . $i];
+			$time = self::formatTime($value, $data['eventId']);
+			if ($boldBest && $value === $data['best']) {
+				$time = CHtml::Tag('b', array(), $time);
+			}
+			$detail[] = $time;
+		}
+		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+	}
+
 	public function getTime($attribute) {
 		$time = self::formatTime($this->$attribute, $this->eventId);
 		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
@@ -377,16 +390,7 @@ class Results extends ActiveRecord {
 	}
 
 	public function getDetail($boldBest = false) {
-		$detail = array();
-		for ($i = 1; $i <= 5; $i++) {
-			$attribute = 'value' . $i;
-			$time = $this->getTime($attribute);
-			if ($boldBest && $this->$attribute === $this->best) {
-				$time = CHtml::Tag('b', array(), $time);
-			}
-			$detail[] = $time;
-		}
-		return implode('&nbsp;&nbsp;&nbsp;', $detail);
+		return self::getDisplayDetail($this->attributes, $boldBest);
 	}
 
 	/**

@@ -87,9 +87,7 @@
   if ($type === 'average') {
     $columns[] = array(
       'header'=>Yii::t('common', 'Detail'),
-      'value'=>'implode("&nbsp;&nbsp;", array_map(function($i) use($data) {
-        return Results::formatTime($data["value" . $i], $data["eventId"]);
-      }, range(1, 5)))',
+      'value'=>'Results::getDisplayDetail($data)',
       'type'=>'raw',
     );
   }

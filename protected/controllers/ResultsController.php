@@ -417,6 +417,49 @@ class ResultsController extends Controller {
 		));
 	}
 
+	private function statTop100() {
+		$region = $this->sGet('region', 'China');
+		$type = $this->sGet('type', 'single');
+		$event = $this->sGet('event', '333');
+		$gender = $this->sGet('gender', 'all');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!array_key_exists($event, Events::getNormalEvents())) {
+			$event = '333';
+		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		$statistic = array(
+			'class'=>'Top100',
+			'type'=>$type,
+			'event'=>$event,
+			'gender'=>$gender,
+			'region'=>$region,
+		);
+		$this->title = Yii::t('statistics', 'Top 100 Results');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic);
+		extract($data);
+		$this->render('stat/top100', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'region'=>$region,
+			'gender'=>$gender,
+			'event'=>$event,
+			'type'=>$type,
+		));
+	}
+
 	private function statMedalCollection() {
 		$page = $this->iGet('page', 1);
 		$eventIds = $this->aGet('event');

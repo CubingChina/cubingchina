@@ -78,7 +78,6 @@ Yii::app()->clientScript->registerScript('competition',
   var results = {};
   var lastRound;
   var lastEvent;
-  var s = +new Date();
   $('tr[data-round]').each(function() {
     var that = $(this);
     var event = that.data('event');
