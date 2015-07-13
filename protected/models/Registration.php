@@ -404,20 +404,20 @@ class Registration extends ActiveRecord {
 				$temp = strcmp($rA->user->$attribute, $rB->user->$attribute);
 			}
 		} elseif (self::$sortByEvent === true) {
-			if ($rA->best > 0 && $rB->best > 0) {
-				$temp = $rA->best - $rB->best;
-				if (self::$sortDesc === true) {
-					$temp = -$temp;
-				}
-			} elseif ($rA->best > 0) {
-				$temp = -1;
-			} elseif ($rB->best > 0) {
-				$temp = 1;
-			} else {
-				$temp = 0;
-			}
+			$temp = in_array($attribute, $rB->events) - in_array($attribute, $rA->events);
 			if ($temp == 0) {
-				$temp = in_array($attribute, $rB->events) - in_array($attribute, $rA->events);
+				if ($rA->best > 0 && $rB->best > 0) {
+					$temp = $rA->best - $rB->best;
+					if (self::$sortDesc === true) {
+						$temp = -$temp;
+					}
+				} elseif ($rA->best > 0) {
+					$temp = -1;
+				} elseif ($rB->best > 0) {
+					$temp = 1;
+				} else {
+					$temp = 0;
+				}
 			}
 		} else {
 			$temp = $rA->$attribute - $rB->$attribute;
