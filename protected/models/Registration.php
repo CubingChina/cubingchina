@@ -406,10 +406,13 @@ class Registration extends ActiveRecord {
 		} elseif (self::$sortByEvent === true) {
 			if ($rA->best > 0 && $rB->best > 0) {
 				$temp = $rA->best - $rB->best;
+				if (self::$sortDesc === true) {
+					$temp = -$temp;
+				}
 			} elseif ($rA->best > 0) {
-				$temp = 1;
-			} elseif ($rB->best > 0) {
 				$temp = -1;
+			} elseif ($rB->best > 0) {
+				$temp = 1;
 			} else {
 				$temp = 0;
 			}
@@ -550,7 +553,7 @@ class Registration extends ActiveRecord {
 		}
 		if ($sort !== '') {
 			usort($registrations, array($this, 'sortRegistration'));
-			if (self::$sortDesc === true) {
+			if (self::$sortDesc === true && self::$sortByEvent !== true) {
 				$registrations = array_reverse($registrations);
 			}
 		}
