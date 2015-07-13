@@ -14,6 +14,7 @@
  */
 class Registration extends ActiveRecord {
 	public $number;
+	public $best = -1;
 
 	public static $sortByUserAttribute = false;
 	public static $sortByEvent = false;
@@ -76,10 +77,14 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getEventsString($event) {
+		$str = '';
 		if (in_array($event, $this->events)) {
-			return '<span class="fa fa-check"></span>';
+			$str = '<span class="fa fa-check"></span>';
+			if ($this->best > 0 && self::$sortAttribute === $event) {
+				$str .= Results::formatTime($this->best, $event);
+			}
 		}
-		return '';
+		return $str;
 	}
 
 	public function getRegistrationEvents() {
@@ -400,6 +405,20 @@ class Registration extends ActiveRecord {
 			}
 		} elseif (self::$sortByEvent === true) {
 			$temp = in_array($attribute, $rB->events) - in_array($attribute, $rA->events);
+			if ($temp == 0) {
+				if ($rA->best > 0 && $rB->best > 0) {
+					$temp = $rA->best - $rB->best;
+					if (self::$sortDesc === true) {
+						$temp = -$temp;
+					}
+				} elseif ($rA->best > 0) {
+					$temp = -1;
+				} elseif ($rB->best > 0) {
+					$temp = 1;
+				} else {
+					$temp = 0;
+				}
+			}
 		} else {
 			$temp = $rA->$attribute - $rB->$attribute;
 		}
@@ -446,37 +465,8 @@ class Registration extends ActiveRecord {
 		$statistics['unpaid'] = 0;
 		$statistics[User::GENDER_MALE] = 0;
 		$statistics[User::GENDER_FEMALE] = 0;
-		foreach ($registrations as $registration) {
-			if ($registration->isAccepted()) {
-				$registration->number = $number++;
-			}
-			$statistics['number']++;
-			$statistics[$registration->user->gender]++;
-			if ($registration->user->wcaid === '') {
-				$statistics['new']++;
-			}
-			foreach ($registration->events as $event) {
-				if (!isset($statistics[$event])) {
-					$statistics[$event] = 0;
-				}
-				$statistics[$event]++;
-			}
-			$fee = $registration->getTotalFee();
-			if ($registration->isPaid()) {
-				$statistics['paid'] += $fee;
-			} else {
-				$statistics['unpaid'] += $fee;
-			}
-		}
-		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];
-		$statistics['old'] = $statistics['number'] - $statistics['new'];
-		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
-		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
-		foreach ($columns as $key=>$column) {
-			if (isset($column['name']) && isset($statistics[$column['name']])) {
-				$columns[$key]['footer'] = $statistics[$column['name']];
-			}
-		}
+
+		//detect sort attribute
 		$sort = Yii::app()->controller->sGet('sort');
 		$sort = explode('.', $sort);
 		if (isset($sort[1]) && $sort[1] === 'desc') {
@@ -503,8 +493,67 @@ class Registration extends ActiveRecord {
 					self::$sortAttribute = $sort;
 					break;
 			}
+		}
+
+		$wcaIds = array();
+		foreach ($registrations as $registration) {
+			if ($registration->isAccepted()) {
+				$registration->number = $number++;
+			}
+			$statistics['number']++;
+			$statistics[$registration->user->gender]++;
+			if ($registration->user->wcaid === '') {
+				$statistics['new']++;
+			}
+			foreach ($registration->events as $event) {
+				if (!isset($statistics[$event])) {
+					$statistics[$event] = 0;
+				}
+				$statistics[$event]++;
+			}
+			$fee = $registration->getTotalFee();
+			if ($registration->isPaid()) {
+				$statistics['paid'] += $fee;
+			} else {
+				$statistics['unpaid'] += $fee;
+			}
+			//store wcaids
+			if ($registration->user->wcaid) {
+				$wcaIds[$registration->user->wcaid] = $registration;
+			}
+		}
+		if (self::$sortByEvent === true && !empty($wcaIds)) {
+			switch ($sort) {
+				case '333bf':
+				case '444bf':
+				case '555bf':
+				case '333mbf':
+					$modelName = 'RanksSingle';
+					break;
+				default:
+					$modelName = 'RanksAverage';
+					break;
+			}
+			$results = $modelName::model()->findAllByAttributes(array(
+				'eventId'=>$sort,
+				'personId'=>array_keys($wcaIds),
+			));
+			foreach ($results as $result) {
+				$wcaIds[$result->personId]->best = $result->best;
+			}
+		}
+		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];
+		$statistics['old'] = $statistics['number'] - $statistics['new'];
+		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
+		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
+		foreach ($columns as $key=>$column) {
+			if (isset($column['name']) && isset($statistics[$column['name']])) {
+				$columns[$key]['footer'] = $statistics[$column['name']];
+			}
+		}
+		if ($sort !== '') {
 			usort($registrations, array($this, 'sortRegistration'));
-			if (self::$sortDesc === true) {
+			if (self::$sortDesc === true && self::$sortByEvent !== true) {
 				$registrations = array_reverse($registrations);
 			}
 		}
