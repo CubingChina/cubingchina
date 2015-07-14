@@ -103,6 +103,13 @@ class Registration extends ActiveRecord {
 		$fee = $this->getTotalFee();
 		if ($this->isPaid() && $fee > 0) {
 			$fee .= Yii::t('common', ' (paid)');
+		} elseif ($fee > 0) {
+			$fee .= CHtml::link(Yii::t('common', 'Pay'), array(
+				'/pay/registration',
+				'id'=>$this->id,
+			), array(
+				'class'=>'btn btn-xs btn-theme',
+			));
 		}
 		return $fee;
 	}
@@ -352,6 +359,7 @@ class Registration extends ActiveRecord {
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
+			'pay'=>array(self::HAS_ONE, 'Pay', 'type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
 			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
 		);
 	}
