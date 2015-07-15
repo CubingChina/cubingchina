@@ -29,6 +29,76 @@ class Pay extends ActiveRecord {
 	const DEVICE_TYPE_PC = 0;
 	const DEVICE_TYPE_WAP = 1;
 
+	const FUNCODE_PAY = 'WP001';
+	const ORDER_TYPE = '01';
+	const ORDER_TIME_OUT = 3600;
+	const CURRENCY_TYPE = '156';
+	const CHARSET = 'UTF-8';
+	const SIGN_TYPE = 'MD5';
+
+	public function generateNowPayUrl($isMobile) {
+		$app = Yii::app();
+		if ($isMobile) {
+			$nowPay = $app->params->nowPay['mobile'];
+		} else {
+			$nowPay = $app->params->nowPay['pc'];
+		}
+		$baseUrl = $app->request->getBaseUrl(true);
+		$params = array(
+			'funcode'=>self::FUNCODE_PAY,
+			'appId'=>$nowPay['appId'],
+			'mhtOrderNo'=>$this->order_id,
+			'mhtOrderName'=>$this->order_name,
+			'mhtOrderType'=>self::ORDER_TYPE,
+			'mhtCurrencyType'=>self::CURRENCY_TYPE,
+			'mhtOrderAmt'=>$this->amount,
+			'mhtOrderDetail'=>$this->order_name,
+			'mhtOrderTimeOut'=>self::ORDER_TIME_OUT,
+			'mhtOrderStartTime'=>date('YmdHis'),
+			'notifyUrl'=>$baseUrl . $app->createUrl('/pay/notify', array('id'=>$this->id)),
+			'frontNotifyUrl'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('id'=>$this->id)),
+			'mhtCharset'=>self::CHARSET,
+			'deviceType'=>$nowPay['deviceType'],
+			// 'mhtReserved'=>'',
+			'consumerId'=>$this->user_id,
+		);
+		$this->buildSignature($params, $nowPay['securityKey'], array(
+			'funcode',
+			'deviceType',
+		));
+		return $app->params->nowPay['baseUrl'] . '?' . http_build_query($params);
+	}
+
+	public function buildSignature(&$params, $securityKey, $excludeAttributes = array()) {
+		$temp = array_filter($params);
+		foreach ($excludeAttributes as $attribute) {
+			unset($temp[$attribute]);
+		}
+		ksort($temp);
+		$str = '';
+		foreach ($temp as $key=>$value) {
+			$str .= "$key=$value&";
+		}
+		$str .= md5($securityKey);
+		$params['mhtSignature'] = md5($str);
+		$params['mhtSignType'] = self::SIGN_TYPE;
+		return $params;
+	}
+
+	public function isPaid() {
+		return $this->status == self::STATUS_PAID;
+	}
+
+	protected function beforeValidate() {
+		if ($this->isNewRecord) {
+			$this->create_time = $this->update_time = time();
+			if (!$this->order_id) {
+				$this->order_id = sprintf('%s-%d-%06d-%05d', date('YmdHis', $this->create_time), $this->type, $this->sub_type_id, mt_rand(10000, 99999));
+			}
+		}
+		return parent::beforeValidate();
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -46,7 +116,7 @@ class Pay extends ActiveRecord {
 			array('user_id, order_id, order_name', 'required'),
 			array('type, device_type, status', 'numerical', 'integerOnly'=>true),
 			array('user_id, type_id, sub_type_id, amount', 'length', 'max'=>10),
-			array('order_id', 'length', 'max'=>20),
+			array('order_id', 'length', 'max'=>32),
 			array('order_name', 'length', 'max'=>50),
 			array('pay_channel', 'length', 'max'=>4),
 			array('now_pay_account', 'length', 'max'=>64),

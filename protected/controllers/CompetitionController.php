@@ -103,6 +103,7 @@ class CompetitionController extends Controller {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
 			$model->competition_id = $competition->id;
+			$model->total_fee = $model->getTotalFee();
 			$model->ip = Yii::app()->request->getUserHostAddress();
 			$model->date = time();
 			$model->status = Registration::STATUS_WAITING;
@@ -110,6 +111,9 @@ class CompetitionController extends Controller {
 				$model->status = Registration::STATUS_ACCEPTED;
 			}
 			if ($model->save()) {
+				if ($competition->isOnlinePay()) {
+					$model->pay = $model->createPay();
+				}
 				Yii::app()->mailer->sendRegistrationNotice($model);
 				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 				$this->render('registrationDone', array(

@@ -305,6 +305,18 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function createPay() {
+		$pay = new Pay();
+		$pay->user_id = $this->user_id;
+		$pay->type = Pay::TYPE_REGISTRATION;
+		$pay->type_id = $this->competition_id;
+		$pay->sub_type_id = $this->id;
+		$pay->amount = $this->total_fee * 100;
+		$pay->order_name = $this->competition->name_zh . '报名费';
+		$r = $pay->save();
+		return $pay;
+	}
+
 	public function handleEvents() {
 		if ($this->events !== null) {
 			$this->events = json_encode($this->events);
@@ -365,7 +377,7 @@ class Registration extends ActiveRecord {
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
-			'pay'=>array(self::HAS_ONE, 'Pay', 'type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
+			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
 			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
 		);
 	}
