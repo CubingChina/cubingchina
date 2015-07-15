@@ -8,6 +8,7 @@
  * @property string $user_id
  * @property integer $type
  * @property string $type_id
+ * @property string $sub_type_id
  * @property string $order_id
  * @property string $order_name
  * @property string $amount
@@ -44,7 +45,7 @@ class Pay extends ActiveRecord {
 		return array(
 			array('user_id, order_id, order_name', 'required'),
 			array('type, device_type, status', 'numerical', 'integerOnly'=>true),
-			array('user_id, type_id, amount', 'length', 'max'=>10),
+			array('user_id, type_id, sub_type_id, amount', 'length', 'max'=>10),
 			array('order_id', 'length', 'max'=>20),
 			array('order_name', 'length', 'max'=>50),
 			array('pay_channel', 'length', 'max'=>4),
@@ -52,7 +53,7 @@ class Pay extends ActiveRecord {
 			array('create_time, update_time', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, type, type_id, order_id, order_name, amount, device_type, pay_channel, now_pay_account, status, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, user_id, type, type_id, sub_type_id, order_id, order_name, amount, device_type, pay_channel, now_pay_account, status, create_time, update_time', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,6 +76,7 @@ class Pay extends ActiveRecord {
 			'user_id' => Yii::t('Pay', 'User'),
 			'type' => Yii::t('Pay', 'Type'),
 			'type_id' => Yii::t('Pay', 'Type'),
+			'sub_type_id' => Yii::t('Pay', 'Sub Type'),
 			'order_id' => Yii::t('Pay', 'Order'),
 			'order_name' => Yii::t('Pay', 'Order Name'),
 			'amount' => Yii::t('Pay', 'Amount'),
@@ -108,6 +110,7 @@ class Pay extends ActiveRecord {
 		$criteria->compare('user_id',$this->user_id,true);
 		$criteria->compare('type',$this->type);
 		$criteria->compare('type_id',$this->type_id,true);
+		$criteria->compare('sub_type_id',$this->sub_type_id,true);
 		$criteria->compare('order_id',$this->order_id,true);
 		$criteria->compare('order_name',$this->order_name,true);
 		$criteria->compare('amount',$this->amount,true);

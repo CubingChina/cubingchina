@@ -8,6 +8,7 @@
  * @property string $competition_id
  * @property string $user_id
  * @property string $events
+ * @property integer $total_fee
  * @property string $comments
  * @property string $date
  * @property integer $status
@@ -103,13 +104,6 @@ class Registration extends ActiveRecord {
 		$fee = $this->getTotalFee();
 		if ($this->isPaid() && $fee > 0) {
 			$fee .= Yii::t('common', ' (paid)');
-		} elseif ($fee > 0) {
-			$fee .= CHtml::link(Yii::t('common', 'Pay'), array(
-				'/pay/registration',
-				'id'=>$this->id,
-			), array(
-				'class'=>'btn btn-xs btn-theme',
-			));
 		}
 		return $fee;
 	}
@@ -124,6 +118,18 @@ class Registration extends ActiveRecord {
 			}
 		}
 		return $this->competition->entry_fee + array_sum($fees);
+	}
+
+	public function getPayButton($checkOnlinePay = true) {
+		if ($checkOnlinePay && !($this->getTotalFee() > 0 && $this->competition->isOnlinePay())) {
+			return '';
+		}
+		return CHtml::link(Yii::t('common', 'Pay'), array(
+			'/pay/registration',
+			'id'=>$this->id,
+		), array(
+			'class'=>'btn btn-xs btn-theme',
+		));
 	}
 
 	public function getLocation() {
@@ -151,7 +157,7 @@ class Registration extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-email',
 				),
-				'type'=>'raw', 
+				'type'=>'raw',
 				'value'=>"CHtml::label(CHtml::checkBox('{$modelName}[competitors][]', \$data->isAccepted(), array(
 					'class'=>implode(' ', array_map(function(\$a) {
 						return 'event-' . \$a;
@@ -160,7 +166,7 @@ class Registration extends ActiveRecord {
 					'data-accepted'=>intval(\$data->isAccepted()),
 				)) . ' ' . \$data->user->email, false, array(
 					'class'=>'checkbox',
-				))", 
+				))",
 			),
 		), $columns);
 		return $columns;
@@ -340,13 +346,13 @@ class Registration extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('location_id, competition_id, user_id, events, date', 'required'),
-			array('location_id, status', 'numerical', 'integerOnly'=>true),
+			array('location_id, total_fee, status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id, date', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, location_id, user_id, events, comments, date, status', 'safe', 'on'=>'search'),
+			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 	}
 

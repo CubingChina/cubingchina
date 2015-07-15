@@ -24,14 +24,13 @@
         'value'=>'$data->userNumber',
       ),
       array(
-        'name'=>'events',
-        'type'=>'raw',
-        'value'=>'$data->getRegistrationEvents()',
-      ),
-      array(
         'name'=>'fee',
         'type'=>'raw',
         'value'=>'$data->getRegistrationFee()',
+      ),
+      array(
+        'type'=>'raw',
+        'value'=>'$data->getPayButton()',
       ),
       // array(
       //   'name'=>'competition.province_id',
@@ -53,12 +52,17 @@
         'type'=>'raw',
         'value'=>'date("Y-m-d H:i", $data->date)',
       ),
-      'comments',
       array(
         'name'=>'status',
         'type'=>'raw',
         'value'=>'$data->getStatusText()',
       ),
+      array(
+        'name'=>'events',
+        'type'=>'raw',
+        'value'=>'$data->getRegistrationEvents()',
+      ),
+      'comments',
     ),
   )); ?>
 </div>

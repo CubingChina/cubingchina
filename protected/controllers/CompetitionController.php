@@ -1,17 +1,6 @@
 <?php
 class CompetitionController extends Controller {
 
-	public function filters() {
-		return array(
-			'accessControl',
-			// array(
-			// 	'COutputCache - registration',
-			// 	'duration'=>3600,
-			// 	'varyByLanguage'=>true,
-			// 	'varyByParam'=>array('name', 'sort'),
-			// ),
-		);
-	}
 	public function accessRules() {
 		return array(
 			array(
@@ -30,6 +19,7 @@ class CompetitionController extends Controller {
 			),
 		);
 	}
+
 	public function actionCompetitors() {
 		$competition = $this->getCompetition();
 		$model = new Registration('search');
@@ -41,6 +31,7 @@ class CompetitionController extends Controller {
 			'competition'=>$competition,
 		));
 	}
+
 	public function actionDetail() {
 		$competition = $this->getCompetition();
 		$this->pageTitle = array($competition->getAttribute($this->getAttributeName('name')));
@@ -52,6 +43,7 @@ class CompetitionController extends Controller {
 			'competition'=>$competition,
 		));
 	}
+
 	public function actionIndex() {
 		$model = new Competition('search');
 		$model->unsetAttributes();
@@ -70,6 +62,7 @@ class CompetitionController extends Controller {
 			'model'=>$model,
 		));
 	}
+
 	public function actionRegistration() {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
@@ -133,18 +126,21 @@ class CompetitionController extends Controller {
 			'model'=>$model,
 		));
 	}
+
 	public function actionRegulations() {
 		$competition = $this->getCompetition();
 		$this->render('regulations', array(
 			'competition'=>$competition,
 		));
 	}
+
 	public function actionSchedule() {
 		$competition = $this->getCompetition();
 		$this->render('schedule', array(
 			'competition'=>$competition,
 		));
 	}
+
 	public function actionTravel() {
 		$competition = $this->getCompetition();
 		$this->render('travel', array(
