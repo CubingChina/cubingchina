@@ -121,15 +121,21 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
-		if ($checkOnlinePay && !($this->getTotalFee() > 0 && $this->competition->isOnlinePay())) {
-			return '';
+		$totalFee = $this->getTotalFee();
+		if ($totalFee > 0 && $this->isPaid()) {
+			return CHtml::tag('button', array(
+				'class'=>'btn btn-xs btn-disabled',
+			), Yii::t('common', 'Paid'));
 		}
-		return CHtml::link(Yii::t('common', 'Pay'), array(
-			'/pay/registration',
-			'id'=>$this->id,
-		), array(
-			'class'=>'btn btn-xs btn-theme',
-		));
+		if ($totalFee > 0 && $this->competition->isOnlinePay()) {
+			return CHtml::link(Yii::t('common', 'Pay'), array(
+				'/pay/registration',
+				'id'=>$this->id,
+			), array(
+				'class'=>'btn btn-xs btn-theme',
+			));
+		}
+		return '';
 	}
 
 	public function getLocation() {
@@ -396,7 +402,7 @@ class Registration extends ActiveRecord {
 			'ip' => 'IP',
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
-			'fee' => Yii::t('Registration', 'Fee (CNY)'),
+			'fee' => Yii::t('Registration', 'Fee'),
 		);
 	}
 

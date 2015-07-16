@@ -17,15 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  ' CNY' => '元',
-  'Fee' => '报名费',
+  'Amount' => '',
+  'Create Time' => '',
+  'Device Type' => '',
   'ID' => '',
+  'Now Pay Account' => '',
+  'Order' => '',
+  'Order Name' => '',
+  'Pay Channel' => '',
+  'Status' => '',
+  'Sub Type' => '',
+  'Type' => '',
+  'Update Time' => '',
   'User' => '',
-  'Date' => '报名时间',
-  'Additional Comments' => '备注',
-  'Competition' => '比赛',
-  'Events' => '项目',
-  'Fee (CNY)' => '报名费(元)',
-  'Registration Date' => '报名时间',
-  'Status' => '状态',
 );

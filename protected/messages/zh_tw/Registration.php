@@ -17,6 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  ' CNY' => '元',
+  'Fee' => '報名費',
   'ID' => '',
   'User' => '',
   'Date' => '報名時間',

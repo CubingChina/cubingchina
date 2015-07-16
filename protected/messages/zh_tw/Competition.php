@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'Online Pay' => '',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
