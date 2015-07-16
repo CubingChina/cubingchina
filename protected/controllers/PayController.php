@@ -35,12 +35,15 @@ class PayController extends Controller {
 	}
 
 	public function actionNotify() {
-		$orderId = $this->sGet('mhtOrderNo');
+		$paramsStr = file_get_contents('php://input');
+		parse_str($paramsStr, $params);
+		$orderId = isset($params['mhtOrderNo']) ? $params['mhtOrderNo'] : '';
 		$model = Pay::getPayByOrderId($orderId);
 		if ($model === null) {
 			echo 'success=N';
+			exit;
 		}
-		$result = $model->validateNotify($_GET);
+		$result = $model->validateNotify($params);
 		if ($result) {
 			echo 'success=Y';
 		} else {
