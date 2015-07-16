@@ -34,6 +34,33 @@ class PayController extends Controller {
 		));
 	}
 
+	public function actionNotify() {
+		$orderId = $this->sGet('mhtOrderNo');
+		$model = Pay::getPayByOrderId($orderId);
+		if ($model === null) {
+			echo 'success=N';
+		}
+		$result = $model->validateNotify($_GET);
+		if ($result) {
+			echo 'success=Y';
+		} else {
+			echo 'success=N';
+		}
+	}
+
+	public function actionFrontNotify() {
+		$orderId = $this->sGet('mhtOrderNo');
+		$model = Pay::getPayByOrderId($orderId);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not Found');
+		}
+		$result = $model->validateNotify($_GET);
+		$this->render('result', array(
+			'model'=>$model,
+			'result'=>$result,
+		));
+	}
+
 	public function actionUrl() {
 		$id = $this->iGet('id');
 		$isMobile = $this->iRequest('is_mobile');

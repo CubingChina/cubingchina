@@ -30,11 +30,65 @@ class Pay extends ActiveRecord {
 	const DEVICE_TYPE_WAP = 1;
 
 	const FUNCODE_PAY = 'WP001';
+	const FUNCODE_NOTIFY = 'N001';
 	const ORDER_TYPE = '01';
 	const ORDER_TIME_OUT = 3600;
 	const CURRENCY_TYPE = '156';
 	const CHARSET = 'UTF-8';
 	const SIGN_TYPE = 'MD5';
+	const TRADE_SUCCESS = 'A001';
+
+	public static function buildSignature(&$params, $securityKey, $excludeAttributes = array()) {
+		$temp = array_filter($params);
+		foreach ($excludeAttributes as $attribute) {
+			unset($temp[$attribute]);
+		}
+		ksort($temp);
+		$str = '';
+		foreach ($temp as $key=>$value) {
+			$str .= "$key=$value&";
+		}
+		$str .= md5($securityKey);
+		$params['mhtSignature'] = md5($str);
+		$params['mhtSignType'] = self::SIGN_TYPE;
+		return $params;
+	}
+
+	public static function getPayByOrderId($orderId) {
+		return self::model()->findByAttributes(array(
+			'order_id'=>$orderId,
+		));
+	}
+
+	public function validateNotify($params) {
+		$app = Yii::app();
+		$appId = isset($params['appId']) ? $params['appId'] : '';
+		$signature = isset($params['signature']) ? $params['signature'] : '';
+		$funcode = isset($params['funcode']) ? $params['funcode'] : '';
+		$deviceType = isset($params['deviceType']) ? $params['deviceType'] : '';
+		$tradeStatus = isset($params['tradeStatus']) ? $params['tradeStatus'] : '';
+		$payChannelType = isset($params['payChannelType']) ? $params['payChannelType'] : '';
+		$nowPayAccNo = isset($params['nowPayAccNo']) ? $params['nowPayAccNo'] : '';
+		if ($app->params->nowPay['pc']['appId'] === $appId) {
+			$nowPay = $app->params->nowPay['pc'];
+		} else {
+			$nowPay = $app->params->nowPay['mobile'];
+		}
+		self::buildSignature($params, $nowPay['securityKey'], array(
+			'signature',
+			'signType',
+		));
+		$result = $signature === $params['mhtSignature'] && $tradeStatus === self::TRADE_SUCCESS;
+		if ($result && $funcode === self::FUNCODE_NOTIFY) {
+			//@todo notify check success
+			$this->device_type = $deviceType;
+			$this->pay_channel = $payChannelType;
+			$this->now_pay_account = $nowPayAccNo;
+			$this->status = self::STATUS_PAID;
+			$this->save(false);
+		}
+		return $result;
+	}
 
 	public function generateNowPayUrl($isMobile) {
 		$app = Yii::app();
@@ -55,34 +109,18 @@ class Pay extends ActiveRecord {
 			'mhtOrderDetail'=>$this->order_name,
 			'mhtOrderTimeOut'=>self::ORDER_TIME_OUT,
 			'mhtOrderStartTime'=>date('YmdHis'),
-			'notifyUrl'=>$baseUrl . $app->createUrl('/pay/notify', array('id'=>$this->id)),
-			'frontNotifyUrl'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('id'=>$this->id)),
+			'notifyUrl'=>$baseUrl . $app->createUrl('/pay/notify'),
+			'frontNotifyUrl'=>$baseUrl . $app->createUrl('/pay/frontNotify'),
 			'mhtCharset'=>self::CHARSET,
 			'deviceType'=>$nowPay['deviceType'],
 			// 'mhtReserved'=>'',
 			'consumerId'=>$this->user_id,
 		);
-		$this->buildSignature($params, $nowPay['securityKey'], array(
+		self::buildSignature($params, $nowPay['securityKey'], array(
 			'funcode',
 			'deviceType',
 		));
 		return $app->params->nowPay['baseUrl'] . '?' . http_build_query($params);
-	}
-
-	public function buildSignature(&$params, $securityKey, $excludeAttributes = array()) {
-		$temp = array_filter($params);
-		foreach ($excludeAttributes as $attribute) {
-			unset($temp[$attribute]);
-		}
-		ksort($temp);
-		$str = '';
-		foreach ($temp as $key=>$value) {
-			$str .= "$key=$value&";
-		}
-		$str .= md5($securityKey);
-		$params['mhtSignature'] = md5($str);
-		$params['mhtSignType'] = self::SIGN_TYPE;
-		return $params;
 	}
 
 	public function isPaid() {
