@@ -85,7 +85,18 @@ class Pay extends ActiveRecord {
 			$this->pay_channel = $payChannelType;
 			$this->now_pay_account = $nowPayAccNo;
 			$this->status = self::STATUS_PAID;
+			$this->update_time = time();
 			$this->save(false);
+			switch ($this->type) {
+				case self::TYPE_REGISTRATION:
+					$registration = Registration::model()->findByPk($this->sub_type_id);
+					if ($registration !== null) {
+						$registration->status = Registration::STATUS_ACCEPTED;
+						$registration->paid = Registration::PAID;
+						$registration->save();
+					}
+					break;
+			}
 		}
 		return $result;
 	}
