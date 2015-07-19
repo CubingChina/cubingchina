@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('Results', 'Emulation'); ?>:</span>
-          <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->month, $lastCompetition->day); ?></span>
+          <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay); ?></span>
         </div>
       </div>
     </div>
