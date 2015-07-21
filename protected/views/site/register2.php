@@ -129,9 +129,10 @@ $this->renderPartial('registerSide', $_data_);
   <?php $this->endWidget(); ?>
 </div>
 <?php
+$emailMsg = Yii::t('common', 'Please confirm your email:\\n{email}');
 Yii::app()->clientScript->registerCssFile('/f/plugins/bootstrap-datepicker/css/datepicker.css');
 Yii::app()->clientScript->registerScriptFile('/f/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js?v=20150721');
 $allCities = json_encode($allCities);
 Yii::app()->clientScript->registerScript('register2',
 <<<EOT
@@ -148,7 +149,13 @@ Yii::app()->clientScript->registerScript('register2',
         $('<option>').val(id).text(name).appendTo(city);
       });
     })
-    .on('submit', 'form', function() {
+    .on('submit', 'form', function(e) {
+      var email = $('#RegisterForm_email').val();
+      var msg = '{$emailMsg}';
+      if (!confirm(msg.replace('{email}', email))) {
+        e.preventDefault();
+        return false;
+      }
       $('[readonly]').prop('disabled', false);
     });
   $('label[for="RegisterForm_mobile"]').append('<span class="required">*</span>');

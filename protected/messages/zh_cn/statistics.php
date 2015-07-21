@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Chinese Top 100 Results' => '中国前百成绩',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中国三速平均成绩前100占席',
@@ -54,6 +53,7 @@ return array (
   'Best Podiums' => '领奖台成绩榜',
   'Bronze' => '铜',
   'CR' => '洲际排名',
+  'Chinese Top 100 Results' => '中国前百成绩',
   'Generated on {time}.' => '生成于{time}。',
   'Global personal rankings in each official event are listed, based on the the official WCA rankings.' => '本页面列出了各地选手在所有WCA项目的个人排名，所有的排名成绩源自WCA赛事的官方排名。',
   'Global personal rankings in each official event are listed, based on the {url}.' => '本页面列出了各地选手在所有WCA项目的个人排名，所有的排名成绩源自{url}。',
