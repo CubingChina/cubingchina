@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Please confirm your email:\\n{email}' => '請確認你的電子郵件：\\n{email}',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
