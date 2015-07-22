@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Unpaid' => '未付',
   'Paid successfully' => '支付成功',
   'WCA ID' => '',
   'You are being redirected to the payment, please wait patiently.' => '',

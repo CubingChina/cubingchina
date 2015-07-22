@@ -29,6 +29,10 @@ class PayController extends Controller {
 		if ($model->pay === null) {
 			$model->pay = $model->createPay();
 		}
+		if ($model->pay->amount != $model->getTotalFee() * 100) {
+			$model->pay->amount = $model->getTotalFee() * 100;
+			$model->pay->save(false);
+		}
 		$this->render('pay', array(
 			'model'=>$model->pay,
 		));
@@ -62,7 +66,7 @@ class PayController extends Controller {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
 					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
-					$competition = Competition::model()->findByPk($model->type_id);
+					$competition = $model->competition;
 					$this->redirect($competition->getUrl('competitors'));
 					break;
 			}
@@ -84,7 +88,7 @@ class PayController extends Controller {
 		if ($model->isPaid()) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
-					$competition = Competition::model()->findByPk($model->type_id);
+					$competition = $model->competition;
 					$url = $competition->getUrl('registration');
 					break;
 			}

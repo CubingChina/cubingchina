@@ -61,6 +61,19 @@ class Pay extends ActiveRecord {
 		));
 	}
 
+	public static function getAllStatus() {
+		return array(
+			self::STATUS_UNPAID=>Yii::t('common', 'Unpaid'), 
+			self::STATUS_PAID=>Yii::t('common', 'Paid'), 
+		);
+	}
+
+	public static function getTypes() {
+		return array(
+			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'), 
+		);
+	}
+
 	public function validateNotify($params) {
 		$app = Yii::app();
 		$appId = isset($params['appId']) ? $params['appId'] : '';
@@ -100,7 +113,7 @@ class Pay extends ActiveRecord {
 		$this->save(false);
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
-				$registration = Registration::model()->findByPk($this->sub_type_id);
+				$registration = $this->registration;
 				if ($registration !== null) {
 					$registration->status = Registration::STATUS_ACCEPTED;
 					$registration->paid = Registration::PAID;
@@ -145,6 +158,68 @@ class Pay extends ActiveRecord {
 
 	public function isPaid() {
 		return $this->status == self::STATUS_PAID;
+	}
+
+	public function getStatusText() {
+		$status = self::getAllStatus();
+		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
+	}
+
+	public function getTypeText() {
+		$types = self::getTypes();
+		return isset($types[$this->type]) ? $types[$this->type] : $this->type;
+	}
+
+	public function getColumns() {
+		$columns = array(
+			'id',
+			array(
+				'name'=>'user_id',
+				'value'=>'$data->user->name_zh',
+			),
+			array(
+				'name'=>'type',
+				'value'=>'$data->getTypeText()',
+				'filter'=>Pay::getTypes(),
+			),
+			array(
+				'name'=>'amount',
+				'value'=>'number_format($data->amount / 100, 2)',
+			),
+			array(
+				'name'=>'create_time',
+				'type'=>'raw',
+				'value'=>'date("Y-m-d H:i:s", $data->create_time)',
+				'filter'=>false,
+			),
+			array(
+				'name'=>'update_time',
+				'type'=>'raw',
+				'value'=>'date("Y-m-d H:i:s", $data->update_time)',
+				'filter'=>false,
+			),
+			array(
+				'name'=>'status',
+				'type'=>'raw',
+				'value'=>'$data->getStatusText()',
+				'filter'=>Pay::getAllStatus(),
+			),
+		);
+		switch ($this->type) {
+			case '':
+				break;
+			case self::TYPE_REGISTRATION:
+				array_splice($columns, 4, 0, array(
+					array(
+						'name'=>'type_id',
+						'header'=>Yii::t('common', 'Competition'),
+						'value'=>'$data->competition->name_zh',
+						'filter'=>Competition::getRegistrationCompetitions(),
+					),
+				));
+				break;
+		}
+		return $columns;
 	}
 
 	protected function beforeValidate() {
@@ -192,6 +267,9 @@ class Pay extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
+			'competition'=>array(self::BELONGS_TO, 'Competition', 'type_id'),
+			'registration'=>array(self::BELONGS_TO, 'Registration', 'sub_type_id'),
 		);
 	}
 
@@ -251,6 +329,12 @@ class Pay extends ActiveRecord {
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'id DESC',
+			),
+			'pagination'=>array(
+				'pageSize'=>100,
+			),
 		));
 	}
 

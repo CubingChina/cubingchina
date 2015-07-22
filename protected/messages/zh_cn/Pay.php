@@ -17,17 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Amount' => '',
-  'Create Time' => '',
-  'Device Type' => '',
+  'Amount' => '金额',
+  'Create Time' => '创建时间',
+  'Device Type' => '设备类型',
   'ID' => '',
-  'Now Pay Account' => '',
+  'Now Pay Account' => '现在支付账号',
   'Order' => '',
   'Order Name' => '',
-  'Pay Channel' => '',
-  'Status' => '',
+  'Pay Channel' => '支付渠道',
+  'Status' => '状态',
   'Sub Type' => '',
-  'Type' => '',
-  'Update Time' => '',
-  'User' => '',
+  'Type' => '类型',
+  'Update Time' => '更新时间',
+  'User' => '用户',
 );

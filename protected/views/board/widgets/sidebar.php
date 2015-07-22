@@ -96,6 +96,37 @@
 					),
 				),
 				array(
+					'label'=>'<i class="fa fa-money"></i> 财务 <i class="fa fa-caret-down"></i>',
+					'url'=>'javascript:;',
+					'active'=>$this->controller->id == 'pay',
+					'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+					'linkOptions'=>array(
+						'data-parent'=>'#side',
+						'data-toggle'=>'collapse',
+						'class'=>'accordion-toggle',
+						'data-target'=>'#pay',
+					),
+					'itemOptions'=>array(
+						'class'=>'panel',
+					),
+					'submenuOptions'=>array(
+						'class'=>'collapse nav in',
+						'id'=>'pay',
+					),
+					'items'=>array(
+						array(
+							'label'=>'<i class="fa fa-angle-double-right"></i> 支付流水',
+							'url'=>array('/board/pay/index'),
+							'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+						),
+						// array(
+						// 	'label'=>'<i class="fa fa-angle-double-right"></i> 财务报表',
+						// 	'url'=>array('/board/pay/statistics'),
+						// 	'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+						// ),
+					),
+				),
+				array(
 					'label'=>'<i class="fa fa-bullhorn"></i> 新闻 <i class="fa fa-caret-down"></i>',
 					'url'=>'javascript:;',
 					'active'=>$this->controller->id == 'news',
