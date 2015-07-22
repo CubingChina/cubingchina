@@ -31,6 +31,7 @@ class Pay extends ActiveRecord {
 
 	const FUNCODE_PAY = 'WP001';
 	const FUNCODE_NOTIFY = 'N001';
+	const FUNCODE_FRONT_NOTIFY = 'N002';
 	const ORDER_TYPE = '01';
 	const ORDER_TIME_OUT = 3600;
 	const CURRENCY_TYPE = '156';
@@ -79,26 +80,34 @@ class Pay extends ActiveRecord {
 			'signType',
 		));
 		$result = $signature === $params['mhtSignature'] && $tradeStatus === self::TRADE_SUCCESS;
+		if ($result && $funcode === self::FUNCODE_FRONT_NOTIFY) {
+			$this->successPaid();
+		}
 		if ($result && $funcode === self::FUNCODE_NOTIFY) {
-			//@todo notify check success
 			$this->device_type = $deviceType;
 			$this->pay_channel = $payChannelType;
 			$this->now_pay_account = $nowPayAccNo;
-			$this->status = self::STATUS_PAID;
-			$this->update_time = time();
-			$this->save(false);
-			switch ($this->type) {
-				case self::TYPE_REGISTRATION:
-					$registration = Registration::model()->findByPk($this->sub_type_id);
-					if ($registration !== null) {
-						$registration->status = Registration::STATUS_ACCEPTED;
-						$registration->paid = Registration::PAID;
-						$registration->save();
-					}
-					break;
-			}
+			$this->successPaid(true);
 		}
 		return $result;
+	}
+
+	public function successPaid($updateTime = false) {
+		if ($updateTime || !$this->isPaid()) {
+			$this->update_time = time();
+		}
+		$this->status = self::STATUS_PAID;
+		$this->save(false);
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+				$registration = Registration::model()->findByPk($this->sub_type_id);
+				if ($registration !== null) {
+					$registration->status = Registration::STATUS_ACCEPTED;
+					$registration->paid = Registration::PAID;
+					$registration->save();
+				}
+				break;
+		}
 	}
 
 	public function generateNowPayUrl($isMobile) {

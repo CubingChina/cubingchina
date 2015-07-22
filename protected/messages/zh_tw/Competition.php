@@ -43,6 +43,7 @@ return array (
   'Entry Fee' => '基礎報名費',
   'Events' => '項目',
   'Information' => '詳情',
+  'It will be verified automatically after your {paying}.' => '在您{paying}報名費後，系統將自動審核你的報名。',
   'It will be verified by the organisation team soon. Please wait with patience.' => '主辦方會儘快審核您的報名，請耐心等待。',
   'Limited Number of Competitor' => '報名人數限制',
   'Links' => '鏈接',

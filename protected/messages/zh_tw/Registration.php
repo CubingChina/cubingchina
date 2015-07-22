@@ -17,14 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  ' CNY' => '元',
-  'Fee' => '報名費',
   'ID' => '',
   'User' => '',
   'Date' => '報名時間',
+  ' CNY' => '元',
   'Additional Comments' => '備註',
   'Competition' => '比賽',
   'Events' => '項目',
+  'Fee' => '報名費',
   'Fee (CNY)' => '報名費(元)',
   'Registration Date' => '報名時間',
   'Status' => '狀態',

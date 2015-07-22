@@ -58,6 +58,15 @@ class PayController extends Controller {
 			throw new CHttpException(404, 'Not Found');
 		}
 		$result = $model->validateNotify($_GET);
+		if ($result) {
+			switch ($model->type) {
+				case Pay::TYPE_REGISTRATION:
+					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
+					$competition = Competition::model()->findByPk($model->type_id);
+					$this->redirect($competition->getUrl('competitors'));
+					break;
+			}
+		}
 		$this->render('result', array(
 			'model'=>$model,
 			'result'=>$result,

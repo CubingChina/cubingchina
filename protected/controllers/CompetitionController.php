@@ -91,6 +91,7 @@ class CompetitionController extends Controller {
 				'user'=>$user,
 				'accepted'=>$registration->isAccepted(),
 				'competition'=>$competition,
+				'registration'=>$registration,
 			));
 			Yii::app()->end();
 		}
@@ -120,6 +121,7 @@ class CompetitionController extends Controller {
 					'user'=>$user,
 					'accepted'=>$model->isAccepted(),
 					'competition'=>$competition,
+					'registration'=>$model,
 				));
 				Yii::app()->end();
 			}

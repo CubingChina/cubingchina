@@ -128,14 +128,18 @@ class Registration extends ActiveRecord {
 			), Yii::t('common', 'Paid'));
 		}
 		if ($totalFee > 0 && $this->competition->isOnlinePay()) {
-			return CHtml::link(Yii::t('common', 'Pay'), array(
-				'/pay/registration',
-				'id'=>$this->id,
-			), array(
+			return CHtml::link(Yii::t('common', 'Pay'), $this->getPayUrl(), array(
 				'class'=>'btn btn-xs btn-theme',
 			));
 		}
 		return '';
+	}
+
+	public function getPayUrl() {
+		return array(
+			'/pay/registration',
+			'id'=>$this->id,
+		);
 	}
 
 	public function getLocation() {

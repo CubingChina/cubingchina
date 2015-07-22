@@ -18,7 +18,9 @@
  */
 return array (
   'Fee' => '',
+  'Paid successfully' => '支付成功',
   'WCA ID' => '',
+  'You are being redirected to the payment, please wait patiently.' => '',
   'more' => '',
   'About us' => '关于本站',
   'AsR' => '亚洲纪录',
@@ -205,6 +207,7 @@ return array (
   'activate' => '激活',
   'administrator' => '管理员',
   'here' => '这里',
+  'paying the fee online' => '在线支付',
   '{minute} minute' => '{minute}分',
   '{minute} minute {second} seconds' => '{minute}分{second}秒',
   '{minute} minutes' => '{minute}分',
