@@ -86,6 +86,7 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		if ($registration !== null) {
+			$registration->formatEvents();
 			$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 			$this->render('registrationDone', array(
 				'user'=>$user,
