@@ -205,19 +205,19 @@ class Pay extends ActiveRecord {
 				'filter'=>Pay::getAllStatus(),
 			),
 		);
-		switch ($this->type) {
-			case '':
-				break;
-			case self::TYPE_REGISTRATION:
-				array_splice($columns, 4, 0, array(
-					array(
-						'name'=>'type_id',
-						'header'=>Yii::t('common', 'Competition'),
-						'value'=>'$data->competition->name_zh',
-						'filter'=>Competition::getRegistrationCompetitions(),
-					),
-				));
-				break;
+		if ($this->type !== '') {
+			switch ($this->type) {
+				case self::TYPE_REGISTRATION:
+					array_splice($columns, 4, 0, array(
+						array(
+							'name'=>'type_id',
+							'header'=>Yii::t('common', 'Competition'),
+							'value'=>'$data->competition->name_zh',
+							'filter'=>Competition::getRegistrationCompetitions(),
+						),
+					));
+					break;
+			}
 		}
 		return $columns;
 	}
