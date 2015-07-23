@@ -31,7 +31,7 @@ class PayController extends Controller {
 		}
 		if ($model->pay->amount != $model->getTotalFee() * 100) {
 			$model->pay->amount = $model->getTotalFee() * 100;
-			// $model->pay->save(false);
+			$model->pay->save(false);
 		}
 		$this->render('pay', array(
 			'model'=>$model->pay,

@@ -321,7 +321,7 @@ class Registration extends ActiveRecord {
 		$pay->type = Pay::TYPE_REGISTRATION;
 		$pay->type_id = $this->competition_id;
 		$pay->sub_type_id = $this->id;
-		$pay->amount = 10;//$this->total_fee * 100;
+		$pay->amount = $this->total_fee * 100;
 		$pay->order_name = $this->competition->name_zh . '报名费';
 		$r = $pay->save();
 		return $pay;
