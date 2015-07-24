@@ -22,7 +22,7 @@ return array (
   'Device Type' => '设备类型',
   'ID' => '',
   'Now Pay Account' => '现在支付账号',
-  'Order' => '',
+  'Order No' => '订单号',
   'Order Name' => '',
   'Pay Channel' => '支付渠道',
   'Status' => '状态',

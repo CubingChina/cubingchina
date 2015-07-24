@@ -61,6 +61,7 @@ $config = array(
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1983|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
+				'pay/<action:notify|frontNotify>/<channel:nowPay|alipay>'=>'pay/<action>',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

@@ -35,33 +35,54 @@ class PayController extends Controller {
 		}
 		$this->render('pay', array(
 			'model'=>$model->pay,
+			'registration'=>$model,
+			'competition'=>$model->competition,
 		));
 	}
 
 	public function actionNotify() {
-		$paramsStr = file_get_contents('php://input');
-		parse_str($paramsStr, $params);
-		$orderId = isset($params['mhtOrderNo']) ? $params['mhtOrderNo'] : '';
+		$channel = $this->sGet('channel');
+		unset($_GET['channel']);
+		switch ($channel) {
+			case 'nowPay':
+				$paramsStr = file_get_contents('php://input');
+				parse_str($paramsStr, $params);
+				$orderId = isset($params['mhtOrderNo']) ? $params['mhtOrderNo'] : '';
+				break;
+			default:
+				$orderId = $this->sPost('out_trade_no');
+				$params = $_POST;
+				break;
+		}
 		$model = Pay::getPayByOrderId($orderId);
 		if ($model === null) {
-			echo 'success=N';
+			echo Pay::notifyReturn($channel, false);
 			exit;
 		}
 		$result = $model->validateNowPayNotify($params);
 		if ($result) {
-			echo 'success=Y';
+			echo Pay::notifyReturn($channel, true);
 		} else {
-			echo 'success=N';
+			echo Pay::notifyReturn($channel, false);
 		}
 	}
 
 	public function actionFrontNotify() {
-		$orderId = $this->sGet('mhtOrderNo');
+		$channel = $this->sGet('channel');
+		unset($_GET['channel']);
+		switch ($channel) {
+			case 'nowPay':
+				$orderId = $this->sGet('mhtOrderNo');
+				break;
+			default:
+				$orderId = $this->sGet('out_trade_no');
+				break;
+		}
 		$model = Pay::getPayByOrderId($orderId);
 		if ($model === null) {
 			throw new CHttpException(404, 'Not Found');
 		}
-		$result = $model->validateNowPayNotify($_GET);
+		$result = $model->validateNotify($channel, $_GET);
 		if ($result) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
@@ -77,26 +98,25 @@ class PayController extends Controller {
 		));
 	}
 
-	public function actionUrl() {
+	public function actionParams() {
 		$id = $this->iGet('id');
 		$isMobile = $this->iRequest('is_mobile');
+		$channel = $this->sRequest('channel');
 		$model = Pay::model()->findByPk($id);
 		if ($model === null || $model->user_id !== Yii::app()->user->id) {
 			throw new CHttpException(401, 'Unauthorized Access');
 		}
-		$url = '';
+		$params = array();
 		if ($model->isPaid()) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
 					$competition = $model->competition;
-					$url = $competition->getUrl('registration');
+					$params['url'] = $competition->getUrl('registration');
 					break;
 			}
 		} else {
-			$url = $model->generateNowPayUrl($isMobile);
+			$params = $model->generateParams($isMobile, $channel);
 		}
-		$this->ajaxOk(array(
-			'url'=>$url,
-		));
+		$this->ajaxOk($params);
 	}
 }
