@@ -47,7 +47,7 @@ class PayController extends Controller {
 			echo 'success=N';
 			exit;
 		}
-		$result = $model->validateNotify($params);
+		$result = $model->validateNowPayNotify($params);
 		if ($result) {
 			echo 'success=Y';
 		} else {
@@ -61,7 +61,7 @@ class PayController extends Controller {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not Found');
 		}
-		$result = $model->validateNotify($_GET);
+		$result = $model->validateNowPayNotify($_GET);
 		if ($result) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
