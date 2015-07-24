@@ -8,6 +8,7 @@
  * @property string $competition_id
  * @property string $user_id
  * @property string $events
+ * @property integer $total_fee
  * @property string $comments
  * @property string $date
  * @property integer $status
@@ -119,6 +120,28 @@ class Registration extends ActiveRecord {
 		return $this->competition->entry_fee + array_sum($fees);
 	}
 
+	public function getPayButton($checkOnlinePay = true) {
+		$totalFee = $this->getTotalFee();
+		if ($totalFee > 0 && $this->isPaid()) {
+			return CHtml::tag('button', array(
+				'class'=>'btn btn-xs btn-disabled',
+			), Yii::t('common', 'Paid'));
+		}
+		if ($totalFee > 0 && $this->competition->isOnlinePay()) {
+			return CHtml::link(Yii::t('common', 'Pay'), $this->getPayUrl(), array(
+				'class'=>'btn btn-xs btn-theme',
+			));
+		}
+		return '';
+	}
+
+	public function getPayUrl() {
+		return array(
+			'/pay/registration',
+			'id'=>$this->id,
+		);
+	}
+
 	public function getLocation() {
 		return CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
 			'competition_id'=>$this->competition_id,
@@ -144,7 +167,7 @@ class Registration extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-email',
 				),
-				'type'=>'raw', 
+				'type'=>'raw',
 				'value'=>"CHtml::label(CHtml::checkBox('{$modelName}[competitors][]', \$data->isAccepted(), array(
 					'class'=>implode(' ', array_map(function(\$a) {
 						return 'event-' . \$a;
@@ -153,7 +176,7 @@ class Registration extends ActiveRecord {
 					'data-accepted'=>intval(\$data->isAccepted()),
 				)) . ' ' . \$data->user->email, false, array(
 					'class'=>'checkbox',
-				))", 
+				))",
 			),
 		), $columns);
 		return $columns;
@@ -292,6 +315,18 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function createPay() {
+		$pay = new Pay();
+		$pay->user_id = $this->user_id;
+		$pay->type = Pay::TYPE_REGISTRATION;
+		$pay->type_id = $this->competition_id;
+		$pay->sub_type_id = $this->id;
+		$pay->amount = $this->total_fee * 100;
+		$pay->order_name = $this->competition->name_zh . '报名费';
+		$r = $pay->save();
+		return $pay;
+	}
+
 	public function handleEvents() {
 		if ($this->events !== null) {
 			$this->events = json_encode($this->events);
@@ -333,13 +368,13 @@ class Registration extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('location_id, competition_id, user_id, events, date', 'required'),
-			array('location_id, status', 'numerical', 'integerOnly'=>true),
+			array('location_id, total_fee, status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id, date', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, location_id, user_id, events, comments, date, status', 'safe', 'on'=>'search'),
+			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -352,6 +387,7 @@ class Registration extends ActiveRecord {
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
+			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
 			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
 		);
 	}
@@ -370,7 +406,7 @@ class Registration extends ActiveRecord {
 			'ip' => 'IP',
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
-			'fee' => Yii::t('Registration', 'Fee (CNY)'),
+			'fee' => Yii::t('Registration', 'Fee'),
 		);
 	}
 

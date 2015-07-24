@@ -2,5 +2,11 @@
 	"require": {
 		"phpoffice/phpexcel": "dev-develop",
 		"suin/php-rss-writer": "dev-master"
-	}
+	},
+	"repositories": [{
+		"type": "composer",
+		"url": "http://pkg.phpcomposer.com/repo/packagist/"
+	}, {
+		"packagist": false
+	}]
 }

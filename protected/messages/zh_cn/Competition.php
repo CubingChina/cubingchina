@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'Online Pay' => '',
   ' round' => '轮',
   ' rounds' => '轮',
   'Competition List' => '比赛列表',
@@ -42,6 +43,7 @@ return array (
   'Entry Fee' => '基础报名费',
   'Events' => '项目',
   'Information' => '详情',
+  'It will be verified automatically after your {paying}.' => '在您{paying}报名费后，系统将自动审核你的报名。',
   'It will be verified by the organisation team soon. Please wait with patience.' => '主办方会尽快审核您的报名，请耐心等待。',
   'Limited Number of Competitor' => '报名人数限制',
   'Links' => '链接',

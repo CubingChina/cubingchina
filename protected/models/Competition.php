@@ -18,6 +18,7 @@
  * @property string $venue_zh
  * @property string $events
  * @property integer $entry_fee
+ * @property integer $online_pay
  * @property string $alipay_url
  * @property string $information
  * @property string $information_zh
@@ -30,6 +31,9 @@
 class Competition extends ActiveRecord {
 	const TYPE_WCA = 'WCA';
 	const TYPE_OTHER = 'other';
+
+	const NOT_ONLINE_PAY = 0;
+	const ONLINE_PAY = 1;
 
 	const STATUS_HIDE = 0;
 	const STATUS_SHOW = 1;
@@ -199,6 +203,13 @@ class Competition extends ActiveRecord {
 		);
 	}
 
+	public static function getOnlinePays() {
+		return array(
+			self::ONLINE_PAY=>'是',
+			self::NOT_ONLINE_PAY=>'否',
+		);
+	}
+
 	public static function getYears() {
 		$years = array(
 			'current'=>Yii::t('common', 'Current'),
@@ -228,6 +239,10 @@ class Competition extends ActiveRecord {
 			self::CHECK_PERSON=>'否', 
 			self::NOT_CHECK_PERSON=>'是', 
 		);
+	}
+
+	public function isOnlinePay() {
+		return $this->online_pay == self::ONLINE_PAY;
 	}
 
 	public function isPublic() {
@@ -1013,7 +1028,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
+			array('province_id, city_id, entry_fee, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),
@@ -1072,6 +1087,7 @@ class Competition extends ActiveRecord {
 			'venue_zh' => Yii::t('Competition', 'Venue'),
 			'events' => Yii::t('Competition', 'Events'),
 			'entry_fee' => Yii::t('Competition', 'Entry Fee'),
+			'online_pay' => Yii::t('Competition', 'Online Pay'),
 			'alipay_url' => Yii::t('Competition', 'Alipay Url'),
 			'regulations' => Yii::t('Competition', 'Regulations'),
 			'regulations_zh' => Yii::t('Competition', 'Regulations'),
@@ -1121,6 +1137,7 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.venue_zh', $this->venue_zh,true);
 		$criteria->compare('t.events', $this->events,true);
 		$criteria->compare('t.entry_fee', $this->entry_fee);
+		$criteria->compare('t.online_pay', $this->online_pay);
 		$criteria->compare('t.alipay_url', $this->alipay_url,true);
 		$criteria->compare('t.information', $this->information,true);
 		$criteria->compare('t.information_zh', $this->information_zh,true);
