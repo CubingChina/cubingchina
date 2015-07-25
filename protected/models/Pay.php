@@ -112,6 +112,13 @@ class Pay extends ActiveRecord {
 		);
 	}
 
+	public static function getChannels() {
+		return array(
+			self::CHANNEL_ALIPAY=>'支付宝', 
+			self::CHANNEL_NOWPAY=>'现在支付', 
+		);
+	}
+
 	public static function getTypes() {
 		return array(
 			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'), 
@@ -142,6 +149,7 @@ class Pay extends ActiveRecord {
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
+			$this->channel = self::CHANNEL_ALIPAY;
 			$status = self::STATUS_WAIT_SEND;
 			switch ($tradeStatus) {
 				case self::ALIPAY_TRADE_STATUS_WAIT_SEND:
@@ -337,6 +345,11 @@ class Pay extends ActiveRecord {
 			array(
 				'name'=>'user_id',
 				'value'=>'$data->user->name_zh',
+			),
+			array(
+				'name'=>'channel',
+				'value'=>'$data->channel',
+				'filter'=>Pay::getChannels(),
 			),
 			array(
 				'name'=>'type',
