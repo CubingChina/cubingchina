@@ -266,7 +266,7 @@ class Pay extends ActiveRecord {
 			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_ALIPAY)),
 			'out_trade_no'=>$this->order_no,
 			'subject'=>$this->order_name,
-			'price'=>'0.01',//number_format($this->amount / 100, 2, '.', ''),
+			'price'=>number_format($this->amount / 100, 2, '.', ''),
 			'quantity'=>1,
 			'logistics_fee'=>'0.00',
 			'logistics_type'=>'EXPRESS',
