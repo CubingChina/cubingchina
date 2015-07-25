@@ -134,12 +134,11 @@ class Pay extends ActiveRecord {
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
-		$isSuccess = isset($params['is_success']) ? $params['is_success'] : '';
 		self::buildAlipaySignature($params, $alipay['key'], array(
 			'sign',
 			'sign_type',
 		));
-		$result = $sign === $params['sign'] && $isSuccess === self::ALIPAY_SUCCESS;
+		$result = $sign === $params['sign'];
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
