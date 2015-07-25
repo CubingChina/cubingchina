@@ -158,7 +158,7 @@ class Pay extends ActiveRecord {
 					$status = self::STATUS_PAID;
 					break;
 			}
-			$this->successPaid($status);
+			$this->updateStatus($status);
 		}
 		return $result;
 	}
@@ -212,13 +212,15 @@ class Pay extends ActiveRecord {
 					break;
 			}
 			$this->channel = self::CHANNEL_NOWPAY;
-			$this->successPaid();
+			$this->updateStatus();
 		}
 		return $result;
 	}
 
-	public function successPaid($status = self::STATUS_PAID) {
-		$this->status = $status;
+	public function updateStatus($status = self::STATUS_PAID) {
+		if (!$this->isPaid()) {
+			$this->status = $status;
+		}
 		$this->update_time = time();
 		$this->save(false);
 		switch ($this->type) {
