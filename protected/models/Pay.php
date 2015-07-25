@@ -46,6 +46,7 @@ class Pay extends ActiveRecord {
 	const NOWPAY_CURRENCY_TYPE = '156';
 
 	//支付宝
+	const ALIPAY_TRADE_STATUS_WAIT_PAY = 'WAIT_BUYER_PAY';
 	const ALIPAY_TRADE_STATUS_WAIT_SEND = 'WAIT_SELLER_SEND_GOODS';
 	const ALIPAY_TRADE_STATUS_WAIT_CONFIRM = 'WAIT_BUYER_CONFIRM_GOODS';
 	const ALIPAY_TRADE_STATUS_FINISHED = 'TRADE_FINISHED';
@@ -150,8 +151,11 @@ class Pay extends ActiveRecord {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
 			$this->channel = self::CHANNEL_ALIPAY;
-			$status = self::STATUS_WAIT_SEND;
+			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
+				case self::ALIPAY_TRADE_STATUS_WAIT_PAY:
+					return $result;
+					break;
 				case self::ALIPAY_TRADE_STATUS_WAIT_SEND:
 					$status = self::STATUS_WAIT_SEND;
 					if ($this->send()) {
