@@ -274,7 +274,7 @@ class Pay extends ActiveRecord {
 			'body'=>$this->order_name,
 			// 'show_url'=>$show_url,
 			'receive_name'=>$this->user->getCompetitionName(),
-			'receive_address'=>$this->user->getRegionName($this->user->region) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
+			'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
 			// 'receive_zip'=>$receive_zip,
 			// 'receive_phone'=>$receive_phone,
 			'receive_mobile'=>$this->user->mobile,
