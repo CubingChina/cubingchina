@@ -17,13 +17,13 @@
     <?php endif; ?>
   </div>
   <?php if ($registration->payable): ?>
-  <div class="col-lg-8 col-lg-push-2">
+  <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
     <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
     <div class="pay-channels clearfix">
-      <div class="pay-channel alipay col-md-6 active" data-channel="alipay">
+      <div class="pay-channel alipay col-sm-6 active" data-channel="alipay">
         <img src="/f/images/pay/alipay.png">
       </div>
-      <div class="pay-channel nowpay col-md-6" data-channel="nowPay">
+      <div class="pay-channel nowpay col-sm-6" data-channel="nowPay">
         <img src="/f/images/pay/nowpay.png">
         <p>
           <?php echo Yii::t('common', 'It supports Unionpay and many China bankcards.'); ?>
