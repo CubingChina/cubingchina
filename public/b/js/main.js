@@ -9,4 +9,14 @@ $(function() {
     var url = this.checked ? that.data('checked-url') : that.data('unchecked-url');
     location.href = url;
   });
+  function adjustTableContainer() {
+    var tableContainer = $('.table-responsive');
+    if (tableContainer.length) {
+      tableContainer.css({
+        'max-height': $(window).height() - tableContainer.offset().top - 60
+      })
+    }
+  }
+  adjustTableContainer();
+  $(window).on('resize', adjustTableContainer);
 })

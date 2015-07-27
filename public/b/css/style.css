@@ -161,7 +161,7 @@ a:focus {
     #page-wrapper {
         margin: 50px 0 0 225px;
         padding: 10px 30px 0;
-        min-height: 1300px;
+        /*min-height: 1300px;*/
         border-left: 1px solid #2c3e50;
     }
 
@@ -2083,7 +2083,7 @@ form span.required {
 }
 
 .table-responsive {
-    overflow-x: scroll;
+    overflow: auto;
 }
 
 .table-responsive table.table td, .table-responsive table.table th {
