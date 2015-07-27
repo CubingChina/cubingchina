@@ -38,10 +38,16 @@ $(function() {
   });
   function adjustTableContainer() {
     var tableContainer = $('.table-responsive');
-    if (tableContainer.length && !('ontouchstart' in window)) {
-      tableContainer.css({
-        'max-height': $(window).height() - tableContainer.offset().top - 60
-      })
+    if (tableContainer.length) {
+      if (!('ontouchstart' in window) && $(window).height() - tableContainer.offset().top > 475) {
+        tableContainer.css({
+          'max-height': $(window).height() - tableContainer.offset().top - 60
+        });
+      } else {
+        tableContainer.css({
+          'max-height': 'auto'
+        });
+      }
     }
   }
   adjustTableContainer();
