@@ -496,7 +496,7 @@ class Pay extends ActiveRecord {
 		$criteria->compare('user_id', $this->user_id, true);
 		$criteria->compare('channel', $this->channel, true);
 		$criteria->compare('type', $this->type);
-		$criteria->compare('type_id', $this->type_id, true);
+		$criteria->compare('type_id', $this->type_id);
 		$criteria->compare('sub_type_id', $this->sub_type_id, true);
 		$criteria->compare('order_no', $this->order_no, true);
 		$criteria->compare('order_name', $this->order_name, true);
