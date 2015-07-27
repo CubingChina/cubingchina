@@ -285,19 +285,35 @@ class Registration extends ActiveRecord {
 		$buttons[] = CHtml::link('编辑', array('/board/registration/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
 		switch ($this->status) {
 			case self::STATUS_WAITING:
-				$buttons[] = CHtml::link('通过', array('/board/registration/show', 'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-green btn-square toggle',
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+					'data-attribute'=>'status',
+					'data-value'=>$this->status,
+					'data-text'=>'["通过","取消"]',
+				), '通过');
 				break;
 			case self::STATUS_ACCEPTED:
-				$buttons[] = CHtml::link('取消', array('/board/registration/hide', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-red btn-square toggle',
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+					'data-attribute'=>'status',
+					'data-value'=>$this->status,
+					'data-text'=>'["通过","取消"]',
+				), '取消');
 				break;
 		}
 		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
-			'class'=>'paid tips',
+			'class'=>'toggle tips',
 			'data-toggle'=>'tooltip',
 			'data-placement'=>'top',
 			'title'=>'是否支付报名费',
-			'data-checked-url'=>CHtml::normalizeUrl(array('/board/registration/paid', 'id'=>$this->id)),
-			'data-unchecked-url'=>CHtml::normalizeUrl(array('/board/registration/unpaid', 'id'=>$this->id)),
+			'data-id'=>$this->id,
+			'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+			'data-attribute'=>'paid',
+			'data-value'=>$this->paid,
 		));
 		return implode(' ', $buttons);
 	}

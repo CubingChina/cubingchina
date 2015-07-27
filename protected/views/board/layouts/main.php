@@ -15,7 +15,7 @@
   <link href="/b/icons/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
   <!-- THEME STYLES - Include these on every page. -->
-  <link href="/b/css/style.css" rel="stylesheet">
+  <link href="/b/css/style.css?v=20150727" rel="stylesheet">
   <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
   <!--[if lt IE 9]>
@@ -49,6 +49,6 @@
   <!-- HISRC Retina Images -->
   <script src="/b/js/plugins/hisrc/hisrc.js"></script>
   <script src="/b/js/flex.js"></script>
-  <script src="/b/js/main.js"></script>
+  <script src="/b/js/main.js?v=20150727"></script>
 </body>
 </html>
