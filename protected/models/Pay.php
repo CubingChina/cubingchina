@@ -153,9 +153,6 @@ class Pay extends ActiveRecord {
 			$this->channel = self::CHANNEL_ALIPAY;
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
-				case self::ALIPAY_TRADE_STATUS_WAIT_PAY:
-					return $result;
-					break;
 				case self::ALIPAY_TRADE_STATUS_WAIT_SEND:
 					$status = self::STATUS_WAIT_SEND;
 					if ($this->send()) {
@@ -168,6 +165,8 @@ class Pay extends ActiveRecord {
 				case self::ALIPAY_TRADE_STATUS_FINISHED:
 					$status = self::STATUS_PAID;
 					break;
+				default:
+					return $result;
 			}
 			$this->updateStatus($status);
 		}
@@ -275,7 +274,7 @@ class Pay extends ActiveRecord {
 			'logistics_fee'=>'0.00',
 			'logistics_type'=>'EXPRESS',
 			'logistics_payment'=>'SELLER_PAY',
-			'body'=>$this->order_name,
+			'body'=>$this->user->getCompetitionName(),
 			// 'show_url'=>$show_url,
 			'receive_name'=>$this->user->getCompetitionName(),
 			'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
@@ -308,7 +307,7 @@ class Pay extends ActiveRecord {
 			'mhtOrderType'=>self::NOWPAY_ORDER_TYPE,
 			'mhtCurrencyType'=>self::NOWPAY_CURRENCY_TYPE,
 			'mhtOrderAmt'=>$this->amount,
-			'mhtOrderDetail'=>$this->order_name,
+			'mhtOrderDetail'=>$this->user->getCompetitionName(),
 			'mhtOrderTimeOut'=>self::NOWPAY_ORDER_TIME_OUT,
 			'mhtOrderStartTime'=>date('YmdHis'),
 			'notifyUrl'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_NOWPAY)),
