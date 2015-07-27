@@ -49,6 +49,6 @@
   <!-- HISRC Retina Images -->
   <script src="/b/js/plugins/hisrc/hisrc.js"></script>
   <script src="/b/js/flex.js"></script>
-  <script src="/b/js/main.js?v=20150727"></script>
+  <script src="/b/js/main.js?v=20150728"></script>
 </body>
 </html>

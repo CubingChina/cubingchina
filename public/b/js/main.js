@@ -38,7 +38,7 @@ $(function() {
   });
   function adjustTableContainer() {
     var tableContainer = $('.table-responsive');
-    if (tableContainer.length) {
+    if (tableContainer.length && !('ontouchstart' in window)) {
       tableContainer.css({
         'max-height': $(window).height() - tableContainer.offset().top - 60
       })
