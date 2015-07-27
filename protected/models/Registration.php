@@ -136,10 +136,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayUrl() {
-		return array(
-			'/pay/registration',
-			'id'=>$this->id,
-		);
+		return $this->competition->getUrl('registration');
 	}
 
 	public function getLocation() {
@@ -329,6 +326,17 @@ class Registration extends ActiveRecord {
 		} else {
 			return '-';
 		}
+	}
+
+	public function getPayable() {
+		if ($this->pay === null) {
+			$this->pay = $this->createPay();
+		}
+		if ($this->pay->amount !== $this->getTotalFee() * 100) {
+			$this->pay->amount = $this->getTotalFee() * 100;
+			$this->pay->save(false);
+		}
+		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0 && !$this->isAccepted();
 	}
 
 	public function createPay() {

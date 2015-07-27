@@ -99,7 +99,7 @@
 					'label'=>'<i class="fa fa-money"></i> 财务 <i class="fa fa-caret-down"></i>',
 					'url'=>'javascript:;',
 					'active'=>$this->controller->id == 'pay',
-					'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+					'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
 					'linkOptions'=>array(
 						'data-parent'=>'#side',
 						'data-toggle'=>'collapse',
@@ -117,12 +117,12 @@
 						array(
 							'label'=>'<i class="fa fa-angle-double-right"></i> 支付流水',
 							'url'=>array('/board/pay/index'),
-							'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+							'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
 						),
 						// array(
 						// 	'label'=>'<i class="fa fa-angle-double-right"></i> 财务报表',
 						// 	'url'=>array('/board/pay/statistics'),
-						// 	'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+						// 	'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
 						// ),
 					),
 				),
