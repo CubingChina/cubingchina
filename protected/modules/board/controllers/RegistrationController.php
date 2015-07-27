@@ -648,4 +648,21 @@ class RegistrationController extends AdminController {
 		Yii::app()->user->setFlash('success', $model->user->name . '未付！');
 		$this->redirect(Yii::app()->request->urlReferrer);
 	}
+
+	public function actionToggle() {
+		$id = $this->iRequest('id');
+		$model = Registration::model()->findByPk($id);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+			throw new CHttpException(401, 'Unauthorized');
+		}
+		$attribute = $this->sRequest('attribute');
+		$model->$attribute = 1 - $model->$attribute;
+		$model->save();
+		$this->ajaxOk(array(
+			'value'=>$model->$attribute,
+		));
+	}
 }

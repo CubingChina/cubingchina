@@ -1,8 +1,8 @@
-# Ignore everything in this directory
 protected/vendor/*
 protected/composer.lock
 protected/config/wcaDb
 protected/commands/shell/last
+public/.htaccess
 .tag*
 
 # Except this file
