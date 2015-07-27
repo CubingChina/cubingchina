@@ -31,17 +31,15 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	public function getRegIpDisplay($attribute = 'ip') {
-		if (!extension_loaded('qqwry') || !class_exists('qqwry', false) || empty($this->$attribute)) {
+		if (!class_exists('\Zhuzhichao\IpLocationZh\Ip', false) || empty($this->$attribute)) {
 			return $this->$attribute;
 		}
-		$result = self::getQQWRY()->q($this->$attribute);
+		$result = \Zhuzhichao\IpLocationZh\Ip::find($this->$attribute);
 		return CHtml::tag('button', array(
 			'class'=>'btn btn-xs btn-orange tips',
 			'data-toggle'=>'tooltip',
 			'data-placement'=>'left',
-			'title'=>implode('|', array_map(function($a) {
-				return iconv('gbk', 'utf-8', $a);
-			}, $result)),
+			'title'=>implode('', $result),
 		), $this->$attribute);
 	}
 

@@ -1,7 +1,8 @@
 {
 	"require": {
 		"phpoffice/phpexcel": "dev-develop",
-		"suin/php-rss-writer": "dev-master"
+		"suin/php-rss-writer": "dev-master",
+		"zhuzhichao/ip-location-zh": "dev-master"
 	},
 	"repositories": [{
 		"type": "composer",
