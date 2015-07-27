@@ -20,7 +20,7 @@ return array (
   'Fee' => '',
   'Please confirm your email:\\n{email}' => '请确认你的电子邮件：\\n{email}',
   'If you were unable to pay online, please contact the organizer.' => '如果你无法在线支付，请联系主办方。',
-  'It supports Unionpay and many China bankcards.' => '支持中国银联和银行卡支付。',
+  'It supports Unionpay and many China bankcards.' => '支持中国银联快捷支付和常见银行卡支付。',
   'Please choose a payment channel.' => '请选择一个支付渠道：',
   'WCA ID' => '',
   'more' => '',

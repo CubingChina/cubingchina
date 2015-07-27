@@ -22,6 +22,12 @@
     <div class="pay-channels clearfix">
       <div class="pay-channel alipay col-sm-6 active" data-channel="alipay">
         <img src="/f/images/pay/alipay.png">
+        <p>
+          <?php if (Yii::app()->language === 'zh_cn'): ?>
+          支持绑定银行卡和支付宝余额支付，<br>
+          <span class="text-danger">不支持余额宝</span>。
+          <?php endif; ?>
+        </p>
       </div>
       <div class="pay-channel nowpay col-sm-6" data-channel="nowPay">
         <img src="/f/images/pay/nowpay.png">

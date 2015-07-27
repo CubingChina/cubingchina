@@ -274,8 +274,8 @@ class Pay extends ActiveRecord {
 			'logistics_fee'=>'0.00',
 			'logistics_type'=>'EXPRESS',
 			'logistics_payment'=>'SELLER_PAY',
-			'body'=>$this->user->getCompetitionName(),
-			// 'show_url'=>$show_url,
+			'body'=>sprintf("ID: %s, Name: %s", $this->user_id, $this->user->getCompetitionName()),
+			'show_url'=>$this->getUrl(),
 			'receive_name'=>$this->user->getCompetitionName(),
 			'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
 			// 'receive_zip'=>$receive_zip,
@@ -289,6 +289,16 @@ class Pay extends ActiveRecord {
 			'method'=>'post',
 			'params'=>$params,
 		);
+	}
+
+	public function getUrl() {
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+				return $baseUrl . CHtml::normalizeUrl($this->competition->getUrl());
+			default:
+				return $baseUrl;
+		}
 	}
 
 	public function generateNowPayParams($isMobile) {

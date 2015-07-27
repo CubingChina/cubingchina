@@ -2444,7 +2444,7 @@ body.results table .region {
 .pay-channel {
   padding: 5px;
   cursor: pointer;
-  height: 100px;
+  height: 90px;
   border: 3px solid transparent;
 }
 .pay-channel.active {
