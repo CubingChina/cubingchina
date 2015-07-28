@@ -34,7 +34,7 @@ class Pay extends ActiveRecord {
 	const STATUS_WAIT_CONFIRM = 4;
 
 	const DEVICE_TYPE_PC = '02';
-	const DEVICE_TYPE_WAP = '06';
+	const DEVICE_TYPE_MOBILE = '06';
 
 	//现在支付参数
 	const NOWPAY_FUNCODE_PAY = 'WP001';
@@ -55,6 +55,8 @@ class Pay extends ActiveRecord {
 
 	const CHARSET = 'UTF-8';
 	const SIGN_TYPE = 'MD5';
+
+	private static $_criteria;
 
 	public static function notifyReturn($channel, $success) {
 		switch ($channel) {
@@ -353,6 +355,15 @@ class Pay extends ActiveRecord {
 	}
 
 	public function getColumns() {
+		$criteria = clone self::$_criteria;
+		$criteria->select = 'SUM(amount) AS amount';
+		$amount = $this->find($criteria)->amount;
+		$criteria->select = 'SUM(ROUND((CASE
+			WHEN status=0 THEN 0
+			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
+			WHEN channel="nowPay" THEN amount*0.06
+			ELSE amount*0.012 END) / 100, 2)) AS amount';
+		$fee = $this->find($criteria)->amount;
 		$columns = array(
 			'id',
 			array(
@@ -372,6 +383,13 @@ class Pay extends ActiveRecord {
 			array(
 				'name'=>'amount',
 				'value'=>'number_format($data->amount / 100, 2)',
+				'footer'=>number_format($amount / 100, 2),
+			),
+			array(
+				'name'=>'fee',
+				'footer'=>$fee,
+				'filter'=>false,
+				'header'=>'手续费',
 			),
 			array(
 				'name'=>'create_time',
@@ -407,6 +425,23 @@ class Pay extends ActiveRecord {
 			}
 		}
 		return $columns;
+	}
+
+	public function getFee() {
+		if ($this->status != self::STATUS_UNPAID) {
+			switch ($this->channel) {
+				case self::CHANNEL_NOWPAY:
+					if ($this->device_type == self::DEVICE_TYPE_PC) {
+						return number_format(max($this->amount * 0.0002, 0.08), 2, '.', '');
+					} else {
+						return number_format(max($this->amount * 0.0006, 0.08), 2, '.', '');
+					}
+				default:
+					return number_format($this->amount * 0.00012, 2, '.', '');
+			}
+		} else {
+			return '0.00';
+		}
 	}
 
 	protected function beforeValidate() {
@@ -518,6 +553,8 @@ class Pay extends ActiveRecord {
 		$criteria->compare('status', $this->status);
 		$criteria->compare('create_time', $this->create_time, true);
 		$criteria->compare('update_time', $this->update_time, true);
+
+		self::$_criteria = $criteria;
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
