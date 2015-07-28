@@ -289,6 +289,7 @@ class Registration extends ActiveRecord {
 					'data-attribute'=>'status',
 					'data-value'=>$this->status,
 					'data-text'=>'["通过","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
 				), '通过');
 				break;
 			case self::STATUS_ACCEPTED:
@@ -299,6 +300,7 @@ class Registration extends ActiveRecord {
 					'data-attribute'=>'status',
 					'data-value'=>$this->status,
 					'data-text'=>'["通过","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
 				), '取消');
 				break;
 		}
@@ -311,6 +313,7 @@ class Registration extends ActiveRecord {
 			'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
 			'data-attribute'=>'paid',
 			'data-value'=>$this->paid,
+			'data-name'=>$this->user->getCompetitionName(),
 		));
 		return implode(' ', $buttons);
 	}

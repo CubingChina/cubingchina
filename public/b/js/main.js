@@ -17,6 +17,7 @@ $(function() {
         attribute: options.attribute,
         value: options.values[0] == options.value ? options.values[1] : options.values[0]
       },
+      timeout: 10000,
       success: function(data) {
         $.extend(options, data.data);
         var index = options.values.indexOf(data.data.value);
@@ -31,10 +32,22 @@ $(function() {
           that.removeClass('btn-' + options.btns[1 - index]).addClass('btn-' + options.btns[index]);
         }
       },
-      error: function() {
-        alert('操作失败，请联系管理员');
+      error: function(xhr, textStatus, error) {
+        var msg = [];
+        switch (textStatus) {
+          case 'timeout':
+            msg.push('连接超时，请检查网络');
+            break;
+          default:
+            msg.push(error);
+        }
+        if (options.name) {
+          msg.push(options.name);
+        }
+        alert(msg.join('\n'));
       }
-    })
+    });
+    return false;
   });
   function adjustTableContainer() {
     var tableContainer = $('.table-responsive');
