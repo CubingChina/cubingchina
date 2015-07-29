@@ -127,7 +127,7 @@ class Registration extends ActiveRecord {
 				'class'=>'btn btn-xs btn-disabled',
 			), Yii::t('common', 'Paid'));
 		}
-		if ($totalFee > 0 && $this->competition->isOnlinePay()) {
+		if ($this->payable) {
 			return CHtml::link(Yii::t('common', 'Pay'), $this->getPayUrl(), array(
 				'class'=>'btn btn-xs btn-theme',
 			));
@@ -339,7 +339,8 @@ class Registration extends ActiveRecord {
 			$this->pay->amount = $this->getTotalFee() * 100;
 			$this->pay->save(false);
 		}
-		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0 && !$this->isAccepted();
+		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0
+			&& !$this->isAccepted() && !$this->competition->isRegistrationFull();
 	}
 
 	public function createPay() {
