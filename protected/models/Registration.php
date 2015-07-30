@@ -340,7 +340,8 @@ class Registration extends ActiveRecord {
 			$this->pay->save(false);
 		}
 		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0
-			&& !$this->isAccepted() && !$this->competition->isRegistrationFull();
+			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
+			&& !$this->competition->isRegistrationEnded();
 	}
 
 	public function createPay() {
