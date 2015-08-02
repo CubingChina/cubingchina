@@ -17,19 +17,19 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Channel' => '渠道',
   'ID' => '',
   'Order Name' => '',
-  'Pay Account' => '支付账号',
   'Sub Type' => '',
-  'Trade No' => '渠道订单号',
   'Now Pay Account' => '现在支付账号',
   'Amount' => '金额',
+  'Channel' => '渠道',
   'Create Time' => '创建时间',
   'Device Type' => '设备类型',
   'Order No' => '订单号',
+  'Pay Account' => '支付账号',
   'Pay Channel' => '支付渠道',
   'Status' => '状态',
+  'Trade No' => '渠道订单号',
   'Type' => '类型',
   'Update Time' => '更新时间',
   'User' => '用户',

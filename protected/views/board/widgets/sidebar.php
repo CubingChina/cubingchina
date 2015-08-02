@@ -159,6 +159,39 @@
 						),
 					),
 				),
+				array(
+					'label'=>'<i class="fa fa-bullhorn"></i> FAQ <i class="fa fa-caret-down"></i>',
+					'url'=>'javascript:;',
+					'active'=>$this->controller->id == 'faq',
+					'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+					'linkOptions'=>array(
+						'data-parent'=>'#side',
+						'data-toggle'=>'collapse',
+						'class'=>'accordion-toggle',
+						'data-target'=>'#faq',
+					),
+					'itemOptions'=>array(
+						'class'=>'panel',
+					),
+					'submenuOptions'=>array(
+						'class'=>'collapse nav in',
+						'id'=>'faq',
+					),
+					'items'=>array(
+						array(
+							'label'=>'<i class="fa fa-angle-double-right"></i> FAQ管理',
+							'url'=>array('/board/faq/index'),
+						),
+						array(
+							'label'=>'<i class="fa fa-angle-double-right"></i> 新增FAQ',
+							'url'=>array('/board/faq/add'),
+						),
+						array(
+							'label'=>'<i class="fa fa-angle-double-right"></i> FAQ分类',
+							'url'=>array('/board/faq/category'),
+						),
+					),
+				),
 			)
 		));?>
 	</div>
