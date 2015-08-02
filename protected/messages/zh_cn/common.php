@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Frequently Asked Questions' => '常见问题解答',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',

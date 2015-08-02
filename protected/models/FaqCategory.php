@@ -32,6 +32,22 @@ class FaqCategory extends ActiveRecord {
 		return CHtml::listData($categories, 'id', 'name_zh');
 	}
 
+	public static function getCategoryMenu() {
+		$categories = self::model()->findAllByAttributes(array(
+			'status'=>self::STATUS_SHOW,
+		), array(
+			'order'=>'date DESC',
+		));
+		$menu = array();
+		foreach ($categories as $category) {
+			$menu[] = array(
+				'label'=>$category->getAttributeValue('name'),
+				'url'=>array('/faq/index', 'category_id'=>$category->id),
+			);
+		}
+		return $menu;
+	}
+
 	public function getStatusText() {
 		$status = self::getAllStatus();
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;

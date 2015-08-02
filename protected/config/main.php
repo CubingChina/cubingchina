@@ -49,6 +49,10 @@ $config = array(
 			'urlFormat'=>'path',
 			'rules'=>array(
 				'<page:\d+>'=>'site/index',
+				'faq/<category_id:\d+>'=>array(
+					'faq/index',
+					'urlSuffix'=>'.html'
+				),
 				''=>'site/index',
 				'register/<step:\d>'=>'site/register',
 				'<action:login|logout|register|forgetPassword|resetPassword|activate|reactivate|banned>'=>'site/<action>',

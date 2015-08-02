@@ -107,6 +107,7 @@ class Faq extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
+			'category'=>array(self::BELONGS_TO, 'FaqCategory', 'category_id'),
 		);
 	}
 
@@ -161,6 +162,7 @@ class Faq extends ActiveRecord {
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',
+				'pageSize'=>100,
 			),
 		));
 	}

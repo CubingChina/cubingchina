@@ -11,6 +11,7 @@
         <div class="portlet-body">
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(),
+            'filter'=>$model,
             'columns'=>array(
               array(
                 'header'=>'操作',
@@ -21,17 +22,25 @@
               array(
                 'name'=>'user_id',
                 'value'=>'$data->user->name_zh',
+                'filter'=>false,
+              ),
+              array(
+                'name'=>'category_id',
+                'filter'=>FaqCategory::getCategories(),
+                'value'=>'$data->category->name_zh',
               ),
               'title_zh',
               array(
                 'name'=>'date',
                 'type'=>'raw',
                 'value'=>'date("Y-m-d H:i:s", $data->date)',
+                'filter'=>false,
               ),
               array(
                 'name'=>'status',
                 'type'=>'raw',
                 'value'=>'$data->getStatusText()',
+                'filter'=>Faq::getAllStatus(),
               ),
             ),
           )); ?>
