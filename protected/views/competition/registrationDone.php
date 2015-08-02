@@ -5,7 +5,7 @@
     <?php echo Yii::t('Competition', 'Click {here} to view the competitors list.', array(
       '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('competitors')),
     )); ?>
-    <?php elseif ($competition->isOnlinePay() && $registration->getTotalFee() > 0): ?>
+    <?php elseif ($registration->payable): ?>
     <?php echo Yii::t('Competition', 'It will be verified automatically after your {paying}.', array(
       '{paying}'=>CHtml::tag('b', array('class'=>'text-danger'), Yii::t('common', 'paying the fee online')),
     )); ?>
