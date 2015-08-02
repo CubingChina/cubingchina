@@ -127,7 +127,7 @@ class Registration extends ActiveRecord {
 				'class'=>'btn btn-xs btn-disabled',
 			), Yii::t('common', 'Paid'));
 		}
-		if ($totalFee > 0 && $this->competition->isOnlinePay()) {
+		if ($this->payable) {
 			return CHtml::link(Yii::t('common', 'Pay'), $this->getPayUrl(), array(
 				'class'=>'btn btn-xs btn-theme',
 			));
@@ -136,10 +136,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayUrl() {
-		return array(
-			'/pay/registration',
-			'id'=>$this->id,
-		);
+		return $this->competition->getUrl('registration');
 	}
 
 	public function getLocation() {
@@ -292,6 +289,7 @@ class Registration extends ActiveRecord {
 					'data-attribute'=>'status',
 					'data-value'=>$this->status,
 					'data-text'=>'["通过","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
 				), '通过');
 				break;
 			case self::STATUS_ACCEPTED:
@@ -302,6 +300,7 @@ class Registration extends ActiveRecord {
 					'data-attribute'=>'status',
 					'data-value'=>$this->status,
 					'data-text'=>'["通过","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
 				), '取消');
 				break;
 		}
@@ -314,6 +313,7 @@ class Registration extends ActiveRecord {
 			'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
 			'data-attribute'=>'paid',
 			'data-value'=>$this->paid,
+			'data-name'=>$this->user->getCompetitionName(),
 		));
 		return implode(' ', $buttons);
 	}
@@ -329,6 +329,19 @@ class Registration extends ActiveRecord {
 		} else {
 			return '-';
 		}
+	}
+
+	public function getPayable() {
+		if ($this->pay === null) {
+			$this->pay = $this->createPay();
+		}
+		if ($this->pay->amount !== $this->getTotalFee() * 100) {
+			$this->pay->amount = $this->getTotalFee() * 100;
+			$this->pay->save(false);
+		}
+		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0
+			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
+			&& !$this->competition->isRegistrationEnded();
 	}
 
 	public function createPay() {

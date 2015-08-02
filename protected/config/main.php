@@ -61,6 +61,7 @@ $config = array(
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1983|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
+				'pay/<action:notify|frontNotify>/<channel:nowPay|alipay>'=>'pay/<action>',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
@@ -112,13 +113,17 @@ $config = array(
 					'maxFileSize'=>102400,
 				),
 				array(
+					'class'=>'CFileLogRoute',
+					'levels'=>'pay',
+					'logFile'=>'application.pay.log',
+					'maxFileSize'=>102400,
+				),
+				array(
 					'class'=>'CDbLogRoute',
 					'levels'=>'test',
 					'connectionID'=>'db',
 					'autoCreateLogTable'=>DEV,
 					'logTableName'=>'logs',
-					// 'logFile'=>'application.test.log',
-					// 'maxFileSize'=>102400,
 				),
 				array( // configuration for the toolbar
 					'class'=>'XWebDebugRouter',
@@ -140,7 +145,7 @@ $config = array(
 			'from'=>'noreply@cubingchina.com',
 			'fromname'=>'请勿回复DO NOT REPLY',
 			'api'=>array(
-				'user'=>'',
+				'user'=>'cubingchina',
 				'key'=>'',
 			),
 		),
@@ -164,7 +169,7 @@ $config = array(
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>0 ? '/static/' : 'http://s.cubingchina.com/',
 		'jsVer'=>'20150629',
-		'cssVer'=>'20150629',
+		'cssVer'=>'20150728',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,
@@ -172,16 +177,24 @@ $config = array(
 		),
 		'nowPay'=>array(
 			'baseUrl'=>'http://api.ipaynow.cn/',
-			'pc'=>array(
-				'appId'=>'',
-				'securityKey'=>'',
-				'deviceType'=>'02',
+			'types'=>array(
+				'pc'=>array(
+					'appId'=>'1436844603321385',
+					'securityKey'=>'',
+					'deviceType'=>'02',
+				),
+				'mobile'=>array(
+					'appId'=>'1436844653265386',
+					'securityKey'=>'',
+					'deviceType'=>'06',
+				),
 			),
-			'mobile'=>array(
-				'appId'=>'',
-				'securityKey'=>'',
-				'deviceType'=>'06',
-			),
+		),
+		'alipay'=>array(
+			'gateway'=>'https://mapi.alipay.com/gateway.do',
+			'partner'=>'2088002487607846',
+			'seller_email'=>'qiyuuu@gmail.com',
+			'key'=>'',
 		),
 	),
 );
