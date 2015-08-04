@@ -194,6 +194,10 @@ class Controller extends CController {
 					),
 					'items'=>array(
 						array(
+							'url'=>array('/faq/index'),
+							'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
+						),
+						array(
 							'url'=>array('/site/page', 'view'=>'about'),
 							'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
 						),

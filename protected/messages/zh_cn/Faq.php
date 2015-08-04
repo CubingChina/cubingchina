@@ -17,20 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Category' => '分类',
+  'Content' => '正文',
+  'Content Zh' => '中文正文',
+  'Date' => '日期',
   'ID' => '',
-  'Order Name' => '',
-  'Sub Type' => '',
-  'Now Pay Account' => '現在支付賬號',
-  'Amount' => '金額',
-  'Channel' => '渠道',
-  'Create Time' => '創建時間',
-  'Device Type' => '設備類型',
-  'Order No' => '訂單號',
-  'Pay Account' => '支付賬號',
-  'Pay Channel' => '支付渠道',
-  'Status' => '狀態',
-  'Trade No' => '渠道訂單號',
-  'Type' => '類型',
-  'Update Time' => '更新時間',
-  'User' => '用戶',
+  'Status' => '状态',
+  'Title' => '标题',
+  'Title Zh' => '中文标题',
+  'User' => '发布人',
 );

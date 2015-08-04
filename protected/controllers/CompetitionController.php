@@ -114,9 +114,6 @@ class CompetitionController extends Controller {
 				$model->status = Registration::STATUS_ACCEPTED;
 			}
 			if ($model->save()) {
-				if ($competition->isOnlinePay()) {
-					$model->pay = $model->createPay();
-				}
 				Yii::app()->mailer->sendRegistrationNotice($model);
 				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 				$model->formatEvents();
