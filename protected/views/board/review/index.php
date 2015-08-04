@@ -24,14 +24,14 @@
                 'value'=>'$data->organizer ? $data->organizer->name_zh : ""',
               ),
               array(
-                'name'=>'competition_id',
-                'value'=>'$data->competition ? $data->competition->name_zh : "无"',
-              ),
-              array(
                 'name'=>'rank',
                 'type'=>'raw',
                 'value'=>'$data->getRankText()',
                 'filter'=>Review::getRanks(),
+              ),
+              array(
+                'name'=>'competition_id',
+                'value'=>'$data->competition ? $data->competition->name_zh : "无"',
               ),
               array(
                 'name'=>'date',
