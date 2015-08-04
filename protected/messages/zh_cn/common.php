@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Frequently Asked Questions' => '常见问题解答',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -103,6 +102,7 @@ return array (
   'File is too large, the limited size is {size}' => '文件太大，最大允许{size}',
   'Fill More Information' => '填写信息',
   'Find my password' => '找回密码',
+  'Frequently Asked Questions' => '常见问题解答',
   'Gender' => '性别',
   'Home' => '首页',
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活过程中有任何问题，请发送邮件到{email}联系管理员。',
