@@ -19,8 +19,8 @@
 return array (
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
-  'Appearances in top 100 Chinese average results of Rubik\'s Cube' => '中國三速平均成績前100占席',
-  'Appearances in top 100 Chinese single results of Rubik\'s Cube' => '中國三速單次成績前100占席',
+  'Appearances in top 100 Chinese average results of each event' => '中國各項平均成績前100占席',
+  'Appearances in top 100 Chinese single results of each event' => '中國各項單次成績前100占席',
   'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自{url}。',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
   'Best "medal collection" of all events' => '官方賽事全項目累計獎牌榜',

@@ -12,6 +12,7 @@
  */
 class Events extends ActiveRecord {
 	private static $_allEvents;
+	private static $_normalEvents;
 	private static $_specialEventNames = array(
 		'pyram'=>'pyra',
 		'minx'=>'mega',
@@ -112,12 +113,15 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getNormalEvents() {
+		if (self::$_normalEvents !== null) {
+			return self::$_normalEvents;
+		}
 		$events = self::model()->cache(86500 * 7)->findAll(array(
 			'condition'=>'rank<900',
 			'order'=>'rank',
 		));
 		$events = CHtml::listData($events, 'id', 'cellName');
-		return $events;
+		return self::$_normalEvents = $events;
 	}
 
 	public static function getNormalTranslatedEvents() {
