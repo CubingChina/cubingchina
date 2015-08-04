@@ -195,7 +195,7 @@ class Controller extends CController {
 					'items'=>array(
 						array(
 							'url'=>array('/faq/index'),
-							'label'=>'FAQ',
+							'label'=>Html::fontAwesome('list-alt', 'a') . 'FAQ',
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'about'),
