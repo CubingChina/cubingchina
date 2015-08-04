@@ -58,6 +58,7 @@
               )),
               $form->dropDownList($model, 'rank', Review::getRanks(), array(
                 'class'=>'form-control',
+                'prompt'=>'',
               )),
               $form->error($model, 'rank', array('class'=>'text-danger'))
             );?>
@@ -84,7 +85,8 @@
                 'label'=>'备注',
               )),
               $form->textArea($model, 'comments', array(
-                'class'=>'editor form-control'
+                'class'=>'editor form-control',
+                'rows'=>6,
               )),
               $form->error($model, 'comments', array('class'=>'text-danger'))
             );?>

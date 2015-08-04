@@ -16,9 +16,9 @@ class ReviewController extends AdminController {
 
 	public function actionAdd() {
 		$model = new Review();
+		$model->unsetAttributes();
 		$model->user_id = $this->user->id;
 		$model->date = time();
-		// $model->unsetAttributes();
 		if (isset($_POST['Review'])) {
 			$model->attributes = $_POST['Review'];
 			if ($model->save()) {
