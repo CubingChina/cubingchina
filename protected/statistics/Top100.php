@@ -2,6 +2,8 @@
 
 class Top100 extends Statistics {
 
+	public static $top100s = array();
+
 	public static function build($statistic) {
 		$db = Yii::app()->wcaDb;
 		$command = $db->createCommand()
@@ -130,7 +132,26 @@ class Top100 extends Statistics {
 					'type'=>'raw',
 				),
 			);
-			return self::makeStatisticsData($statistic, $columns, array_slice($top100, 0, self::$limit));
+			self::$top100s[$statistic['type']][$statistic['event']] = self::makeStatisticsData($statistic, $columns, array_slice($top100, 0, self::$limit));
+			$events = Events::getNormalEvents();
+			$eventIds = array_keys($events);
+			foreach ($eventIds as $eventId) {
+				if (isset(self::$top100s[$statistic['type']][$eventId])) {
+					continue;
+				}
+				$temp = $statistic;
+				$temp['event'] = $eventId;
+				self::build($temp);
+			}
+			if ($statistic['type'] === 'average') {
+				unset($events['444bf'], $events['555bf'], $events['333mbf']);
+			}
+			return self::makeStatisticsData($statistic, array(
+				'statistic'=>self::$top100s[$statistic['type']],
+				'select'=>$events,
+				'selectHandler'=>'Yii::t("event", "$name")',
+				'selectKey'=>'event',
+			));
 		} else {
 			$top100 = array_map(function($row) {
 				return self::getCompetition($row);

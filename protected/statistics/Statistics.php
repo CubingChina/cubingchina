@@ -72,7 +72,7 @@ class Statistics {
 			'class'=>'MedalCollection',
 			'width'=>'6',
 		),
-		'Appearances in top 100 Chinese single results of Rubik\'s Cube'=>array(
+		'Appearances in top 100 Chinese single results of each event'=>array(
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'single',
@@ -86,7 +86,7 @@ class Statistics {
 				'type'=>'single',
 			),
 		),
-		'Appearances in top 100 Chinese average results of Rubik\'s Cube'=>array(
+		'Appearances in top 100 Chinese average results of each event'=>array(
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'average',

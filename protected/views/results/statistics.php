@@ -74,14 +74,25 @@ Yii::app()->clientScript->registerScript('statistics',
       more = that.parent().find('.more');
     $('.' + name).addClass('hide').filter('#statistic_' + name + '_' + value).removeClass('hide');
     if (key && more.length > 0) {
-      if (!more.data('href')) {
-        more.data('href', more.attr('href'));
-      }
-      more.attr('href', more.data('href') + '?' + key + '=' + value);
+      var params = {};
+      params[key] = value;
+      more.attr('href', addParams(more.attr('href'), params));
     }
   }).trigger('change');
   $('select[name="statistics"]').on('change', function() {
     location.href = '#' + $(this).val();
   });
+  function addParams(url, params) {
+    var oldParams = {};
+    url = url.split('?');
+    if (url[1]) {
+      $.each(url[1].split('&'), function(key, value) {
+        value = value.split('=');
+        oldParams[value[0]] = value[1] || '';
+      });
+    }
+    $.extend(oldParams, params);
+    return url[0] + '?' + $.param(oldParams);
+  }
 EOT
 );
