@@ -332,14 +332,17 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayable() {
-		if ($this->pay === null) {
-			$this->pay = $this->createPay();
+		$totalFee = $this->getTotalFee();
+		if ($this->competition->isOnlinePay() && $totalFee > 0) {
+			if ($this->pay === null) {
+				$this->pay = $this->createPay();
+			}
+			if ($this->pay->amount !== $totalFee * 100) {
+				$this->pay->amount = $totalFee * 100;
+				$this->pay->save(false);
+			}
 		}
-		if ($this->pay->amount !== $this->getTotalFee() * 100) {
-			$this->pay->amount = $this->getTotalFee() * 100;
-			$this->pay->save(false);
-		}
-		return $this->competition->isOnlinePay() && $this->getTotalFee() > 0
+		return $this->competition->isOnlinePay() && $totalFee > 0
 			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
 			&& !$this->competition->isRegistrationEnded();
 	}
