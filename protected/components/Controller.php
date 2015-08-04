@@ -195,7 +195,7 @@ class Controller extends CController {
 					'items'=>array(
 						array(
 							'url'=>array('/faq/index'),
-							'label'=>Html::fontAwesome('list-alt', 'a') . 'FAQ',
+							'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'about'),

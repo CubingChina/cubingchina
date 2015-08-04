@@ -189,7 +189,7 @@
           ),
         ),
         array(
-          'label'=>'<i class="fa fa-bullhorn"></i> FAQ <i class="fa fa-caret-down"></i>',
+          'label'=>'<i class="fa fa-question-circle"></i> FAQ <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'faq',
           'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),

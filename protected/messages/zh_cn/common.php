@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'FAQ' => '常见问题',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
