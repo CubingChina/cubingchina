@@ -72,7 +72,7 @@ class Statistics {
 			'class'=>'MedalCollection',
 			'width'=>'6',
 		),
-		'Appearances in top 100 Chinese single results of each event'=>array(
+		'Appearances in top 100 Chinese single results of'=>array(
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'single',
@@ -86,7 +86,7 @@ class Statistics {
 				'type'=>'single',
 			),
 		),
-		'Appearances in top 100 Chinese average results of each event'=>array(
+		'Appearances in top 100 Chinese average results of'=>array(
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'average',
@@ -100,7 +100,7 @@ class Statistics {
 				'type'=>'average',
 			),
 		),
-		'Best podiums'=>array(
+		'Best podiums in Chinese competitions'=>array(
 			'class'=>'BestPodiums',
 			'eventId'=>'333',
 			'type'=>'all',
