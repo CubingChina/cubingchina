@@ -24,7 +24,7 @@ return array (
   'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自{url}。',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
   'Best "medal collection" of all events' => '官方賽事全項目累計獎牌榜',
-  'Best podiums' => '中國賽事領獎台成績榜',
+  'Best podiums in Chinese competitions' => '中國賽事領獎台成績榜',
   'Competitions' => '比賽次數',
   'Days' => '天數',
   'First' => '冠軍',

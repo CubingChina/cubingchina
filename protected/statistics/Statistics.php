@@ -100,7 +100,7 @@ class Statistics {
 				'type'=>'average',
 			),
 		),
-		'Best podiums'=>array(
+		'Best podiums in Chinese competitions'=>array(
 			'class'=>'BestPodiums',
 			'eventId'=>'333',
 			'type'=>'all',
