@@ -368,7 +368,7 @@ class Pay extends ActiveRecord {
 			'id',
 			array(
 				'name'=>'user_id',
-				'value'=>'$data->user->name_zh',
+				'value'=>'$data->user->getCompetitionName()',
 			),
 			array(
 				'name'=>'channel',
