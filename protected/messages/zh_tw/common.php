@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  '1 hour' => '1小時',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
