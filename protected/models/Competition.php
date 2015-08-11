@@ -81,6 +81,9 @@ class Competition extends ActiveRecord {
 				}
 			}
 		}
+		if ($second == 3600) {
+			return Yii::t('common', '1 hour');
+		}
 	}
 
 	public static function getUnpublicCount() {
