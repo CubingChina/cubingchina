@@ -109,6 +109,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getTotalFee() {
+		if (empty($this->events)) {
+			return 0;
+		}
 		$this->competition->formatEvents();
 		$competitionEvents = $this->competition->events;
 		$fees = array();
