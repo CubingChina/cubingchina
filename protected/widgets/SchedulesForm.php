@@ -35,6 +35,7 @@ class SchedulesForm extends Widget {
 		echo CHtml::tag('th', array(), '赛制');
 		echo CHtml::tag('th', array(), '及格线(秒)');
 		echo CHtml::tag('th', array(), '还原时限(秒)');
+		echo CHtml::tag('th', array(), '人数');
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('thead');
 
@@ -88,6 +89,9 @@ class SchedulesForm extends Widget {
 			)));
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[time_limit][]", array(
 				'value'=>$time_limit,
+			)));
+			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][]", array(
+				'value'=>$number,
 			)));
 
 			echo CHtml::closeTag('tr');

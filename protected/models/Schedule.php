@@ -14,6 +14,7 @@
  * @property string $group
  * @property string $format
  * @property string $round
+ * @property string $number
  * @property string $cut_off
  * @property string $time_limit
  */
@@ -45,13 +46,13 @@ class Schedule extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competition_id, start_time, end_time, event, format, round, cut_off, time_limit', 'required'),
+			array('competition_id, start_time, end_time, event, format, round, number, cut_off, time_limit', 'required'),
 			array('competition_id, day', 'numerical', 'integerOnly'=>true),
 			array('stage, start_time, end_time, group, format, round, cut_off, time_limit', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, day, stage, start_time, end_time, event, group, format, round, cut_off, time_limit', 'safe', 'on'=>'search'),
+			array('id, competition_id, day, stage, start_time, end_time, event, group, format, round, number, cut_off, time_limit', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,6 +81,7 @@ class Schedule extends ActiveRecord {
 			'group' => Yii::t('Schedule', 'Group'),
 			'format' => Yii::t('Schedule', 'Format'),
 			'round' => Yii::t('Schedule', 'Round'),
+			'number' => Yii::t('Schedule', 'Competitors'),
 			'cut_off' => Yii::t('Schedule', 'Cut Off'),
 			'time_limit' => Yii::t('Schedule', 'Time Limit'),
 		);
@@ -102,18 +104,19 @@ class Schedule extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('competition_id',$this->competition_id);
-		$criteria->compare('day',$this->day);
-		$criteria->compare('stage',$this->stage,true);
-		$criteria->compare('start_time',$this->start_time,true);
-		$criteria->compare('end_time',$this->end_time,true);
-		$criteria->compare('event',$this->event,true);
-		$criteria->compare('group',$this->group,true);
-		$criteria->compare('format',$this->format,true);
-		$criteria->compare('round',$this->round,true);
-		$criteria->compare('cut_off',$this->cut_off,true);
-		$criteria->compare('time_limit',$this->time_limit,true);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('competition_id', $this->competition_id);
+		$criteria->compare('day', $this->day);
+		$criteria->compare('stage', $this->stage, true);
+		$criteria->compare('start_time', $this->start_time, true);
+		$criteria->compare('end_time', $this->end_time, true);
+		$criteria->compare('event', $this->event, true);
+		$criteria->compare('group', $this->group, true);
+		$criteria->compare('format', $this->format, true);
+		$criteria->compare('round', $this->round, true);
+		$criteria->compare('number', $this->number, true);
+		$criteria->compare('cut_off', $this->cut_off, true);
+		$criteria->compare('time_limit', $this->time_limit, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

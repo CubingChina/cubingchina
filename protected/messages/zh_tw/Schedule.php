@@ -17,6 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Competitors' => '人數',
+  'ID' => '',
   'Competition' => '比賽',
   'Cut Off' => '及格線',
   'Day' => '第幾天',
@@ -24,7 +26,6 @@ return array (
   'Event' => '項目',
   'Format' => '賽制',
   'Group' => '分組',
-  'ID' => '',
   'Main Stage' => '主賽台',
   'Round' => '輪次',
   'Side Stage' => '分賽台',
