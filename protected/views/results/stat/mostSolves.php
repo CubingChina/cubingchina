@@ -2,7 +2,7 @@
   <p class="text-muted"><small><?php echo Yii::t('statistics', 'Generated on {time}.', array(
     '{time}'=>date('Y-m-d H:i:s', $time),
   )); ?></small></p>
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     'htmlOptions'=>array(
       'role'=>'form',
       'class'=>'form',

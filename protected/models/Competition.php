@@ -857,6 +857,7 @@ class Competition extends ActiveRecord {
 				'group'=>$oldSchedules['group'][$key],
 				'round'=>$oldSchedules['round'][$key],
 				'format'=>$oldSchedules['format'][$key],
+				'number'=>$oldSchedules['number'][$key],
 				'cut_off'=>$oldSchedules['cut_off'][$key],
 				'time_limit'=>$oldSchedules['time_limit'][$key],
 			);

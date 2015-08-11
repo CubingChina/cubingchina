@@ -8,7 +8,7 @@
       <span class="sr-only"><?php echo Yii::t('common', 'Step One'); ?></span>
     </div>
   </div>
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     'id'=>'register-form',
     'htmlOptions'=>array(
       //'class'=>'form-login',

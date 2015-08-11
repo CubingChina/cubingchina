@@ -1,5 +1,5 @@
 <div class="col-lg-12">
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     'htmlOptions'=>array(
       'role'=>'form',
       'class'=>'form-inline',

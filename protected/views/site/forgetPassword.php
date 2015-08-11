@@ -4,7 +4,7 @@
         <h3 class="panel-title"><?php echo Yii::t('common', 'Find my password'); ?></h3>
     </div>
     <div class="panel-body">
-      <?php $form = $this->beginWidget('CActiveForm', array(
+      <?php $form = $this->beginWidget('ActiveForm', array(
         'id'=>'forget-password-form',
         'htmlOptions'=>array(
           //'class'=>'form-login',
