@@ -29,7 +29,7 @@ EOT
 );
 		}
 		if ($hiddens !== array()) {
-			$form .= "\n" . self::tag('div',array('style'=>'display:none'), implode("\n", $hiddens));
+			$form .= "\n" . self::tag('div', array('style'=>'display:none'), implode("\n", $hiddens));
 		}
 		return $form;
 	}

@@ -78,7 +78,7 @@ class LoginHistory extends ActiveRecord {
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('user_id', $this->user_id, true);
+		$criteria->compare('user_id', $this->user_id);
 		$criteria->compare('ip', $this->ip, true);
 		$criteria->compare('date', $this->date, true);
 		$criteria->compare('from_cookie', $this->from_cookie);
