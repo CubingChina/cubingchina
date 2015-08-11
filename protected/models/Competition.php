@@ -645,6 +645,8 @@ class Competition extends ActiveRecord {
 			case 'Cut Off':
 			case 'Time Limit':
 				return 145;
+			case 'Competitors':
+				return 72;
 		}
 	}
 
