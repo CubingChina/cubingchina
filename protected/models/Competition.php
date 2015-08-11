@@ -532,6 +532,7 @@ class Competition extends ActiveRecord {
 		$schedules = $this->schedule;
 		usort($schedules, array($this, 'sortSchedules'));
 		$hasGroup = false;
+		$hasNumber = false;
 		$specialEvents = array(
 			'333fm'=>array(),
 			'333mbf'=>array(),
@@ -539,6 +540,11 @@ class Competition extends ActiveRecord {
 		foreach ($schedules as $key=>$schedule) {
 			if (trim($schedule->group) != '') {
 				$hasGroup = true;
+			}
+			if ($schedule->number > 0) {
+				$hasNumber = true;
+			} else {
+				$schedule->number = '';
 			}
 			if (isset($specialEvents[$schedule->event])) {
 				$specialEvents[$schedule->event][$schedule->round][] = $key;
@@ -579,12 +585,16 @@ class Competition extends ActiveRecord {
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
+				'Competitors'=>$schedule->number,
 				'id'=>$schedule->id,
 				'event'=>$schedule->event,
 				'round'=>$schedule->round,
 			);
 			if ($hasGroup === false) {
-				array_splice($temp, 3, 1);
+				unset($temp['Group']);
+			}
+			if ($hasNumber === false) {
+				unset($temp['Competitors']);
 			}
 			$listableSchedules[$schedule->day][$schedule->stage][] = $temp;
 		}
@@ -918,6 +928,7 @@ class Competition extends ActiveRecord {
 				$model->group = $schedules['group'][$key];
 				$model->round = $schedules['round'][$key];
 				$model->format = $schedules['format'][$key];
+				$model->number = intval($schedules['number'][$key]);
 				$model->cut_off = intval($schedules['cut_off'][$key]);
 				$model->time_limit = intval($schedules['time_limit'][$key]);
 				$model->save(false);
