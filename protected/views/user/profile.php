@@ -6,7 +6,7 @@
     <dt><?php echo Yii::t('User', 'Avatar'); ?></dt>
     <dd>
       <div class="user-avatar-container">
-        <?php $form = $this->beginWidget('CActiveForm', array(
+        <?php $form = $this->beginWidget('ActiveForm', array(
           'action'=>array('/user/upload'),
           'htmlOptions'=>array(
             'role'=>'form',

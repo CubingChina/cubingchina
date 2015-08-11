@@ -393,6 +393,13 @@ class Controller extends CController {
 			);
 			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
+		if ($this->module === null && $this->action->id !== 'error') {
+			$app = Yii::app();
+			$request = $app->request;
+			$request->enableCsrfValidation = true;
+			$request->csrfTokenName = md5($app->user->stateKeyPrefix . $app->getId() . $app->user->name);
+			$request->validateCsrfToken(new CEvent($this));
+		}
 		$this->setPageTitle(Yii::app()->name);
 		if (!Yii::app()->user->isGuest && $this->user && $this->user->isBanned()
 			&& $this->id !== 'site' && $action->id !== 'banned' && $action->id !== 'logout'

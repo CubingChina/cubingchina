@@ -1,5 +1,5 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     'id'=>'login-form',
     'htmlOptions'=>array(
     ),

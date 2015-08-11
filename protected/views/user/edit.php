@@ -6,7 +6,7 @@ $this->renderPartial('side', $_data_);
   <h3 class="has-divider text-highlight">
     <?php echo Yii::t('common', 'Edit profile.'); ?>
   </h3>
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     // 'id'=>'register-form',
     'htmlOptions'=>array(
       //'class'=>'form-login',

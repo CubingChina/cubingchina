@@ -4,7 +4,7 @@
       '{url}'=>CHtml::link(Yii::t('statistics', 'official WCA rankings'), 'https://www.worldcubeassociation.org/results/events.php?regionId=China', array('target'=>'_blank')),
     )); ?></p>
   </div>
-  <?php $form = $this->beginWidget('CActiveForm', array(
+  <?php $form = $this->beginWidget('ActiveForm', array(
     'htmlOptions'=>array(
       'role'=>'form',
       'class'=>'form-inline',

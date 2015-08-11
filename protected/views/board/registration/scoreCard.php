@@ -14,7 +14,7 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
-          <?php $form = $this->beginWidget('CActiveForm', array(
+          <?php $form = $this->beginWidget('ActiveForm', array(
             'htmlOptions'=>array(
               'class'=>'form-horizontal',
             ),
