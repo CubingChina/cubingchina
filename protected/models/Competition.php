@@ -466,9 +466,13 @@ class Competition extends ActiveRecord {
 	}
 
 	public function formatStageDate($dates) {
-		return implode('<br> ~ <br>', array_map(function($date) {
+		$dates = array_map(function($date) {
 			return date('Y-m-d H:i:s', $date);
-		}, $dates));
+		}, $dates);
+		if (!isset($dates[1])) {
+			array_unshift($dates, Yii::t('Competition', 'Now'));
+		}
+		return implode('<br> ~ <br>', $dates);
 	}
 
 	public function getHasSecondStage() {

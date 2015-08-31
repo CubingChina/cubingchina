@@ -22,6 +22,6 @@ return array(
 		'yiit.php',
 		'/messages',
 		'/statistics',
-		'/vendors',
+		'/vendor',
 	),
 );

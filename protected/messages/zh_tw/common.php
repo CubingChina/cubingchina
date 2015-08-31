@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Total Fee:' => '總計報名費：',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -196,6 +195,7 @@ return array (
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
   'Title' => '標題',
   'Tools' => '工具',
+  'Total Fee:' => '總計報名費：',
   'Unknown' => '未知',
   'Unpaid' => '未付',
   'Upcoming Competitions' => '近期賽事',
