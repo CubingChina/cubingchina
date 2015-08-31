@@ -29,7 +29,6 @@ return array (
   'Highlight these events:' => '高亮相关项目：',
   'Wca Competition' => 'WCA比赛',
   'About the Competition' => '关于比赛',
-  'Alipay Url' => '支付宝链接',
   'Base Entry Fee' => '基础报名费',
   'Check Person' => '报名自动审核',
   'City' => '城市',
