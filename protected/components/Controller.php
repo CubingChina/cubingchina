@@ -393,7 +393,7 @@ class Controller extends CController {
 			);
 			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
-		if ($this->module === null && $this->action->id !== 'error') {
+		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay') {
 			$app = Yii::app();
 			$request = $app->request;
 			$request->enableCsrfValidation = true;
