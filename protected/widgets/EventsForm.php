@@ -19,6 +19,7 @@ class EventsForm extends Widget {
 		$model = $this->model;
 		$name = $this->name;
 		$type = $this->type;
+		$competition = $this->competition;
 		$htmlOptions = $this->htmlOptions;
 		$labelOptions = $this->labelOptions;
 		$numberOptions = $this->numberOptions;
@@ -34,9 +35,9 @@ class EventsForm extends Widget {
 				));
 				$text = $value;
 				$fee = 0;
-				if ($this->competition instanceof Competition && isset($this->competition->events[$event]) && $this->competition->events[$event]['fee'] > 0) {
-					$text .= Html::fontAwesome('rmb', 'b') . $this->competition->events[$event]['fee'];
-					$fee = $this->competition->events[$event]['fee'];
+				if ($competition instanceof Competition && isset($competition->events[$event]) && $competition->events[$event]['fee'] > 0) {
+					$fee = $competition->secondStageFee($competition->events[$event]['fee'], $competition->second_stage_date <= time() && $competition->second_stage_all);
+					$text .= Html::fontAwesome('rmb', 'b') . $fee;
 				}
 				echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), in_array("$event", $model->$name), array(
 					'id'=>'Registration_events_' . $event,

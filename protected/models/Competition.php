@@ -449,6 +449,39 @@ class Competition extends ActiveRecord {
 		return Competitions::getDisplayDate($this->date, $this->end_date);
 	}
 
+	public function getFirstStage() {
+		if ($this->reg_start) {
+			$dates[] = $this->reg_start;
+		}
+		if ($this->second_stage_date) {
+			$dates[] = $this->second_stage_date - 1;
+		} else {
+			$dates[] = $this->reg_end;
+		}
+		return $this->formatStageDate($dates);
+	}
+
+	public function getSecondStage() {
+		return $this->formatStageDate(array($this->second_stage_date, $this->reg_end));
+	}
+
+	public function formatStageDate($dates) {
+		return implode('<br> ~ <br>', array_map(function($date) {
+			return date('Y-m-d H:i:s', $date);
+		}, $dates));
+	}
+
+	public function getHasSecondStage() {
+		return $this->second_stage_date > 0;
+	}
+
+	public function secondStageFee($fee, $multiple = true) {
+		if (!$multiple) {
+			return $fee;
+		}
+		return ceil($fee * $this->second_stage_ratio);
+	}
+
 	public function getOrganizers() {
 		if ($this->_organizers === null) {
 			$this->_organizers = CHtml::listData($this->organizer, 'organizer_id', 'organizer_id');
@@ -1059,7 +1092,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
+			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),

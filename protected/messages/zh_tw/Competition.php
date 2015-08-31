@@ -19,6 +19,9 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Second Stage All' => '第二階段包括所有項目',
+  'Second Stage Date' => '第二階段時間',
+  'Second Stage Ratio' => '第二階段倍率',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
@@ -39,7 +42,7 @@ return array (
   'Date' => '日期',
   'Delegates' => '代表',
   'End Date' => '結束日期',
-  'Entry Fee' => '基礎報名費',
+  'Entry Fee' => '報名費',
   'Events' => '項目',
   'Information' => '詳情',
   'It will be verified automatically after your {paying}.' => '在您{paying}報名費後，系統將自動審核你的報名。',

@@ -32,6 +32,7 @@ class Pay extends ActiveRecord {
 	const STATUS_FAILED = 2;
 	const STATUS_WAIT_SEND = 3;
 	const STATUS_WAIT_CONFIRM = 4;
+	const STATUS_WAIT_PAY = 5;
 
 	const DEVICE_TYPE_PC = '02';
 	const DEVICE_TYPE_MOBILE = '06';
@@ -167,6 +168,9 @@ class Pay extends ActiveRecord {
 				case self::ALIPAY_TRADE_STATUS_FINISHED:
 					$status = self::STATUS_PAID;
 					break;
+				case self::ALIPAY_TRADE_STATUS_WAIT_PAY:
+					$status = self::STATUS_WAIT_PAY;
+					break;
 				default:
 					return $result;
 			}
@@ -235,12 +239,16 @@ class Pay extends ActiveRecord {
 		}
 		$this->update_time = time();
 		$this->save(false);
+		if ($this->status == self::STATUS_WAIT_PAY || $this->status == self::STATUS_UNPAID) {
+			return;
+		}
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
 				$registration = $this->registration;
 				if ($registration !== null) {
 					$registration->status = Registration::STATUS_ACCEPTED;
 					$registration->paid = Registration::PAID;
+					$registration->total_fee = $registration->getTotalFee();
 					$registration->save();
 				}
 				break;
