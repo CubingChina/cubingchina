@@ -661,7 +661,7 @@ class RegistrationController extends AdminController {
 		$attribute = $this->sRequest('attribute');
 		$model->$attribute = 1 - $model->$attribute;
 		if ($model->isAccepted()) {
-			$model->total_fee = $model->getTotalFee();
+			$model->total_fee = $model->getTotalFee(true);
 		}
 		$model->save();
 		$this->ajaxOk(array(
