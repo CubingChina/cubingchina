@@ -476,7 +476,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function secondStageFee($fee, $multiple = true) {
-		if (!$multiple) {
+		if (!$multiple || !$this->hasSecondStage) {
 			return $fee;
 		}
 		return ceil($fee * $this->second_stage_ratio);

@@ -393,13 +393,6 @@ class Registration extends ActiveRecord {
 		return parent::beforeValidate();
 	}
 
-	protected function beforeSave() {
-		if ($this->isAccepted()) {
-			$this->total_fee = $this->getTotalFee();
-		}
-		return parent::beforeSave();
-	}
-
 	/**
 	 * @return string the associated database table name
 	 */
