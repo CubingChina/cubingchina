@@ -113,6 +113,7 @@ class Pay extends ActiveRecord {
 			self::STATUS_PAID=>Yii::t('common', 'Paid'), 
 			self::STATUS_WAIT_SEND=>'待发货', 
 			self::STATUS_WAIT_CONFIRM=>'待收货', 
+			self::STATUS_WAIT_PAY=>'待付款', 
 		);
 	}
 
@@ -367,7 +368,7 @@ class Pay extends ActiveRecord {
 		$criteria->select = 'SUM(amount) AS amount';
 		$amount = $this->find($criteria)->amount;
 		$criteria->select = 'SUM(ROUND((CASE
-			WHEN status=0 THEN 0
+			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
 			WHEN channel="nowPay" THEN amount*0.06
 			ELSE amount*0.012 END) / 100, 2)) AS amount';
