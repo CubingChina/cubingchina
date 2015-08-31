@@ -59,8 +59,40 @@
 				return Yii::t('event', $competition->getFullEventName($event));
 			}, array_keys($competition->getRegistrationEvents()))); ?>
 		</dd>
-		<dt><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></dt>
-		<dd><i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></dd>
+		<dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
+		<dd>
+			<table>
+				<thead>
+					<tr>
+						<th><?php echo Yii::t('Competition', 'Events'); ?></th>
+						<th><?php echo $competition->firstStage; ?></th>
+						<?php if ($competition->hasSecondStage): ?>
+						<th><?php echo $competition->secondStage; ?></th>
+						<?php endif; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
+						<td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
+						<?php if ($competition->hasSecondStage): ?>
+						<td>　<i class="fa fa-rmb"></i><?php echo $competition->secondStageFee($competition->entry_fee); ?></td>
+						<?php endif; ?>
+					</tr>
+					<?php foreach ($competition->events as $key=>$value): ?>
+					<?php if ($value['round'] > 0): ?>
+					<tr>
+						<td><?php echo Yii::t('event', Events::getFullEventName($key)); ?></td>
+						<td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $value['fee']; ?></td>
+						<?php if ($competition->hasSecondStage): ?>
+						<td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->secondStageFee($value['fee'], $competition->second_stage_all); ?></td>
+						<?php endif; ?>
+					</tr>
+					<?php endif; ?>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</dd>
 		<?php if ($competition->person_num > 0): ?>
 		<dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
 		<dd><?php echo $competition->person_num; ?></dd>

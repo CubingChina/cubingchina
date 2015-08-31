@@ -13,7 +13,7 @@
           <?php echo Yii::t('event', Events::getFullEventName($event)); ?>
           - <?php echo $value['round']; ?><?php echo Yii::t('Competition', $value['round'] > 1 ? ' rounds' : ' round'); ?>
           <?php if ($value['fee'] > 0): ?>
-          (<i class="fa fa-rmb"></i><?php echo $value['fee']; ?>)
+          (<i class="fa fa-rmb"></i><?php echo $competition->secondStageFee($value['fee'], $competition->second_stage_date <= time() && $competition->second_stage_all); ?>)
           <?php endif; ?>
         </label>
       </div>

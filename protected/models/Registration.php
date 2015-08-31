@@ -112,15 +112,20 @@ class Registration extends ActiveRecord {
 		if (empty($this->events)) {
 			return 0;
 		}
-		$this->competition->formatEvents();
-		$competitionEvents = $this->competition->events;
+		if ($this->isAccepted()) {
+			return $this->total_fee;
+		}
+		$competition = $this->competition;
+		$competition->formatEvents();
+		$competitionEvents = $competition->events;
 		$fees = array();
+		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
 		foreach ($this->events as $event) {
 			if (isset($competitionEvents[$event]) && $competitionEvents[$event]['round'] > 0) {
-				$fees[] = $competitionEvents[$event]['fee'];
+				$fees[] = $competition->secondStageFee($competitionEvents[$event]['fee'], $multiple);
 			}
 		}
-		return $this->competition->entry_fee + array_sum($fees);
+		return $competition->secondStageFee($competition->entry_fee, $competition->second_stage_date <= time()) + array_sum($fees);
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
@@ -386,6 +391,13 @@ class Registration extends ActiveRecord {
 	protected function beforeValidate() {
 		$this->handleEvents();
 		return parent::beforeValidate();
+	}
+
+	protected function beforeSave() {
+		if ($this->isAccepted()) {
+			$this->total_fee = $this->getTotalFee();
+		}
+		return parent::beforeSave();
 	}
 
 	/**

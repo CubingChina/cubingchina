@@ -19,7 +19,6 @@
  * @property string $events
  * @property integer $entry_fee
  * @property integer $online_pay
- * @property string $alipay_url
  * @property string $information
  * @property string $information_zh
  * @property string $travel
@@ -450,6 +449,39 @@ class Competition extends ActiveRecord {
 		return Competitions::getDisplayDate($this->date, $this->end_date);
 	}
 
+	public function getFirstStage() {
+		if ($this->reg_start) {
+			$dates[] = $this->reg_start;
+		}
+		if ($this->second_stage_date) {
+			$dates[] = $this->second_stage_date - 1;
+		} else {
+			$dates[] = $this->reg_end;
+		}
+		return $this->formatStageDate($dates);
+	}
+
+	public function getSecondStage() {
+		return $this->formatStageDate(array($this->second_stage_date, $this->reg_end));
+	}
+
+	public function formatStageDate($dates) {
+		return implode('<br> ~ <br>', array_map(function($date) {
+			return date('Y-m-d H:i:s', $date);
+		}, $dates));
+	}
+
+	public function getHasSecondStage() {
+		return $this->second_stage_date > 0;
+	}
+
+	public function secondStageFee($fee, $multiple = true) {
+		if (!$multiple) {
+			return $fee;
+		}
+		return ceil($fee * $this->second_stage_ratio);
+	}
+
 	public function getOrganizers() {
 		if ($this->_organizers === null) {
 			$this->_organizers = CHtml::listData($this->organizer, 'organizer_id', 'organizer_id');
@@ -810,7 +842,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_start', 'reg_end') as $attribute) {
+		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date') as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -832,7 +864,7 @@ class Competition extends ActiveRecord {
 				$this->$attribute = '';
 			}
 		}
-		foreach (array('reg_start', 'reg_end') as $attribute) {
+		foreach (array('reg_start', 'reg_end', 'second_stage_date') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -970,6 +1002,21 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkSecondStageDate() {
+		if (($this->second_stage_date >= $this->reg_end && $this->reg_end > 0)
+			|| ($this->second_stage_date <= $this->reg_start && $this->second_stage_date > 0)
+		) {
+			$this->addError('second_stage_date', '第二阶段时间必须介于报名开始和报名结束之间');
+		}
+	}
+
+	public function checkSecondStageRatio() {
+		$this->second_stage_ratio = floatval($this->second_stage_ratio);
+		if ($this->second_stage_date > 0 && $this->second_stage_ratio <= 1) {
+			$this->addError('second_stage_ratio', '倍率必须大于1');
+		}
+	}
+
 	public function checkName() {
 		if (!preg_match('{^[\'\-a-z0-9& ]+$}i', $this->name, $matches)) {
 			$this->addError('name', '英文名只能由字母、数字、空格、短杠-和单引号\'组成');
@@ -1045,7 +1092,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
+			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),
@@ -1056,10 +1103,12 @@ class Competition extends ActiveRecord {
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
-			array('venue, venue_zh, alipay_url', 'length', 'max'=>512),
+			array('second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true),
+			array('second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true),
+			array('venue, venue_zh', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
-			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, alipay_url, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
+			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
 		if (!$this->isOld()) {
 			$rules[] = array('organizers', 'required');
@@ -1105,7 +1154,9 @@ class Competition extends ActiveRecord {
 			'events' => Yii::t('Competition', 'Events'),
 			'entry_fee' => Yii::t('Competition', 'Entry Fee'),
 			'online_pay' => Yii::t('Competition', 'Online Pay'),
-			'alipay_url' => Yii::t('Competition', 'Alipay Url'),
+			'second_stage_date' => Yii::t('Competition', 'Second Stage Date'),
+			'second_stage_ratio' => Yii::t('Competition', 'Second Stage Ratio'),
+			'second_stage_all' => Yii::t('Competition', 'Second Stage All'),
 			'regulations' => Yii::t('Competition', 'Regulations'),
 			'regulations_zh' => Yii::t('Competition', 'Regulations'),
 			'information' => Yii::t('Competition', 'Information'),
@@ -1140,26 +1191,25 @@ class Competition extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 		$criteria->with = array('location', 'location.province', 'location.city');
-		$criteria->compare('t.id', $this->id,true);
-		$criteria->compare('t.type', $this->type,true);
-		$criteria->compare('t.wca_competition_id', $this->wca_competition_id,true);
-		$criteria->compare('t.name', $this->name,true);
-		$criteria->compare('t.name_zh', $this->name_zh,true);
-		$criteria->compare('t.date', $this->date,true);
-		$criteria->compare('t.end_date', $this->end_date,true);
-		$criteria->compare('t.reg_end', $this->reg_end,true);
+		$criteria->compare('t.id', $this->id, true);
+		$criteria->compare('t.type', $this->type, true);
+		$criteria->compare('t.wca_competition_id', $this->wca_competition_id, true);
+		$criteria->compare('t.name', $this->name, true);
+		$criteria->compare('t.name_zh', $this->name_zh, true);
+		$criteria->compare('t.date', $this->date, true);
+		$criteria->compare('t.end_date', $this->end_date, true);
+		$criteria->compare('t.reg_end', $this->reg_end, true);
 		$criteria->compare('t.province_id', $this->province_id);
 		$criteria->compare('t.city_id', $this->city_id);
-		$criteria->compare('t.venue', $this->venue,true);
-		$criteria->compare('t.venue_zh', $this->venue_zh,true);
-		$criteria->compare('t.events', $this->events,true);
+		$criteria->compare('t.venue', $this->venue, true);
+		$criteria->compare('t.venue_zh', $this->venue_zh, true);
+		$criteria->compare('t.events', $this->events, true);
 		$criteria->compare('t.entry_fee', $this->entry_fee);
 		$criteria->compare('t.online_pay', $this->online_pay);
-		$criteria->compare('t.alipay_url', $this->alipay_url,true);
-		$criteria->compare('t.information', $this->information,true);
-		$criteria->compare('t.information_zh', $this->information_zh,true);
-		$criteria->compare('t.travel', $this->travel,true);
-		$criteria->compare('t.travel_zh', $this->travel_zh,true);
+		$criteria->compare('t.information', $this->information, true);
+		$criteria->compare('t.information_zh', $this->information_zh, true);
+		$criteria->compare('t.travel', $this->travel, true);
+		$criteria->compare('t.travel_zh', $this->travel_zh, true);
 		$criteria->compare('t.person_num', $this->person_num);
 		$criteria->compare('t.check_person', $this->check_person);
 		if ($this->status !== '' && $this->status !== null) {

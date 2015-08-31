@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  '1 hour' => '1小時',
   'Fee' => '',
+  'Total Fee:' => '總計報名費：',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -66,6 +66,7 @@ return array (
   '(3rd attempt)' => '（第三次）',
   '({times}th attempt)' => '（第{times}次）',
   ', ' => '、',
+  '1 hour' => '1小時',
   'A reset password mail was sent to your email address, please check your inbox.' => '重設密碼郵件已經發送您的郵箱，請檢查您的收件箱並根據提示進行重設密碼。',
   'About' => '關於本站',
   'Accepted' => '已通過',

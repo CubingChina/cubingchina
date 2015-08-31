@@ -18,6 +18,9 @@
   </div>
   <?php if ($registration->payable): ?>
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+    <h4>
+      <?php echo Yii::t('common', 'Total Fee:'); ?>&nbsp; <b class="text-danger"><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></b>
+    </h4>
     <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
     <div class="pay-channels clearfix">
       <div class="pay-channel alipay col-sm-6 active" data-channel="alipay">

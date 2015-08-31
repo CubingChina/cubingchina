@@ -16,6 +16,13 @@ class ActiveRecord extends CActiveRecord {
 		return Yii::app()->controller->translateTWInNeed($value);
 	}
 
+	public static function getYesOrNo() {
+		return array(
+			1=>'是',
+			0=>'否',
+		);
+	}
+
 	public static function getQQWRY() {
 		if (self::$_qqwry === null) {
 			self::$_qqwry = new qqwry(self::getQQWRYFile());
