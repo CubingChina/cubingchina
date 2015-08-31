@@ -55,7 +55,7 @@
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'check_person', array(
-                  'class'=>'col-lg-2 col-md-4',
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'check_person', array(
                   'label'=>'报名自动审核',
@@ -67,7 +67,7 @@
               );?>
               <?php echo Html::formGroup(
                 $model, 'type', array(
-                  'class'=>'col-lg-2 col-md-4',
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'type', array(
                   'label'=>'类型',
@@ -79,7 +79,7 @@
               );?>
               <?php echo Html::formGroup(
                 $model, 'wca_competition_id', array(
-                  'class'=>'col-lg-2 col-md-4',
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'wca_competition_id', array(
                   'label'=>'WCA比赛ID',
@@ -87,10 +87,10 @@
                 Html::activeTextField($model, 'wca_competition_id'),
                 $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
               );?>
-              <div class="clearfix hidden-lg"></div>
+              <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'entry_fee', array(
-                  'class'=>'col-lg-2 col-md-4'
+                  'class'=>'col-md-4'
                 ),
                 $form->labelEx($model, 'entry_fee', array(
                   'label'=>'基础报名费',
@@ -100,7 +100,7 @@
               );?>
               <?php echo Html::formGroup(
                 $model, 'online_pay', array(
-                  'class'=>'col-lg-2 col-md-4',
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'online_pay', array(
                   'label'=>'在线支付',
@@ -112,13 +112,49 @@
               );?>
               <?php echo Html::formGroup(
                 $model, 'person_num', array(
-                  'class'=>'col-lg-2 col-md-4',
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'person_num', array(
                   'label'=>'人数限制',
                 )),
                 Html::activeTextField($model, 'person_num'),
                 $form->error($model, 'person_num', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'second_stage_date', array(
+                  'class'=>'col-md-4'
+                ),
+                $form->labelEx($model, 'second_stage_date', array(
+                  'label'=>'第二阶段时间',
+                )),
+                Html::activeTextField($model, 'second_stage_date', array(
+                  'class'=>'datetime-picker',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+                )),
+                $form->error($model, 'second_stage_date', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
+                $model, 'second_stage_ratio', array(
+                  'class'=>'col-md-4',
+                ),
+                $form->labelEx($model, 'second_stage_ratio', array(
+                  'label'=>'第二阶段倍率',
+                )),
+                Html::activeTextField($model, 'second_stage_ratio'),
+                $form->error($model, 'second_stage_ratio', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
+                $model, 'second_stage_all', array(
+                  'class'=>'col-md-4',
+                ),
+                $form->labelEx($model, 'second_stage_all', array(
+                  'label'=>'包含所有项目',
+                )),
+                $form->dropDownList($model, 'second_stage_all', Competition::getYesOrNo(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'second_stage_all', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
@@ -157,7 +193,7 @@
                 $form->labelEx($model, 'reg_start'),
                 Html::activeTextField($model, 'reg_start', array(
                   'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
                   'placeholder'=>'留空默认公示后即开放报名',
                 )),
                 $form->error($model, 'reg_start', array('class'=>'text-danger'))
@@ -169,7 +205,7 @@
                 $form->labelEx($model, 'reg_end'),
                 Html::activeTextField($model, 'reg_end', array(
                   'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:ss',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
                 )),
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
@@ -470,8 +506,16 @@ Yii::app()->clientScript->registerScript('competition',
     date.setMinutes(59);
     $('#Competition_reg_start').datetimepicker('setEndDate', date);
     $('#Competition_reg_end').datetimepicker('setEndDate', date);
+  }).on('changeDate', '#Competition_reg_start', function() {
+    var date = $(this).datetimepicker('getDate');
+    $('#Competition_second_stage_date').datetimepicker('setStartDate', new Date(+date + 1000));
+  }).on('changeDate', '#Competition_reg_end', function() {
+    var date = $(this).datetimepicker('getDate');
+    $('#Competition_second_stage_date').datetimepicker('setEndDate', new Date(+date - 1000));
   });
   $('#Competition_date').trigger('changeDate');
+  $('#Competition_reg_start').trigger('changeDate');
+  $('#Competition_reg_end').trigger('changeDate');
   $('#Competition_type').trigger('change');
   var organizers = {$organizerNames};
   var engine = new Bloodhound({
