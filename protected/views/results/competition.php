@@ -59,7 +59,7 @@
         'name'=>'countryId',
         'header'=>Yii::t('common', 'Region'),
         'type'=>'raw',
-        'value'=>'$data->country ? Region::getIconName($data->country->name, $data->country->iso2) : $data->cityName',
+        'value'=>'$data->country ? Region::getIconName($data->country->name, $data->country->iso2) : $data->countryId',
         'htmlOptions'=>array('class'=>'region'),
       ),
       array(
