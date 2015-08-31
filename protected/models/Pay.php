@@ -437,7 +437,7 @@ class Pay extends ActiveRecord {
 	}
 
 	public function getFee() {
-		if ($this->status != self::STATUS_UNPAID) {
+		if ($this->status != self::STATUS_UNPAID && $this->status != self::STATUS_WAIT_PAY) {
 			switch ($this->channel) {
 				case self::CHANNEL_NOWPAY:
 					if ($this->device_type == self::DEVICE_TYPE_PC) {
