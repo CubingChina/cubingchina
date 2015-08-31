@@ -155,7 +155,10 @@ class Competitions extends ActiveRecord {
 
 	public function getLocation() {
 		if ($this->_location === null) {
-			$this->_location = $this->cityName . ', ' . $this->country->name;
+			$this->_location = $this->cityName;
+			if ($this->country) {
+				$this->_location .= ', ' . $this->country->name;
+			}
 		}
 		return $this->_location;
 	}
