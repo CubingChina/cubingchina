@@ -249,7 +249,7 @@ class Pay extends ActiveRecord {
 				if ($registration !== null) {
 					$registration->status = Registration::STATUS_ACCEPTED;
 					$registration->paid = Registration::PAID;
-					$registration->total_fee = $registration->getTotalFee();
+					$registration->total_fee = $registration->getTotalFee(true);
 					$registration->save();
 				}
 				break;
