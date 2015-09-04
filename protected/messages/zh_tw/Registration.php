@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'Total Fee' => '報名費',
   'User' => '',
   'Date' => '報名時間',
   ' CNY' => '元',

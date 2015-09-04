@@ -8,7 +8,7 @@
  * @property string $competition_id
  * @property string $user_id
  * @property string $events
- * @property integer $total_fee
+ * @property integer $f
  * @property string $comments
  * @property string $date
  * @property integer $status
@@ -408,7 +408,7 @@ class Registration extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('location_id, competition_id, user_id, events, date', 'required'),
-			array('location_id, total_fee, status', 'numerical', 'integerOnly'=>true),
+			array('location_id, total_fee, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
@@ -443,6 +443,7 @@ class Registration extends ActiveRecord {
 			'user_id' => Yii::t('Registration', 'User'),
 			'events' => Yii::t('Registration', 'Events'),
 			'comments' => Yii::t('Registration', 'Additional Comments'),
+			'total_fee' => Yii::t('Registration', 'Total Fee'),
 			'ip' => 'IP',
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),

@@ -586,7 +586,6 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
-			$model->total_fee = $model->getTotalFee(true);
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新报名信息成功');
 				$this->redirect(array('/board/registration/index', 'Registration'=>array(
@@ -594,6 +593,7 @@ class RegistrationController extends AdminController {
 				)));
 			}
 		}
+		$model->formatEvents();
 		$model->competition->formatEvents();
 		$this->render('edit', array(
 			'model'=>$model,
