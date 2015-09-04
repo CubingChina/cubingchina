@@ -46,7 +46,7 @@ class User extends ActiveRecord {
 		$data = Yii::app()->db->createCommand()
 			->select('FROM_UNIXTIME(MIN(reg_time), "%Y-%m-%d") as day, COUNT(1) AS user')
 			->from('user')
-			->where('status=' . self::STATUS_NORMAL)
+			->where('status=' . self::STATUS_NORMAL . ' AND reg_time>=' . strtotime('today 180 days ago'))
 			->group('FROM_UNIXTIME(reg_time, "%Y-%m-%d")')
 			->queryAll();
 		return $data;

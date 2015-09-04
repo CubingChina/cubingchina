@@ -33,7 +33,7 @@ class Registration extends ActiveRecord {
 			->select('FROM_UNIXTIME(MIN(r.date), "%Y-%m-%d") as day, COUNT(1) AS registration')
 			->from('registration r')
 			->leftJoin('user u', 'r.user_id=u.id')
-			->where('u.status=' . User::STATUS_NORMAL)
+			->where('u.status=' . User::STATUS_NORMAL . ' AND r.date>=' . strtotime('today 180 days ago'))
 			->group('FROM_UNIXTIME(r.date, "%Y-%m-%d")')
 			->queryAll();
 		return $data;
