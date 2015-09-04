@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Psych Sheet' => '预排名',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',

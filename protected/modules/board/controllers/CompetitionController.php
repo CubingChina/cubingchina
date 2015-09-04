@@ -122,32 +122,22 @@ class CompetitionController extends AdminController {
 		);
 	}
 
-	public function actionShow() {
-		$this->toggleStatus(Competition::STATUS_SHOW, '公示比赛');
-	}
-
-	public function actionHide() {
-		$this->toggleStatus(Competition::STATUS_HIDE, '隐藏比赛');
-	}
-
-	private function toggleStatus($status, $messsage) {
-		if ($this->user->isOrganizer()) {
-			throw new CHttpException(403, '权限不足');
-		}
-		$id = $this->iGet('id');
+	public function actionToggle() {
+		$id = $this->iRequest('id');
 		$model = Competition::model()->findByPk($id);
 		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
+			throw new CHttpException(404, 'Not found');
+		}
+		if ($this->user->isOrganizer()) {
+			throw new CHttpException(401, 'Unauthorized');
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$model->status = $status;
-		if ($model->save()) {
-			Yii::app()->user->setFlash('success', $messsage . '成功');
-		} else {
-			Yii::app()->user->setFlash('danger', $messsage . '失败');
-		}
-		$this->redirect(Yii::app()->request->urlReferrer);
-
+		$attribute = $this->sRequest('attribute');
+		$model->$attribute = 1 - $model->$attribute;
+		$model->save();
+		$this->ajaxOk(array(
+			'value'=>$model->$attribute,
+		));
 	}
 }

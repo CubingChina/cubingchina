@@ -41,6 +41,9 @@ class Competition extends ActiveRecord {
 	const NOT_CHECK_PERSON = 0;
 	const CHECK_PERSON = 1;
 
+	const UNPAID = 0;
+	const PAID = 1;
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
@@ -329,6 +332,13 @@ class Competition extends ActiveRecord {
 					return $this->location[0]->getAttributeValue($type);
 			}
 		}
+	}
+
+	public function getDays() {
+		if ($this->end_date == 0) {
+			return 1;
+		}
+		return floor(($this->end_date - $this->date) / 86400) + 1;
 	}
 
 	public function getRegistrationDoneWeiboText() {
@@ -710,10 +720,26 @@ class Competition extends ActiveRecord {
 		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
-					$buttons[] = CHtml::link('公示', array('/board/competition/show', 'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+					$buttons[] = CHtml::tag('button', array(
+						'class'=>'btn btn-xs btn-green btn-square toggle',
+						'data-id'=>$this->id,
+						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+						'data-attribute'=>'status',
+						'data-value'=>$this->status,
+						'data-text'=>'["公示","隐藏"]',
+						'data-name'=>$this->name_zh,
+					), '公示');
 					break;
 				case self::STATUS_SHOW:
-					$buttons[] = CHtml::link('隐藏', array('/board/competition/hide', 'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
+					$buttons[] = CHtml::tag('button', array(
+						'class'=>'btn btn-xs btn-red btn-square toggle',
+						'data-id'=>$this->id,
+						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+						'data-attribute'=>'status',
+						'data-value'=>$this->status,
+						'data-text'=>'["公示","隐藏"]',
+						'data-name'=>$this->name_zh,
+					), '隐藏');
 					break;
 			}
 		}
@@ -721,6 +747,22 @@ class Competition extends ActiveRecord {
 			$buttons[] = CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>array('competition_id'=>$this->id)), array('class'=>'btn btn-xs btn-purple btn-square'));
 		}
 		return implode(' ', $buttons);
+	}
+
+	public function getOperationFeeButton() {
+		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
+			return CHtml::checkBox('paid', $this->paid == self::PAID, array(
+				'class'=>'toggle tips',
+				'data-toggle'=>'tooltip',
+				'data-placement'=>'top',
+				'title'=>'是否支付运营费',
+				'data-id'=>$this->id,
+				'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+				'data-attribute'=>'paid',
+				'data-value'=>$this->paid,
+				'data-name'=>$this->name_zh,
+			));
+		}
 	}
 
 	public function getFullEventName($event) {
@@ -837,6 +879,9 @@ class Competition extends ActiveRecord {
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
+					'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
+						'class'=>'hover',
+					) : array(),
 					'type'=>'raw', 
 					'value'=>"\$data->getEventsString('$event')",
 				);
@@ -1134,6 +1179,7 @@ class Competition extends ActiveRecord {
 			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id'),
 			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
+			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
 		);
 	}
 
