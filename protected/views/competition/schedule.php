@@ -6,7 +6,7 @@
           continue;
         }
     ?>
-    <div class="col-lg-3 col-md-4 col-xs-6">
+    <div class="col-lg-3 col-md-4 col-xs-<?php echo Yii::app()->language == 'zh_cn' ? 6 : 12; ?>">
       <div class="checkbox">
         <label class="event-icon event-icon-<?php echo $event; ?>">
           <input type="checkbox" data-event="<?php echo $event; ?>">
