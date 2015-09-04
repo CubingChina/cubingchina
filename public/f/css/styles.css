@@ -2453,3 +2453,6 @@ body.results table .region {
 .pay-channel.nowpay img {
   background-color: #00a5dd;
 }
+td.hover {
+  background: #f5f8fb;
+}

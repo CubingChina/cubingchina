@@ -18,7 +18,6 @@
  */
 return array (
   'ID' => '',
-  'Total Fee' => '报名费',
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',
@@ -29,4 +28,5 @@ return array (
   'Fee (CNY)' => '报名费(元)',
   'Registration Date' => '报名时间',
   'Status' => '状态',
+  'Total Fee' => '报名费',
 );

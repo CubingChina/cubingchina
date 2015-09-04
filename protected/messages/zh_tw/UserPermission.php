@@ -18,15 +18,6 @@
  */
 return array (
   'ID' => '',
+  'Permission' => '',
   'User' => '',
-  'Date' => '報名時間',
-  ' CNY' => '元',
-  'Additional Comments' => '備註',
-  'Competition' => '比賽',
-  'Events' => '項目',
-  'Fee' => '報名費',
-  'Fee (CNY)' => '報名費(元)',
-  'Registration Date' => '報名時間',
-  'Status' => '狀態',
-  'Total Fee' => '報名費',
 );
