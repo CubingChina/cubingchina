@@ -707,7 +707,7 @@ class Competition extends ActiveRecord {
 		$buttons = array();
 		$buttons[] = CHtml::link('预览', $this->getUrl('detail'), array('class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank'));
 		$buttons[] = CHtml::link('编辑', array('/board/competition/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkAccess(User::ROLE_DELEGATE)) {
+		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
 					$buttons[] = CHtml::link('公示', array('/board/competition/show', 'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
@@ -922,7 +922,7 @@ class Competition extends ActiveRecord {
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
-		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_DELEGATE);
+		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE);
 		//处理代表和主办
 		foreach (array('organizer', 'delegate') as $attribute) {
 			$attributeId = $attribute . '_id';

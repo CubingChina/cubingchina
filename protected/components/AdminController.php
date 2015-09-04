@@ -37,7 +37,9 @@ class AdminController extends Controller {
 		return array(
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ORGANIZER, User::ROLE_DELEGATE, User::ROLE_ADMINISTRATOR),
+				'roles'=>array(
+					'role'=>User::ROLE_ORGANIZER,
+				),
 			),
 			array(
 				'deny',

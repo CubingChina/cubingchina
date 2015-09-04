@@ -5,7 +5,9 @@ class ReviewController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ADMINISTRATOR),
+				'roles'=>array(
+					'role'=>User::ROLE_ADMINISTRATOR,
+				),
 			),
 			array(
 				'deny',

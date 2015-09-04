@@ -162,7 +162,7 @@ class Registration extends ActiveRecord {
 			$columns = $this->competition->getEventsColumns(true);
 		}
 		$modelName = get_class($model);
-		$userLink = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR)
+		$userLink = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)
 			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
 			: '$data->user->getWcaLink()';
 		$columns = array_merge(array(
@@ -205,7 +205,7 @@ class Registration extends ActiveRecord {
 				)
 			));
 		}
-		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR);
+		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		$userLink = $isAdmin
 			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
 			: '$data->user->getWcaLink()';

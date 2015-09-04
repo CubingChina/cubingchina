@@ -83,7 +83,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 用户管理',
               'url'=>array('/board/user/index'),
-              'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
@@ -99,7 +99,7 @@
           'label'=>'<i class="fa fa-money"></i> 财务 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'pay',
-          'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -117,12 +117,12 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 支付流水',
               'url'=>array('/board/pay/index'),
-              'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
             ),
             // array(
             //  'label'=>'<i class="fa fa-angle-double-right"></i> 财务报表',
             //  'url'=>array('/board/pay/statistics'),
-            //  'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
+            //  'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
             // ),
           ),
         ),
@@ -130,7 +130,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 新闻 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'news',
-          'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -163,7 +163,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 评价<i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'review',
-          'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -192,7 +192,7 @@
           'label'=>'<i class="fa fa-question-circle"></i> FAQ <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'faq',
-          'visible'=>Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR),
+          'visible'=>Yii::app()->user->checkPermission('faq'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -218,6 +218,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> FAQ分类',
               'url'=>array('/board/faq/category'),
+              'visible'=>Yii::app()->user->checkPermission('faq_admin'),
             ),
           ),
         ),

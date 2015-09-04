@@ -122,7 +122,7 @@ class User extends ActiveRecord {
 	}
 
 	public static function getOrganizers() {
-		if (Yii::app()->user->checkAccess(self::ROLE_DELEGATE)) {
+		if (Yii::app()->user->checkRole(self::ROLE_DELEGATE)) {
 			$attributes = array(
 				'role'=>array(
 					self::ROLE_ORGANIZER,
@@ -197,6 +197,10 @@ class User extends ActiveRecord {
 
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
+	}
+
+	public function hasPermission($permission) {
+		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
 	}
 
 	public function getRoleName() {
@@ -372,6 +376,7 @@ class User extends ActiveRecord {
 			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
 			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
 			'avatars'=>array(self::HAS_MANY, 'UserAvatar', 'user_id'),
+			'permissions'=>array(self::HAS_MANY, 'UserPermission', 'user_id'),
 		);
 	}
 

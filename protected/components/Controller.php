@@ -249,7 +249,7 @@ class Controller extends CController {
 					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
-						'visible'=>Yii::app()->user->checkAccess(User::ROLE_ORGANIZER),
+						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
 					),
 					array(
 						'label'=>Yii::t('common', 'Logout'),

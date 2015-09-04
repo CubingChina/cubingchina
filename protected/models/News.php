@@ -74,7 +74,7 @@ class News extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/news/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkAccess(User::ROLE_DELEGATE)) {
+		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
 					$buttons[] = CHtml::link('发布',  array('/board/news/show',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));

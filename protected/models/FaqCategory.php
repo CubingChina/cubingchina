@@ -77,7 +77,7 @@ class FaqCategory extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/faq/editCategory',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkAccess(User::ROLE_DELEGATE)) {
+		if (Yii::app()->user->checkPermission('faq_admin')) {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
 					$buttons[] = CHtml::link('发布',  array('/board/faq/showCategory',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));

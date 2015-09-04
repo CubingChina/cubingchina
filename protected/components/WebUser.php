@@ -1,8 +1,23 @@
 <?php
 
 class WebUser extends CWebUser {
+
 	public function checkAccess($operation, $params = array()) {
-		return !$this->isGuest && !is_null(Yii::app()->controller) && Yii::app()->controller->user->role >= $operation;
+		$method = 'check' . ucfirst($operation);
+		if (!method_exists($this, $method)) {
+			return false;
+		}
+		return !$this->isGuest && !is_null(Yii::app()->controller) && $this->$method($params);
+	}
+
+	public function checkRole($role) {
+		$user = Yii::app()->controller->user;
+		return !$this->isGuest && $user && $user->role >= $role;
+	}
+
+	public function checkPermission($permission, $role = User::ROLE_ADMINISTRATOR) {
+		$user = Yii::app()->controller->user;
+		return !$this->isGuest && $user && ($user->hasPermission($permission) || $this->checkRole($role));
 	}
 
 	protected function afterLogin($fromCookie) {

@@ -160,7 +160,7 @@ class CompetitionController extends Controller {
 		if ($competition === null || strtolower($name) != strtolower($competition->getUrlName())) {
 			throw new CHttpException(404, 'Error');
 		}
-		// if (!$competition->isPublic() && !Yii::app()->user->checkAccess(User::ROLE_ORGANIZER)) {
+		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
 		// 	throw new CHttpException(404, 'Error');
 		// }
 		$competition->formatEvents();

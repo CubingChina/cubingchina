@@ -5,11 +5,15 @@ class UserController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ADMINISTRATOR),
+				'roles'=>array(
+					'role'=>User::ROLE_ADMINISTRATOR,
+				),
 			),
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ORGANIZER),
+				'roles'=>array(
+					'role'=>User::ROLE_ORGANIZER,
+				),
 				'actions'=>array('statistics'),
 			),
 			array(
