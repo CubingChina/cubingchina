@@ -32,6 +32,13 @@
               ),
               'name_zh',
               array(
+                'header'=>'运营费',
+                'type'=>'raw',
+                'value'=>'$data->operationFeeButton . ($data->operationFee * $data->days)',
+                'sortable'=>false,
+                'filter'=>false,
+              ),
+              array(
                 'name'=>'province_id',
                 'type'=>'raw',
                 'value'=>'$data->getLocationInfo("province")',
