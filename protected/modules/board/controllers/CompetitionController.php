@@ -54,11 +54,22 @@ class CompetitionController extends AdminController {
 		$cannotEditAttr = array(
 			'name',
 			'name_zh',
+			'check_person',
 			'type',
+			'wca_competition_id',
+			'entry_fee',
+			'online_pay',
+			'person_num',
+			'second_stage_date',
+			'second_stage_ratio',
+			'second_stage_all',
 			'date',
 			'end_date',
+			'reg_start',
+			'reg_end',
 			'delegates',
 			'locations',
+			'events',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
@@ -69,8 +80,8 @@ class CompetitionController extends AdminController {
 				foreach ($cannotEditAttr as $attr) {
 					$model->$attr = $$attr;
 				}
-				$model->date = date('Y-m-d', $model->date);
-				$model->end_date = date('Y-m-d', $model->end_date);
+				$model->formatEvents();
+				$model->formatDate();
 			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
@@ -80,9 +91,6 @@ class CompetitionController extends AdminController {
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		if ($this->user->isOrganizer() && $model->isPublic()) {
-			Yii::app()->user->setFlash('warning', '该比赛已公示，名字、时间等部分信息不能修改，如需修改请联系管理员');
-		}
 		$this->render('edit', $this->getCompetitionData($model));
 	}
 

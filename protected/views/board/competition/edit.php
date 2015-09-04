@@ -32,6 +32,11 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
+              <?php if ($this->user->isOrganizer() && $model->isPublic()): ?>
+              <div class="col-lg-12">
+                <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:admin@cubingchina.com"><i class="fa fa-envelope"></i>管理员</a></div>
+              </div>
+              <?php endif; ?>
               <?php echo Html::formGroup(
                 $model, 'name_zh', array(
                   'class'=>'col-lg-6',
