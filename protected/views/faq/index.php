@@ -4,12 +4,12 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-<?php echo $faq->id; ?>" class="collapsed">
+          <a data-toggle="collapse" data-parent="#accordion" href="#faq-<?php echo $faq->id; ?>" class="collapsed">
           <?php echo $faq->getAttributeValue('title'); ?>
           </a>
         </h4>
       </div><!--//pane-heading-->
-      <div id="collapse-<?php echo $faq->id; ?>" class="panel-collapse collapse">
+      <div id="faq-<?php echo $faq->id; ?>" class="panel-collapse collapse">
         <div class="panel-body">
           <?php echo $faq->getAttributeValue('content'); ?>
         </div><!--//panel-body-->
@@ -28,3 +28,18 @@
     )); ?>
   </section><!--//widget-->
 </aside>
+<?php
+
+Yii::app()->clientScript->registerScript('faq',
+<<<EOT
+  if (location.hash) {
+    var faq = $('[href=#' + location.hash.replace(/^#/, '') + ']');
+    if (faq) {
+      faq.click();
+      $('html, body').animate({
+        scrollTop: faq.offset().top
+      });
+    }
+  }
+EOT
+);

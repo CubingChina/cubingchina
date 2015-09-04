@@ -6,7 +6,9 @@ class PayController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ORGANIZER),
+				'roles'=>array(
+					'role'=>User::ROLE_ORGANIZER,
+				),
 			),
 			array(
 				'deny',

@@ -44,7 +44,7 @@
         </div>
         <div class="form-group">
           <label for="luckyDrawNames"><?php echo Yii::t('common', 'Names (One name per line)'); ?></label>
-          <?php if (Yii::app()->user->checkAccess(User::ROLE_ORGANIZER)): ?>
+          <?php if (Yii::app()->user->checkRole(User::ROLE_ORGANIZER)): ?>
           <?php echo CHtml::dropDownList('luckyDrawCompetition', '', Competition::getRegistrationCompetitions(), array(
             'prompt'=>Yii::t('common', 'Choose a competition'),
             'class'=>'form-control',

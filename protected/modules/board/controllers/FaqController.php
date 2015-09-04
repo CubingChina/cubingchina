@@ -5,7 +5,16 @@ class FaqController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'roles'=>array(User::ROLE_ADMINISTRATOR),
+				'actions'=>array('index', 'add', 'edit'),
+				'roles'=>array(
+					'permission'=>'faq',
+				),
+			),
+			array(
+				'allow',
+				'roles'=>array(
+					'permission'=>'faq_admin',
+				),
 			),
 			array(
 				'deny',

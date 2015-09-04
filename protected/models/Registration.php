@@ -33,7 +33,7 @@ class Registration extends ActiveRecord {
 			->select('FROM_UNIXTIME(MIN(r.date), "%Y-%m-%d") as day, COUNT(1) AS registration')
 			->from('registration r')
 			->leftJoin('user u', 'r.user_id=u.id')
-			->where('u.status=' . User::STATUS_NORMAL)
+			->where('u.status=' . User::STATUS_NORMAL . ' AND r.date>=' . strtotime('today 180 days ago'))
 			->group('FROM_UNIXTIME(r.date, "%Y-%m-%d")')
 			->queryAll();
 		return $data;
@@ -162,7 +162,7 @@ class Registration extends ActiveRecord {
 			$columns = $this->competition->getEventsColumns(true);
 		}
 		$modelName = get_class($model);
-		$userLink = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR)
+		$userLink = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)
 			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
 			: '$data->user->getWcaLink()';
 		$columns = array_merge(array(
@@ -205,7 +205,7 @@ class Registration extends ActiveRecord {
 				)
 			));
 		}
-		$isAdmin = Yii::app()->user->checkAccess(User::ROLE_ADMINISTRATOR);
+		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		$userLink = $isAdmin
 			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
 			: '$data->user->getWcaLink()';
