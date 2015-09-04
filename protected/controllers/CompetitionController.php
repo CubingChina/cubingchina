@@ -106,7 +106,7 @@ class CompetitionController extends Controller {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
 			$model->competition_id = $competition->id;
-			$model->total_fee = $model->getTotalFee();
+			$model->total_fee = $model->getTotalFee(true);
 			$model->ip = Yii::app()->request->getUserHostAddress();
 			$model->date = time();
 			$model->status = Registration::STATUS_WAITING;
