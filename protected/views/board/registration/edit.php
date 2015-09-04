@@ -46,6 +46,7 @@
               $form->labelEx($model, 'total_fee'),
               Html::activeTextField($model, 'total_fee', array(
               )),
+              Html::tag('div', array('class'=>'text-danger'), '此数值会影响已经通过审核的选手的报名费显示，不影响未通过的支付金额'),
               $form->error($model, 'total_fee', array('class'=>'text-danger'))
             ); ?>
             <?php echo Html::formGroup(
