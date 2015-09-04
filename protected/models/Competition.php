@@ -879,7 +879,7 @@ class Competition extends ActiveRecord {
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
-					'htmlOptions'=>Yii::app()->controller->sGet('sort') == $event ? array(
+					'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
 						'class'=>'hover',
 					) : array(),
 					'type'=>'raw', 
