@@ -66,7 +66,7 @@
         'name'=>'cityName',
         'header'=>Yii::t('common', 'City'),
         'type'=>'raw',
-        'value'=>'$data->cityName',
+        'value'=>'$data->getCityInfo()',
       ),
     ),
   )); ?>

@@ -16,7 +16,7 @@
         // ),
         array(
           'url'=>array('/user/competitions'),
-          'label'=>Yii::t('common', 'My Competitions'),
+          'label'=>Yii::t('common', 'My Registration'),
         ),
         array(
           'url'=>array('/user/competitionHistory'),

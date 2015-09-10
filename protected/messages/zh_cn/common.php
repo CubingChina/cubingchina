@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competition History' => '参赛经历',
   'Fee' => '',
+  'My Registration' => '我的报名',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -41,6 +41,7 @@ return array (
   'Fun Statistics' => '趣味统计',
   'Language' => '语言',
   'Mean of 3' => '三次计平均',
+  'My Competitions' => '我的比赛',
   'NR' => '国家纪录',
   'Not found' => '未找到',
   'Official Records' => '官方纪录',
@@ -86,6 +87,7 @@ return array (
   'City' => '城市',
   'Close' => '关闭',
   'Competition' => '比赛',
+  'Competition History' => '参赛经历',
   'Competition Site' => '分赛场',
   'Competitions' => '赛事',
   'Contact' => '联系我们',
@@ -134,7 +136,6 @@ return array (
   'Mobile Number' => '手机号码',
   'More Info' => '其他',
   'Multiple' => '多地',
-  'My Competitions' => '我的比赛',
   'My Homepage' => '我的主页',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',

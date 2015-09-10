@@ -52,6 +52,7 @@ class RecordsSet extends Statistics {
 				$select = array_merge($select, array(
 					'competitionId',
 					'c.cellName',
+					'c.cityName',
 				));
 				$command->leftJoin('Competitions c', 'r.competitionId=c.id');
 				$command->andWhere('c.countryId="China"');

@@ -22,6 +22,7 @@ class MostSolves extends Statistics {
 			'personId',
 			'personName',
 			'cellName',
+			'cityName',
 			'p.countryId',
 			'country.iso2',
 		))

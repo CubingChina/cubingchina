@@ -59,6 +59,7 @@ class Top100 extends Statistics {
 						'iso2',
 						'competitionId',
 						'cellName',
+						'cityName',
 						'eventId',
 					))
 					->andWhere("value{$i}>0")
@@ -82,6 +83,7 @@ class Top100 extends Statistics {
 					'iso2',
 					'competitionId',
 					'cellName',
+					'cityName',
 					'eventId',
 					'average AS value',
 					'value1',

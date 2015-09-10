@@ -9,6 +9,7 @@ class OldestStandingRecords extends Statistics {
 			'rs.personName',
 			'rs.competitionId',
 			'c.cellName',
+			'c.cityName',
 			'c.year',
 			'c.month',
 			'c.day',

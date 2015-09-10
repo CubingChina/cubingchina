@@ -119,6 +119,15 @@ class Competitions extends ActiveRecord {
 		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $id;
 	}
 
+	public function getCityInfo() {
+		$competition = Statistics::getCompetition(array(
+			'competitionId'=>$this->id,
+			'cellName'=>$this->cellName,
+			'cityName'=>$this->cityName,
+		));
+		return ActiveRecord::getModelAttributeValue($competition, 'city_name');
+	}
+
 	public function getLinks() {
 		if ($this->c) {
 			$links[] = CHtml::link(CHtml::image('/f/images/icon64.png', $this->name, array('class'=>'wca-competition')), $this->c->url);
@@ -135,6 +144,7 @@ class Competitions extends ActiveRecord {
 		$competition = Statistics::getCompetition(array(
 			'competitionId'=>$this->id,
 			'cellName'=>$this->cellName,
+			'cityName'=>$this->cityName,
 		));
 		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}

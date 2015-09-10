@@ -225,6 +225,8 @@ class Statistics {
 				self::$_competitions[$competition->wca_competition_id] = array(
 					'name'=>$competition->name,
 					'name_zh'=>$competition->name_zh,
+					'city_name'=>$competition->isMultiLocation() ? 'Multiple' : (in_array($competition->location[0]->province_id, array(215, 525, 567, 642)) ? $competition->location[0]->province->name : $competition->location[0]->city->name . ', ' . $competition->location[0]->province->name),
+					'city_name_zh'=>$competition->isMultiLocation() ? '多地' : (in_array($competition->location[0]->province_id, array(215, 525, 567, 642)) ? $competition->location[0]->province->name_zh : $competition->location[0]->province->name_zh . $competition->location[0]->city->name_zh),
 					'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
 				);
 			}
@@ -233,6 +235,7 @@ class Statistics {
 			$data = self::$_competitions[$row['competitionId']];
 		} elseif (($data = $cache->get($cacheKey)) === false) {
 			$data['name'] = $data['name_zh'] = $row['cellName'];
+			$data['city_name'] = $data['city_name_zh'] = $row['cityName'];
 			$data['url'] = array('/results/c', 'id'=>$row['competitionId']);
 			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
 			self::$_competitions[$row['competitionId']] = $data;
