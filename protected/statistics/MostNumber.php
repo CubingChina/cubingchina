@@ -32,6 +32,7 @@ class MostNumber extends Statistics {
 				$select = array(
 					'competitionId',
 					'c.cellName',
+					'c.cityName',
 					'count(DISTINCT personId) AS count',
 				);
 				$command->leftJoin('Competitions c', 'r.competitionId=c.id');

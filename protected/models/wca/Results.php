@@ -107,6 +107,7 @@ class Results extends ActiveRecord {
 					'rs.value4',
 					'rs.value5',
 					'c.cellName',
+					'c.cityName',
 					'c.year',
 					'c.month',
 					'c.day',
@@ -177,6 +178,7 @@ class Results extends ActiveRecord {
 			'rs.regionalSingleRecord',
 			'rs.regionalAverageRecord',
 			'c.cellName',
+			'c.cityName',
 			'c.year',
 			'c.month',
 			'c.day',
@@ -259,6 +261,7 @@ class Results extends ActiveRecord {
 			'rs.value4',
 			'rs.value5',
 			'c.cellName',
+			'c.cityName',
 			'c.year',
 			'c.month',
 			'c.day',
@@ -385,6 +388,7 @@ class Results extends ActiveRecord {
 		$competition = Statistics::getCompetition(array(
 			'competitionId'=>$this->competitionId,
 			'cellName'=>$this->competition->cellName,
+			'cityName'=>$this->competition->cityName,
 		));
 		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}

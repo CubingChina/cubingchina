@@ -28,6 +28,7 @@ class BestPodiums extends Statistics {
 			'r.roundId',
 			self::getSelectSum($eventId, $type),
 			'c.cellName',
+			'c.cityName',
 			'c.year',
 			'c.month',
 			'c.day',
