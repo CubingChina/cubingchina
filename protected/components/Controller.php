@@ -238,9 +238,8 @@ class Controller extends CController {
 						'url'=>array('/user/profile'),
 					),
 					array(
-						'label'=>Yii::t('common', 'My Homepage'),
-						'url'=>Yii::app()->user->isGuest ? '' : array('/results/p', 'id'=>$this->user->wcaid),
-						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+						'label'=>Yii::t('common', 'My Registration'),
+						'url'=>array('/user/competitions'),
 					),
 					array(
 						'label'=>Yii::t('common', 'Competition History'),
@@ -248,8 +247,9 @@ class Controller extends CController {
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
-						'label'=>Yii::t('common', 'My Registration'),
-						'url'=>array('/user/competitions'),
+						'label'=>Yii::t('common', 'My Homepage'),
+						'url'=>Yii::app()->user->isGuest ? '' : array('/results/p', 'id'=>$this->user->wcaid),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
 						'label'=>Yii::t('common', 'Board'),
