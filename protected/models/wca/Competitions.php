@@ -221,6 +221,7 @@ class Competitions extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'country'=>array(self::BELONGS_TO, 'Countries', 'countryId'),
+			'results'=>array(self::HAS_MANY, 'Results', 'competitionId'),
 		);
 	}
 
@@ -334,6 +335,53 @@ class Competitions extends ActiveRecord {
 			'criteria'=>$criteria,
 			'pagination'=>array(
 				'pageSize'=>$pageSize,
+			),
+			'sort'=>array(
+				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.endMonth DESC, t.endDay DESC',
+			),
+		));
+	}
+
+	public function searchUser($personId) {
+		Yii::import('application.statistics.*');
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria = new CDbCriteria;
+
+		$criteria->with = array(
+			'results'=>array(
+				'together'=>true,
+			),
+		);
+
+		$criteria->compare('t.id',$this->id,true);
+		// $criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.cityName',$this->cityName,true);
+		$criteria->compare('t.countryId',$this->countryId,true);
+		$criteria->compare('t.information',$this->information,true);
+		// $criteria->compare('t.year',$this->year);
+		// $criteria->compare('t.month',$this->month);
+		// $criteria->compare('t.day',$this->day);
+		$criteria->compare('t.endMonth',$this->endMonth);
+		$criteria->compare('t.endDay',$this->endDay);
+		$criteria->compare('t.eventSpecs',$this->eventSpecs,true);
+		$criteria->compare('t.wcaDelegate',$this->wcaDelegate,true);
+		$criteria->compare('t.organiser',$this->organiser,true);
+		$criteria->compare('t.venue',$this->venue,true);
+		$criteria->compare('t.venueAddress',$this->venueAddress,true);
+		$criteria->compare('t.venueDetails',$this->venueDetails,true);
+		$criteria->compare('t.website',$this->website,true);
+		$criteria->compare('t.cellName',$this->cellName,true);
+		$criteria->compare('t.latitude',$this->latitude);
+		$criteria->compare('t.longitude',$this->longitude);
+		$criteria->compare('results.personId', $personId);
+
+		$criteria->group = 't.id';
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>100,
 			),
 			'sort'=>array(
 				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.endMonth DESC, t.endDay DESC',

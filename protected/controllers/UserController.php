@@ -11,6 +11,17 @@ class UserController extends Controller {
 		));
 	}
 
+	public function actionCompetitionHistory() {
+		if ($this->user->id === '') {
+			$this->redirect(array('/user/competitions'));
+		}
+		$model = new Competitions('search');
+		$model->unsetAttributes();
+		$this->render('competitionHistory', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionPassword() {
 		$this->render('password');
 	}

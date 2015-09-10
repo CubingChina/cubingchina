@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Competition History' => '參賽經歷',
   'Fee' => '',
-  'Psych Sheet' => '預排名',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -163,6 +163,7 @@ return array (
   'Previous step' => '上一步',
   'Profile' => '我的資料',
   'Province' => '省份',
+  'Psych Sheet' => '預排名',
   'Rankings' => '排名',
   'Recommended Browsers:' => '推薦瀏覽器：',
   'Records' => '紀錄',

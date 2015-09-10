@@ -18,6 +18,11 @@
           'url'=>array('/user/competitions'),
           'label'=>Yii::t('common', 'My Competitions'),
         ),
+        array(
+          'url'=>array('/user/competitionHistory'),
+          'label'=>Yii::t('common', 'Competition History'),
+          'visible'=>$this->user->wcaid != '',
+        ),
       ),
     )); ?>
   </section><!--//widget-->

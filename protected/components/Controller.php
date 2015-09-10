@@ -243,6 +243,11 @@ class Controller extends CController {
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
+						'label'=>Yii::t('common', 'Competition History'),
+						'url'=>array('/user/competitionHistory'),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+					),
+					array(
 						'label'=>Yii::t('common', 'My Competitions'),
 						'url'=>array('/user/competitions'),
 					),
