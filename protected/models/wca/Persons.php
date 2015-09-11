@@ -330,6 +330,10 @@ class Persons extends ActiveRecord {
 			'mapData'=>$mapData,
 			'mapCenter'=>$mapCenter,
 			'competitions'=>$competitions,
+			'user'=>User::model()->findByAttributes(array(
+				'wcaid'=>$id,
+				'status'=>User::STATUS_NORMAL,
+			)),
 		);
 	}
 
