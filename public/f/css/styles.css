@@ -316,6 +316,7 @@ ul.custom-list-style li {
 }
 .nav-tabs > li.active {
   border-top: 2px solid #6091ba;
+  margin-top: -1px;
 }
 .nav-tabs > li.active a, .nav-tabs > li.active a:hover, .nav-tabs > li.active a:active, .nav-tabs > li.active a:focus {
   border-bottom: 0;
