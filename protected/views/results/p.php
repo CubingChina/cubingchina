@@ -376,74 +376,137 @@
     ),
   )); ?>
   <?php endif; ?>
-  <h2><?php echo Yii::t('Persons', 'History'); ?></h2>
-  <?php
-  $this->widget('GroupRankGridView', array(
-    'dataProvider'=>new CArrayDataProvider($personResults, array(
-      'pagination'=>false,
-      'sort'=>false,
-    )),
-    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-    'groupKey'=>'eventId',
-    'groupHeader'=>'CHtml::openTag("a", array(
-        "name"=>$data->eventId,
-      )) . "</a>" . CHtml::tag("span", array(
-        "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-        "title"=>Yii::t("event", $data->event->cellName),
-      ), Yii::t("event", $data->event->cellName))',
-    'rankKey'=>'competitionId',
-    'repeatHeader'=>true,
-    'columns'=>array(
-      array(
-        'class'=>'RankColumn',
-        'name'=>Yii::t('Results', 'Competition'),
-        'type'=>'raw',
-        'value'=>'$displayRank ? $data->competitionLink : ""',
-        'headerHtmlOptions'=>array('class'=>'competition_name'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Round'),
-        'type'=>'raw',
-        'value'=>'Yii::t("Rounds", $data->round->cellName)',
-        'headerHtmlOptions'=>array('class'=>'round'),
-      ),
-      array(
-        'name'=>Yii::t('Results', 'Place'),
-        'type'=>'raw',
-        'value'=>'$data->pos',
-        'headerHtmlOptions'=>array('class'=>'place'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Best'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("best")',
-        'headerHtmlOptions'=>array('class'=>'result'),
-        'htmlOptions'=>array('class'=>'result'),
-      ),
-      array(
-        'name'=>'',
-        'type'=>'raw',
-        'value'=>'$data->regionalSingleRecord',
-        'headerHtmlOptions'=>array('class'=>'record'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Average'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("average")',
-        'headerHtmlOptions'=>array('class'=>'result'),
-        'htmlOptions'=>array('class'=>'result'),
-      ),
-      array(
-        'name'=>'',
-        'type'=>'raw',
-        'value'=>'$data->regionalAverageRecord',
-        'headerHtmlOptions'=>array('class'=>'record'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Detail'),
-        'type'=>'raw',
-        'value'=>'$data->detail',
-      ),
-    ),
-  )); ?>
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#history" data-toggle="tab"><?php echo Yii::t('Persons', 'History'); ?></a></li>
+    <li class=""><a href="#person-map" data-toggle="tab"><?php echo Yii::t('Persons', 'Map'); ?></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="history">
+      <?php
+      $this->widget('GroupRankGridView', array(
+        'dataProvider'=>new CArrayDataProvider($personResults, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+        'groupKey'=>'eventId',
+        'groupHeader'=>'CHtml::openTag("a", array(
+            "name"=>$data->eventId,
+          )) . "</a>" . CHtml::tag("span", array(
+            "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+            "title"=>Yii::t("event", $data->event->cellName),
+          ), Yii::t("event", $data->event->cellName))',
+        'rankKey'=>'competitionId',
+        'repeatHeader'=>true,
+        'columns'=>array(
+          array(
+            'class'=>'RankColumn',
+            'name'=>Yii::t('Results', 'Competition'),
+            'type'=>'raw',
+            'value'=>'$displayRank ? $data->competitionLink : ""',
+            'headerHtmlOptions'=>array('class'=>'competition_name'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Round'),
+            'type'=>'raw',
+            'value'=>'Yii::t("Rounds", $data->round->cellName)',
+            'headerHtmlOptions'=>array('class'=>'round'),
+          ),
+          array(
+            'name'=>Yii::t('Results', 'Place'),
+            'type'=>'raw',
+            'value'=>'$data->pos',
+            'headerHtmlOptions'=>array('class'=>'place'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Best'),
+            'type'=>'raw',
+            'value'=>'$data->getTime("best")',
+            'headerHtmlOptions'=>array('class'=>'result'),
+            'htmlOptions'=>array('class'=>'result'),
+          ),
+          array(
+            'name'=>'',
+            'type'=>'raw',
+            'value'=>'$data->regionalSingleRecord',
+            'headerHtmlOptions'=>array('class'=>'record'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Average'),
+            'type'=>'raw',
+            'value'=>'$data->getTime("average")',
+            'headerHtmlOptions'=>array('class'=>'result'),
+            'htmlOptions'=>array('class'=>'result'),
+          ),
+          array(
+            'name'=>'',
+            'type'=>'raw',
+            'value'=>'$data->regionalAverageRecord',
+            'headerHtmlOptions'=>array('class'=>'record'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Detail'),
+            'type'=>'raw',
+            'value'=>'$data->detail',
+          ),
+        ),
+      )); ?>
+    </div>
+    <div class="tab-pane" id="person-map">
+      <div id="competition-cluster"></div>
+    </div>
+  </div>
 </div>
+<?php
+$mapCenter = json_encode($mapCenter);
+$mapData = json_encode(array_map(function($data) {
+  $data['name'] = ActiveRecord::getModelAttributeValue($data, 'name');
+  $data['city_name'] = ActiveRecord::getModelAttributeValue($data, 'city_name');
+  return $data;
+}, $mapData));
+Yii::app()->clientScript->registerCssFile('/f/leaflet/leaflet.css');
+Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.css');
+Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.default.css');
+Yii::app()->clientScript->registerScriptFile('/f/leaflet/leaflet.js');
+Yii::app()->clientScript->registerScriptFile('/f/leaflet/plugins/MarkerCluster/leaflet.markercluster.js');
+Yii::app()->clientScript->registerScript('person',
+<<<EOT
+  $(window).resize(function() {
+    $('#competition-cluster').height($(window).height() - 20);
+  }).resize();
+  var map;
+  $('a[href="#person-map"]').on('shown.bs.tab', function() {
+    console.log(111)
+    if (!map) {
+      var center = {$mapCenter},
+        mapData = {$mapData},
+        tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+        }),
+        latlng = L.latLng(-37.82, 175.24);
+
+      map = L.map('competition-cluster', {
+        center: L.latLng(center.latitude, center.longitude),
+        zoom: 3,
+        layers: [tiles]
+      });
+
+      var markers = L.markerClusterGroup();
+      var marker;
+      for (var i = 0; i < mapData.length; i++) {
+        var marker = L.marker(new L.LatLng(mapData[i].latitude, mapData[i].longitude), {
+          title: mapData[i].name,
+        });
+        marker.bindPopup([
+          '<a href="' + mapData[i].url + '" target="_blank">' + mapData[i].name + '</a>',
+          mapData[i].city_name,
+          mapData[i].date
+        ].join('<br>'));
+        markers.addLayer(marker);
+      }
+      map.addLayer(markers);
+    }
+  });
+EOT
+);
