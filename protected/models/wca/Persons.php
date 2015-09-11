@@ -284,6 +284,16 @@ class Persons extends ActiveRecord {
 				return $result->regionalAverageRecord == 'NR';
 			})),
 		);
+		usort($competitions, function($competitionA, $competitionB) {
+			$temp = $competitionB->year - $competitionA->year;
+			if ($temp == 0) {
+				$temp = $competitionB->month - $competitionA->month;
+			}
+			if ($temp == 0) {
+				$temp = $competitionB->day - $competitionA->day;
+			}
+			return $temp;
+		});
 		$temp = array(
 			'longitude'=>0,
 			'latitude'=>0,
@@ -319,6 +329,7 @@ class Persons extends ActiveRecord {
 			'lastCompetition'=>$lastCompetitionResult->competition,
 			'mapData'=>$mapData,
 			'mapCenter'=>$mapCenter,
+			'competitions'=>$competitions,
 		);
 	}
 

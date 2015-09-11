@@ -377,8 +377,9 @@
   )); ?>
   <?php endif; ?>
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#history" data-toggle="tab"><?php echo Yii::t('Persons', 'History'); ?></a></li>
-    <li class=""><a href="#person-map" data-toggle="tab"><?php echo Yii::t('Persons', 'Map'); ?></a></li>
+    <li class="active"><a href="#history" data-toggle="tab"><?php echo Yii::t('common', 'Results'); ?></a></li>
+    <li><a href="#person-map" data-toggle="tab"><?php echo Yii::t('Persons', 'Map'); ?></a></li>
+    <li><a href="#competition-history" data-toggle="tab"><?php echo Yii::t('common', 'Competitions'); ?></a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="history">
@@ -454,6 +455,47 @@
     </div>
     <div class="tab-pane" id="person-map">
       <div id="competition-cluster"></div>
+    </div>
+    <div class="tab-pane" id="competition-history">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new NonSortArrayDataProvider($competitions, array(
+          'pagination'=>array(
+            'pageSize'=>count($competitions),
+          ),
+        )),
+        'template'=>'{items}{pager}',
+        'enableSorting'=>false,
+        'front'=>true,
+        'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
+        'columns'=>array(
+          array(
+            'name'=>'date',
+            'header'=>Yii::t('Competition', 'Date'),
+            'type'=>'raw',
+            'value'=>'$data->getDate()',
+          ),
+          array(
+            'name'=>'name',
+            'header'=>Yii::t('Competition', 'Name'),
+            'type'=>'raw',
+            'value'=>'$data->getCompetitionLink()',
+          ),
+          array(
+            'name'=>'countryId',
+            'header'=>Yii::t('common', 'Region'),
+            'type'=>'raw',
+            'value'=>'$data->country ? Region::getIconName($data->country->name, $data->country->iso2) : $data->countryId',
+            'htmlOptions'=>array('class'=>'region'),
+          ),
+          array(
+            'name'=>'cityName',
+            'header'=>Yii::t('common', 'City'),
+            'type'=>'raw',
+            'value'=>'$data->getCityInfo()',
+          ),
+        ),
+      )); ?>
     </div>
   </div>
 </div>
