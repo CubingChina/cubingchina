@@ -466,7 +466,7 @@ $mapData = json_encode(array_map(function($data) {
 }, $mapData));
 Yii::app()->clientScript->registerCssFile('/f/leaflet/leaflet.css');
 Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.css');
-Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.default.css');
+Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.Default.css');
 Yii::app()->clientScript->registerScriptFile('/f/leaflet/leaflet.js');
 Yii::app()->clientScript->registerScriptFile('/f/leaflet/plugins/MarkerCluster/leaflet.markercluster.js');
 Yii::app()->clientScript->registerScript('person',
