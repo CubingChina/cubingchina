@@ -20,6 +20,7 @@ return array (
   'Country' => '',
   'Gender' => '',
   'ID' => '',
+  'Map' => '比賽地圖',
   'Name' => '',
   'Subid' => '',
   'History' => '歷史成績',
