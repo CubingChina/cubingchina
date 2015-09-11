@@ -544,7 +544,7 @@ Yii::app()->clientScript->registerScript('person',
 
       map = L.map('competition-cluster', {
         center: L.latLng(center.latitude, center.longitude),
-        zoom: 3,
+        zoom: 4,
         layers: [tiles]
       });
 
