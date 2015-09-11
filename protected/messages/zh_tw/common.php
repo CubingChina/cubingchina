@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'My Registration' => '我的報名',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -137,6 +136,7 @@ return array (
   'More Info' => '其他',
   'Multiple' => '多地',
   'My Homepage' => '我的主頁',
+  'My Registration' => '我的報名',
   'Name' => '英文名',
   'Name in Local Character' => '中文名',
   'Names (One name per line)' => '名字（一行一個）',

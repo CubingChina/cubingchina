@@ -167,6 +167,7 @@ class Persons extends ActiveRecord {
 			}
 		}
 		//历史成绩
+		$competitions = array();
 		$personResults = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
@@ -195,6 +196,7 @@ class Persons extends ActiveRecord {
 				$average = $result->average;
 			}
 			$personResults[$eventId][] = $result;
+			$competitions[$result->competitionId] = $result->competition;
 		}
 		//世锦赛获奖记录
 		$wcPodiums = Results::model()->with(array(
@@ -282,6 +284,39 @@ class Persons extends ActiveRecord {
 				return $result->regionalAverageRecord == 'NR';
 			})),
 		);
+		usort($competitions, function($competitionA, $competitionB) {
+			$temp = $competitionB->year - $competitionA->year;
+			if ($temp == 0) {
+				$temp = $competitionB->month - $competitionA->month;
+			}
+			if ($temp == 0) {
+				$temp = $competitionB->day - $competitionA->day;
+			}
+			return $temp;
+		});
+		$temp = array(
+			'longitude'=>0,
+			'latitude'=>0,
+		);
+		$mapData = array();
+		foreach ($competitions as $competition) {
+			$temp['longitude'] += $competition->longitude / 1e6;
+			$temp['latitude'] += $competition->latitude / 1e6;
+			$data = Statistics::getCompetition(array(
+				'competitionId'=>$competition->id,
+				'cellName'=>$competition->cellName,
+				'cityName'=>$competition->cityName,
+			));
+			$data['longitude'] = $competition->longitude / 1e6;
+			$data['latitude'] = $competition->latitude / 1e6;
+			$data['url'] = CHtml::normalizeUrl($data['url']);
+			$data['date'] = $competition->getDate();
+			$mapData[] = $data;
+		}
+		$mapCenter = array(
+			'longitude'=>number_format($temp['longitude'] / count($competitions), 6, ',', ''),
+			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
+		);
 		return array(
 			'personRanks'=>array_values($personRanks),
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
@@ -292,6 +327,13 @@ class Persons extends ActiveRecord {
 			'overAll'=>$overAll,
 			'firstCompetition'=>$firstCompetitionResult->competition,
 			'lastCompetition'=>$lastCompetitionResult->competition,
+			'mapData'=>$mapData,
+			'mapCenter'=>$mapCenter,
+			'competitions'=>$competitions,
+			'user'=>User::model()->findByAttributes(array(
+				'wcaid'=>$id,
+				'status'=>User::STATUS_NORMAL,
+			)),
 		);
 	}
 
