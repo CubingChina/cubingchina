@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('Results', 'Competitions'); ?>:</span>
-          <span class="info-value"><?php echo $person->competitionNum; ?></span>
+          <span class="info-value"><?php echo count($competitions); ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('common', 'WCA ID'); ?>:</span>
@@ -491,6 +491,11 @@
         'front'=>true,
         'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
         'columns'=>array(
+          array(
+            'header'=>Yii::t('Registration', 'No.'),
+            'type'=>'raw',
+            'value'=>'$data->number',
+          ),
           array(
             'name'=>'date',
             'header'=>Yii::t('Competition', 'Date'),

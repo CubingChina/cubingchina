@@ -292,14 +292,14 @@ class Persons extends ActiveRecord {
 			if ($temp == 0) {
 				$temp = $competitionB->day - $competitionA->day;
 			}
-			return $temp;
+			return -$temp;
 		});
 		$temp = array(
 			'longitude'=>0,
 			'latitude'=>0,
 		);
 		$mapData = array();
-		foreach ($competitions as $competition) {
+		foreach ($competitions as $key=>$competition) {
 			$temp['longitude'] += $competition->longitude / 1e6;
 			$temp['latitude'] += $competition->latitude / 1e6;
 			$data = Statistics::getCompetition(array(
@@ -311,6 +311,7 @@ class Persons extends ActiveRecord {
 			$data['latitude'] = $competition->latitude / 1e6;
 			$data['url'] = CHtml::normalizeUrl($data['url']);
 			$data['date'] = $competition->getDate();
+			$competition->number = $key + 1;
 			$mapData[] = $data;
 		}
 		$mapCenter = array(
@@ -329,7 +330,7 @@ class Persons extends ActiveRecord {
 			'lastCompetition'=>$lastCompetitionResult->competition,
 			'mapData'=>$mapData,
 			'mapCenter'=>$mapCenter,
-			'competitions'=>$competitions,
+			'competitions'=>array_reverse($competitions),
 			'user'=>User::model()->findByAttributes(array(
 				'wcaid'=>$id,
 				'status'=>User::STATUS_NORMAL,
