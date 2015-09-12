@@ -50,7 +50,7 @@
   <h2><?php echo Yii::t('Results', 'Current Personal Records'); ?></h2>
   <?php
   $this->widget('GridView', array(
-    'dataProvider'=>new CArrayDataProvider($personRanks, array(
+    'dataProvider'=>new CArrayDataProvider(array_values($personRanks), array(
       'pagination'=>false,
       'sort'=>false,
     )),
@@ -482,9 +482,7 @@
       <?php
       $this->widget('GridView', array(
         'dataProvider'=>new NonSortArrayDataProvider($competitions, array(
-          'pagination'=>array(
-            'pageSize'=>count($competitions),
-          ),
+          'pagination'=>false,
         )),
         'template'=>'{items}{pager}',
         'enableSorting'=>false,

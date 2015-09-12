@@ -319,7 +319,8 @@ class Persons extends ActiveRecord {
 			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
 		);
 		return array(
-			'personRanks'=>array_values($personRanks),
+			'id'=>$id,
+			'personRanks'=>$personRanks,
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,

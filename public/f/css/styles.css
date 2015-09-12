@@ -2457,3 +2457,15 @@ body.results table .region {
 td.hover {
   background: #E6F4E6;
 }
+table.pk-table tbody tr td {
+  vertical-align: middle;
+}
+.pk-table td.winner {
+  background-color: #E6F4E6;
+  color: #f60;
+}
+table tbody tr.fix-top {
+  position: fixed;
+  top: 0;
+  background-color: #fff;
+}
