@@ -287,9 +287,9 @@ class ResultsController extends Controller {
 			$bestAverageNR = $this->getBestData($persons, $averageNRExpression);
 			$bestSingleCR = $this->getBestData($persons, $singleCRExpression);
 			$bestAverageCR = $this->getBestData($persons, $averageCRExpression);
-			$bestGold = $this->getBestData($persons, $goldExpression);
-			$bestSilver = $this->getBestData($persons, $silverExpression);
-			$bestBronze = $this->getBestData($persons, $bronzeExpression);
+			$bestGold = $this->getBestData($persons, $goldExpression, 'max');
+			$bestSilver = $this->getBestData($persons, $silverExpression, 'max');
+			$bestBronze = $this->getBestData($persons, $bronzeExpression, 'max');
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
 			foreach ($persons as $person) {
 				$id = $person['person']->id;
