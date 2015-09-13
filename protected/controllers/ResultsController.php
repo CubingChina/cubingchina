@@ -231,28 +231,12 @@ class ResultsController extends Controller {
 				))',
 				'type'=>'max',
 			),
-			'WR'=>array(
-				'expression'=>'$results["overAll"]["WR"]',
+			'records'=>array(
+				'expression'=>'$results["overAll"]["WR"] * 10 + $results["overAll"]["CR"] * 5 + $results["overAll"]["NR"]',
 				'type'=>'max',
 			),
-			'CR'=>array(
-				'expression'=>'$results["overAll"]["CR"]',
-				'type'=>'max',
-			),
-			'NR'=>array(
-				'expression'=>'$results["overAll"]["NR"]',
-				'type'=>'max',
-			),
-			'gold'=>array(
-				'expression'=>'$results["overAll"]["gold"]',
-				'type'=>'max',
-			),
-			'silver'=>array(
-				'expression'=>'$results["overAll"]["silver"]',
-				'type'=>'max',
-			),
-			'bronze'=>array(
-				'expression'=>'$results["overAll"]["bronze"]',
+			'medals'=>array(
+				'expression'=>'$results["overAll"]["gold"] * 1e8 + $results["overAll"]["silver"] * 1e4 + $results["overAll"]["bronze"]',
 				'type'=>'max',
 			),
 		);
@@ -277,60 +261,28 @@ class ResultsController extends Controller {
 			$averageNRExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->countryRank : -1";
 			$singleCRExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->continentRank : -1";
 			$averageCRExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->continentRank : -1";
-			$goldExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['gold'] : 0";
-			$silverExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['silver'] : 0";
-			$bronzeExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['bronze'] : 0";
+			$medalsExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['gold'] * 1e8 + \$results['personRanks']['{$eventId}']->medals['silver'] * 1e4 + \$results['personRanks']['{$eventId}']->medals['bronze'] : 0";
 			$solvesExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['solve'] * 10000000 - \$results['personRanks']['{$eventId}']->medals['attempt'] : -1";
 			$bestSingle = $this->getBestData($persons, $singleExpression);
 			$bestAverage = $this->getBestData($persons, $averageExpression);
-			$bestSingleNR = $this->getBestData($persons, $singleNRExpression);
-			$bestAverageNR = $this->getBestData($persons, $averageNRExpression);
-			$bestSingleCR = $this->getBestData($persons, $singleCRExpression);
-			$bestAverageCR = $this->getBestData($persons, $averageCRExpression);
-			$bestGold = $this->getBestData($persons, $goldExpression, 'max');
-			$bestSilver = $this->getBestData($persons, $silverExpression, 'max');
-			$bestBronze = $this->getBestData($persons, $bronzeExpression, 'max');
+			$bestMedals = $this->getBestData($persons, $medalsExpression, 'max');
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
 			foreach ($persons as $person) {
 				$id = $person['person']->id;
 				$single = $this->evaluateExpression($singleExpression, $person);
 				$average = $this->evaluateExpression($averageExpression, $person);
-				$singleNR = $this->evaluateExpression($singleNRExpression, $person);
-				$averageNR = $this->evaluateExpression($averageNRExpression, $person);
-				$singleCR = $this->evaluateExpression($singleCRExpression, $person);
-				$averageCR = $this->evaluateExpression($averageCRExpression, $person);
-				$gold = $this->evaluateExpression($goldExpression, $person);
-				$silver = $this->evaluateExpression($silverExpression, $person);
-				$bronze = $this->evaluateExpression($bronzeExpression, $person);
+				$medals = $this->evaluateExpression($medalsExpression, $person);
 				$solves = $this->evaluateExpression($solvesExpression, $person, 'max');
 				if ($single === $bestSingle) {
 					$winners[$id][$eventId . 'Single'] = true;
 					$winners[$id][$eventId . 'SingleWR'] = true;
 				}
-				if ($singleNR === $bestSingleNR) {
-					$winners[$id][$eventId . 'SingleNR'] = true;
-				}
-				if ($singleCR === $bestSingleCR) {
-					$winners[$id][$eventId . 'SingleCR'] = true;
-				}
 				if ($average === $bestAverage) {
 					$winners[$id][$eventId . 'Average'] = true;
 					$winners[$id][$eventId . 'AverageWR'] = true;
 				}
-				if ($averageNR === $bestAverageNR) {
-					$winners[$id][$eventId . 'AverageNR'] = true;
-				}
-				if ($averageCR === $bestAverageCR) {
-					$winners[$id][$eventId . 'AverageCR'] = true;
-				}
-				if ($gold === $bestGold) {
-					$winners[$id][$eventId . 'Gold'] = true;
-				}
-				if ($silver === $bestSilver) {
-					$winners[$id][$eventId . 'Silver'] = true;
-				}
-				if ($bronze === $bestBronze) {
-					$winners[$id][$eventId . 'Bronze'] = true;
+				if ($medals === $bestMedals) {
+					$winners[$id][$eventId . 'Medals'] = true;
 				}
 				if ($solves === $bestSolves) {
 					$winners[$id][$eventId . 'Solves'] = true;
@@ -387,7 +339,7 @@ class ResultsController extends Controller {
 		}
 		$value = $model[$attribute];
 		if ($attribute === 'best') {
-			$value = Results::formatTime($value, $eventId);
+			$value = Results::formatTime($value, "$eventId");
 		}
 		if ($attribute === 'solve') {
 			$value .= '/' . $model['attempt'];

@@ -327,6 +327,7 @@ class Persons extends ActiveRecord {
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,
 			'overAll'=>$overAll,
+			'score'=>$overAll['WR'] * 10 + $overAll['CR'] * 5 + $overAll['NR'],
 			'firstCompetition'=>$firstCompetitionResult->competition,
 			'lastCompetition'=>$lastCompetitionResult->competition,
 			'mapData'=>$mapData,

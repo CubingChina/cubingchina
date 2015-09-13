@@ -4,25 +4,25 @@
       <tr id="names">
         <td colspan="2"><?php echo Yii::t('Results', 'Name'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
+        <td colspan="3"><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
         <?php endforeach; ?>
       </tr>
       <tr>
         <td colspan="2"><?php echo Yii::t('common', 'WCA ID'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td><?php echo Persons::getWCAIconLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
+        <td colspan="3"><?php echo Persons::getWCAIconLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
         <?php endforeach; ?>
       </tr>
       <tr>
         <td colspan="2"><?php echo Yii::t('common', 'Region'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td><?php echo Yii::t('Region', $person['person']->country->name); ?></td>
+        <td colspan="3"><?php echo Yii::t('Region', $person['person']->country->name); ?></td>
         <?php endforeach; ?>
       </tr>
       <tr>
         <td colspan="2"><?php echo Yii::t('common', 'Gender'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'gender'); ?>>
+        <td colspan="3">
           <?php echo strtolower($person['person']->gender) == 'f' ? Yii::t('common', 'Female') : Yii::t('common', 'Male'); ?>
         </td>
         <?php endforeach; ?>
@@ -30,7 +30,7 @@
       <tr>
         <td colspan="2"><?php echo Yii::t('Results', 'Competitions'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'competitions'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, 'competitions'); ?>>
           <?php echo count($person['results']['competitions']); ?>
         </td>
         <?php endforeach; ?>
@@ -38,7 +38,7 @@
       <tr>
         <td colspan="2"><?php echo Yii::t('Results', 'Emulation'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'emulation'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, 'emulation'); ?>>
           <?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d',
             $person['results']['firstCompetition']->year, $person['results']['firstCompetition']->month, $person['results']['firstCompetition']->day,
             $person['results']['lastCompetition']->year, $person['results']['lastCompetition']->endMonth, $person['results']['lastCompetition']->endDay);
@@ -46,40 +46,88 @@
         </td>
         <?php endforeach; ?>
       </tr>
-      <?php foreach ($persons[0]['results']['overAll'] as $type=>$overAll): ?>
       <tr>
-        <td colspan="2"><?php echo Yii::t('statistics', Yii::t('Results', ucfirst($type))); ?></td>
+        <td colspan="2" rowspan="4"><?php echo Yii::t('statistics', Yii::t('Results', 'Records')); ?></td>
+      </tr>
+      <tr>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $type); ?>>
-          <?php echo $person['results']['overAll'][$type]; ?>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['score']; ?>
         </td>
         <?php endforeach; ?>
       </tr>
-      <?php endforeach; ?>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo Yii::t('Results', 'WR'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo Yii::t('Results', 'CR'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo Yii::t('Results', 'NR'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['WR']; ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['CR']; ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['NR']; ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <td colspan="2" rowspan="4"><?php echo Yii::t('statistics', Yii::t('statistics', 'Medals')); ?></td>
+      </tr>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+          <?php echo $person['results']['score']; ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+          <?php echo Yii::t('statistics', 'Gold'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+          <?php echo Yii::t('statistics', 'Silver'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+          <?php echo Yii::t('statistics', 'Bronze'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['gold']; ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['silver']; ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+          <?php echo $person['results']['overAll']['bronze']; ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
       <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$eventName): ?>
       <?php $nonAverage = in_array("$eventId", array('333mbf', '444bf', '555bf')); ?>
       <?php if (isset($eventIds[$eventId])): ?>
       <tr>
-        <td rowspan="<?php echo $nonAverage ? 8 : 12; ?>"><?php echo $eventName; ?></td>
-        <td><?php echo Yii::t('statistics', 'NR'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleNR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'countryRank'); ?>
-        </td>
-        <?php endforeach; ?>
-      </tr>
-      <tr>
-        <td><?php echo Yii::t('statistics', 'CR'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleCR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'continentRank'); ?>
-        </td>
-        <?php endforeach; ?>
+        <td rowspan="<?php echo $nonAverage ? 6 : 8; ?>"><?php echo $eventName; ?></td>
       </tr>
       <tr>
         <td><?php echo Yii::t('statistics', 'WR'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleWR'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleWR'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'worldRank'); ?>
         </td>
         <?php endforeach; ?>
@@ -87,7 +135,7 @@
       <tr>
         <td><?php echo Yii::t('common', 'Single'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Single'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Single'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'best'); ?>
         </td>
         <?php endforeach; ?>
@@ -96,7 +144,7 @@
       <tr>
         <td><?php echo Yii::t('common', 'Average'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Average'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Average'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.best'); ?>
         </td>
         <?php endforeach; ?>
@@ -104,48 +152,35 @@
       <tr>
         <td><?php echo Yii::t('statistics', 'WR'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageWR'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageWR'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.worldRank'); ?>
-        </td>
-        <?php endforeach; ?>
-      </tr>
-      <tr>
-        <td><?php echo Yii::t('statistics', 'CR'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageCR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.continentRank'); ?>
-        </td>
-        <?php endforeach; ?>
-      </tr>
-      <tr>
-        <td><?php echo Yii::t('statistics', 'NR'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageNR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.countryRank'); ?>
         </td>
         <?php endforeach; ?>
       </tr>
       <?php endif; ?>
       <tr>
-        <td><?php echo Yii::t('statistics', 'Gold'); ?></td>
+        <td rowspan="2"><?php echo Yii::t('statistics', 'Medals'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Gold'); ?>>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+          <?php echo Yii::t('statistics', 'Gold'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+          <?php echo Yii::t('statistics', 'Silver'); ?>
+        </td>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+          <?php echo Yii::t('statistics', 'Bronze'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'medals.gold'); ?>
         </td>
-        <?php endforeach; ?>
-      </tr>
-      <tr>
-        <td><?php echo Yii::t('statistics', 'Silver'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Silver'); ?>>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'medals.silver'); ?>
         </td>
-        <?php endforeach; ?>
-      </tr>
-      <tr>
-        <td><?php echo Yii::t('statistics', 'Bronze'); ?></td>
-        <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Bronze'); ?>>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'medals.bronze'); ?>
         </td>
         <?php endforeach; ?>
@@ -153,7 +188,7 @@
       <tr>
         <td><?php echo Yii::t('statistics', 'Solves/Attempts'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Solves'); ?>>
+        <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Solves'); ?>>
           <?php echo $this->getPersonRankValue($person['results'], $eventId, 'medals.solve'); ?>
         </td>
         <?php endforeach; ?>
@@ -165,51 +200,39 @@
 </div>
 <?php Yii::app()->clientScript->registerScript('pk',
 <<<EOT
-  var names = $('#names');
-  var table = names.parent().parent();
-  $(window).on('resize', function() {
-    names.css({
-      left: table.offset().left,
-      right: $(window).width() - table.outerWidth() - table.offset().left
-    });
-    var td = names.next().find('td');
-    names.find('td').each(function(index) {
-      var width = td.eq(index).width();
-      td.eq(index).width(width);
-      $(this).width(width);
-    });
-  }).resize();
-  $(document).on('scroll', function() {
-    if (document.body.scrollTop >= table.offset().top + names.height()) {
-      if (!names.hasClass('fix-top')) {
-        names.addClass('fix-top');
-        $(window).resize();
-      }
-    } else {
-      names.removeClass('fix-top');
-    }
-  });
+  // var names = $('#names');
+  // var table = names.parent().parent();
+  // $(document).on('scroll', function() {
+  //   if (document.body.scrollTop >= table.offset().top + names.height()) {
+  //     if (!names.hasClass('fix-top')) {
+  //       names.addClass('fix-top');
+  //       $(window).resize();
+  //     }
+  //   } else {
+  //     names.removeClass('fix-top');
+  //   }
+  // });
   var lastGroup;
-  $('.pk-table tr:nth-of-type(n+5)').each(function() {
-    var that = $(this);
-    var hasData = false;
-    console.log(that.find('td:first-child'))
-    if (that.find('td:first-child').attr('rowspan')) {
-      lastGroup = that;
-    }
-    $(this).find('td').each(function() {
-      if ($(this).hasClass('winner')) {
-        hasData = true;
-        return false;
-      }
-    });
-    if (!hasData) {
-      $(this).remove();
-      if (lastGroup) {
-        var rowspan = parseInt(lastGroup.find('td:first-child').attr('rowspan'));
-        lastGroup.find('td:first-child').attr('rowspan', rowspan - 1);
-      }
-    }
-  })
+  // $('.pk-table tr:nth-of-type(n+5)').each(function() {
+  //   var that = $(this);
+  //   var hasData = false;
+  //   if (that.find('td:first-child').attr('rowspan')) {
+  //     lastGroup = that;
+  //     return;
+  //   }
+  //   $(this).find('td').each(function() {
+  //     if ($(this).hasClass('winner')) {
+  //       hasData = true;
+  //       return false;
+  //     }
+  //   });
+  //   if (!hasData) {
+  //     $(this).remove();
+  //     if (lastGroup) {
+  //       var rowspan = parseInt(lastGroup.find('td:first-child').attr('rowspan'));
+  //       lastGroup.find('td:first-child').attr('rowspan', rowspan - 1);
+  //     }
+  //   }
+  // })
 EOT
 );

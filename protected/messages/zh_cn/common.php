@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'PK' => '',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',

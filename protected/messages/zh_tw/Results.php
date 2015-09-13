@@ -25,6 +25,7 @@ return array (
   'ID' => '',
   'Person Name' => '',
   'Pos' => '',
+  'Records' => '紀錄',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
   'Round' => '',
