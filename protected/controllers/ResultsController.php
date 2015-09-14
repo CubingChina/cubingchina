@@ -230,6 +230,7 @@ class ResultsController extends Controller {
 					$results["firstCompetition"]->day
 				))',
 				'type'=>'max',
+				'canBeZero'=>true,
 			),
 			'records'=>array(
 				'expression'=>'$results["overAll"]["WR"] * 10 + $results["overAll"]["CR"] * 5 + $results["overAll"]["NR"]',
@@ -241,7 +242,7 @@ class ResultsController extends Controller {
 			),
 		);
 		foreach ($bestData as $key=>$value) {
-			$bestData[$key]['value'] = $this->getBestData($persons, $value['expression'], $value['type']);
+			$bestData[$key]['value'] = $this->getBestData($persons, $value['expression'], $value['type'], isset($value['canBeZero']) ? $value['canBeZero'] : false);
 		}
 		foreach ($persons as $person) {
 			$id = $person['person']->id;
@@ -297,11 +298,11 @@ class ResultsController extends Controller {
 		);
 	}
 
-	private function getBestData($persons, $expression, $type = 'min') {
+	private function getBestData($persons, $expression, $type = 'min', $canBeZero = false) {
 		$temp = array();
 		foreach ($persons as $person) {
 			$value = $this->evaluateExpression($expression, $person);
-			if ($value > 0) {
+			if ($value > 0 || $canBeZero) {
 				$temp[] = $this->evaluateExpression($expression, $person);
 			}
 		}
@@ -309,7 +310,7 @@ class ResultsController extends Controller {
 			return -1;
 		}
 		$best = $type($temp);
-		if ($best <= 0) {
+		if ($best <= 0 && !$canBeZero) {
 			return -1;
 		}
 		return $best;
