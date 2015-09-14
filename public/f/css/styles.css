@@ -2460,12 +2460,33 @@ td.hover {
 table.pk-table tbody tr td {
   vertical-align: middle;
 }
-.pk-table td.winner {
+table.pk-table td.winner {
   background-color: #E6F4E6;
   color: #f60;
 }
-table tbody tr.fix-top {
+table.pk-table tbody tr td.has-table {
+  padding: 0;
+}
+table.pk-table tbody tr td table {
+  border: none;
+  margin: 0;
+}
+table.pk-table tbody tr td table tr:first-child td {
+  border-top: none;
+}
+table.pk-table tbody tr td table tr:last-child td {
+  border-bottom: none;
+}
+table.pk-table tbody tr td table tr td:first-child {
+  border-left: none;
+}
+table.pk-table tbody tr td table tr td:last-child {
+  border-right: none;
+}
+.fix-top {
   position: fixed;
   top: 0;
+}
+.fix-top table tbody tr td {
   background-color: #fff;
 }
