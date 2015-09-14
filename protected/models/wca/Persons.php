@@ -12,6 +12,20 @@
  */
 class Persons extends ActiveRecord {
 
+	public static function getBattleCheckBox($name, $id) {
+		if ($id === '') {
+			return '';
+		}
+		$checkBox = CHtml::checkBox('ids', isset($_COOKIE['battle_' . $id]), array(
+			'class'=>'battle-person',
+			'data-id'=>$id,
+			'data-name'=>$name,
+		));
+		$text = CHtml::tag('span', array(), Yii::t('common', 'Battle'));
+		$label = CHtml::tag('label', array('class'=>'battle-label'), $checkBox . $text);
+		return CHtml::tag('div', array('class'=>'checkbox'), $label);
+	}
+
 	public static function getPersons($region = 'China', $gender = 'all', $name = '', $page = 1) {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(

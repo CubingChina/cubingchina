@@ -2502,3 +2502,16 @@ table.pk-table tbody tr td table tr td:last-child {
 .fix-top table tbody tr td {
   background-color: #fff;
 }
+.battle-checkbox {
+  width: 70px;
+}
+.battle-label span {
+  visibility: hidden;
+}
+tr:hover .battle-label span {
+  visibility: visible;
+}
+td .checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}

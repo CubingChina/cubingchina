@@ -825,6 +825,14 @@ class Competition extends ActiveRecord {
 		}
 		$columns = array(
 			array(
+				'headerHtmlOptions'=>array(
+					'class'=>'battle-checkbox',
+				),
+				'header'=>Yii::t('common', 'Battle'),
+				'value'=>'Persons::getBattleCheckBox($data->user->getCompetitionName(), $data->user->wcaid)',
+				'type'=>'raw',
+			),
+			array(
 				'name'=>'number',
 				'header'=>'No.',
 				'value'=>'$data->number',

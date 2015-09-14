@@ -25,7 +25,6 @@ return array (
   'ID' => '',
   'Person Name' => '',
   'Pos' => '',
-  'Records' => '纪录',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
   'Round' => '',
@@ -52,6 +51,7 @@ return array (
   'Overall Record Collection' => '纪录汇总',
   'Person' => '选手',
   'Place' => '排名',
+  'Records' => '纪录',
   'WR' => '世界纪录',
   'World Championship Podiums' => '世锦赛领奖台',
 );

@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Battle' => '较量',
   'Fee' => '',
-  'PK' => '',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -45,6 +45,7 @@ return array (
   'NR' => '国家纪录',
   'Not found' => '未找到',
   'Official Records' => '官方纪录',
+  'PK' => '',
   'Personal Rankings' => '个人排名',
   'Regulations' => '比赛规则',
   'Reset Password' => '重设密码',

@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Medals' => '獎牌',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中國各項平均成績前100占席',
@@ -39,7 +38,6 @@ return array (
   'Persons' => '人數',
   'Records set by Chinese competitors' => '中國選手創紀錄數量排行榜',
   'Records set in Chinese competitions' => '中國賽事創紀錄數量排行榜',
-  'Score' => '計分',
   'Second' => '亞軍',
   'Sum' => '總和',
   'Sum of 2x2 to 5x5 average ranks' => '二階至五階平均綜合排行榜',
@@ -62,12 +60,14 @@ return array (
   'Here you can find WCA competitions.' => '你可以在這裡查看WCA比賽。',
   'Here you can find WCA competitors.' => '你可以在這裡查看WCA選手們。',
   'Medal Collection' => '獎牌榜',
+  'Medals' => '獎牌',
   'Most Personal Solves' => '復原榜',
   'NR' => '地區排名',
   'Person' => '姓名',
   'Rank' => '排名',
   'Regional records are displayed on the page, based on the official WCA records.' => '本頁面列出了所有WCA項目的各地區紀錄，所有的成績紀錄源自WCA賽事的官方紀錄。',
   'Regional records are displayed on the page, based on the {url}.' => '本頁面列出了所有WCA項目的各地區紀錄，所有的成績紀錄源自{url}。',
+  'Score' => '計分',
   'Silver' => '銀',
   'Solves/Attempts' => '復原/嘗試',
   'Sum of Country Ranks' => '各地綜合排行榜',

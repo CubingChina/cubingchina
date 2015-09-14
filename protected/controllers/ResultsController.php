@@ -174,7 +174,7 @@ class ResultsController extends Controller {
 		$this->render('p', $data);
 	}
 
-	public function actionPk() {
+	public function actionBattle() {
 		$ids = array_unique(array_map('strtoupper', $this->aGet('ids')));
 		$ids = array_slice($ids, 0, 4);
 		$persons = array();
@@ -202,12 +202,12 @@ class ResultsController extends Controller {
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Persons'=>array('/results/person'),
-			'PK',
+			'Battle',
 		);
-		$names[] = 'PK';
+		$names[] = 'Battle';
 		$this->pageTitle = $names;
-		$this->title = Yii::t('common', 'PK');
-		$this->render('pk', $data);
+		$this->title = Yii::t('common', 'Battle');
+		$this->render('battle', $data);
 	}
 
 	private function handlePKPersons($persons) {

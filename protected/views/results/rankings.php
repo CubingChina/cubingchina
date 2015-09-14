@@ -53,6 +53,14 @@
   <?php
   $columns = array(
     array(
+      'headerHtmlOptions'=>array(
+        'class'=>'battle-checkbox',
+      ),
+      'header'=>Yii::t('common', 'Battle'),
+      'value'=>'Persons::getBattleCheckBox($data["personName"], $data["personId"])',
+      'type'=>'raw',
+    ),
+    array(
       'class'=>'RankColumn',
       'header'=>Yii::t('statistics', 'Rank'),
       'value'=>'$displayRank',
