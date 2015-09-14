@@ -66,13 +66,13 @@
                 </td>
               </tr>
               <tr>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td>
                   <?php echo Yii::t('Results', 'WR'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td>
                   <?php echo Yii::t('Results', 'CR'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td>
                   <?php echo Yii::t('Results', 'NR'); ?>
                 </td>
               </tr>
@@ -99,13 +99,13 @@
           <table class="table table-bordered table-condensed table-boxed table-hover">
             <tbody>
               <tr>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Gold'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Silver'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Bronze'); ?>
                 </td>
               </tr>
@@ -131,7 +131,7 @@
       <tr class="sepatator">
         <td colspan="<?php echo count($persons) + 3; ?>">&nbsp;</td>
       </tr>
-      <tr>
+      <tr class="event-row">
         <td rowspan="<?php echo $nonAverage ? 5 + $sameCountry + $sameContinent : 7 + ($sameCountry + $sameContinent) * 2; ?>">
           <?php CHtml::tag('span', array(
             'class'=>'event-icon event-icon-' . $eventId,
@@ -222,13 +222,13 @@
           <table class="table table-bordered table-condensed table-boxed table-hover">
             <tbody>
               <tr>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Gold'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Silver'); ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
+                <td>
                   <?php echo Yii::t('statistics', 'Bronze'); ?>
                 </td>
               </tr>
@@ -268,7 +268,7 @@
   $('.pk-table tr:nth-of-type(n+5)').each(function() {
     var that = $(this);
     var hasData = false;
-    if (that.find('td:first-child').attr('rowspan')) {
+    if (that.hasClass('event-row')) {
       lastGroup = that;
       return;
     }
