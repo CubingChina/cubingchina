@@ -2467,7 +2467,13 @@ table.pk-table td.winner {
 table.pk-table thead th {
   width: 50%;
 }
-table.pk-table th.pk-attribute {
+table.pk-table thead tr.persons-3 th {
+  width: 33.33%;
+}
+table.pk-table thead tr.persons-4 th {
+  width: 25%;
+}
+table.pk-table thead tr th.pk-attribute {
   width: 100px;
 }
 table.pk-table tbody tr td.has-table {

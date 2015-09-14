@@ -176,6 +176,7 @@ class ResultsController extends Controller {
 
 	public function actionPk() {
 		$ids = array_unique($this->aGet('ids'));
+		$ids = array_slice($ids, 0, 4);
 		$persons = array();
 		$names = array();
 		foreach ($ids as $id) {
@@ -197,7 +198,6 @@ class ResultsController extends Controller {
 				break;
 		}
 		$persons = array_slice($persons, 0, 4);
-		$names = array_slice($names, 0, 4);
 		$data = $this->handlePKPersons($persons);
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),

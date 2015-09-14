@@ -1,7 +1,7 @@
 <div class="table-responsive">
   <table class="table table-bordered table-condensed table-hover table-boxed pk-table">
     <thead>
-      <tr>
+      <tr class="persons-<?php echo count($persons); ?>">
         <th colspan="2" class="pk-attribute"><?php echo Yii::t('Results', 'Name'); ?></th>
         <?php foreach ($persons as $person): ?>
         <th><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></th>
