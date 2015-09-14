@@ -175,7 +175,7 @@ class ResultsController extends Controller {
 	}
 
 	public function actionPk() {
-		$ids = array_unique($this->aGet('ids'));
+		$ids = array_unique(array_map('strtoupper', $this->aGet('ids')));
 		$ids = array_slice($ids, 0, 4);
 		$persons = array();
 		$names = array();
