@@ -277,7 +277,7 @@ class ResultsController extends Controller {
 					$winners[$id][$eventId . 'Single'] = true;
 					$winners[$id][$eventId . 'SingleWR'] = true;
 				}
-				if ($average === $bestAverage) {
+				if ($average === $bestAverage && $bestAverage > 0) {
 					$winners[$id][$eventId . 'Average'] = true;
 					$winners[$id][$eventId . 'AverageWR'] = true;
 				}

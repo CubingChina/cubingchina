@@ -2464,6 +2464,12 @@ table.pk-table td.winner {
   background-color: #E6F4E6;
   color: #f60;
 }
+table.pk-table thead th {
+  width: 50%;
+}
+table.pk-table th.pk-attribute {
+  width: 100px;
+}
 table.pk-table tbody tr td.has-table {
   padding: 0;
 }

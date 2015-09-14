@@ -1,12 +1,14 @@
 <div class="table-responsive">
   <table class="table table-bordered table-condensed table-hover table-boxed pk-table">
-    <tbody>
+    <thead>
       <tr>
-        <td colspan="2"><?php echo Yii::t('Results', 'Name'); ?></td>
+        <th colspan="2" class="pk-attribute"><?php echo Yii::t('Results', 'Name'); ?></th>
         <?php foreach ($persons as $person): ?>
-        <td><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
+        <th><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></th>
         <?php endforeach; ?>
       </tr>
+    </thead>
+    <tbody>
       <tr>
         <td colspan="2"><?php echo Yii::t('common', 'WCA ID'); ?></td>
         <?php foreach ($persons as $person): ?>
@@ -102,13 +104,13 @@
                 </td>
               </tr>
               <tr>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
                   <?php echo $person['results']['overAll']['gold']; ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
                   <?php echo $person['results']['overAll']['silver']; ?>
                 </td>
-                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
+                <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
                   <?php echo $person['results']['overAll']['bronze']; ?>
                 </td>
               </tr>
