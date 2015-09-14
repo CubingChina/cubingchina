@@ -120,6 +120,9 @@
       <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$eventName): ?>
       <?php $nonAverage = in_array("$eventId", array('333mbf', '444bf', '555bf')); ?>
       <?php if (isset($eventIds[$eventId])): ?>
+      <tr class="sepatator">
+        <td colspan="<?php echo count($persons) + 2; ?>">&nbsp;</td>
+      </tr>
       <tr>
         <td rowspan="<?php echo $nonAverage ? 5 : 7; ?>"><?php echo $eventName; ?></td>
       </tr>
@@ -205,6 +208,33 @@
 </div>
 <?php Yii::app()->clientScript->registerScript('pk',
 <<<EOT
+  //hide empty row
+  var lastGroup;
+  $('.pk-table tr:nth-of-type(n+5)').each(function() {
+    var that = $(this);
+    var hasData = false;
+    if (that.find('td:first-child').attr('rowspan')) {
+      lastGroup = that;
+      return;
+    }
+    if (that.hasClass('sepatator')) {
+      return;
+    }
+    $(this).find('td').each(function() {
+      if ($(this).hasClass('winner')) {
+        hasData = true;
+        return false;
+      }
+    });
+    if (!hasData) {
+      $(this).remove();
+      if (lastGroup) {
+        var rowspan = parseInt(lastGroup.find('td:first-child').attr('rowspan'));
+        lastGroup.find('td:first-child').attr('rowspan', rowspan - 1);
+      }
+    }
+  });
+  //make a sample table
   var pkTable = $('.pk-table').parent();
   var fixTable = pkTable.clone();
   fixTable.css({
@@ -226,28 +256,5 @@
       fixTable.removeClass('fix-top').addClass('hide');
     }
   });
-  //hide empty row
-  var lastGroup;
-  $('.pk-table tr:nth-of-type(n+5)').each(function() {
-    var that = $(this);
-    var hasData = false;
-    if (that.find('td:first-child').attr('rowspan')) {
-      lastGroup = that;
-      return;
-    }
-    $(this).find('td').each(function() {
-      if ($(this).hasClass('winner')) {
-        hasData = true;
-        return false;
-      }
-    });
-    if (!hasData) {
-      $(this).remove();
-      if (lastGroup) {
-        var rowspan = parseInt(lastGroup.find('td:first-child').attr('rowspan'));
-        lastGroup.find('td:first-child').attr('rowspan', rowspan - 1);
-      }
-    }
-  })
 EOT
 );
