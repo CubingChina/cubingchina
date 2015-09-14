@@ -49,10 +49,16 @@
         <?php endforeach; ?>
       </tr>
       <tr>
-        <td colspan="2"><?php echo Yii::t('statistics', Yii::t('Results', 'Records')); ?></td>
+        <td><?php echo Yii::t('statistics', Yii::t('Results', 'Records')); ?></td>
+        <td>
+          <?php echo Yii::t('statistics', 'Score'); ?>:<br>
+          WR * 10 + <br>
+          CR * 5 + <br>
+          NR * 1
+        </td>
         <?php foreach ($persons as $person): ?>
         <td class="has-table"<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
-          <table class="table table-bordered table-condensed table-hover table-boxed">
+          <table class="table table-bordered table-condensed table-hover table-boxed table-hover">
             <tbody>
               <tr>
                 <td colspan="3"<?php echo $this->getWinnerCSSClass($winners, $person, 'records'); ?>>
@@ -90,7 +96,7 @@
         <td colspan="2"><?php echo Yii::t('statistics', Yii::t('statistics', 'Medals')); ?></td>
         <?php foreach ($persons as $person): ?>
         <td class="has-table"<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
-          <table class="table table-bordered table-condensed table-boxed">
+          <table class="table table-bordered table-condensed table-boxed table-hover">
             <tbody>
               <tr>
                 <td<?php echo $this->getWinnerCSSClass($winners, $person, 'medals'); ?>>
@@ -151,7 +157,7 @@
         <td><?php echo Yii::t('statistics', 'NR'); ?></td>
         <?php foreach ($persons as $person): ?>
         <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleNR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'continentRank'); ?>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'countryRank'); ?>
         </td>
         <?php endforeach; ?>
       </tr>
@@ -178,7 +184,7 @@
         <td><?php echo Yii::t('statistics', 'NR'); ?></td>
         <?php foreach ($persons as $person): ?>
         <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageNR'); ?>>
-          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.continentRank'); ?>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.countryRank'); ?>
         </td>
         <?php endforeach; ?>
       </tr>
@@ -206,7 +212,7 @@
         <td><?php echo Yii::t('statistics', 'Medals'); ?></td>
         <?php foreach ($persons as $person): ?>
         <td class="has-table"<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
-          <table class="table table-bordered table-condensed table-boxed">
+          <table class="table table-bordered table-condensed table-boxed table-hover">
             <tbody>
               <tr>
                 <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'Medals'); ?>>
