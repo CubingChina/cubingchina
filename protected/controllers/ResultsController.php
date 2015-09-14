@@ -244,8 +244,11 @@ class ResultsController extends Controller {
 		foreach ($bestData as $key=>$value) {
 			$bestData[$key]['value'] = $this->getBestData($persons, $value['expression'], $value['type'], isset($value['canBeZero']) ? $value['canBeZero'] : false);
 		}
+		$countries = $continents = array();
 		foreach ($persons as $person) {
 			$id = $person['person']->id;
+			$countries[$person['person']->countryId] = $person['person']->countryId;
+			$continents[$person['person']->country->continentId] = $person['person']->country->continentId;
 			foreach ($person['results']['personRanks'] as $eventId=>$ranks) {
 				$eventIds[$eventId] = $eventId;
 			}
@@ -266,21 +269,41 @@ class ResultsController extends Controller {
 			$solvesExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['solve'] * 10000000 - \$results['personRanks']['{$eventId}']->medals['attempt'] : -1";
 			$bestSingle = $this->getBestData($persons, $singleExpression);
 			$bestAverage = $this->getBestData($persons, $averageExpression);
+			$bestSingleNR = $this->getBestData($persons, $singleNRExpression);
+			$bestAverageNR = $this->getBestData($persons, $averageNRExpression);
+			$bestSingleCR = $this->getBestData($persons, $singleCRExpression);
+			$bestAverageCR = $this->getBestData($persons, $averageCRExpression);
 			$bestMedals = $this->getBestData($persons, $medalsExpression, 'max');
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
 			foreach ($persons as $person) {
 				$id = $person['person']->id;
 				$single = $this->evaluateExpression($singleExpression, $person);
 				$average = $this->evaluateExpression($averageExpression, $person);
+				$singleNR = $this->evaluateExpression($singleNRExpression, $person);
+				$averageNR = $this->evaluateExpression($averageNRExpression, $person);
+				$singleCR = $this->evaluateExpression($singleCRExpression, $person);
+				$averageCR = $this->evaluateExpression($averageCRExpression, $person);
 				$medals = $this->evaluateExpression($medalsExpression, $person);
 				$solves = $this->evaluateExpression($solvesExpression, $person, 'max');
 				if ($single === $bestSingle) {
 					$winners[$id][$eventId . 'Single'] = true;
 					$winners[$id][$eventId . 'SingleWR'] = true;
 				}
+				if ($singleNR === $bestSingleNR) {
+					$winners[$id][$eventId . 'SingleNR'] = true;
+				}
+				if ($singleCR === $bestSingleCR) {
+					$winners[$id][$eventId . 'SingleCR'] = true;
+				}
 				if ($average === $bestAverage && $bestAverage > 0) {
 					$winners[$id][$eventId . 'Average'] = true;
 					$winners[$id][$eventId . 'AverageWR'] = true;
+				}
+				if ($averageNR === $bestAverageNR) {
+					$winners[$id][$eventId . 'AverageNR'] = true;
+				}
+				if ($averageCR === $bestAverageCR) {
+					$winners[$id][$eventId . 'AverageCR'] = true;
 				}
 				if ($medals === $bestMedals) {
 					$winners[$id][$eventId . 'Medals'] = true;
@@ -295,6 +318,8 @@ class ResultsController extends Controller {
 			'eventIds'=>$eventIds,
 			'bestData'=>$bestData,
 			'winners'=>$winners,
+			'sameCountry'=>count($countries) === 1,
+			'sameContinent'=>count($continents) === 1,
 		);
 	}
 

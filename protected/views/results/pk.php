@@ -126,7 +126,7 @@
         <td colspan="<?php echo count($persons) + 2; ?>">&nbsp;</td>
       </tr>
       <tr>
-        <td rowspan="<?php echo $nonAverage ? 5 : 7; ?>"><?php echo $eventName; ?></td>
+        <td rowspan="<?php echo $nonAverage ? 5 + $sameCountry + $sameContinent : 7 + ($sameCountry + $sameContinent) * 2; ?>"><?php echo $eventName; ?></td>
       </tr>
       <tr>
         <td><?php echo Yii::t('statistics', 'WR'); ?></td>
@@ -136,6 +136,26 @@
         </td>
         <?php endforeach; ?>
       </tr>
+      <?php if ($sameContinent): ?>
+      <tr>
+        <td><?php echo Yii::t('statistics', 'CR'); ?></td>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleCR'); ?>>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'continentRank'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <?php endif; ?>
+      <?php if ($sameCountry): ?>
+      <tr>
+        <td><?php echo Yii::t('statistics', 'NR'); ?></td>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'SingleNR'); ?>>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'continentRank'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <?php endif; ?>
       <tr>
         <td><?php echo Yii::t('common', 'Single'); ?></td>
         <?php foreach ($persons as $person): ?>
@@ -153,6 +173,26 @@
         </td>
         <?php endforeach; ?>
       </tr>
+      <?php if ($sameCountry): ?>
+      <tr>
+        <td><?php echo Yii::t('statistics', 'NR'); ?></td>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageNR'); ?>>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.continentRank'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <?php endif; ?>
+      <?php if ($sameContinent): ?>
+      <tr>
+        <td><?php echo Yii::t('statistics', 'CR'); ?></td>
+        <?php foreach ($persons as $person): ?>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, $eventId . 'AverageCR'); ?>>
+          <?php echo $this->getPersonRankValue($person['results'], $eventId, 'average.continentRank'); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <?php endif; ?>
       <tr>
         <td><?php echo Yii::t('statistics', 'WR'); ?></td>
         <?php foreach ($persons as $person): ?>
