@@ -258,5 +258,8 @@
       fixTable.removeClass('fix-top').addClass('hide');
     }
   });
+  pkTable.on('scroll touchmove', function() {
+    fixTable[0].scrollLeft = this.scrollLeft;
+  });
 EOT
 );
