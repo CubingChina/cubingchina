@@ -53,6 +53,8 @@ $(function() {
     })();
   }
   (function() {
+    var mouseEvent;
+    var lastLength = 0;
     var battleControl = $('<div id="battle-control">').appendTo(document.body);
     var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
     var battleButton = $('<a target="_blank">GO</a>').appendTo($('<button class="go"></button').appendTo(battleControl));
@@ -67,6 +69,7 @@ $(function() {
           //todo notifycation
           return false;
         }
+        event = e;
         addBattlePerson(id, name);
       } else {
         removeBattlePerson(id);
@@ -99,10 +102,20 @@ $(function() {
           ).appendTo(listWrapper);
         });
         battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+        if (lastLength == 0) {
+          battleControl.css({
+            right: event ? $(window).width() - event.clientX : 200,
+            bottom: event ? $(window).height() - event.clientY : 200
+          }).animate({
+            right: 5,
+            bottom: 50
+          }, 800, 'swing');
+        }
         battleControl.show();
       } else {
         battleControl.hide();
       }
+      lastLength = list.length;
     }
     function getBattleList() {
       var list = [];

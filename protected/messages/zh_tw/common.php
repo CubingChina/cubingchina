@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Battle' => '',
+  'Battle' => '較量',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',

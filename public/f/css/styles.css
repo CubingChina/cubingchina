@@ -2517,6 +2517,7 @@ td .checkbox {
   margin-bottom: 0;
 }
 #battle-control {
+  z-index: 9999;
   position: fixed;
   right: 5px;
   bottom: 50px;
