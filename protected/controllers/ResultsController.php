@@ -250,7 +250,7 @@ class ResultsController extends Controller {
 			$countries[$person['person']->countryId] = $person['person']->countryId;
 			$continents[$person['person']->country->continentId] = $person['person']->country->continentId;
 			foreach ($person['results']['personRanks'] as $eventId=>$ranks) {
-				$eventIds[$eventId] = $eventId;
+				$eventIds[$eventId] = true;
 			}
 			foreach ($bestData as $key=>$value) {
 				if ($this->evaluateExpression($value['expression'], $person) === $value['value']) {
@@ -258,7 +258,7 @@ class ResultsController extends Controller {
 				}
 			}
 		}
-		foreach ($eventIds as $eventId) {
+		foreach ($eventIds as $eventId=>$value) {
 			$singleExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->best : -1";
 			$averageExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->best : -1";
 			//single devide average
@@ -278,6 +278,7 @@ class ResultsController extends Controller {
 			$bestAverageCR = $this->getBestData($persons, $averageCRExpression);
 			$bestMedals = $this->getBestData($persons, $medalsExpression, 'max');
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
+			$eventIds[$eventId] &= $bestAverage > 0;
 			foreach ($persons as $person) {
 				$id = $person['person']->id;
 				$single = $this->evaluateExpression($singleExpression, $person);
@@ -306,10 +307,10 @@ class ResultsController extends Controller {
 					$winners[$id][$eventId . 'Average'] = true;
 					$winners[$id][$eventId . 'AverageWR'] = true;
 				}
-				if ($averageNR === $bestAverageNR) {
+				if ($averageNR === $bestAverageNR && $bestAverage > 0) {
 					$winners[$id][$eventId . 'AverageNR'] = true;
 				}
-				if ($averageCR === $bestAverageCR) {
+				if ($averageCR === $bestAverageCR && $bestAverage > 0) {
 					$winners[$id][$eventId . 'AverageCR'] = true;
 				}
 				if ($medals === $bestMedals) {
