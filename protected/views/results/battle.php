@@ -300,9 +300,14 @@
 <?php Yii::app()->clientScript->registerScript('pk',
 <<<EOT
   //hide empty row
+  var lastGroup;
   $('.pk-table tr:nth-of-type(n+5)').each(function() {
     var that = $(this);
     var hasData = false;
+    if (that.find('td:first-child').attr('rowspan')) {
+      lastGroup = that;
+      return;
+    }
     if (that.hasClass('event-row')) {
       return;
     }
@@ -314,6 +319,10 @@
     });
     if (!hasData) {
       $(this).remove();
+      if (lastGroup) {
+        var rowspan = parseInt(lastGroup.find('td:first-child').attr('rowspan'));
+        lastGroup.find('td:first-child').attr('rowspan', rowspan - 1);
+      }
     }
   });
   //make a sample table
