@@ -2556,9 +2556,13 @@ td .checkbox {
 #battle-control button.go {
   z-index: 2;
   bottom: 0;
+  padding: 0;
 }
 #battle-control button.go a {
-  color :#fff;
+  color: #fff;
+  display: block;
+  height: 100%;
+  line-height: 35px;
 }
 #battle-control.active button.go,
 #battle-control:hover button.go {

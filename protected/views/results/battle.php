@@ -304,11 +304,11 @@
   $('.pk-table tr:nth-of-type(n+5)').each(function() {
     var that = $(this);
     var hasData = false;
-    if (that.find('td:first-child').attr('rowspan')) {
-      lastGroup = that;
+    if (that.hasClass('event-row')) {
       return;
     }
-    if (that.hasClass('event-row')) {
+    if (that.find('td:first-child').attr('rowspan')) {
+      lastGroup = that;
       return;
     }
     $(this).find('td').each(function() {
