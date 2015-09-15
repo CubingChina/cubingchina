@@ -119,7 +119,7 @@ $(function() {
             })
           ).appendTo(listWrapper);
         });
-        if (lastLength == 0) {
+        if (lastLength < list.length) {
           battleControl.css({
             right: event ? $(window).width() - event.clientX : 200,
             bottom: event ? $(window).height() - event.clientY : 200
