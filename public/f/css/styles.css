@@ -2497,6 +2497,7 @@ table.pk-table tbody tr td table tr td:last-child {
 }
 .fix-top {
   position: fixed;
+  z-index: 999;
   top: 0;
 }
 .fix-top table tbody tr td {
@@ -2514,4 +2515,70 @@ tr:hover .battle-label span {
 td .checkbox {
   margin-top: 0;
   margin-bottom: 0;
+}
+#battle-control {
+  position: fixed;
+  right: 5px;
+  bottom: 50px;
+}
+#battle-control button {
+  position: relative;
+  z-index: 10;
+  display: block;
+  width: 35px;
+  height: 35px;
+  background: #84aac9;
+  color: #fff;
+  text-align: center;
+  border: none;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  -ms-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  margin-top: 5px;
+}
+#battle-control  button:hover {
+  background: #6091ba;
+}
+#battle-control button.go {
+  z-index: 1;
+  bottom: -40px;
+}
+#battle-control button.go a {
+  color :#fff;
+}
+#battle-control:hover button.go {
+  bottom: 0;
+}
+#battle-control .battle-list {
+  position: absolute;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  -ms-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+  border: 1px solid #84aac9;
+  border-top-width: 10px;
+  background-color: #fff;
+  opacity: 0;
+  bottom: 80px;
+  right: -300px;
+}
+#battle-control:hover .battle-list {
+  opacity: 1;
+  right: 0;
+}
+#battle-control .battle-list .battle-person {
+  padding: 5px;
+  white-space: nowrap;
 }

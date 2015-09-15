@@ -53,17 +53,18 @@ $(function() {
     })();
   }
   (function() {
-    $.each($.cookie(), function(key, value) {
-      if (key.indexOf('battle_') === 0) {
-        addBattlePerson(key.substr(7), value);
-      }
-    });
+    var battleControl = $('<div id="battle-control">').appendTo(document.body);
+    var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
+    var battleButton = $('<a target="_blank">GO</a>').appendTo($('<button class="go"></button').appendTo(battleControl));
+    $('<button class="rocket"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
+    updateBattleList();
     $(document).on('click', 'input.battle-person', function(e) {
       var id = $(this).data('id');
       var name = $(this).data('name');
       if (this.checked) {
         if (getBattleList().length >= 4) {
           e.preventDefault();
+          //todo notifycation
           return false;
         }
         addBattlePerson(id, name);
@@ -84,21 +85,33 @@ $(function() {
       updateBattleList();
     }
     function updateBattleList() {
-      var list = [];
+      var list = getBattleList();
+      var ids = [];
       if (list.length > 0){
-
+        listWrapper.empty();
+        list.forEach(function(person) {
+          ids.push(person.id);
+          $('<div class="battle-person">').append(
+            $('<a>').attr({
+              href: '/results/p/' + person.id,
+              target: '_blank'
+            }).text(person.name)
+          ).appendTo(listWrapper);
+        });
+        battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+        battleControl.show();
       } else {
-
+        battleControl.hide();
       }
     }
     function getBattleList() {
-      var list = {
-        length: 0
-      };
+      var list = [];
       $.each($.cookie(), function(key, value) {
         if (key.indexOf('battle_') === 0) {
-          list[key.substr('7')] = value;
-          list.length++;
+          list.push({
+            id: key.substr('7'),
+            name: value
+          });
         }
       });
       return list;
