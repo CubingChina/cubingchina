@@ -120,7 +120,7 @@ $(function() {
           ).appendTo(listWrapper);
         });
         if (lastLength < list.length) {
-          battleControl.css({
+          battleControl.stop().css({
             right: event ? $(window).width() - event.clientX : 200,
             bottom: event ? $(window).height() - event.clientY : 200
           }).animate({
