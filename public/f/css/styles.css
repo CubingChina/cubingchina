@@ -2523,7 +2523,7 @@ td .checkbox {
   bottom: 50px;
 }
 #battle-control button {
-  position: relative;
+  position: absolute;
   z-index: 10;
   display: block;
   width: 35px;
@@ -2546,18 +2546,38 @@ td .checkbox {
   -o-transition: all 0.4s ease-in-out;
   margin-top: 5px;
 }
-#battle-control  button:hover {
+#battle-control button:hover {
   background: #6091ba;
 }
+#battle-control button.rocket {
+  position: relative;
+  z-index: 99;
+}
 #battle-control button.go {
-  z-index: 1;
-  bottom: -40px;
+  z-index: 2;
+  bottom: 0;
 }
 #battle-control button.go a {
   color :#fff;
 }
+#battle-control.active button.go,
 #battle-control:hover button.go {
-  bottom: 0;
+  bottom: 40px;
+}
+#battle-control button.truncate {
+  z-index: 1;
+  bottom: 40px;
+  left: 40px;
+  opacity: 0;
+  -webkit-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
+  -moz-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
+  -ms-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
+  -o-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
+}
+#battle-control.active button.truncate,
+#battle-control:hover button.truncate {
+  left: -40px;
+  opacity: 1;
 }
 #battle-control .battle-list {
   position: absolute;
@@ -2575,6 +2595,7 @@ td .checkbox {
   bottom: 80px;
   right: -300px;
 }
+#battle-control.active .battle-list,
 #battle-control:hover .battle-list {
   opacity: 1;
   right: 0;

@@ -57,8 +57,23 @@ $(function() {
     var lastLength = 0;
     var battleControl = $('<div id="battle-control">').appendTo(document.body);
     var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
+    var truncateButton = $('<button class="truncate"><i class="fa fa-close"></i></button>').appendTo(battleControl);
     var battleButton = $('<a target="_blank">GO</a>').appendTo($('<button class="go"></button').appendTo(battleControl));
+    truncateButton.on('click', function() {
+      $.each($.cookie(), function(key, value) {
+        if (key.indexOf('battle_') === 0) {
+          $.removeCookie(key);
+          $('input.battle-person[data-id="' + key.substr('7') + '"]').prop('checked', false);
+        }
+      });
+      updateBattleList();
+    });
     $('<button class="rocket"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
+    battleControl.find('button.rocket').on('focus', function() {
+      battleControl.addClass('active');
+    }).on('blur', function() {
+      battleControl.removeClass('active');
+    });
     updateBattleList();
     $(document).on('click', 'input.battle-person', function(e) {
       var id = $(this).data('id');
@@ -101,7 +116,9 @@ $(function() {
             }).text(person.name)
           ).appendTo(listWrapper);
         });
-        battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+        if (list.length > 1) {
+          battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+        }
         if (lastLength == 0) {
           battleControl.css({
             right: event ? $(window).width() - event.clientX : 200,
@@ -113,6 +130,7 @@ $(function() {
         }
         battleControl.show();
       } else {
+        battleButton.attr('href', 'javascript: void(0)');
         battleControl.hide();
       }
       lastLength = list.length;
