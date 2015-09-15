@@ -273,6 +273,25 @@
         </td>
         <?php endforeach; ?>
       </tr>
+      <?php if (isset($rivalries[$eventId])): ?>
+      <tr>
+        <td rowspan="2"><?php echo Yii::t('common', 'Rivalries'); ?></td>
+        <td><?php echo Yii::t('common', 'Overall'); ?></td>
+        <?php foreach ($persons as $key=>$person): ?>
+        <td<?php echo $this->getRivalryWinnerCSSClass($person, $eventId, $rivalries, 'overAll'); ?>>
+          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->id]['overAll']); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <tr>
+        <td><?php echo Yii::t('common', 'Finals'); ?></td>
+        <?php foreach ($persons as $key=>$person): ?>
+        <td<?php echo $this->getRivalryWinnerCSSClass($person, $eventId, $rivalries, 'final'); ?>>
+          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->id]['final']); ?>
+        </td>
+        <?php endforeach; ?>
+      </tr>
+      <?php endif; ?>
       <?php endif; ?>
       <?php endforeach; ?>
     </tbody>

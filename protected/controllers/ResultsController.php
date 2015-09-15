@@ -324,6 +324,62 @@ class ResultsController extends Controller {
 				}
 			}
 		}
+		$rivalries = array();
+		if (count($persons) === 2) {
+			$person1Results = array();
+			$id1 = $persons[0]['person']->id;
+			$id2 = $persons[1]['person']->id;
+			foreach ($persons[0]['results']['personResults'] as $result) {
+				$person1Results[$result->competitionId][$result->eventId][$result->roundId] = $result->pos;
+			}
+			foreach ($persons[1]['results']['personResults'] as $result) {
+				$eventId = $result->eventId;
+				$roundId = $result->roundId;
+				if (isset($person1Results[$result->competitionId][$eventId][$roundId])) {
+					$pos = $person1Results[$result->competitionId][$eventId][$roundId];
+					if (!isset($rivalries[$eventId][$id1]['overAll'])) {
+						$rivalries[$eventId][$id1]['overAll'] = array(
+							'wins'=>0,
+							'loses'=>0,
+							'ties'=>0,
+						);
+						$rivalries[$eventId][$id1]['final'] = array(
+							'wins'=>0,
+							'loses'=>0,
+							'ties'=>0,
+						);
+						$rivalries[$eventId][$id2]['overAll'] = array(
+							'wins'=>0,
+							'loses'=>0,
+							'ties'=>0,
+						);
+						$rivalries[$eventId][$id2]['final'] = array(
+							'wins'=>0,
+							'loses'=>0,
+							'ties'=>0,
+						);
+					}
+					$key1 = $key2 = '';
+					if ($pos < $result->pos) {
+						$key1 = 'wins';
+						$key2 = 'loses';
+					} elseif ($pos > $result->pos) {
+						$key1 = 'loses';
+						$key2 = 'wins';
+					} else {
+						$key1 = $key2 = 'ties';
+					}
+					if ($key1 !== '') {
+						$rivalries[$eventId][$id1]['overAll'][$key1]++;
+						$rivalries[$eventId][$id2]['overAll'][$key2]++;
+						if (in_array($roundId, array('c', 'f'))) {
+							$rivalries[$eventId][$id1]['final'][$key1]++;
+							$rivalries[$eventId][$id2]['final'][$key2]++;
+						}
+					}
+				}
+			}
+		}
 		return array(
 			'persons'=>$persons,
 			'eventIds'=>$eventIds,
@@ -331,6 +387,7 @@ class ResultsController extends Controller {
 			'winners'=>$winners,
 			'sameCountry'=>count($countries) === 1,
 			'sameContinent'=>count($continents) === 1,
+			'rivalries'=>$rivalries,
 		);
 	}
 
@@ -357,6 +414,40 @@ class ResultsController extends Controller {
 			return ' class="winner"';
 		}
 		return '';
+	}
+
+	protected function getRivalryWinnerCSSClass($person, $eventId, $rivalries, $type) {
+		$rivalry = $rivalries[$eventId][$person['person']->id][$type];
+		if ($rivalry['wins'] >= $rivalry['loses'] && array_sum($rivalry) > 0) {
+			return ' class="winner"';
+		}
+		return '';
+	}
+
+	protected function getRivalryResult($rivalry) {
+		$result = array();
+		foreach (array('wins', 'loses', 'ties') as $type) {
+			$count = $rivalry[$type];
+			if ($type === 'ties' && $count == 0) {
+				continue;
+			}
+			if ($count <= 1) {
+				$type = substr($type, 0, -1);
+			}
+			$result[] = $count;
+			$result[] = Yii::t('common', $type);
+		}
+		$rounds = array('(');
+		$rounds[] = array_sum($rivalry);
+		$rounds[] = ' ';
+		if (array_sum($rivalry) > 1) {
+			$rounds[] = Yii::t('common', 'rounds');
+		} else {
+			$rounds[] = Yii::t('common', 'round');
+		}
+		$rounds[] = ')';
+		$result[] = implode('', $rounds);
+		return implode(' ', $result);
 	}
 
 	protected function getPersonRankValue($results, $eventId, $attribute) {
