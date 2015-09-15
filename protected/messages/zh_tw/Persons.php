@@ -20,8 +20,8 @@ return array (
   'Country' => '',
   'Gender' => '',
   'ID' => '',
-  'Map' => '地圖',
   'Name' => '',
   'Subid' => '',
   'History' => '歷史成績',
+  'Map' => '地圖',
 );

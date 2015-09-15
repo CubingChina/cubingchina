@@ -32,6 +32,7 @@ class Competitions extends ActiveRecord {
 
 	public $region;
 	public $event;
+	public $number;
 
 	public static function getResultsTypes() {
 		return array(

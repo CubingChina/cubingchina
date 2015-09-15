@@ -2,7 +2,6 @@
 <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="<?php echo $this->IEClass; ?>">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Cache-Control" content="no-siteapp">
   <!-- Theme CSS -->
   <?php if (DEV): ?>

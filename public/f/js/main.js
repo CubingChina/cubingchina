@@ -1,3 +1,4 @@
+(function(factory){if(typeof define==='function'&&define.amd){define(['jquery'],factory)}else if(typeof exports==='object'){module.exports=factory(require('jquery'))}else{factory(jQuery)}}(function($){var pluses=/\+/g;function encode(s){return config.raw?s:encodeURIComponent(s)}function decode(s){return config.raw?s:decodeURIComponent(s)}function stringifyCookieValue(value){return encode(config.json?JSON.stringify(value):String(value))}function parseCookieValue(s){if(s.indexOf('"')===0){s=s.slice(1,-1).replace(/\\"/g,'"').replace(/\\\\/g,'\\')}try{s=decodeURIComponent(s.replace(pluses,' '));return config.json?JSON.parse(s):s}catch(e){}}function read(s,converter){var value=config.raw?s:parseCookieValue(s);return $.isFunction(converter)?converter(value):value}var config=$.cookie=function(key,value,options){if(arguments.length>1&&!$.isFunction(value)){options=$.extend({},config.defaults,options);if(typeof options.expires==='number'){var days=options.expires,t=options.expires=new Date();t.setMilliseconds(t.getMilliseconds()+days*864e+5)}return(document.cookie=[encode(key),'=',stringifyCookieValue(value),options.expires?'; expires='+options.expires.toUTCString():'',options.path?'; path='+options.path:'',options.domain?'; domain='+options.domain:'',options.secure?'; secure':''].join(''))}var result=key?undefined:{},cookies=document.cookie?document.cookie.split('; '):[],i=0,l=cookies.length;for(;i<l;i++){var parts=cookies[i].split('='),name=decode(parts.shift()),cookie=parts.join('=');if(key===name){result=read(cookie,value);break}if(!key&&(cookie=read(cookie))!==undefined){result[name]=cookie}}return result};config.defaults={};$.removeCookie=function(key,options){$.cookie(key,'',$.extend({},options,{expires:-1}));return!$.cookie(key)}}));
 $(function() {
   $('input, textarea').placeholder();
   $.fn.dropdownHover && $('[data-hover="dropdown"]').dropdownHover();
@@ -51,6 +52,106 @@ $(function() {
       });
     })();
   }
+  (function() {
+    var mouseEvent;
+    var lastLength = 0;
+    var battleControl = $('<div id="battle-control">').appendTo(document.body);
+    var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
+    var truncateButton = $('<button class="truncate"><i class="fa fa-close"></i></button>').appendTo(battleControl);
+    var battleButton = $('<a target="_blank">GO</a>').appendTo($('<button class="go"></button').appendTo(battleControl));
+    truncateButton.on('click', function() {
+      $.each($.cookie(), function(key, value) {
+        if (key.indexOf('battle_') === 0) {
+          removeBattlePerson(key.substr('7'));
+        }
+      });
+      updateBattleList();
+    });
+    $('<button class="rocket"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
+    battleControl.find('button.rocket').on('focus', function() {
+      battleControl.addClass('active');
+    }).on('blur', function() {
+      battleControl.removeClass('active');
+    });
+    updateBattleList();
+    $(document).on('click', 'input.battle-person', function(e) {
+      var id = $(this).data('id');
+      var name = $(this).data('name');
+      if (this.checked) {
+        if (getBattleList().length >= 4) {
+          e.preventDefault();
+          //todo notifycation
+          return false;
+        }
+        event = e;
+        addBattlePerson(id, name);
+      } else {
+        removeBattlePerson(id);
+      }
+    });
+    function addBattlePerson(id, name) {
+      var key = 'battle_' + id;
+      $.cookie(key, name, {
+        expires: 365
+      });
+      updateBattleList();
+    }
+    function removeBattlePerson(id) {
+      var key = 'battle_' + id;
+      $.removeCookie(key);
+      $('input.battle-person[data-id="' + id + '"]').prop('checked', false);
+      updateBattleList();
+    }
+    function updateBattleList() {
+      var list = getBattleList();
+      var ids = [];
+      if (list.length > 0){
+        listWrapper.empty();
+        list.forEach(function(person) {
+          ids.push(person.id);
+          $('<div class="battle-person">').append(
+            $('<a>').attr({
+              href: '/results/p/' + person.id,
+              target: '_blank'
+            }).text(person.name),
+            $('<i class="fa fa-close">').on('click', function() {
+              removeBattlePerson(person.id);
+            })
+          ).appendTo(listWrapper);
+        });
+        if (lastLength < list.length) {
+          battleControl.stop().css({
+            right: event ? $(window).width() - event.clientX : 200,
+            bottom: event ? $(window).height() - event.clientY : 200
+          }).animate({
+            right: 5,
+            bottom: 50
+          }, 800, 'swing');
+        }
+        battleControl.show();
+      } else {
+        battleControl.hide();
+      }
+      if (list.length > 1) {
+        battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+      } else {
+        battleButton.attr('href', 'javascript: void(0)');
+      }
+      lastLength = list.length;
+    }
+    function getBattleList() {
+      var list = [];
+      $.each($.cookie(), function(key, value) {
+        if (key.indexOf('battle_') === 0) {
+          list.push({
+            id: key.substr('7'),
+            name: value
+          });
+        }
+      });
+      return list;
+    }
+  })();
   if (location.hostname === 'cubingchina.com'){
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

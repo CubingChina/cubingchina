@@ -12,6 +12,20 @@
  */
 class Persons extends ActiveRecord {
 
+	public static function getBattleCheckBox($name, $id) {
+		if ($id === '') {
+			return '';
+		}
+		$checkBox = CHtml::checkBox('ids', isset($_COOKIE['battle_' . $id]), array(
+			'class'=>'battle-person',
+			'data-id'=>$id,
+			'data-name'=>$name,
+		));
+		$text = CHtml::tag('span', array(), Yii::t('common', 'Battle'));
+		$label = CHtml::tag('label', array('class'=>'battle-label'), $checkBox . $text);
+		return CHtml::tag('div', array('class'=>'checkbox'), $label);
+	}
+
 	public static function getPersons($region = 'China', $gender = 'all', $name = '', $page = 1) {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
@@ -292,14 +306,14 @@ class Persons extends ActiveRecord {
 			if ($temp == 0) {
 				$temp = $competitionB->day - $competitionA->day;
 			}
-			return $temp;
+			return -$temp;
 		});
 		$temp = array(
 			'longitude'=>0,
 			'latitude'=>0,
 		);
 		$mapData = array();
-		foreach ($competitions as $competition) {
+		foreach ($competitions as $key=>$competition) {
 			$temp['longitude'] += $competition->longitude / 1e6;
 			$temp['latitude'] += $competition->latitude / 1e6;
 			$data = Statistics::getCompetition(array(
@@ -311,6 +325,7 @@ class Persons extends ActiveRecord {
 			$data['latitude'] = $competition->latitude / 1e6;
 			$data['url'] = CHtml::normalizeUrl($data['url']);
 			$data['date'] = $competition->getDate();
+			$competition->number = $key + 1;
 			$mapData[] = $data;
 		}
 		$mapCenter = array(
@@ -318,18 +333,20 @@ class Persons extends ActiveRecord {
 			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
 		);
 		return array(
-			'personRanks'=>array_values($personRanks),
+			'id'=>$id,
+			'personRanks'=>$personRanks,
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,
 			'overAll'=>$overAll,
+			'score'=>$overAll['WR'] * 10 + $overAll['CR'] * 5 + $overAll['NR'],
 			'firstCompetition'=>$firstCompetitionResult->competition,
 			'lastCompetition'=>$lastCompetitionResult->competition,
 			'mapData'=>$mapData,
 			'mapCenter'=>$mapCenter,
-			'competitions'=>$competitions,
+			'competitions'=>array_reverse($competitions),
 			'user'=>User::model()->findByAttributes(array(
 				'wcaid'=>$id,
 				'status'=>User::STATUS_NORMAL,

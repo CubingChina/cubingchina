@@ -51,6 +51,7 @@ return array (
   'Overall Record Collection' => '紀錄匯總',
   'Person' => '選手',
   'Place' => '排名',
+  'Records' => '紀錄',
   'WR' => '世界紀錄',
   'World Championship Podiums' => '世錦賽領獎台',
 );

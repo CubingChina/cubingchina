@@ -42,6 +42,14 @@
     'front'=>true,
     'columns'=>array(
       array(
+        'headerHtmlOptions'=>array(
+          'class'=>'battle-checkbox',
+        ),
+        'header'=>Yii::t('common', 'Battle'),
+        'value'=>'Persons::getBattleCheckBox($data["name"], $data["id"])',
+        'type'=>'raw',
+      ),
+      array(
         'name'=>Yii::t('Results', 'Name'),
         'value'=>'Persons::getLinkByNameNId($data["name"], $data["id"])',
         'type'=>'raw',
