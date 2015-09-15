@@ -62,8 +62,7 @@ $(function() {
     truncateButton.on('click', function() {
       $.each($.cookie(), function(key, value) {
         if (key.indexOf('battle_') === 0) {
-          $.removeCookie(key);
-          $('input.battle-person[data-id="' + key.substr('7') + '"]').prop('checked', false);
+          removeBattlePerson(key.substr('7'));
         }
       });
       updateBattleList();
@@ -100,6 +99,7 @@ $(function() {
     function removeBattlePerson(id) {
       var key = 'battle_' + id;
       $.removeCookie(key);
+      $('input.battle-person[data-id="' + id + '"]').prop('checked', false);
       updateBattleList();
     }
     function updateBattleList() {
@@ -113,12 +113,12 @@ $(function() {
             $('<a>').attr({
               href: '/results/p/' + person.id,
               target: '_blank'
-            }).text(person.name)
+            }).text(person.name),
+            $('<i class="fa fa-close">').on('click', function() {
+              removeBattlePerson(person.id);
+            })
           ).appendTo(listWrapper);
         });
-        if (list.length > 1) {
-          battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
-        }
         if (lastLength == 0) {
           battleControl.css({
             right: event ? $(window).width() - event.clientX : 200,
@@ -130,8 +130,12 @@ $(function() {
         }
         battleControl.show();
       } else {
-        battleButton.attr('href', 'javascript: void(0)');
         battleControl.hide();
+      }
+      if (list.length > 1) {
+        battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+      } else {
+        battleButton.attr('href', 'javascript: void(0)');
       }
       lastLength = list.length;
     }

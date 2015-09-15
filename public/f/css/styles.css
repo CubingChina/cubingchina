@@ -2603,4 +2603,8 @@ td .checkbox {
 #battle-control .battle-list .battle-person {
   padding: 5px;
   white-space: nowrap;
+  text-align: right;
+}
+#battle-control .battle-list .battle-person i.fa {
+  margin-left: 15px;
 }
