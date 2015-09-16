@@ -750,8 +750,13 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getOperationFeeButton() {
+		if ($this->id < 382) {
+			return '';
+		}
+		$fee = $this->operationFee * $this->days;
+		$buttons = array();
 		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
-			return CHtml::checkBox('paid', $this->paid == self::PAID, array(
+			$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
 				'class'=>'toggle tips',
 				'data-toggle'=>'tooltip',
 				'data-placement'=>'top',
@@ -763,6 +768,25 @@ class Competition extends ActiveRecord {
 				'data-name'=>$this->name_zh,
 			));
 		}
+		$buttons[] = $fee;
+		if ($this->paid == self::UNPAID && isset($this->organizers[Yii::app()->controller->user->id])) {
+			$form = array();
+			$form[] = CHtml::beginForm('https://shenghuo.alipay.com/send/payment/fill.htm', 'post', array(
+				'target'=>'_blank',
+				'style'=>'display:inline',
+				'accept-charset'=>'GBK',
+			));
+			$form[] = CHtml::hiddenField('optEmail', 'pay@cubingchina.com');
+			$form[] = CHtml::hiddenField('payAmount', $fee);
+			$form[] = CHtml::hiddenField('title', $this->name_zh . '运营费');
+			$form[] = CHtml::tag('button', array(
+				'class'=>'btn btn-xs btn-square btn-primary',
+				'title'=>'支付运营费',
+			), '支付');
+			$form[] = CHtml::endForm();
+			$buttons[] = implode('', $form);
+		}
+		return implode('', $buttons);
 	}
 
 	public function getFullEventName($event) {

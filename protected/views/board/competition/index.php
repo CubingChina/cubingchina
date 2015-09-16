@@ -34,7 +34,7 @@
               array(
                 'header'=>'运营费',
                 'type'=>'raw',
-                'value'=>'$data->id >= 382 ? $data->operationFeeButton . ($data->operationFee * $data->days) : ""',
+                'value'=>'$data->operationFeeButton',
                 'sortable'=>false,
                 'filter'=>false,
               ),
