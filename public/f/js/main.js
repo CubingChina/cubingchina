@@ -132,7 +132,7 @@ $(function() {
       } else {
         battleControl.hide();
       }
-      if (list.length > 1) {
+      if (list.length > 0) {
         battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
       } else {
         battleButton.attr('href', 'javascript: void(0)');

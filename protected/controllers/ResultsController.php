@@ -189,6 +189,16 @@ class ResultsController extends Controller {
 				$names[] = $person->name;
 			}
 		}
+		if (count($persons) === 1 && $this->user->wcaid != '' && $persons[0]['person']->id !== $this->user->wcaid) {
+			$person = Persons::model()->findByAttributes(array('id' => $this->user->wcaid));
+			if ($person !== null) {
+				$persons[] = array(
+					'person'=>$person,
+					'results'=>Yii::app()->cache->getData(array('Persons', 'getResults'), $this->user->wcaid),
+				);
+				$names[] = $person->name;
+			}
+		}
 		switch (count($persons)) {
 			case 0:
 				$this->redirect(array('/results/person'));
