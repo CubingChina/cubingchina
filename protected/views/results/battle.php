@@ -305,6 +305,7 @@
     var that = $(this);
     var hasData = false;
     if (that.hasClass('event-row')) {
+      lastGroup = null;
       return;
     }
     if (that.find('td:first-child').attr('rowspan')) {
