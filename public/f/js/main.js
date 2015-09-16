@@ -92,13 +92,16 @@ $(function() {
     function addBattlePerson(id, name) {
       var key = 'battle_' + id;
       $.cookie(key, name, {
-        expires: 365
+        expires: 365,
+        path: '/'
       });
       updateBattleList();
     }
     function removeBattlePerson(id) {
       var key = 'battle_' + id;
-      $.removeCookie(key);
+      $.removeCookie(key, {
+        path: '/'
+      });
       $('input.battle-person[data-id="' + id + '"]').prop('checked', false);
       updateBattleList();
     }
