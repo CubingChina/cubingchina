@@ -19,6 +19,9 @@
     </div>
     <div class="clearfix"></div>
     <?php foreach ($statistics as $name=>$statistic): ?>
+    <?php if ($statistic['class'] === 'col-md-12'): ?>
+    <div class="clearfix"></div>
+    <?php endif; ?>
     <div class="<?php echo $statistic['class']; ?>" id= "<?php echo $statistic['id']; ?>">
     <?php if (isset($statistic['columns'])): ?>
       <h3>
