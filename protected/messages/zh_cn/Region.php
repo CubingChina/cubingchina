@@ -137,6 +137,7 @@ return array (
   'Mauritius' => '毛里求斯',
   'Mayotte' => '马约特',
   'Mexico' => '墨西哥',
+  'Monaco' => '摩纳哥',
   'Moldova' => '摩尔多瓦',
   'Mongolia' => '蒙古',
   'Montenegro' => '黑山',
