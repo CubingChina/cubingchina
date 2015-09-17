@@ -21,6 +21,8 @@ return array (
   'Name' => '',
   'Name Zh' => '',
   'Pid' => '',
+  'Multiple Countries (Asia)' => '亚洲多地',
+  'Multiple Countries (Europe)' => '欧洲多地',
   'Afghanistan' => '阿富汗',
   'Albania' => '阿尔巴尼亚',
   'Algeria' => '阿尔及利亚',

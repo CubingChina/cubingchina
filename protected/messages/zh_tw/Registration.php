@@ -22,7 +22,7 @@ return array (
   'User' => '',
   'Date' => '報名時間',
   ' CNY' => '元',
-  'Additional Comments' => '備註',
+  'Additional Comments' => '備注',
   'Competition' => '比賽',
   'Events' => '項目',
   'Fee' => '報名費',
