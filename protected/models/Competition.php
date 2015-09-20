@@ -568,6 +568,7 @@ class Competition extends ActiveRecord {
 			$this->_schedules = array_map(function($schedule) {
 				return $schedule->attributes;
 			}, $this->schedule);
+			usort($this->_schedules, array($this, 'sortSchedules'));
 		}
 		return $this->_schedules;
 	}
@@ -700,17 +701,17 @@ class Competition extends ActiveRecord {
 	}
 
 	private function sortSchedules($scheduleA, $scheduleB) {
-		if ($scheduleA['day'] < $scheduleB['day']) {
-			return -1;
-		} elseif ($scheduleA['day'] > $scheduleB['day']) {
-			return 1;
-		} else {
-			$temp = date('Hi', $scheduleA['start_time']) - date('Hi', $scheduleB['start_time']);
-			if ($temp != 0) {
-				return $temp;
-			}
-			return date('Hi', $scheduleA['end_time']) - date('Hi', $scheduleB['end_time']);
+		$temp = $scheduleA['day'] - $scheduleB['day'];
+		if ($temp == 0) {
+			$temp = Schedule::getStagetWeight($scheduleA['stage']) - Schedule::getStagetWeight($scheduleB['stage']);
 		}
+		if ($temp == 0) {
+			$temp = date('Hi', $scheduleA['start_time']) - date('Hi', $scheduleB['start_time']);
+		}
+		if ($temp == 0) {
+			$temp = date('Hi', $scheduleA['end_time']) - date('Hi', $scheduleB['end_time']);
+		}
+		return $temp;
 	}
 
 	public function getOperationButton() {

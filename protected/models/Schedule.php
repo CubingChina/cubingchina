@@ -33,6 +33,10 @@ class Schedule extends ActiveRecord {
 		return isset($stages[$stage]) ? $stages[$stage] : $stage;
 	}
 
+	public static function getStagetWeight($stage) {
+		return array_search($stage, array_keys(self::getStages()));
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

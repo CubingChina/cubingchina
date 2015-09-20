@@ -20,7 +20,15 @@
     </div>
     <?php endforeach; ?>
   </div>
+  <?php $hasManyStages = false; ?>
   <?php $listableSchedules = $competition->getListableSchedules(); ?>
+  <?php foreach ($listableSchedules as $day=>$stages): ?>
+    <?php foreach ($stages as $stage=>$schedules): ?>
+      <?php if (count($stages) > 1): ?>
+        <?php $hasManyStages = true; ?>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  <?php endforeach; ?>
   <?php if (!empty($listableSchedules)): ?>
   <?php foreach ($listableSchedules as $day=>$stages): ?>
   <div class="panel panel-info">
@@ -29,7 +37,7 @@
     </div>
     <div class="panel-body">
       <?php foreach ($stages as $stage=>$schedules): ?>
-      <?php if (count($stages) > 1): ?>
+      <?php if ($hasManyStages): ?>
       <h3><?php echo Schedule::getStageText($stage); ?></h3>
       <?php endif; ?>
       <?php $this->widget('GridView', array(
