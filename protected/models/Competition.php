@@ -568,6 +568,7 @@ class Competition extends ActiveRecord {
 			$this->_schedules = array_map(function($schedule) {
 				return $schedule->attributes;
 			}, $this->schedule);
+			usort($this->_schedules, array($this, 'sortSchedules'));
 		}
 		return $this->_schedules;
 	}
