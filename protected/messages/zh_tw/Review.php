@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Comments' => '備註',
+  'Comments' => '備注',
   'Competition' => '比賽',
   'Date' => '時間',
   'ID' => '',

@@ -17,9 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competitors' => '人數',
   'ID' => '',
+  'Long-time Event Stage' => '長項目區',
   'Competition' => '比賽',
+  'Competitors' => '人數',
   'Cut Off' => '及格線',
   'Day' => '第幾天',
   'End Time' => '結束時間',

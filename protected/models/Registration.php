@@ -82,8 +82,8 @@ class Registration extends ActiveRecord {
 		$str = '';
 		if (in_array($event, $this->events)) {
 			$str = '<span class="fa fa-check"></span>';
-			if ($this->best > 0 && self::$sortAttribute === $event) {
-				$str = '[' . $this->pos . ']' . $str;
+			if ($this->best > 0 && self::$sortAttribute === $event && self::$sortDesc !== true) {
+				$str = self::$sortDesc === true ? '' : '[' . $this->pos . ']' . $str;
 				$str .= Results::formatTime($this->best, $event);
 			}
 		}
@@ -632,7 +632,7 @@ class Registration extends ActiveRecord {
 		}
 		if ($sort !== '') {
 			usort($registrations, array($this, 'sortRegistration'));
-			if (count($registrations) > 0 && self::$sortByEvent === true) {
+			if (count($registrations) > 0 && self::$sortByEvent === true && self::$sortDesc !== true) {
 				$best = $registrations[0]->best;
 				$pos = 1;
 				foreach ($registrations as $i=>$registration) {
