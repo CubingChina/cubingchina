@@ -843,7 +843,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getEventsColumns($headerText = false) {
-		$region = '$data->user->country->getAttributeValue("name")';
+		$region = 'Yii::t("Region", $data->user->country->getAttributeValue("name"))';
 		if (Yii::app()->language == 'zh_cn') {
 			$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
 		}
