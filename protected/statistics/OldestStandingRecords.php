@@ -26,7 +26,7 @@ class OldestStandingRecords extends Statistics {
 				$row['type'] = $type;
 				if (isset($rows[$type][$row['eventId']])) {
 					$temp = $rows[$type][$row['eventId']];
-					if ($temp['year'] > $row['year'] || $temp['month'] > $row['month'] || $temp['day'] > $row['temp']) {
+					if ($temp['year'] > $row['year'] || $temp['month'] > $row['month'] || $temp['day'] > $row['day']) {
 						continue;
 					}
 				}

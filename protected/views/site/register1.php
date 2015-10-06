@@ -18,7 +18,7 @@
     <div class="register-area">
       <div class="col-xs-6">
         <p><?php echo Yii::t('common', 'Please enter your WCA ID below. You can find your WCA ID {here}.', array(
-          '{here}'=>CHtml::link(Yii::t('common', 'here'), 'https://www.worldcubeassociation.org/results/persons.php', array('target'=>'_blank')),
+          '{here}'=>CHtml::link(Yii::t('common', 'here'), 'http://cubingchina.com/faq/1.html#faq-5', array('target'=>'_blank')),
         )); ?></p>
         <p>
           <?php echo $form->textField($model, 'wcaid', array(
