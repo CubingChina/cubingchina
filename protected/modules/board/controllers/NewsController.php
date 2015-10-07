@@ -179,11 +179,11 @@ class NewsController extends AdminController {
 		}
 		$data['records'] = array();
 		$data['records_zh'] = array();
-		$recordResults = Results::model()->findAllByAttributes(array(
+		$recordResults = Results::model()->with('event')->findAllByAttributes(array(
 			'competitionId'=>$competition->wca_competition_id,
 		), array(
 			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
-			'order'=>'best, average',
+			'order'=>'event.rank ASC,  best DESC, average DESC',
 		));
 		$records = array();
 		foreach ($recordResults as $record) {
@@ -248,20 +248,7 @@ class NewsController extends AdminController {
 			}
 			foreach ($rec['zh'] as $country=>$re) {
 				$re = implode('；', $re);
-				switch ($country) {
-					case 'China':
-						$country = '中国';
-						break;
-					case 'Hong Kong':
-						$country = '香港';
-						break;
-					case 'Macau':
-						$country = '澳门';
-						break;
-					case 'Taiwan':
-						$country = '台湾';
-						break;
-				}
+				$country = Yii::t('Region', $country);
 				$data['records_zh'][] =sprintf('%s纪录：%s。', $country, $re);
 			}
 		}
@@ -275,19 +262,16 @@ class NewsController extends AdminController {
 	}
 
 	private function filterRecords($records, $attribute, $region) {
-		usort($records, function($recordA, $recordB) use($attribute) {
-			return $recordA->$attribute - $recordB->$attribute;
-		});
 		$temp = array();
 		$region = strtoupper($region);
 		foreach ($records as $record) {
 			if ($region !== 'NR') {
 				if (!isset($temp[$record->eventId])) {
-					$temp[$record->eventId] = $record;
+					$temp[] = $record;
 				}
 			} else {
 				if (!isset($temp[$record->personCountryId][$record->eventId])) {
-					$temp[$record->personCountryId][$record->eventId] = $record;
+					$temp[$record->personCountryId][] = $record;
 				}
 			}
 		}
