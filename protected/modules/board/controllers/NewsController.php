@@ -183,7 +183,7 @@ class NewsController extends AdminController {
 			'competitionId'=>$competition->wca_competition_id,
 		), array(
 			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
-			'order'=>'event.rank ASC,  best DESC, average DESC',
+			'order'=>'event.rank ASC, best ASC, average ASC',
 		));
 		$records = array();
 		foreach ($recordResults as $record) {
@@ -267,11 +267,11 @@ class NewsController extends AdminController {
 		foreach ($records as $record) {
 			if ($region !== 'NR') {
 				if (!isset($temp[$record->eventId])) {
-					$temp[] = $record;
+					$temp[$record->eventId] = $record;
 				}
 			} else {
 				if (!isset($temp[$record->personCountryId][$record->eventId])) {
-					$temp[$record->personCountryId][] = $record;
+					$temp[$record->personCountryId][$record->eventId] = $record;
 				}
 			}
 		}
