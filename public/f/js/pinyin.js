@@ -12,7 +12,7 @@
       "xia": "#Y#w&,&;'''I)1.u/j7=:[<'B[ByCtL'NmNyQOR([0`(cLh[iRkVt/t_u4uezFzM|W|{~d-&)-*4-.}-0a-5;-8S",
       "han": "#,.m/h:l<P>MFrGXJqNrOUPCPqPrQ|]@`+`2h1lBlZnXp*r;rWrkz9{4{B}x-#c-#y-$;-$l-$y-%Q-%n-(i-(x-)i-/!-3*-5B-9V",
       "wan": "#=$0&o.]0F4@5X5b6*628u9p<K?e?h@IChFqG!G7H2HHJzL=O5Q'RQ`;a:b<bGeHh&h)rMr^s'slu!-$E-%V",
-      "mo": "!`#$#&#y$%P'e(T*N3v5$517`8R=6?XA5E6FZF~JLM;MgP+RTRcU6]'](_j`s`x`y`za+qkuDyR|G-!e-'g-($-(U-*R-+k-,(-.U-.k-.{-8/-80-8K-8L",
+      "mo": "!`#$#&#y$%%P'e(T*N3v5$517`8R=6?XA5E6FZF~JLM;MgP+RTRcU6]'](_j`s`x`y`za+qkuDyR|G-!e-'g-($-(U-*R-+k-,(-.U-.k-.{-8/-80-8K-8L",
       "zhang": "#~(#.:2o3N>k@,JhR`b$b`knmtujz'z0}<-#+-'I-*Q-16-7m",
       "san": "3T3q3w3x7~uJuwzA-'n-([-,s",
       "ji": "#r%''l'y)3)d)o*Z+'+9+G+M+T+Z+^+g+x._.c/R090d1S1W2;43484J4R5C5w6)6C6`7f7s878H8t8w9J9X9Z9{;8;<;B;C=(=2>6?YA$B+CHD0D8DbE:EQF2I*I|JEJnKKL)L:LkLzMdN'N5N:NiQ6QyRrUWVcVnWPWQWtX6XEXYXuY(ZAZ|[/]O]e^F^J^U^~`)b#b0c*ckc}dee!e$e9e>eyf+fXfrg)hFhriMjZlrqmr)sRt%uov3vevw|@};}N}g~!~+~F~{-!&-!u-#N-$%-&a-'u-(,-*x-+]-,W-.?-.V-._-.d-.g-/+-0$-0H-1%-1/-10-1^-1o-2/-2@-3'-4)-4o-5>-5H-5U-6,-6J-7/-7P-9e-9g-9h-9i-9j-:l",
@@ -819,7 +819,7 @@
     }
     return a.join('');
   }());
-  var DB = {},
+  var DB = window.DB = {},
     group = /-?.{2}/g,
     replaceGroup = /^-/,
     fromX = function(str) {

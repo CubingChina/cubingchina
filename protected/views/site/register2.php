@@ -132,7 +132,7 @@ $this->renderPartial('registerSide', $_data_);
 $emailMsg = Yii::t('common', 'Please confirm your email:\\n{email}');
 Yii::app()->clientScript->registerCssFile('/f/plugins/bootstrap-datepicker/css/datepicker.css');
 Yii::app()->clientScript->registerScriptFile('/f/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js?v=20150721');
+Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js?v=20151008');
 $allCities = json_encode($allCities);
 Yii::app()->clientScript->registerScript('register2',
 <<<EOT
@@ -286,6 +286,11 @@ Yii::app()->clientScript->registerScript('register2',
       }
       function getEnNames(names, surnames) {
         var enNames = [];
+        if (names.length == 0) {
+          return [].map.call(surnames || [], function(surname) {
+            return surname.ucfirst();
+          });
+        }
         for (var i = 0; i < names.length; i++) {
           if (surnames.length === 0) {
             enNames.push(names[i].ucfirst());
