@@ -163,7 +163,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 评价<i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'review',
-          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+          'visible'=>Yii::app()->user->checkPermission('review'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
