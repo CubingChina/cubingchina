@@ -41,13 +41,13 @@ echo $date >> last
 lftp -c "pget -n 20 '$wca_home/results/misc/$zipname' -o $zipname"
 echo "unzip the export data"
 unzip -o $zipname WCA_export.sql
-echo "replace latin1 to utf8"
-sed -ri 's/latin1/utf8/g' WCA_export.sql
+echo "replace charset to utf8_general_ci"
+sed -ri 's/utf8_unicode_ci/utf8_general_ci/g' WCA_export.sql
 echo "import data"
 mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql
 echo "import additional"
 mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql
 rm -f export.html* WCA_export*
 echo "build some data and clean cache"
-echo -n $db_num > $db_config   
+echo -n $db_num > $db_config
 ../../yiic wca update
