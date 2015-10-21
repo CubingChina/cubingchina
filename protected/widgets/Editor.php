@@ -20,6 +20,7 @@ class Editor extends Widget {
       return;
     }
     var editor = KindEditor.create('#' + id, {
+      width: '100%',
       height: 300,
       resizeType: 1,
       filterMode: false,
