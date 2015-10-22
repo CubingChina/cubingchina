@@ -34,6 +34,10 @@
                 'value'=>'$data->competition ? $data->competition->name_zh : "无"',
               ),
               array(
+                'header'=>'比赛日期',
+                'value'=>'$data->competition ? $data->competition->getDisplayDate() : "无"',
+              ),
+              array(
                 'name'=>'date',
                 'type'=>'raw',
                 'value'=>'date("Y-m-d H:i:s", $data->date)',
