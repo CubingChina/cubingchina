@@ -188,7 +188,7 @@ class Competition extends ActiveRecord {
 		), array(
 			'condition'=>'date>' . time(),
 			'limit'=>3,
-			'order'=>'date ASC', 
+			'order'=>'date ASC',
 		));
 		$attribute = Yii::app()->controller->getAttributeName('name');
 		$items = array();
@@ -233,16 +233,16 @@ class Competition extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_HIDE=>'隐藏', 
-			self::STATUS_SHOW=>'公示', 
-			// self::STATUS_DELETE=>'删除', 
+			self::STATUS_HIDE=>'隐藏',
+			self::STATUS_SHOW=>'公示',
+			// self::STATUS_DELETE=>'删除',
 		);
 	}
 
 	public static function getCheckPersons() {
 		return array(
-			self::CHECK_PERSON=>'否', 
-			self::NOT_CHECK_PERSON=>'是', 
+			self::CHECK_PERSON=>'否',
+			self::NOT_CHECK_PERSON=>'是',
 		);
 	}
 
@@ -868,8 +868,8 @@ class Competition extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-username',
 				),
-				'type'=>'raw', 
-				'value'=>'$data->user->getWcaLink()', 
+				'type'=>'raw',
+				'value'=>'$data->user->getWcaLink()',
 			),
 			array(
 				'name'=>'gender',
@@ -877,8 +877,8 @@ class Competition extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-gender',
 				),
-				'type'=>'raw', 
-				'value'=>'$data->user->getGenderText()', 
+				'type'=>'raw',
+				'value'=>'$data->user->getGenderText()',
 			),
 			array(
 				'name'=>'country_id',
@@ -886,7 +886,7 @@ class Competition extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-region',
 				),
-				'type'=>'raw', 
+				'type'=>'raw',
 				'value'=>$region,
 			),
 		);
@@ -897,7 +897,7 @@ class Competition extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-location',
 				),
-				'type'=>'raw', 
+				'type'=>'raw',
 				'value'=>'$data->location->getFullAddress(false)',
 			);
 		}
@@ -915,7 +915,7 @@ class Competition extends ActiveRecord {
 					'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
 						'class'=>'hover',
 					) : array(),
-					'type'=>'raw', 
+					'type'=>'raw',
 					'value'=>"\$data->getEventsString('$event')",
 				);
 			}

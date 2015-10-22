@@ -63,7 +63,9 @@
                   'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'check_person', array(
-                  'label'=>'报名自动审核',
+                  'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
+                  'data-toggle'=>'tooltip',
+                  'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
                 )),
                 $form->dropDownList($model, 'check_person', $checkPersons, array(
                   'class'=>'form-control',
@@ -108,7 +110,9 @@
                   'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'online_pay', array(
-                  'label'=>'在线支付',
+                  'label'=>'在线支付' . Html::fontAwesome('question-circle', 'b'),
+                  'data-toggle'=>'tooltip',
+                  'title'=>'在线支付极大程度方便主办方的审核工作，手续费率大约是1.5%，详情请联系管理员',
                 )),
                 $form->dropDownList($model, 'online_pay', Competition::getOnlinePays(), array(
                   'class'=>'form-control',
@@ -128,10 +132,12 @@
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'second_stage_date', array(
-                  'class'=>'col-md-4'
+                  'class'=>'col-md-4',
                 ),
                 $form->labelEx($model, 'second_stage_date', array(
-                  'label'=>'第二阶段时间',
+                  'label'=>'第二阶段时间' . Html::fontAwesome('question-circle', 'b'),
+                  'data-toggle'=>'tooltip',
+                  'title'=>'不采用分阶段报名费的比赛忽略此项',
                 )),
                 Html::activeTextField($model, 'second_stage_date', array(
                   'class'=>'datetime-picker',
@@ -473,6 +479,7 @@ $datum = json_encode(array_map(function($user) {
 $organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
+  $('[data-toggle="tooltip"]').tooltip();
   $('.datetime-picker').on('mousedown touchstart', function() {
     $(this).datetimepicker({
       autoclose: true
