@@ -25,7 +25,7 @@
             )); ?>
             <?php echo Html::formGroup(
               $model, 'date', array(
-                'class'=>'col-lg-4',
+                'class'=>'col-lg-6',
               ),
               $form->labelEx($model, 'date', array(
                 'label'=>'时间',
@@ -38,7 +38,7 @@
             );?>
             <?php echo Html::formGroup(
               $model, 'competition_id', array(
-                'class'=>'col-lg-4',
+                'class'=>'col-lg-6',
               ),
               $form->labelEx($model, 'competition_id', array(
                 'label'=>'比赛',
@@ -49,23 +49,10 @@
               )),
               $form->error($model, 'competition_id', array('class'=>'text-danger'))
             );?>
-            <?php echo Html::formGroup(
-              $model, 'rank', array(
-                'class'=>'col-lg-4',
-              ),
-              $form->labelEx($model, 'rank', array(
-                'label'=>'评级',
-              )),
-              $form->dropDownList($model, 'rank', Review::getRanks(), array(
-                'class'=>'form-control',
-                'prompt'=>'',
-              )),
-              $form->error($model, 'rank', array('class'=>'text-danger'))
-            );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'organizer_id', array(
-                'class'=>'col-lg-12',
+                'class'=>'col-lg-6',
               ),
               $form->labelEx($model, 'organizer_id', array(
                 'label'=>'主办方',
@@ -77,6 +64,20 @@
               )),
               $form->error($model, 'organizer_id', array('class'=>'text-danger'))
             ); ?>
+            <?php echo Html::formGroup(
+              $model, 'rank', array(
+                'class'=>'col-lg-6',
+              ),
+              $form->labelEx($model, 'rank', array(
+                'label'=>'评级',
+              )),
+              $form->dropDownList($model, 'rank', Review::getRanks(), array(
+                'class'=>'form-control',
+                'prompt'=>'',
+              )),
+              $form->error($model, 'rank', array('class'=>'text-danger'))
+            );?>
+            <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'comments', array(
                 'class'=>'col-lg-12',
