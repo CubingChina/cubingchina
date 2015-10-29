@@ -2625,3 +2625,18 @@ td.scramble pre {
   color: inherit;
   line-height: inherit;
 }
+td .result-detail {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+}
+td .result-detail .result-value {
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  -o-flex: 1;
+  flex: 1;
+  margin-right: 5px;
+}
