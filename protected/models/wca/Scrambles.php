@@ -60,6 +60,18 @@ class Scrambles extends ActiveRecord {
 				}, $scramble);
 				$scramble = implode('<br>', $scramble);
 				break;
+			case 'clock':
+				$scramble = explode(' ', $scramble);
+				$scramble = array_map(function($scramble) {
+					return str_pad($scramble, 5, ' ');
+				}, $scramble);
+				$scramble = implode(' ', $scramble);
+				$pos = strpos($scramble, 'y');
+				if ($pos !== false) {
+					// $pos = strpos($scramble, ' ', $pos)
+					$scramble = substr($scramble, 0, $pos - 1) . '<br>' . substr($scramble, $pos);
+				}
+				break;
 			default:
 				$scramble = explode(' ', $scramble);
 				$scramble = array_map(function($scramble) {
