@@ -22,6 +22,8 @@ class Scrambles extends ActiveRecord {
 	public function getFormattedScramble() {
 		$scramble = $this->scramble;
 		switch ($this->eventId) {
+			case '444':
+			case '444bf':
 			case '555':
 			case '555bf':
 			case '666':
@@ -40,21 +42,6 @@ class Scrambles extends ActiveRecord {
 				}, $scramble);
 				$scramble = implode('<br>', $scramble);
 				break;
-			case '444':
-			case '444bf':
-				$scramble = explode(' ', $scramble);
-				$scramble = array_map(function($scramble) {
-					return str_pad($scramble, 3, ' ');
-				}, $scramble);
-				$scramble = implode(' ', $scramble);
-				$pos = strpos($scramble, 'w');
-				if ($pos !== false) {
-					$scramble = implode('<br>', array(
-						substr($scramble, 0, $pos - 2),
-						substr($scramble, $pos - 1),
-					));
-				}
-				break;
 			case 'sq1':
 				$scramble = explode('/', $scramble);
 				$scramble = array_map(function($scramble) {
@@ -72,6 +59,18 @@ class Scrambles extends ActiveRecord {
 					return implode(' / ', $scramble);
 				}, $scramble);
 				$scramble = implode('<br>', $scramble);
+				break;
+			case 'clock':
+				$scramble = explode(' ', $scramble);
+				$scramble = array_map(function($scramble) {
+					return str_pad($scramble, 5, ' ');
+				}, $scramble);
+				$scramble = implode(' ', $scramble);
+				$pos = strpos($scramble, 'y');
+				if ($pos !== false) {
+					// $pos = strpos($scramble, ' ', $pos)
+					$scramble = substr($scramble, 0, $pos - 1) . '<br>' . substr($scramble, $pos);
+				}
 				break;
 			default:
 				$scramble = explode(' ', $scramble);
