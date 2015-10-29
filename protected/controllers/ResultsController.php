@@ -508,11 +508,12 @@ class ResultsController extends Controller {
 	public function actionC() {
 		$id = $this->sGet('id');
 		$type = $this->sGet('type', 'winners');
+		$types = Competitions::getResultsTypes();
 		$competition = Competitions::model()->findByAttributes(array('id' => $id));
 		if ($competition == null) {
 			$this->redirect(array('/results/competition'));
 		}
-		if (!array_key_exists($type, Competitions::getResultsTypes())) {
+		if (!array_key_exists($type, $types)) {
 			$type = 'winners';
 		}
 		if (($c = Competition::model()->findByAttributes(array('wca_competition_id' => $id))) !== null) {
@@ -521,8 +522,12 @@ class ResultsController extends Controller {
 			$competition->c = $c;
 		}
 		$data = Yii::app()->cache->getData(array('Competitions', 'getResults'), $id);
+		if (empty($data['scrambles']) && $type !== 'scrambles') {
+			unset($types['scrambles']);
+		}
 		$data['competition'] = $competition;
 		$data['type'] = $type;
+		$data['types'] = $types;
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Competitions'=>array('/results/competition'),

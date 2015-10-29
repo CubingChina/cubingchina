@@ -26,7 +26,7 @@
     'method'=>'get',
     'action'=>array('/results/c', 'id'=>$competition->id),
   )); ?>
-    <?php foreach (Competitions::getResultsTypes() as $_type=>$name): ?>
+    <?php foreach ($types as $_type=>$name): ?>
     <?php echo CHtml::tag('button', array(
       'type'=>'submit',
       'name'=>'type',

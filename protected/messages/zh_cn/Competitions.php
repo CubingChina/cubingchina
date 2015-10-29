@@ -19,7 +19,6 @@
 return array (
   'Cell Name' => '',
   'City Name' => '',
-  'Competitions' => '比赛',
   'Country' => '',
   'Day' => '',
   'End Day' => '',
@@ -32,6 +31,7 @@ return array (
   'Month' => '',
   'Name' => '',
   'Organiser' => '',
+  'Scrambles' => '打乱',
   'Venue' => '',
   'Venue Address' => '',
   'Venue Details' => '',
@@ -39,6 +39,7 @@ return array (
   'Website' => '',
   'Year' => '',
   'All Results' => '所有',
+  'Competitions' => '比赛',
   'Top 3' => '前三',
   'Winners' => '冠军',
 );
