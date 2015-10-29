@@ -6,10 +6,15 @@ $this->widget('GroupGridView', array(
   )),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
   'groupKey'=>'eventId',
-  'groupHeader'=>'CHtml::tag("span", array(
+  'groupHeader'=>'CHtml::link(CHtml::tag("span", array(
     "class"=>"event-icon event-icon event-icon-" . $data->eventId,
     "title"=>Yii::t("event", $data->event->cellName),
-  ), Yii::t("event", $data->event->cellName))',
+  ), Yii::t("event", $data->event->cellName)), array(
+    "/results/c",
+    "id"=>$data->competitionId,
+    "type"=>"all",
+    "#"=>$data->eventId,
+  ))',
   'columns'=>array(
     array(
       'name'=>Yii::t('Results', 'Place'),

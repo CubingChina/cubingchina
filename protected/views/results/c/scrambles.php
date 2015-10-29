@@ -1,4 +1,5 @@
 <?php
+$this->renderPartial('c/dropdownEvents', $_data_);
 $this->widget('GroupGridView', array(
   'dataProvider'=>new CArrayDataProvider($results, array(
     'pagination'=>false,
@@ -7,6 +8,7 @@ $this->widget('GroupGridView', array(
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
   'groupKey'=>'eventId',
   'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(CHtml::tag("span", array(
+      "id"=>$data->eventId,
       "class"=>"event-icon event-icon event-icon-" . $data->eventId,
       "title"=>Yii::t("event", $data->event->cellName),
     ), Yii::t("event", $data->event->cellName)),

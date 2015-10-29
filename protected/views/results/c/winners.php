@@ -9,10 +9,15 @@ $this->widget('GridView', array(
     array(
       'name'=>Yii::t('common', 'Event'),
       'type'=>'raw',
-      'value'=>'CHtml::tag("span", array(
+      'value'=>'CHtml::link(CHtml::tag("span", array(
         "class"=>"event-icon event-icon event-icon-" . $data->eventId,
         "title"=>Yii::t("event", $data->event->cellName),
-      ), Yii::t("event", $data->event->cellName))',
+      ), Yii::t("event", $data->event->cellName)), array(
+        "/results/c",
+        "id"=>$data->competitionId,
+        "type"=>"all",
+        "#"=>$data->eventId,
+      ))',
     ),
     array(
       'name'=>Yii::t('Results', 'Person'),
