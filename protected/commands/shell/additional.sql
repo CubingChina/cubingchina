@@ -28,3 +28,4 @@ ALTER TABLE `RanksSingle` ADD INDEX ( `eventId` );
 ALTER TABLE `RanksAverage` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 ALTER TABLE `RanksAverage` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `RanksAverage` ADD INDEX ( `eventId` );
+ALTER TABLE `Scrambles` ADD PRIMARY KEY(`scrambleId`);

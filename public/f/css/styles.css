@@ -2612,3 +2612,16 @@ td .checkbox {
 #battle-control .battle-list .battle-person i.fa {
   margin-left: 15px;
 }
+td.scramble {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+td.scramble pre {
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: inherit;
+  line-height: inherit;
+}
