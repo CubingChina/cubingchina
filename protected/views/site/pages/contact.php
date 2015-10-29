@@ -50,11 +50,6 @@
         <td><i class="fa fa-envelope"></i> <a href="mailto:20003214@sina.com">20003214@sina.com</a></td>
       </tr>
       <tr>
-        <td><i class="fa fa-user"></i> 王皓</td>
-        <td><i class="fa fa-building"></i> 沈阳</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:wanghao@yoercn.com">wanghao@yoercn.com</a></td>
-      </tr>
-      <tr>
         <td><i class="fa fa-user"></i> 陳德泉</td>
         <td><i class="fa fa-building"></i> 香港</td>
         <td><i class="fa fa-envelope"></i> <a href="mailto:kimchikoon@hkrcu.net">kimchikoon@hkrcu.net</a></td>
@@ -103,11 +98,6 @@ EOT
         <td><i class="fa fa-user"></i> Donglei Li</td>
         <td><i class="fa fa-building"></i> Xi’an</td>
         <td><i class="fa fa-envelope"></i> <a href="mailto:20003214@sina.com">20003214@sina.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Hao Wang</td>
-        <td><i class="fa fa-building"></i> Shenyang</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:wanghao@yoercn.com">wanghao@yoercn.com</a></td>
       </tr>
       <tr>
         <td><i class="fa fa-user"></i> Chan Tak Chuen (Kim)</td>
