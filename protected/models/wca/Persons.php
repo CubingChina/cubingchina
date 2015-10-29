@@ -12,7 +12,7 @@
  */
 class Persons extends ActiveRecord {
 
-	public static function getBattleCheckBox($name, $id) {
+	public static function getBattleCheckBox($name, $id, $container = 'div', $htmlOptions = array('class'=>'checkbox')) {
 		if ($id === '') {
 			return '';
 		}
@@ -23,7 +23,7 @@ class Persons extends ActiveRecord {
 		));
 		$text = CHtml::tag('span', array(), Yii::t('common', 'Battle'));
 		$label = CHtml::tag('label', array('class'=>'battle-label'), $checkBox . $text);
-		return CHtml::tag('div', array('class'=>'checkbox'), $label);
+		return CHtml::tag($container, $htmlOptions, $label);
 	}
 
 	public static function getPersons($region = 'China', $gender = 'all', $name = '', $page = 1) {

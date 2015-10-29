@@ -47,7 +47,7 @@
       </div>
     </div>
   </div>
-  <h2><?php echo Yii::t('Results', 'Current Personal Records'); ?></h2>
+  <h2><?php echo Yii::t('Results', 'Current Personal Records') . Persons::getBattleCheckBox($person->name, $person->id, 'span', array('class'=>'small')); ?></h2>
   <?php
   $this->widget('GridView', array(
     'dataProvider'=>new CArrayDataProvider(array_values($personRanks), array(

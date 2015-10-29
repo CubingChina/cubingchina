@@ -2512,6 +2512,9 @@ table.pk-table tbody tr td table tr td:last-child {
 tr:hover .battle-label span {
   visibility: visible;
 }
+.battle-label:hover span {
+  visibility: visible;
+}
 td .checkbox {
   margin-top: 0;
   margin-bottom: 0;
