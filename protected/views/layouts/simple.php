@@ -2,6 +2,8 @@
 <html xmlns:wb="http://open.weibo.com/wb" lang="en" class="<?php echo $this->IEClass; ?>">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-siteapp">
   <!-- Theme CSS -->
   <?php if (DEV): ?>
@@ -21,7 +23,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="<?php echo CHtml::encode($this->description); ?>">
   <meta name="keywords" content="<?php echo CHtml::encode($this->keywords); ?>">
   <meta name="author" content="<?php echo Yii::app()->params->author; ?>">

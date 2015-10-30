@@ -2618,7 +2618,7 @@ td .checkbox {
 td.scramble {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
-td.scramble pre {
+td pre {
   padding: 0;
   margin: 0;
   font-size: inherit;
@@ -2627,19 +2627,4 @@ td.scramble pre {
   background-color: transparent;
   color: inherit;
   line-height: inherit;
-}
-td .result-detail {
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  display: flex;
-}
-td .result-detail .result-value {
-  -webkit-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  -o-flex: 1;
-  flex: 1;
-  margin-right: 5px;
 }
