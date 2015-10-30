@@ -1201,6 +1201,9 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
   margin-bottom: 30px;
   padding-bottom: 15px;
 }
+.page-wrapper .page-sidebar .widget .details {
+  padding-left: 20px;
+}
 .page-wrapper .page-sidebar .widget.has-divider {
   border-bottom: 1px dotted #e8e8e8;
 }

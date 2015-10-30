@@ -58,6 +58,7 @@
         'name'=>Yii::t('common', 'WCA ID'),
         'value'=>'Persons::getWCAIconLinkByNameNId($data["name"], $data["id"])',
         'type'=>'raw',
+        'htmlOptions'=>array('class'=>'region'),
       ),
       array(
         'name'=>Yii::t('common', 'Region'),
