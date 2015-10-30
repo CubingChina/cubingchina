@@ -355,8 +355,13 @@ class Results extends ActiveRecord {
 	 * @param boolean $multi 是否是多盲
 	 */
 	private static function formatGMTime($time, $multi = false) {
-		if ($multi && $time == '99999') {
-			return 'unknown';
+		if ($multi) {
+			if ($time == '99999') {
+				return 'unknown';
+			}
+			if ($time == '3600') {
+				return '60:00';
+			}
 		} else if ($time == 0) {
 			return '0';
 		}
@@ -368,6 +373,7 @@ class Results extends ActiveRecord {
 		for ($i = 1; $i <= 5; $i++) {
 			$value = $data['value' . $i];
 			$time = self::formatTime($value, $data['eventId']);
+			$time = str_pad($time, $data['eventId'] === '333mbo' || $data['eventId'] === '333mbf' ? 12 : 7);
 			if ($boldBest && $value === $data['best']) {
 				$time = CHtml::Tag('b', array(), $time);
 			}
@@ -375,9 +381,8 @@ class Results extends ActiveRecord {
 				'class'=>'result-value'
 			), $time);
 		}
-		return CHtml::tag('div', array(
-			'class'=>'result-detail'
-		), implode('&nbsp;&nbsp;&nbsp;', $detail));
+		return CHtml::tag('pre', array(
+		), implode('   ', $detail));
 	}
 
 	public function getTime($attribute) {

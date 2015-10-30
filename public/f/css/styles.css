@@ -1201,6 +1201,9 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
   margin-bottom: 30px;
   padding-bottom: 15px;
 }
+.page-wrapper .page-sidebar .widget .details {
+  padding-left: 20px;
+}
 .page-wrapper .page-sidebar .widget.has-divider {
   border-bottom: 1px dotted #e8e8e8;
 }
@@ -2618,7 +2621,7 @@ td .checkbox {
 td.scramble {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
-td.scramble pre {
+td pre {
   padding: 0;
   margin: 0;
   font-size: inherit;
@@ -2627,19 +2630,4 @@ td.scramble pre {
   background-color: transparent;
   color: inherit;
   line-height: inherit;
-}
-td .result-detail {
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  display: flex;
-}
-td .result-detail .result-value {
-  -webkit-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  -o-flex: 1;
-  flex: 1;
-  margin-right: 5px;
 }
