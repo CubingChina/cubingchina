@@ -42,6 +42,7 @@ lftp -c "pget -n 20 '$wca_home/results/misc/$zipname' -o $zipname"
 echo "unzip the export data"
 unzip -o $zipname WCA_export.sql
 echo "replace charset to utf8_general_ci"
+sed -ri 's/latin1/utf8/g' WCA_export.sql
 sed -ri 's/utf8_unicode_ci/utf8_general_ci/g' WCA_export.sql
 echo "import data"
 mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql

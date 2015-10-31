@@ -29,3 +29,199 @@ ALTER TABLE `RanksAverage` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT P
 ALTER TABLE `RanksAverage` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `RanksAverage` ADD INDEX ( `eventId` );
 ALTER TABLE `Scrambles` ADD PRIMARY KEY(`scrambleId`);
+DROP TABLE IF EXISTS `SumOfRanks`;
+CREATE TABLE IF NOT EXISTS `SumOfRanks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `personId` varchar(10) NOT NULL DEFAULT '',
+  `countryId` varchar(50) NOT NULL DEFAULT '',
+  `continentId` varchar(50) NOT NULL DEFAULT '',
+  `type` varchar(10) NOT NULL,
+  `countryRank` int(11) NOT NULL DEFAULT '0',
+  `continentRank` int(11) NOT NULL DEFAULT '0',
+  `worldRank` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `personId` (`personId`),
+  KEY `type` (`type`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+-- Sum or countryRank
+-- Single
+INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countryRank`)
+(
+	SELECT
+		`p`.`id`,
+		`p`.`countryId`,
+		`c`.`continentId`,
+		'single',
+		SUM(
+			CASE WHEN
+				`r`.`countryRank`=0 OR `r`.`countryRank` IS NULL
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			ELSE `r`.`countryRank`
+		END) AS `countryRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			`personCountryId` AS `countryId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results`
+		WHERE `best`>0
+		GROUP BY `personCountryId`, `eventId`
+	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`countryId`=`p`.`countryId`
+	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+);
+-- Sum or countryRank
+-- Average
+INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countryRank`)
+(
+	SELECT
+		`p`.`id`,
+		`p`.`countryId`,
+		`c`.`continentId`,
+		'average',
+		SUM(
+			CASE WHEN
+				`r`.`countryRank`=0 OR `r`.`countryRank` IS NULL
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			ELSE `r`.`countryRank`
+		END) AS `countryRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			`personCountryId` AS `countryId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results`
+		WHERE `average`>0
+		GROUP BY `personCountryId`, `eventId`
+	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`countryId`=`p`.`countryId`
+	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+);
+
+
+-- Sum or continentRank
+-- Single
+UPDATE `SumOfRanks` `sor` INNER JOIN
+(
+	SELECT
+		`p`.`id` AS `personId`,
+		`p`.`countryId`,
+		`c`.`continentId`,
+		SUM(
+			CASE WHEN
+				`r`.`continentRank`=0 OR `r`.`continentRank` IS NULL
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			ELSE `r`.`continentRank`
+		END) AS `continentRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			`c`.`continentId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results` `r`
+		LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
+		WHERE `best`>0
+		GROUP BY `eventId`, `c`.`continentId`
+	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`continentId`=`c`.`continentId`
+	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+) `t` ON `sor`.`personId`=`t`.`personId`
+SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='single';
+-- Sum or continentRank
+-- Average
+UPDATE `SumOfRanks` `sor` INNER JOIN
+(
+	SELECT
+		`p`.`id` AS `personId`,
+		`p`.`countryId`,
+		`c`.`continentId`,
+		SUM(
+			CASE WHEN
+				`r`.`continentRank`=0 OR `r`.`continentRank` IS NULL
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			ELSE `r`.`continentRank`
+		END) AS `continentRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			`c`.`continentId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results` `r`
+		LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
+		WHERE `average`>0
+		GROUP BY `eventId`, `c`.`continentId`
+	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`continentId`=`c`.`continentId`
+	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+) `t` ON `sor`.`personId`=`t`.`personId`
+SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='average';
+
+
+-- Sum or worldRank
+-- Single
+UPDATE `SumOfRanks` `sor` INNER JOIN
+(
+	SELECT
+		`p`.`id` AS `personId`,
+		SUM(
+			CASE WHEN `r`.`worldRank` IS NULL
+			THEN `rp`.`penalty`
+			ELSE `r`.`worldRank`
+		END) AS `worldRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results`
+		WHERE `best`>0
+		GROUP BY `eventId`
+	) `rp` ON `rp`.`eventId`=`e`.`id`
+	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+) `t` ON `sor`.`personId`=`t`.`personId`
+SET `sor`.`worldRank`=`t`.`worldRank` WHERE `sor`.`type`='single';
+-- Sum or worldRank
+-- Average
+UPDATE `SumOfRanks` `sor` INNER JOIN
+(
+	SELECT
+		`p`.`id` AS `personId`,
+		SUM(
+			CASE WHEN `r`.`worldRank` IS NULL
+			THEN `rp`.`penalty`
+			ELSE `r`.`worldRank`
+		END) AS `worldRank`
+	FROM `Persons` `p`
+	LEFT JOIN `Events` `e` ON 1
+	LEFT JOIN (
+		SELECT
+			`eventId`,
+			COUNT(DISTINCT `personId`) + 1 AS `penalty`
+		FROM `Results`
+		WHERE `average`>0
+		GROUP BY `eventId`
+	) `rp` ON `rp`.`eventId`=`e`.`id`
+	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
+	WHERE `p`.`subid`=1 AND `e`.`rank`<900
+	GROUP BY `p`.`id`
+) `t` ON `sor`.`personId`=`t`.`personId`
+SET `sor`.`worldRank`=`t`.`worldRank` WHERE `sor`.`type`='average';
