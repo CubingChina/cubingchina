@@ -51,25 +51,7 @@ class Results extends ActiveRecord {
 				':eventId'=>$event,
 			))
 			->andWhere(sprintf('rs.%s>0', $field));
-			switch ($region) {
-				case 'World':
-					break;
-				case 'Africa':
-				case 'Asia':
-				case 'Oceania':
-				case 'Europe':
-				case 'North America':
-				case 'South America':
-					$command->andWhere('country.continentId=:region', array(
-						':region'=>'_' . $region,
-					));
-					break;
-				default:
-					$command->andWhere('rs.personCountryId=:region', array(
-						':region'=>$region,
-					));
-					break;
-			}
+			self::applyRegionCondition($command, $region);
 			switch ($gender) {
 				case 'female':
 					$command->andWhere('p.gender="f"');
@@ -193,25 +175,7 @@ class Results extends ActiveRecord {
 			':eventId'=>$event,
 		))
 		->order('c.year DESC, c.month DESC, c.day DESC, round.rank DESC, rs.personName ASC');
-		switch ($region) {
-			case 'World':
-				break;
-			case 'Africa':
-			case 'Asia':
-			case 'Oceania':
-			case 'Europe':
-			case 'North America':
-			case 'South America':
-				$command->andWhere('country.continentId=:region', array(
-					':region'=>'_' . $region,
-				));
-				break;
-			default:
-				$command->andWhere('rs.personCountryId=:region', array(
-					':region'=>$region,
-				));
-				break;
-		}
+		self::applyRegionCondition($command, $region);
 		$rows = array();
 		foreach (self::getRankingTypes() as $type) {
 			$cmd = clone $command;

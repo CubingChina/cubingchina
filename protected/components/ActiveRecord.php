@@ -8,6 +8,28 @@ class ActiveRecord extends CActiveRecord {
 		return self::getModelAttributeValue($this, $name, $forceValue);
 	}
 
+	public static function applyRegionCondition($command, $region, $countryField = 'rs.personCountryId', $continentField = 'country.continentId') {
+		switch ($region) {
+			case 'World':
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->andWhere($continentField . '=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->andWhere($countryField . '=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+	}
+
 	public static function getModelAttributeValue($model, $name, $forceValue = false) {
 		$value = $model[Yii::app()->controller->getAttributeName($name)];
 		if ($forceValue) {

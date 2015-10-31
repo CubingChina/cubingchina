@@ -44,25 +44,7 @@ class Persons extends ActiveRecord {
 				$command->andWhere('p.gender="m"');
 				break;
 		}
-		switch ($region) {
-			case 'World':
-				break;
-			case 'Africa':
-			case 'Asia':
-			case 'Oceania':
-			case 'Europe':
-			case 'North America':
-			case 'South America':
-				$command->andWhere('country.continentId=:region', array(
-					':region'=>'_' . $region,
-				));
-				break;
-			default:
-				$command->andWhere('p.countryId=:region', array(
-					':region'=>$region,
-				));
-				break;
-		}
+		self::applyRegionCondition($command, $region, 'p.countryId');
 		if ($name) {
 			$names = explode(' ', $name);
 			foreach ($names as $key=>$value) {

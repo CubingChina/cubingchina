@@ -16,25 +16,7 @@ class Top100 extends Statistics {
 		))
 		->order('value ASC')
 		->limit(200);
-		switch ($statistic['region']) {
-			case 'World':
-				break;
-			case 'Africa':
-			case 'Asia':
-			case 'Oceania':
-			case 'Europe':
-			case 'North America':
-			case 'South America':
-				$command->andWhere('country.continentId=:region', array(
-					':region'=>'_' . $statistic['region'],
-				));
-				break;
-			default:
-				$command->andWhere('personCountryId=:region', array(
-					':region'=>$statistic['region'],
-				));
-				break;
-		}
+		ActiveRecord::applyRegionCondition($command, $statistic['region']);
 		if (isset($statistic['gender'])) {
 			switch ($statistic['gender']) {
 				case 'female':
