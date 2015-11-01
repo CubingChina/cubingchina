@@ -121,8 +121,15 @@ class Persons extends ActiveRecord {
 		$db = Yii::app()->wcaDb;
 		//个人排名
 		$ranks = RanksSingle::model()->with(array(
-			'average',
-			'event',
+			'average'=>array(
+				'together'=>true,
+			),
+			'person'=>array(
+				'together'=>true,
+			),
+			'event'=>array(
+				'together'=>true,
+			),
 		))->findAllByAttributes(array(
 			'personId'=>$id
 		), array(
@@ -131,6 +138,15 @@ class Persons extends ActiveRecord {
 		$personRanks = array();
 		foreach ($ranks as $rank) {
 			$personRanks[$rank->eventId] = $rank;
+		}
+		//sum of ranks
+		$sumOfRanks = RanksSum::model()->findAllByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'order'=>'type DESC',
+		));
+		foreach ($sumOfRanks as $key=>$sumOfRank) {
+			$sumOfRank->getRanks();
 		}
 		//奖牌数量
 		$command = $db->createCommand();
@@ -169,6 +185,7 @@ class Persons extends ActiveRecord {
 		$best = $average = PHP_INT_MAX;
 		$results = Results::model()->with(array(
 			'competition',
+			'competition.country',
 			'round',
 			'event',
 		))->findAllByAttributes(array(
