@@ -29,8 +29,8 @@ ALTER TABLE `RanksAverage` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT P
 ALTER TABLE `RanksAverage` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `RanksAverage` ADD INDEX ( `eventId` );
 ALTER TABLE `Scrambles` ADD PRIMARY KEY(`scrambleId`);
-DROP TABLE IF EXISTS `SumOfRanks`;
-CREATE TABLE IF NOT EXISTS `SumOfRanks` (
+DROP TABLE IF EXISTS `RanksSum`;
+CREATE TABLE IF NOT EXISTS `RanksSum` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `personId` varchar(10) NOT NULL DEFAULT '',
   `countryId` varchar(50) NOT NULL DEFAULT '',
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `SumOfRanks` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 -- Sum or countryRank
 -- Single
-INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countryRank`)
+INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `countryRank`)
 (
 	SELECT
 		`p`.`id`,
@@ -76,7 +76,7 @@ INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countr
 );
 -- Sum or countryRank
 -- Average
-INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countryRank`)
+INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `countryRank`)
 (
 	SELECT
 		`p`.`id`,
@@ -86,7 +86,7 @@ INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countr
 		SUM(
 			CASE WHEN
 				`r`.`countryRank`=0 OR `r`.`countryRank` IS NULL
-			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			THEN (CASE WHEN `rp`.`penalty` IS NULL AND `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE `rp`.`penalty` END)
 			ELSE `r`.`countryRank`
 		END) AS `countryRank`
 	FROM `Persons` `p`
@@ -109,7 +109,7 @@ INSERT INTO `SumOfRanks`(`personId`, `countryId`, `continentId`, `type`, `countr
 
 -- Sum or continentRank
 -- Single
-UPDATE `SumOfRanks` `sor` INNER JOIN
+UPDATE `RanksSum` `sor` INNER JOIN
 (
 	SELECT
 		`p`.`id` AS `personId`,
@@ -141,7 +141,7 @@ UPDATE `SumOfRanks` `sor` INNER JOIN
 SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='single';
 -- Sum or continentRank
 -- Average
-UPDATE `SumOfRanks` `sor` INNER JOIN
+UPDATE `RanksSum` `sor` INNER JOIN
 (
 	SELECT
 		`p`.`id` AS `personId`,
@@ -150,7 +150,7 @@ UPDATE `SumOfRanks` `sor` INNER JOIN
 		SUM(
 			CASE WHEN
 				`r`.`continentRank`=0 OR `r`.`continentRank` IS NULL
-			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN 1 ELSE `rp`.`penalty` END)
+			THEN (CASE WHEN `rp`.`penalty` IS NULL AND `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE `rp`.`penalty` END)
 			ELSE `r`.`continentRank`
 		END) AS `continentRank`
 	FROM `Persons` `p`
@@ -175,7 +175,7 @@ SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='average';
 
 -- Sum or worldRank
 -- Single
-UPDATE `SumOfRanks` `sor` INNER JOIN
+UPDATE `RanksSum` `sor` INNER JOIN
 (
 	SELECT
 		`p`.`id` AS `personId`,
@@ -201,7 +201,7 @@ UPDATE `SumOfRanks` `sor` INNER JOIN
 SET `sor`.`worldRank`=`t`.`worldRank` WHERE `sor`.`type`='single';
 -- Sum or worldRank
 -- Average
-UPDATE `SumOfRanks` `sor` INNER JOIN
+UPDATE `RanksSum` `sor` INNER JOIN
 (
 	SELECT
 		`p`.`id` AS `personId`,
