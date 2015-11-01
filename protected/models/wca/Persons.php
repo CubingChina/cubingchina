@@ -334,6 +334,7 @@ class Persons extends ActiveRecord {
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
+			'sumOfRanks'=>$sumOfRanks,
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,

@@ -17,6 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Sum of CR' => '洲际排名总和',
+  'Sum of NR' => '地区排名总和',
+  'Sum of WR' => '世界排名总和',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中国各项平均成绩前100占席',
