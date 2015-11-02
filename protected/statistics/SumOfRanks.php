@@ -15,11 +15,19 @@ class SumOfRanks extends Statistics {
 				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
 				'type'=>'raw',
 			),
-			array(
-				'header'=>'Yii::t("statistics", "Sum")',
-				'value'=>'CHtml::tag("b", array(), $data["sum"])',
+		);
+		if (Region::isContinent($statistic['region']) || $statistic['region'] === 'World') {
+			$columns[] = array(
+				'header'=>'Yii::t("common", "Region")',
+				'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
 				'type'=>'raw',
-			),
+				'htmlOptions'=>array('class'=>'region'),
+			);
+		}
+		$columns[] = array(
+			'header'=>'Yii::t("statistics", "Sum")',
+			'value'=>'CHtml::tag("b", array(), $data["sum"])',
+			'type'=>'raw',
 		);
 		//计算未参赛的项目应该排第几
 		$penalty = RanksPenalty::getPenlties($statistic['type'], $statistic['region']);
@@ -100,6 +108,8 @@ class SumOfRanks extends Statistics {
 			'p.gender',
 			'p.name AS personName',
 			'p.subid',
+			'country.name AS countryName',
+			'country.iso2',
 		);
 		switch ($region) {
 			case 'World':
