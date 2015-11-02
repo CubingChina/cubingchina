@@ -29,6 +29,92 @@ ALTER TABLE `RanksAverage` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT P
 ALTER TABLE `RanksAverage` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `RanksAverage` ADD INDEX ( `eventId` );
 ALTER TABLE `Scrambles` ADD PRIMARY KEY(`scrambleId`);
+
+DROP TABLE IF EXISTS `RanksPenalty`;
+CREATE TABLE IF NOT EXISTS `RanksPenalty` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `eventId` varchar(10) NOT NULL DEFAULT '',
+  `countryId` varchar(50) DEFAULT '',
+  `type` varchar(10) NOT NULL DEFAULT '',
+  `penalty` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`countryId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+-- Single countryRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		`personCountryId` AS `countryId`,
+		'single' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results`
+	WHERE `best`>0
+	GROUP BY `eventId`, `personCountryId`
+);
+-- Average countryRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		`personCountryId` AS `countryId`,
+		'average' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results`
+	WHERE `average`>0
+	GROUP BY `eventId`, `personCountryId`
+);
+-- Single continentRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		`c`.`continentId`,
+		'single' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results` `r`
+	LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
+	WHERE `best`>0
+	GROUP BY `eventId`, `c`.`continentId`
+);
+-- Average continentRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		`c`.`continentId`,
+		'average' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results` `r`
+	LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
+	WHERE `average`>0
+	GROUP BY `eventId`, `c`.`continentId`
+);
+-- Single worldRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		'World',
+		'single' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results`
+	WHERE `best`>0
+	GROUP BY `eventId`
+);
+-- Average worldRanks penalty
+INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
+(
+	SELECT
+		`eventId`,
+		'World',
+		'average' AS `type`,
+		COUNT(DISTINCT `personId`) + 1 AS `penalty`
+	FROM `Results`
+	WHERE `average`>0
+	GROUP BY `eventId`
+);
+
 DROP TABLE IF EXISTS `RanksSum`;
 CREATE TABLE IF NOT EXISTS `RanksSum` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -61,15 +147,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
 	FROM `Persons` `p`
 	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			`personCountryId` AS `countryId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results`
-		WHERE `best`>0
-		GROUP BY `personCountryId`, `eventId`
-	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`countryId`=`p`.`countryId`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='single' AND `rp`.`eventId`=`e`.`id` AND `rp`.`countryId`=`p`.`countryId`
 	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
@@ -92,15 +170,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
 	FROM `Persons` `p`
 	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			`personCountryId` AS `countryId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results`
-		WHERE `average`>0
-		GROUP BY `personCountryId`, `eventId`
-	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`countryId`=`p`.`countryId`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='average' AND `rp`.`countryId`=`p`.`countryId` AND `rp`.`eventId`=`e`.`id`
 	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
@@ -124,16 +194,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 	FROM `Persons` `p`
 	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			`c`.`continentId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results` `r`
-		LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
-		WHERE `best`>0
-		GROUP BY `eventId`, `c`.`continentId`
-	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`continentId`=`c`.`continentId`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='single' AND `rp`.`countryId`=`c`.`continentId` AND `rp`.`eventId`=`e`.`id`
 	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
@@ -156,16 +217,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 	FROM `Persons` `p`
 	LEFT JOIN `Countries` `c` ON `p`.`countryId`=`c`.`id`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			`c`.`continentId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results` `r`
-		LEFT JOIN `Countries` `c` ON `r`.`personCountryId`=`c`.`id`
-		WHERE `average`>0
-		GROUP BY `eventId`, `c`.`continentId`
-	) `rp` ON `rp`.`eventId`=`e`.`id` AND `rp`.`continentId`=`c`.`continentId`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='average' AND `rp`.`countryId`=`c`.`continentId` AND `rp`.`eventId`=`e`.`id`
 	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
@@ -186,14 +238,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 		END) AS `worldRank`
 	FROM `Persons` `p`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results`
-		WHERE `best`>0
-		GROUP BY `eventId`
-	) `rp` ON `rp`.`eventId`=`e`.`id`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='single' AND `rp`.`countryId`='World' AND `rp`.`eventId`=`e`.`id`
 	LEFT JOIN  `RanksSingle` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
@@ -212,14 +257,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 		END) AS `worldRank`
 	FROM `Persons` `p`
 	LEFT JOIN `Events` `e` ON 1
-	LEFT JOIN (
-		SELECT
-			`eventId`,
-			COUNT(DISTINCT `personId`) + 1 AS `penalty`
-		FROM `Results`
-		WHERE `average`>0
-		GROUP BY `eventId`
-	) `rp` ON `rp`.`eventId`=`e`.`id`
+	LEFT JOIN `RanksPenalty` `rp` ON `rp`.`type`='average' AND `rp`.`countryId`='World' AND `rp`.`eventId`=`e`.`id`
 	LEFT JOIN  `RanksAverage` `r` ON `e`.`id`=`r`.`eventId` AND `p`.`id`= `r`.`personId`
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
