@@ -250,6 +250,30 @@ class ResultsController extends Controller {
 				'expression'=>'$results["overAll"]["gold"] * 1e8 + $results["overAll"]["silver"] * 1e4 + $results["overAll"]["bronze"]',
 				'type'=>'max',
 			),
+			'singleSumOfNR'=>array(
+				'expression'=>'$results["sumOfRanks"][0]->countryRank',
+				'type'=>'min',
+			),
+			'singleSumOfCR'=>array(
+				'expression'=>'$results["sumOfRanks"][0]->continentRank',
+				'type'=>'min',
+			),
+			'singleSumOfWR'=>array(
+				'expression'=>'$results["sumOfRanks"][0]->worldRank',
+				'type'=>'min',
+			),
+			'averageSumOfNR'=>array(
+				'expression'=>'$results["sumOfRanks"][1]->countryRank',
+				'type'=>'min',
+			),
+			'averageSumOfCR'=>array(
+				'expression'=>'$results["sumOfRanks"][1]->continentRank',
+				'type'=>'min',
+			),
+			'averageSumOfWR'=>array(
+				'expression'=>'$results["sumOfRanks"][1]->worldRank',
+				'type'=>'min',
+			),
 		);
 		foreach ($bestData as $key=>$value) {
 			$bestData[$key]['value'] = $this->getBestData($persons, $value['expression'], $value['type'], isset($value['canBeZero']) ? $value['canBeZero'] : false);
