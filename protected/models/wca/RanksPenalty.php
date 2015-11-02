@@ -12,6 +12,9 @@
  */
 class RanksPenalty extends ActiveRecord {
 	public static function getPenlties($type, $countryId) {
+		if (in_array($countryId, array('Africa', 'Asia', 'Oceania', 'Europe', 'North America', 'South America'))) {
+			$countryId = '_' . $countryId;
+		}
 		$ranksPenalties = self::model()->findAllByAttributes(array(
 			'type'=>$type,
 			'countryId'=>$countryId,
