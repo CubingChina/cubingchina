@@ -12,6 +12,7 @@ class Statistics {
 	public static $lists = array(
 		'Sum of all single ranks'=>array(
 			'type'=>'single',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'more'=>array(
 				'/results/statistics',
@@ -22,6 +23,7 @@ class Statistics {
 		'Sum of all average ranks'=>array(
 			'type'=>'average',
 			'class'=>'SumOfRanks',
+			'region'=>'China',
 			'more'=>array(
 				'/results/statistics',
 				'name'=>'sum-of-ranks',
@@ -30,12 +32,14 @@ class Statistics {
 		),
 		'Sum of 2x2 to 5x5 single ranks'=>array(
 			'type'=>'single',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
 			'width'=>6,
 		),
 		'Sum of 2x2 to 5x5 average ranks'=>array(
 			'type'=>'average',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
 			'width'=>6,

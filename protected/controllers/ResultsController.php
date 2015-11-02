@@ -568,6 +568,10 @@ class ResultsController extends Controller {
 		$type = $this->sGet('type', 'single');
 		$gender = $this->sGet('gender', 'all');
 		$eventIds = $this->aGet('event');
+		$region = $this->sGet('region', 'China');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
 		if (!in_array($type, Results::getRankingTypes())) {
 			$type = 'single';
 		}
@@ -580,6 +584,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'SumOfRanks',
 			'type'=>$type,
+			'region'=>$region,
 			'eventIds'=>$eventIds,
 			'gender'=>$gender,
 		);
@@ -603,6 +608,7 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'type'=>$type,
+			'region'=>$region,
 			'gender'=>$gender,
 			'eventIds'=>$eventIds,
 		));
