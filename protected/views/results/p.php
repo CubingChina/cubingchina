@@ -147,7 +147,13 @@
     'columns'=>array(
       array(
         'header'=>'',
-        'value'=>'Yii::t("common", ucfirst($data->type))',
+        'type'=>'raw',
+        'value'=>'CHtml::link(Yii::t("common", ucfirst($data->type)), array(
+          "/results/statistics",
+          "name"=>"sum-of-ranks",
+          "type"=>$data->type,
+          "region"=>"' . $person->countryId . '",
+        ))',
       ),
       array(
         'name'=>Yii::t('statistics', 'Sum of NR'),
