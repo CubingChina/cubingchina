@@ -147,18 +147,17 @@
     'columns'=>array(
       array(
         'header'=>'',
+        'value'=>'Yii::t("common", ucfirst($data->type))',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'Sum of NR'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Yii::t("common", ucfirst($data->type)), array(
+        'value'=>'CHtml::link($data->countryRank, array(
           "/results/statistics",
           "name"=>"sum-of-ranks",
           "type"=>$data->type,
           "region"=>"' . $person->countryId . '",
         ))',
-      ),
-      array(
-        'name'=>Yii::t('statistics', 'Sum of NR'),
-        'type'=>'raw',
-        'value'=>'$data->countryRank',
       ),
       array(
         'name'=>Yii::t('statistics', 'NR'),
@@ -168,7 +167,12 @@
       array(
         'name'=>Yii::t('statistics', 'Sum of CR'),
         'type'=>'raw',
-        'value'=>'$data->continentRank',
+        'value'=>'CHtml::link($data->continentRank, array(
+          "/results/statistics",
+          "name"=>"sum-of-ranks",
+          "type"=>$data->type,
+          "region"=>"' . $person->country->continentId . '",
+        ))',
       ),
       array(
         'name'=>Yii::t('statistics', 'CR'),
@@ -178,7 +182,12 @@
       array(
         'name'=>Yii::t('statistics', 'Sum of WR'),
         'type'=>'raw',
-        'value'=>'$data->worldRank',
+        'value'=>'CHtml::link($data->worldRank, array(
+          "/results/statistics",
+          "name"=>"sum-of-ranks",
+          "type"=>$data->type,
+          "region"=>"World",
+        ))',
       ),
       array(
         'name'=>Yii::t('statistics', 'WR'),
