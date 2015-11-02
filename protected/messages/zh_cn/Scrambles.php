@@ -19,9 +19,10 @@
 return array (
   'Competition' => '',
   'Event' => '',
-  'Group' => '分组',
   'Is Extra' => '',
+  'No.' => '',
   'Round' => '',
+  'Group' => '分组',
   'Scramble' => '打乱',
   'Scramble Num' => '序号',
 );

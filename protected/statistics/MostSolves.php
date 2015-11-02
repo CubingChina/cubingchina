@@ -31,25 +31,7 @@ class MostSolves extends Statistics {
 		->leftJoin('Countries country', 'p.countryId=country.id')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id');
 		if (isset($statistic['region'])) {
-			switch ($statistic['region']) {
-				case 'World':
-					break;
-				case 'Africa':
-				case 'Asia':
-				case 'Oceania':
-				case 'Europe':
-				case 'North America':
-				case 'South America':
-					$command->where('country.continentId=:region', array(
-						':region'=>'_' . $statistic['region'],
-					));
-					break;
-				default:
-					$command->where('p.countryId=:region', array(
-						':region'=>$statistic['region'],
-					));
-					break;
-			}
+			ActiveRecord::applyRegionCondition($command, $statistic['region'], 'p.countryId');
 		} else {
 			$command->where('p.countryId="China"');
 		}

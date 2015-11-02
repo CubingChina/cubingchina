@@ -12,6 +12,7 @@ class Statistics {
 	public static $lists = array(
 		'Sum of all single ranks'=>array(
 			'type'=>'single',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'more'=>array(
 				'/results/statistics',
@@ -22,6 +23,7 @@ class Statistics {
 		'Sum of all average ranks'=>array(
 			'type'=>'average',
 			'class'=>'SumOfRanks',
+			'region'=>'China',
 			'more'=>array(
 				'/results/statistics',
 				'name'=>'sum-of-ranks',
@@ -30,12 +32,14 @@ class Statistics {
 		),
 		'Sum of 2x2 to 5x5 single ranks'=>array(
 			'type'=>'single',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
 			'width'=>6,
 		),
 		'Sum of 2x2 to 5x5 average ranks'=>array(
 			'type'=>'average',
+			'region'=>'China',
 			'class'=>'SumOfRanks',
 			'eventIds'=>array('222', '333', '444', '555'),
 			'width'=>6,
@@ -220,7 +224,10 @@ class Statistics {
 		$cacheKey = 'results_competition_data_' . $row['competitionId'];
 		$cache = Yii::app()->cache;
 		if (self::$_competitions === array()) {
-			$competitions = Competition::model()->cache(self::CACHE_EXPIRE)->findAll('wca_competition_id!=""');
+			$competitions = Competition::model()->with('location', 'location.province', 'location.city')->cache(self::CACHE_EXPIRE)->findAll(array(
+				'condition'=>'wca_competition_id!=""',
+				'select'=>'t.name, t.name_zh, t.wca_competition_id',
+			));
 			foreach ($competitions as $competition) {
 				self::$_competitions[$competition->wca_competition_id] = array(
 					'name'=>$competition->name,

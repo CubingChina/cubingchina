@@ -135,6 +135,52 @@
       ),
     ),
   )); ?>
+  <h2><?php echo Yii::t('statistics', 'Sum of Ranks'); ?></h2>
+  <?php
+  $this->widget('GridView', array(
+    'dataProvider'=>new CArrayDataProvider($sumOfRanks, array(
+      'pagination'=>false,
+      'sort'=>false,
+    )),
+    'front'=>true,
+    'template'=>'{items}',
+    'columns'=>array(
+      array(
+        'header'=>'',
+        'value'=>'Yii::t("common", ucfirst($data->type))',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'Sum of NR'),
+        'type'=>'raw',
+        'value'=>'$data->countryRank',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'NR'),
+        'type'=>'raw',
+        'value'=>'$data->ranks["NR"]',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'Sum of CR'),
+        'type'=>'raw',
+        'value'=>'$data->continentRank',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'CR'),
+        'type'=>'raw',
+        'value'=>'$data->ranks["CR"]',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'Sum of WR'),
+        'type'=>'raw',
+        'value'=>'$data->worldRank',
+      ),
+      array(
+        'name'=>Yii::t('statistics', 'WR'),
+        'type'=>'raw',
+        'value'=>'$data->ranks["WR"]',
+      ),
+    ),
+  )); ?>
   <?php if (!empty($wcPodiums)): ?>
   <h2><?php echo Yii::t('Results', 'World Championship Podiums'); ?></h2>
   <?php

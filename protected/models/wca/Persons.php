@@ -44,25 +44,7 @@ class Persons extends ActiveRecord {
 				$command->andWhere('p.gender="m"');
 				break;
 		}
-		switch ($region) {
-			case 'World':
-				break;
-			case 'Africa':
-			case 'Asia':
-			case 'Oceania':
-			case 'Europe':
-			case 'North America':
-			case 'South America':
-				$command->andWhere('country.continentId=:region', array(
-					':region'=>'_' . $region,
-				));
-				break;
-			default:
-				$command->andWhere('p.countryId=:region', array(
-					':region'=>$region,
-				));
-				break;
-		}
+		self::applyRegionCondition($command, $region, 'p.countryId');
 		if ($name) {
 			$names = explode(' ', $name);
 			foreach ($names as $key=>$value) {
@@ -139,8 +121,15 @@ class Persons extends ActiveRecord {
 		$db = Yii::app()->wcaDb;
 		//个人排名
 		$ranks = RanksSingle::model()->with(array(
-			'average',
-			'event',
+			'average'=>array(
+				'together'=>true,
+			),
+			'person'=>array(
+				'together'=>true,
+			),
+			'event'=>array(
+				'together'=>true,
+			),
 		))->findAllByAttributes(array(
 			'personId'=>$id
 		), array(
@@ -149,6 +138,15 @@ class Persons extends ActiveRecord {
 		$personRanks = array();
 		foreach ($ranks as $rank) {
 			$personRanks[$rank->eventId] = $rank;
+		}
+		//sum of ranks
+		$sumOfRanks = RanksSum::model()->findAllByAttributes(array(
+			'personId'=>$id,
+		), array(
+			'order'=>'type DESC',
+		));
+		foreach ($sumOfRanks as $key=>$sumOfRank) {
+			$sumOfRank->getRanks();
 		}
 		//奖牌数量
 		$command = $db->createCommand();
@@ -187,6 +185,7 @@ class Persons extends ActiveRecord {
 		$best = $average = PHP_INT_MAX;
 		$results = Results::model()->with(array(
 			'competition',
+			'competition.country',
 			'round',
 			'event',
 		))->findAllByAttributes(array(
@@ -335,6 +334,7 @@ class Persons extends ActiveRecord {
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
+			'sumOfRanks'=>$sumOfRanks,
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
 			'historyWR'=>$historyWR,
