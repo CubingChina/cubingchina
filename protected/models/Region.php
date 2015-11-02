@@ -124,6 +124,10 @@ class Region extends ActiveRecord {
 		));
 	}
 
+	public static function isContinent($region) {
+		return in_array($region, array('Africa', 'Asia', 'Oceania', 'Europe', 'North America', 'South America'));
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
