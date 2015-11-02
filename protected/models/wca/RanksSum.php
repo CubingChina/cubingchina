@@ -41,6 +41,15 @@ class RanksSum extends ActiveRecord {
 		return $this->_ranks;
 	}
 
+	public function getRank($key) {
+		$ranks = $this->getRanks();
+		$rank = $ranks[$key];
+		if ($rank <= 10) {
+			return CHtml::tag('span', array('class'=>'top10'), $rank);
+		}
+		return $rank;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

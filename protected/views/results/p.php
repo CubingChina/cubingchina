@@ -163,7 +163,7 @@
       array(
         'name'=>Yii::t('statistics', 'NR'),
         'type'=>'raw',
-        'value'=>'$data->ranks["NR"]',
+        'value'=>'$data->getRank("NR")',
       ),
       array(
         'name'=>Yii::t('statistics', 'Sum of CR'),
@@ -173,7 +173,7 @@
       array(
         'name'=>Yii::t('statistics', 'CR'),
         'type'=>'raw',
-        'value'=>'$data->ranks["CR"]',
+        'value'=>'$data->getRank("CR")',
       ),
       array(
         'name'=>Yii::t('statistics', 'Sum of WR'),
@@ -183,7 +183,7 @@
       array(
         'name'=>Yii::t('statistics', 'WR'),
         'type'=>'raw',
-        'value'=>'$data->ranks["WR"]',
+        'value'=>'$data->getRank("WR")',
       ),
     ),
   )); ?>
