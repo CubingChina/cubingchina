@@ -229,7 +229,7 @@ class ResultsController extends Controller {
 				'expression'=>'count($results["competitions"])',
 				'type'=>'max',
 			),
-			'emulation'=>array(
+			'career'=>array(
 				'expression'=>'strtotime(sprintf("%d-%02d-%02d",
 					$results["lastCompetition"]->year,
 					$results["lastCompetition"]->month,

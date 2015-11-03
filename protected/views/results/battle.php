@@ -38,9 +38,9 @@
         <?php endforeach; ?>
       </tr>
       <tr>
-        <td colspan="2"><?php echo Yii::t('Results', 'Emulation'); ?></td>
+        <td colspan="2"><?php echo Yii::t('Results', 'Career'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'emulation'); ?>>
+        <td<?php echo $this->getWinnerCSSClass($winners, $person, 'career'); ?>>
           <?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d',
             $person['results']['firstCompetition']->year, $person['results']['firstCompetition']->month, $person['results']['firstCompetition']->day,
             $person['results']['lastCompetition']->year, $person['results']['lastCompetition']->endMonth, $person['results']['lastCompetition']->endDay);
