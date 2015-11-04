@@ -130,9 +130,8 @@ $this->renderPartial('registerSide', $_data_);
 </div>
 <?php
 $emailMsg = Yii::t('common', 'Please confirm your email:\\n{email}');
-Yii::app()->clientScript->registerCssFile('/f/plugins/bootstrap-datepicker/css/datepicker.css');
-Yii::app()->clientScript->registerScriptFile('/f/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js?v=20151008');
+Yii::app()->clientScript->registerPackage('datepicker');
+Yii::app()->clientScript->registerPackage('pinyin');
 $allCities = json_encode($allCities);
 Yii::app()->clientScript->registerScript('register2',
 <<<EOT

@@ -141,7 +141,76 @@ $config = array(
 			'defaultScriptFilePosition'=>CClientScript::POS_END,
 			'coreScriptPosition'=>CClientScript::POS_END,
 			'packages'=>array(
-				'jquery'=>false,
+				'jquery'=>array(
+					'baseUrl'=>'',
+					'js'=>array('js/jquery.min.js'),
+				),
+				'board'=>array(
+					'baseUrl'=>'b',
+					'js'=>array(
+						'js/plugins/bootstrap/bootstrap.min.js',
+						'js/plugins/hisrc/hisrc.js',
+						'js/flex.js',
+						'js/main.js?v=20150729',
+					),
+					'depends'=>array('jquery'),
+				),
+				'datepicker'=>array(
+					'baseUrl'=>'f/plugins/bootstrap-datepicker',
+					'css'=>array(
+						'css/datepicker.css',
+					),
+					'js'=>array(
+						'js/bootstrap-datepicker.js',
+					),
+				),
+				'datetimepicker'=>array(
+					'baseUrl'=>'b',
+					'css'=>array(
+						'css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css',
+					),
+					'js'=>array(
+						'js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js',
+					),
+				),
+				'tokenfield'=>array(
+					'baseUrl'=>'b',
+					'css'=>array(
+						'css/plugins/bootstrap-tokenfield/tokenfield-typeahead.min.css',
+						'css/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.css',
+					),
+					'js'=>array(
+						'js/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.js',
+						'js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js',
+					),
+				),
+				'morris'=>array(
+					'baseUrl'=>'b',
+					'css'=>array(
+						'css/plugins/morris/morris.css',
+					),
+					'js'=>array(
+						'js/plugins/morris/raphael-2.1.0.min.js',
+						'js/plugins/morris/morris.js',
+					),
+				),
+				'pinyin'=>array(
+					'js'=>array(
+						'f/js/pinyin.min.js',
+					),
+				),
+				'leaflet'=>array(
+					'baseUrl'=>'f',
+					'css'=>array(
+						'leaflet/leaflet.css',
+						'leaflet/plugins/MarkerCluster/MarkerCluster.css',
+						'leaflet/plugins/MarkerCluster/MarkerCluster.Default.css',
+					),
+					'js'=>array(
+						'leaflet/leaflet.js',
+						'leaflet/plugins/MarkerCluster/leaflet.markercluster.js',
+					),
+				),
 			),
 		),
 		'mailer'=>array(

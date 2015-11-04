@@ -57,11 +57,8 @@ $this->renderPartial('side', $_data_);
   <?php $this->endWidget(); ?>
 </div>
 <?php
-Yii::app()->clientScript->registerCssFile('/f/plugins/bootstrap-datepicker/css/datepicker.css');
-Yii::app()->clientScript->registerScriptFile('/f/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/pinyin.min.js');
 $allCities = json_encode($allCities);
-Yii::app()->clientScript->registerScript('register2',
+Yii::app()->clientScript->registerScript('edit',
 <<<EOT
   var allCities = {$allCities};
   $(document)

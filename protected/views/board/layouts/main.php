@@ -43,12 +43,5 @@
     <!-- /#page-wrapper -->
     <!-- end MAIN PAGE CONTENT -->
   </div>
-  <!-- GLOBAL SCRIPTS -->
-  <script src="/js/jquery.min.js"></script>
-  <script src="/b/js/plugins/bootstrap/bootstrap.min.js"></script>
-  <!-- HISRC Retina Images -->
-  <script src="/b/js/plugins/hisrc/hisrc.js"></script>
-  <script src="/b/js/flex.js"></script>
-  <script src="/b/js/main.js?v=20150729"></script>
 </body>
 </html>

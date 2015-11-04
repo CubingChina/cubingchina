@@ -592,11 +592,7 @@ $mapData = json_encode(array_map(function($data) {
   $data['city_name'] = ActiveRecord::getModelAttributeValue($data, 'city_name');
   return $data;
 }, $mapData));
-Yii::app()->clientScript->registerCssFile('/f/leaflet/leaflet.css');
-Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.css');
-Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.Default.css');
-Yii::app()->clientScript->registerScriptFile('/f/leaflet/leaflet.js');
-Yii::app()->clientScript->registerScriptFile('/f/leaflet/plugins/MarkerCluster/leaflet.markercluster.js');
+Yii::app()->clientScript->registerPackage('leaflet');
 Yii::app()->clientScript->registerScript('person',
 <<<EOT
   $(window).resize(function() {

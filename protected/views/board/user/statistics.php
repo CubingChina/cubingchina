@@ -224,9 +224,7 @@
 </div>
 
 <?php
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/morris/morris.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/morris/raphael-2.1.0.min.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/morris/morris.js');
+Yii::app()->clientScript->registerPackage('morris');
 $dailyKeys = array_keys($dailyData[0]);
 $dailyKeys = json_encode(array_slice($dailyKeys, 1));
 $dailyData = json_encode($dailyData);

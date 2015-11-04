@@ -193,8 +193,7 @@
   </div>
 </div>
 <?php
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
+Yii::app()->clientScript->registerPackage('datetimepicker');
 $allCities = json_encode($cities);
 Yii::app()->clientScript->registerScript('user',
 <<<EOT
