@@ -456,12 +456,8 @@
 </div>
 <?php
 $this->widget('Editor');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/tokenfield-typeahead.min.css');
-Yii::app()->clientScript->registerCssFile('/b/css/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.css');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/bootstrap-tokenfield.min.js');
-Yii::app()->clientScript->registerScriptFile('/b/js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js');
+Yii::app()->clientScript->registerPackage('datetimepicker');
+Yii::app()->clientScript->registerPackage('tokenfield');
 $allCities = json_encode($cities);
 $tokens = json_encode(array_map(function($organizer) {
   return array(

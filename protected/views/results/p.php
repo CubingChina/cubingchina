@@ -41,7 +41,7 @@
           <span class="info-value"><?php echo strtolower($person->gender) == 'f' ? Yii::t('common', 'Female') : Yii::t('common', 'Male'); ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
-          <span class="info-title"><?php echo Yii::t('Results', 'Emulation'); ?>:</span>
+          <span class="info-title"><?php echo Yii::t('Results', 'Career'); ?>:</span>
           <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay); ?></span>
         </div>
       </div>
@@ -592,11 +592,7 @@ $mapData = json_encode(array_map(function($data) {
   $data['city_name'] = ActiveRecord::getModelAttributeValue($data, 'city_name');
   return $data;
 }, $mapData));
-Yii::app()->clientScript->registerCssFile('/f/leaflet/leaflet.css');
-Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.css');
-Yii::app()->clientScript->registerCssFile('/f/leaflet/plugins/MarkerCluster/MarkerCluster.Default.css');
-Yii::app()->clientScript->registerScriptFile('/f/leaflet/leaflet.js');
-Yii::app()->clientScript->registerScriptFile('/f/leaflet/plugins/MarkerCluster/leaflet.markercluster.js');
+Yii::app()->clientScript->registerPackage('leaflet');
 Yii::app()->clientScript->registerScript('person',
 <<<EOT
   $(window).resize(function() {

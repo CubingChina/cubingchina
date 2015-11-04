@@ -39,7 +39,7 @@ return array (
   'Competition' => '赛事',
   'Competitions' => '参赛次数',
   'Current Personal Records' => '个人最好成绩',
-  'Emulation' => '参赛经历',
+  'Career' => '参赛经历',
   'History of Continental Records' => '历史洲际纪录',
   'History of National Records' => '历史国家/地区纪录',
   'History of World Records' => '历史世界纪录',

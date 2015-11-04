@@ -35,16 +35,5 @@
 </head>
 <body class="<?php echo $this->id; ?> <?php echo $this->id; ?>-<?php echo $this->action->id; ?>">
   <?php echo $content; ?>
-  <!-- Javascript -->
-  <?php if (DEV): ?>
-  <script type="text/javascript" src="/f/plugins/jquery-1.10.2.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/plugins/bootstrap/js/bootstrap.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/plugins/bootstrap-hover-dropdown.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/plugins/back-to-top.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/plugins/jquery-placeholder/jquery.placeholder.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <script type="text/javascript" src="/f/js/main.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <?php else: ?>
-  <script type="text/javascript" src="/f/js/main.min.js?v=<?php echo Yii::app()->params->jsVer; ?>"></script>
-  <?php endif; ?>
 </body>
 </html>

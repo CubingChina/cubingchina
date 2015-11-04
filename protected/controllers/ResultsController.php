@@ -153,7 +153,7 @@ class ResultsController extends Controller {
 
 	public function actionP() {
 		$id = $this->sGet('id');
-		$person = Persons::model()->with('country')->cache(86400)->findByAttributes(array('id' => $id));
+		$person = Persons::model()->with('country')->findByAttributes(array('id' => $id));
 		if ($person == null) {
 			$this->redirect(array('/results/person'));
 		}
@@ -229,7 +229,7 @@ class ResultsController extends Controller {
 				'expression'=>'count($results["competitions"])',
 				'type'=>'max',
 			),
-			'emulation'=>array(
+			'career'=>array(
 				'expression'=>'strtotime(sprintf("%d-%02d-%02d",
 					$results["lastCompetition"]->year,
 					$results["lastCompetition"]->month,

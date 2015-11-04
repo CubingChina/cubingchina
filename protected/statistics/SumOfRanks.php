@@ -30,7 +30,7 @@ class SumOfRanks extends Statistics {
 			'type'=>'raw',
 		);
 		//计算未参赛的项目应该排第几
-		$penalty = RanksPenalty::getPenlties($statistic['type'], $statistic['region']);
+		$penalty = Yii::app()->cache->getData('RanksPenalty::getPenlties', array($statistic['type'], $statistic['region']));
 		foreach ($eventIds as $key=>$eventId) {
 			if (!isset($ranks[$eventId])) {
 				unset($eventIds[$key]);
