@@ -1,8 +1,8 @@
 <?php
-// uncomment the following to define a path alias
-// Yii::setPathOfAlias('local','path/to/local-folder');
-// This is the main Web application configuration. Any writable
-// CWebApplication properties can be configured here.
+
+Yii::setPathOfAlias('application', APP_PATH . '/protected');
+Yii::import('application.components.*');
+
 $config = array(
 	'basePath'=>dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
 	'name'=>'Cubing China',
@@ -16,7 +16,6 @@ $config = array(
 		'application.models.*',
 		'application.models.wca.*',
 		'application.forms.*',
-		'application.components.*',
 		'application.levels.*',
 		'application.widgets.*',
 		'application.extensions.debugtb.*',
@@ -224,7 +223,7 @@ $config = array(
 			'fromname'=>'请勿回复DO NOT REPLY',
 			'api'=>array(
 				'user'=>'cubingchina',
-				'key'=>'',
+				'key'=>Env::get('MAILER_KEY'),
 			),
 		),
 	),
@@ -258,12 +257,12 @@ $config = array(
 			'types'=>array(
 				'pc'=>array(
 					'appId'=>'1436844603321385',
-					'securityKey'=>'',
+					'securityKey'=>Env::get('PAYMENT_NOWPAY_PC'),
 					'deviceType'=>'02',
 				),
 				'mobile'=>array(
 					'appId'=>'1436844653265386',
-					'securityKey'=>'',
+					'securityKey'=>Env::get('PAYMENT_NOWPAY_MOBILE'),
 					'deviceType'=>'06',
 				),
 			),
@@ -272,7 +271,7 @@ $config = array(
 			'gateway'=>'https://mapi.alipay.com/gateway.do',
 			'partner'=>'2088002487607846',
 			'seller_email'=>'qiyuuu@gmail.com',
-			'key'=>'',
+			'key'=>Env::get('PAYMENT_ALIPAY'),
 		),
 	),
 );
