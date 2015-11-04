@@ -383,6 +383,20 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
+		if ($this->module === null) {
+			$clientScript = Yii::app()->clientScript;
+			$min = DEV ? '' : '.min';
+			$version = Yii::app()->params->jsVer;
+			if (DEV) {
+				$clientScript->packages['main']['js'][] = 'plugins/jquery-1.10.2.min.js?v=' . $version;
+				$clientScript->packages['main']['js'][] = 'plugins/bootstrap/js/bootstrap.min.js?v=' . $version;
+				$clientScript->packages['main']['js'][] = 'plugins/bootstrap-hover-dropdown.min.js?v=' . $version;
+				$clientScript->packages['main']['js'][] = 'plugins/back-to-top.min.js?v=' . $version;
+				$clientScript->packages['main']['js'][] = 'plugins/jquery-placeholder/jquery.placeholder.min.js?v=' . $version;
+			}
+			$clientScript->packages['main']['js'][] = 'js/main' . $min . '.js?v=' . $version;
+			$clientScript->registerPackage('main');
+		}
 		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($this->_IEVersion = $matches[1], $this->minIEVersion, '<')
 			&& !($this->id == 'site' && $action->id == 'page' && $this->sGet('view') == 'please-update-your-browser')
 		) {

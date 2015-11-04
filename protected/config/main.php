@@ -155,6 +155,10 @@ $config = array(
 					),
 					'depends'=>array('jquery'),
 				),
+				'main'=>array(
+					'baseUrl'=>'f',
+					'depends'=>array('jquery'),
+				),
 				'datepicker'=>array(
 					'baseUrl'=>'f/plugins/bootstrap-datepicker',
 					'css'=>array(
@@ -195,8 +199,9 @@ $config = array(
 					),
 				),
 				'pinyin'=>array(
+					'baseUrl'=>'f',
 					'js'=>array(
-						'f/js/pinyin.min.js',
+						'js/pinyin.min.js',
 					),
 				),
 				'leaflet'=>array(
@@ -241,7 +246,7 @@ $config = array(
 		'weiboSharePic'=>'http://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>0 ? '/static/' : 'http://s.cubingchina.com/',
-		'jsVer'=>'20150918',
+		'jsVer'=>'20151104',
 		'cssVer'=>'20151031',
 		'avatar'=>array(
 			'size'=>2097152,
