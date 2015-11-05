@@ -17,9 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Sum of CR' => '洲际排名总和',
-  'Sum of NR' => '地区排名总和',
-  'Sum of WR' => '世界排名总和',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中国各项平均成绩前100占席',
@@ -73,8 +70,11 @@ return array (
   'Score' => '计分',
   'Silver' => '银',
   'Solves/Attempts' => '复原/尝试',
+  'Sum of CR' => '洲际排名总和',
   'Sum of Country Ranks' => '各地综合排行榜',
+  'Sum of NR' => '地区排名总和',
   'Sum of Ranks' => '排名总和',
+  'Sum of WR' => '世界排名总和',
   'WR' => '世界排名',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本页面列出了与官方赛事及中国选手相关的趣味统计，所有的统计数据源自{url}。',
   'Welcome to the Cubing China results page, where you can find the personal rankings, official records, and fun statistics.' => '欢迎浏览粗饼网的官方成绩页面！你可以在此查看魔方选手的个人排名、官方纪录与趣味统计等信息。',

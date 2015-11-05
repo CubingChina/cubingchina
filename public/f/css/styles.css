@@ -2631,3 +2631,6 @@ td pre {
   color: inherit;
   line-height: inherit;
 }
+.large {
+  font-size: 2em;
+}

@@ -64,8 +64,8 @@ $this->renderPartial('registerSide', $_data_);
     $model, 'local_name', array('id'=>'local_name'),
     $form->labelEx($model, 'local_name'),
     Html::activeTextField($model, 'local_name', array('readonly'=>$model->wcaid != '' && $model->local_name != '')),
-    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-danger">请使用真实姓名注册粗饼网并报名比赛。</div>' : '',
-    $form->error($model, 'local_name', array('class'=>'text-danger'))
+    $form->error($model, 'local_name', array('class'=>'text-danger')),
+    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-danger">请使用真实姓名注册粗饼网并报名比赛。</div>' : ''
   );?>
   <?php echo Html::formGroup(
     $model, 'gender', array(),

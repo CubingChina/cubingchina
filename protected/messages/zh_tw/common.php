@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Please <b>DO NOT</b> repeat registration!' => '<span class="large">請勿重復注冊！</span>',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
