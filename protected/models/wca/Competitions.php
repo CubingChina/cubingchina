@@ -30,9 +30,35 @@ class Competitions extends ActiveRecord {
 	public $c;
 	private $_location;
 
+	public static $championshipPatterns = array(
+		'continent'=>array(
+			'Asia'=>'^AsianChampionship[[:digit:]]\{4\}$',
+			'Europe'=>'^Euro[[:digit:]]\{4\}$',
+		),
+		'country'=>array(
+			'China'=>'^ChinaChampionship[[:digit:]]\{4\}$',
+			'Japan'=>'^Japan(Open)?[[:digit:]]\{4\}$',
+			'USA'=>'^USNationals[[:digit:]]\{4\}$',
+			'United Kingdom'=>'^UKChampionship[[:digit:]]\{4\}$',
+			'Thailand'=>'^Thailand(Championship)?[[:digit:]]\{4\}$',
+		),
+	);
+
 	public $region;
 	public $event;
 	public $number;
+
+	public static function getChampionshipPattern($id) {
+		if (isset(self::$championshipPatterns[$id])) {
+			return self::$championshipPatterns[$id];
+		}
+		foreach (self::$championshipPatterns as $patterns) {
+			if (isset($patterns[$id])) {
+				return $patterns[$id];
+			}
+		}
+		return '';
+	}
 
 	public static function getResultsTypes() {
 		return array(

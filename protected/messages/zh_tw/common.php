@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Please <b>DO NOT</b> repeat registration!' => '<span class="large">請勿重復注冊！</span>',
   'WCA ID' => '',
   'more' => '',
   'About us' => '關於本站',
@@ -165,6 +164,7 @@ return array (
   'Pending' => '待審核',
   'Personal Page' => '選手主頁',
   'Persons' => '選手',
+  'Please <b>DO NOT</b> repeat registration!' => '<span class="large">請勿重復注冊！</span>',
   'Please choose a payment channel.' => '請選擇一個支付渠道：',
   'Please choose the correct English name below' => '請在下面選擇正確的英文名',
   'Please confirm your email:\\n{email}' => '請確認你的電子郵件：\\n{email}',

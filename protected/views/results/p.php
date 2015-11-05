@@ -240,6 +240,94 @@
     ),
   )); ?>
   <?php endif; ?>
+  <?php if (!empty($ccPodiums)): ?>
+  <h2><?php echo Yii::t('Results', 'Continental Championship Podiums'); ?></h2>
+  <?php
+  $this->widget('GroupGridView', array(
+    'dataProvider'=>new CArrayDataProvider($ccPodiums, array(
+      'pagination'=>false,
+      'sort'=>false,
+    )),
+    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+    'groupKey'=>'competition.year',
+    'groupHeader'=>'$data->competitionLink',
+    'columns'=>array(
+      array(
+        'name'=>Yii::t('common', 'Event'),
+        'type'=>'raw',
+        'value'=>'CHtml::tag("span", array(
+          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+          "title"=>Yii::t("event", $data->event->cellName),
+        ), Yii::t("event", $data->event->cellName))',
+      ),
+      array(
+        'name'=>Yii::t('Results', 'Place'),
+        'type'=>'raw',
+        'value'=>'$data->pos',
+        'headerHtmlOptions'=>array('class'=>'place'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Single'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("best")',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Average'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("average")',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Detail'),
+        'type'=>'raw',
+        'value'=>'$data->detail',
+      ),
+    ),
+  )); ?>
+  <?php endif; ?>
+  <?php if (!empty($ncPodiums)): ?>
+  <h2><?php echo Yii::t('Results', 'National Championship Podiums'); ?></h2>
+  <?php
+  $this->widget('GroupGridView', array(
+    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $ncPodiums), array(
+      'pagination'=>false,
+      'sort'=>false,
+    )),
+    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+    'groupKey'=>'competition.year',
+    'groupHeader'=>count($ncPodiums) === 1 ? '$data->competitionLink' : 'Region::getIconName($data->personCountryId, $data->personCountry->iso2) . " - " . $data->competitionLink',
+    'columns'=>array(
+      array(
+        'name'=>Yii::t('common', 'Event'),
+        'type'=>'raw',
+        'value'=>'CHtml::tag("span", array(
+          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+          "title"=>Yii::t("event", $data->event->cellName),
+        ), Yii::t("event", $data->event->cellName))',
+      ),
+      array(
+        'name'=>Yii::t('Results', 'Place'),
+        'type'=>'raw',
+        'value'=>'$data->pos',
+        'headerHtmlOptions'=>array('class'=>'place'),
+      ),
+      array(
+        'name'=>Yii::t('common', 'Single'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("best")',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Average'),
+        'type'=>'raw',
+        'value'=>'$data->getTime("average")',
+      ),
+      array(
+        'name'=>Yii::t('common', 'Detail'),
+        'type'=>'raw',
+        'value'=>'$data->detail',
+      ),
+    ),
+  )); ?>
+  <?php endif; ?>
   <?php if (array_sum($overAll) > 0): ?>
   <div class="row">
     <?php $overAllDataProvider = new CArrayDataProvider(array($overAll), array(
