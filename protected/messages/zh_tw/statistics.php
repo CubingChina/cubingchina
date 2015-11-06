@@ -17,9 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Sum of CR' => '洲際排名總和',
-  'Sum of NR' => '地區排名總和',
-  'Sum of WR' => '世界排名總和',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中國各項平均成績前100占席',
@@ -73,8 +70,11 @@ return array (
   'Score' => '計分',
   'Silver' => '銀',
   'Solves/Attempts' => '復原/嘗試',
+  'Sum of CR' => '洲際排名總和',
   'Sum of Country Ranks' => '各地綜合排行榜',
+  'Sum of NR' => '地區排名總和',
   'Sum of Ranks' => '排名總和',
+  'Sum of WR' => '世界排名總和',
   'WR' => '世界排名',
   'We generate several WCA statistics about Chinese competitions and competitors, based on {url}.' => '本頁面列出了與官方賽事及中國選手相關的趣味統計，所有的統計數據源自{url}。',
   'Welcome to the Cubing China results page, where you can find the personal rankings, official records, and fun statistics.' => '歡迎瀏覽粗餅網的官方成績頁面！你可以在此查看魔方選手的個人排名、官方紀錄與趣味統計等信息。',

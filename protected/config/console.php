@@ -1,7 +1,10 @@
 <?php
+define('APP_PATH', dirname(dirname(__DIR__)));
 define('ENV', isset($_SERVER['ENV']) ? $_SERVER['ENV'] : 'production');
 define('DEV', ENV === 'dev');
-require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
-$config = require dirname(__FILE__) . '/main.php';
+if (is_file($autoload = APP_PATH . '/protected/vendor/autoload.php')) {
+	require $autoload;
+}
+$config = require APP_PATH . '/protected/config/main.php';
 unset($config['components']['log']['routes'][count($config['components']['log']['routes']) - 1]);
 return $config;

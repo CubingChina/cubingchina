@@ -32,6 +32,110 @@ class Results extends ActiveRecord {
 		return array('single', 'average');
 	}
 
+	public static function buildChampionshipPodiums() {
+		$events = Events::getNormalEvents();
+		$podiums = array();
+		//continent championship podiums
+		$patterns = Competitions::getChampionshipPattern('continent');
+		foreach ($patterns as $region=>$pattern) {
+			$competitions = Competitions::model()->findAll(array(
+				'condition'=>"id REGEXP '$pattern'",
+				'order'=>'year DESC',
+			));
+			foreach ($competitions as $competition) {
+				$temp = array();
+				foreach ($events as $eventId=>$eventName) {
+					//top 10 is enough
+					$top10 = Results::model()->with(array(
+						'personCountry'=>array(
+							'condition'=>'personCountry.continentId=:continentId',
+							'params'=>array(
+								':continentId'=>'_' . $region,
+							),
+						),
+					))->findAllByAttributes(array(
+						'competitionId'=>$competition->id,
+						'eventId'=>"$eventId",
+						'roundId'=>array('c', 'f'),
+					), array(
+						'condition'=>'best>0',
+						'order'=>'pos ASC',
+						'limit'=>10,
+					));
+					if ($top10 === array()) {
+						continue;
+					}
+					$i = 0;
+					$pos = 0;
+					foreach ($top10 as $result) {
+						if ($result->pos != $pos) {
+							$i++;
+							$pos = $result->pos;
+							//only top 3
+							if ($i > 3) {
+								break;
+							}
+						}
+						//the official pos might not be the regional podiums pos
+						$result->pos = $i;
+						$podiums[$result->personId]['continent'][] = $result;
+					}
+				}
+			}
+		}
+		//country championship podiums
+		$patterns = Competitions::getChampionshipPattern('country');
+		foreach ($patterns as $region=>$pattern) {
+			$competitions = Competitions::model()->findAll(array(
+				'condition'=>"id REGEXP '$pattern'",
+				'order'=>'year DESC',
+			));
+			//4 regions for China Championship
+			if ($region === 'China') {
+				$region = array('China', 'Hong Kong', 'Macau', 'Taiwan');
+			}
+			foreach ($competitions as $competition) {
+				foreach ($events as $eventId=>$eventName) {
+					//top 10 is enough
+					$top10 = Results::model()->findAllByAttributes(array(
+						'competitionId'=>$competition->id,
+						'eventId'=>"$eventId",
+						'roundId'=>array('c', 'f'),
+						'personCountryId'=>$region,
+					), array(
+						'condition'=>'best>0',
+						'order'=>'pos ASC',
+						'limit'=>10,
+					));
+					if ($top10 === array()) {
+						continue;
+					}
+					$i = 0;
+					$pos = 0;
+					foreach ($top10 as $result) {
+						if ($result->pos != $pos) {
+							$i++;
+							$pos = $result->pos;
+							//only top 3
+							if ($i > 3) {
+								break;
+							}
+						}
+						//the official pos might not be the regional podiums pos
+						$result->pos = $i;
+						$podiums[$result->personId]['country'][$result->personCountryId][] = $result;
+					}
+				}
+			}
+		}
+		return $podiums;
+	}
+
+	public static function getChampionshipPodiums($personId) {
+		$podiums = Yii::app()->cache->getData('Results::buildChampionshipPodiums');
+		return isset($podiums[$personId]) ? $podiums[$personId] : array();
+	}
+
 	public static function getRankings($region = 'China', $type = 'single', $event = '333', $gender = 'all', $page = 1) {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_rankings_{$region}_{$type}_{$event}_{$gender}_{$page}";
@@ -406,6 +510,7 @@ class Results extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'person'=>array(self::BELONGS_TO, 'Persons', 'personId'),
+			'personCountry'=>array(self::BELONGS_TO, 'Countries', 'personCountryId'),
 			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
 			'round'=>array(self::BELONGS_TO, 'Rounds', 'roundId'),
 			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),

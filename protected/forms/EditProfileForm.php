@@ -34,12 +34,12 @@ class EditProfileForm extends CFormModel {
 				'id' => $this->wcaid,
 				'subid' => 1,
 			));
-			if ($person !== null) {
-				$name = $user->name;
-				if ($user->name_zh !== '') {
-					$name .= ' (' . $user->name_zh . ')';
-				}
-				if ($name !== $person->name && $user->name !== $person->name) {
+			$existUser = User::model()->findByAttributes(array(
+				'wcaid'=>$this->wcaid,
+				'status'=>User::STATUS_NORMAL,
+			));
+			if ($person !== null && $existUser === null) {
+				if ($user->getCompetitionName() !== $person->name && $user->name !== $person->name) {
 					$this->addError('wcaid', Yii::t('common', 'Wrong WCA ID'));
 				}
 			} else {

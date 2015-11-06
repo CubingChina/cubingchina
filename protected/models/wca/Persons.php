@@ -223,6 +223,10 @@ class Persons extends ActiveRecord {
 			'condition'=>'competitionId LIKE "WC%"',
 			'order'=>'competition.year DESC, event.rank ASC',
 		));
+		$podiums = Results::getChampionshipPodiums($id);
+		//洲/国锦赛获奖记录
+		$ccPodiums = isset($podiums['continent']) ? $podiums['continent'] : array();
+		$ncPodiums = isset($podiums['country']) ? $podiums['country'] : array();
 		//WR们
 		$historyWR = Results::model()->with(array(
 			'competition',
@@ -337,6 +341,8 @@ class Persons extends ActiveRecord {
 			'sumOfRanks'=>$sumOfRanks,
 			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
 			'wcPodiums'=>$wcPodiums,
+			'ccPodiums'=>$ccPodiums,
+			'ncPodiums'=>$ncPodiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,

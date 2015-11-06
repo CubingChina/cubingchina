@@ -2,6 +2,7 @@
 
 class WcaCommand extends CConsoleCommand {
 	public function actionUpdate() {
+		$this->log('start update');
 		$competitions = Competition::model()->findAllByAttributes(array(
 			'type'=>Competition::TYPE_WCA,
 		), array(
@@ -22,10 +23,16 @@ class WcaCommand extends CConsoleCommand {
 		foreach ($competitions as $competition) {
 			$num[$competition->id] = $db->createCommand(str_replace('%id%', $competition->id, $sql))->execute();
 		}
-		echo 'updated wcaid: ', array_sum($num), PHP_EOL;
+		$this->log('updated wcaid:', array_sum($num));
+		$result = Results::buildChampionshipPodiums();
+		$this->log('build podiums:', $result ? 1 : 0);
 		Yii::import('application.statistics.*');
 		Yii::app()->cache->flush();
 		$data = Statistics::getData(true);
-		echo 'set results_statistics_data: ', $data ? 1 : 0, PHP_EOL;
+		$this->log('set results_statistics_data:', $data ? 1 : 0);
+	}
+
+	private function log() {
+		printf("[%s] %s\n", date('Y-m-d H:i:s'), implode(' ', func_get_args()));
 	}
 }

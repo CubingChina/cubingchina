@@ -33,6 +33,7 @@ class RegisterForm extends CFormModel {
 			array('email', 'match', 'pattern'=>'{^www\..+@.+$}i', 'not'=>true),
 			array('wcaid', 'checkWcaId'),
 			array('birthday', 'checkBirthday', 'on'=>'step2'),
+			array('name', 'checkName', 'on'=>'step2'),
 			array('country_id', 'checkRegion', 'on'=>'step2'),
 			array('mobile', 'checkMobile', 'on'=>'step2'),
 			array('gender', 'checkGender', 'on'=>'step2'),
@@ -77,6 +78,19 @@ class RegisterForm extends CFormModel {
 				break;
 			case 3:
 				break;
+		}
+	}
+
+	public function checkName() {
+		if ($this->country_id == 1) {
+			$user = User::model()->findByAttributes(array(
+				'name_zh'=>$this->local_name,
+				'birthday'=>$this->birthday,
+				'status'=>User::STATUS_NORMAL,
+			));
+			if ($user !== null) {
+				$this->addError('local_name', Yii::t('common', 'Please <b>DO NOT</b> repeat registration!'));
+			}
 		}
 	}
 
@@ -196,47 +210,19 @@ class RegisterForm extends CFormModel {
 		$user->country_id = $this->country_id;
 		$user->province_id = $this->province_id;
 		$user->city_id = $this->city_id;
+		$user->role = User::ROLE_UNCHECKED;
 		$user->reg_time = time();
 		$user->reg_ip = Yii::app()->request->getUserHostAddress();
-		//@todo 判断是否需要发注册邮件
-		$sendMail = true;
-		//判断系统语言，用中文的你懂的
-		// $userLanguage = strtolower(str_replace('-', '_', current(explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']))));
-		// if ($userLanguage == 'zh_cn') {
-		// 	$person = WcaPersons::model()->findByAttributes(array(
-		// 		'id'=>$this->wcaid,
-		// 	));
-		// 	if ($person !== null) {
-		// 		if (date('Y', $this->birthday) == $person->year
-		// 			&& date('n', $this->birthday) == $person->month
-		// 			&& date('j', $this->birthday) == $person->day
-		// 		) {
-		// 			$sendMail = false;
-		// 		}
-		// 	}
-		// } else {
-		// 	$sendMail = false;
-		// }
 		$recentUserCount = User::model()->countByAttributes(array(
 			'reg_ip'=>$user->reg_ip,
 		), 'reg_time > :reg_time', array(
 			'reg_time'=>time() - 86400 * 7,
 		));
-		if ($recentUserCount > 0) {
-			$sendMail = true;
-		}
-		if ($sendMail === true) {
-			$user->role = User::ROLE_UNCHECKED;
-		} else {
-			$user->role = User::ROLE_CHECKED;
-		}
 		if ($user->save()) {
 			$identity = new UserIdentity($this->email,$this->password);
 			$identity->id = $user->id;
 			Yii::app()->user->login($identity);
-			if ($sendMail) {
-				Yii::app()->mailer->sendActivate($user);
-			}
+			Yii::app()->mailer->sendActivate($user);
 			return true;
 		} else {
 			return false;
