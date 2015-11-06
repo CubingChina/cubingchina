@@ -19,12 +19,12 @@
 return array (
   'Average' => '',
   'Best' => '',
-  'Continental Championship Podiums' => '洲際錦標賽領獎台',
+  'Continental Championship Podiums' => '洲錦賽領獎台',
   'Country' => '',
   'Event' => '',
   'Format' => '',
   'ID' => '',
-  'National Championship Podiums' => '國家錦標賽領獎台',
+  'National Championship Podiums' => '國家賽領獎台',
   'Person Name' => '',
   'Pos' => '',
   'Regional Average Record' => '',
@@ -55,5 +55,5 @@ return array (
   'Place' => '排名',
   'Records' => '紀錄',
   'WR' => '世界紀錄',
-  'World Championship Podiums' => '世界錦標賽領獎台',
+  'World Championship Podiums' => '世錦賽領獎台',
 );
