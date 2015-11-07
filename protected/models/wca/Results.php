@@ -65,19 +65,21 @@ class Results extends ActiveRecord {
 					if ($top10 === array()) {
 						continue;
 					}
-					$i = 0;
 					$pos = 0;
+					$lastPos = 0;
+					$count = 0;
 					foreach ($top10 as $result) {
-						if ($result->pos != $pos) {
-							$i++;
-							$pos = $result->pos;
+						$count++;
+						if ($result->pos != $lastPos) {
+							$pos = $count;
+							$lastPos = $result->pos;
 							//only top 3
-							if ($i > 3) {
+							if ($count > 3) {
 								break;
 							}
 						}
 						//the official pos might not be the regional podiums pos
-						$result->pos = $i;
+						$result->pos = $pos;
 						$podiums[$result->personId]['continent'][] = $result;
 					}
 				}
@@ -124,7 +126,7 @@ class Results extends ActiveRecord {
 							}
 						}
 						//the official pos might not be the regional podiums pos
-						$result->pos = $i;
+						$result->pos = $pos;
 						$podiums[$result->personId]['country'][$result->personCountryId][] = $result;
 					}
 				}
