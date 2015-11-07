@@ -110,14 +110,16 @@ class Results extends ActiveRecord {
 					if ($top10 === array()) {
 						continue;
 					}
-					$i = 0;
 					$pos = 0;
+					$lastPos = 0;
+					$count = 0;
 					foreach ($top10 as $result) {
-						if ($result->pos != $pos) {
-							$i++;
-							$pos = $result->pos;
+						$count++;
+						if ($result->pos != $lastPos) {
+							$pos = $count;
+							$lastPos = $result->pos;
 							//only top 3
-							if ($i > 3) {
+							if ($count > 3) {
 								break;
 							}
 						}
