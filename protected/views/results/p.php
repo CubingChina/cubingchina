@@ -288,13 +288,13 @@
   <h2><?php echo Yii::t('Results', 'National Championship Podiums'); ?></h2>
   <?php
   $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $ncPodiums), array(
+    'dataProvider'=>new CArrayDataProvider($ncPodiums, array(
       'pagination'=>false,
       'sort'=>false,
     )),
     'itemsCssClass'=>'table table-condensed table-hover table-boxed',
     'groupKey'=>'competition.year',
-    'groupHeader'=>count($ncPodiums) === 1 ? '$data->competitionLink' : 'Region::getIconName($data->personCountryId, $data->personCountry->iso2) . " - " . $data->competitionLink',
+    'groupHeader'=>'$data->competitionLink',
     'columns'=>array(
       array(
         'name'=>Yii::t('common', 'Event'),

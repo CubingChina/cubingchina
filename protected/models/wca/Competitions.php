@@ -32,8 +32,8 @@ class Competitions extends ActiveRecord {
 
 	public static $championshipPatterns = array(
 		'continent'=>array(
-			'Asia'=>'^AsianChampionship[[:digit:]]\{4\}$',
-			'Europe'=>'^Euro[[:digit:]]\{4\}$',
+			'_Asia'=>'^AsianChampionship[[:digit:]]\{4\}$',
+			'_Europe'=>'^Euro[[:digit:]]\{4\}$',
 		),
 		'country'=>array(
 			'China'=>'^ChinaChampionship[[:digit:]]\{4\}$',
