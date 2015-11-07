@@ -136,7 +136,7 @@ $(function() {
         battleControl.hide();
       }
       if (list.length > 0) {
-        battleButton.attr('href', '/results/battle?' + $.param({ids: ids}));
+        battleButton.attr('href', '/results/battle/' + ids.join('-'));
       } else {
         battleButton.attr('href', 'javascript: void(0)');
       }

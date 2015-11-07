@@ -175,7 +175,11 @@ class ResultsController extends Controller {
 	}
 
 	public function actionBattle() {
-		$ids = array_unique(array_map('strtoupper', $this->aGet('ids')));
+		$ids = isset($_GET['ids']) ? $_GET['ids'] : array();
+		if (is_string($ids)) {
+			$ids = explode('-', $ids);
+		}
+		$ids = array_unique(array_map('strtoupper', $ids));
 		$ids = array_slice($ids, 0, 4);
 		$persons = array();
 		$names = array();
