@@ -24,8 +24,12 @@ class WcaCommand extends CConsoleCommand {
 			$num[$competition->id] = $db->createCommand(str_replace('%id%', $competition->id, $sql))->execute();
 		}
 		$this->log('updated wcaid:', array_sum($num));
-		$result = Results::buildChampionshipPodiums();
-		$this->log('build podiums:', $result ? 1 : 0);
+		foreach (Competitions::$championshipPatterns as $type=>$patterns) {
+			foreach ($patterns as $regionId=>$pattern) {
+				Yii::app()->cache->getData('Results::buildChampionshipPodiums', array($type, $regionId));
+			}
+		}
+		$this->log('podiums built');
 		Yii::import('application.statistics.*');
 		Yii::app()->cache->flush();
 		$data = Statistics::getData(true);
