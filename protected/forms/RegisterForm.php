@@ -87,6 +87,8 @@ class RegisterForm extends CFormModel {
 				'name_zh'=>$this->local_name,
 				'birthday'=>$this->birthday,
 				'status'=>User::STATUS_NORMAL,
+			), array(
+				'condition'=>'role!=' . User::ROLE_UNCHECKED,
 			));
 			if ($user !== null) {
 				$this->addError('local_name', Yii::t('common', 'Please <b>DO NOT</b> repeat registration!'));
