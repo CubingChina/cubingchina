@@ -155,6 +155,18 @@ $(function() {
       return list;
     }
   })();
+  $('#expand-fee').on('click', function() {
+    var that = $(this);
+    var fa = that.find('i.fa');
+    var dd = that.parent().next();
+    if (fa.hasClass('fa-plus')) {
+      fa.removeClass('fa-plus').addClass('fa-minus');
+      dd.height('auto');
+    } else {
+      fa.addClass('fa-plus').removeClass('fa-minus');
+      dd.height(104).css('overflow-y', 'hidden');
+    }
+  })
   if (location.hostname === 'cubingchina.com'){
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

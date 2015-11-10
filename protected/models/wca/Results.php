@@ -33,6 +33,8 @@ class Results extends ActiveRecord {
 	}
 
 	public static function buildChampionshipPodiums($type, $regionId) {
+		//special china championship
+		$chineseRegioins = array('China', 'Hong kong', 'Macau', 'Taiwan');
 		$events = Events::getNormalEvents();
 		//for the past events
 		$events['magic'] = 'Rubik\'s Magic';
@@ -41,6 +43,9 @@ class Results extends ActiveRecord {
 		$podiums = array();
 		//continent championship podiums
 		$patterns = Competitions::getChampionshipPattern($type);
+		if (in_array($regionId, $chineseRegioins)) {
+			$regionId = 'China';
+		}
 		if (!isset($patterns[$regionId])) {
 			return array();
 		}
@@ -49,6 +54,9 @@ class Results extends ActiveRecord {
 			'condition'=>"id REGEXP '$pattern'",
 			'order'=>'year DESC',
 		));
+		if ($regionId === 'China') {
+			$regionId = $chineseRegioins;
+		}
 		foreach ($competitions as $competition) {
 			foreach ($events as $eventId=>$eventName) {
 				$attributes = array(

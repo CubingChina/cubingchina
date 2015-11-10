@@ -582,6 +582,8 @@ class Competition extends ActiveRecord {
 		$schedules = $this->schedule;
 		usort($schedules, array($this, 'sortSchedules'));
 		$hasGroup = false;
+		$hasCutOff = false;
+		$hasTimeLimit = false;
 		$hasNumber = false;
 		$specialEvents = array(
 			'333fm'=>array(),
@@ -590,6 +592,12 @@ class Competition extends ActiveRecord {
 		foreach ($schedules as $key=>$schedule) {
 			if (trim($schedule->group) != '') {
 				$hasGroup = true;
+			}
+			if ($schedule->cut_off > 0) {
+				$hasCutOff = true;
+			}
+			if ($schedule->time_limit > 0) {
+				$hasTimeLimit = true;
 			}
 			if ($schedule->number > 0) {
 				$hasNumber = true;
@@ -642,6 +650,12 @@ class Competition extends ActiveRecord {
 			);
 			if ($hasGroup === false) {
 				unset($temp['Group']);
+			}
+			if ($hasCutOff === false) {
+				unset($temp['Cut Off']);
+			}
+			if ($hasTimeLimit === false) {
+				unset($temp['Time Limit']);
 			}
 			if ($hasNumber === false) {
 				unset($temp['Competitors']);
