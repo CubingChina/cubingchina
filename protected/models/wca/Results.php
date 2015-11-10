@@ -34,7 +34,7 @@ class Results extends ActiveRecord {
 
 	public static function buildChampionshipPodiums($type, $regionId) {
 		//special china championship
-		$chineseRegioins = array('China', 'Hong kong', 'Macau', 'Taiwan');
+		$chineseRegioins = array('China', 'Hong Kong', 'Macau', 'Taiwan');
 		$events = Events::getNormalEvents();
 		//for the past events
 		$events['magic'] = 'Rubik\'s Magic';
