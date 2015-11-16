@@ -16,7 +16,9 @@
     <dd><?php echo $competition->getDisplayDate(); ?></dd>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
     <dd>
-      <?php if ($competition->isMultiLocation()): ?>
+      <?php if ($competition->tba == Competition::YES): ?>
+      <?php echo Yii::t('common', 'To be announced'); ?>
+      <?php elseif ($competition->isMultiLocation()): ?>
       <ol>
       <?php foreach ($competition->location as $location): ?>
         <li>
