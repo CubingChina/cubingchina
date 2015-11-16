@@ -182,13 +182,13 @@ class CompetitionController extends Controller {
 		if ($this->action->id !== 'detail') {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttribute($this->getAttributeName('name'))=>$competition->getUrl(),
+				$competition->getAttributeValue('name')=>$competition->getUrl(),
 				ucfirst($this->action->id),
 			);
 		} else {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttribute($this->getAttributeName('name')),
+				$competition->getAttributeValue('name'),
 			);
 		}
 	}
