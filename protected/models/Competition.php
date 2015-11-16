@@ -321,7 +321,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getLocationInfo($type) {
-		if ($this->isMultiLocation()) {
+		if ($this->tba) {
+			return Yii::t('common', 'To be announced');
+		} elseif ($this->isMultiLocation()) {
 			return Yii::t('common', 'Multiple');
 		} else {
 			switch ($type) {

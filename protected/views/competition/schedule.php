@@ -1,4 +1,5 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
+  <?php if ($competition->tba == Competition::NO): ?>
   <div class="row schedule-event">
     <?php
       foreach ($competition->events as $event=>$value):
@@ -20,8 +21,10 @@
     </div>
     <?php endforeach; ?>
   </div>
+  <?php endif; ?>
   <?php $hasManyStages = false; ?>
   <?php $listableSchedules = $competition->getListableSchedules(); ?>
+  <?php if (!empty($listableSchedules)): ?>
   <?php foreach ($listableSchedules as $day=>$stages): ?>
     <?php foreach ($stages as $stage=>$schedules): ?>
       <?php if (count($stages) > 1): ?>
@@ -29,7 +32,6 @@
       <?php endif; ?>
     <?php endforeach; ?>
   <?php endforeach; ?>
-  <?php if (!empty($listableSchedules)): ?>
   <?php foreach ($listableSchedules as $day=>$stages): ?>
   <div class="panel panel-info">
     <div class="panel-heading">
