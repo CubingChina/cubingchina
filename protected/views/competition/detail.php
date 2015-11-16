@@ -59,11 +59,18 @@
         return Yii::t('event', $competition->getFullEventName($event));
       }, array_keys($competition->getRegistrationEvents()))); ?>
     </dd>
-    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?> <?php echo CHtml::tag('span', array(
-      'class'=>'btn btn-xs btn-primary',
-      'id'=>'expand-fee',
-    ), Html::fontAwesome('plus') . 'more'); ?></dt>
+    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?>
+      <?php if ($competition->tba == Competition::NO): ?>
+      <?php echo CHtml::tag('span', array(
+        'class'=>'btn btn-xs btn-primary',
+        'id'=>'expand-fee',
+      ), Html::fontAwesome('plus') . 'more'); ?>
+      <?php endif; ?>
+    </dt>
     <dd style="height:104px;overflow-y:hidden">
+      <?php if ($competition->tba == Competition::YES): ?>
+      <?php echo Yii::t('common', 'To be announced'); ?>
+      <?php else: ?>
       <table>
         <thead>
           <tr>
@@ -95,12 +102,13 @@
           <?php endforeach; ?>
         </tbody>
       </table>
+      <?php endif; ?>
     </dd>
     <?php if ($competition->person_num > 0): ?>
     <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
     <dd><?php echo $competition->person_num; ?></dd>
     <?php endif; ?>
-    <?php if ($competition->reg_start > 0): ?>
+    <?php if ($competition->reg_start > 0 && $competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Registration Starting Time'); ?></dt>
     <dd><?php echo date('Y-m-d H:i:s', $competition->reg_start); ?></dd>
     <?php endif; ?>
