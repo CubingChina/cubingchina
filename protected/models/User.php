@@ -321,7 +321,7 @@ class User extends ActiveRecord {
 				$url = Yii::app()->createUrl('/site/' . $action, array('c'=>$userAction->code));
 				break;
 		}
-		return Yii::app()->request->getBaseUrl(true) . $url;
+		return $url;
 	}
 
 	public function getAvatarList() {

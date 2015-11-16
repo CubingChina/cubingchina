@@ -393,8 +393,6 @@ class Controller extends CController {
 				$clientScript->packages['main']['js'][] = 'plugins/bootstrap-hover-dropdown.min.js?v=' . $version;
 				$clientScript->packages['main']['js'][] = 'plugins/back-to-top.min.js?v=' . $version;
 				$clientScript->packages['main']['js'][] = 'plugins/jquery-placeholder/jquery.placeholder.min.js?v=' . $version;
-			} else {
-				Yii::app()->request->setBaseUrl('http://cubingchina.com');
 			}
 			$clientScript->packages['main']['js'][] = 'js/main' . $min . '.js?v=' . $version;
 			$clientScript->registerPackage('main');
