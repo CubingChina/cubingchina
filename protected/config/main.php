@@ -44,9 +44,27 @@ $config = array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
+		'session'=>array(
+			'cookieParams'=>DEV ? array() : array(
+				'domain'=>'.cubingchina.com',
+			),
+			'sessionName'=>'CUBINGCHINA_SID',
+		),
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
+				'http://ac2016.cubingchina.com/'=>array(
+					'competition/detail',
+					'defaultParams'=>array(
+						'name'=>'Asian-Championship-2016',
+					),
+				),
+				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration>'=>array(
+					'competition/<action>',
+					'defaultParams'=>array(
+						'name'=>'Asian-Championship-2016',
+					),
+				),
 				'<page:\d+>'=>'site/index',
 				'faq/<category_id:\d+>'=>array(
 					'faq/index',

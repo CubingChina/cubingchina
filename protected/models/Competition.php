@@ -456,6 +456,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getDisplayDate() {
+		if ($this->tba == self::YES) {
+			return Yii::t('common', 'To be announced');
+		}
 		return Competitions::getDisplayDate($this->date, $this->end_date);
 	}
 
@@ -1206,6 +1209,9 @@ class Competition extends ActiveRecord {
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
+		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
+			$rules[] = array('tba', 'safe');
+		}
 		if (!$this->isOld()) {
 			$rules[] = array('organizers', 'required');
 		} else {
