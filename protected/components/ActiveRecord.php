@@ -4,6 +4,9 @@ class ActiveRecord extends CActiveRecord {
 	private static $_qqwry;
 	private static $_qqwryFile;
 
+	const YES = 1;
+	const NO = 0;
+
 	public function getAttributeValue($name, $forceValue = false) {
 		return self::getModelAttributeValue($this, $name, $forceValue);
 	}
@@ -40,8 +43,8 @@ class ActiveRecord extends CActiveRecord {
 
 	public static function getYesOrNo() {
 		return array(
-			1=>'是',
-			0=>'否',
+			self::YES=>'是',
+			self::NO=>'否',
 		);
 	}
 

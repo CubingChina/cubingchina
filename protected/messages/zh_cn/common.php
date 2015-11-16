@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'To be announced' => '待定',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',

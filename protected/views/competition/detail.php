@@ -104,8 +104,10 @@
     <dt><?php echo Yii::t('Competition', 'Registration Starting Time'); ?></dt>
     <dd><?php echo date('Y-m-d H:i:s', $competition->reg_start); ?></dd>
     <?php endif; ?>
+    <?php if ($competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Registration Ending Time'); ?></dt>
     <dd><?php echo date('Y-m-d H:i:s', $competition->reg_end); ?></dd>
+    <?php endif; ?>
     <?php if (trim(strip_tags($competition->getAttributeValue('information'), '<img>')) != ''): ?>
     <dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>
     <dd>

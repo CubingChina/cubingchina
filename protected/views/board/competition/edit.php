@@ -175,6 +175,9 @@
                 $form->labelEx($model, 'date', array(
                   'label'=>'日期',
                 )),
+                Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) ? $form->labelEx($model, 'tba', array(
+                  'label'=>$form->checkBox($model, 'tba') . '待定',
+                )) : '',
                 Html::activeTextField($model, 'date', array(
                   'class'=>'datetime-picker',
                   'data-date-format'=>'yyyy-mm-dd',
