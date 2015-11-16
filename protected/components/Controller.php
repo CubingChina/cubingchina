@@ -316,6 +316,8 @@ class Controller extends CController {
 			$this->setLanguage($_REQUEST['lang'], true);
 		} else if(isset($_COOKIE['language']) && $_COOKIE['language'] != '') {
 			$this->setLanguage($_COOKIE['language']);
+		} else if(Yii::app()->session->get('language') !== null) {
+			$this->setLanguage(Yii::app()->session->get('language'), true);
 		} else if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
 			$languages = Yii::app()->params->languages;
 			$acceptLanguage = strtolower(str_replace('-', '_', $_SERVER['HTTP_ACCEPT_LANGUAGE']));
@@ -340,6 +342,7 @@ class Controller extends CController {
 			return;
 		}
 		Yii::app()->language = $language;
+		Yii::app()->session->add('language', $language);
 		if ($setCookie) {
 			$_COOKIE['language'] = $language;
 			setcookie('language', $language, time() + 365 * 86400, '/');
