@@ -1,7 +1,7 @@
 <div class="breadcrumbs pull-right hidden-xs">
   <ul class="breadcrumbs-list">
     <li class="breadcrumbs-label"><?php echo Yii::t('common', 'You are here:'); ?></li>
-    <li><a href="/"><?php echo Yii::t('common', 'Home'); ?></a><i class="fa fa-angle-right"></i></li>
+    <li><?php echo CHtml::link(Yii::t('common', 'Home'), array('/site/index')); ?><i class="fa fa-angle-right"></i></li>
     <?php
     $i = 0;
     foreach ($this->breadcrumbs as $label=>$url) {
