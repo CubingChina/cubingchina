@@ -50,7 +50,7 @@ class Mailer extends CApplicationComponent {
 		$message = $this->render('addCompetitionNotice', array(
 			'user'=>Yii::app()->controller->user,
 			'competition'=>$competition,
-			'url'=>Yii::app()->request->getBaseUrl(true) . Yii::app()->createUrl(
+			'url'=>Yii::app()->createUrl(
 				'/board/competition/edit',
 				array(
 					'id'=>$competition->id,
@@ -64,7 +64,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('选手报名通知');
 		$message = $this->render('registrationNotice', array(
 			'registration'=>$registration,
-			'url'=>Yii::app()->request->getBaseUrl(true) . Yii::app()->createUrl(
+			'url'=>Yii::app()->createUrl(
 				'/board/registration/index',
 				array(
 					'Registration'=>array(
