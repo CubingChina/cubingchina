@@ -90,7 +90,7 @@ $config = array(
 			),
 			'appendParams'=>false,
 			'showScriptName'=>false,
-			'baseUrl'=>DEV ? null : 'http://cubingchina.com',
+			// 'baseUrl'=>DEV ? null : 'http://cubingchina.com',
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
