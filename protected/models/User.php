@@ -316,6 +316,7 @@ class User extends ActiveRecord {
 		$userAction->date = time();
 		$userAction->code = $userAction->generateCode();
 		$userAction->save();
+		Yii::app()->urlManager->setBaseUrl('http://cubingchina.com');
 		switch ($action) {
 			default:
 				$url = Yii::app()->createUrl('/site/' . $action, array('c'=>$userAction->code));
