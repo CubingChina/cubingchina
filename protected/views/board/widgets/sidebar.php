@@ -86,6 +86,11 @@
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
             array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 重复用户',
+              'url'=>array('/board/user/repeat'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+            ),
+            array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
               'url'=>array('/board/user/statistics'),
             ),

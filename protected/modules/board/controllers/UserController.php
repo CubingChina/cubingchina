@@ -36,6 +36,15 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionRepeat() {
+		$model = new User('search');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('User');
+		$this->render('repeat', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionRegistration() {
 		$model = new Registration();
 		$model->unsetAttributes();
