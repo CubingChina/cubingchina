@@ -455,6 +455,21 @@ class User extends ActiveRecord {
 		));
 	}
 
+	public function searchRepeat() {
+		$command = Yii::app()->db->createCommand()
+		->select('a.*')
+		->from('user a')
+		->leftJoin('user b', 'a.name_zh=b.name_zh and a.birthday=b.birthday')
+		->where('a.name_zh!="" and a.id!=b.id and a.status=0 and b.status=0')
+		->order('a.name_zh');
+
+		return new NonSortArrayDataProvider($this->findAllBySql($command->getText()), array(
+			'pagination'=>array(
+				'pageSize'=>50,
+			),
+		));
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
