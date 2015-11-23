@@ -39,8 +39,8 @@ class Events extends ActiveRecord {
 		'skewb'=>'average5s',
 		'666'=>'mean3m',
 		'777'=>'mean3m',
-		'444bf'=>'best1m',
-		'555bf'=>'best1m',
+		'444bf'=>'best3m',
+		'555bf'=>'best3m',
 		'333mbf'=>'multibf1',
 		'default'=>'average5s',
 	);
