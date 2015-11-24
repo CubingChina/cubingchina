@@ -1,5 +1,27 @@
 <?php
+
 class RegistrationController extends AdminController {
+
+	const ROW_PER_CARD = 11;
+	const CARD_PER_PAGE = 3;
+	const PAGE_PER_STACK = 50;
+
+	private $imageStyle = array(
+		array(
+			'width'=>72,
+			'height'=>71,
+			'offsetX'=>2,
+			'offsetY'=>-13,
+		),
+		array(
+			'width'=>72,
+			'height'=>71,
+			'offsetX'=>0,
+			'offsetY'=>-14,
+		),
+	);
+	private $scoreCardInfo = array();
+
 	public function actionIndex() {
 		$model = new Registration();
 		$model->unsetAttributes();
@@ -49,7 +71,7 @@ class RegistrationController extends AdminController {
 			$this->redirect(array('/board/registration/index'));
 		}
 		if (isset($_POST['order'])) {
-			$this->exportScoreCard($model, $this->iPost('all'), $this->sPost('order'));
+			$this->exportScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
 		}
 		$this->render('scoreCard', array(
 			'model'=>$model,
@@ -196,7 +218,7 @@ class RegistrationController extends AdminController {
 		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx);
 	}
 
-	public function exportScoreCard($competition, $all = false, $order = 'date') {
+	public function exportScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
 		$registrations = $this->getRegistrations($competition, $all, $order);
 		$tempPath = Yii::app()->runtimePath;
 		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
@@ -207,21 +229,6 @@ class RegistrationController extends AdminController {
 			->setTitle($competition->wca_competition_id ?: $competition->name)
 			->setSubject($competition->name);
 		$sheet = $scoreCard->getSheet(0);
-		//修复图片宽高及偏移
-		$imageStyle = array(
-			array(
-				'width'=>72,
-				'height'=>71,
-				'offsetX'=>2,
-				'offsetY'=>-13,
-			),
-			array(
-				'width'=>72,
-				'height'=>71,
-				'offsetX'=>0,
-				'offsetY'=>-14,
-			),
-		);
 		$drawingCollection = $sheet->getDrawingCollection();
 		foreach ($drawingCollection as $i=>$drawing) {
 			$drawing->setWidthAndHeight(0, 0);
@@ -241,7 +248,7 @@ class RegistrationController extends AdminController {
 			}
 		}
 		//fix the height of last row
-		$rowHeights[$oneCardRow] = 12.75;
+		$rowHeights[$oneCardRow] = 10.75;
 		$staticCells = array(
 			'A2', 'D2', 'F2',
 			'A3', 'B3', 'C3', 'D3', 'E3', 'F3', 'G3', 'H3', 'I3', 'J3',
@@ -260,104 +267,44 @@ class RegistrationController extends AdminController {
 				'row'=>$row,
 			);
 		}
+		$this->scoreCardInfo = compact('rowHeights', 'xfIndexes', 'values', 'drawingCollection');
 		$i = 0;
 		$count = 0;
-		foreach ($registrations as $registration) {
-			$user = $registration->user;
-			$inChina = $user->country_id <= 4;
-			foreach ($registration->events as $event) {
+		if ($split === 'event') {
+			$competition->formatEvents();
+			foreach ($competition->events as $event=>$value) {
+				if ($value['round'] <= 0) {
+					continue;
+				}
 				if ($event === '333fm') {
 					continue;
 				}
-				//merge cells
-				//wcaid
-				$sheet->mergeCells(sprintf('I%d:J%d', $i * $oneCardRow + 1, $i * $oneCardRow + 1));
-				//event
-				$sheet->mergeCells(sprintf('B%d:C%d', $i * $oneCardRow + 2, $i * $oneCardRow + 2));
-				//name
-				$sheet->mergeCells(sprintf('G%d:I%d', $i * $oneCardRow + 2, $i * $oneCardRow + 2));
-
-				//调整各行高度及样式
-				for ($j = 1; $j <= $oneCardRow; $j++) {
-					$row = $i * $oneCardRow + $j;
-					$sheet->getRowDimension($row)->setRowHeight($rowHeights[$j]);
-					foreach ($xfIndexes[$j] as $col=>$xfIndex) {
-						$sheet->getCell($col . $row)->setXfIndex($xfIndex);
+				foreach ($registrations as $registration) {
+					if (!in_array("$event", $registration->events)) {
+						continue;
 					}
+					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
+					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
 				}
-				//填写固定内容
-				foreach ($values as $value) {
-					$row = $i * $oneCardRow + $value['row'];
-					$cell = str_replace('{row}', $row, $value['template']);
-					$sheet->setCellValue($cell, $value['value']);
-				}
-				//比赛名字
-				$row = $i * $oneCardRow + 1;
-				$sheet->setCellValue("A{$row}", sprintf('%s - Score Card', $inChina ? $competition->name_zh : $competition->name));
-				$sheet->setCellValue("I{$row}", $user->wcaid);
-				//项目、轮次、编号等
-				$row = $i * $oneCardRow + 2;
-				$eventName = Events::getFullEventName($event);
-				$eventName = sprintf('%s %s', Yii::t('event', $eventName), $event);
-				$sheet->setCellValue("B{$row}", $eventName);
-				$sheet->setCellValue("E{$row}", '1st');
-				$sheet->setCellValue("J{$row}", 'No.' . $registration->number);
-				$sheet->setCellValue("G{$row}", $inChina && $user->name_zh ? $user->name_zh : $user->name);
-				//8个图片
-				$row = $i * $oneCardRow + 3;
-				$col = 'D';
-				for ($j = 0; $j < 4; $j++) {
-					$drawing = new PHPExcelDrawing();
-					$drawing->setImageIndex($drawingCollection[$j]->getImageIndex());
-					$drawing->setWorksheet($sheet);
-					$drawing->setPath($drawingCollection[$j]->getPath(), false);
-					$drawing->setResizeProportional(false);
-					$drawing->setCoordinates("{$col}{$row}");
-					$drawing->setWidth($imageStyle[0]['width'])->setHeight($imageStyle[0]['height']);
-					$drawing->setOffsetX($imageStyle[0]['offsetX'])->setOffsetY($imageStyle[0]['offsetY']);
-					$col++;
-				}
-				$row = $i * $oneCardRow + 4;
-				$col = 'D';
-				for ($j = 4; $j < 8; $j++) {
-					$drawing = new PHPExcelDrawing();
-					$drawing->setImageIndex($drawingCollection[$j]->getImageIndex());
-					$drawing->setWorksheet($sheet);
-					$drawing->setPath($drawingCollection[$j]->getPath(), false);
-					$drawing->setResizeProportional(false);
-					$drawing->setCoordinates("{$col}{$row}");
-					$drawing->setWidth($imageStyle[1]['width'])->setHeight($imageStyle[1]['height']);
-					$drawing->setOffsetX($imageStyle[1]['offsetX'])->setOffsetY($imageStyle[1]['offsetY']);
-					$col++;
-				}
-				$i++;
-				//400张一个表
-				if ($i == 400) {
-					$path = $tempPath . '/' . $competition->name . ".$count.xlsx";
-					$this->exportToExcel($scoreCard, $path);
-					//释放内存
-					$scoreCard->disconnectWorksheets();
-					unset($scoreCard, $sheet);
-					$count++;
-					$i = 0;
-					//新开excel
-					$scoreCard = PHPExcel_IOFactory::load($templatePath);
-					$scoreCard->getProperties()
-						->setCreator(Yii::app()->params->author)
-						->setLastModifiedBy(Yii::app()->params->author)
-						->setTitle($competition->wca_competition_id ?: $competition->name)
-						->setSubject($competition->name);
-					$sheet = $scoreCard->getSheet(0);
-					//修复图片宽高及偏移
-					$drawingCollection = $sheet->getDrawingCollection();
-					foreach ($drawingCollection as $drawing) {
-						$drawing->setWidthAndHeight(0, 0);
+			}
+		} else {
+			foreach ($registrations as $registration) {
+				foreach ($registration->events as $event) {
+					if ($event === '333fm') {
+						continue;
 					}
+					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
+					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
 				}
 			}
 		}
+		if ($direction !== 'horizontal') {
+			while ($i % 150 !== 0) {
+				$this->fillScoreCard($competition, $sheet, $direction, $i);
+				$i++;
+			}
+		}
 		if ($count == 0) {
-			//修复第四行高度
 			$this->exportToExcel($scoreCard, 'php://output', $competition->name);
 		} else {
 			//压缩成zip
@@ -389,6 +336,114 @@ class RegistrationController extends AdminController {
 			}
 			unlink($tempName);
 			exit;
+		}
+	}
+
+	private function splitScoreCard(&$scoreCard, &$sheet, &$count, &$i, $competition) {
+		$i++;
+		//200页做个分割
+		if ($i == 600) {
+			$path = Yii::app()->runtimePath . '/' . $competition->name . ".$count.xlsx";
+			$this->exportToExcel($scoreCard, $path);
+			//释放内存
+			$scoreCard->disconnectWorksheets();
+			// unset($scoreCard, $sheet);
+			$count++;
+			$i = 0;
+			//新开excel
+			$scoreCard = PHPExcel_IOFactory::load(APP_PATH . '/public/static/score-card.xlsx');
+			$scoreCard->getProperties()
+				->setCreator(Yii::app()->params->author)
+				->setLastModifiedBy(Yii::app()->params->author)
+				->setTitle($competition->wca_competition_id ?: $competition->name)
+				->setSubject($competition->name);
+			$sheet = $scoreCard->getSheet(0);
+			//修复图片宽高及偏移
+			$drawingCollection = $sheet->getDrawingCollection();
+			foreach ($drawingCollection as $drawing) {
+				$drawing->setWidthAndHeight(0, 0);
+			}
+			$this->scoreCardInfo['drawingCollection'] = $drawingCollection;
+		}
+	}
+
+	private function fillScoreCard($competition, $sheet, $direction, $i, $registration = null, $event= '') {
+		$oneCardRow = self::ROW_PER_CARD;
+		if ($direction === 'horizontal') {
+			$baseRow = $i * $oneCardRow;
+		} else {
+			//50张一摞
+			$temp = self::CARD_PER_PAGE * self::PAGE_PER_STACK;
+			$group = floor($i / $temp);
+			$subGroup = $i % $temp;
+			$x = floor($subGroup / self::PAGE_PER_STACK);
+			$y = $subGroup % self::PAGE_PER_STACK;
+			$baseRow = $oneCardRow * ($group * $temp + $y * self::CARD_PER_PAGE + $x);
+		}
+		//merge cells
+		//wcaid
+		$sheet->mergeCells(sprintf('I%d:J%d', $baseRow + 1, $baseRow + 1));
+		//event
+		$sheet->mergeCells(sprintf('B%d:C%d', $baseRow + 2, $baseRow + 2));
+		//name
+		$sheet->mergeCells(sprintf('G%d:I%d', $baseRow + 2, $baseRow + 2));
+
+		//调整各行高度及样式
+		for ($j = 1; $j <= $oneCardRow; $j++) {
+			$row = $baseRow + $j;
+			$sheet->getRowDimension($row)->setRowHeight($this->scoreCardInfo['rowHeights'][$j]);
+			foreach ($this->scoreCardInfo['xfIndexes'][$j] as $col=>$xfIndex) {
+				$sheet->getCell($col . $row)->setXfIndex($xfIndex);
+			}
+		}
+		//填写固定内容
+		foreach ($this->scoreCardInfo['values'] as $value) {
+			$row = $baseRow + $value['row'];
+			$cell = str_replace('{row}', $row, $value['template']);
+			$sheet->setCellValue($cell, $value['value']);
+		}
+		//比赛名字
+		$row = $baseRow + 1;
+		$sheet->setCellValue("A{$row}", sprintf('%s成绩条 - %s Score Card', $competition->name_zh, $competition->name));
+		if ($registration !== null) {
+			$user = $registration->user;
+			$sheet->setCellValue("I{$row}", $user->wcaid);
+			//项目、轮次、编号等
+			$row = $baseRow + 2;
+			$eventName = Events::getFullEventName($event);
+			$eventName = sprintf('%s %s', Yii::t('event', $eventName), $event);
+			$sheet->setCellValue("B{$row}", $eventName);
+			$sheet->setCellValue("E{$row}", '1st');
+			$sheet->setCellValue("J{$row}", 'No.' . $registration->number);
+			$sheet->getStyle("J{$row}")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->setCellValue("G{$row}", $user->country_id <= 4 && $user->name_zh ? $user->name_zh : $user->name);
+		}
+		//8个图片
+		$row = $baseRow + 3;
+		$col = 'D';
+		for ($j = 0; $j < 4; $j++) {
+			$drawing = new PHPExcelDrawing();
+			$drawing->setImageIndex($this->scoreCardInfo['drawingCollection'][$j]->getImageIndex());
+			$drawing->setWorksheet($sheet);
+			$drawing->setPath($this->scoreCardInfo['drawingCollection'][$j]->getPath(), false);
+			$drawing->setResizeProportional(false);
+			$drawing->setCoordinates("{$col}{$row}");
+			$drawing->setWidth($this->imageStyle[0]['width'])->setHeight($this->imageStyle[0]['height']);
+			$drawing->setOffsetX($this->imageStyle[0]['offsetX'])->setOffsetY($this->imageStyle[0]['offsetY']);
+			$col++;
+		}
+		$row = $baseRow + 4;
+		$col = 'D';
+		for ($j = 4; $j < 8; $j++) {
+			$drawing = new PHPExcelDrawing();
+			$drawing->setImageIndex($this->scoreCardInfo['drawingCollection'][$j]->getImageIndex());
+			$drawing->setWorksheet($sheet);
+			$drawing->setPath($this->scoreCardInfo['drawingCollection'][$j]->getPath(), false);
+			$drawing->setResizeProportional(false);
+			$drawing->setCoordinates("{$col}{$row}");
+			$drawing->setWidth($this->imageStyle[1]['width'])->setHeight($this->imageStyle[1]['height']);
+			$drawing->setOffsetX($this->imageStyle[1]['offsetX'])->setOffsetY($this->imageStyle[1]['offsetY']);
+			$col++;
 		}
 	}
 

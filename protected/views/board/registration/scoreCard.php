@@ -37,9 +37,32 @@
                   <input type="radio" value="user.name" name="order"> 按姓名首字母排序
                 </label>
               </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
               <div class="radio">
                 <label>
-                  <input type="radio" value="random" name="order" disabled> 随机排序
+                  <input type="radio" value="user" name="split" checked> 按人分割
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="event" name="split"> 按项目分割
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              <div class="radio">
+                <label>
+                  <input type="radio" value="vertical" name="direction" checked> 纵向分割（50张一摞）
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="horizontal" name="direction"> 横向分割
                 </label>
               </div>
             </div>
