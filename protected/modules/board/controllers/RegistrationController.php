@@ -4,8 +4,8 @@ class RegistrationController extends AdminController {
 
 	const ROW_PER_CARD = 11;
 	const CARD_PER_PAGE = 3;
-	const PAGE_PER_STACK = 50;
 
+	private $pagePerStack = 50;
 	private $imageStyle = array(
 		array(
 			'width'=>72,
@@ -71,6 +71,7 @@ class RegistrationController extends AdminController {
 			$this->redirect(array('/board/registration/index'));
 		}
 		if (isset($_POST['order'])) {
+			$this->pagePerStack = $this->iPost('stack', 50);
 			$this->exportScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
 		}
 		$this->render('scoreCard', array(
@@ -299,7 +300,8 @@ class RegistrationController extends AdminController {
 			}
 		}
 		if ($direction !== 'horizontal') {
-			while ($i % 150 !== 0) {
+			$temp = self::CARD_PER_PAGE * $this->pagePerStack;
+			while ($i % $temp !== 0) {
 				$this->fillScoreCard($competition, $sheet, $direction, $i);
 				$i++;
 			}
@@ -372,12 +374,12 @@ class RegistrationController extends AdminController {
 		if ($direction === 'horizontal') {
 			$baseRow = $i * $oneCardRow;
 		} else {
-			//50张一摞
-			$temp = self::CARD_PER_PAGE * self::PAGE_PER_STACK;
+			//n张一摞
+			$temp = self::CARD_PER_PAGE * $this->pagePerStack;
 			$group = floor($i / $temp);
 			$subGroup = $i % $temp;
-			$x = floor($subGroup / self::PAGE_PER_STACK);
-			$y = $subGroup % self::PAGE_PER_STACK;
+			$x = floor($subGroup / $this->pagePerStack);
+			$y = $subGroup % $this->pagePerStack;
 			$baseRow = $oneCardRow * ($group * $temp + $y * self::CARD_PER_PAGE + $x);
 		}
 		//merge cells

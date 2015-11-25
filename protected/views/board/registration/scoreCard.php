@@ -57,12 +57,42 @@
             <div class="col-lg-10 col-lg-offset-2">
               <div class="radio">
                 <label>
-                  <input type="radio" value="vertical" name="direction" checked> 纵向分割（50张一摞）
+                  <input type="radio" value="vertical" name="direction" checked> 纵向分割
                 </label>
               </div>
               <div class="radio">
                 <label>
                   <input type="radio" value="horizontal" name="direction"> 横向分割
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              以下选项仅限纵向分割有效
+              <div class="radio">
+                <label>
+                  <input type="radio" value="10" name="stack"> 10张一摞
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="20" name="stack"> 20张一摞
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="50" name="stack" checked> 50张一摞
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="100" name="stack"> 100张一摞
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="200" name="stack"> 200张一摞
                 </label>
               </div>
             </div>
