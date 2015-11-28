@@ -301,12 +301,16 @@ class RegistrationController extends AdminController {
 		}
 		if ($direction !== 'horizontal') {
 			$temp = self::CARD_PER_PAGE * $this->pagePerStack;
-			while ($i % $temp !== 0) {
-				$this->fillScoreCard($competition, $sheet, $direction, $i);
-				$i++;
-			}
+			$total = ceil($i / $temp) * $temp;
+		} else {
+			$total = ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE;
+		}
+		while ($i < $total) {
+			$this->fillScoreCard($competition, $sheet, $direction, $i);
+			$i++;
 		}
 		if ($count == 0) {
+			$sheet->getPageSetup()->setPrintArea('A1:J' . (ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE * self::ROW_PER_CARD));
 			$this->exportToExcel($scoreCard, 'php://output', $competition->name);
 		} else {
 			//压缩成zip
@@ -346,6 +350,7 @@ class RegistrationController extends AdminController {
 		//200页做个分割
 		if ($i == 600) {
 			$path = Yii::app()->runtimePath . '/' . $competition->name . ".$count.xlsx";
+			$sheet->getPageSetup()->setPrintArea('A1:J' . (ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE * self::ROW_PER_CARD));
 			$this->exportToExcel($scoreCard, $path);
 			//释放内存
 			$scoreCard->disconnectWorksheets();
