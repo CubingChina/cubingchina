@@ -83,7 +83,7 @@ $(function() {
           //todo notifycation
           return false;
         }
-        event = e;
+        mouseEvent = e;
         addBattlePerson(id, name);
       } else {
         removeBattlePerson(id);
@@ -124,8 +124,8 @@ $(function() {
         });
         if (lastLength < list.length) {
           battleControl.stop().css({
-            right: event ? $(window).width() - event.clientX : 200,
-            bottom: event ? $(window).height() - event.clientY : 200
+            right: mouseEvent ? $(window).width() - mouseEvent.clientX : 200,
+            bottom: mouseEvent ? $(window).height() - mouseEvent.clientY : 200
           }).animate({
             right: 5,
             bottom: 50

@@ -23,6 +23,11 @@
       'value'=>'$data->competition->getDisplayDate()',
     ),
     array(
+      'header'=>'No.',
+      'type'=>'raw',
+      'value'=>'$data->userNumber',
+    ),
+    array(
       'name'=>'events',
       'type'=>'raw',
       'value'=>'$data->getRegistrationEvents()',
