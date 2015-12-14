@@ -23,8 +23,8 @@ $this->renderPartial('registerSide', $_data_);
     $model, 'email', array(),
     $form->labelEx($model, 'email'),
     Html::activeTextField($model, 'email', array('type'=>'email')),
-    Yii::app()->language === 'zh_cn' ? '<div class="text-danger">请检查所填写的邮箱正确并有效。QQ邮箱请注意不要带“<strong>www.</strong>”。</div>' : '',
-    $form->error($model, 'email', array('class'=>'text-danger'))
+    $form->error($model, 'email', array('class'=>'text-danger')),
+    Yii::app()->language === 'zh_cn' ? '<div class="text-warning">请检查所填写的邮箱正确并有效。</div>' : ''
   );?>
   <?php echo Html::formGroup(
     $model, 'password', array(),
@@ -65,7 +65,7 @@ $this->renderPartial('registerSide', $_data_);
     $form->labelEx($model, 'local_name'),
     Html::activeTextField($model, 'local_name', array('readonly'=>$model->wcaid != '' && $model->local_name != '')),
     $form->error($model, 'local_name', array('class'=>'text-danger')),
-    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-danger">请使用真实姓名注册粗饼网并报名比赛。</div>' : ''
+    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-warning">请使用真实姓名注册粗饼网并报名比赛。</div>' : ''
   );?>
   <?php echo Html::formGroup(
     $model, 'gender', array(),
@@ -129,6 +129,7 @@ $this->renderPartial('registerSide', $_data_);
   <?php $this->endWidget(); ?>
 </div>
 <?php
+$emailConfirmation = Yii::app()->language == 'zh_cn' ? 1 : 0;
 $emailMsg = Yii::t('common', 'Please confirm your email:\\n{email}');
 Yii::app()->clientScript->registerPackage('datepicker');
 Yii::app()->clientScript->registerPackage('pinyin');
@@ -149,11 +150,21 @@ Yii::app()->clientScript->registerScript('register2',
       });
     })
     .on('submit', 'form', function(e) {
-      var email = $('#RegisterForm_email').val();
+      var email = $.trim($('#RegisterForm_email').val());
+      var confirmation = {$emailConfirmation};
       var msg = '{$emailMsg}';
       if (!confirm(msg.replace('{email}', email))) {
         e.preventDefault();
         return false;
+      }
+      if (confirmation && /^\d{10,}@qq\.com$/.test(email)) {
+        var i = 3;
+        while (i-- > 0) {
+          if (!confirm('请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！\\n请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！\\n请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！')) {
+            e.preventDefault();
+            return false;
+          }
+        }
       }
       $('[readonly]').prop('disabled', false);
     });
