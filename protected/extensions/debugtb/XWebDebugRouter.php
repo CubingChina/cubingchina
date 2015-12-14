@@ -90,8 +90,12 @@ class arrayDumper
 		self::dumpInternal($var,0);
 		if($highlight)
 		{
-			$result=highlight_string("<?php\n".self::$_output,true);
-			self::$_output=preg_replace('/&lt;\\?php<br \\/>/','',$result,1);
+			try {
+				$result=highlight_string("<?php\n".self::$_output,true);
+				self::$_output=preg_replace('/&lt;\\?php<br \\/>/','',$result,1);
+			} catch (ParseError $e) {
+				
+			}
 		}
 		return self::$_output;
 	}
