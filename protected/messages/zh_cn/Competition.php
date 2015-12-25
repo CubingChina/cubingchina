@@ -48,7 +48,7 @@ return array (
   'Links' => '链接',
   'Location' => '地点',
   'Main Page' => '详情',
-  'Name' => '姓名',
+  'Name' => '比赛名称',
   'No competitions now.' => '暂无比赛',
   'Now' => '即日起',
   'Organizers' => '主办方',

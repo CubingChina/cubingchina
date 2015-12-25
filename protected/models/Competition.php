@@ -883,7 +883,7 @@ class Competition extends ActiveRecord {
 			),
 			array(
 				'name'=>'name',
-				'header'=>Yii::t('Competition', 'Name'),
+				'header'=>Yii::t('Results', 'Name'),
 				'headerHtmlOptions'=>array(
 					'class'=>'header-username',
 				),
