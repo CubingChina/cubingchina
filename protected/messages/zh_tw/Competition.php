@@ -48,7 +48,7 @@ return array (
   'Links' => '鏈接',
   'Location' => '地點',
   'Main Page' => '詳情',
-  'Name' => '姓名',
+  'Name' => '比賽名稱',
   'No competitions now.' => '暫無比賽',
   'Now' => '即日起',
   'Organizers' => '主辦方',
