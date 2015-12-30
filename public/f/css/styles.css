@@ -2528,12 +2528,13 @@ td .checkbox {
   right: 5px;
   bottom: 50px;
 }
-#battle-control button {
+#battle-control .button {
   position: absolute;
   z-index: 10;
   display: block;
   width: 35px;
   height: 35px;
+  line-height: 35px;
   background: #84aac9;
   color: #fff;
   text-align: center;
@@ -2552,29 +2553,23 @@ td .checkbox {
   -o-transition: all 0.4s ease-in-out;
   margin-top: 5px;
 }
-#battle-control button:hover {
+#battle-control .button:hover {
   background: #6091ba;
 }
-#battle-control button.rocket {
+#battle-control .button.rocket {
   position: relative;
   z-index: 99;
 }
-#battle-control button.go {
+#battle-control .button.go {
   z-index: 2;
   bottom: 0;
   padding: 0;
 }
-#battle-control button.go a {
-  color: #fff;
-  display: block;
-  height: 100%;
-  line-height: 35px;
-}
-#battle-control.active button.go,
-#battle-control:hover button.go {
+#battle-control.active .button.go,
+#battle-control:hover .button.go {
   bottom: 40px;
 }
-#battle-control button.truncate {
+#battle-control .button.truncate {
   z-index: 1;
   bottom: 40px;
   left: 40px;

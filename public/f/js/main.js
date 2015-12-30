@@ -57,8 +57,8 @@ $(function() {
     var lastLength = 0;
     var battleControl = $('<div id="battle-control">').appendTo(document.body);
     var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
-    var truncateButton = $('<button class="truncate"><i class="fa fa-close"></i></button>').appendTo(battleControl);
-    var battleButton = $('<a target="_blank">GO</a>').appendTo($('<button class="go"></button').appendTo(battleControl));
+    var truncateButton = $('<button class="truncate button"><i class="fa fa-close"></i></button>').appendTo(battleControl);
+    var battleButton = $('<a target="_blank" class="button go">GO</a>').appendTo(battleControl);
     truncateButton.on('click', function() {
       $.each($.cookie(), function(key, value) {
         if (key.indexOf('battle_') === 0) {
@@ -67,7 +67,7 @@ $(function() {
       });
       updateBattleList();
     });
-    $('<button class="rocket"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
+    $('<button class="rocket button"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
     battleControl.find('button.rocket').on('focus', function() {
       battleControl.addClass('active');
     }).on('blur', function() {
@@ -114,7 +114,7 @@ $(function() {
           ids.push(person.id);
           $('<div class="battle-person">').append(
             $('<a>').attr({
-              href: '/results/p/' + person.id,
+              href: '/results/person/' + person.id,
               target: '_blank'
             }).text(person.name),
             $('<i class="fa fa-close">').on('click', function() {
