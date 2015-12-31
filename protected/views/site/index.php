@@ -16,8 +16,8 @@
     <article class="events-item row page-row">
       <div class="date-label-wrapper col-md-3 col-sm-4 col-xs-2">
         <p class="date-label">
-          <span class="month"><?php echo Yii::t('date', strtoupper(date('M', $competition->date))); ?></span>
-          <span class="date-number"><?php echo date('d', $competition->date); ?></span>
+          <span class="month"><?php echo Yii::t('date', $competition->tba == Competition::YES ? 'TBA' : strtoupper(date('M', $competition->date))); ?></span>
+          <span class="date-number"><?php echo $competition->tba == Competition::YES ? '' : date('d', $competition->date); ?></span>
         </p>
       </div>
       <div class="details col-md-9 col-sm-8 col-xs-10">
@@ -26,7 +26,7 @@
             'class'=>'comp-type-' . strtolower($competition->type),
           )); ?>
         </h5>
-        <p class="time text-muted"><?php echo $competition->isMultiLocation() ? $competition->getLocationInfo('venue') : $competition->location[0]->getFullAddress(); ?></p>
+        <p class="time text-muted"><?php echo $competition->tba == Competition::YES ? Yii::t('common', 'To be announced') : ($competition->isMultiLocation() ? $competition->getLocationInfo('venue') : $competition->location[0]->getFullAddress()); ?></p>
       </div>
     </article>
     <?php endforeach; ?>

@@ -18,4 +18,5 @@
  */
 return array (
   'CCaptchaValidator.action "{id}" is invalid. Unable to find such an action in the current controller.' => '',
+  'Login Required' => '',
 );
