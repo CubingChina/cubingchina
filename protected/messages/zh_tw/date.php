@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'TBA' => '待定',
   'JAN' => '一',
   'FEB' => '二',
   'MAR' => '三',

@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'To be announced' => '待定',
   'WCA ID' => '',
   'more' => '',
   'About us' => '关于本站',
@@ -210,6 +209,7 @@ return array (
   'The WCA ID {wcaid} has been registered.' => '该WCA ID已被注册。',
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
   'Title' => '标题',
+  'To be announced' => '待定',
   'Tools' => '工具',
   'Total Fee:' => '总计报名费：',
   'Unknown' => '未知',
