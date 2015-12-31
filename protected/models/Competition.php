@@ -789,23 +789,6 @@ class Competition extends ActiveRecord {
 			));
 		}
 		$buttons[] = $fee;
-		if ($this->paid == self::UNPAID && isset($this->organizers[Yii::app()->controller->user->id])) {
-			$form = array();
-			$form[] = CHtml::beginForm('https://shenghuo.alipay.com/send/payment/fill.htm', 'post', array(
-				'target'=>'_blank',
-				'style'=>'display:inline',
-				'accept-charset'=>'GBK',
-			));
-			$form[] = CHtml::hiddenField('optEmail', 'pay@cubingchina.com');
-			$form[] = CHtml::hiddenField('payAmount', $fee);
-			$form[] = CHtml::hiddenField('title', $this->name_zh . '运营费');
-			$form[] = CHtml::tag('button', array(
-				'class'=>'btn btn-xs btn-square btn-primary',
-				'title'=>'支付运营费',
-			), '支付');
-			$form[] = CHtml::endForm();
-			$buttons[] = implode('', $form);
-		}
 		return implode('', $buttons);
 	}
 
