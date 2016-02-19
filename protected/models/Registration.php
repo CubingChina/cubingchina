@@ -124,10 +124,10 @@ class Registration extends ActiveRecord {
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
 		foreach ($this->events as $event) {
 			if (isset($competitionEvents[$event]) && $competitionEvents[$event]['round'] > 0) {
-				$fees[] = $competition->secondStageFee($competitionEvents[$event]['fee'], $multiple);
+				$fees[] = $competition->getEventFee($event);
 			}
 		}
-		return $competition->secondStageFee($competition->entry_fee, $competition->second_stage_date <= time()) + array_sum($fees);
+		return $competition->getEventFee('entry') + array_sum($fees);
 	}
 
 	public function getPayButton($checkOnlinePay = true) {

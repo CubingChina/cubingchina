@@ -44,6 +44,10 @@ class Competition extends ActiveRecord {
 	const UNPAID = 0;
 	const PAID = 1;
 
+	const STAGE_FIRST = 'first';
+	const STAGE_SECOND = 'second';
+	const STAGE_THIRD = 'third';
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
@@ -477,7 +481,11 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getSecondStage() {
-		return $this->formatStageDate(array($this->second_stage_date, $this->reg_end));
+		return $this->formatStageDate(array($this->second_stage_date, $this->third_stage_date > 0 ? $this->third_stage_date - 1 : $this->reg_end));
+	}
+
+	public function getThirdStage() {
+		return $this->formatStageDate(array($this->third_stage_date, $this->reg_end));
 	}
 
 	public function formatStageDate($dates) {
@@ -494,11 +502,40 @@ class Competition extends ActiveRecord {
 		return $this->second_stage_date > 0;
 	}
 
-	public function secondStageFee($fee, $multiple = true) {
-		if (!$multiple || !$this->hasSecondStage) {
-			return $fee;
+	public function getHasThirdStage() {
+		return $this->third_stage_date > 0;
+	}
+
+	public function getEventFee($event, $stage = null) {
+		$now = time();
+		$isBasic = !isset($this->events[$event]);
+		if ($stage === null) {
+			if ($now < $this->second_stage_date) {
+				$stage = self::STAGE_FIRST;
+			} elseif ($now < $this->third_stage_date) {
+				$stage = self::STAGE_SECOND;
+			} else {
+				$stage = self::STAGE_THIRD;
+			}
+			if (!$this->hasSecondStage && $stage !== self::STAGE_FIRST) {
+				$stage = self::STAGE_FIRST;
+			}
 		}
-		return ceil($fee * $this->second_stage_ratio);
+		$basicFee = $isBasic ? $this->entry_fee : $this->events[$event]['fee'];
+		switch ($stage) {
+			case self::STAGE_FIRST:
+				return $basicFee;
+			case self::STAGE_SECOND:
+			case self::STAGE_THIRD:
+				$ratio = $this->{$stage . '_stage_ratio'};
+				if ($isBasic) {
+					return ceil($basicFee * $ratio);
+				}
+				if (isset($this->events[$event]['fee_' . $stage]) && $this->events[$event]['fee_' . $stage] > 0) {
+					return $this->events[$event]['fee_' . $stage];
+				}
+				return $this->second_stage_all ? ceil($basicFee * $ratio) : $basicFee;
+		}
 	}
 
 	public function getOrganizers() {
@@ -821,6 +858,8 @@ class Competition extends ActiveRecord {
 				$temp[$key] = array(
 					'round'=>0,
 					'fee'=>0,
+					'fee_second'=>'',
+					'fee_third'=>'',
 				);
 				continue;
 			}
@@ -829,6 +868,12 @@ class Competition extends ActiveRecord {
 			}
 			if (!isset($temp[$key]['fee']) || $temp[$key]['fee'] == '') {
 				$temp[$key]['fee'] = 0;
+			}
+			if (!isset($temp[$key]['fee_second'])) {
+				$temp[$key]['fee_second'] = '';
+			}
+			if (!isset($temp[$key]['fee_third'])) {
+				$temp[$key]['fee_third'] = '';
 			}
 		}
 		$this->events = $temp;
@@ -926,7 +971,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date') as $attribute) {
+		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -948,7 +993,7 @@ class Competition extends ActiveRecord {
 				$this->$attribute = '';
 			}
 		}
-		foreach (array('reg_start', 'reg_end', 'second_stage_date') as $attribute) {
+		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -1092,12 +1137,33 @@ class Competition extends ActiveRecord {
 		) {
 			$this->addError('second_stage_date', '第二阶段时间必须介于报名开始和报名结束之间');
 		}
+		if ($this->second_stage_date >= $this->third_stage_date && $this->third_stage_date > 0) {
+			$this->addError('second_stage_date', '第二阶段时间必须介于报名开始和第三阶段之间');
+		}
 	}
 
 	public function checkSecondStageRatio() {
 		$this->second_stage_ratio = floatval($this->second_stage_ratio);
 		if ($this->second_stage_date > 0 && $this->second_stage_ratio <= 1) {
 			$this->addError('second_stage_ratio', '倍率必须大于1');
+		}
+	}
+
+	public function checkThirdStageDate() {
+		if (($this->third_stage_date >= $this->reg_end && $this->reg_end > 0)
+			|| ($this->third_stage_date <= $this->reg_start && $this->third_stage_date > 0)
+		) {
+			$this->addError('third_stage_date', '第三阶段时间必须介于报名开始和报名结束之间');
+		}
+		if ($this->second_stage_date >= $this->third_stage_date && $this->third_stage_date > 0) {
+			$this->addError('third_stage_date', '第三阶段时间必须介于第二阶段和报名结束之间');
+		}
+	}
+
+	public function checkThirdStageRatio() {
+		$this->third_stage_ratio = floatval($this->third_stage_ratio);
+		if ($this->third_stage_date > 0 && $this->third_stage_ratio <= 1) {
+			$this->addError('third_stage_ratio', '倍率必须大于1');
 		}
 	}
 
@@ -1189,6 +1255,8 @@ class Competition extends ActiveRecord {
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
 			array('second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true),
 			array('second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true),
+			array('third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true),
+			array('third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true),
 			array('venue, venue_zh', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
