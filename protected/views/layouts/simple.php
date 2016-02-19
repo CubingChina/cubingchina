@@ -18,6 +18,7 @@
   <link rel="apple-touch-icon" href="/f/images/icon196.png">
   <link rel="apple-touch-icon-precomposed" sizes="128x128" href="/f/images/icon196.png">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo CHtml::normalizeUrl(array('/feed/index')); ?>">
+  <meta name="theme-color" content="#6091ba">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
