@@ -82,15 +82,22 @@ class SchedulesForm extends Widget {
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][]", array(
 				'value'=>$group,
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][]"), $round, $rounds, array('prompt'=>'')));
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][]"), $round, $rounds, array(
+				'prompt'=>'',
+				'options'=>array(
+					'0'=>array('disabled'=>true),
+					'h'=>array('disabled'=>true),
+					'b'=>array('disabled'=>true),
+				),
+			)));
 			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][]"), $format, $formats, array('prompt'=>'')));
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[cut_off][]", array(
 				'value'=>$cut_off,
-				'max'=>3600,
+				// 'max'=>3600,
 			)));
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
 				'value'=>$time_limit,
-				'max'=>3600,
+				// 'max'=>3600,
 			)));
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][]", array(
 				'value'=>$number,
