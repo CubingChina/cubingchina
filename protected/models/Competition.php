@@ -66,7 +66,7 @@ class Competition extends ActiveRecord {
 		if ($second < 60) {
 			return sprintf('%d%s', $second, Yii::t('common', ' seconds'));
 		}
-		if ($second < 3600) {
+		if ($second < 3600 || $second > 3600) {
 			$minute = floor($second / 60);
 			$second = $second % 60;
 			$params = array(
