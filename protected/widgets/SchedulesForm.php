@@ -55,6 +55,7 @@ class SchedulesForm extends Widget {
 		}
 		$stages = Schedule::getStages();
 		echo CHtml::openTag('tbody');
+		// CVarDumper::dump($schedules, 10, 1);exit;
 		foreach ($schedules as $key=>$value) {
 			extract($value);
 			echo CHtml::openTag('tr');
@@ -95,10 +96,15 @@ class SchedulesForm extends Widget {
 				'value'=>$cut_off,
 				// 'max'=>3600,
 			)));
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
+			echo CHtml::openTag('td');
+			echo CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
 				'value'=>$time_limit,
 				// 'max'=>3600,
-			)));
+			));
+			echo CHtml::activeCheckBox($model, "{$name}[cumulative][]", array(
+				'checked'=>$cumulative == Schedule::YES,
+			));
+			echo CHtml::closeTag('td');
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][]", array(
 				'value'=>$number,
 			)));

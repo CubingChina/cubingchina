@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Cumulative' => '',
   'ID' => '',
-  'Long-time Event Stage' => '长项目区',
   'Competition' => '比赛',
   'Competitors' => '人数',
   'Cut Off' => '及格线',
@@ -27,6 +27,7 @@ return array (
   'Event' => '项目',
   'Format' => '赛制',
   'Group' => '分组',
+  'Long-time Event Stage' => '长项目区',
   'Main Stage' => '主赛台',
   'Round' => '轮次',
   'Side Stage' => '分赛台',

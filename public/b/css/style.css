@@ -2082,6 +2082,10 @@ form span.required {
     width: 50px;
 }
 
+#schedules table input[type="checkbox"] {
+    width: 13px;
+}
+
 .table-responsive {
     overflow: auto;
 }

@@ -66,29 +66,24 @@ class Competition extends ActiveRecord {
 		if ($second < 60) {
 			return sprintf('%d%s', $second, Yii::t('common', ' seconds'));
 		}
-		if ($second < 3600 || $second > 3600) {
-			$minute = floor($second / 60);
-			$second = $second % 60;
-			$params = array(
-				'{minute}'=>$minute,
-				'{second}'=>$second,
-			);
-			if ($second == 0) {
-				if ($minute > 1) {
-					return Yii::t('common', '{minute} minutes', $params);
-				} else {
-					return Yii::t('common', '{minute} minute', $params);
-				}
+		$minute = floor($second / 60);
+		$second = $second % 60;
+		$params = array(
+			'{minute}'=>$minute,
+			'{second}'=>$second,
+		);
+		if ($second == 0) {
+			if ($minute > 1) {
+				return Yii::t('common', '{minute} minutes', $params);
 			} else {
-				if ($minute > 1) {
-					return Yii::t('common', '{minute} minutes {second} seconds', $params);
-				} else {
-					return Yii::t('common', '{minute} minute {second} seconds', $params);
-				}
+				return Yii::t('common', '{minute} minute', $params);
 			}
-		}
-		if ($second == 3600) {
-			return Yii::t('common', '1 hour');
+		} else {
+			if ($minute > 1) {
+				return Yii::t('common', '{minute} minutes {second} seconds', $params);
+			} else {
+				return Yii::t('common', '{minute} minute {second} seconds', $params);
+			}
 		}
 	}
 
@@ -627,6 +622,7 @@ class Competition extends ActiveRecord {
 		$hasCutOff = false;
 		$hasTimeLimit = false;
 		$hasNumber = false;
+		$cumulative = Yii::t('common', 'Cumulative ');
 		$specialEvents = array(
 			'333fm'=>array(),
 			'333mbf'=>array(),
@@ -690,6 +686,9 @@ class Competition extends ActiveRecord {
 				'event'=>$schedule->event,
 				'round'=>$schedule->round,
 			);
+			if ($schedule->cumulative) {
+				$temp['Time Limit'] = $cumulative . $temp['Time Limit'];
+			}
 			if ($hasGroup === false) {
 				unset($temp['Group']);
 			}
@@ -1021,6 +1020,7 @@ class Competition extends ActiveRecord {
 				'number'=>$oldSchedules['number'][$key],
 				'cut_off'=>$oldSchedules['cut_off'][$key],
 				'time_limit'=>$oldSchedules['time_limit'][$key],
+				'cumulative'=>$oldSchedules['cumulative'][$key],
 			);
 		}
 		$this->schedules = $schedules;
@@ -1081,6 +1081,12 @@ class Competition extends ActiveRecord {
 			Schedule::model()->deleteAllByAttributes(array(
 				'competition_id'=>$this->id,
 			));
+			foreach ($schedules['cumulative'] as $key=>$value) {
+				if ($value == Schedule::YES) {
+					unset($schedules['cumulative'][$key - 1]);
+				}
+			}
+			$schedules['cumulative'] = array_values($schedules['cumulative']);
 			foreach ($schedules['start_time'] as $key=>$startTime) {
 				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
 					continue;
@@ -1098,6 +1104,7 @@ class Competition extends ActiveRecord {
 				$model->number = intval($schedules['number'][$key]);
 				$model->cut_off = intval($schedules['cut_off'][$key]);
 				$model->time_limit = intval($schedules['time_limit'][$key]);
+				$model->cumulative = intval($schedules['cumulative'][$key]);
 				$model->save(false);
 			}
 		}
