@@ -25,6 +25,7 @@ class Schedule extends ActiveRecord {
 			'main'=>Yii::t('Schedule', 'Main Stage'),
 			'side'=>Yii::t('Schedule', 'Side Stage'),
 			'long'=>Yii::t('Schedule', 'Long-time Event Stage'),
+			'room'=>Yii::t('Schedule', 'Classroom'),
 		);
 	}
 

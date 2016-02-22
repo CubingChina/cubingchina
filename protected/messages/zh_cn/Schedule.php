@@ -18,6 +18,7 @@
  */
 return array (
   'Cumulative' => '',
+  'Classroom' => '教室',
   'ID' => '',
   'Competition' => '比赛',
   'Competitors' => '人数',
