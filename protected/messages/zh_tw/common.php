@@ -17,9 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Cumulative ' => '累計',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
+  '1 hour' => '1小時',
   'About us' => '關於本站',
   'AsR' => '亞洲紀錄',
   'Average of 5' => '五次計平均',
@@ -73,7 +75,6 @@ return array (
   '(3rd attempt)' => '（第三次）',
   '({times}th attempt)' => '（第{times}次）',
   ', ' => '、',
-  '1 hour' => '1小時',
   'A reset password mail was sent to your email address, please check your inbox.' => '重設密碼郵件已經發送您的郵箱，請檢查您的收件箱並根據提示進行重設密碼。',
   'About' => '關於本站',
   'Accepted' => '已通過',

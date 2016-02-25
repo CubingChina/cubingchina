@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Cubing China">
   <meta name="author" content="Baiqiang Dong">
+  <meta name="theme-color" content="#6091ba">
 
   <!-- PACE LOAD BAR PLUGIN - This creates the subtle load bar effect at the top of the page. -->
   <link href="/b/css/plugins/pace/pace.css" rel="stylesheet">

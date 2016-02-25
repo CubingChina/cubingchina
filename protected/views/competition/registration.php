@@ -5,7 +5,7 @@
     ),
   )); ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
-    <p><?php echo $competition->secondStageFee($competition->entry_fee, $competition->second_stage_date <= time()); ?></p>
+    <p><?php echo $competition->getEventFee('entry'); ?></p>
     <?php echo Html::formGroup(
       $model, 'events', array(),
       $form->labelEx($model, 'events'),
@@ -35,7 +35,7 @@
   <?php $this->endWidget(); ?>
 </div>
 <?php
-$basicFee = $competition->secondStageFee($competition->entry_fee, $competition->second_stage_date <= time());
+$basicFee = $competition->getEventFee('entry');
 Yii::app()->clientScript->registerScript('registration',
 <<<EOT
   var basicFee = {$basicFee};

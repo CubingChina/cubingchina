@@ -53,7 +53,7 @@ class Schedule extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id, start_time, end_time, event, format, round, number, cut_off, time_limit', 'required'),
-			array('competition_id, day', 'numerical', 'integerOnly'=>true),
+			array('competition_id, day, cumulative', 'numerical', 'integerOnly'=>true),
 			array('stage, start_time, end_time, group, format, round, cut_off, time_limit', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>32),
 			// The following rule is used by search().
@@ -90,6 +90,7 @@ class Schedule extends ActiveRecord {
 			'number' => Yii::t('Schedule', 'Competitors'),
 			'cut_off' => Yii::t('Schedule', 'Cut Off'),
 			'time_limit' => Yii::t('Schedule', 'Time Limit'),
+			'cumulative' => Yii::t('Schedule', 'Cumulative'),
 		);
 	}
 

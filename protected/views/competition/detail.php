@@ -81,6 +81,9 @@
             <?php if ($competition->hasSecondStage): ?>
             <th><?php echo $competition->secondStage; ?></th>
             <?php endif; ?>
+            <?php if ($competition->hasThirdStage): ?>
+            <th><?php echo $competition->thirdStage; ?></th>
+            <?php endif; ?>
           </tr>
         </thead>
         <tbody>
@@ -88,7 +91,10 @@
             <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
             <td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
             <?php if ($competition->hasSecondStage): ?>
-            <td>　<i class="fa fa-rmb"></i><?php echo $competition->secondStageFee($competition->entry_fee); ?></td>
+            <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
+            <?php endif; ?>
+            <?php if ($competition->hasThirdStage): ?>
+            <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
             <?php endif; ?>
           </tr>
           <?php foreach ($competition->events as $key=>$value): ?>
@@ -97,7 +103,10 @@
             <td><?php echo Yii::t('event', Events::getFullEventName($key)); ?></td>
             <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $value['fee']; ?></td>
             <?php if ($competition->hasSecondStage): ?>
-            <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->secondStageFee($value['fee'], $competition->second_stage_all); ?></td>
+            <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_SECOND); ?></td>
+            <?php endif; ?>
+            <?php if ($competition->hasThirdStage): ?>
+            <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_THIRD); ?></td>
             <?php endif; ?>
           </tr>
           <?php endif; ?>

@@ -50,11 +50,15 @@ class SchedulesForm extends Widget {
 			$formats[$key] = Yii::t('common', $value);
 		}
 		$rounds = Rounds::getAllRounds();
+		unset($rounds['0']);
+		unset($rounds['h']);
+		unset($rounds['b']);
 		foreach ($rounds as $key=>$value) {
 			$rounds[$key] = Yii::t('Rounds', $value);
 		}
 		$stages = Schedule::getStages();
 		echo CHtml::openTag('tbody');
+		// CVarDumper::dump($schedules, 10, 1);exit;
 		foreach ($schedules as $key=>$value) {
 			extract($value);
 			echo CHtml::openTag('tr');
@@ -78,20 +82,31 @@ class SchedulesForm extends Widget {
 				'data-max-view'=>'1',
 				'data-start-view'=>'1',
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][]"), $event, $events, array('prompt'=>'')));
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][]"), $event, $events, array(
+				'prompt'=>'',
+				'class'=>'schedule-event',
+			)));
 			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][]", array(
 				'value'=>$group,
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][]"), $round, $rounds, array('prompt'=>'')));
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][]"), $round, $rounds, array(
+				'prompt'=>'',
+				'class'=>'schedule-round',
+			)));
 			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][]"), $format, $formats, array('prompt'=>'')));
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[cut_off][]", array(
 				'value'=>$cut_off,
-				'max'=>3600,
+				// 'max'=>3600,
 			)));
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
+			echo CHtml::openTag('td');
+			echo CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
 				'value'=>$time_limit,
-				'max'=>3600,
-			)));
+				// 'max'=>3600,
+			));
+			echo CHtml::activeCheckBox($model, "{$name}[cumulative][]", array(
+				'checked'=>$cumulative == Schedule::YES,
+			));
+			echo CHtml::closeTag('td');
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][]", array(
 				'value'=>$number,
 			)));
@@ -102,14 +117,38 @@ class SchedulesForm extends Widget {
 
 		echo CHtml::closeTag('table');
 		echo CHtml::closeTag('div');
+		$onlyScheculeEvents = json_encode(Events::getOnlyScheduleEvents());
 		Yii::app()->clientScript->registerScript('SchedulesForm',
 <<<EOT
+  var onlyScheculeEvents = {$onlyScheculeEvents};
+  var combinedRounds = ['c', 'd', 'e', 'g'];
   $(document).on('focus', '#schedules table tbody tr:last-child', function() {
     $(this).clone().insertAfter(this);
     $('.datetime-picker').datetimepicker({
       autoclose: true
     });
+  }).on('change', '.schedule-event', function(e) {
+    var that = $(this);
+    var event = that.val();
+    if (onlyScheculeEvents[event] !== undefined) {
+      that.parent().nextAll().find('select, input').prop('disabled', true);
+    } else {
+      that.parent().nextAll().find('select, input').prop('disabled', false);
+    }
+  }).on('change', '.schedule-round', function(e) {
+    var that = $(this);
+    var round = that.val();
+    var format = that.parent().next().find('option');
+    format.prop('disabled', false);
+    if (combinedRounds.indexOf(round) > -1) {
+      format.filter(':not([value="2/a"]):not([value="1/m"])').prop('disabled', true);
+    } else {
+      format.filter('[value="2/a"], [value="1/m"]').prop('disabled', true);
+    }
+  }).on('submit', 'form', function() {
+    $('select, input').prop('disabled', false);
   });
+  $('.schedule-event, .schedule-round').change();
 EOT
 		);
 	}

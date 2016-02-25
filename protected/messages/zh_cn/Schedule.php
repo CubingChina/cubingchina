@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Cumulative' => '',
   'Classroom' => '教室',
   'ID' => '',
   'Competition' => '比赛',
