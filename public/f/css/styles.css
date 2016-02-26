@@ -2837,6 +2837,7 @@ table.concise-schedule {
  .concise-schedule > tbody > tr > td.has-time span.hover {
   background-color: #d9edf7;
   z-index: 999;
+  font-weight: bold;
 }
 .concise-schedule > tbody > tr > td.end-time {
   height: 0;
