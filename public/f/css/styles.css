@@ -2642,177 +2642,186 @@ table.concise-schedule {
 .concise-schedule > tbody > tr > td[rowspan] {
   background-color: #68C8C1;
   padding: 5px;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+  -o-transition: -o-transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+}
+.concise-schedule > tbody > tr > td[rowspan].highlight {
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
 }
 .concise-schedule > tbody > tr > td[rowspan]:hover {
   background-color: #8dd6d0;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-registration {
-  background-color: #72bbbf
+  background-color: #00a6ac;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-intro {
-  background-color: #bfb872
+  background-color: #76becc;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-lunch {
-  background-color: #a572bf
+  background-color: #2a5caa;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-break {
-  background-color: #bf72b0
+  background-color: #2585a6;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-lucky {
-  background-color: #a572bf
+  background-color: #00ae9d;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-ceremony {
-  background-color: #9172bf
+  background-color: #009ad6;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333 {
-  background-color: #bf7b72
+  background-color: #b2d235;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-444 {
-  background-color: #72bbbf
+  background-color: #dea32c;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-555 {
-  background-color: #7299bf
+  background-color: #f58220;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-222 {
-  background-color: #72bf8a
+  background-color: #decb00;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333bf {
-  background-color: #bf8572
+  background-color: #f69c9f;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333oh {
-  background-color: #bf727c
+  background-color: #7fb80e;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333fm {
-  background-color: #bfa172
+  background-color: #78a355;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333ft {
-  background-color: #72a0bf
+  background-color: #a3cf62;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-minx {
-  background-color: #72bf73
+  background-color: #585eaa;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-pyram {
-  background-color: #b972bf
+  background-color: #6f599c;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-sq1 {
-  background-color: #72a7bf
+  background-color: #8552a1;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-clock {
-  background-color: #bebf72
+  background-color: #867892;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-skewb {
-  background-color: #72bfaf
+  background-color: #9b95c9;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-666 {
-  background-color: #72bf9b
+  background-color: #faa755;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-777 {
-  background-color: #bf9c72
+  background-color: #deab8a;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-444bf {
-  background-color: #b972bf
+  background-color: #f3715c;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-555bf {
-  background-color: #bf728a
+  background-color: #d64f44;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333mbf {
-  background-color: #72bfb1
+  background-color: #f05b72;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-magic {
-  background-color: #72b4bf
+  background-color: #d9d6c3;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-mmagic {
-  background-color: #bf9072
+  background-color: #d1c8b7;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-stack {
-  background-color: #bf728a
+  background-color: #f2eada;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-funny {
-  background-color: #b5bf72
+  background-color: #d3d7d4;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-registration:hover {
-  background-color: #95cccf;
+  background-color: #00d7df;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-intro:hover {
-  background-color: #cfca95;
+  background-color: #9bd0da;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-lunch:hover {
-  background-color: #bb95cf;
+  background-color: #3973ce;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-break:hover {
-  background-color: #cf95c4;
+  background-color: #2ea6d0;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-lucky:hover {
-  background-color: #bb95cf;
+  background-color: #00e1cb;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-ceremony:hover {
-  background-color: #ac95cf;
+  background-color: #0abaff;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333:hover {
-  background-color: #cf9c95;
+  background-color: #c2db5f;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-444:hover {
-  background-color: #95cccf;
+  background-color: #e5b658;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-555:hover {
-  background-color: #95b2cf;
+  background-color: #f79d51;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-222:hover {
-  background-color: #95cfa7;
+  background-color: #ffeb12;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333bf:hover {
-  background-color: #cfa395;
+  background-color: #facbcc;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333oh:hover {
-  background-color: #cf959d;
+  background-color: #a0e712;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333fm:hover {
-  background-color: #cfb895;
+  background-color: #92b774;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333ft:hover {
-  background-color: #95b8cf;
+  background-color: #badb89;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-minx:hover {
-  background-color: #95cf96;
+  background-color: #7a7fbb;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-pyram:hover {
-  background-color: #ca95cf;
+  background-color: #8a77b1;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-sq1:hover {
-  background-color: #95bdcf;
+  background-color: #9d70b6;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-clock:hover {
-  background-color: #cecf95;
+  background-color: #9f94a9;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-skewb:hover {
-  background-color: #95cfc3;
+  background-color: #bbb7da;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-666:hover {
-  background-color: #95cfb4;
+  background-color: #fbc187;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-777:hover {
-  background-color: #cfb595;
+  background-color: #e9c8b2;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-444bf:hover {
-  background-color: #ca95cf;
+  background-color: #f69a8c;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-555bf:hover {
-  background-color: #cf95a7;
+  background-color: #df766e;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-333mbf:hover {
-  background-color: #95cfc4;
+  background-color: #f48a9a;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-magic:hover {
-  background-color: #95c7cf;
+  background-color: #edebe2;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-mmagic:hover {
-  background-color: #cfac95;
+  background-color: #e5e0d6;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-stack:hover {
-  background-color: #cf95a7;
+  background-color: #ffffff;
 }
 .concise-schedule > tbody > tr > td[rowspan].event-funny:hover {
-  background-color: #c7cf95;
+  background-color: #eeefee;
 }
 .concise-schedule > tbody > tr > td.time {
   position: relative;
@@ -2843,7 +2852,7 @@ table.concise-schedule {
 .concise-schedule > thead > tr > th {
   text-align: center;
   vertical-align: middle;
-  background-color: #72AFBF;
+  background-color: #83838d;
   color: #ffffff;
   border: none;
 }
