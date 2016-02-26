@@ -145,8 +145,24 @@ class ConciseSchedule extends Widget {
 	}
 
 	protected function renderEventCell($schedule, $colSpan = 1) {
+		$tdClass = array(
+			'event',
+			'event-' . $schedule['event'],
+			'round-' . $schedule['round'],
+		);
+		$spanClass = array(
+			'event-icon',
+			'event-icon-' . $schedule['event'],
+		);
+		if (in_array($schedule['event'], array(
+			'sq1', 'skewb', 'pyram', 'clock', 'minx',
+			'lunch', 'registration', 'break', 'ceremony', 'lucky', 'intro',
+		))) {
+			$tdClass[] = 'inverse';
+			$spanClass[] = 'event-icon-white';
+		}
 		$text = array(CHtml::tag('span', array(
-			'class'=>'event-icon event-icon-' . $schedule['event'],
+			'class'=>implode(' ', $spanClass),
 		), $schedule['Event'] . ' ' . $schedule['Round']));
 		foreach (array('Cut Off', 'Time Limit', 'Group') as $key) {
 			if (isset($schedule[$key]) && $schedule[$key] != '') {
@@ -154,11 +170,7 @@ class ConciseSchedule extends Widget {
 			}
 		}
 		echo CHtml::tag('td', array(
-			'class'=>implode(' ', array(
-				'event',
-				'event-' . $schedule['schedule']->event,
-				'round-' . $schedule['schedule']->round,
-			)),
+			'class'=>implode(' ', $tdClass),
 			'colspan'=>$colSpan,
 			'rowspan'=>($schedule['schedule']->end_time - $schedule['schedule']->start_time) / $this->timeSpan,
 		), implode('<br>', $text));

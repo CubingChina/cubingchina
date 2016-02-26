@@ -2646,6 +2646,9 @@ table.concise-schedule {
   -o-transition: -o-transform 0.3s ease-in-out;
   transition: transform 0.3s ease-in-out;
 }
+.concise-schedule > tbody > tr > td[rowspan].inverse {
+  color: #f0f0f0;
+}
 .concise-schedule > tbody > tr > td[rowspan].highlight {
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
@@ -2832,7 +2835,7 @@ table.concise-schedule {
 .concise-schedule > tbody > tr.hover,
 .concise-schedule > tbody > tr:hover > td.has-time span,
  .concise-schedule > tbody > tr > td.has-time span.hover {
-  background-color: #a7c2d9;
+  background-color: #d9edf7;
   z-index: 999;
 }
 .concise-schedule > tbody > tr > td.end-time {
