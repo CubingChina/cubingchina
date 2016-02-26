@@ -2649,12 +2649,6 @@ table.concise-schedule {
 .concise-schedule > tbody > tr > td[rowspan].inverse {
   color: #f0f0f0;
 }
-.concise-schedule > tbody > tr > td[rowspan].highlight {
-  -webkit-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  transform: scale(1.1);
-}
 .concise-schedule > tbody > tr > td[rowspan]:hover {
   background-color: #8dd6d0;
 }
@@ -2825,6 +2819,12 @@ table.concise-schedule {
 }
 .concise-schedule > tbody > tr > td[rowspan].event-funny:hover {
   background-color: #eeefee;
+}
+.concise-schedule.highlight > tbody > tr > td[rowspan].unselected {
+  background-color: #bdbdbd;
+}
+.concise-schedule.highlight > tbody > tr > td[rowspan].unselected:hover {
+  background-color: #a9a9a9;
 }
 .concise-schedule > tbody > tr > td.time {
   position: relative;

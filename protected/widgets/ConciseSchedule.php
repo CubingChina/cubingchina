@@ -146,6 +146,7 @@ class ConciseSchedule extends Widget {
 
 	protected function renderEventCell($schedule, $colSpan = 1) {
 		$tdClass = array(
+			'unselected',
 			'event',
 			'event-' . $schedule['event'],
 			'round-' . $schedule['round'],

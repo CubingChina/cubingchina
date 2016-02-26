@@ -34,11 +34,11 @@
   <?php if (!empty($listableSchedules)): ?>
   <?php if ($hasManyStages): ?>
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#consice" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
+    <li class="active"><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
     <li><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
   </ul>
   <div class="tab-content">
-    <div class="tab-pane active" id="consice">
+    <div class="tab-pane active" id="concise">
       <?php foreach ($listableSchedules as $day=>$schedules): ?>
       <div class="panel panel-info">
         <div class="panel-heading">
@@ -111,12 +111,21 @@ Yii::app()->clientScript->registerScript('schedule',
         f: 'danger',
         g: 'warning'
       },
-      func = $(this).prop('checked') ? 'addClass' : 'removeClass';
+      func = $(this).prop('checked') ? 'addClass' : 'removeClass',
+      func2 = $(this).prop('checked') ? 'removeClass' : 'addClass',
+      uncheckAll = true;
+    $('.schedule-event input').each(function() {
+      if (this.checked) {
+        uncheckAll = false;
+        return false;
+      }
+    })
     events.each(function() {
       var c = classes[$(this).data('round')] || 'info';
       $(this)[func](c);
     });
-    events2[func]('highlight');
+    events2[func2]('unselected');
+    $('.concise-schedule')[uncheckAll ? 'removeClass' : 'addClass']('highlight');
   }).on('mouseenter mouseleave', 'td.event', function(e) {
     var func = e.type == 'mouseenter' ? 'addClass' : 'removeClass';
     var that = $(this);
