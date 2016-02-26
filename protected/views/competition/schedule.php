@@ -99,7 +99,8 @@ Yii::app()->clientScript->registerScript('schedule',
 <<<EOT
   $(document).on('change', '.schedule-event input', function() {
     var event = $(this).data('event'),
-      events = $('tr.event-' + event)
+      events = $('tr.event-' + event),
+      events2 = $('td.event-' + event),
       classes = {
         1: 'info',
         2: 'success',
@@ -114,7 +115,14 @@ Yii::app()->clientScript->registerScript('schedule',
     events.each(function() {
       var c = classes[$(this).data('round')] || 'info';
       $(this)[func](c);
-    })
-  })
+    });
+    events2[func]('highlight');
+  }).on('mouseenter mouseleave', 'td.event', function(e) {
+    var func = e.type == 'mouseenter' ? 'addClass' : 'removeClass';
+    var that = $(this);
+    var tr = that.parent();
+    var endTime = tr.nextAll().eq(this.rowSpan - 1);
+    endTime.find('.time span')[func]('hover');
+  });
 EOT
 );

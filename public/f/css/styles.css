@@ -2820,7 +2820,9 @@ table.concise-schedule {
 .concise-schedule > tbody > tr > td.has-time {
   /*border-top: 1px solid #ebebeb;*/
 }
-.concise-schedule > tbody > tr:hover > td.has-time {
+.concise-schedule > tbody > tr.hover,
+.concise-schedule > tbody > tr:hover > td.has-time span,
+ .concise-schedule > tbody > tr > td.has-time span.hover {
   background-color: #a7c2d9;
 }
 .concise-schedule > tbody > tr > td.end-time {
@@ -2847,4 +2849,5 @@ table.concise-schedule {
 .concise-schedule > thead > tr > th.time {
   min-width: 50px;
   width: 50px;
+  background-color: transparent;
 }

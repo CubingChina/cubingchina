@@ -161,6 +161,7 @@ class ConciseSchedule extends Widget {
 		}
 		echo CHtml::tag('td', array(
 			'class'=>implode(' ', array(
+				'event',
 				'event-' . $schedule['schedule']->event,
 				'round-' . $schedule['schedule']->round,
 			)),
