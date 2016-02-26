@@ -24,7 +24,6 @@
   <?php endif; ?>
   <?php $hasManyStages = false; ?>
   <?php $listableSchedules = $competition->getListableSchedules(); ?>
-  <?php if (!empty($listableSchedules)): ?>
   <?php foreach ($listableSchedules as $day=>$stages): ?>
     <?php foreach ($stages as $stage=>$schedules): ?>
       <?php if (count($stages) > 1): ?>
@@ -32,33 +31,61 @@
       <?php endif; ?>
     <?php endforeach; ?>
   <?php endforeach; ?>
-  <?php foreach ($listableSchedules as $day=>$stages): ?>
-  <div class="panel panel-info">
-    <div class="panel-heading">
-      <h3 class="panel-title"><?php echo date('Y-m-d', $competition->date + ($day - 1) * 86400); ?></h3>
+  <?php if (!empty($listableSchedules)): ?>
+  <?php if ($hasManyStages): ?>
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
+    <li><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="concise">
+      <?php foreach ($listableSchedules as $day=>$schedules): ?>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo date('Y-m-d', $competition->date + ($day - 1) * 86400); ?></h3>
+        </div>
+        <div class="panel-body">
+          <?php $this->widget('ConciseSchedule', array(
+            'competition'=>$competition,
+            'schedules'=>$schedules,
+          )); ?>
+        </div>
+      </div>
+      <?php endforeach;?>
     </div>
-    <div class="panel-body">
-      <?php foreach ($stages as $stage=>$schedules): ?>
-      <?php if ($hasManyStages): ?>
-      <h3><?php echo Schedule::getStageText($stage); ?></h3>
-      <?php endif; ?>
-      <?php $this->widget('GridView', array(
-        'dataProvider'=>new CArrayDataProvider($schedules, array(
-          'pagination'=>false,
-        )),
-        'enableSorting'=>false,
-        'front'=>true,
-        'rowCssClassExpression'=>'"event-" . $data["event"]',
-        'rowHtmlOptionsExpression'=>'array(
-          "data-round"=>$data["round"],
-        )',
-        'columns'=>$competition->getScheduleColumns($schedules),
-      ));
-      ?>
+    <div class="tab-pane" id="old-style">
+  <?php endif; ?>
+      <?php foreach ($listableSchedules as $day=>$stages): ?>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo date('Y-m-d', $competition->date + ($day - 1) * 86400); ?></h3>
+        </div>
+        <div class="panel-body">
+          <?php foreach ($stages as $stage=>$schedules): ?>
+          <?php if ($hasManyStages): ?>
+          <h3><?php echo Schedule::getStageText($stage); ?></h3>
+          <?php endif; ?>
+          <?php $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($schedules, array(
+              'pagination'=>false,
+            )),
+            'enableSorting'=>false,
+            'front'=>true,
+            'rowCssClassExpression'=>'"event-" . $data["event"]',
+            'rowHtmlOptionsExpression'=>'array(
+              "data-round"=>$data["round"],
+            )',
+            'columns'=>$competition->getScheduleColumns($schedules),
+          ));
+          ?>
+          <?php endforeach; ?>
+        </div>
+      </div>
       <?php endforeach; ?>
+  <?php if ($hasManyStages): ?>
     </div>
   </div>
-  <?php endforeach; ?>
+  <?php endif; ?>
   <?php else: ?>
   <div class="panel panel-info">
     <div class="panel-body">
@@ -72,7 +99,8 @@ Yii::app()->clientScript->registerScript('schedule',
 <<<EOT
   $(document).on('change', '.schedule-event input', function() {
     var event = $(this).data('event'),
-      events = $('tr.event-' + event)
+      events = $('tr.event-' + event),
+      events2 = $('td.event-' + event),
       classes = {
         1: 'info',
         2: 'success',
@@ -83,11 +111,27 @@ Yii::app()->clientScript->registerScript('schedule',
         f: 'danger',
         g: 'warning'
       },
-      func = $(this).prop('checked') ? 'addClass' : 'removeClass';
+      func = $(this).prop('checked') ? 'addClass' : 'removeClass',
+      func2 = $(this).prop('checked') ? 'removeClass' : 'addClass',
+      uncheckAll = true;
+    $('.schedule-event input').each(function() {
+      if (this.checked) {
+        uncheckAll = false;
+        return false;
+      }
+    })
     events.each(function() {
       var c = classes[$(this).data('round')] || 'info';
       $(this)[func](c);
-    })
-  })
+    });
+    events2[func2]('unselected');
+    $('.concise-schedule')[uncheckAll ? 'removeClass' : 'addClass']('highlight');
+  }).on('mouseenter mouseleave', 'td.event', function(e) {
+    var func = e.type == 'mouseenter' ? 'addClass' : 'removeClass';
+    var that = $(this);
+    var tr = that.parent();
+    var endTime = tr.nextAll().eq(this.rowSpan - 1);
+    endTime.find('.time span')[func]('hover');
+  });
 EOT
 );

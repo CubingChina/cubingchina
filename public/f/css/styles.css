@@ -2629,3 +2629,239 @@ td pre {
 .large {
   font-size: 2em;
 }
+table.concise-schedule {
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.concise-schedule > tbody > tr > td {
+  padding: 2px;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+}
+.concise-schedule > tbody > tr > td[rowspan] {
+  background-color: #68C8C1;
+  padding: 5px;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+  -o-transition: -o-transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+}
+.concise-schedule > tbody > tr > td[rowspan].inverse {
+  color: #f0f0f0;
+}
+.concise-schedule > tbody > tr > td[rowspan]:hover {
+  background-color: #8dd6d0;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-registration {
+  background-color: #00a6ac;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-intro {
+  background-color: #76becc;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-lunch {
+  background-color: #2a5caa;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-break {
+  background-color: #2585a6;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-lucky {
+  background-color: #00ae9d;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-ceremony {
+  background-color: #009ad6;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333 {
+  background-color: #b2d235;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-444 {
+  background-color: #dea32c;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-555 {
+  background-color: #f58220;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-222 {
+  background-color: #decb00;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333bf {
+  background-color: #f69c9f;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333oh {
+  background-color: #7fb80e;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333fm {
+  background-color: #78a355;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333ft {
+  background-color: #a3cf62;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-minx {
+  background-color: #585eaa;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-pyram {
+  background-color: #6f599c;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-sq1 {
+  background-color: #8552a1;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-clock {
+  background-color: #867892;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-skewb {
+  background-color: #9b95c9;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-666 {
+  background-color: #faa755;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-777 {
+  background-color: #deab8a;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-444bf {
+  background-color: #f3715c;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-555bf {
+  background-color: #d64f44;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333mbf {
+  background-color: #f05b72;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-magic {
+  background-color: #d9d6c3;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-mmagic {
+  background-color: #d1c8b7;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-stack {
+  background-color: #f2eada;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-funny {
+  background-color: #d3d7d4;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-registration:hover {
+  background-color: #00d7df;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-intro:hover {
+  background-color: #9bd0da;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-lunch:hover {
+  background-color: #3973ce;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-break:hover {
+  background-color: #2ea6d0;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-lucky:hover {
+  background-color: #00e1cb;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-ceremony:hover {
+  background-color: #0abaff;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333:hover {
+  background-color: #c2db5f;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-444:hover {
+  background-color: #e5b658;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-555:hover {
+  background-color: #f79d51;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-222:hover {
+  background-color: #ffeb12;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333bf:hover {
+  background-color: #facbcc;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333oh:hover {
+  background-color: #a0e712;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333fm:hover {
+  background-color: #92b774;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333ft:hover {
+  background-color: #badb89;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-minx:hover {
+  background-color: #7a7fbb;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-pyram:hover {
+  background-color: #8a77b1;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-sq1:hover {
+  background-color: #9d70b6;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-clock:hover {
+  background-color: #9f94a9;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-skewb:hover {
+  background-color: #bbb7da;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-666:hover {
+  background-color: #fbc187;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-777:hover {
+  background-color: #e9c8b2;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-444bf:hover {
+  background-color: #f69a8c;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-555bf:hover {
+  background-color: #df766e;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-333mbf:hover {
+  background-color: #f48a9a;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-magic:hover {
+  background-color: #edebe2;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-mmagic:hover {
+  background-color: #e5e0d6;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-stack:hover {
+  background-color: #ffffff;
+}
+.concise-schedule > tbody > tr > td[rowspan].event-funny:hover {
+  background-color: #eeefee;
+}
+.concise-schedule.highlight > tbody > tr > td[rowspan].unselected {
+  background-color: #bdbdbd;
+}
+.concise-schedule.highlight > tbody > tr > td[rowspan].unselected:hover {
+  background-color: #a9a9a9;
+}
+.concise-schedule > tbody > tr > td.time {
+  position: relative;
+}
+.concise-schedule > tbody > tr > td.has-time {
+  /*border-top: 1px solid #ebebeb;*/
+}
+.concise-schedule > tbody > tr.hover,
+.concise-schedule > tbody > tr:hover > td.has-time span,
+ .concise-schedule > tbody > tr > td.has-time span.hover {
+  background-color: #d9edf7;
+  z-index: 999;
+  font-weight: bold;
+}
+.concise-schedule > tbody > tr > td.end-time {
+  height: 0;
+  padding: 0;
+  border-top: none;
+}
+.concise-schedule > tbody > tr > td.time span {
+  position: absolute;
+  top: -12px;
+  right: 5px;
+}
+.concise-schedule > tbody > tr > td.time span.end-time {
+  top: 100%;
+  margin-top: -10px;
+}
+.concise-schedule > thead > tr > th {
+  text-align: center;
+  vertical-align: middle;
+  background-color: #83838d;
+  color: #ffffff;
+  border: none;
+}
+.concise-schedule > thead > tr > th.time {
+  min-width: 50px;
+  width: 50px;
+  background-color: transparent;
+}
