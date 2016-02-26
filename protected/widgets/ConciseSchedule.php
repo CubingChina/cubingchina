@@ -12,7 +12,7 @@ class ConciseSchedule extends Widget {
 		if (Yii::app()->language === 'en') {
 			$this->space = ' ';
 		}
-		$stageKeys = array();
+		$headColSpans = array();
 		foreach ($this->schedules as $stage=>$schedules) {
 			if ($schedules[0]['schedule']->start_time < $this->startTime) {
 				$this->startTime = $schedules[0]['schedule']->start_time;
@@ -21,7 +21,15 @@ class ConciseSchedule extends Widget {
 			if ($end->end_time > $this->endTime) {
 				$this->endTime = $end->end_time;
 			}
-			$stageKeys[$stage] = 0;
+			$headColSpans[$stage] = 0;
+		}
+		$this->processSchedules();
+		$stageKeys = array();
+		$colSpans = array();
+		foreach ($this->schedules as $key=>$schedules) {
+			$stageKeys[$key] = 0;
+			$colSpans[$key] = 1;
+			$headColSpans[$schedules[0]['schedule']->stage]++;
 		}
 		echo CHtml::openTag('div', array('class'=>'table-responsive'));
 		echo CHtml::openTag('table', array(
@@ -32,11 +40,13 @@ class ConciseSchedule extends Widget {
 		echo CHtml::openTag('thead');
 		echo CHtml::openTag('tr');
 		echo '<th class="time">&nbsp</th>';
-		foreach ($this->schedules as $stage=>$schedules) {
+		foreach ($headColSpans as $stage=>$colSpan) {
 			echo CHtml::tag('th', array(
-				'class'=>'stage-' . $schedules[0]['schedule']->stage,
-			), Schedule::getStageText($schedules[0]['schedule']->stage));
+				'colspan'=>$colSpan,
+				'class'=>'stage-' . $stage,
+			), Schedule::getStageText($stage));
 		}
+		echo '<th class="time">&nbsp</th>';
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('thead');
 		//table
@@ -44,14 +54,14 @@ class ConciseSchedule extends Widget {
 		for ($time = $this->startTime; $time < $this->endTime; $time += $this->timeSpan) {
 			$hasEventStart = false;
 			$hasEventEnd = false;
-			foreach ($this->schedules as $stage=>$schedules) {
-				if (!isset($schedules[$stageKeys[$stage]])) {
+			foreach ($this->schedules as $key=>$schedules) {
+				if (!isset($schedules[$stageKeys[$key]])) {
 					continue;
 				}
-				if ($schedules[$stageKeys[$stage]]['schedule']->start_time == $time) {
+				if ($schedules[$stageKeys[$key]]['schedule']->start_time == $time) {
 					$hasEventStart = true;
 				}
-				if (isset($schedules[$stageKeys[$stage] - 1]) && $schedules[$stageKeys[$stage] - 1]['schedule']->end_time == $time) {
+				if (isset($schedules[$stageKeys[$key] - 1]) && $schedules[$stageKeys[$key] - 1]['schedule']->end_time == $time) {
 					$hasEventEnd = true;
 				}
 			}
@@ -67,21 +77,45 @@ class ConciseSchedule extends Widget {
 					'class'=>'end-time',
 				), date('H:i', $this->endTime));
 			}
-			foreach ($this->schedules as $stage=>$schedules) {
-				if (!isset($schedules[$stageKeys[$stage]])) {
-					echo CHtml::tag('td');
+			echo CHtml::closeTag('td');
+			foreach ($this->schedules as $key=>$schedules) {
+				if (!isset($schedules[$stageKeys[$key]])) {
+					if (!isset($stageKeys[$key - 1]) || !isset($this->schedules[$key - 1][$stageKeys[$key - 1]]) || $colSpans[$key - 1] == 1) {
+						echo CHtml::tag('td');
+					}
 					continue;
 				}
-				$current = $schedules[$stageKeys[$stage]]['schedule'];
+				$current = $schedules[$stageKeys[$key]]['schedule'];
 				if ($current->end_time == $time + $this->timeSpan) {
-					$stageKeys[$stage]++;
+					$stageKeys[$key]++;
+					$colSpans[$key] = 1;
 				}
 				if ($current->start_time == $time) {
-					$this->renderEventCell($schedules[$stageKeys[$stage]]);
+					if (isset($stageKeys[$key + 1]) && $this->schedules[$key + 1][0]['schedule']->stage == $current->stage
+						&& (!isset($this->schedules[$key + 1][$stageKeys[$key + 1]])
+						|| $this->schedules[$key + 1][$stageKeys[$key + 1]]['schedule']->start_time >= $current->end_time)
+					) {
+						$colSpans[$key] = 2;
+					}
+					$this->renderEventCell($schedules[$stageKeys[$key]], $colSpans[$key]);
 				} elseif ($current->start_time > $time) {
-					echo CHtml::tag('td');
+					if (!isset($stageKeys[$key - 1]) || !isset($this->schedules[$key - 1][$stageKeys[$key - 1]]) || $colSpans[$key - 1] == 1) {
+						echo CHtml::tag('td');
+					}
 				}
 			}
+			echo CHtml::openTag('td', array(
+				'class'=>'time' . ($hasEventStart || $hasEventEnd ? ' has-time' : ''),
+			));
+			if ($hasEventStart || $hasEventEnd) {
+				echo CHtml::tag('span', array(), date('H:i', $time));
+			}
+			if ($time == $this->endTime - $this->timeSpan) {
+				echo CHtml::tag('span', array(
+					'class'=>'end-time',
+				), date('H:i', $this->endTime));
+			}
+			echo CHtml::closeTag('td');
 			echo CHtml::closeTag('tr');
 		}
 		echo CHtml::closeTag('tr');
@@ -91,7 +125,32 @@ class ConciseSchedule extends Widget {
 		echo CHtml::closeTag('div');
 	}
 
-	public function renderEventCell($schedule) {
+	private function processSchedules() {
+		$newSchedules = array();
+		foreach ($this->schedules as $stage=>$schedules) {
+			$temp = array();
+			$count = count($schedules);
+			for ($i = 0; $i < $count - 1; $i++) {
+				for ($j = $i + 1; $j < $count; $j++) {
+					//conflict
+					if ($schedules[$i]['schedule']->end_time > $schedules[$j]['schedule']->start_time) {
+						$temp[] = $schedules[$j];
+						unset($schedules[$j]);
+					} else {
+						break;
+					}
+				}
+				$i = $j - 1;
+			}
+			$newSchedules[] = array_values($schedules);
+			if ($temp !== array()) {
+				$newSchedules[] = $temp;
+			}
+		}
+		$this->schedules = $newSchedules;
+	}
+
+	protected function renderEventCell($schedule, $colSpan = 1) {
 		$text = array(CHtml::tag('span', array(
 			'class'=>'event-icon event-icon-' . $schedule['event'],
 		), $schedule['Event'] . ' ' . $schedule['Round']));
@@ -105,6 +164,7 @@ class ConciseSchedule extends Widget {
 				'event-' . $schedule['schedule']->event,
 				'round-' . $schedule['schedule']->round,
 			)),
+			'colspan'=>$colSpan,
 			'rowspan'=>($schedule['schedule']->end_time - $schedule['schedule']->start_time) / $this->timeSpan,
 		), implode('<br>', $text));
 	}
