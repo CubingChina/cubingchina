@@ -33,7 +33,7 @@ class ConciseSchedule extends Widget {
 		}
 		echo CHtml::openTag('div', array('class'=>'table-responsive'));
 		echo CHtml::openTag('table', array(
-			'class'=>'table table-condensed table-bordered concise-schedule',
+			'class'=>'table table-condensed concise-schedule',
 		));
 
 		//table head
@@ -52,32 +52,21 @@ class ConciseSchedule extends Widget {
 		//table
 		echo CHtml::openTag('tbody');
 		for ($time = $this->startTime; $time < $this->endTime; $time += $this->timeSpan) {
-			$hasEventStart = false;
-			$hasEventEnd = false;
+			$hasEventStartOrEnd = false;
 			foreach ($this->schedules as $key=>$schedules) {
-				if (!isset($schedules[$stageKeys[$key]])) {
-					continue;
-				}
-				if ($schedules[$stageKeys[$key]]['schedule']->start_time == $time) {
-					$hasEventStart = true;
+				if (isset($schedules[$stageKeys[$key]]) && $schedules[$stageKeys[$key]]['schedule']->start_time == $time) {
+					$hasEventStartOrEnd = true;
+					break;
 				}
 				if (isset($schedules[$stageKeys[$key] - 1]) && $schedules[$stageKeys[$key] - 1]['schedule']->end_time == $time) {
-					$hasEventEnd = true;
+					$hasEventStartOrEnd = true;
+					break;
 				}
 			}
 			echo CHtml::openTag('tr');
-			echo CHtml::openTag('td', array(
-				'class'=>'time' . ($hasEventStart || $hasEventEnd ? ' has-time' : ''),
-			));
-			if ($hasEventStart || $hasEventEnd) {
-				echo CHtml::tag('span', array(), date('H:i', $time));
-			}
-			if ($time == $this->endTime - $this->timeSpan) {
-				echo CHtml::tag('span', array(
-					'class'=>'end-time',
-				), date('H:i', $this->endTime));
-			}
-			echo CHtml::closeTag('td');
+			echo CHtml::tag('td', array(
+				'class'=>'time' . ($hasEventStartOrEnd ? ' has-time' : ''),
+			), $hasEventStartOrEnd ? CHtml::tag('span', array(), date('H:i', $time)) : '');
 			foreach ($this->schedules as $key=>$schedules) {
 				if (!isset($schedules[$stageKeys[$key]])) {
 					if (!isset($stageKeys[$key - 1]) || !isset($this->schedules[$key - 1][$stageKeys[$key - 1]]) || $colSpans[$key - 1] == 1) {
@@ -105,19 +94,24 @@ class ConciseSchedule extends Widget {
 				}
 			}
 			echo CHtml::openTag('td', array(
-				'class'=>'time' . ($hasEventStart || $hasEventEnd ? ' has-time' : ''),
+				'class'=>'time' . ($hasEventStartOrEnd ? ' has-time' : ''),
 			));
-			if ($hasEventStart || $hasEventEnd) {
+			if ($hasEventStartOrEnd) {
 				echo CHtml::tag('span', array(), date('H:i', $time));
-			}
-			if ($time == $this->endTime - $this->timeSpan) {
-				echo CHtml::tag('span', array(
-					'class'=>'end-time',
-				), date('H:i', $this->endTime));
 			}
 			echo CHtml::closeTag('td');
 			echo CHtml::closeTag('tr');
 		}
+		echo CHtml::openTag('tr');
+		echo CHtml::tag('td', array(
+			'class'=>'time has-time',
+		), CHtml::tag('span', array(), date('H:i', $time)));
+		echo CHtml::tag('td', array(
+			'colspan'=>count($colSpans),
+		));
+		echo CHtml::tag('td', array(
+			'class'=>'time has-time',
+		), CHtml::tag('span', array(), date('H:i', $time)));
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('tbody');
 		
