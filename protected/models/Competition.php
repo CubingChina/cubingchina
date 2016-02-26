@@ -685,6 +685,7 @@ class Competition extends ActiveRecord {
 				'id'=>$schedule->id,
 				'event'=>$schedule->event,
 				'round'=>$schedule->round,
+				'schedule'=>$schedule,
 			);
 			if ($schedule->cumulative) {
 				$temp['Time Limit'] = $cumulative . $temp['Time Limit'];
@@ -711,8 +712,8 @@ class Competition extends ActiveRecord {
 			return array();
 		}
 		$columns = array();
-		foreach (array_keys($schedules[0]) as $key) {
-			if ($key == 'id' || $key == 'event' || $key == 'round') {
+		foreach ($schedules[0] as $key=>$value) {
+			if ($key == 'id' || $key == 'event' || $key == 'round' || !is_string($value)) {
 				continue;
 			}
 			$width = $this->getScheduleColumnWidth($key);

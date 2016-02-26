@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Cumulative ' => '累計',
+  'Event List' => '項目列表',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -51,7 +51,6 @@ return array (
   'Regulations' => '比賽規則',
   'Reset Password' => '重設密碼',
   'Rubik\'s Cube' => '魔方',
-  'Schedule' => '賽程安排',
   'Speedcubing' => '競速魔方',
   'Success' => '成功',
   'The Chinese speedcubing website.' => '中國魔方競速網站',
@@ -101,6 +100,7 @@ return array (
   'Contact' => '聯系我們',
   'Cubing China' => '粗餅·中國魔方賽事網',
   'CubingChina ID' => '粗餅ID',
+  'Cumulative ' => '累計',
   'Current' => '近期',
   'Delegate' => '代表',
   'Detail' => '詳情',
@@ -195,6 +195,7 @@ return array (
   'Round' => '輪次',
   'Rounds' => '輪',
   'Save' => '保存',
+  'Schedule' => '賽程安排',
   'Score Card' => '成績條模板',
   'Settings' => '設置',
   'Single' => '單次',
