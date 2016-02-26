@@ -74,20 +74,20 @@ class ConciseSchedule extends Widget {
 					}
 					continue;
 				}
-				$current = $schedules[$stageKeys[$key]]['schedule'];
-				if ($current->end_time == $time + $this->timeSpan) {
+				$current = $schedules[$stageKeys[$key]];
+				if ($current['schedule']->end_time == $time + $this->timeSpan) {
 					$stageKeys[$key]++;
 					$colSpans[$key] = 1;
 				}
-				if ($current->start_time == $time) {
-					if (isset($stageKeys[$key + 1]) && $this->schedules[$key + 1][0]['schedule']->stage == $current->stage
+				if ($current['schedule']->start_time == $time) {
+					if (isset($stageKeys[$key + 1]) && $this->schedules[$key + 1][0]['schedule']->stage == $current['schedule']->stage
 						&& (!isset($this->schedules[$key + 1][$stageKeys[$key + 1]])
-						|| $this->schedules[$key + 1][$stageKeys[$key + 1]]['schedule']->start_time >= $current->end_time)
+						|| $this->schedules[$key + 1][$stageKeys[$key + 1]]['schedule']->start_time >= $current['schedule']->end_time)
 					) {
 						$colSpans[$key] = 2;
 					}
-					$this->renderEventCell($schedules[$stageKeys[$key]], $colSpans[$key]);
-				} elseif ($current->start_time > $time) {
+					$this->renderEventCell($current, $colSpans[$key]);
+				} elseif ($current['schedule']->start_time > $time) {
 					if (!isset($stageKeys[$key - 1]) || !isset($this->schedules[$key - 1][$stageKeys[$key - 1]]) || $colSpans[$key - 1] == 1) {
 						echo CHtml::tag('td');
 					}
