@@ -147,7 +147,7 @@ return array (
   'Myanmar' => '缅甸',
   'Name En' => '',
   'Namibia' => '纳米比亚',
-  'Nauru' => '鲁',
+  'Nauru' => '瑙鲁',
   'Nepal' => '尼泊尔',
   'Netherlands' => '荷兰',
   'New Caledonia' => '新喀里多尼亚',
