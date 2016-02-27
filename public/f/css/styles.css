@@ -2872,3 +2872,6 @@ table.concise-schedule {
 .tab-content.schedule .panel-body {
   padding: 0;
 }
+.tab-content.schedule .table-responsive {
+  border: none;
+}
