@@ -37,7 +37,7 @@
     <li class="active"><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
     <li><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
   </ul>
-  <div class="tab-content">
+  <div class="tab-content schedule">
     <div class="tab-pane active" id="concise">
       <?php foreach ($listableSchedules as $day=>$schedules): ?>
       <div class="panel panel-info">

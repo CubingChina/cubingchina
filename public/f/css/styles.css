@@ -2865,3 +2865,10 @@ table.concise-schedule {
   width: 50px;
   background-color: transparent;
 }
+.tab-content.schedule {
+  padding: 0;
+  border: none;
+}
+.tab-content.schedule .panel-body {
+  padding: 0;
+}
