@@ -512,7 +512,10 @@ class Competition extends ActiveRecord {
 			} else {
 				$stage = self::STAGE_THIRD;
 			}
-			if (!$this->hasSecondStage && $stage !== self::STAGE_FIRST) {
+			if (!$this->hasThirdStage && $stage == self::STAGE_THIRD) {
+				$stage = self::STAGE_SECOND;
+			}
+			if (!$this->hasSecondStage && $stage == self::STAGE_SECOND) {
 				$stage = self::STAGE_FIRST;
 			}
 		}

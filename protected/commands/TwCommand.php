@@ -6,7 +6,7 @@ class TwCommand extends CConsoleCommand {
 		include Yii::getPathOfAlias('application.data') . '/ZhConversion.php';
 		$path = Yii::getPathOfAlias('application.messages.zh_tw');
 		foreach ($files as $file) {
-			if (basename($file) === 'event.php') {
+			if (in_array(basename($file), array('event.php', 'Region.php'))) {
 				continue;
 			}
 			$content = file_get_contents($file);
