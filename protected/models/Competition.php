@@ -1422,7 +1422,7 @@ class Competition extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'date DESC',
+				'defaultOrder'=>'date DESC, end_date DESC',
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',
