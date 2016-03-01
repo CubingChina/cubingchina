@@ -1,6 +1,12 @@
 <?php
 
 class WebUser extends CWebUser {
+	const STATE_KEY_PREFIX = 'user';
+
+	public function init() {
+		parent::init();
+		$this->setStateKeyPrefix(self::STATE_KEY_PREFIX);
+	}
 
 	public function checkAccess($operation, $params = array()) {
 		$method = 'check' . ucfirst($operation);
@@ -39,6 +45,37 @@ class WebUser extends CWebUser {
 		}
 
 		throw new CHttpException(403, Yii::t('yii', 'Login Required'));
+	}
+
+	public function getState($key, $defaultValue = null) {
+		$key = $this->getStateKeyPrefix() . $key;
+		return Yii::app()->session->get($key, $defaultValue);
+	}
+
+	public function setState($key, $value, $defaultValue = null) {
+		$key = $this->getStateKeyPrefix().$key;
+		$session = Yii::app()->session;
+		if ($value === $defaultValue) {
+			$session->remove($key);
+		} else {
+			$session->add($key, $value);
+		}
+	}
+
+	public function hasState($key) {
+		$key = $this->getStateKeyPrefix() . $key;
+		return Yii::app()->session->contains($key);
+	}
+
+	public function clearStates() {
+		$session = Yii::app()->session;
+		$prefix = $this->getStateKeyPrefix();
+		$n = strlen($prefix);
+		foreach ($session as $key=>$value) {
+			if (!strncmp($key, $prefix, $n)) {
+				$session->remove($key);
+			}
+		}
 	}
 
 	protected function afterLogin($fromCookie) {

@@ -45,6 +45,10 @@ $config = array(
 			'allowAutoLogin'=>true,
 		),
 		'session'=>array(
+			'class'=>'SymfonyHttpSession',
+			// 'connectionID'=>'db',
+			// 'sessionTableName'=>'session',
+			// 'autoCreateSessionTable'=>false,
 			'cookieParams'=>DEV ? array() : array(
 				'domain'=>'.cubingchina.com',
 			),
