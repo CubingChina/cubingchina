@@ -4,13 +4,15 @@ use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 class SymfonyHttpSession extends CHttpSession {
+	public $options = array();
+
 	private $_session;
 	private $_handler;
 	private $_storage;
 
 	public function init() {
 		$pdo = Yii::app()->db->getPdoInstance();
-		$this->_handler = new PdoSessionHandler($pdo);
+		$this->_handler = new PdoSessionHandler($pdo, $this->options);
 		$this->_storage = new NativeSessionStorage(array(), $this->_handler);
 		$this->_session = new Session($this->_storage);
 
@@ -47,10 +49,6 @@ class SymfonyHttpSession extends CHttpSession {
 
 	public function gcSession($maxLifetime) {
 		return $this->_handler->gc($maxLifetime);
-	}
-
-	public function getSsss() {
-		return $this->_session;
 	}
 
 	public function getIterator() {

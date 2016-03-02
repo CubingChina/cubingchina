@@ -46,9 +46,9 @@ $config = array(
 		),
 		'session'=>array(
 			'class'=>'SymfonyHttpSession',
-			// 'connectionID'=>'db',
-			// 'sessionTableName'=>'session',
-			// 'autoCreateSessionTable'=>false,
+			'options'=>array(
+				'lock_mode'=>Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE,
+			),
 			'cookieParams'=>DEV ? array() : array(
 				'domain'=>'.cubingchina.com',
 			),

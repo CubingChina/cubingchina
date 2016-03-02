@@ -67,6 +67,25 @@ class WebUser extends CWebUser {
 		return Yii::app()->session->contains($key);
 	}
 
+	public function getFlashes($delete = true) {
+		$session = Yii::app()->session;
+		$flashes = array();
+		$prefix = $this->getStateKeyPrefix() . self::FLASH_KEY_PREFIX;
+		$n = strlen($prefix);
+		foreach($session as $key=>$value) {
+			if(!strncmp($key, $prefix, $n)) {
+				$flashes[substr($key, $n)] = $value;
+				if($delete) {
+					$session->remove($key);
+				}
+			}
+		}
+		if ($delete) {
+			$this->setState(self::FLASH_COUNTERS, array());
+		}
+		return $flashes;
+	}
+
 	public function clearStates() {
 		$session = Yii::app()->session;
 		$prefix = $this->getStateKeyPrefix();
