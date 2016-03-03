@@ -1,0 +1,62 @@
+<?php
+
+Yii::import('application.live.handler.*');
+
+class LiveClient {
+	const CODE_OK = 200;
+	const CODE_UNAUTHORIZED = 401;
+	const CODE_FORBIDDEN = 403;
+	const CODE_NOT_FOUND = 404;
+	const CODE_INTERNAL_ERROR = 500;
+
+	public $conn;
+	public $user;
+
+	public function __construct($conn) {
+		$this->conn = $conn;
+	}
+
+	public function handleMessage($msg) {
+		$msg = $this->preProcess($msg);
+		if ($msg === 'ping') {
+			return $this->send('pong');
+		}
+		if (is_object($msg) && isset($msg->type)) {
+			$handlerClass = ucfirst($msg->type) . 'Handler';
+			try {
+				$handler = new $handlerClass($this, $msg);
+				$handler->process();
+				unset($handler);
+			} catch (Exception $e) {
+				Yii::log($e->getMessage(), 'ws', 'handler.error');
+			}
+		}
+	}
+
+	private function preProcess($msg) {
+		$temp = json_decode($msg);
+		if ($temp === false || $temp === null) {
+			return $msg;
+		}
+		return $temp;
+	}
+
+	public function success($data) {
+		return $this->send(array(
+			'code'=>self::CODE_OK,
+			'data'=>$data,
+		));
+	}
+
+	public function error($code) {
+		return $this->send(array(
+			'code'=>$code,
+			'data'=>null,
+		));
+	}
+
+	public function send($msg) {
+		$msg = json_encode($msg);
+		return $this->conn->send($msg);
+	}
+}
