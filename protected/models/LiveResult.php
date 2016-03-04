@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * This is the model class for table "live_result".
+ *
+ * The followings are the available columns in table 'live_result':
+ * @property string $id
+ * @property string $competition_id
+ * @property string $user_id
+ * @property string $event
+ * @property string $round
+ * @property string $format
+ * @property integer $best
+ * @property integer $average
+ * @property integer $value1
+ * @property integer $value2
+ * @property integer $value3
+ * @property integer $value4
+ * @property integer $value5
+ * @property string $regional_single_record
+ * @property string $regional_average_record
+ */
+class LiveResult extends ActiveRecord {
+	/**
+	 * @return string the associated database table name
+	 */
+	public function tableName() {
+		return 'live_result';
+	}
+
+	/**
+	 * @return array validation rules for model attributes.
+	 */
+	public function rules() {
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
+		return array(
+			array('competition_id, user_id', 'required'),
+			array('best, average, value1, value2, value3, value4, value5', 'numerical', 'integerOnly'=>true),
+			array('competition_id, user_id', 'length', 'max'=>10),
+			array('event', 'length', 'max'=>6),
+			array('round, format', 'length', 'max'=>1),
+			array('regional_single_record, regional_average_record', 'length', 'max'=>3),
+			// The following rule is used by search().
+			// @todo Please remove those attributes that should not be searched.
+			array('id, competition_id, user_id, event, round, format, best, average, value1, value2, value3, value4, value5, regional_single_record, regional_average_record', 'safe', 'on'=>'search'),
+		);
+	}
+
+	/**
+	 * @return array relational rules.
+	 */
+	public function relations() {
+		// NOTE: you may need to adjust the relation name and the related
+		// class name for the relations automatically generated below.
+		return array(
+		);
+	}
+
+	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels() {
+		return array(
+			'id' => 'ID',
+			'competition_id' => 'Competition',
+			'user_id' => 'User',
+			'event' => 'Event',
+			'round' => 'Round',
+			'format' => 'Format',
+			'best' => 'Best',
+			'average' => 'Average',
+			'value1' => 'Value1',
+			'value2' => 'Value2',
+			'value3' => 'Value3',
+			'value4' => 'Value4',
+			'value5' => 'Value5',
+			'regional_single_record' => 'Regional Single Record',
+			'regional_average_record' => 'Regional Average Record',
+		);
+	}
+
+	/**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
+	 */
+	public function search() {
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id, true);
+		$criteria->compare('competition_id', $this->competition_id, true);
+		$criteria->compare('user_id', $this->user_id, true);
+		$criteria->compare('event', $this->event, true);
+		$criteria->compare('round', $this->round, true);
+		$criteria->compare('format', $this->format, true);
+		$criteria->compare('best', $this->best);
+		$criteria->compare('average', $this->average);
+		$criteria->compare('value1', $this->value1);
+		$criteria->compare('value2', $this->value2);
+		$criteria->compare('value3', $this->value3);
+		$criteria->compare('value4', $this->value4);
+		$criteria->compare('value5', $this->value5);
+		$criteria->compare('regional_single_record', $this->regional_single_record, true);
+		$criteria->compare('regional_average_record', $this->regional_average_record, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+
+	/**
+	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
+	 * @param string $className active record class name.
+	 * @return LiveResult the static model class
+	 */
+	public static function model($className = __CLASS__) {
+		return parent::model($className);
+	}
+}
