@@ -1,6 +1,6 @@
 <?php
 
-Yii::import('application.live.handler.*');
+Yii::import('application.websocket.handler.*');
 
 class LiveClient {
 	const CODE_OK = 200;
@@ -9,11 +9,33 @@ class LiveClient {
 	const CODE_NOT_FOUND = 404;
 	const CODE_INTERNAL_ERROR = 500;
 
+	public $server;
 	public $conn;
 	public $user;
+	public $competitionId;
 
-	public function __construct($conn) {
+	public static $competitions = array();
+
+	public function __construct($server, $conn) {
+		$this->server = $server;
 		$this->conn = $conn;
+		$session = $conn->Session;
+		$prefix = WebUser::STATE_KEY_PREFIX;
+		$key = $prefix . '__id';
+		if ($session->has($key)) {
+			$id = $session->get($key);
+			$user = User::model()->findByPk($id);
+			$this->user = $user;
+		}
+	}
+
+	public function getCompetition() {
+		if ($this->competitionId !== null) {
+			if (isset(self::$competitions[$this->competitionId])) {
+				return self::$competitions[$this->competitionId];
+			}
+			return self::$competitions[$this->competitionId] = Competition::model()->findByPk($this->competitionId);
+		}
 	}
 
 	public function handleMessage($msg) {

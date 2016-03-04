@@ -15,8 +15,9 @@ class WebSocketCommand extends CConsoleCommand {
 
 	public function actionIndex() {
 		$db = Yii::app()->db;
+		$db->setPersistent(true);
 		$pdo = $db->getPdoInstance();
-
+		set_error_handler(array($this, 'errorHandler'));
 		$session = new SessionProvider(
 			new LiveServer(),
 			new PdoSessionHandler($pdo, array(
@@ -34,5 +35,9 @@ class WebSocketCommand extends CConsoleCommand {
 		$socket->listen(self::PORT, self::ADDRESS);
 		$server = new IoServer($app, $socket, $loop);
 		$server->run();
+	}
+
+	public function errorHandler($errno, $errstr, $errfile, $errline) {
+		throw new Exception($errstr, $errno);
 	}
 }

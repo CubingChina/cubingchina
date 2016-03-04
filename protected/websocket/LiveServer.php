@@ -10,19 +10,10 @@ class LiveServer implements MessageComponentInterface {
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
-		$client = new LiveClient($conn);
+		$client = new LiveClient($this, $conn);
 		$conn->client = $client;
 		$this->clients->attach($client);
 		Yii::log("New connection: {$conn->resourceId}", 'ws', 'connect');
-
-		$session = $conn->Session;
-		$prefix = WebUser::STATE_KEY_PREFIX;
-		$key = $prefix . '__id';
-		if ($session->has($key)) {
-			$id = $session->get($key);
-			$user = User::model()->findByPk($id);
-			$client->user = $user;
-		}
 	}
 
 	public function onMessage(ConnectionInterface $conn, $msg) {
@@ -38,5 +29,21 @@ class LiveServer implements MessageComponentInterface {
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		Yii::log($e->getMessage(), 'ws', 'error');
 		$conn->close();
+	}
+
+	public function broadcast($msg, $competition = null) {
+		foreach ($this->clients as $client) {
+			if ($competition === null || $client->competitionId == $competition->id) {
+				$client->send($msg);
+			}
+		}
+	}
+
+	public function broadcastSuccess($data, $competition = null) {
+		foreach ($this->clients as $client) {
+			if ($competition === null || $client->competitionId == $competition->id) {
+				$client->success($data);
+			}
+		}
 	}
 }

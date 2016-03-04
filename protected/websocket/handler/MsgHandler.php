@@ -9,13 +9,17 @@ abstract class MsgHandler {
 		$this->msg = $msg;
 	}
 
-	public function process();
+	abstract public function process();
 
 	public function __call($method, $args) {
 		try {
-			call_user_func_array(array($this->client, $method), $args);
+			if (method_exists($this->client->server, $method)) {
+				call_user_func_array(array($this->client->server, $method), $args);
+			} elseif (method_exists($this->client, $method)) {
+				call_user_func_array(array($this->client, $method), $args);
+			}
 		} catch (Exception $e) {
-			
+			Yii::log($e->getMessage(), 'ws', 'error');
 		}
 	}
 }

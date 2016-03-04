@@ -20,7 +20,6 @@ class ResultHandler extends MsgHandler {
 	}
 
 	public function processResult() {
-		$this->success(['a'=>'b']);
 	}
 
 	public function processAttribute() {
