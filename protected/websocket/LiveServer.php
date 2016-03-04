@@ -39,10 +39,10 @@ class LiveServer implements MessageComponentInterface {
 		}
 	}
 
-	public function broadcastSuccess($data, $competition = null) {
+	public function broadcastSuccess($type, $data, $competition = null) {
 		foreach ($this->clients as $client) {
 			if ($competition === null || $client->competitionId == $competition->id) {
-				$client->success($data);
+				$client->success($type, $data);
 			}
 		}
 	}
