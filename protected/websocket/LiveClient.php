@@ -63,9 +63,10 @@ class LiveClient {
 		return $temp;
 	}
 
-	public function success($data) {
+	public function success($type, $data) {
 		return $this->send(array(
 			'code'=>self::CODE_OK,
+			'type'=>$type,
 			'data'=>$data,
 		));
 	}
