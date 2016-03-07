@@ -7,6 +7,8 @@
  * @property string $id
  * @property string $competition_id
  * @property string $user_id
+ * @property integer $user_type
+ * @property integer $number
  * @property string $event
  * @property string $round
  * @property string $format
@@ -35,15 +37,15 @@ class LiveResult extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competition_id, user_id', 'required'),
-			array('best, average, value1, value2, value3, value4, value5', 'numerical', 'integerOnly'=>true),
+			array('competition_id, user_id, number', 'required'),
+			array('user_type, number, best, average, value1, value2, value3, value4, value5', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>6),
 			array('round, format', 'length', 'max'=>1),
 			array('regional_single_record, regional_average_record', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, user_id, event, round, format, best, average, value1, value2, value3, value4, value5, regional_single_record, regional_average_record', 'safe', 'on'=>'search'),
+			array('id, competition_id, user_id, user_type, number, event, round, format, best, average, value1, value2, value3, value4, value5, regional_single_record, regional_average_record', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,6 +67,8 @@ class LiveResult extends ActiveRecord {
 			'id' => 'ID',
 			'competition_id' => 'Competition',
 			'user_id' => 'User',
+			'user_type' => 'User Type',
+			'number' => 'Number',
 			'event' => 'Event',
 			'round' => 'Round',
 			'format' => 'Format',
@@ -100,6 +104,8 @@ class LiveResult extends ActiveRecord {
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('competition_id', $this->competition_id, true);
 		$criteria->compare('user_id', $this->user_id, true);
+		$criteria->compare('user_type', $this->user_type);
+		$criteria->compare('number', $this->number);
 		$criteria->compare('event', $this->event, true);
 		$criteria->compare('round', $this->round, true);
 		$criteria->compare('format', $this->format, true);

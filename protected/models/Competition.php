@@ -1030,6 +1030,55 @@ class Competition extends ActiveRecord {
 		$this->schedules = $schedules;
 	}
 
+	public function initLiveData() {
+		if (LiveResult::model()->countByAttributes(array('competition_id'=>$this->id)) > 0) {
+			return;
+		}
+		$this->formatEvents();
+		$schedules = array();
+		$temp = $this->schedule;
+		usort($temp, array($this, 'sortSchedules'));
+		foreach ($temp as $schedule) {
+			$schedules[$schedule->event][] = $schedule;
+		}
+		unset($temp);
+		$formats = array();
+		foreach ($this->events as $event=>$value) {
+			if (isset($schedules[$event]) && $schedules[$event][0]->format) {
+				$format = $schedules[$event][0]->format;
+			} else {
+				$format = Formats::getDefaultFormat($event);
+			}
+			$format = explode('/', $format);
+			$formats[$event] = isset($format[1]) ? $format[1] : $format[0];
+		}
+		$rounds = array();
+		foreach ($this->events as $event=>$value) {
+			if (isset($schedules[$event]) && $schedules[$event][0]->round) {
+				$round = $schedules[$event][0]->round;
+			} else {
+				$round = $value['round'] > 1 ? '1' : 'f';
+			}
+			$rounds[$event] = $round;
+		}
+		$registrations = Registration::getRegistrations($this);
+		foreach ($registrations as $registration) {
+			foreach ($registration->events as $event) {
+				if (!isset($formats[$event]) || !isset($rounds[$event])) {
+					continue;
+				}
+				$model = new LiveResult();
+				$model->competition_id = $this->id;
+				$model->user_id = $registration->user_id;
+				$model->number = $registration->number;
+				$model->event = $event;
+				$model->round = $rounds[$event];
+				$model->format = $formats[$event];
+				$model->save();
+			}
+		}
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		$this->handleEvents();

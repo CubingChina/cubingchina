@@ -27,6 +27,19 @@ class Formats extends ActiveRecord {
 			'2'=>'Best of 2',
 		);
 	}
+
+	public static function getDefaultFormat($event) {
+		$exportFormat = Events::getDefaultExportFormat($event);
+		switch (substr($exportFormat, 0, 4)) {
+			case 'mean':
+				return 'm';
+			case 'best':
+				return substr($exportFormat, 4, 1);
+			default:
+				return 'a';
+		}
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

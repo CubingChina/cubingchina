@@ -26,6 +26,7 @@ class LiveController extends CompetitionController {
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('/f/js/websocket' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/live' . $min . '.js');
+		$competition->initLiveData();
 		$this->render('competition', array(
 			'competition'=>$competition,
 		));
