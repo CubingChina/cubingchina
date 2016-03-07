@@ -1253,7 +1253,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, status', 'numerical', 'integerOnly'=>true),
+			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, live, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),

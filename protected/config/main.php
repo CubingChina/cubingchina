@@ -83,6 +83,7 @@ $config = array(
 				),
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
+				'live/<name:[-A-z0-9]+>'=>'live/competition',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
