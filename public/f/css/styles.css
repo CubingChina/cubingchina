@@ -2869,9 +2869,9 @@ table.concise-schedule {
   padding: 0;
   border: none;
 }
-.tab-content.schedule .panel-body {
+#concise .panel-body {
   padding: 0;
 }
-.tab-content.schedule .table-responsive {
+#concise .table-responsive {
   border: none;
 }
