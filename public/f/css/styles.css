@@ -745,7 +745,7 @@ ul.custom-list-style li {
   background: #6091ba;
   margin-bottom: 30px;
 }
-body.competition .main-nav button {
+.main-nav.colorful button {
   background: #202020;
 }
 .main-nav button, body.competition-index .main-nav button {

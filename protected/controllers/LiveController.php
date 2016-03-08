@@ -25,8 +25,10 @@ class LiveController extends CompetitionController {
 		$version = Yii::app()->params->jsVer;
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('/f/js/websocket' . $min . '.js');
+		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
+		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
+		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/live' . $min . '.js');
-		$competition->initLiveData();
 		$this->render('competition', array(
 			'competition'=>$competition,
 		));
