@@ -41,8 +41,11 @@
       } catch (e) {}
     },
     connect: function() {
+      var that = this;
+      if (that.conn instanceof WebSocket && that.conn.readyState == WebSocket.CONNECTING) {
+        return;
+      }
       try {
-        var that = this;
         var conn = that.conn = new WebSocket(that.uri);
         conn.onopen = function() {
           that._msgs.forEach(function(msg) {
