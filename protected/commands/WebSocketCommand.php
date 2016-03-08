@@ -14,27 +14,32 @@ class WebSocketCommand extends CConsoleCommand {
 	const ADDRESS = '127.0.0.1';
 
 	public function actionIndex() {
-		$db = Yii::app()->db;
-		$db->setPersistent(true);
-		$pdo = $db->getPdoInstance();
 		set_error_handler(array($this, 'errorHandler'));
-		$session = new SessionProvider(
-			new LiveServer(),
-			new PdoSessionHandler($pdo, array(
-				'lock_mode'=>PdoSessionHandler::LOCK_NONE,
-			)),
-			array(
-				'name'=>'CUBINGCHINA_SID'
-			)
-		);
-		Yii::getLogger()->autoDump = true;
-		Yii::getLogger()->autoFlush = 1;
-		$app = new HttpServer(new WsServer($session));
-		$loop = new StreamSelectLoop();
-		$socket = new Reactor($loop);
-		$socket->listen(self::PORT, self::ADDRESS);
-		$server = new IoServer($app, $socket, $loop);
-		$server->run();
+		try {
+			$db = Yii::app()->db;
+			$pdo = new QueryCheckPdo($db->connectionString, $db->username, $db->password);
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$liveServer = new LiveServer();
+			$session = new SessionProvider(
+				$liveServer,
+				new PdoSessionHandler($pdo, array(
+					'lock_mode'=>PdoSessionHandler::LOCK_NONE,
+				)),
+				array(
+					'name'=>'CUBINGCHINA_SID'
+				)
+			);
+			Yii::getLogger()->autoDump = true;
+			Yii::getLogger()->autoFlush = 1;
+			$app = new HttpServer(new WsServer($session));
+			$loop = new StreamSelectLoop();
+			$socket = new Reactor($loop);
+			$socket->listen(self::PORT, self::ADDRESS);
+			$server = new IoServer($app, $socket, $loop);
+			$server->run();
+		} catch (Exception $e) {
+			Yii::log($e->getMessage(), 'error', 'websocket');
+		}
 	}
 
 	public function errorHandler($errno, $errstr, $errfile, $errline) {
