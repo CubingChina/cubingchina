@@ -26,6 +26,7 @@
         this.conn.send(JSON.stringify(msg));
         this.lastActiveTime = Date.now();
       }
+      return this;
     },
     receive: function(e) {
       this.lastActiveTime = Date.now();
@@ -48,6 +49,7 @@
       try {
         var conn = that.conn = new WebSocket(that.uri);
         conn.onopen = function() {
+          that.fire('connect');
           that._msgs.forEach(function(msg) {
             conn.send(JSON.stringify(msg));
           });
@@ -60,6 +62,7 @@
     on: function(event, callback) {
       this._eventHandlers[event] = this._eventHandlers[event] || [];
       this._eventHandlers[event].push(callback);
+      return this;
     },
     off: function(event, callback) {
       if (!this._eventHandlers[event]) {
@@ -73,6 +76,7 @@
       if (index > -1) {
         this._eventHandlers[event].splice(index, 1);
       }
+      return this;
     },
     fire: function(event, data) {
       var that = this;
@@ -86,6 +90,7 @@
           callback.call(that, data);
         });
       }
+      return that;
     }
   }
   global.WS = WS;
