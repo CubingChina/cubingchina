@@ -53,6 +53,7 @@ $config = array(
 				'domain'=>'.cubingchina.com',
 			),
 			'sessionName'=>'CUBINGCHINA_SID',
+			'timeout'=>86400 * 7,
 		),
 		'urlManager'=>array(
 			'urlFormat'=>'path',

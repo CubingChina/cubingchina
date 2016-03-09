@@ -19,8 +19,8 @@
         result.pos = '';
         result.isNew = true;
         var results = state.results;
-        var key = findKey(results, result);
-        results.splice(key, 0, result);
+        var index = findIndex(results, result);
+        results.splice(index, 0, result);
         var i = 0, len = results.length;
         for (; i < len; i++) {
           if (!results[i - 1] || compare(results[i - 1], results[i]) < 0) {
@@ -35,12 +35,12 @@
     },
     NEW_MESSAGE: function(state, message) {
       state.messages.push(message);
-      if (state.messages.length > 10) {
+      if (state.messages.length > 1000) {
         state.messages.splice(0, 1);
       }
     }
   };
-  var store = window.store = new Vuex.Store({
+  var store = new Vuex.Store({
     state: state,
     mutations: mutations
   });
@@ -74,9 +74,9 @@
               type: 'chat',
               text: that.message
             });
-            store.dispatch('NEW_MESSAGE', {
+            newMessage({
               text: that.message
-            })
+            }, true);
             that.message = '';
           }
         }
@@ -102,10 +102,22 @@
   }).on('newresult', function(result) {
     store.dispatch('NEW_RESULT', result);
   }).on('newmessage', function(message) {
-    store.dispatch('NEW_MESSAGE', message);
+    newMessage(message);
   });
 
-  function findKey(results, result) {
+  var newMessage = function() {
+    var container = $('.message-container');
+    var ul = container.find('ul');
+    return function(message, scroll) {
+      store.dispatch('NEW_MESSAGE', message);
+      if (scroll || container.height() + container.scrollTop() > ul.height()) {
+        vm.$nextTick(function() {
+          container.scrollTop(ul.height());
+        });
+      }
+    };
+  }();
+  function findIndex(results, result) {
     var middle, temp;
     var left = 0, right = results.length - 1;
     while (left <= right) {

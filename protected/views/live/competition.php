@@ -20,7 +20,9 @@
       <li v-for="message in messages">{{message.text}}</li>
     </ul>
   </div>
-  <input v-model="message" @keyup.enter="send" />
+  <div class="input-panel">
+    <input v-model="message" @keyup.enter="send" />
+  </div>
 </template>
 
 <template id="result-template">

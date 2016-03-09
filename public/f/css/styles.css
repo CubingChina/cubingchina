@@ -2882,3 +2882,7 @@ table.concise-schedule {
 .tab-content.schedule .table-responsive {
   border: none;
 }
+.message-container {
+  height: 300px;
+  overflow-y: auto;
+}
