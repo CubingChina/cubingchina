@@ -1,12 +1,13 @@
-<div id="live-container"></div>
-<?php echo CHtml::openTag('template', array(
-  'id'=>'live-container-template',
+<?php echo CHtml::tag('div', array(
+  'id'=>'live-container',
   'data-competition-id'=>$competition->id,
   'data-logged-in'=>!Yii::app()->user->isGuest,
   'data-user-id'=>Yii::app()->user->id,
   'data-user-name'=>Yii::app()->user->name,
   'v-cloak'=>true,
-)); ?>
+), ''); ?>
+
+<template id="live-container-template">
   <div class="col-lg-12">
     <chat></chat>
     <result></result>
@@ -14,7 +15,12 @@
 </template>
 
 <template id="chat-template">
-  <textarea></textarea>
+  <div class="message-container">
+    <ul>
+      <li v-for="message in messages">{{message.text}}</li>
+    </ul>
+  </div>
+  <input v-model="message" @keyup.enter="send" />
 </template>
 
 <template id="result-template">
@@ -66,13 +72,13 @@
         <?php endforeach; ?>
       </thead>
       <tbody>
-        <tr v-for="result in results">
+        <tr v-for="result in results" :class="{danger: result.isNew}">
           <td>{{result.pos}}</td>
           <td>{{{result.user}}}</td>
-          <td>{{result.best}}</td>
-          <td>{{result.regional_single_record}}</td>
-          <td>{{result.average}}</td>
-          <td>{{result.regional_average_record}}</td>
+          <td class="result">{{result.best}}</td>
+          <td class="record">{{result.regional_single_record}}</td>
+          <td class="result">{{result.average}}</td>
+          <td class="record">{{result.regional_average_record}}</td>
           <td>{{result.region}}</td>
           <td>{{result.detail}}</td>
         </tr>

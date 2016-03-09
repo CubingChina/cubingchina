@@ -34,7 +34,8 @@ class LiveClient {
 			if (isset(self::$competitions[$this->competitionId])) {
 				return self::$competitions[$this->competitionId];
 			}
-			return self::$competitions[$this->competitionId] = Competition::model()->findByPk($this->competitionId);
+			$competition = self::$competitions[$this->competitionId] = Competition::model()->findByPk($this->competitionId);
+			return $competition;
 		}
 	}
 

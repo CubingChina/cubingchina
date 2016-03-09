@@ -31,17 +31,17 @@ class LiveServer implements MessageComponentInterface {
 		$conn->close();
 	}
 
-	public function broadcast($msg, $competition = null) {
+	public function broadcast($msg, $competition = null, $exclude = null) {
 		foreach ($this->clients as $client) {
-			if ($competition === null || $client->competitionId == $competition->id) {
+			if ($client != $exclude && ($competition === null || $client->competitionId == $competition->id)) {
 				$client->send($msg);
 			}
 		}
 	}
 
-	public function broadcastSuccess($type, $data, $competition = null) {
+	public function broadcastSuccess($type, $data, $competition = null, $exclude = null) {
 		foreach ($this->clients as $client) {
-			if ($competition === null || $client->competitionId == $competition->id) {
+			if ($client != $exclude && ($competition === null || $client->competitionId == $competition->id)) {
 				$client->success($type, $data);
 			}
 		}
