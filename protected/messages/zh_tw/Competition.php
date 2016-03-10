@@ -38,6 +38,7 @@ return array (
   'Cubing China' => '粗餅',
   'Date' => '日期',
   'Delegates' => '代表',
+  'Main Judge' => '主裁判',
   'End Date' => '結束日期',
   'Entry Fee' => '報名費',
   'Events' => '項目',
