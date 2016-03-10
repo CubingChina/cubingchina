@@ -42,7 +42,7 @@
       <?php endif; ?>
     </dd>
     <?php if ($competition->delegate !== array()): ?>
-    <dt><?php echo Yii::t('Competition', 'Delegates'); ?></dt>
+    <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
     <dd>
       <?php foreach ($competition->delegate as $key=>$delegate): ?>
       <?php if ($key > 0) echo Yii::t('common', ', '); ?>
@@ -50,7 +50,7 @@
       <?php endforeach; ?>
     </dd>
     <?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
-    <dt><?php echo Yii::t('Competition', 'Delegates'); ?></dt>
+    <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
     <dd>
       <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('delegate')); ?>
     </dd>
