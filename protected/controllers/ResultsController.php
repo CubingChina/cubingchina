@@ -591,6 +591,40 @@ class ResultsController extends Controller {
 		));
 	}
 
+	private function statMostPersons() {
+		$page = $this->iGet('page', 1);
+		$region = $this->sGet('region', 'China');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		$statistic = array(
+			'class'=>'MostNumber',
+			'region'=>$region,
+			'group'=>'competitionId',
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Most Persons');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/mostPersons', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'region'=>$region,
+		));
+	}
+
 	private function statSumOfRanks() {
 		$page = $this->iGet('page', 1);
 		$type = $this->sGet('type', 'single');

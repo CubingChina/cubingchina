@@ -2,12 +2,12 @@
 
 class MostNumber extends Statistics {
 
-	public static function build($statistic) {
+	public static function build($statistic, $page = 1) {
 		$command = Yii::app()->wcaDb->createCommand()
-		->from('Results r')
-		->group($statistic['group'])
-		->order('count DESC')
-		->limit(self::$limit);
+		->from('Results rs');
+		if (!isset($statistic['region'])) {
+			$statistic['region'] = 'China';
+		}
 		switch ($statistic['group']) {
 			case 'personId':
 				$select = array(
@@ -15,7 +15,8 @@ class MostNumber extends Statistics {
 					'personName',
 					'count(DISTINCT competitionId) AS count',
 				);
-				$command->andWhere('personCountryId="China"');
+				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				Results::applyRegionCondition($command, $statistic['region']);
 				$columns = array(
 					array(
 						'header'=>'Yii::t("statistics", "Person")',
@@ -35,8 +36,9 @@ class MostNumber extends Statistics {
 					'c.cityName',
 					'count(DISTINCT personId) AS count',
 				);
-				$command->leftJoin('Competitions c', 'r.competitionId=c.id');
-				$command->andWhere('c.countryId="China"');
+				$command->leftJoin('Competitions c', 'rs.competitionId=c.id');
+				$command->leftJoin('Countries country', 'c.countryId=country.id');
+				Results::applyRegionCondition($command, $statistic['region'], 'c.countryId');
 				$columns = array(
 					array(
 						'header'=>'Yii::t("common", "Competition")',
@@ -50,12 +52,23 @@ class MostNumber extends Statistics {
 				);
 				break;
 		}
-		$rows = $command->select($select)->queryAll();
+		$limit = self::$limit;
+		$cmd = clone $command;
+		$rows = $command
+		->select($select)
+		->group($statistic['group'])
+		->order('count DESC')
+		->limit($limit)
+		->offset(($page - 1) * $limit)
+		->queryAll();
 		if ($statistic['group'] === 'competitionId') {
 			$rows = array_map(function($row) {
 				return self::getCompetition($row);
 			}, $rows);
 		}
+		$statistic['count'] = $cmd->select('count(DISTINCT ' . $statistic['group'] . ') AS count')->queryScalar();
+		$statistic['rank'] = ($page - 1) * $limit;
+		$statistic['rankKey'] = 'count'; 
 		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 

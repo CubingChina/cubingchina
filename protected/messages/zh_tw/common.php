@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Event List' => '項目列表',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -110,6 +109,7 @@ return array (
   'Enter WCA ID' => '輸入WCA ID',
   'Enter your WCA ID' => '輸入您的WCA ID',
   'Event' => '項目',
+  'Event List' => '項目列表',
   'FAQ' => '常見問題',
   'Female' => '女',
   'File is too large, the limited size is {size}' => '文件太大，最大允許{size}',

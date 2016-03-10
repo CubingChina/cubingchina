@@ -22,6 +22,7 @@ class OldestStandingRecords extends Statistics {
 			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
 			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
 			->leftJoin('Competitions c', 'rs.competitionId=c.id');
+			$rows[$type] = array();
 			foreach ($cmd->queryAll() as $row) {
 				$row['type'] = $type;
 				if (isset($rows[$type][$row['eventId']])) {
