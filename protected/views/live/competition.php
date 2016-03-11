@@ -77,9 +77,9 @@
         <tr v-for="result in results" :class="{danger: result.isNew}">
           <td>{{result.pos}}</td>
           <td>{{{result.user}}}</td>
-          <td class="result">{{result.best}}</td>
+          <td class="result">{{result.best | formatTime result.event}}</td>
           <td class="record">{{result.regional_single_record}}</td>
-          <td class="result">{{result.average}}</td>
+          <td class="result">{{result.average | formatTime result.event}}</td>
           <td class="record">{{result.regional_average_record}}</td>
           <td>{{result.region}}</td>
           <td>{{result.detail}}</td>

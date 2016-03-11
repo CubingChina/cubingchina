@@ -86,12 +86,12 @@
       var that = this;
       if (that._eventHandlers['*']) {
         that._eventHandlers['*'].forEach(function(callback) {
-          callback.call(that, data);
+          callback(data);
         });
       }
       if (that._eventHandlers[event]) {
         that._eventHandlers[event].forEach(function(callback) {
-          callback.call(that, data);
+          callback(data);
         });
       }
       return that;
