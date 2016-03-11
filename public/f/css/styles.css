@@ -2201,6 +2201,10 @@ body.competition .main-nav .nav .cube-purple.active > a, body.competition .main-
   z-index: 10;
 }
 
+.competition-wca .nav-tabs {
+  z-index: 100;
+}
+
 td .comp-type-other {
   padding-left: 25px;
   padding-right: 20px;
