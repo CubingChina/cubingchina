@@ -660,16 +660,16 @@ class Competition extends ActiveRecord {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				switch ($times + 1) {
 					case 1:
-						$event .= Yii::t('common', '(1st attempt)');
+						$event .= Yii::t('common', ' (1st attempt)');
 						break;
 					case 2:
-						$event .= Yii::t('common', '(2nd attempt)');
+						$event .= Yii::t('common', ' (2nd attempt)');
 						break;
 					case 3:
-						$event .= Yii::t('common', '(3rd attempt)');
+						$event .= Yii::t('common', ' (3rd attempt)');
 						break;
 					default:
-						$event .= Yii::t('common', '({times}th attempt)', array(
+						$event .= Yii::t('common', ' ({times}th attempt)', array(
 							'{times}'=>$times,
 						));
 						break;
