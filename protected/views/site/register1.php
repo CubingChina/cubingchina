@@ -30,7 +30,7 @@
       </div>
       <div class="col-xs-6">
         <p>&nbsp;</p>
-        <p><?php echo Yii::t('common', 'You will have a WCA ID after compete in any WCA competition.'); ?></p>
+        <p><?php echo Yii::t('common', 'You will have a WCA ID after you compete in any WCA competition.'); ?></p>
       </div>
       <div class="clearfix"></div>
       <div class="col-xs-6">

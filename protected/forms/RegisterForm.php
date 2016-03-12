@@ -188,7 +188,7 @@ class RegisterForm extends CFormModel {
 		return array(
 			'wcaid'=>Yii::t('common', 'WCA ID'),
 			'name'=>Yii::t('common', 'Name'),
-			'local_name'=>Yii::t('common', 'Name in Local Character'),
+			'local_name'=>Yii::t('common', 'Name in Local Characters'),
 			'gender'=>Yii::t('common', 'Gender'),
 			'birthday'=>Yii::t('common', 'Birthday'),
 			'country_id'=>Yii::t('common', 'Region'),
