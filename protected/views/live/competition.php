@@ -1,9 +1,11 @@
 <?php echo CHtml::tag('div', array(
   'id'=>'live-container',
   'data-competition-id'=>$competition->id,
-  'data-logged-in'=>!Yii::app()->user->isGuest,
-  'data-user-id'=>Yii::app()->user->id,
-  'data-user-name'=>Yii::app()->user->name,
+  'data-events'=>json_encode($competition->events),
+  'data-user'=>json_encode(array(
+    'isGuest'=>Yii::app()->user->isGuest,
+    'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),
+  )),
   'v-cloak'=>true,
 ), ''); ?>
 
@@ -16,12 +18,25 @@
 
 <template id="chat-template">
   <div class="message-container">
-    <ul>
-      <li v-for="message in messages">{{message.text}}</li>
+    <ul class="unstyled">
+      <li v-for="message in messages">
+        <message :message="message"></message>
+      </li>
     </ul>
   </div>
   <div class="input-panel">
-    <input v-model="message" @keyup.enter="send" />
+    <input v-model="message" @keyup.enter="send" :disabled="$store.state.user.isGuest" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
+  </div>
+</template>
+
+<template id="message-template">
+  <div class="chat-message" :class="{'self-message': message.isSelf}">
+    <div class="message-meta">
+      {{message.user.name}} {{message.time | formatTime}}
+    </div>
+    <div class="message-body">
+      {{message.content}}
+    </div>
   </div>
 </template>
 

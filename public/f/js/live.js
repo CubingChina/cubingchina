@@ -6,7 +6,8 @@
   Vue.use(VueRouter);
   Vue.use(Vuex);
   var liveContainer = $('#live-container');
-  var state = {
+  var state = window.state = {
+    user: {},
     competitionId: 0,
     events: {},
     event: '',
@@ -102,13 +103,27 @@
             }
             ws.send({
               type: 'chat',
-              text: that.message
+              content: that.message
             });
             newMessage({
-              text: that.message
+              user: state.user,
+              content: that.message,
+              // time: Date.now() / 1000,
+              isSelf: true
             }, true);
             that.message = '';
           }
+        },
+        components: {
+          message: Vue.extend({
+            props: ['message'],
+            template: $('#message-template').html(),
+            filters: {
+              formatTime: function(time) {
+                return time ? moment(new Date(time * 1000)).format('HH:mm:ss') : '';
+              }
+            }
+          })
         }
       }),
       result: Vue.extend({
@@ -146,6 +161,9 @@
             } else { 
               var msecond = result % 100;
               var second = Math.floor(result / 100);
+              if (msecond < 10) {
+                msecond = '0' + msecond;
+              }
               time = formatSecond(second) + '.' + msecond;
             }
             return time;
@@ -158,7 +176,7 @@
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
-      competitionId: store.competitionId
+      competitionId: state.competitionId
     });
   }).on('newresult', function(result) {
     store.dispatch('NEW_RESULT', result);
@@ -179,13 +197,8 @@
     };
   }();
   function formatSecond(second, multi) {
-    if (multi) {
-      if (second == 99999) {
-        return 'unknown';
-      }
-      if (second == 3600) {
-        return '60:00';
-      }
+    if (multi && second == 99999) {
+      return 'unknown';
     }
     second = parseInt(second);
     var minute = Math.floor(second / 60);
@@ -197,6 +210,11 @@
       temp.push(minute, hour);
     } else if (minute > 0) {
       temp.push(minute);
+    }
+    for (var i = 1; i < temp.length; i++) {
+      if (temp[i - 1] < 10) {
+        temp[i - 1] = '0' + temp[i - 1];
+      }
     }
     return temp.reverse().join(':');
   }
