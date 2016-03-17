@@ -72,12 +72,14 @@
     }
   };
   $.extend(state, liveContainer.data());
+
+  //vuex
   var store = new Vuex.Store({
     state: state,
     mutations: mutations
   });
-  var vm = new Vue({
-    el: liveContainer.get(0),
+  //main component
+  var vm = window.vm = Vue.extend({
     template: $('#live-container-template').html(),
     store: store,
     components: {
@@ -172,6 +174,20 @@
       })
     }
   });
+
+  //router
+  var router = window.router = new VueRouter();
+  router.map({
+    '/:event/:round': {
+      component: {}
+    }
+  });
+  router.redirect({
+    '*': ['', state.event, state.round].join('/')
+  });
+  router.start(vm, liveContainer.get(0));
+
+  //websocket
   var ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
@@ -190,7 +206,7 @@
     return function(message, scroll) {
       store.dispatch('NEW_MESSAGE', message);
       if (scroll || container.height() + container.scrollTop() > ul.height()) {
-        vm.$nextTick(function() {
+        Vue.nextTick(function() {
           container.scrollTop(ul.height());
         });
       }

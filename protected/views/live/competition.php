@@ -1,7 +1,10 @@
+<?php $events = $competition->getEventsRounds(); ?>
 <?php echo CHtml::tag('div', array(
   'id'=>'live-container',
   'data-competition-id'=>$competition->id,
-  'data-events'=>json_encode($competition->events),
+  'data-events'=>json_encode($events),
+  'data-event'=>array_keys($events)[0],
+  'data-round'=>current($events)[0],
   'data-user'=>json_encode(array(
     'isGuest'=>Yii::app()->user->isGuest,
     'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),

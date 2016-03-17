@@ -1079,6 +1079,30 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function getEventsRounds() {
+		$this->formatEvents();
+		$schedules = array();
+		$temp = $this->schedule;
+		usort($temp, array($this, 'sortSchedules'));
+		foreach ($temp as $schedule) {
+			$schedules[$schedule->event][] = $schedule;
+		}
+		$events = array();
+		foreach ($this->events as $event=>$value) {
+			if (isset($schedules[$event])) {
+				foreach ($schedules[$event] as $schedule) {
+					$events[$event][] = $schedule->round;
+				}
+			} elseif ($value['round'] > 0) {
+				for ($i = 1; $i < $value['round']; $i++) {
+					$events[$event][] = "$i";
+				}
+				$events[$event][] = 'f';
+			}
+		}
+		return $events;
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		$this->handleEvents();
