@@ -2182,6 +2182,10 @@ body.competition .main-nav .nav .cube-purple.active > a, body.competition .main-
 .competition-wca {
   position: relative;
   min-height: 300px;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
 }
 
 .competition-wca:before{
