@@ -103,6 +103,7 @@ $config = array(
 		),
 		'db'=>array(
 			'connectionString'=>'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
+			'pdoClass'=>'QueryCheckPdo',
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
 			'password'=>'',
@@ -113,6 +114,7 @@ $config = array(
 		),
 		'wcaDb'=>array(
 			'class'=>'system.db.CDbConnection',
+			'pdoClass'=>'QueryCheckPdo',
 			'connectionString'=>'mysql:host=localhost;dbname=wca_' . intval(file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'wcaDb')),
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
