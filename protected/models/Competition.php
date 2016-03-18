@@ -1103,6 +1103,26 @@ class Competition extends ActiveRecord {
 		return $events;
 	}
 
+	public function getLastActiveEventRound($events) {
+		$liveResult = LiveResult::model()->findByAttributes(array(
+			'competition_id'=>$this->id,
+			// 'status'=>LiveResult::STATUS_NORMAL,
+		), array(
+			'condition'=>'update_time > 0',
+			'order'=>'update_time DESC',
+		));
+		if ($liveResult !== null) {
+			return array(
+				'event'=>$liveResult->event,
+				'round'=>$liveResult->round,
+			);
+		}
+		return array(
+			'event'=>array_keys($events)[0],
+			'round'=>current($events)[0],
+		);
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		$this->handleEvents();

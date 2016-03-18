@@ -23,6 +23,39 @@
  * @property string $regional_average_record
  */
 class LiveResult extends ActiveRecord {
+
+	const USER_TYPE_LIVE = 1;
+
+	public function getShowAttributes() {
+		return array(
+			'id'=>$this->id,
+			'competition_id'=>$this->competition_id,
+			'user'=>array(
+				'name'=>$this->user->getCompetitionName(),
+				'wcaid'=>$this->user->wcaid,
+				'region'=>$this->user->country->name,
+			),
+			'region'=>$this->user->country->name,
+			'number'=>$this->number,
+			'event'=>$this->event,
+			'round'=>$this->round,
+			'format'=>$this->format,
+			'best'=>intval($this->best),
+			'average'=>intval($this->average),
+			'value1'=>intval($this->value1),
+			'value2'=>intval($this->value2),
+			'value3'=>intval($this->value3),
+			'value4'=>intval($this->value4),
+			'value5'=>intval($this->value5),
+			'regional_single_record'=>$this->regional_single_record,
+			'regional_average_record'=>$this->regional_average_record,
+		);
+	}
+
+	public function getUser() {
+		return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -56,6 +89,8 @@ class LiveResult extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'liveUser'=>array(self::BELONGS_TO, 'LiveUser', 'user_id'),
+			'realUser'=>array(self::BELONGS_TO, 'User', 'user_id'),
 		);
 	}
 

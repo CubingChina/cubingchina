@@ -3,43 +3,44 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
+
+  //websocket
+  var ws = new WS('ws://' + location.host + '/ws');
+  ws.on('connect', function() {
+    ws.send({
+      type: 'competition',
+      competitionId: state.competitionId
+    });
+  }).on('newresult', function(result) {
+    store.dispatch('NEW_RESULT', result);
+  }).on('newmessage', function(message) {
+    newMessage(message);
+  }).on('results', function(results) {
+    store.dispatch('UPDATE_RESULTS', results);
+  });
+
   Vue.use(VueRouter);
   Vue.use(Vuex);
   var liveContainer = $('#live-container');
-  var state = window.state = {
+  var isTimeTraveling;
+  var state = {
     user: {},
     competitionId: 0,
     events: {},
-    event: '',
-    round: '',
+    params: {
+      event: '',
+      round: '',
+    },
+    loading: false,
     results: [],
     messages: []
   };
   var mutations = {
-    CHANGE_EVENT: function(state, event) {
-      if (state.events[event] !== undefined) {
-        state.event = event;
-        state.results = [];
-        ws.send({
-          type: 'result',
-          command: 'event',
-          event: event
-        });
-      }
-    },
-    CHANGE_ROUND: function(state, round) {
-      if (state.events[state.event].indexOf(round) > -1) {
-        state.round = round;
-        state.results = [];
-        ws.send({
-          type: 'result',
-          command: 'round',
-          round: round
-        });
-      }
+    ROUTE_CHANGED: function(state, params) {
+      state.params = params;
     },
     NEW_RESULT: function(state, result) {
-      if (result.competitionId == state.competitionId && result.event == state.event && result.round == state.round) {
+      if (result.competitionId == state.competitionId && result.event == state.params.event && result.round == state.params.round) {
         result.pos = '';
         result.isNew = true;
         var results = state.results;
@@ -49,7 +50,7 @@
       }
     },
     UPDATE_RESULT: function(state, result) {
-      if (result.competitionId == state.competitionId && result.event == state.event && result.round == state.round) {
+      if (result.competitionId == state.competitionId && result.event == state.params.event && result.round == state.params.round) {
         var results = state.results;
         var i = 0, len = results.length;
         result.pos = '';
@@ -63,6 +64,12 @@
         results.sort(compare);
         calcPos(results, result);
       }
+    },
+    UPDATE_RESULTS: function(state, results) {
+      results.sort(compare);
+      calcPos(results, {});
+      state.results = results;
+      state.loading = false;
     },
     NEW_MESSAGE: function(state, message) {
       state.messages.push(message);
@@ -79,7 +86,7 @@
     mutations: mutations
   });
   //main component
-  var vm = window.vm = Vue.extend({
+  var vm = Vue.extend({
     template: $('#live-container-template').html(),
     store: store,
     components: {
@@ -131,6 +138,9 @@
       result: Vue.extend({
         vuex: {
           getters: {
+            loading: function(state) {
+              return state.loading;
+            },
             results: function(state) {
               return state.results;
             }
@@ -176,29 +186,34 @@
   });
 
   //router
-  var router = window.router = new VueRouter();
+  var router = new VueRouter();
   router.map({
     '/:event/:round': {
       component: {}
     }
   });
+  store.watch(function(state) {
+    return state.params;
+  }, function(params) {
+    router.go(['', params.event, params.round].join('/'));
+    fetchResults();
+  }, {
+    deep: true,
+    sync: true,
+    immediate: true
+  });
+  router.afterEach(function(transition) {
+    var params = transition.to.params;
+    console.log(params, JSON.parse(JSON.stringify(state.params)));
+    if (params.event == state.params.event && params.round == state.params.round) {
+      return;
+    }
+    store.dispatch('ROUTE_CHANGED', params);
+  });
   router.redirect({
-    '*': ['', state.event, state.round].join('/')
+    '*': ['', state.params.event, state.params.round].join('/')
   });
   router.start(vm, liveContainer.get(0));
-
-  //websocket
-  var ws = new WS('ws://' + location.host + '/ws');
-  ws.on('connect', function() {
-    ws.send({
-      type: 'competition',
-      competitionId: state.competitionId
-    });
-  }).on('newresult', function(result) {
-    store.dispatch('NEW_RESULT', result);
-  }).on('newmessage', function(message) {
-    newMessage(message);
-  });
 
   var newMessage = function() {
     var container = $('.message-container');
@@ -212,6 +227,15 @@
       }
     };
   }();
+  function fetchResults() {
+    state.loading = true;
+    state.results = [];
+    ws.send({
+      type: 'result',
+      action: 'fetch',
+      params: state.params
+    });
+  }
   function formatSecond(second, multi) {
     if (multi && second == 99999) {
       return 'unknown';
@@ -239,7 +263,7 @@
     var left = 0, right = results.length - 1;
     while (left <= right) {
       middle = (left + right) >> 1;
-      temp = compare(result, results[middle]);
+      temp = compare(result, results[middle], true);
       if (temp < 0) {
         right = middle - 1;
       } else {
@@ -250,7 +274,7 @@
   }
   function calcPos(results, result) {
     for (var i = 0, len = results.length; i < len; i++) {
-      if (!results[i - 1] || compare(results[i - 1], results[i]) < 0) {
+      if (!results[i - 1] || compare(results[i - 1], results[i], true) < 0) {
         results[i].pos = i + 1;
       } else {
         results[i].pos = results[i - 1].pos;
@@ -261,7 +285,7 @@
       results[i].isNew = results[i] === result;
     }
   }
-  function compare(resA, resB) {
+  function compare(resA, resB, onlyResult) {
     if (resA.average > 0 && resB.average <= 0) {
       return -1
     }
@@ -277,6 +301,9 @@
         return 1
       }
       temp = resA.best - resB.best;
+    }
+    if (!onlyResult && temp == 0) {
+      temp = resA.user.name < resB.user.name ? -1 : 1;
     }
     return temp;
   }

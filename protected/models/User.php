@@ -195,6 +195,10 @@ class User extends ActiveRecord {
 		return $this->role == self::ROLE_ORGANIZER;
 	}
 
+	public function isDelegate() {
+		return $this->identity != self::IDENTITY_NONE;
+	}
+
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
 	}

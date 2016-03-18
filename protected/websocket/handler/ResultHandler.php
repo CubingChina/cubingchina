@@ -1,46 +1,50 @@
 <?php
 
 class ResultHandler extends MsgHandler {
-	private $_allowedCommand = array(
-		'result', //update a specified result
-		'attribute', //change cut off, time limit or format
-		'round', //add/remove round or remove a round's result
-		'event', //add/remove event
-		'person', //add/remove person and/or his event or result
-	);
 
 	public function process() {
-		$command = $this->getCommand();
-		if ($command !== '') {
-			$method = 'process' . ucfirst($command);
+		$action = $this->getAction();
+		if ($action !== '') {
+			$method = 'action' . ucfirst($action);
 			if (method_exists($this, $method)) {
 				return $this->$method();
 			}
 		}
 	}
 
-	public function processResult() {
+	public function actionFetch() {
+		$results = LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition->id,
+			'event'=>"{$this->msg->params->event}",
+			'round'=>"{$this->msg->params->round}",
+		));
+		$this->success('results', array_map(function($result) {
+			return $result->getShowAttributes();
+		}, $results));
 	}
 
-	public function processAttribute() {
+	public function actionResult() {
+	}
+
+	public function actionAttribute() {
 
 	}
 
-	public function processRound() {
+	public function actionRound() {
 
 	}
 
-	public function processEvent() {
+	public function actionEvent() {
 
 	}
 
-	public function processPerson() {
+	public function actionPerson() {
 
 	}
 
-	private function getCommand() {
-		if (isset($this->msg->command) && in_array($this->msg->command, $this->_allowedCommand)) {
-			return $this->msg->command;
+	private function getAction() {
+		if (isset($this->msg->action)) {
+			return $this->msg->action;
 		}
 		return '';
 	}

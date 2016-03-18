@@ -1,12 +1,15 @@
 <?php $events = $competition->getEventsRounds(); ?>
+<?php $params = $competition->getLastActiveEventRound($events); ?>
 <?php echo CHtml::tag('div', array(
   'id'=>'live-container',
   'data-competition-id'=>$competition->id,
   'data-events'=>json_encode($events),
-  'data-event'=>array_keys($events)[0],
-  'data-round'=>current($events)[0],
+  'data-params'=>json_encode($params),
   'data-user'=>json_encode(array(
     'isGuest'=>Yii::app()->user->isGuest,
+    'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
+    'isDelegate'=>!Yii::app()->user->isGuest && $this->user->isDelegate() && isset($competition->delegates[$this->user->id]),
+    'isAdmin'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
     'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),
   )),
   'v-cloak'=>true,
@@ -92,14 +95,19 @@
         <?php endforeach; ?>
       </thead>
       <tbody>
+        <tr v-if="loading" class="loading">
+          <td colspan="8">
+            Loading...
+          </td>
+        </tr>
         <tr v-for="result in results" :class="{danger: result.isNew}">
           <td>{{result.pos}}</td>
-          <td>{{{result.user}}}</td>
+          <td>{{{result.user.name}}}</td>
           <td class="result">{{result.best | formatTime result.event}}</td>
           <td class="record">{{result.regional_single_record}}</td>
           <td class="result">{{result.average | formatTime result.event}}</td>
           <td class="record">{{result.regional_average_record}}</td>
-          <td>{{result.region}}</td>
+          <td>{{{result.user.region}}}</td>
           <td>{{result.detail}}</td>
         </tr>
       </tbody>
