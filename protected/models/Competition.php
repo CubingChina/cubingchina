@@ -1039,28 +1039,38 @@ class Competition extends ActiveRecord {
 		$temp = $this->schedule;
 		usort($temp, array($this, 'sortSchedules'));
 		foreach ($temp as $schedule) {
-			$schedules[$schedule->event][] = $schedule;
+			$schedules[$schedule->event][$schedule->round] = $schedule;
 		}
 		unset($temp);
+		//events and rounds
 		$formats = array();
-		foreach ($this->events as $event=>$value) {
-			if (isset($schedules[$event]) && $schedules[$event][0]->format) {
-				$format = $schedules[$event][0]->format;
-			} else {
-				$format = Formats::getDefaultFormat($event);
-			}
-			$format = explode('/', $format);
-			$formats[$event] = isset($format[1]) ? $format[1] : $format[0];
-		}
 		$rounds = array();
 		foreach ($this->events as $event=>$value) {
-			if (isset($schedules[$event]) && $schedules[$event][0]->round) {
-				$round = $schedules[$event][0]->round;
-			} else {
-				$round = $value['round'] > 1 ? '1' : 'f';
+			if ($value['round'] == 0) {
+				continue;
 			}
-			$rounds[$event] = $round;
+			if (isset($schedules[$event])) {
+				$first = current($schedules[$event]);
+				$format = $first->format;
+				$format = explode('/', $format);
+				$formats[$event] = isset($format[1]) ? $format[1] : $format[0];
+				$round = $first->round;
+				$rounds[$event] = $round;
+				foreach ($schedules[$event] as $schedule) {
+					$model = new LiveEventRound();
+					$model->competition_id = $schedule->competition_id;
+					$model->event = $schedule->event;
+					$model->round = $schedule->round;
+					$model->format = $schedule->format;
+					$model->cut_off = $schedule->cut_off;
+					$model->time_limit = $schedule->time_limit;
+					$model->number = $schedule->number;
+					$model->status = LiveEventRound::STATUS_OPEN;
+					$model->save();
+				}
+			}
 		}
+		//empty results of first rounds
 		$registrations = Registration::getRegistrations($this);
 		foreach ($registrations as $registration) {
 			foreach ($registration->events as $event) {
@@ -1080,27 +1090,26 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getEventsRounds() {
-		$this->formatEvents();
-		$schedules = array();
-		$temp = $this->schedule;
-		usort($temp, array($this, 'sortSchedules'));
-		foreach ($temp as $schedule) {
-			$schedules[$schedule->event][] = $schedule;
-		}
+		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
+			'competition_id'=>$this->id,
+		));
 		$events = array();
-		foreach ($this->events as $event=>$value) {
-			if (isset($schedules[$event])) {
-				foreach ($schedules[$event] as $schedule) {
-					$events[$event][] = $schedule->round;
-				}
-			} elseif ($value['round'] > 0) {
-				for ($i = 1; $i < $value['round']; $i++) {
-					$events[$event][] = "$i";
-				}
-				$events[$event][] = 'f';
+		foreach ($eventRounds as $eventRound) {
+			if (!isset($events[$eventRound->event])) {
+				$events[$eventRound->event] = array(
+					'id'=>$eventRound->event,
+					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
+					'rounds'=>array(),
+				);
 			}
+			$events[$eventRound->event]['rounds'][] = array(
+				'id'=>$eventRound->round,
+				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
+				'status'=>$eventRound->status,
+				'statusText'=>$eventRound->statusText,
+			);
 		}
-		return $events;
+		return array_values($events);
 	}
 
 	public function getLastActiveEventRound($events) {
@@ -1117,9 +1126,16 @@ class Competition extends ActiveRecord {
 				'round'=>$liveResult->round,
 			);
 		}
+		$event = current($events);
+		if ($event === false) {
+			return array(
+				'event'=>'',
+				'round'=>'',
+			);
+		}
 		return array(
-			'event'=>array_keys($events)[0],
-			'round'=>current($events)[0],
+			'event'=>$event['id'],
+			'round'=>$event['rounds'][0]['id'],
 		);
 	}
 

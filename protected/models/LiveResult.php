@@ -21,6 +21,10 @@
  * @property integer $value5
  * @property string $regional_single_record
  * @property string $regional_average_record
+ * @property string $operator_id
+ * @property integer $status
+ * @property string $create_time
+ * @property string $update_time
  */
 class LiveResult extends ActiveRecord {
 
@@ -71,14 +75,14 @@ class LiveResult extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id, user_id, number', 'required'),
-			array('user_type, number, best, average, value1, value2, value3, value4, value5', 'numerical', 'integerOnly'=>true),
-			array('competition_id, user_id', 'length', 'max'=>10),
+			array('user_type, number, best, average, value1, value2, value3, value4, value5, status', 'numerical', 'integerOnly'=>true),
+			array('competition_id, user_id, operator_id, create_time, update_time', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>6),
 			array('round, format', 'length', 'max'=>1),
 			array('regional_single_record, regional_average_record', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, user_id, user_type, number, event, round, format, best, average, value1, value2, value3, value4, value5, regional_single_record, regional_average_record', 'safe', 'on'=>'search'),
+			array('id, competition_id, user_id, user_type, number, event, round, format, best, average, value1, value2, value3, value4, value5, regional_single_record, regional_average_record, operator_id, status, create_time, update_time', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -116,6 +120,10 @@ class LiveResult extends ActiveRecord {
 			'value5' => 'Value5',
 			'regional_single_record' => 'Regional Single Record',
 			'regional_average_record' => 'Regional Average Record',
+			'operator_id' => 'Operator',
+			'status' => 'Status',
+			'create_time' => 'Create Time',
+			'update_time' => 'Update Time',
 		);
 	}
 
@@ -153,6 +161,10 @@ class LiveResult extends ActiveRecord {
 		$criteria->compare('value5', $this->value5);
 		$criteria->compare('regional_single_record', $this->regional_single_record, true);
 		$criteria->compare('regional_average_record', $this->regional_average_record, true);
+		$criteria->compare('operator_id', $this->operator_id, true);
+		$criteria->compare('status', $this->status);
+		$criteria->compare('create_time', $this->create_time, true);
+		$criteria->compare('update_time', $this->update_time, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
