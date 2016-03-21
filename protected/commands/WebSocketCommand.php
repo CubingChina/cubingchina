@@ -17,8 +17,7 @@ class WebSocketCommand extends CConsoleCommand {
 		set_error_handler(array($this, 'errorHandler'));
 		try {
 			$db = Yii::app()->db;
-			$pdo = new QueryCheckPdo($db->connectionString, $db->username, $db->password);
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pdo = $db->getPdoInstance();
 			$liveServer = new LiveServer();
 			$session = new SessionProvider(
 				$liveServer,

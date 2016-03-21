@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Live' => '直播',
   'Event List' => '项目列表',
   'Fee' => '',
   'WCA ID' => '',

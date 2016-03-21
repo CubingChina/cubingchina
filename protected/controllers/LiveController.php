@@ -13,14 +13,9 @@ class LiveController extends CompetitionController {
 		);
 	}
 
-	public function actionIndex() {
-		$this->render('index', array(
-		));
-	}
-
-	public function actionCompetition() {
+	public function actionLive() {
 		$competition = $this->getCompetition();
-		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Live');
+		$competition->initLiveData();
 		$min = DEV ? '' : '.min';
 		$version = Yii::app()->params->jsVer;
 		$clientScript = Yii::app()->clientScript;
