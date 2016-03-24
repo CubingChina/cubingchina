@@ -27,6 +27,7 @@
       $model, 'passport_type', array(),
       $form->labelEx($model, 'passport_type'),
       $form->dropDownList($model, 'passport_type', Registration::getPassportTypes(), array(
+        'prompt'=>'',
         'class'=>'form-control',
       )),
       $form->error($model, 'passport_type', array('class'=>'text-danger'))

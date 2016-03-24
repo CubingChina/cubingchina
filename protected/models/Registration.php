@@ -26,8 +26,8 @@ class Registration extends ActiveRecord {
 	const UNPAID = 0;
 	const PAID = 1;
 
-	const PASSPORT_TYPE_ID = 0;
-	const PASSPORT_TYPE_PASSPORT = 1;
+	const PASSPORT_TYPE_ID = 1;
+	const PASSPORT_TYPE_PASSPORT = 2;
 
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
@@ -419,7 +419,7 @@ class Registration extends ActiveRecord {
 		$rules = array(
 			array('location_id, competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
-			array('competition_id, user_id, date, passport_number', 'length', 'max'=>10),
+			array('competition_id, user_id, date, passport_number', 'length', 'max'=>20),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
