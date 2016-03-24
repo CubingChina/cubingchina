@@ -22,6 +22,24 @@
       <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
       <p id="totalFee"></p>
     </div>
+    <?php if ($competition->fill_passport): ?>
+    <?php echo Html::formGroup(
+      $model, 'passport_type', array(),
+      $form->labelEx($model, 'passport_type'),
+      $form->dropDownList($model, 'passport_type', Registration::getPassportTypes(), array(
+        'class'=>'form-control',
+      )),
+      $form->error($model, 'passport_type', array('class'=>'text-danger'))
+    ); ?>
+    <?php echo Html::formGroup(
+      $model, 'passport_number', array(),
+      $form->labelEx($model, 'passport_number'),
+      Html::activeTextField($model, 'passport_number', array(
+        'class'=>'form-control',
+      )),
+      $form->error($model, 'passport_number', array('class'=>'text-danger'))
+    ); ?>
+    <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'comments', array(),
       $form->labelEx($model, 'comments'),

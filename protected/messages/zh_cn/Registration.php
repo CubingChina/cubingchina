@@ -18,7 +18,9 @@
  */
 return array (
   'ID' => '',
+  'Identity Number' => '证件号码',
   'No.' => '',
+  'Type of Identity' => '证件类型',
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',

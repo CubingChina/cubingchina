@@ -18,7 +18,9 @@
  */
 return array (
   'ID' => '',
+  'Identity Number' => '證件號碼',
   'No.' => '',
+  'Type of Identity' => '證件類型',
   'User' => '',
   'Date' => '報名時間',
   ' CNY' => '元',

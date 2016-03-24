@@ -26,6 +26,9 @@ class Registration extends ActiveRecord {
 	const UNPAID = 0;
 	const PAID = 1;
 
+	const PASSPORT_TYPE_ID = 0;
+	const PASSPORT_TYPE_PASSPORT = 1;
+
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
 
@@ -49,6 +52,13 @@ class Registration extends ActiveRecord {
 			->group('FROM_UNIXTIME(r.date, "%k")')
 			->queryAll();
 		return $data;
+	}
+
+	public static function getPassportTypes() {
+		return array(
+			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card'),
+			self::PASSPORT_TYPE_PASSPORT=>Yii::t('common', 'Passport'),
+		);
 	}
 
 	public static function getAllStatus() {
@@ -406,18 +416,20 @@ class Registration extends ActiveRecord {
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
+		$rules = array(
 			array('location_id, competition_id, user_id, events, date', 'required'),
-			array('location_id, total_fee, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
-			array('competition_id, user_id, date', 'length', 'max'=>10),
+			array('location_id, total_fee, passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
+			array('competition_id, user_id, date, passport_number', 'length', 'max'=>10),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
+		if ($this->competition->fill_passport) {
+			$rules[] = array('passport_type, passport_number', 'required');
+		}
+		return $rules;
 	}
 
 	/**
@@ -447,6 +459,8 @@ class Registration extends ActiveRecord {
 			'comments' => Yii::t('Registration', 'Additional Comments'),
 			'total_fee' => Yii::t('Registration', 'Total Fee'),
 			'ip' => 'IP',
+			'passport_type' => Yii::t('Registration', 'Type of Identity'),
+			'passport_number' => Yii::t('Registration', 'Identity Number'),
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee'),
