@@ -105,6 +105,14 @@ if ($competition->fill_passport) {
     }
   }).on('change', '#Registration_passport_type', function() {
     changePassportType(true);
+  }).on('contextmenu', '#Registration_passport_number, #Registration_repeatPassportNumber', function(e) {
+    e.preventDefault();
+    return false;
+  }).on('keydown', '#Registration_passport_number, #Registration_repeatPassportNumber', function(e) {
+    if (e.which == 86 && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      return false;
+    }
   });
   $('label[for="Registration_passport_name"]').append('<span class="required">*</span>');
   changePassportType();
