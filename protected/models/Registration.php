@@ -17,6 +17,9 @@ class Registration extends ActiveRecord {
 	public $number;
 	public $best = -1;
 	public $pos = -1;
+	public $repeatPassportNumber;
+	public $coefficients = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+	public $codes = array(1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2);
 
 	public static $sortByUserAttribute = false;
 	public static $sortByEvent = false;
@@ -28,6 +31,7 @@ class Registration extends ActiveRecord {
 
 	const PASSPORT_TYPE_ID = 1;
 	const PASSPORT_TYPE_PASSPORT = 2;
+	const PASSPORT_TYPE_OTHER = 3;
 
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
@@ -58,6 +62,7 @@ class Registration extends ActiveRecord {
 		return array(
 			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card'),
 			self::PASSPORT_TYPE_PASSPORT=>Yii::t('common', 'Passport'),
+			self::PASSPORT_TYPE_OTHER=>Yii::t('common', 'Other'),
 		);
 	}
 
@@ -86,6 +91,51 @@ class Registration extends ActiveRecord {
 
 	public function isPaid() {
 		return $this->paid == self::PAID;
+	}
+
+	public function checkPassportType() {
+		if ($this->passport_type == self::PASSPORT_TYPE_OTHER && empty($this->passport_name)) {
+			$this->addError('passport_name', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('passport_name'),
+			)));
+		}
+	}
+
+	public function checkPassportNumber() {
+		switch ($this->passport_type) {
+			case self::PASSPORT_TYPE_ID:
+				if (!preg_match('|^\d{6}(\d{8})(\d{3})[\dX]$|i', $this->passport_number, $matches)) {
+					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+					return false;
+				}
+				if (date('Ymd', $this->user->birthday) != $matches[1]) {
+					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+					return false;
+				}
+				if ($matches[2] % 2 != 1 - $this->user->gender) {
+					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+					return false;
+				}
+				$sum = 0;
+				for ($i = 0; $i < 17; $i++) {
+					$sum += $this->passport_number{$i} * $this->coefficients[$i];
+				}
+				$mod = $sum % 11;
+				if ($this->passport_number{17} != $this->codes[$mod]) {
+					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+					return false;
+				}
+				break;
+			case self::PASSPORT_TYPE_PASSPORT:
+				if (!preg_match('|^\w+$|i', $this->passport_number, $matches)) {
+					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+					return false;
+				}
+				break;
+		}
+		if (!empty($this->repeatPassportNumber) && $this->passport_number != $this->repeatPassportNumber) {
+			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
+		}
 	}
 
 	public function getEventsString($event) {
@@ -427,7 +477,9 @@ class Registration extends ActiveRecord {
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 		if ($this->competition->fill_passport) {
-			$rules[] = array('passport_type, passport_number', 'required');
+			$rules[] = array('passport_type', 'checkPassportType');
+			$rules[] = array('passport_number', 'checkPassportNumber');
+			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required');
 		}
 		return $rules;
 	}
@@ -460,7 +512,9 @@ class Registration extends ActiveRecord {
 			'total_fee' => Yii::t('Registration', 'Total Fee'),
 			'ip' => 'IP',
 			'passport_type' => Yii::t('Registration', 'Type of Identity'),
+			'passport_name' => Yii::t('Registration', 'Name of Identity'),
 			'passport_number' => Yii::t('Registration', 'Identity Number'),
+			'repeatPassportNumber' => Yii::t('Registration', 'Repeat Identity Number'),
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee'),

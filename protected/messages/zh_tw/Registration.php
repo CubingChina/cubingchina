@@ -18,10 +18,9 @@
  */
 return array (
   'ID' => '',
-  'Identity Number' => '證件號碼',
   'No.' => '',
-  'Type of Identity' => '證件類型',
   'User' => '',
+  '<b class="text-danger">Note</b>: Personal ID is collected for verification and insurance purchasing.<br>The competitors undertake any consequences on <b class="text-danger">failing in registration</b> and <b class="text-danger">insuring</b> due to incorrect personal information.' => '<b class="text-danger">備注</b>：組委會收集選手身份證件信息用以選手比賽簽到身份核實和意外保險的購買。<br>組委會不承擔由於選手錯誤填寫證件號碼造成的<b class="text-danger">無法簽到</b>和<b class="text-danger">投保失敗</b>造成的任何後果。',
   'Date' => '報名時間',
   ' CNY' => '元',
   'Additional Comments' => '備注',
@@ -29,7 +28,11 @@ return array (
   'Events' => '項目',
   'Fee' => '報名費',
   'Fee (CNY)' => '報名費(元)',
+  'Identity Number' => '證件號碼',
+  'Name of Identity' => '證件名',
   'Registration Date' => '報名時間',
+  'Repeat Identity Number' => '重復證件號碼',
   'Status' => '狀態',
   'Total Fee' => '報名費',
+  'Type of Identity' => '證件類型',
 );

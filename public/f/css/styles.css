@@ -2883,3 +2883,7 @@ table.concise-schedule {
 #concise .table-responsive {
   border: none;
 }
+.important-border {
+  padding: 10px;
+  border: 1px dashed;
+}
