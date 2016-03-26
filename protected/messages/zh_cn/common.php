@@ -17,7 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Confirm' => '确认',
   'Fee' => '',
+  'Tips' => '重要提示',
   'Name in Local Character' => '',
   'WCA ID' => '',
   'more' => '',
