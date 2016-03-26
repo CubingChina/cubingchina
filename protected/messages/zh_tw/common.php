@@ -120,7 +120,7 @@ return array (
   'Frequently Asked Questions' => '常見問題解答',
   'Gender' => '性別',
   'Home' => '首頁',
-  'ID Card' => '身份證',
+  'ID Card (Chinese Citizen)' => '身份證（中國大陸居民）',
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活過程中有任何問題，請發送郵件到{email}聯系管理員。',
   'If you were unable to pay online, please contact the organizer.' => '如果你無法在線支付，請聯系主辦方。',
   'Image height or width exceeded, the limited width is {width} and height is {height}' => '圖像寬度或高度過大，最大寬度是{width}，最大高度是{height}',

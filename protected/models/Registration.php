@@ -60,7 +60,7 @@ class Registration extends ActiveRecord {
 
 	public static function getPassportTypes() {
 		return array(
-			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card'),
+			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card (Chinese Citizen)'),
 			self::PASSPORT_TYPE_PASSPORT=>Yii::t('common', 'Passport'),
 			self::PASSPORT_TYPE_OTHER=>Yii::t('common', 'Other'),
 		);
