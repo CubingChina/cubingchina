@@ -477,6 +477,7 @@ class Registration extends ActiveRecord {
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 		if ($this->competition->fill_passport) {
+			$rules[] = array('passport_name', 'safe');
 			$rules[] = array('passport_type', 'checkPassportType');
 			$rules[] = array('passport_number', 'checkPassportNumber');
 			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required');
