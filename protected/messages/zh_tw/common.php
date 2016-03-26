@@ -131,7 +131,7 @@ return array (
   'Invalid email.' => '郵箱不對。',
   'Invalid file type of image' => '圖像文件格式不規范',
   'Invalid gender.' => '性別不對。',
-  'Invalid identity number.' => '證件號碼',
+  'Invalid identity number.' => '證件號碼錯誤',
   'Invalid local name.' => '中文名錯誤',
   'Invalid mobile.' => '手機號格式不對。',
   'Invalid province.' => '省份不對。',
