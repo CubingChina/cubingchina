@@ -22,7 +22,7 @@ return array (
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',
-  '<b class="text-danger">Note</b>: Personal ID is collected for verification and insurance purchasing.<br>The competitors undertake any consequences on <b class="text-danger">failing in registration</b> and <b class="text-danger">insuring</b> due to incorrect personal information.' => '<b class="text-danger">备注</b>：组委会收集选手身份证件信息用以选手比赛签到身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法签到</b>和<b class="text-danger">投保失败</b>造成的任何后果。',
+  '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">备注</b>：组委会收集选手身份证件信息用以选手比赛签到身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法签到</b>和<b class="text-danger">投保失败</b>的任何后果。',
   'Additional Comments' => '备注',
   'Competition' => '比赛',
   'Events' => '项目',

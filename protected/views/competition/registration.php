@@ -25,7 +25,7 @@
     <?php if ($competition->fill_passport): ?>
     <div class="bg-info important-border">
       <p>
-        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: Personal ID is collected for verification and insurance purchasing.<br>The competitors undertake any consequences on <b class="text-danger">failing in registration</b> and <b class="text-danger">insuring</b> due to incorrect personal information.'); ?>
+        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.'); ?>
       </p>
       <?php echo Html::formGroup(
         $model, 'passport_type', array(),
