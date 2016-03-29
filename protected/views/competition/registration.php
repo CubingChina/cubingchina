@@ -5,7 +5,7 @@
     ),
   )); ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
-    <p><?php echo $competition->getEventFee('entry'); ?></p>
+    <p><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry'); ?></p>
     <?php echo Html::formGroup(
       $model, 'events', array(),
       $form->labelEx($model, 'events'),

@@ -17,9 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Confirm' => '確認',
   'Fee' => '',
-  'Tips' => '重要提示',
   'Name in Local Character' => '',
   'WCA ID' => '',
   'more' => '',
@@ -99,6 +97,7 @@ return array (
   'Competition History' => '參賽經歷',
   'Competition Site' => '分賽場',
   'Competitions' => '賽事',
+  'Confirm' => '確認',
   'Contact' => '聯系我們',
   'Cubing China' => '粗餅·中國魔方賽事網',
   'CubingChina ID' => '粗餅ID',
@@ -217,6 +216,7 @@ return array (
   'Submit' => '提交',
   'The WCA ID {wcaid} has been registered.' => '該WCA ID已被注冊。',
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
+  'Tips' => '重要提示',
   'Title' => '標題',
   'To be announced' => '待定',
   'Tools' => '工具',

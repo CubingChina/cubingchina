@@ -27,7 +27,7 @@ return array (
   'Pos' => '',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
-  'Round' => '',
+  'Round' => '轮次',
   'Value1' => '',
   'Value2' => '',
   'Value3' => '',

@@ -98,6 +98,7 @@ class Competitions extends ActiveRecord {
 			'winners'=>Yii::t('Competitions', 'Winners'),
 			'top3'=>Yii::t('Competitions', 'Top 3'),
 			'all'=>Yii::t('Competitions', 'All Results'),
+			'byPerson'=>Yii::t('Competitions', 'By Person'),
 			'scrambles'=>Yii::t('Competitions', 'Scrambles'),
 		);
 	}
@@ -155,6 +156,17 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
+		$byPerson = Results::model()->with(array(
+			'person',
+			'person.country',
+			'round',
+			'event',
+			'format',
+		))->findAllByAttributes(array(
+			'competitionId'=>$id,
+		), array(
+			'order'=>'personName, event.rank, round.rank DESC'
+		));
 		$scrambles = Scrambles::model()->with(array(
 			'round',
 			'event',
@@ -167,6 +179,7 @@ class Competitions extends ActiveRecord {
 			'winners'=>$winners,
 			'top3'=>$top3,
 			'all'=>$all,
+			'byPerson'=>$byPerson,
 			'scrambles'=>$scrambles,
 		);
 	}
