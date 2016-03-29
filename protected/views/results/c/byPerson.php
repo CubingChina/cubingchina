@@ -1,5 +1,5 @@
 <?php
-$this->widget('GroupGridView', array(
+$this->widget('GroupRankGridView', array(
   'dataProvider'=>new CArrayDataProvider($results, array(
     'pagination'=>false,
     'sort'=>false,
@@ -10,6 +10,7 @@ $this->widget('GroupGridView', array(
     Persons::getLinkByNameNId($data->personName, $data->personId),
     Region::getIconName($data->person->country->name, $data->person->country->iso2),
   ))',
+  'rankKey'=>'eventId',
   'repeatHeader'=>true,
   'rowHtmlOptionsExpression'=>'array(
     "data-event"=>$data->eventId,
@@ -20,9 +21,10 @@ $this->widget('GroupGridView', array(
   )',
   'columns'=>array(
     array(
+      'class'=>'RankColumn',
       'name'=>Yii::t('common', 'Event'),
       'type'=>'raw',
-      'value'=>'CHtml::link(CHtml::tag("span", array(
+      'value'=>'$displayRank ? CHtml::link(CHtml::tag("span", array(
         "class"=>"event-icon event-icon event-icon-" . $data->eventId,
         "title"=>Yii::t("event", $data->event->cellName),
       ), Yii::t("event", $data->event->cellName)), array(
@@ -30,7 +32,7 @@ $this->widget('GroupGridView', array(
         "id"=>$data->competitionId,
         "type"=>"all",
         "#"=>$data->eventId,
-      ))',
+      )) : ""',
     ),
     array(
       'name'=>Yii::t('Results', 'Round'),
