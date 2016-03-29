@@ -27,7 +27,6 @@ return array (
   'Pos' => '',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
-  'Round' => '',
   'Value1' => '',
   'Value2' => '',
   'Value3' => '',
@@ -54,6 +53,7 @@ return array (
   'Person' => '選手',
   'Place' => '排名',
   'Records' => '紀錄',
+  'Round' => '輪次',
   'WR' => '世界紀錄',
   'World Championship Podiums' => '世錦賽領獎台',
 );

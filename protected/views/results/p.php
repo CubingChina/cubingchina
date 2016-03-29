@@ -400,75 +400,156 @@
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="history">
-      <?php
-      $this->widget('GroupRankGridView', array(
-        'dataProvider'=>new CArrayDataProvider($personResults, array(
-          'pagination'=>false,
-          'sort'=>false,
-        )),
-        'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-        'groupKey'=>'eventId',
-        'groupHeader'=>'CHtml::openTag("a", array(
-            "name"=>$data->eventId,
-          )) . "</a>" . CHtml::tag("span", array(
-            "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-            "title"=>Yii::t("event", $data->event->cellName),
-          ), Yii::t("event", $data->event->cellName))',
-        'rankKey'=>'competitionId',
-        'repeatHeader'=>true,
-        'columns'=>array(
-          array(
-            'class'=>'RankColumn',
-            'name'=>Yii::t('Results', 'Competition'),
-            'type'=>'raw',
-            'value'=>'$displayRank ? $data->competitionLink : ""',
-            'headerHtmlOptions'=>array('class'=>'competition_name'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Round'),
-            'type'=>'raw',
-            'value'=>'Yii::t("Rounds", $data->round->cellName)',
-            'headerHtmlOptions'=>array('class'=>'round'),
-          ),
-          array(
-            'name'=>Yii::t('Results', 'Place'),
-            'type'=>'raw',
-            'value'=>'$data->pos',
-            'headerHtmlOptions'=>array('class'=>'place'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Best'),
-            'type'=>'raw',
-            'value'=>'$data->getTime("best")',
-            'headerHtmlOptions'=>array('class'=>'result'),
-            'htmlOptions'=>array('class'=>'result'),
-          ),
-          array(
-            'name'=>'',
-            'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord',
-            'headerHtmlOptions'=>array('class'=>'record'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Average'),
-            'type'=>'raw',
-            'value'=>'$data->getTime("average")',
-            'headerHtmlOptions'=>array('class'=>'result'),
-            'htmlOptions'=>array('class'=>'result'),
-          ),
-          array(
-            'name'=>'',
-            'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord',
-            'headerHtmlOptions'=>array('class'=>'record'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Detail'),
-            'type'=>'raw',
-            'value'=>'$data->detail',
-          ),
-        ),
-      )); ?>
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#by-event" data-toggle="tab"><?php echo Yii::t('common', 'By Event'); ?></a></li>
+        <li><a href="#by-competition" data-toggle="tab"><?php echo Yii::t('common', 'By Competition'); ?></a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="by-event">
+          <?php
+          $this->widget('GroupRankGridView', array(
+            'dataProvider'=>new CArrayDataProvider($byEvent, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+            'groupKey'=>'eventId',
+            'groupHeader'=>'CHtml::openTag("a", array(
+                "name"=>$data->eventId,
+              )) . "</a>" . CHtml::tag("span", array(
+                "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+                "title"=>Yii::t("event", $data->event->cellName),
+              ), Yii::t("event", $data->event->cellName))',
+            'rankKey'=>'competitionId',
+            'repeatHeader'=>true,
+            'columns'=>array(
+              array(
+                'class'=>'RankColumn',
+                'name'=>Yii::t('Results', 'Competition'),
+                'type'=>'raw',
+                'value'=>'$displayRank ? $data->competitionLink : ""',
+                'headerHtmlOptions'=>array('class'=>'competition_name'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Round'),
+                'type'=>'raw',
+                'value'=>'Yii::t("Rounds", $data->round->cellName)',
+                'headerHtmlOptions'=>array('class'=>'round'),
+              ),
+              array(
+                'name'=>Yii::t('Results', 'Place'),
+                'type'=>'raw',
+                'value'=>'$data->pos',
+                'headerHtmlOptions'=>array('class'=>'place'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Best'),
+                'type'=>'raw',
+                'value'=>'$data->getTime("best")',
+                'headerHtmlOptions'=>array('class'=>'result'),
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'type'=>'raw',
+                'value'=>'$data->regionalSingleRecord',
+                'headerHtmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Average'),
+                'type'=>'raw',
+                'value'=>'$data->getTime("average")',
+                'headerHtmlOptions'=>array('class'=>'result'),
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'type'=>'raw',
+                'value'=>'$data->regionalAverageRecord',
+                'headerHtmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Detail'),
+                'type'=>'raw',
+                'value'=>'$data->detail',
+              ),
+            ),
+          )); ?>
+        </div>
+        <div class="tab-pane active" id="by-competition">
+          <?php
+          $this->widget('GroupRankGridView', array(
+            'dataProvider'=>new CArrayDataProvider($byCompetition, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+            'groupKey'=>'competitionId',
+            'groupHeader'=>'$data->competitionLink',
+            'rankKey'=>'eventId',
+            'repeatHeader'=>true,
+            'columns'=>array(
+              array(
+                'class'=>'RankColumn',
+                'name'=>Yii::t('common', 'Event'),
+                'type'=>'raw',
+                'value'=>'$displayRank ? CHtml::link(CHtml::tag("span", array(
+                  "class"=>"event-icon event-icon event-icon-" . $data->eventId,
+                  "title"=>Yii::t("event", $data->event->cellName),
+                ), Yii::t("event", $data->event->cellName)), array(
+                  "/results/c",
+                  "id"=>$data->competitionId,
+                  "type"=>"all",
+                  "#"=>$data->eventId,
+                )) : ""',
+              ),
+              array(
+                'name'=>Yii::t('common', 'Round'),
+                'type'=>'raw',
+                'value'=>'Yii::t("Rounds", $data->round->cellName)',
+                'headerHtmlOptions'=>array('class'=>'round'),
+              ),
+              array(
+                'name'=>Yii::t('Results', 'Place'),
+                'type'=>'raw',
+                'value'=>'$data->pos',
+                'headerHtmlOptions'=>array('class'=>'place'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Best'),
+                'type'=>'raw',
+                'value'=>'$data->getTime("best")',
+                'headerHtmlOptions'=>array('class'=>'result'),
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'type'=>'raw',
+                'value'=>'$data->regionalSingleRecord',
+                'headerHtmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Average'),
+                'type'=>'raw',
+                'value'=>'$data->getTime("average")',
+                'headerHtmlOptions'=>array('class'=>'result'),
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'type'=>'raw',
+                'value'=>'$data->regionalAverageRecord',
+                'headerHtmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Detail'),
+                'type'=>'raw',
+                'value'=>'$data->detail',
+              ),
+            ),
+          )); ?>
+        </div>
+      </div>
     </div>
     <?php if ($hasRecords): ?>
     <div class="tab-pane" id="records">
@@ -636,7 +717,7 @@
         'template'=>'{items}{pager}',
         'enableSorting'=>false,
         'front'=>true,
-        'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
+        // 'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
         'columns'=>array(
           array(
             'header'=>Yii::t('Registration', 'No.'),

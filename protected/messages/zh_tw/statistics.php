@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Most Persons' => '選手人數排行榜',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中國各項平均成績前100占席',
@@ -63,6 +62,7 @@ return array (
   'Medal Collection' => '獎牌榜',
   'Medals' => '獎牌',
   'Most Personal Solves' => '復原榜',
+  'Most Persons' => '選手人數排行榜',
   'NR' => '地區排名',
   'Person' => '姓名',
   'Rank' => '排名',
