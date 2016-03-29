@@ -180,7 +180,8 @@ class Persons extends ActiveRecord {
 		}
 		//历史成绩
 		$competitions = array();
-		$personResults = array();
+		$byEvent = array();
+		$byCompetition = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
 		$results = Results::model()->with(array(
@@ -198,7 +199,7 @@ class Persons extends ActiveRecord {
 				//重置各值
 				$eventId = $result->eventId;
 				$best = $average = PHP_INT_MAX;
-				$personResults[$eventId] = array();
+				$byEvent[$eventId] = array();
 			}
 			if ($result->best > 0 && $result->best <= $best) {
 				$result->newBest = true;
@@ -208,7 +209,8 @@ class Persons extends ActiveRecord {
 				$result->newAverage = true;
 				$average = $result->average;
 			}
-			$personResults[$eventId][] = $result;
+			$byEvent[$eventId][] = $result;
+			$byCompetition[$result->competitionId][] = $result;
 			$competitions[$result->competitionId] = $result->competition;
 		}
 		//世锦赛获奖记录
@@ -335,11 +337,29 @@ class Persons extends ActiveRecord {
 			'longitude'=>number_format($temp['longitude'] / count($competitions), 6, ',', ''),
 			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
 		);
+		$byCompetition = call_user_func_array('array_merge', $byCompetition);
+		usort($byCompetition, function($resultA, $resultB) {
+			$temp = $resultB->competition->year - $resultA->competition->year;
+			if ($temp == 0) {
+				$temp = $resultB->competition->month - $resultA->competition->month;
+			}
+			if ($temp == 0) {
+				$temp = $resultB->competition->day - $resultA->competition->day;
+			}
+			if ($temp == 0) {
+				$temp = $resultA->event->rank - $resultB->event->rank;
+			}
+			if ($temp == 0) {
+				$temp = $resultB->round->rank - $resultA->round->rank;
+			}
+			return $temp;
+		});
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
 			'sumOfRanks'=>$sumOfRanks,
-			'personResults'=>call_user_func_array('array_merge', array_map('array_reverse', $personResults)),
+			'byEvent'=>call_user_func_array('array_merge', array_map('array_reverse', $byEvent)),
+			'byCompetition'=>$byCompetition,
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
 			'ncPodiums'=>$ncPodiums,

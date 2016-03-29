@@ -17,6 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'By Competition' => '按比賽',
+  'By Event' => '按項目',
   'Fee' => '',
   'Name in Local Character' => '',
   'WCA ID' => '',
