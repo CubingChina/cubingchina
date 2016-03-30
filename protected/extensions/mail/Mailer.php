@@ -7,6 +7,7 @@ class Mailer extends CApplicationComponent {
 	public $from;
 	public $fromname;
 	public $api;
+	public $baseUrl;
 
 	protected $titlePrefix = 'Cubing China (粗饼·中国魔方赛事网) - ';
 	protected $viewPath;
@@ -14,7 +15,7 @@ class Mailer extends CApplicationComponent {
 
 	public function init() {
 		parent::init();
-		Yii::app()->urlManager->setBaseUrl('http://cubingchina.com');
+		$this->baseUrl = 'http://cubingchina.com';
 		$this->viewPath = dirname(__FILE__) . '/views/';
 	}
 
@@ -30,7 +31,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('注册激活邮件');
 		$message = $this->render('activate', array(
 			'user'=>$user,
-			'url'=>$user->getMailUrl('activate'),
+			'url'=>$this->baseUrl . $user->getMailUrl('activate'),
 		));
 		return $this->add($to, $subject, $message);
 	}
@@ -40,7 +41,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('密码重设邮件');
 		$message = $this->render('resetPassword', array(
 			'user'=>$user,
-			'url'=>$user->getMailUrl('resetPassword'),
+			'url'=>$this->baseUrl . $user->getMailUrl('resetPassword'),
 		));
 		return $this->add($to, $subject, $message);
 	}
@@ -51,7 +52,7 @@ class Mailer extends CApplicationComponent {
 		$message = $this->render('addCompetitionNotice', array(
 			'user'=>Yii::app()->controller->user,
 			'competition'=>$competition,
-			'url'=>Yii::app()->createUrl(
+			'url'=>$this->baseUrl . Yii::app()->createUrl(
 				'/board/competition/edit',
 				array(
 					'id'=>$competition->id,
@@ -65,7 +66,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('选手报名通知');
 		$message = $this->render('registrationNotice', array(
 			'registration'=>$registration,
-			'url'=>Yii::app()->createUrl(
+			'url'=>$this->baseUrl . Yii::app()->createUrl(
 				'/board/registration/index',
 				array(
 					'Registration'=>array(
