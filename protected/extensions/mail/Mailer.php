@@ -31,7 +31,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('注册激活邮件');
 		$message = $this->render('activate', array(
 			'user'=>$user,
-			'url'=>$this->baseUrl . $user->getMailUrl('activate'),
+			'url'=>$this->getUrl($user->getMailUrl('activate')),
 		));
 		return $this->add($to, $subject, $message);
 	}
@@ -41,7 +41,7 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('密码重设邮件');
 		$message = $this->render('resetPassword', array(
 			'user'=>$user,
-			'url'=>$this->baseUrl . $user->getMailUrl('resetPassword'),
+			'url'=>$this->getUrl($user->getMailUrl('resetPassword')),
 		));
 		return $this->add($to, $subject, $message);
 	}
@@ -52,12 +52,12 @@ class Mailer extends CApplicationComponent {
 		$message = $this->render('addCompetitionNotice', array(
 			'user'=>Yii::app()->controller->user,
 			'competition'=>$competition,
-			'url'=>$this->baseUrl . Yii::app()->createUrl(
+			'url'=>$this->getUrl(Yii::app()->createUrl(
 				'/board/competition/edit',
 				array(
 					'id'=>$competition->id,
 				)
-			),
+			)),
 		));
 		return $this->add($to, $subject, $message);
 	}
@@ -66,14 +66,14 @@ class Mailer extends CApplicationComponent {
 		$subject = $this->makeTitle('选手报名通知');
 		$message = $this->render('registrationNotice', array(
 			'registration'=>$registration,
-			'url'=>$this->baseUrl . Yii::app()->createUrl(
+			'url'=>$this->getUrl(Yii::app()->createUrl(
 				'/board/registration/index',
 				array(
 					'Registration'=>array(
 						'competition_id'=>$registration->competition_id,
 					),
 				)
-			),
+			)),
 		));
 		$to = array();
 		foreach ($registration->competition->organizer as $organizer) {
@@ -116,6 +116,13 @@ class Mailer extends CApplicationComponent {
 			'organizers'=>$organizers,
 		));
 		return compact('subject', 'message');
+	}
+
+	public function getUrl($url) {
+		if (strpos($url, $this->baseUrl) === false) {
+			$url = $this->baseUrl . $url;
+		}
+		return $url;
 	}
 
 	private function makeTitle($title) {
