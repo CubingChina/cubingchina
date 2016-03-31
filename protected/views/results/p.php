@@ -476,7 +476,7 @@
             ),
           )); ?>
         </div>
-        <div class="tab-pane active" id="by-competition">
+        <div class="tab-pane" id="by-competition">
           <?php
           $this->widget('GroupRankGridView', array(
             'dataProvider'=>new CArrayDataProvider($byCompetition, array(
