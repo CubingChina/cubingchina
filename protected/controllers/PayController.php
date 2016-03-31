@@ -60,7 +60,7 @@ class PayController extends Controller {
 				case Pay::TYPE_REGISTRATION:
 					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
 					$competition = $model->competition;
-					$this->redirect($competition->getUrl('competitors'));
+					$this->redirect($competition->getUrl('registration'));
 					break;
 			}
 		}
