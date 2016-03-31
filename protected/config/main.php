@@ -84,6 +84,7 @@ $config = array(
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
 				'pay/<action:notify|frontNotify>/<channel:nowPay|alipay>'=>'pay/<action>',
+				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

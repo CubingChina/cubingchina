@@ -246,11 +246,10 @@ class Pay extends ActiveRecord {
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
 				$registration = $this->registration;
-				if ($registration !== null) {
-					$registration->status = Registration::STATUS_ACCEPTED;
+				if ($registration !== null && !$registration->isAccepted()) {
 					$registration->paid = Registration::PAID;
 					$registration->total_fee = $registration->getTotalFee(true);
-					$registration->save();
+					$registration->accept();
 				}
 				break;
 		}

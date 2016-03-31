@@ -1,4 +1,5 @@
 <?php
+use Ramsey\Uuid\Uuid;
 
 /**
  * This is the model class for table "registration".
@@ -91,6 +92,15 @@ class Registration extends ActiveRecord {
 
 	public function isPaid() {
 		return $this->paid == self::PAID;
+	}
+
+	public function accept() {
+		$this->formatEvents();
+		$this->status = Registration::STATUS_ACCEPTED;
+		$this->save();
+		if ($this->competition->show_qrcode) {
+			Yii::app()->mailer->sendRegistrationAcception($this);
+		}
 	}
 
 	public function checkPassportType() {
@@ -207,6 +217,18 @@ class Registration extends ActiveRecord {
 
 	public function getPayUrl() {
 		return $this->competition->getUrl('registration');
+	}
+
+	public function getQRCodeUrl() {
+		if ($this->code == '') {
+			$this->formatEvents();
+			$this->code = sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4());
+			$this->save();
+		}
+		return CHtml::normalizeUrl(array(
+			'/qrCode/signin',
+			'code'=>$this->code,
+		));
 	}
 
 	public function getLocation() {
@@ -477,10 +499,10 @@ class Registration extends ActiveRecord {
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 		if ($this->competition_id > 0 && $this->competition->fill_passport) {
-			$rules[] = array('passport_name', 'safe');
-			$rules[] = array('passport_type', 'checkPassportType');
-			$rules[] = array('passport_number', 'checkPassportNumber');
-			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required');
+			$rules[] = array('passport_name', 'safe', 'on'=>'register');
+			$rules[] = array('passport_type', 'checkPassportType', 'on'=>'register');
+			$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
+			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
 		}
 		return $rules;
 	}

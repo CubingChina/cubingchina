@@ -16,6 +16,24 @@
     <?php echo '点击上面的分享按钮告诉你的小伙伴吧～'; ?>
     <?php endif; ?>
   </div>
+  <?php if ($accepted && $competition->show_qrcode): ?>
+  <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <p><?php echo Yii::t('Registration', 'You succeeded in registering for '), $competition->getAttributeValue('name'), Yii::t('common', '.'); ?></p>
+        <p><?php echo Yii::t('Registration', 'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.'); ?></p>
+        <p class="text-center">
+          <?php echo CHtml::image($registration->qrCodeUrl); ?>
+          <br>
+          <?php echo CHtml::link(Yii::t('common', 'Download'), $registration->qrCodeUrl, array(
+            'class'=>'btn btn-theme btn-large',
+            'target'=>'_blank',
+          )); ?>
+        </p>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
   <?php if ($registration->payable): ?>
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
     <h4>

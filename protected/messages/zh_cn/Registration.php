@@ -33,6 +33,8 @@ return array (
   'Registration Date' => '报名时间',
   'Repeat Identity Number' => '重复证件号码',
   'Status' => '状态',
+  'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.' => '下方二维码将用于比赛签到及相关事宜，您可以随时在您的报名信息中查看。请在签到时将<b class="text-danger">二维码及相关证件</b>出示给工作人员进行签到。',
   'Total Fee' => '报名费',
   'Type of Identity' => '证件类型',
+  'You succeeded in registering for ' => '您已成功报名',
 );

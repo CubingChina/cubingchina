@@ -70,6 +70,17 @@ class CompetitionController extends Controller {
 		));
 	}
 
+	public function actionSignin() {
+		$code = $this->sGet('code');
+		$registration = Registration::model()->findByAttributes(array(
+			'code'=>$code,
+		));
+		if ($registration === null) {
+			throw new CHttpException(404, 'Error');
+		}
+		$this->redirect($registration->competition->getUrl());
+	}
+
 	public function actionRegistration() {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
@@ -104,15 +115,15 @@ class CompetitionController extends Controller {
 			));
 			Yii::app()->end();
 		}
-		$model = new Registration();
+		$model = new Registration('register');
 		$model->competition = $competition;
+		$model->competition_id = $competition->id;
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
-			$model->competition_id = $competition->id;
 			$model->total_fee = $model->getTotalFee(true);
 			$model->ip = Yii::app()->request->getUserHostAddress();
 			$model->date = time();

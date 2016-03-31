@@ -2,6 +2,8 @@
 	"require": {
 		"phpoffice/phpexcel": "dev-develop",
 		"suin/php-rss-writer": "dev-master",
+		"ramsey/uuid": "dev-master",
+		"endroid/qrcode": "dev-master",
 		"zhuzhichao/ip-location-zh": "dev-master"
 	},
 	"repositories": [{
