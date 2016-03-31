@@ -95,6 +95,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function accept() {
+		$this->formatEvents();
 		$this->status = Registration::STATUS_ACCEPTED;
 		$this->save();
 		if ($this->competition->show_qrcode) {
@@ -220,6 +221,7 @@ class Registration extends ActiveRecord {
 
 	public function getQRCodeUrl() {
 		if ($this->code == '') {
+			$this->formatEvents();
 			$this->code = sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4());
 			$this->save();
 		}

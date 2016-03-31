@@ -84,7 +84,7 @@ class Mailer extends CApplicationComponent {
 
 	public function sendRegistrationAcception($registration) {
 		$subject = $this->makeTitle('报名成功通知 Registration Confirmed');
-		$qrCodeUrl = $this->getUrl($registration->qrCodeUrl)
+		$qrCodeUrl = $this->getUrl($registration->qrCodeUrl);
 		$registration->formatEvents();
 		$events = array();
 		$translation = include APP_PATH . '/protected/messages/zh_cn/event.php';
