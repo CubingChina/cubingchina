@@ -6,7 +6,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
 		<p><strong>亲爱的<?php echo $user->name_zh ?: $user->name; ?>：</strong></p>
 		<p>
 			我们十分荣幸地通知您，您已成功报名<?php echo $competition->name_zh; ?>。<br>
-			您参加了<span class="color:red"><?php echo $events['cn']; ?></span>。请您认真核对报名项目，若需更改项目，请通过邮件联系我们。<br>
+			您参加了<span style="color:red"><?php echo $events['cn']; ?></span>。请您认真核对报名项目，若需更改项目，请通过邮件联系我们。<br>
 			同时，请您牢记下述注意事项，以免带来不便。<br>
 			<?php $i = 0; ?>
 			(<?php echo ++$i; ?>) 请时刻留意比赛页面信息（<?php echo CHtml::link($url, $url, array('target'=>'_blank')); ?>），以免错过重要通知。<br>
@@ -46,7 +46,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
 		<p><strong>Dear <?php echo $user->name; ?>：</strong></p>
 		<p>
 			We are very privileged to inform you that, you succeeded in registering for <?php echo $competition->name; ?>.<br>
-			You participate in <?php echo $events['en']; ?>. Please double check your events and contact us by email if you need to change your events.<br>
+			You participate in <span style="color:red"><?php echo $events['en']; ?></span>. Please double check your events and contact us by email if you need to change your events.<br>
 			Meanwhile, you must deeply remember the followings to avoid any inconveniences.<br>
 			<?php $i = 0; ?>
 			(<?php echo ++$i; ?>) Keep close attention to the competition information through our website (<?php echo CHtml::link($url, $url, array('target'=>'_blank')); ?>), to avoid missing any important notices.<br>
