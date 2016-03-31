@@ -122,10 +122,10 @@ class Registration extends ActiveRecord {
 					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
-				if ($matches[2] % 2 != 1 - $this->user->gender) {
-					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
-					return false;
-				}
+				// if ($matches[2] % 2 != 1 - $this->user->gender) {
+				// 	$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+				// 	return false;
+				// }
 				$sum = 0;
 				for ($i = 0; $i < 17; $i++) {
 					$sum += $this->passport_number{$i} * $this->coefficients[$i];
