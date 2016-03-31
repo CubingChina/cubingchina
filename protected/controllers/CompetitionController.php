@@ -117,13 +117,13 @@ class CompetitionController extends Controller {
 		}
 		$model = new Registration('register');
 		$model->competition = $competition;
+		$model->competition_id = $competition->id;
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->user_id = $this->user->id;
-			$model->competition_id = $competition->id;
 			$model->total_fee = $model->getTotalFee(true);
 			$model->ip = Yii::app()->request->getUserHostAddress();
 			$model->date = time();
