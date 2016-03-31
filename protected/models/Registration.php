@@ -1,4 +1,5 @@
 <?php
+use Ramsey\Uuid\Uuid;
 
 /**
  * This is the model class for table "registration".
@@ -207,6 +208,17 @@ class Registration extends ActiveRecord {
 
 	public function getPayUrl() {
 		return $this->competition->getUrl('registration');
+	}
+
+	public function getQRCodeUrl() {
+		if ($this->code == '') {
+			$this->code = sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4());
+			$this->save();
+		}
+		return CHtml::normalizeUrl(array(
+			'/qrCode/signin',
+			'code'=>$this->code,
+		));
 	}
 
 	public function getLocation() {

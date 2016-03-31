@@ -70,6 +70,17 @@ class CompetitionController extends Controller {
 		));
 	}
 
+	public function actionSignin() {
+		$code = $this->sGet('code');
+		$registration = Registration::model()->findByAttributes(array(
+			'code'=>$code,
+		));
+		if ($registration === null) {
+			throw new CHttpException(404, 'Error');
+		}
+		$this->redirect($registration->competition->getUrl());
+	}
+
 	public function actionRegistration() {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();

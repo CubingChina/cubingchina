@@ -17,8 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'By Competition' => '按比賽',
-  'By Event' => '按項目',
   'Fee' => '',
   'Name in Local Character' => '',
   'WCA ID' => '',
@@ -76,6 +74,7 @@ return array (
   ' seconds' => '秒',
   ' the WCA delegate' => 'WCA',
   ', ' => '、',
+  '.' => '。',
   'A reset password mail was sent to your email address, please check your inbox.' => '重設密碼郵件已經發送您的郵箱，請檢查您的收件箱並根據提示進行重設密碼。',
   'About' => '關於本站',
   'Accepted' => '已通過',
@@ -89,6 +88,8 @@ return array (
   'Best' => '最好',
   'Birthday' => '生日',
   'Board' => '後台',
+  'By Competition' => '按比賽',
+  'By Event' => '按項目',
   'CCA Delegate' => 'CCA主裁判',
   'CNY' => '元',
   'Change Password' => '修改密碼',
@@ -107,6 +108,7 @@ return array (
   'Current' => '近期',
   'Delegate' => '代表',
   'Detail' => '詳情',
+  'Download' => '下載',
   'Edit' => '編輯',
   'Edit profile.' => '編輯資料',
   'Email' => '郵箱',
