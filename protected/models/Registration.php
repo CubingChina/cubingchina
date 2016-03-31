@@ -94,6 +94,14 @@ class Registration extends ActiveRecord {
 		return $this->paid == self::PAID;
 	}
 
+	public function accept() {
+		$this->status = Registration::STATUS_ACCEPTED;
+		$this->save();
+		if ($this->competition->show_qrcode) {
+			Yii::app()->mailer->sendRegistrationAcception($this);
+		}
+	}
+
 	public function checkPassportType() {
 		if ($this->passport_type == self::PASSPORT_TYPE_OTHER && empty($this->passport_name)) {
 			$this->addError('passport_name', Yii::t('yii','{attribute} cannot be blank.', array(
@@ -489,10 +497,10 @@ class Registration extends ActiveRecord {
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
 		if ($this->competition_id > 0 && $this->competition->fill_passport) {
-			$rules[] = array('passport_name', 'safe');
-			$rules[] = array('passport_type', 'checkPassportType');
-			$rules[] = array('passport_number', 'checkPassportNumber');
-			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required');
+			$rules[] = array('passport_name', 'safe', 'on'=>'register');
+			$rules[] = array('passport_type', 'checkPassportType', 'on'=>'register');
+			$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
+			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
 		}
 		return $rules;
 	}

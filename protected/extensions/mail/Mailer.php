@@ -9,7 +9,7 @@ class Mailer extends CApplicationComponent {
 	public $api;
 	public $baseUrl;
 
-	protected $titlePrefix = 'Cubing China (粗饼·中国魔方赛事网) - ';
+	protected $titlePrefix = 'Cubing China (粗饼) - ';
 	protected $viewPath;
 	private $_mailer;
 
@@ -82,6 +82,30 @@ class Mailer extends CApplicationComponent {
 		return $this->add($to, $subject, $message);
 	}
 
+	public function sendRegistrationAcception($registration) {
+		$subject = $this->makeTitle('报名成功通知 Registration Confirmed');
+		$registration->formatEvents();
+		$events = array();
+		$translation = include APP_PATH . '/protected/messages/zh_cn/event.php';
+		foreach ($registration->events as $event) {
+			$enName = Events::getFullEventName($event);
+			$cnName = isset($translation[$enName]) ? $translation[$enName] : $enName;
+			$events['en'][] = $enName;
+			$events['cn'][] = $cnName;
+		}
+		$events['en'] = implode(', ', $events['en']);
+		$events['cn'] = implode('、', $events['cn']);
+		$message = $this->render('registrationAcception', array(
+			'registration'=>$registration,
+			'competition'=>$registration->competition,
+			'user'=>$registration->user,
+			'events'=>$events,
+			'url'=>$this->getUrl(CHtml::normalizeUrl($registration->competition->getUrl())),
+			'qrCodeUrl'=>$this->getUrl($registration->qrCodeUrl),
+		));
+		return $this->add($registration->user->email, $subject, $message);
+	}
+
 	public function sendCompetitionNotice($competition, $users, $title, $content, $englishContent = '') {
 		$subject = "【{$competition->name_zh}】$title";
 		$organizers = array();
@@ -119,7 +143,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function getUrl($url) {
-		if (strpos($url, $this->baseUrl) === false) {
+		if (strpos($url, 'http') !== 0) {
 			$url = $this->baseUrl . $url;
 		}
 		return $url;

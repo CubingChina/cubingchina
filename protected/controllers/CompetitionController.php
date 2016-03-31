@@ -115,7 +115,7 @@ class CompetitionController extends Controller {
 			));
 			Yii::app()->end();
 		}
-		$model = new Registration();
+		$model = new Registration('register');
 		$model->competition = $competition;
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
