@@ -77,6 +77,7 @@ $config = array(
 					'site/page',
 					'urlSuffix'=>'.html'
 				),
+				'competition/<action:signin>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
