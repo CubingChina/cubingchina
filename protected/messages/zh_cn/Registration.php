@@ -22,7 +22,7 @@ return array (
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',
-  '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">备注</b>：组委会收集选手身份证件信息用以选手比赛签到身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法签到</b>和<b class="text-danger">投保失败</b>的任何后果。<br>如果您提供的身份证件为个人身份证，请注意身份证上的出生日期必须与您在粗饼网注册的信息一致，否则会提示输入错误。需要修改生日信息，请联系admin@cubingchina.com。',
+  '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">备注</b>：组委会收集选手身份证件信息用以选手比赛签到身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法签到</b>和<b class="text-danger">投保失败</b>的任何后果。',
   'Additional Comments' => '备注',
   'Competition' => '比赛',
   'Events' => '项目',
