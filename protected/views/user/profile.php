@@ -26,7 +26,7 @@
     <dd><?php echo $user->id ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
     <dd><?php echo CHtml::encode($user->name); ?></dd>
-    <dt><?php echo Yii::t('common', 'Name in Local Character'); ?></dt>
+    <dt><?php echo Yii::t('common', 'Name in Local Characters'); ?></dt>
     <dd><?php echo CHtml::encode($user->name_zh) ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Email'); ?></dt>
     <dd><?php echo $user->email; ?></dd>
