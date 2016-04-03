@@ -367,10 +367,10 @@ class ResultsController extends Controller {
 			$person1Results = array();
 			$id1 = $persons[0]['person']->id;
 			$id2 = $persons[1]['person']->id;
-			foreach ($persons[0]['results']['personResults'] as $result) {
+			foreach ($persons[0]['results']['byEvent'] as $result) {
 				$person1Results[$result->competitionId][$result->eventId][$result->roundId] = $result->pos;
 			}
-			foreach ($persons[1]['results']['personResults'] as $result) {
+			foreach ($persons[1]['results']['byEvent'] as $result) {
 				$eventId = $result->eventId;
 				$roundId = $result->roundId;
 				if (isset($person1Results[$result->competitionId][$eventId][$roundId])) {
