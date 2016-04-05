@@ -193,6 +193,18 @@
                 Html::activeTextField($model, 'third_stage_ratio'),
                 $form->error($model, 'third_stage_ratio', array('class'=>'text-danger'))
               );?>
+              <?php echo Html::formGroup(
+                $model, 'local_type', array(
+                  'class'=>'col-md-4',
+                ),
+                $form->labelEx($model, 'local_type', array(
+                  'label'=>'人数统计选项',
+                )),
+                $form->dropDownList($model, 'local_type', Competition::getLocalTypes(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'local_type', array('class'=>'text-danger'))
+              );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'date', array(
