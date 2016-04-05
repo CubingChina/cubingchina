@@ -48,6 +48,11 @@ class Competition extends ActiveRecord {
 	const STAGE_SECOND = 'second';
 	const STAGE_THIRD = 'third';
 
+	const LOCAL_TYPE_NONE = 0;
+	const LOCAL_TYPE_PROVINCE = 1;
+	const LOCAL_TYPE_CITY = 2;
+	const LOCAL_TYPE_MAINLAND = 3;
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
@@ -204,6 +209,15 @@ class Competition extends ActiveRecord {
 		return array(
 			self::TYPE_WCA=>self::TYPE_WCA,
 			self::TYPE_OTHER=>Yii::t('common', 'Other'),
+		);
+	}
+
+	public static function getLocalTypes() {
+		return array(
+			self::LOCAL_TYPE_NONE=>'无',
+			self::LOCAL_TYPE_PROVINCE=>'省',
+			self::LOCAL_TYPE_CITY=>'市',
+			self::LOCAL_TYPE_MAINLAND=>'大陆',
 		);
 	}
 
@@ -1253,7 +1267,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, status', 'numerical', 'integerOnly'=>true),
+			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),

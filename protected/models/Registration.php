@@ -618,21 +618,27 @@ class Registration extends ActiveRecord {
 		$criteria->order = 't.date';
 		$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
-		$criteria->compare('t.id',$this->id,true);
-		$criteria->compare('t.competition_id',$this->competition_id);
-		$criteria->compare('t.user_id',$this->user_id);
-		$criteria->compare('t.events',$this->events,true);
-		$criteria->compare('t.comments',$this->comments,true);
-		$criteria->compare('t.date',$this->date,true);
-		$criteria->compare('t.status',$this->status);
+		$criteria->compare('t.id', $this->id,true);
+		$criteria->compare('t.competition_id', $this->competition_id);
+		$criteria->compare('t.user_id', $this->user_id);
+		$criteria->compare('t.events', $this->events,true);
+		$criteria->compare('t.comments', $this->comments,true);
+		$criteria->compare('t.date', $this->date,true);
+		$criteria->compare('t.status', $this->status);
 		$criteria->compare('user.status', User::STATUS_NORMAL);
 		$registrations = $this->findAll($criteria);
 		$number = 1;
+		$localType = $this->competition ? $this->competition->local_type : Competition::LOCAL_TYPE_NONE;
+		if (isset($competition->location[1])) {
+			$localType = Competition::LOCAL_TYPE_NONE;
+		}
 		$statistics = array();
 		$statistics['number'] = 0;
 		$statistics['new'] = 0;
 		$statistics['paid'] = 0;
 		$statistics['unpaid'] = 0;
+		$statistics['local'] = 0;
+		$statistics['nonlocal'] = 0;
 		$statistics[User::GENDER_MALE] = 0;
 		$statistics[User::GENDER_FEMALE] = 0;
 
@@ -657,14 +663,12 @@ class Registration extends ActiveRecord {
 				case 'location_id':
 					self::$sortAttribute = $sort;
 					break;
-				
 				default:
 					self::$sortByEvent = true;
 					self::$sortAttribute = $sort;
 					break;
 			}
 		}
-
 		$wcaIds = array();
 		foreach ($registrations as $registration) {
 			if ($registration->isAccepted()) {
@@ -674,6 +678,14 @@ class Registration extends ActiveRecord {
 			$statistics[$registration->user->gender]++;
 			if ($registration->user->wcaid === '') {
 				$statistics['new']++;
+			}
+			if ($localType == Competition::LOCAL_TYPE_PROVINCE && $registration->user->province_id == $this->competition->location[0]->province_id
+				|| $localType == Competition::LOCAL_TYPE_CITY && $registration->user->city_id == $this->competition->location[0]->city_id
+				|| $localType == Competition::LOCAL_TYPE_MAINLAND && $registration->user->country_id == 1
+			) {
+				$statistics['local']++;
+			} else {
+				$statistics['nonlocal']++;
 			}
 			foreach ($registration->events as $event) {
 				if (!isset($statistics[$event])) {
@@ -716,6 +728,9 @@ class Registration extends ActiveRecord {
 		$statistics['old'] = $statistics['number'] - $statistics['new'];
 		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
 		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
+		if ($localType != Competition::LOCAL_TYPE_NONE) {
+			$statistics['country_id'] =  $statistics['local'] . '/' . $statistics['nonlocal'];
+		}
 		foreach ($columns as $key=>$column) {
 			if (isset($column['name']) && isset($statistics[$column['name']])) {
 				$columns[$key]['footer'] = $statistics[$column['name']];
@@ -754,13 +769,13 @@ class Registration extends ActiveRecord {
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.date DESC';
 
-		$criteria->compare('t.id',$this->id,true);
-		$criteria->compare('t.competition_id',$this->competition_id);
-		$criteria->compare('t.user_id',$this->user_id);
-		$criteria->compare('t.events',$this->events,true);
-		$criteria->compare('t.comments',$this->comments,true);
-		$criteria->compare('t.date',$this->date,true);
-		$criteria->compare('t.status',$this->status);
+		$criteria->compare('t.id', $this->id,true);
+		$criteria->compare('t.competition_id', $this->competition_id);
+		$criteria->compare('t.user_id', $this->user_id);
+		$criteria->compare('t.events', $this->events,true);
+		$criteria->compare('t.comments', $this->comments,true);
+		$criteria->compare('t.date', $this->date,true);
+		$criteria->compare('t.status', $this->status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
