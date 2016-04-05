@@ -1095,6 +1095,7 @@ class Competition extends ActiveRecord {
 		}
 		//处理赛程
 		$schedules = $this->schedules;
+		// CVarDumper::dump($schedules, 10, 1);exit;
 		if (!empty($schedules['start_time'])) {
 			Schedule::model()->deleteAllByAttributes(array(
 				'competition_id'=>$this->id,
@@ -1113,16 +1114,16 @@ class Competition extends ActiveRecord {
 				$model->competition_id = $this->id;
 				$model->start_time = strtotime($startTime);
 				$model->end_time = strtotime($schedules['end_time'][$key]);
-				$model->day = $schedules['day'][$key];
-				$model->stage = $schedules['stage'][$key];
-				$model->event = $schedules['event'][$key];
-				$model->group = $schedules['group'][$key];
-				$model->round = $schedules['round'][$key];
-				$model->format = $schedules['format'][$key];
-				$model->number = intval($schedules['number'][$key]);
-				$model->cut_off = intval($schedules['cut_off'][$key]);
-				$model->time_limit = intval($schedules['time_limit'][$key]);
-				$model->cumulative = intval($schedules['cumulative'][$key]);
+				$model->day = isset($schedules['day'][$key]) ? $schedules['day'][$key] : 1;
+				$model->stage = isset($schedules['stage'][$key]) ? $schedules['stage'][$key] : 'main';
+				$model->event = isset($schedules['event'][$key]) ? $schedules['event'][$key] : '';
+				$model->group = isset($schedules['group'][$key]) ? $schedules['group'][$key] : '';
+				$model->round = isset($schedules['round'][$key]) ? $schedules['round'][$key] : '';
+				$model->format = isset($schedules['format'][$key]) ? $schedules['format'][$key] : '';
+				$model->number = isset($schedules['number'][$key]) ? intval($schedules['number'][$key]) : 0;
+				$model->cut_off = isset($schedules['cut_off'][$key]) ? intval($schedules['cut_off'][$key]) : 0;
+				$model->time_limit = isset($schedules['time_limit'][$key]) ? intval($schedules['time_limit'][$key]) : 0;
+				$model->cumulative = isset($schedules['cumulative'][$key]) ? intval($schedules['cumulative'][$key]) : 0;
 				$model->save(false);
 			}
 		}

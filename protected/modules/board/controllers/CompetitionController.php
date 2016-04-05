@@ -63,6 +63,8 @@ class CompetitionController extends AdminController {
 			'second_stage_date',
 			'second_stage_ratio',
 			'second_stage_all',
+			'third_stage_date',
+			'third_stage_ratio',
 			'date',
 			'end_date',
 			'reg_start',
