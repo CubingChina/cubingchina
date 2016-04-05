@@ -62,52 +62,52 @@ class SchedulesForm extends Widget {
 		foreach ($schedules as $key=>$value) {
 			extract($value);
 			echo CHtml::openTag('tr');
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[day][]", array(
+			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[day][$key]", array(
 				'value'=>$day ?: 1,
 				'min'=>1,
 				'max'=>4,
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][]"), $stage, $stages));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[start_time][]", array(
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][$key]"), $stage, $stages));
+			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[start_time][$key]", array(
 				'value'=>$start_time ? date('H:i', $start_time) : '',
 				'class'=>'datetime-picker',
 				'data-date-format'=>'hh:ii',
 				'data-max-view'=>'1',
 				'data-start-view'=>'1',
 			)));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[end_time][]", array(
+			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[end_time][$key]", array(
 				'value'=>$end_time ? date('H:i', $end_time) : '',
 				'class'=>'datetime-picker',
 				'data-date-format'=>'hh:ii',
 				'data-max-view'=>'1',
 				'data-start-view'=>'1',
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][]"), $event, $events, array(
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][$key]"), $event, $events, array(
 				'prompt'=>'',
 				'class'=>'schedule-event',
 			)));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][]", array(
+			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][$key]", array(
 				'value'=>$group,
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][]"), $round, $rounds, array(
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][$key]"), $round, $rounds, array(
 				'prompt'=>'',
 				'class'=>'schedule-round',
 			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][]"), $format, $formats, array('prompt'=>'')));
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[cut_off][]", array(
+			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][$key]"), $format, $formats, array('prompt'=>'')));
+			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[cut_off][$key]", array(
 				'value'=>$cut_off,
 				// 'max'=>3600,
 			)));
 			echo CHtml::openTag('td');
-			echo CHtml::activeNumberField($model, "{$name}[time_limit][]", array(
+			echo CHtml::activeNumberField($model, "{$name}[time_limit][$key]", array(
 				'value'=>$time_limit,
 				// 'max'=>3600,
 			));
-			echo CHtml::activeCheckBox($model, "{$name}[cumulative][]", array(
+			echo CHtml::activeCheckBox($model, "{$name}[cumulative][$key]", array(
 				'checked'=>$cumulative == Schedule::YES,
 			));
 			echo CHtml::closeTag('td');
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][]", array(
+			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][$key]", array(
 				'value'=>$number,
 			)));
 
@@ -122,9 +122,15 @@ class SchedulesForm extends Widget {
 <<<EOT
   var onlyScheculeEvents = {$onlyScheculeEvents};
   var combinedRounds = ['c', 'd', 'e', 'g'];
+  var length = $('#schedules table tbody tr').length;
   $(document).on('focus', '#schedules table tbody tr:last-child', function() {
-    $(this).clone().insertAfter(this);
-    $('.datetime-picker').datetimepicker({
+    var last = $(this).clone().insertAfter(this);
+    last.find('input, select').each(function() {
+      var name = this.name;
+      $(this).attr('name', name.replace(/\[\d*\]/, '[' + length + ']'));
+    });
+    length++;
+    last.find('.datetime-picker').datetimepicker({
       autoclose: true
     });
   }).on('change', '.schedule-event', function(e) {
@@ -145,8 +151,6 @@ class SchedulesForm extends Widget {
     } else {
       format.filter('[value="2/a"], [value="1/m"]').prop('disabled', true);
     }
-  }).on('submit', 'form', function() {
-    $('select, input').prop('disabled', false);
   });
   $('.schedule-event, .schedule-round').change();
 EOT
