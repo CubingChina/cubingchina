@@ -73,7 +73,7 @@ class CompetitionController extends Controller {
 	public function actionSignin() {
 		$code = $this->sGet('code');
 		$registration = Registration::model()->findByAttributes(array(
-			'code'=>$code,
+			'code'=>substr($code, 0, 64),
 		));
 		if ($registration === null) {
 			throw new CHttpException(404, 'Error');

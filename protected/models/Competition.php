@@ -1197,8 +1197,14 @@ class Competition extends ActiveRecord {
 		if (!preg_match('{^[\'\-a-z0-9& ]+$}i', $this->name, $matches)) {
 			$this->addError('name', '英文名只能由字母、数字、空格、短杠-和单引号\'组成');
 		}
+		if (!preg_match('{ \d{4}$}i', $this->name, $matches)) {
+			$this->addError('name', '英文名必须以年份结尾');
+		}
 		if (!preg_match('{^[a-z0-9 \x{4e00}-\x{9fc0}“”]+$}iu', $this->name_zh)) {
 			$this->addError('name_zh', '中文名只能由中文、英文、数字、空格和双引号“”组成');
+		}
+		if (!preg_match('{^\d{4}}i', $this->name_zh, $matches)) {
+			$this->addError('name_zh', '中文名必须以年份开头');
 		}
 	}
 

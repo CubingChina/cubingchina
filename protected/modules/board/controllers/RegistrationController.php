@@ -483,11 +483,17 @@ class RegistrationController extends AdminController {
 			if ($rA->number === $rB->number || ($rA->number !== null && $rB->number !== null)) {
 				switch ($order) {
 					case 'user.name':
-						return strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
+						$temp = strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
+						break;
 					case 'date':
 					default:
-						return $rA->date - $rB->date;
+						$temp = $rA->date - $rB->date;
+						break;
 				}
+				if ($temp == 0) {
+					return $rA->id - $rB->id;
+				}
+				return $temp;
 			}
 			if ($rA->number === null) {
 				return 1;
@@ -495,7 +501,7 @@ class RegistrationController extends AdminController {
 			if ($rB->number === null) {
 				return -1;
 			}
-			return 0;
+			return $rA->id - $rB->id;
 		});
 		return $registrations;
 	}
