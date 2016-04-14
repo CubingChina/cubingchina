@@ -452,6 +452,27 @@ class Pay extends ActiveRecord {
 		}
 	}
 
+	public function getTotal($status = self::STATUS_PAID) {
+		$criteria = new CDbCriteria;
+		$criteria->compare('type', $this->type);
+		$criteria->compare('type_id', $this->type_id);
+		$criteria->compare('status', $status);
+		$criteria->select = 'SUM(amount) AS amount';
+		return number_format($this->find($criteria)->amount / 100, 2, '.', '');
+	}
+
+	public function getTotalFee() {
+		$criteria = new CDbCriteria;
+		$criteria->compare('type', $this->type);
+		$criteria->compare('type_id', $this->type_id);
+		$criteria->select = 'SUM(ROUND((CASE
+			WHEN status=0 OR status=5 THEN 0
+			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
+			WHEN channel="nowPay" THEN amount*0.06
+			ELSE amount*0.012 END) / 100, 2)) AS amount';
+		return $this->find($criteria)->amount;
+	}
+
 	protected function beforeValidate() {
 		if ($this->isNewRecord) {
 			$this->create_time = $this->update_time = time();
