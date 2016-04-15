@@ -1292,6 +1292,10 @@ class Competition extends ActiveRecord {
 							$this->addError($errorKey, '请正确选择非组合制轮次的赛制！');
 							return false;
 						}
+						if (!empty($cutOff)) {
+							$this->addError($errorKey, '非组合制轮次请勿设置及格线！');
+							return false;
+						}
 					}
 				}
 			}
