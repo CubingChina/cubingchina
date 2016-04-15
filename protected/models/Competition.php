@@ -1027,18 +1027,18 @@ class Competition extends ActiveRecord {
 		$oldSchedules = $this->schedules;
 		foreach ($oldSchedules['start_time'] as $key=>$value) {
 			$schedules[] = array(
-				'day'=>$oldSchedules['day'][$key],
-				'stage'=>$oldSchedules['stage'][$key],
 				'start_time'=>strtotime($oldSchedules['start_time'][$key]),
 				'end_time'=>strtotime($oldSchedules['end_time'][$key]),
-				'event'=>$oldSchedules['event'][$key],
-				'group'=>$oldSchedules['group'][$key],
-				'round'=>$oldSchedules['round'][$key],
-				'format'=>$oldSchedules['format'][$key],
-				'number'=>$oldSchedules['number'][$key],
-				'cut_off'=>$oldSchedules['cut_off'][$key],
-				'time_limit'=>$oldSchedules['time_limit'][$key],
-				'cumulative'=>$oldSchedules['cumulative'][$key],
+				'day'=>isset($oldSchedules['day'][$key]) ? $oldSchedules['day'][$key] : 1,
+				'stage'=>isset($oldSchedules['stage'][$key]) ? $oldSchedules['stage'][$key] : 'main',
+				'event'=>isset($oldSchedules['event'][$key]) ? $oldSchedules['event'][$key] : '',
+				'group'=>isset($oldSchedules['group'][$key]) ? $oldSchedules['group'][$key] : '',
+				'round'=>isset($oldSchedules['round'][$key]) ? $oldSchedules['round'][$key] : '',
+				'format'=>isset($oldSchedules['format'][$key]) ? $oldSchedules['format'][$key] : '',
+				'number'=>isset($oldSchedules['number'][$key]) ? $oldSchedules['number'][$key] : '',
+				'cut_off'=>isset($oldSchedules['cut_off'][$key]) ? $oldSchedules['cut_off'][$key] : '',
+				'time_limit'=>isset($oldSchedules['time_limit'][$key]) ? $oldSchedules['time_limit'][$key] : '',
+				'cumulative'=>isset($oldSchedules['cumulative'][$key]) ? $oldSchedules['cumulative'][$key] : '',
 			);
 		}
 		$this->schedules = $schedules;
