@@ -110,7 +110,13 @@ class SchedulesForm extends Widget {
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][$key]", array(
 				'value'=>$number,
 			)));
-
+			if ($model->hasErrors("{$name}.{$key}")) {
+				echo CHtml::tag('tr', array(
+					'class'=>'danger',
+				), CHtml::tag('td', array(
+					'colspan'=>11,
+				), $model->getError("{$name}.{$key}")));
+			}
 			echo CHtml::closeTag('tr');
 		}
 		echo CHtml::closeTag('tbody');
@@ -145,10 +151,13 @@ class SchedulesForm extends Widget {
     var that = $(this);
     var round = that.val();
     var format = that.parent().next().find('option');
+    var cutoff = that.parent().next().next().find('input');
     format.prop('disabled', false);
     if (combinedRounds.indexOf(round) > -1) {
+      cutoff.prop('disabled', false);
       format.filter(':not([value="2/a"]):not([value="1/m"])').prop('disabled', true);
     } else {
+      cutoff.prop('disabled', true);
       format.filter('[value="2/a"], [value="1/m"]').prop('disabled', true);
     }
   });
