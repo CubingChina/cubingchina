@@ -12,10 +12,6 @@
  * @property string $date
  * @property string $end_date
  * @property string $reg_end
- * @property integer $province_id
- * @property integer $city_id
- * @property string $venue
- * @property string $venue_zh
  * @property string $events
  * @property integer $entry_fee
  * @property integer $online_pay
@@ -1095,17 +1091,10 @@ class Competition extends ActiveRecord {
 		}
 		//处理赛程
 		$schedules = $this->schedules;
-		// CVarDumper::dump($schedules, 10, 1);exit;
 		if (!empty($schedules['start_time'])) {
 			Schedule::model()->deleteAllByAttributes(array(
 				'competition_id'=>$this->id,
 			));
-			foreach ($schedules['cumulative'] as $key=>$value) {
-				if ($value == Schedule::YES) {
-					unset($schedules['cumulative'][$key - 1]);
-				}
-			}
-			$schedules['cumulative'] = array_values($schedules['cumulative']);
 			foreach ($schedules['start_time'] as $key=>$startTime) {
 				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
 					continue;
@@ -1261,6 +1250,54 @@ class Competition extends ActiveRecord {
 		$this->locations = $temp;
 	}
 
+	public function checkSchedules() {
+		$schedules = $this->schedules;
+		if (!empty($schedules['start_time'])) {
+			$onlyScheculeEvents = Events::getOnlyScheduleEvents();
+			$combinedRounds = array('c', 'd', 'e', 'g');
+			foreach ($schedules['start_time'] as $key=>$startTime) {
+				$errorKey = 'schedules.' . $key;
+				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
+					continue;
+				}
+				$event = isset($schedules['event'][$key]) ? $schedules['event'][$key] : '';
+				$group = isset($schedules['group'][$key]) ? $schedules['group'][$key] : '';
+				$round = isset($schedules['round'][$key]) ? $schedules['round'][$key] : '';
+				$format = isset($schedules['format'][$key]) ? $schedules['format'][$key] : '';
+				$number = isset($schedules['number'][$key]) ? intval($schedules['number'][$key]) : 0;
+				$cutOff = isset($schedules['cut_off'][$key]) ? intval($schedules['cut_off'][$key]) : 0;
+				$timeLimit = isset($schedules['time_limit'][$key]) ? intval($schedules['time_limit'][$key]) : 0;
+				$cumulative = isset($schedules['cumulative'][$key]) ? intval($schedules['cumulative'][$key]) : 0;
+				if (empty($event)) {
+					$this->addError($errorKey, '必须选择项目！');
+					return false;
+				}
+				if (isset($onlyScheculeEvents[$event])) {
+					if (!empty($group) || !empty($round) || !empty($format) || !empty($number) || !empty($cutOff) || !empty($timeLimit)) {
+						$this->addError($errorKey, '非比赛项目不能设置分组、轮次、赛制、人数、及格线、还原时限等！');
+						return false;
+					}
+				} else {
+					if (in_array($round, $combinedRounds)) {
+						if ($format != '2/a' && $format != '1/m') {
+							$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
+							return false;
+						}
+						if (empty($cutOff)) {
+							$this->addError($errorKey, '组合制轮次请设置及格线！');
+							return false;
+						}
+					} else {
+						if ($format == '2/a' || $format == '1/m') {
+							$this->addError($errorKey, '请正确选择非组合制轮次的赛制！');
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -1274,7 +1311,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('province_id, city_id, entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, status', 'numerical', 'integerOnly'=>true),
+			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),
@@ -1289,10 +1326,10 @@ class Competition extends ActiveRecord {
 			array('second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true),
 			array('third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true),
 			array('third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true),
-			array('venue, venue_zh', 'length', 'max'=>512),
 			array('locations', 'checkLocations', 'skipOnError'=>true),
+			array('schedules', 'checkSchedules'),
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
-			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, province_id, city_id, venue, venue_zh, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
+			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
 		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = array('tba', 'safe');
@@ -1387,10 +1424,6 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.date', $this->date, true);
 		$criteria->compare('t.end_date', $this->end_date, true);
 		$criteria->compare('t.reg_end', $this->reg_end, true);
-		$criteria->compare('t.province_id', $this->province_id);
-		$criteria->compare('t.city_id', $this->city_id);
-		$criteria->compare('t.venue', $this->venue, true);
-		$criteria->compare('t.venue_zh', $this->venue_zh, true);
 		$criteria->compare('t.events', $this->events, true);
 		$criteria->compare('t.entry_fee', $this->entry_fee);
 		$criteria->compare('t.online_pay', $this->online_pay);

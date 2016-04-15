@@ -23,6 +23,9 @@
             ),
             'enableClientValidation'=>true,
           )); ?>
+          <?php echo $form->errorSummary($model, null, null, array(
+            'class'=>'text-danger col-lg-12',
+          )); ?>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab">赛程安排</a></li>

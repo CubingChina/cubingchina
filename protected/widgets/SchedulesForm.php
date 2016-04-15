@@ -110,7 +110,13 @@ class SchedulesForm extends Widget {
 			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][$key]", array(
 				'value'=>$number,
 			)));
-
+			if ($model->hasErrors("{$name}.{$key}")) {
+				echo CHtml::tag('tr', array(
+					'class'=>'danger',
+				), CHtml::tag('td', array(
+					'colspan'=>11,
+				), $model->getError("{$name}.{$key}")));
+			}
 			echo CHtml::closeTag('tr');
 		}
 		echo CHtml::closeTag('tbody');
