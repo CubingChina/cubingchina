@@ -145,10 +145,13 @@ class SchedulesForm extends Widget {
     var that = $(this);
     var round = that.val();
     var format = that.parent().next().find('option');
+    var cutoff = that.parent().next().next().find('input');
     format.prop('disabled', false);
     if (combinedRounds.indexOf(round) > -1) {
+      cutoff.prop('disabled', false);
       format.filter(':not([value="2/a"]):not([value="1/m"])').prop('disabled', true);
     } else {
+      cutoff.prop('disabled', true);
       format.filter('[value="2/a"], [value="1/m"]').prop('disabled', true);
     }
   });
