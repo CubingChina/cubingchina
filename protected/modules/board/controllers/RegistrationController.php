@@ -670,7 +670,7 @@ class RegistrationController extends AdminController {
 		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
 			throw new CHttpException(401, 'Unauthorized');
 		}
-		if ($this->user->isOrganizer() && $attribute == 'status' && ($competition->isRegistrationFull() || $competition->isRegistrationEnded())) {
+		if (!$this->user->isAdmin() && $attribute == 'status' && ($competition->isRegistrationFull() || $competition->isRegistrationEnded())) {
 			throw new CHttpException(401, '报名已截止，如需变更请联系代表或管理员');
 		}
 		$model->$attribute = 1 - $model->$attribute;

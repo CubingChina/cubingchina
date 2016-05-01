@@ -172,7 +172,7 @@ $config = array(
 						'js/plugins/bootstrap/bootstrap.min.js',
 						'js/plugins/hisrc/hisrc.js',
 						'js/flex.js',
-						'js/main.js?v=20160501',
+						'js/main.js?v=20160502',
 					),
 					'depends'=>array('jquery'),
 				),

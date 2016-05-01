@@ -43,7 +43,7 @@ $(function() {
             msg.push(xhr.responseText);
         }
         if (options.name) {
-          msg.push(options.name);
+          msg.push('涉及数据：' + options.name);
         }
         alert(msg.join('\n'));
       }
