@@ -40,6 +40,7 @@ $(function() {
             break;
           default:
             msg.push(error);
+            msg.push(xhr.responseText);
         }
         if (options.name) {
           msg.push(options.name);

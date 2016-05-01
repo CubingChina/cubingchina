@@ -658,16 +658,23 @@ class RegistrationController extends AdminController {
 
 	public function actionToggle() {
 		$id = $this->iRequest('id');
+		$attribute = $this->sRequest('attribute');
 		$model = Registration::model()->findByPk($id);
 		if ($model === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		$competition = $model->competition;
+		if ($competition === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
 			throw new CHttpException(401, 'Unauthorized');
 		}
-		$attribute = $this->sRequest('attribute');
+		if ($this->user->isOrganizer() && $attribute == 'status' && ($competition->isRegistrationFull() || $competition->isRegistrationEnded())) {
+			throw new CHttpException(401, '报名已截止，如需变更请联系代表或管理员');
+		}
 		$model->$attribute = 1 - $model->$attribute;
-		if ($model->isAccepted()) {
+		if ($attribute == 'status' && $model->isAccepted()) {
 			$model->total_fee = $model->getTotalFee(true);
 			$model->accept();
 		} else {
