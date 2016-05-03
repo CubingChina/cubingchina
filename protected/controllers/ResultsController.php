@@ -544,7 +544,10 @@ class ResultsController extends Controller {
 		if (!array_key_exists($type, $types)) {
 			$type = 'winners';
 		}
-		if (($c = Competition::model()->findByAttributes(array('wca_competition_id' => $id))) !== null) {
+		if (($c = Competition::model()->findByAttributes(array(
+			'wca_competition_id'=>$id,
+			'status'=>Competition::STATUS_SHOW,
+		))) !== null) {
 			$competition->name = $c->getAttributeValue('name');
 			$competition->location = $c->isMultiLocation() ? $c->getLocationInfo('venue') : $c->location[0]->getFullAddress(false);
 			$competition->c = $c;
