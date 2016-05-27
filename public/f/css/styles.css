@@ -2886,3 +2886,8 @@ table.concise-schedule {
   height: 300px;
   overflow-y: auto;
 }
+@media (max-width: 991px) {
+  .affix {
+    position: static;
+  }
+}

@@ -60,6 +60,10 @@ class LiveResult extends ActiveRecord {
 		return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
 	}
 
+	public function caculateRecord($type) {
+		return '';
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

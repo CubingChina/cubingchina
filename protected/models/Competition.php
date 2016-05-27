@@ -1051,17 +1051,14 @@ class Competition extends ActiveRecord {
 			}
 			if (isset($schedules[$event])) {
 				$first = current($schedules[$event]);
-				$format = $first->format;
-				$format = explode('/', $format);
-				$formats[$event] = isset($format[1]) ? $format[1] : $format[0];
-				$round = $first->round;
-				$rounds[$event] = $round;
+				$formats[$event] = $first->getRealFormat();
+				$rounds[$event] = $first->round;
 				foreach ($schedules[$event] as $schedule) {
 					$model = new LiveEventRound();
 					$model->competition_id = $schedule->competition_id;
 					$model->event = $schedule->event;
 					$model->round = $schedule->round;
-					$model->format = $schedule->format;
+					$model->format = $schedule->getRealFormat();
 					$model->cut_off = $schedule->cut_off;
 					$model->time_limit = $schedule->time_limit;
 					$model->number = $schedule->number;

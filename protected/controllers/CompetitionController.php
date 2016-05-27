@@ -263,7 +263,7 @@ class CompetitionController extends Controller {
 		} elseif ($competition->live == Competition::YES && $competition->isRegistrationEnded()) {
 			$navibar[count($navibar) - 1] = array(
 				'label'=>Html::fontAwesome('play', 'a') . Yii::t('Competition', 'Live'),
-				'url'=>array('/live/competition', 'name'=>$competition->alias),
+				'url'=>array('/live/live', 'name'=>$competition->alias),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-pink',
 				),

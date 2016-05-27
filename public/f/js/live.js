@@ -11,11 +11,12 @@
       type: 'competition',
       competitionId: state.competitionId
     });
-  }).on('newresult', function(result) {
+    fetchResults();
+  }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
-  }).on('newmessage', function(message) {
+  }).on('message.new', function(message) {
     newMessage(message);
-  }).on('results', function(results) {
+  }).on('result.all', function(results) {
     store.dispatch('UPDATE_RESULTS', results);
   });
 
@@ -26,7 +27,7 @@
   var state = {
     user: {},
     competitionId: 0,
-    events: {},
+    events: [],
     params: {
       event: '',
       round: '',
@@ -35,8 +36,9 @@
     results: [],
     messages: []
   };
+  var events = {};
   var mutations = {
-    ROUTE_CHANGED: function(state, params) {
+    CHANGE_EVENT_ROUND: function(state, params) {
       state.params = params;
     },
     NEW_RESULT: function(state, result) {
@@ -57,6 +59,7 @@
         result.isNew = true;
         for (; i < len; i++) {
           if (results[i].id == result.id) {
+            result.user = results[i].user;
             results[i] = result;
             break;
           }
@@ -79,6 +82,9 @@
     }
   };
   $.extend(state, liveContainer.data());
+  state.events.forEach(function(event) {
+    events[event.id] = event;
+  });
 
   //vuex
   var store = new Vuex.Store({
@@ -87,10 +93,10 @@
   });
   //main component
   var vm = Vue.extend({
-    template: $('#live-container-template').html(),
+    template: '#live-container-template',
     store: store,
     components: {
-      chat: Vue.extend({
+      chat: {
         data: function() {
           return {
             message: ''
@@ -103,7 +109,7 @@
             }
           }
         },
-        template: $('#chat-template').html(),
+        template: '#chat-template',
         methods: {
           send: function(e) {
             var that = this;
@@ -124,64 +130,118 @@
           }
         },
         components: {
-          message: Vue.extend({
+          message: {
             props: ['message'],
-            template: $('#message-template').html(),
+            template: '#message-template',
             filters: {
               formatTime: function(time) {
                 return time ? moment(new Date(time * 1000)).format('HH:mm:ss') : '';
               }
             }
-          })
+          }
         }
-      }),
-      result: Vue.extend({
+      },
+      result: {
+        data: function() {
+          return {
+            eventRound: null
+          }
+        },
+        watch: {
+          '$store.state.params': function(params) {
+            this.eventRound = {
+              event: params.event,
+              round: params.round
+            }
+          }
+        },
         vuex: {
           getters: {
+            hasPermission: function(state) {
+              var user = state.user;
+              return user.isOrganizer || user.isDelegate || user.isAdmin;
+            },
+            eventName: function(state) {
+              return events[state.params.event] && events[state.params.event].name;
+            },
+            roundName: function(state) {
+              if (events[state.params.event]) {
+                var rounds = events[state.params.event].rounds;
+                for (var i = 0; i < rounds.length; i++) {
+                  if (rounds[i].id == state.params.round) {
+                    return rounds[i].name;
+                  }
+                }
+              }
+            },
             loading: function(state) {
               return state.loading;
+            },
+            event: function(state) {
+              return state.params.event;
+            },
+            round: function(state) {
+              return state.params.round;
+            },
+            events: function(state) {
+              return state.events;
             },
             results: function(state) {
               return state.results;
             }
           }
         },
-        template: $('#result-template').html(),
+        template: '#result-template',
+        methods: {
+          click: function(result) {
+            console.log(result)
+          },
+          changeEventRound: function() {
+            store.dispatch('CHANGE_EVENT_ROUND', {
+              event: this.eventRound.event,
+              round: this.eventRound.round
+            });
+          }
+        },
         filters: {
-          formatTime: function(result, event) {
-            var time;
-            result = parseInt(result);
-            if (result == -1) {
-              return 'DNF';
-            }
-            if (result == -2) {
-              return 'DNS';
-            }
-            if (result == 0) {
-              return '';
-            }
-            if (event === '333fm') {
-              if (result > 1000) {
-                time = (result / 100).toFixed(2);
-              } else {
-                time = result;
+          decodeResult: function(result, event) {
+            return decodeResult(result, event);
+          }
+        },
+        components: {
+          'input-panel': {
+            data: function() {
+              return {
+                value1: 0,
+                value2: 0,
+                value3: 0,
+                value4: 0,
+                value5: 0,
+                best: 0,
+                worst: 0,
+                average: 0,
+                result: {
+                  id: null,
+                  event: '',
+                  name: '',
+                  number: 0
+                }
               }
-            } else if (event === '333mbf') {
-              var difference = 99 - Math.floor(result / 1e7);
-              var missed = result % 100;
-              time = (difference + missed) + '/' + (difference + missed * 2) + ' ' + formatSecond(Math.floor(result / 100) % 1e5, true);
-            } else { 
-              var msecond = result % 100;
-              var second = Math.floor(result / 100);
-              if (msecond < 10) {
-                msecond = '0' + msecond;
+            },
+            filters: {
+              result: {
+                get: function(value) {
+                  return decodeResult(value, this.result.event);
+                },
+                set: function(value) {
+                  return encodeResult(value, this.result.event);
+                }
               }
-              time = formatSecond(second) + '.' + msecond;
-            }
-            return time;
+            },
+            template: '#input-panel-template'
           }
         }
-      })
+      }
     }
   });
 
@@ -200,15 +260,14 @@
   }, {
     deep: true,
     sync: true,
-    immediate: true
+    // immediate: true
   });
   router.afterEach(function(transition) {
     var params = transition.to.params;
-    console.log(params, JSON.parse(JSON.stringify(state.params)));
     if (params.event == state.params.event && params.round == state.params.round) {
       return;
     }
-    store.dispatch('ROUTE_CHANGED', params);
+    store.dispatch('CHANGE_EVENT_ROUND', params);
   });
   router.redirect({
     '*': ['', state.params.event, state.params.round].join('/')
@@ -228,6 +287,9 @@
     };
   }();
   function fetchResults() {
+    if (state.loading) {
+      return;
+    }
     state.loading = true;
     state.results = [];
     ws.send({
@@ -235,6 +297,57 @@
       action: 'fetch',
       params: state.params
     });
+  }
+  function encodeResult(result, event, isAverage) {
+    if (result === 'DNF') {
+      return -1;
+    }
+    if (result === 'DNS') {
+      return -2;
+    }
+    if (result === '') {
+      return 0;
+    }
+    if (event === '333fm') {
+      if (isAverage) {
+        return parseFloat(result) * 100;
+      }
+      return parseInt(result);
+    } else if (event === '333mbf') {
+
+    }
+  }
+  function decodeResult(result, event) {
+    var time;
+    result = parseInt(result);
+    if (result == -1) {
+      return 'DNF';
+    }
+    if (result == -2) {
+      return 'DNS';
+    }
+    if (result == 0) {
+      return '';
+    }
+    if (event === '333fm') {
+      if (result > 1000) {
+        time = (result / 100).toFixed(2);
+      } else {
+        time = result;
+      }
+    } else if (event === '333mbf') {
+      var difference = 99 - Math.floor(result / 1e7);
+      var missed = result % 100;
+      time = (difference + missed) + '/' + (difference + missed * 2) + ' ' + formatSecond(Math.floor(result / 100) % 1e5, true);
+    } else { 
+      var msecond = result % 100;
+      var second = Math.floor(result / 100);
+      if (msecond < 10) {
+        msecond = '0' + msecond;
+      }
+      time = formatSecond(second) + '.' + msecond;
+    }
+    return time;
   }
   function formatSecond(second, multi) {
     if (multi && second == 99999) {

@@ -38,6 +38,11 @@ class Schedule extends ActiveRecord {
 		return array_search($stage, array_keys(self::getStages()));
 	}
 
+	public function getRealFormat() {
+		$formats = explode('/', $this->format);
+		return isset($formats[1]) ? $formats[1] : $formats[0];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

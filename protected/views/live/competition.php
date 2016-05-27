@@ -47,70 +47,95 @@
 </template>
 
 <template id="result-template">
-  <div class="table-responsive">
-    <table class="table table-bordered table-condensed table-hover table-boxed">
-      <thead>
-        <?php $columns = array(
-          array(
-            'name'=>Yii::t('Results', 'Place'),
-            'value'=>'$data->pos',
-            'htmlOptions'=>array('class'=>'place'),
-          ),
-          array(
-            'name'=>Yii::t('Results', 'Person'),
-            'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
-          ),
-          array(
-            'name'=>Yii::t('common', 'Best'),
-            'value'=>'$data->getTime("best")',
-            'htmlOptions'=>array('class'=>'result'),
-          ),
-          array(
-            'name'=>'',
-            'value'=>'$data->regionalSingleRecord',
-            'htmlOptions'=>array('class'=>'record'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Average'),
-            'value'=>'$data->getTime("average")',
-            'htmlOptions'=>array('class'=>'result'),
-          ),
-          array(
-            'name'=>'',
-            'value'=>'$data->regionalAverageRecord',
-            'htmlOptions'=>array('class'=>'record'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Region'),
-            'value'=>'Region::getIconName($data->person->country->name, $data->person->country->iso2)',
-            'htmlOptions'=>array('class'=>'region'),
-          ),
-          array(
-            'name'=>Yii::t('common', 'Detail'),
-            'value'=>'$data->detail',
-          ),
-        ); ?>
-        <?php foreach ($columns as $column): ?>
-        <?php echo CHtml::tag('th', isset($column['htmlOptions']) ? $column['htmlOptions'] : array(), $column['name']); ?>
-        <?php endforeach; ?>
-      </thead>
-      <tbody>
-        <tr v-if="loading" class="loading">
-          <td colspan="8">
-            Loading...
-          </td>
-        </tr>
-        <tr v-for="result in results" :class="{danger: result.isNew}">
-          <td>{{result.pos}}</td>
-          <td>{{{result.user.name}}}</td>
-          <td class="result">{{result.best | formatTime result.event}}</td>
-          <td class="record">{{result.regional_single_record}}</td>
-          <td class="result">{{result.average | formatTime result.event}}</td>
-          <td class="record">{{result.regional_average_record}}</td>
-          <td>{{{result.user.region}}}</td>
-          <td>{{result.detail}}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="col-md-3" v-if="hasPermission">
+      <input-panel></input-panel>
+    </div>
+    <div class="col-md-{{hasPermission ? 9 : 12}}">
+      <div class="clearfix">
+        <h4 class="pull-left">{{eventName}} - {{roundName}}</h4>
+        <div class="pull-right">
+          <select @change="changeEventRound" v-model="eventRound">
+            <optgroup v-for="event in events" :label="event.name">
+              <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
+                {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.statusText : ''}}
+              </option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-condensed table-hover table-boxed">
+          <thead>
+            <?php $columns = array(
+              array(
+                'name'=>Yii::t('Results', 'Place'),
+                'value'=>'$data->pos',
+                'htmlOptions'=>array('class'=>'place'),
+              ),
+              array(
+                'name'=>Yii::t('Results', 'Person'),
+                'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
+              ),
+              array(
+                'name'=>Yii::t('common', 'Best'),
+                'value'=>'$data->getTime("best")',
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'value'=>'$data->regionalSingleRecord',
+                'htmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Average'),
+                'value'=>'$data->getTime("average")',
+                'htmlOptions'=>array('class'=>'result'),
+              ),
+              array(
+                'name'=>'',
+                'value'=>'$data->regionalAverageRecord',
+                'htmlOptions'=>array('class'=>'record'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Region'),
+                'value'=>'Region::getIconName($data->person->country->name, $data->person->country->iso2)',
+                'htmlOptions'=>array('class'=>'region'),
+              ),
+              array(
+                'name'=>Yii::t('common', 'Detail'),
+                'value'=>'$data->detail',
+              ),
+            ); ?>
+            <?php foreach ($columns as $column): ?>
+            <?php echo CHtml::tag('th', isset($column['htmlOptions']) ? $column['htmlOptions'] : array(), $column['name']); ?>
+            <?php endforeach; ?>
+          </thead>
+          <tbody>
+            <tr v-if="loading" class="loading">
+              <td colspan="8">
+                Loading...
+              </td>
+            </tr>
+            <tr v-for="result in results" :class="{danger: result.isNew}" @click="click(result)">
+              <td>{{result.pos}}</td>
+              <td>{{{result.user.name}}}</td>
+              <td class="result">{{result.best | decodeResult result.event}}</td>
+              <td class="record">{{result.regional_single_record}}</td>
+              <td class="result">{{result.average | decodeResult result.event}}</td>
+              <td class="record">{{result.regional_average_record}}</td>
+              <td>{{{result.user.region}}}</td>
+              <td>{{result.detail}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="input-panel-template">
+  <div data-spy="affix" data-offset-top="550" style="top:20px">
+    
   </div>
 </template>
