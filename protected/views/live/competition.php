@@ -49,7 +49,7 @@
 <template id="result-template">
   <div class="row">
     <div class="col-md-3" v-if="hasPermission">
-      <input-panel></input-panel>
+      <input-panel :result.sync="current"></input-panel>
     </div>
     <div class="col-md-{{hasPermission ? 9 : 12}}">
       <div class="clearfix">
@@ -125,7 +125,13 @@
               <td class="result">{{result.average | decodeResult result.event}}</td>
               <td class="record">{{result.regional_average_record}}</td>
               <td>{{{result.user.region}}}</td>
-              <td>{{result.detail}}</td>
+              <td>
+                {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
             </tr>
           </tbody>
         </table>
@@ -136,6 +142,39 @@
 
 <template id="input-panel-template">
   <div data-spy="affix" data-offset-top="550" style="top:20px">
-    
+    <div class="panel panel-theme">
+      <div class="panel-heading">
+        <h3 class="panel-title"><?php echo Yii::t('live', 'Input Panel'); ?></h3>
+      </div>
+      <div class="panel-body">
+        <label for="input-panel-name"><?php echo Yii::t('common', 'Competitor'); ?></label>
+        <input type="text"
+          id="input-panel-name"
+          class="form-control"
+          placeholder=""
+          v-model="competitor.name"
+          readonly
+          :disabled="result == null || result.id == null"
+        >
+        <label><?php echo Yii::t('common', 'Results'); ?></label>
+        <div class="input-panel-result">
+          <div class="input-group" v-for="name in inputNames" v-if="$index < inputNum">
+            <span class="input-group-addon">{{$index + 1}}.</span>
+            <input class="form-control" type="tel"
+              v-model="value[name] | result"
+              @focus="focus($event, name)"
+              @blur="blur"
+              @keydown.prevent="keydown"
+              :disabled="result == null || result.id == null"
+            >
+          </div>
+        </div>
+        <button type="button"
+          @click="save"
+          @keydown.enter.prevent="save"
+          :disabled="result == null || result.id == null"
+        ><?php echo Yii::t('live', 'Save'); ?></button>
+      </div>
+    </div>
   </div>
 </template>

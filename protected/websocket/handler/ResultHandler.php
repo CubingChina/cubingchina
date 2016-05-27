@@ -24,12 +24,12 @@ class ResultHandler extends MsgHandler {
 	}
 
 	public function actionUpdate() {
+		var_dump($this->msg);
 		$data = $this->msg->result;
 		$result = LiveResult::model()->findByPk($data->id);
 		if ($result == null) {
 			return;
 		}
-		$
 		$result->value1 = $data->value1;
 		$result->value2 = $data->value2;
 		$result->value3 = $data->value3;

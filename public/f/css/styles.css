@@ -816,7 +816,7 @@ body.competition-index .main-nav .nav .nav-item.active > a {
   display: none;
 }
 .main-nav.colorful .nav-item.open a {
-  background: #202020;
+  background: #202020 !important;
 }
 .main-nav .nav .nav-item.open a,
 body.competition-index .main-nav .nav .nav-item.open a {

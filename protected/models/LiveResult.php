@@ -33,7 +33,7 @@ class LiveResult extends ActiveRecord {
 	public function getShowAttributes() {
 		return array(
 			'id'=>$this->id,
-			'competition_id'=>$this->competition_id,
+			'competitionId'=>$this->competition_id,
 			'user'=>array(
 				'name'=>$this->user->getCompetitionName(),
 				'wcaid'=>$this->user->wcaid,
