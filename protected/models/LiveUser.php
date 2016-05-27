@@ -1,50 +1,26 @@
 <?php
 
 /**
- * This is the model class for table "Formats".
+ * This is the model class for table "live_user".
  *
- * The followings are the available columns in table 'Formats':
+ * The followings are the available columns in table 'live_user':
  * @property string $id
+ * @property string $wcaid
  * @property string $name
+ * @property string $name_zh
+ * @property string $birthday
+ * @property integer $gender
+ * @property integer $country_id
+ * @property integer $province_id
+ * @property integer $city_id
+ * @property integer $status
  */
-class Formats extends ActiveRecord {
-	private static $_allFormats;
-	public static function getFullFormatName($format) {
-		if (self::$_allFormats === null) {
-			self::$_allFormats = self::getAllFormats();
-		}
-		return isset(self::$_allFormats[$format]) ? self::$_allFormats[$format] : $format;
-	}
-
-	public static function getAllFormats() {
-		return array(
-			'a'=>'Average of 5',
-			'2/a'=>'Best of 2/Average of 5',
-			'3'=>'Best of 3',
-			'm'=>'Mean of 3',
-			'1/m'=>'Best of 1/Mean of 3',
-			'1'=>'Best of 1',
-			'2'=>'Best of 2',
-		);
-	}
-
-	public static function getDefaultFormat($event) {
-		$exportFormat = Events::getDefaultExportFormat($event);
-		switch (substr($exportFormat, 0, 4)) {
-			case 'mean':
-				return 'm';
-			case 'best':
-				return substr($exportFormat, 4, 1);
-			default:
-				return 'a';
-		}
-	}
-
+class LiveUser extends ActiveRecord {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Formats';
+		return 'live_user';
 	}
 
 	/**
@@ -54,11 +30,14 @@ class Formats extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id', 'length', 'max'=>1),
-			array('name', 'length', 'max'=>50),
+			array('name, gender', 'required'),
+			array('gender, country_id, province_id, city_id, status', 'numerical', 'integerOnly'=>true),
+			array('wcaid', 'length', 'max'=>10),
+			array('name, name_zh', 'length', 'max'=>128),
+			array('birthday', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, wcaid, name, name_zh, birthday, gender, country_id, province_id, city_id, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,8 +56,16 @@ class Formats extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Formats', 'ID'),
-			'name' => Yii::t('Formats', 'Name'),
+			'id' => 'ID',
+			'wcaid' => 'Wcaid',
+			'name' => 'Name',
+			'name_zh' => 'Name Zh',
+			'birthday' => 'Birthday',
+			'gender' => 'Gender',
+			'country_id' => 'Country',
+			'province_id' => 'Province',
+			'city_id' => 'City',
+			'status' => 'Status',
 		);
 	}
 
@@ -99,8 +86,16 @@ class Formats extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('id', $this->id, true);
+		$criteria->compare('wcaid', $this->wcaid, true);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('name_zh', $this->name_zh, true);
+		$criteria->compare('birthday', $this->birthday, true);
+		$criteria->compare('gender', $this->gender);
+		$criteria->compare('country_id', $this->country_id);
+		$criteria->compare('province_id', $this->province_id);
+		$criteria->compare('city_id', $this->city_id);
+		$criteria->compare('status', $this->status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -108,17 +103,10 @@ class Formats extends ActiveRecord {
 	}
 
 	/**
-	 * @return CDbConnection the database connection used for this class
-	 */
-	public function getDbConnection() {
-		return Yii::app()->wcaDb;
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Formats the static model class
+	 * @return LiveUser the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

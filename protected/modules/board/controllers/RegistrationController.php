@@ -81,7 +81,7 @@ class RegistrationController extends AdminController {
 	}
 
 	public function export($competition, $exportFormsts, $all = false, $xlsx = false, $extra = false, $order = 'date') {
-		$registrations = $this->getRegistrations($competition, $all, $order);
+		$registrations = Registration::getRegistrations($competition, $all, $order);
 		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
 		$export = new PHPExcel();
 		$export->getProperties()
@@ -220,7 +220,7 @@ class RegistrationController extends AdminController {
 	}
 
 	public function exportScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
-		$registrations = $this->getRegistrations($competition, $all, $order);
+		$registrations = Registration::getRegistrations($competition, $all, $order);
 		$tempPath = Yii::app()->runtimePath;
 		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
 		$scoreCard = PHPExcel_IOFactory::load($templatePath);
@@ -452,58 +452,6 @@ class RegistrationController extends AdminController {
 			$drawing->setOffsetX($this->imageStyle[1]['offsetX'])->setOffsetY($this->imageStyle[1]['offsetY']);
 			$col++;
 		}
-	}
-
-	private function getRegistrations($competition, $all = false, $order = 'date') {
-		$attributes = array(
-			'competition_id'=>$competition->id,
-		);
-		if (!$all) {
-			$attributes['status'] = Registration::STATUS_ACCEPTED;
-		}
-		if (!in_array($order, array('date', 'user.name'))) {
-			$order = 'date';
-		}
-		$registrations = Registration::model()->with(array(
-			'user'=>array(
-				'condition'=>'user.status=' . User::STATUS_NORMAL,
-			),
-			'user.country',
-		))->findAllByAttributes($attributes, array(
-			'order'=>'date',
-		));
-		//计算序号
-		$number = 1;
-		foreach ($registrations as $registration) {
-			if ($registration->isAccepted()) {
-				$registration->number = $number++;
-			}
-		}
-		usort($registrations, function ($rA, $rB) use ($order) {
-			if ($rA->number === $rB->number || ($rA->number !== null && $rB->number !== null)) {
-				switch ($order) {
-					case 'user.name':
-						$temp = strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
-						break;
-					case 'date':
-					default:
-						$temp = $rA->date - $rB->date;
-						break;
-				}
-				if ($temp == 0) {
-					return $rA->id - $rB->id;
-				}
-				return $temp;
-			}
-			if ($rA->number === null) {
-				return 1;
-			}
-			if ($rB->number === null) {
-				return -1;
-			}
-			return $rA->id - $rB->id;
-		});
-		return $registrations;
 	}
 
 	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true) {

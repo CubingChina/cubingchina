@@ -81,6 +81,52 @@ class Registration extends ActiveRecord {
 		));
 	}
 
+	public static function getRegistrations($competition, $all = false, $order = 'date') {
+		$attributes = array(
+			'competition_id'=>$competition->id,
+		);
+		if (!$all) {
+			$attributes['status'] = self::STATUS_ACCEPTED;
+		}
+		if (!in_array($order, array('date', 'user.name'))) {
+			$order = 'date';
+		}
+		$registrations = self::model()->with(array(
+			'user'=>array(
+				'condition'=>'user.status=' . User::STATUS_NORMAL,
+			),
+			'user.country',
+		))->findAllByAttributes($attributes, array(
+			'order'=>'date',
+		));
+		//计算序号
+		$number = 1;
+		foreach ($registrations as $registration) {
+			if ($registration->isAccepted()) {
+				$registration->number = $number++;
+			}
+		}
+		usort($registrations, function ($rA, $rB) use ($order) {
+			if ($rA->number === $rB->number || ($rA->number !== null && $rB->number !== null)) {
+				switch ($order) {
+					case 'user.name':
+						return strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
+					case 'date':
+					default:
+						return $rA->date - $rB->date;
+				}
+			}
+			if ($rA->number === null) {
+				return 1;
+			}
+			if ($rB->number === null) {
+				return -1;
+			}
+			return 0;
+		});
+		return $registrations;
+	}
+
 	public function getStatusText() {
 		$status = self::getAllStatus();
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;

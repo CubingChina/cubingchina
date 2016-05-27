@@ -45,10 +45,15 @@ $config = array(
 			'allowAutoLogin'=>true,
 		),
 		'session'=>array(
+			'class'=>'SymfonyHttpSession',
+			'options'=>array(
+				'lock_mode'=>Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE,
+			),
 			'cookieParams'=>DEV ? array() : array(
 				'domain'=>'.cubingchina.com',
 			),
 			'sessionName'=>'CUBINGCHINA_SID',
+			'timeout'=>86400 * 7,
 		),
 		'urlManager'=>array(
 			'urlFormat'=>'path',
@@ -80,6 +85,7 @@ $config = array(
 				'competition/<action:signin>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
+				'live/<name:[-A-z0-9]+>'=>'live/live',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
@@ -99,6 +105,7 @@ $config = array(
 		),
 		'db'=>array(
 			'connectionString'=>'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
+			'pdoClass'=>'QueryCheckPdo',
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
 			'password'=>'',
@@ -109,6 +116,7 @@ $config = array(
 		),
 		'wcaDb'=>array(
 			'class'=>'system.db.CDbConnection',
+			'pdoClass'=>'QueryCheckPdo',
 			'connectionString'=>'mysql:host=localhost;dbname=wca_' . intval(file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'wcaDb')),
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
@@ -141,6 +149,12 @@ $config = array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'pay',
 					'logFile'=>'application.pay.log',
+					'maxFileSize'=>102400,
+				),
+				array(
+					'class'=>'CFileLogRoute',
+					'levels'=>'ws',
+					'logFile'=>'application.ws.log',
 					'maxFileSize'=>102400,
 				),
 				array(

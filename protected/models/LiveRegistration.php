@@ -1,50 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "Formats".
+ * This is the model class for table "live_registration".
  *
- * The followings are the available columns in table 'Formats':
+ * The followings are the available columns in table 'live_registration':
  * @property string $id
- * @property string $name
+ * @property string $competition_id
+ * @property integer $location_id
+ * @property string $user_id
+ * @property string $events
+ * @property integer $total_fee
+ * @property string $comments
+ * @property integer $paid
+ * @property string $ip
+ * @property string $date
+ * @property integer $status
  */
-class Formats extends ActiveRecord {
-	private static $_allFormats;
-	public static function getFullFormatName($format) {
-		if (self::$_allFormats === null) {
-			self::$_allFormats = self::getAllFormats();
-		}
-		return isset(self::$_allFormats[$format]) ? self::$_allFormats[$format] : $format;
-	}
-
-	public static function getAllFormats() {
-		return array(
-			'a'=>'Average of 5',
-			'2/a'=>'Best of 2/Average of 5',
-			'3'=>'Best of 3',
-			'm'=>'Mean of 3',
-			'1/m'=>'Best of 1/Mean of 3',
-			'1'=>'Best of 1',
-			'2'=>'Best of 2',
-		);
-	}
-
-	public static function getDefaultFormat($event) {
-		$exportFormat = Events::getDefaultExportFormat($event);
-		switch (substr($exportFormat, 0, 4)) {
-			case 'mean':
-				return 'm';
-			case 'best':
-				return substr($exportFormat, 4, 1);
-			default:
-				return 'a';
-		}
-	}
-
+class LiveRegistration extends ActiveRecord {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Formats';
+		return 'live_registration';
 	}
 
 	/**
@@ -54,11 +31,15 @@ class Formats extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id', 'length', 'max'=>1),
-			array('name', 'length', 'max'=>50),
+			array('competition_id, user_id, events, date', 'required'),
+			array('location_id, total_fee, paid, status', 'numerical', 'integerOnly'=>true),
+			array('competition_id, user_id, date', 'length', 'max'=>10),
+			array('events', 'length', 'max'=>512),
+			array('comments', 'length', 'max'=>2048),
+			array('ip', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, competition_id, location_id, user_id, events, total_fee, comments, paid, ip, date, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,8 +58,17 @@ class Formats extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Formats', 'ID'),
-			'name' => Yii::t('Formats', 'Name'),
+			'id' => 'ID',
+			'competition_id' => 'Competition',
+			'location_id' => 'Location',
+			'user_id' => 'User',
+			'events' => 'Events',
+			'total_fee' => 'Total Fee',
+			'comments' => 'Comments',
+			'paid' => 'Paid',
+			'ip' => 'Ip',
+			'date' => 'Date',
+			'status' => 'Status',
 		);
 	}
 
@@ -99,8 +89,17 @@ class Formats extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('id', $this->id, true);
+		$criteria->compare('competition_id', $this->competition_id, true);
+		$criteria->compare('location_id', $this->location_id);
+		$criteria->compare('user_id', $this->user_id, true);
+		$criteria->compare('events', $this->events, true);
+		$criteria->compare('total_fee', $this->total_fee);
+		$criteria->compare('comments', $this->comments, true);
+		$criteria->compare('paid', $this->paid);
+		$criteria->compare('ip', $this->ip, true);
+		$criteria->compare('date', $this->date, true);
+		$criteria->compare('status', $this->status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -108,17 +107,10 @@ class Formats extends ActiveRecord {
 	}
 
 	/**
-	 * @return CDbConnection the database connection used for this class
-	 */
-	public function getDbConnection() {
-		return Yii::app()->wcaDb;
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Formats the static model class
+	 * @return LiveRegistration the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

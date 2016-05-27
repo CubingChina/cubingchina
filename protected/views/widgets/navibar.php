@@ -1,4 +1,4 @@
-<nav class="main-nav" role="navigation">
+<nav class="main-nav<?php if ($this->controller->id == 'competition' || $this->controller->id == 'live') echo ' colorful'; ?>" role="navigation">
   <div class="container">
     <div class="navbar-header" data-toggle="collapse" data-target="#navbar-collapse">
       <button class="navbar-toggle" type="button">
