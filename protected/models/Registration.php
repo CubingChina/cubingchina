@@ -222,7 +222,7 @@ class Registration extends ActiveRecord {
 	public function getQRCodeUrl() {
 		if ($this->code == '') {
 			$this->formatEvents();
-			$this->code = sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4());
+			$this->code = substr(sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
 			$this->save();
 		}
 		return CHtml::normalizeUrl(array(
