@@ -203,6 +203,9 @@
           click: function(result) {
             if (this.hasPermission) {
               this.current = result;
+              this.nextTick(function() {
+                $('.input-panel-result input').eq(0).focus();
+              });
             }
           },
           changeEventRound: function() {
@@ -326,9 +329,6 @@
                       break;
                     }
                   case 13:
-                    if (e.target.value == '') {
-                      break;
-                    }
                     var that = $(e.target).parent();
                     var index = that.index();
                     if (index < this.inputNum - 1) {
@@ -552,22 +552,25 @@
       } else if (value > 0 && value > worst) {
         worst = value;
       }
-      result.best = best;
-      if ((result.format == 'a' || result.format == 'm') && result.value3 == 0) {
-        hasAverage = false;
-      }
-      if (DNFCount > 1 || (DNFCount == 1 && result.format == 'm')) {
-        hasAverage = false;
-      }
-      if (result.format == '1' || result.format == '2' || result.format == '3') {
-        hasAverage = false;
-      }
-      if (hasAverage) {
-        if (result.format == 'm') {
-          result.average = Math.round(sum);
-        } else {
-          result.average = Math.round((sum - best - worst) / 5);
-        }
+    }
+    result.best = best;
+    if (result.best === 999999999) {
+      result.best = worst == 0 ? 0 : -1;
+    }
+    if ((result.format == 'a' || result.format == 'm') && result.value3 == 0) {
+      hasAverage = false;
+    }
+    if (DNFCount > 1 || (DNFCount == 1 && result.format == 'm')) {
+      hasAverage = false;
+    }
+    if (result.format == '1' || result.format == '2' || result.format == '3') {
+      hasAverage = false;
+    }
+    if (hasAverage) {
+      if (result.format == 'm') {
+        result.average = Math.round(sum / 3);
+      } else {
+        result.average = Math.round((sum - best - worst) / 5);
       }
     }
   }
