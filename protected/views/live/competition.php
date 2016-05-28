@@ -23,15 +23,26 @@
 </template>
 
 <template id="chat-template">
-  <div class="message-container">
-    <ul class="unstyled">
-      <li v-for="message in messages">
-        <message :message="message"></message>
-      </li>
-    </ul>
-  </div>
-  <div class="input-panel">
-    <input v-model="message" @keyup.enter="send" :disabled="$store.state.user.isGuest" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title"></h3>
+    </div>
+    <div class="panel-body">
+    <div class="message-container">
+      <ul class="unstyled">
+        <li v-for="message in messages">
+          <message :message="message"></message>
+        </li>
+      </ul>
+    </div>
+    <div class="input-panel">
+      <div class="col-sm-10 col-lg-11">
+        <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
+      </div>
+      <div class="col-sm-2 col-lg-1">
+        <button class="btn btn-primary btn-md" :disabled="$store.state.user.isGuest || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -41,7 +52,7 @@
       {{message.user.name}} {{message.time | formatTime}}
     </div>
     <div class="message-body">
-      {{message.content}}
+      {{{message.content}}}
     </div>
   </div>
 </template>
