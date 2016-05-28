@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = new WS('ws://' + location.host + ':8080');
+  var ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -15,8 +15,10 @@
     fetchResults();
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
+    newMessageOnResult(result, 'new');
   }).on('result.update', function(result) {
     store.dispatch('UPDATE_RESULT', result);
+    newMessageOnResult(result, 'update');
   }).on('message.new', function(message) {
     newMessage(message);
   }).on('result.all', function(results) {
@@ -494,6 +496,33 @@
       }
     };
   }();
+  function newMessageOnResult(result, type) {
+    var message = {
+      user: {
+        name: 'System'
+      },
+      time: Math.floor(+new Date() / 1000)
+    };
+    var content = [];
+    var temp = [];
+    temp.push(result.user.name);
+    temp.push(events[result.event] && events[result.event].name);
+    temp.push(eventRounds[result.event] && eventRounds[result.event][result.round] && eventRounds[result.event][result.round].name);
+    content.push(temp.join(' - '));
+    if (result.average != 0) {
+      content.push('Average: ' + decodeResult(result.average, result.event));
+    }
+    content.push('Single: ' + decodeResult(result.best, result.event));
+    temp = [];
+    for (var i = 1; i <= 5; i++) {
+      if (result['value' + i] != 0) {
+        temp.push(decodeResult(result['value' + i], result.event));
+      }
+    }
+    content.push('Detail: ' + temp.join('    '));
+    message.content = '<p class="text-danger">' + content.join('<br>') + '</p>';
+    newMessage(message);
+  }
   function fetchResults() {
     if (state.loading) {
       return;
