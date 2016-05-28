@@ -40,7 +40,7 @@
         <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
       </div>
       <div class="col-sm-2 col-lg-1">
-        <button class="btn btn-primary btn-md" :disabled="$store.state.user.isGuest || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
+        <button class="btn btn-primary btn-md" @click="send" :disabled="$store.state.user.isGuest || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
       </div>
     </div>
   </div>

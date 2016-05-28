@@ -226,6 +226,7 @@
             data: function() {
               return {
                 lastInput: null,
+                input: null,
                 inputNames: ['value1', 'value2', 'value3', 'value4', 'value5'],
                 competitor: {
                   name: ''
@@ -293,31 +294,61 @@
                 this.result = {};
               },
               focus: function(e, name) {
-                this.lastInput = name;
+                this.input = name;
                 $(e.target).removeClass('has-error');
               },
               blur: function(e) {
                 e.target.value = this.formatResult(e.target.value);
-                this.value[this.lastInput] = encodeResult(e.target.value);
+                this.value[this.input] = encodeResult(e.target.value);
+                this.lastInput = null;
               },
               keydown: function(e) {
                 var code = e.which;
                 var value = e.target.value;
-                console.log(e);
                 switch (code) {
                   //D,/ pressed
                   case 68:
                   case 111:
                     this.value[this.lastInput] = -1;
+                    e.target.value = 'DNF'
                     break;
                   //S,* pressed
                   case 106:
                   case 83:
                     this.value[this.lastInput] = -2;
+                    e.target.value = 'DNS'
                     break;
                   case 8:
-                    this.value[this.lastInput] = 0;
-                    e.target.value = '';
+                    if (this.lastInput != this.input) {
+                      this.value[this.lastInput] = 0;
+                      e.target.value = '';
+                      this.lastInput = this.input;
+                    } else {
+                      value = value.replace(/^0./, '');
+                      value = value.replace(/:|\./g, '');
+                      if (this.lastInput != this.input || value == 'DNF' || value == 'DNS') {
+                        value = '';
+                      }
+                      value = value.slice(0, value.length - 1);
+                      switch (value.length) {
+                        case 1:
+                        case 2:
+                          break;
+                        case 3:
+                          value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
+                          break;
+                        case 4:
+                          value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
+                          break;
+                        case 5:
+                          value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
+                          break;
+                        case 6:
+                          value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
+                          break;
+                      }
+                      e.target.value = value;
+                    }
                     break;
                   case 9:
                     if (e.shiftKey) {
@@ -365,6 +396,9 @@
                     }
                     value = value.replace(/^0./, '');
                     value = value.replace(/:|\./g, '');
+                    if (this.lastInput != this.input || value == 'DNF' || value == 'DNS') {
+                      value = '';
+                    }
                     value += code - 48;
                     switch (value.length) {
                       case 1:
@@ -384,20 +418,10 @@
                         break;
                     }
                     e.target.value = value;
-                    break;
-                    var match = value.match(/(?:(\d+)?:)?(?:(\d{1,2})\.)?(\d{1,})/);
-                    if (!match) {
-
-                    } else if (!match[2]) {
-                      if (match[3].length == 2) {
-                        value += '.';
-                      }
-                    } else if (!match[1]) {
-                      if (match[3].length == 2) {
-                        value = match[2] + ':' + match[3] + '.';
-                      }
-                    } else {
+                    if (this.lastInput != this.input) {
+                      this.lastInput = this.input;
                     }
+                    break;
                 }
               }
             },
