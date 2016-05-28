@@ -203,7 +203,7 @@
           click: function(result) {
             if (this.hasPermission) {
               this.current = result;
-              this.nextTick(function() {
+              this.$nextTick(function() {
                 $('.input-panel-result input').eq(0).focus();
               });
             }
