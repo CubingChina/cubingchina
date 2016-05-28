@@ -574,10 +574,11 @@
       if (value < 0) {
         DNFCount++;
         worst = value;
-      } else if (value > 0 && value > worst) {
+      } else if (value > worst && worst > 0) {
         worst = value;
       }
     }
+    console.log(best, worst, sum);
     result.best = best;
     if (result.best === 999999999) {
       result.best = worst == 0 ? 0 : -1;
@@ -597,6 +598,8 @@
       } else {
         result.average = Math.round((sum - best - worst) / 3);
       }
+    } else if (result.format == 'm' || result.format == 'a') {
+      result.average = -1;
     }
   }
   function encodeResult(result, event, isAverage) {
