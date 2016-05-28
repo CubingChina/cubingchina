@@ -128,7 +128,7 @@
                 Loading...
               </td>
             </tr>
-            <tr v-for="result in results" :class="{danger: result.isNew}" @click="click(result)">
+            <tr v-for="result in results" :class="{danger: result.isNew, success: isAdvanced(result)}" @click="click(result)">
               <td>{{result.pos}}</td>
               <td>{{{result.user.name}}}</td>
               <td class="result">{{result.best | decodeResult result.event}}</td>
@@ -137,11 +137,11 @@
               <td class="record">{{result.regional_average_record}}</td>
               <td>{{{result.user.region}}}</td>
               <td>
-                {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value2 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value3 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value4 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value5 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
               </td>
             </tr>
           </tbody>

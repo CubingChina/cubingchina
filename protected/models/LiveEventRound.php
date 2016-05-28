@@ -31,6 +31,10 @@ class LiveEventRound extends ActiveRecord {
 		);
 	}
 
+	public function getIsClosed() {
+		return $this->status == self::STATUS_CLOSED;
+	}
+
 	public function getStatusText() {
 		$allStatus = self::getAllStatus();
 		return isset($allStatus[$this->status]) ? $allStatus[$this->status] : $this->status;

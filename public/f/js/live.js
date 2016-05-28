@@ -213,6 +213,20 @@
               event: this.eventRound.event,
               round: this.eventRound.round
             });
+          },
+          isAdvanced: function(result) {
+            if (result.round == 'c' || result.round == 'f') {
+              return result.best > 0 && result.pos <= 3;
+            }
+            var i;
+            for (i = 0; i < events[result.event].rounds.length; i++) {
+              if (events[result.event].rounds[i].id == result.round) {
+                if (events[result.event].rounds[i + 1]) {
+                  return result.best > 0 && result.pos <= events[result.event].rounds[i + 1].number;
+                }
+              }
+            }
+            return false;
           }
         },
         filters: {
@@ -268,34 +282,23 @@
                 return decodeResult((minute * 60 + second) * 100 + msecond, state.params.event);
               },
               save: function() {
-                var i;
-                var inputs = $('.input-panel-result').find('.input-group').removeClass('has-error').find('input');
-                for (i = 1; i <= this.inputNum; i++) {
-                  if (i == this.minInputNum + 1 && this.value['value' + i] == 0) {
-                    break;
-                  }
-                  if (this.value['value' + i] == 0) {
-                    inputs.eq(i - 1).parent().addClass('has-error');
-                    return;
-                  }
-                }
-                this.result.value1 = this.value.value1;
-                this.result.value2 = this.value.value2;
-                this.result.value3 = this.value.value3;
-                this.result.value4 = this.value.value4;
-                this.result.value5 = this.value.value5;
-                calculateAverage(this.result);
-                store.dispatch('UPDATE_RESULT', this.result);
+                var that = this;
+                that.result.value1 = that.value.value1;
+                that.result.value2 = that.value.value2;
+                that.result.value3 = that.value.value3;
+                that.result.value4 = that.value.value4;
+                that.result.value5 = that.value.value5;
+                calculateAverage(that.result);
+                store.dispatch('UPDATE_RESULT', that.result);
                 ws.send({
                   type: 'result',
                   action: 'update',
-                  result: this.result
+                  result: that.result
                 });
-                this.result = {};
+                that.result = {};
               },
               focus: function(e, name) {
                 this.input = name;
-                $(e.target).removeClass('has-error');
               },
               blur: function(e) {
                 e.target.value = this.formatResult(e.target.value);
@@ -522,6 +525,9 @@
     };
   }();
   function newMessageOnResult(result, type) {
+    if (result.best == 0) {
+      return;
+    }
     var message = {
       user: {
         name: 'System'
@@ -542,6 +548,8 @@
     for (var i = 1; i <= 5; i++) {
       if (result['value' + i] != 0) {
         temp.push(decodeResult(result['value' + i], result.event));
+      } else {
+        temp.push('--');
       }
     }
     content.push('Detail: ' + temp.join('    '));
@@ -564,12 +572,17 @@
     var best = 999999999;
     var worst = 0;
     var hasAverage = true;
-    var i, value, DNFCount = 0, sum = 0;
+    var i, value, DNFCount = 0, zeroCount = 0, nonZeroCount = 0, sum = 0;
     for (i = 1; i <= 5; i++) {
       value = result['value' + i];
       sum += value;
       if (value > 0 && value < best) {
         best = value;
+      }
+      if (value == 0) {
+        zeroCount++;
+      } else {
+        nonZeroCount++;
       }
       if (value < 0) {
         DNFCount++;
@@ -582,7 +595,7 @@
     if (result.best === 999999999) {
       result.best = worst == 0 ? 0 : -1;
     }
-    if ((result.format == 'a' || result.format == 'm') && result.value3 == 0) {
+    if ((result.format == 'a' || result.format == 'm') && nonZeroCount < (result.format == 'm' ? 3 : 5)) {
       hasAverage = false;
     }
     if (DNFCount > 1 || (DNFCount == 1 && result.format == 'm')) {
@@ -598,7 +611,7 @@
         result.average = Math.round((sum - best - worst) / 3);
       }
     } else if (result.format == 'm' || result.format == 'a') {
-      result.average = result.value3 ==0 ? 0 : -1;
+      result.average = nonZeroCount < (result.format == 'm' ? 3 : 5) ? 0 : -1;
     }
   }
   function encodeResult(result, event, isAverage) {

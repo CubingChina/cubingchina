@@ -13,18 +13,30 @@ class ResultHandler extends MsgHandler {
 	}
 
 	public function actionFetch() {
+		$round = LiveEventRound::model()->findByAttributes(array(
+			'competition_id'=>$this->competition->id,
+			'event'=>"{$this->msg->params->event}",
+			'round'=>"{$this->msg->params->round}",
+		));
 		$results = LiveResult::model()->findAllByAttributes(array(
 			'competition_id'=>$this->competition->id,
 			'event'=>"{$this->msg->params->event}",
 			'round'=>"{$this->msg->params->round}",
 		));
+		if ($round !== null && $round->isClosed) {
+			$results = array_values(array_filter($results, function($result) use ($round) {
+				if ($result->best == 0) {
+					return false;
+				}
+				return true;
+			}));
+		}
 		$this->success('result.all', array_map(function($result) {
 			return $result->getShowAttributes();
 		}, $results));
 	}
 
 	public function actionUpdate() {
-		var_dump($this->msg);
 		$data = $this->msg->result;
 		$result = LiveResult::model()->findByPk($data->id);
 		if ($result == null) {
