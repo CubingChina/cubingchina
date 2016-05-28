@@ -41,7 +41,7 @@ class CompetitionController extends Controller {
 
 	public function actionDetail() {
 		$competition = $this->getCompetition();
-		$this->pageTitle = array($competition->getAttribute($this->getAttributeName('name')));
+		$this->pageTitle = array($competition->getAttributeValue('name'));
 		if (preg_match_all('|<img[^>]+src="([^"]+)"[^>]*>|i', $competition->information_zh, $matches)) {
 			$this->setWeiboSharePic($matches[1]);
 		}
@@ -172,7 +172,7 @@ class CompetitionController extends Controller {
 		));
 	}
 
-	private function getCompetition() {
+	protected function getCompetition() {
 		$name = $this->sGet('name');
 		$competition = Competition::getCompetitionByName($name);
 		if ($competition === null || strtolower($name) != strtolower($competition->getUrlName())) {
@@ -263,14 +263,22 @@ class CompetitionController extends Controller {
 				),
 			),
 		);
-		if ($competition->hasResults) {
-			array_splice($navibar, 6, 0, array(array(
+		if ($competition->hasResults && $this->id != 'live') {
+			$navibar[] = array(
 				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),
 				'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-purple',
 				),
-			)));
+			);
+		} elseif ($competition->live == Competition::YES && $competition->isRegistrationEnded()) {
+			$navibar[count($navibar) - 1] = array(
+				'label'=>Html::fontAwesome('play', 'a') . Yii::t('Competition', 'Live'),
+				'url'=>array('/live/live', 'name'=>$competition->alias),
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-pink',
+				),
+			);
 		}
 		$this->navibar = $navibar;
 	}

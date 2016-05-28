@@ -93,6 +93,12 @@ class SiteController extends Controller {
 		if (!Yii::app()->user->isGuest) {
 			$this->redirect(Yii::app()->homeUrl);
 		}
+		$referrer = Yii::app()->request->urlReferrer;
+		$hostInfo = Yii::app()->request->hostInfo;
+		if (strpos($referrer, $hostInfo) !== false && strpos($referrer, 'login') === false) {
+			Yii::app()->user->returnUrl = $referrer;
+		}
+
 		$model = new LoginForm();
 
 		// collect user input data

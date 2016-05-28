@@ -1040,6 +1040,113 @@ class Competition extends ActiveRecord {
 		$this->schedules = $schedules;
 	}
 
+	public function initLiveData() {
+		if (LiveResult::model()->countByAttributes(array('competition_id'=>$this->id)) > 0) {
+			return;
+		}
+		$this->formatEvents();
+		$schedules = array();
+		$temp = $this->schedule;
+		usort($temp, array($this, 'sortSchedules'));
+		foreach ($temp as $schedule) {
+			$schedules[$schedule->event][$schedule->round] = $schedule;
+		}
+		unset($temp);
+		//events and rounds
+		$formats = array();
+		$rounds = array();
+		foreach ($this->events as $event=>$value) {
+			if ($value['round'] == 0) {
+				continue;
+			}
+			if (isset($schedules[$event])) {
+				$first = current($schedules[$event]);
+				$formats[$event] = $first->getRealFormat();
+				$rounds[$event] = $first->round;
+				foreach ($schedules[$event] as $schedule) {
+					$model = new LiveEventRound();
+					$model->competition_id = $schedule->competition_id;
+					$model->event = $schedule->event;
+					$model->round = $schedule->round;
+					$model->format = $schedule->getRealFormat();
+					$model->cut_off = $schedule->cut_off;
+					$model->time_limit = $schedule->time_limit;
+					$model->number = $schedule->number;
+					$model->status = LiveEventRound::STATUS_OPEN;
+					$model->save();
+				}
+			}
+		}
+		//empty results of first rounds
+		$registrations = Registration::getRegistrations($this);
+		foreach ($registrations as $registration) {
+			foreach ($registration->events as $event) {
+				if (!isset($formats[$event]) || !isset($rounds[$event])) {
+					continue;
+				}
+				$model = new LiveResult();
+				$model->competition_id = $this->id;
+				$model->user_id = $registration->user_id;
+				$model->number = $registration->number;
+				$model->event = $event;
+				$model->round = $rounds[$event];
+				$model->format = $formats[$event];
+				$model->save();
+			}
+		}
+	}
+
+	public function getEventsRounds() {
+		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
+			'competition_id'=>$this->id,
+		));
+		$events = array();
+		foreach ($eventRounds as $eventRound) {
+			if (!isset($events[$eventRound->event])) {
+				$events[$eventRound->event] = array(
+					'id'=>$eventRound->event,
+					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
+					'rounds'=>array(),
+				);
+			}
+			$events[$eventRound->event]['rounds'][] = array(
+				'id'=>$eventRound->round,
+				'format'=>$eventRound->format,
+				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
+				'status'=>$eventRound->status,
+				'statusText'=>$eventRound->statusText,
+			);
+		}
+		return array_values($events);
+	}
+
+	public function getLastActiveEventRound($events) {
+		$liveResult = LiveResult::model()->findByAttributes(array(
+			'competition_id'=>$this->id,
+			// 'status'=>LiveResult::STATUS_NORMAL,
+		), array(
+			'condition'=>'update_time > 0',
+			'order'=>'update_time DESC',
+		));
+		if ($liveResult !== null) {
+			return array(
+				'event'=>$liveResult->event,
+				'round'=>$liveResult->round,
+			);
+		}
+		$event = current($events);
+		if ($event === false) {
+			return array(
+				'event'=>'',
+				'round'=>'',
+			);
+		}
+		return array(
+			'event'=>$event['id'],
+			'round'=>$event['rounds'][0]['id'],
+		);
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		$this->handleEvents();
@@ -1315,7 +1422,7 @@ class Competition extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
-			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, status', 'numerical', 'integerOnly'=>true),
+			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('wca_competition_id', 'length', 'max'=>32),
 			array('name_zh', 'length', 'max'=>50),
