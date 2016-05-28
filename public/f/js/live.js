@@ -595,7 +595,7 @@
       if (result.format == 'm') {
         result.average = Math.round(sum / 3);
       } else {
-        result.average = Math.round((sum - best - worst) / 5);
+        result.average = Math.round((sum - best - worst) / 3);
       }
     }
   }
