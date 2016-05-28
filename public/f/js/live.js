@@ -574,7 +574,7 @@
       if (value < 0) {
         DNFCount++;
         worst = value;
-      } else if (value > worst && worst > 0) {
+      } else if (value > worst && worst >= 0) {
         worst = value;
       }
     }
