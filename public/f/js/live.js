@@ -308,6 +308,7 @@
               keydown: function(e) {
                 var code = e.which;
                 var value = e.target.value;
+                console.log(code)
                 switch (code) {
                   //D,/ pressed
                   case 68:
@@ -354,8 +355,9 @@
                       e.target.value = value;
                     }
                     break;
+                  case 107:
                   case 9:
-                    if (e.shiftKey) {
+                    if (e.shiftKey || code == 107) {
                       var that = $(e.target).parent();
                       var index = that.index();
                       if (index > 0) {
