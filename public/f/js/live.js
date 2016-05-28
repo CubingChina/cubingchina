@@ -319,6 +319,7 @@
                     e.target.value = 'DNS'
                     break;
                   case 8:
+                  case 109:
                     if (this.lastInput != this.input) {
                       this.value[this.lastInput] = 0;
                       e.target.value = '';
