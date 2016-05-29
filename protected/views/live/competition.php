@@ -69,7 +69,7 @@
           <select @change="changeEventRound" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
               <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
-                {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.statusText : ''}}
+                {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.allStatus[round.status] : ''}}
               </option>
             </optgroup>
           </select>

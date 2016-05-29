@@ -20,19 +20,31 @@
 class LiveEventRound extends ActiveRecord {
 
 	const STATUS_OPEN = 0;
-	const STATUS_CLOSED = 1;
+	const STATUS_FINISHED = 1;
 	const STATUS_LIVE = 2;
 
 	public static function getAllStatus() {
 		return array(
 			self::STATUS_OPEN=>Yii::t('live', 'Open'),
-			self::STATUS_CLOSED=>Yii::t('live', 'Closed'),
+			self::STATUS_FINISHED=>Yii::t('live', 'Finished'),
 			self::STATUS_LIVE=>Yii::t('live', 'Live'),
 		);
 	}
 
+	public function getBroadcastAttributes() {
+		return array(
+			'id'=>$this->round,
+			'event'=>$this->event,
+			'format'=>$this->format,
+			'cut_off'=>$this->cut_off,
+			'time_limit'=>$this->time_limit,
+			'number'=>$this->number,
+			'status'=>$this->status,
+		);
+	}
+
 	public function getIsClosed() {
-		return $this->status == self::STATUS_CLOSED;
+		return $this->status == self::STATUS_FINISHED;
 	}
 
 	public function getStatusText() {

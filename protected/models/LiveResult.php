@@ -99,6 +99,11 @@ class LiveResult extends ActiveRecord {
 		return array(
 			'liveUser'=>array(self::BELONGS_TO, 'LiveUser', 'user_id'),
 			'realUser'=>array(self::BELONGS_TO, 'User', 'user_id'),
+			'eventRound'=>array(self::BELONGS_TO, 'LiveEventRound', array(
+				'competition_id'=>'competition_id',
+				'event'=>'event',
+				'round'=>'round',
+			)),
 		);
 	}
 

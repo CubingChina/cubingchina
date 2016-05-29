@@ -17,9 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Live' => '直播',
-  'Event List' => '項目列表',
+  'Competitor' => '選手',
   'Fee' => '',
+  'Please login.' => '請登錄',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小時',
@@ -42,6 +42,7 @@ return array (
   'Forget Password' => '忘記密碼',
   'Fun Statistics' => '趣味統計',
   'Language' => '語言',
+  'Live' => '直播',
   'Mean of 3' => '三次計平均',
   'My Competitions' => '我的比賽',
   'NR' => '國家紀錄',

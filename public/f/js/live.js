@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = new WS('ws://' + location.host + '/ws');
+  var ws = window._ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -19,6 +19,8 @@
   }).on('result.update', function(result) {
     store.dispatch('UPDATE_RESULT', result);
     newMessageOnResult(result, 'update');
+  }).on('round.update', function(round) {
+    store.dispatch('UPDATE_ROUND', round);
   }).on('message.new', function(message) {
     newMessage(message);
   }).on('result.all', function(results) {
@@ -46,6 +48,10 @@
   var mutations = {
     CHANGE_EVENT_ROUND: function(state, params) {
       state.params = params;
+    },
+    UPDATE_ROUND: function(state, round) {
+      console.log(round, eventRounds)
+      $.extend(eventRounds[round.event][round.id], round);
     },
     NEW_RESULT: function(state, result) {
       if (result.competitionId == state.competitionId && result.event == state.params.event && result.round == state.params.round) {
@@ -271,7 +277,7 @@
             attached: function() {
               var that = this;
               $(window).on('resize', function() {
-                that.$el.style.width = that.$el.parentNode.clientWidth + 'px';
+                that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
               }).trigger('resize');
             },
             methods: {

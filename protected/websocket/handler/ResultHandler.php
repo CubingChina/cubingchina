@@ -53,6 +53,12 @@ class ResultHandler extends MsgHandler {
 		$result->regional_average_record = $result->caculateRecord('average');
 		$result->save();
 		$this->broadcastSuccess('result.update', $result->getShowAttributes());
+		$eventRound = $result->eventRound;
+		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {
+			$eventRound->status = LiveEventRound::STATUS_LIVE;
+			$eventRound->save();
+			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes());
+		}
 	}
 
 	public function actionResult() {
@@ -63,7 +69,20 @@ class ResultHandler extends MsgHandler {
 	}
 
 	public function actionRound() {
-
+		$round = LiveEventRound::model()->findByAttributes(array(
+			'competition_id'=>$this->competition->id,
+			'event'=>"{$this->msg->round->event}",
+			'round'=>"{$this->msg->round->id}",
+		));
+		if ($round != null) {
+			foreach (array('number', 'cut_off', 'time_limit', 'status') as $attribute) {
+				if (isset($this->msg->round->$attribute)) {
+					$round->$attribute = $this->msg->round->$attribute;
+				}
+			}
+			$round->save();
+			$this->broadcastSuccess('round.update', $round->getBroadcastAttributes());
+		}
 	}
 
 	public function actionEvent() {

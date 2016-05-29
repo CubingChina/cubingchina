@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Live' => '直播',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '轮',
@@ -48,6 +47,7 @@ return array (
   'It will be verified by the organisation team soon. Please wait with patience.' => '主办方会尽快审核您的报名，请耐心等待。',
   'Limited Number of Competitor' => '报名人数限制',
   'Links' => '链接',
+  'Live' => '直播',
   'Location' => '地点',
   'Main Page' => '详情',
   'Name' => '比赛名称',

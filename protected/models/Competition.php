@@ -1111,13 +1111,14 @@ class Competition extends ActiveRecord {
 			}
 			$events[$eventRound->event]['rounds'][] = array(
 				'id'=>$eventRound->round,
+				'event'=>$eventRound->event,
 				'format'=>$eventRound->format,
 				'cut_off'=>$eventRound->cut_off,
 				'time_limit'=>$eventRound->time_limit,
 				'number'=>$eventRound->number,
 				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
 				'status'=>$eventRound->status,
-				'statusText'=>$eventRound->statusText,
+				'allStatus'=>$eventRound->allStatus,
 			);
 		}
 		return array_values($events);
