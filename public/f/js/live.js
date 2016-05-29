@@ -604,7 +604,7 @@
     if ((result.format == 'a' || result.format == 'm') && nonZeroCount < (result.format == 'm' ? 3 : 5)) {
       hasAverage = false;
     }
-    if (DNFCount > 1 || (DNFCount == 1 && result.format == 'm')) {
+    if (DNFCount > 1 || (DNFCount == 1 && (result.format == 'm' || result.format == '3'))) {
       hasAverage = false;
     }
     if (result.format == '1' || result.format == '2' || (result.format == '3' && result.event != '333bf')) {
@@ -618,6 +618,8 @@
       }
     } else if (result.format == 'm' || result.format == 'a') {
       result.average = nonZeroCount < (result.format == 'm' ? 3 : 5) ? 0 : -1;
+    } else if (result.event == '333bf') {
+      result.average = 0;
     }
   }
   function encodeResult(result, event, isAverage) {
