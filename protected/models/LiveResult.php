@@ -61,7 +61,7 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function caculateRecord($type) {
-		return '';
+		return $this->{"regional_{$type}_record"};
 	}
 
 	/**
