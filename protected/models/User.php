@@ -195,6 +195,10 @@ class User extends ActiveRecord {
 		return $this->role == self::ROLE_ORGANIZER;
 	}
 
+	public function isAdministrator() {
+		return $this->role == self::ROLE_ADMINISTRATOR;
+	}
+
 	public function isDelegate() {
 		return $this->identity != self::IDENTITY_NONE;
 	}

@@ -5,6 +5,9 @@ class ResultHandler extends MsgHandler {
 	public function process() {
 		$action = $this->getAction();
 		if ($action !== '') {
+			if (strtolower($action) != 'fetch' && !$this->checkAccess()) {
+				return;
+			}
 			$method = 'action' . ucfirst($action);
 			if (method_exists($this, $method)) {
 				return $this->$method();
