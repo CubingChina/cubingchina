@@ -529,7 +529,7 @@
     var ul = container.find('ul');
     return function(message, scroll) {
       store.dispatch('NEW_MESSAGE', message);
-      if (scroll || container.height() + container.scrollTop() > ul.height()) {
+      if (scroll || container.height() + container.scrollTop() > ul.height() - 30) {
         Vue.nextTick(function() {
           container.scrollTop(ul.height());
         });
