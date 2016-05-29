@@ -259,16 +259,20 @@
             },
             watch: {
               result: function(result) {
-                this.competitor.name = result.user && result.user.name;
-                this.value.value1 = result.value1 || 0;
-                this.value.value2 = result.value2 || 0;
-                this.value.value3 = result.value3 || 0;
-                this.value.value4 = result.value4 || 0;
-                this.value.value5 = result.value5 || 0;
+                var that = this;
+                that.competitor.name = result.user && result.user.name;
+                that.value.value1 = result.value1 || 0;
+                that.value.value2 = result.value2 || 0;
+                that.value.value3 = result.value3 || 0;
+                that.value.value4 = result.value4 || 0;
+                that.value.value5 = result.value5 || 0;
               }
             },
             attached: function() {
-              this.$el.style.width = this.$el.clientWidth + 'px';
+              var that = this;
+              $(window).on('resize', function() {
+                that.$el.style.width = that.$el.parentNode.clientWidth + 'px';
+              }).trigger('resize');
             },
             methods: {
               formatResult: function(value) {
@@ -603,11 +607,11 @@
     if (DNFCount > 1 || (DNFCount == 1 && result.format == 'm')) {
       hasAverage = false;
     }
-    if (result.format == '1' || result.format == '2' || result.format == '3') {
+    if (result.format == '1' || result.format == '2' || (result.format == '3' && result.event != '333bf')) {
       hasAverage = false;
     }
     if (hasAverage) {
-      if (result.format == 'm') {
+      if (result.format == 'm' || result.format == '3') {
         result.average = Math.round(sum / 3);
       } else {
         result.average = Math.round((sum - best - worst) / 3);
@@ -726,13 +730,16 @@
     }
   }
   function compare(resA, resB, onlyResult) {
-    if (resA.average > 0 && resB.average <= 0) {
-      return -1
+    var temp = 0;
+    if (resA.format == 'm' || resA.format == 'a') {
+      if (resA.average > 0 && resB.average <= 0) {
+        return -1
+      }
+      if (resB.average > 0 && resA.average <= 0) {
+        return 1
+      }
+      temp = resA.average - resB.average;
     }
-    if (resB.average > 0 && resA.average <= 0) {
-      return 1
-    }
-    var temp = resA.average - resB.average;
     if (temp == 0) {
       if (resA.best > 0 && resB.best <= 0) {
         return -1
