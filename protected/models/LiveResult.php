@@ -30,6 +30,86 @@ class LiveResult extends ActiveRecord {
 
 	const USER_TYPE_LIVE = 1;
 
+	public static $records = array();
+	public static $liveRecords = array();
+
+	public $pos;
+
+	private $_beatedRecords = array();
+
+	public static function formatTime($result, $eventId) {
+		if ($result == -1) {
+			return 'DNF';
+		}
+		if ($result == -2) {
+			return 'DNS';
+		}
+		if ($result == 0) {
+			return '';
+		}
+		if ($eventId === '333fm') {
+			if ($result > 1000) {
+				$time = sprintf('%.2f', $result / 100);
+			} else {
+				$time = $result;
+			}
+		} elseif ($eventId === '333mbf') {
+			$time = substr($result, 3, -2);
+		} else {
+			$msecond = substr($result, -2);
+			$second = substr($result, 0, -2);
+			$time = $second . '.' . $msecond;
+		}
+		return $time;
+	}
+
+	public static function getRecords($region) {
+		if (isset(self::$records[$region])) {
+			return self::$records[$region];
+		}
+		$command = Yii::app()->wcaDb->createCommand()
+		->select(array(
+			'r.eventId',
+			'r.best',
+		))
+		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
+		->leftJoin('Countries country', 'p.countryId=country.id')
+		->leftJoin('Continents continent', 'country.continentId=continent.id');
+		switch ($region) {
+			case 'World':
+				$command->where('r.worldRank=1');
+				break;
+			case 'Africa':
+			case 'Asia':
+			case 'Oceania':
+			case 'Europe':
+			case 'North America':
+			case 'South America':
+				$command->where('r.continentRank=1 AND country.continentId=:region', array(
+					':region'=>'_' . $region,
+				));
+				break;
+			default:
+				$command->where('r.countryRank=1 AND rs.personCountryId=:region', array(
+					':region'=>$region,
+				));
+				break;
+		}
+		$records = array(
+			'333'=>array(),
+		);
+		foreach (Results::getRankingTypes() as $type) {
+			$cmd = clone $command;
+			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
+			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
+			->leftJoin('Competitions c', 'rs.competitionId=c.id');
+			foreach ($cmd->queryAll() as $row) {
+				$records[$row['eventId']][$type] = $row['best'];
+			}
+		}
+		return self::$records[$region] = $records;
+	}
+
 	public function getShowAttributes() {
 		return array(
 			'id'=>$this->id,
@@ -104,6 +184,8 @@ class LiveResult extends ActiveRecord {
 				'event'=>'event',
 				'round'=>'round',
 			)),
+			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
+			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
 		);
 	}
 

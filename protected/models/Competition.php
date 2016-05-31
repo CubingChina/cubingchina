@@ -1470,6 +1470,7 @@ class Competition extends ActiveRecord {
 			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
 			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
+			'liveResults'=>array(self::HAS_MANY, 'LiveResult', 'competition_id'),
 		);
 	}
 

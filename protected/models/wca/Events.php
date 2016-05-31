@@ -70,6 +70,29 @@ class Events extends ActiveRecord {
 		return isset(self::$_defaultExportFormats[$event]) ? self::$_defaultExportFormats[$event] : self::$_defaultExportFormats['default'];
 	}
 
+	public static function getExportFormat($event, $format) {
+		if ($event === '333mbo') {
+			return 'multibf' . $format;
+		}
+		if ($event === '333fm') {
+			if ($format == 'm') {
+				return 'mean3n';
+			} else {
+				return 'best' . $format . 'n';
+			}
+		}
+		switch ($format) {
+			case '1':
+			case '2':
+			case '3':
+				return 'best' . $format . 's';
+			case 'm':
+				return 'mean3s';
+			default:
+				return 'average5s';
+		}
+	}
+
 	public static function getColumnName($event) {
 		if (isset(self::$_specialEventNames[$event])) {
 			$event = self::$_specialEventNames[$event];

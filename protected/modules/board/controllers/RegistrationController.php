@@ -60,6 +60,26 @@ class RegistrationController extends AdminController {
 		));
 	}
 
+	public function actionExportLiveData() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$model->formatEvents();
+		if (Yii::app()->request->getRequestType() === 'POST') {
+			$this->exportLiveData($model, $this->iPost('xlsx'));
+		}
+		$this->render('exportLiveData', array(
+			'model'=>$model,
+			'competition'=>$model,
+		));
+	}
+
 	public function actionScoreCard() {
 		$id = $this->iGet('id');
 		$model = Competition::model()->findByPk($id);
@@ -158,7 +178,7 @@ class RegistrationController extends AdminController {
 							'argb'=>'FFFFFF00',
 						),
 					),
-		 		));
+				));
 			}
 		}
 		$export->addExternalSheet($sheet);
@@ -208,7 +228,7 @@ class RegistrationController extends AdminController {
 										'argb'=>'FFFFFF00',
 									),
 								),
-					 		));
+							));
 						}
 						$row++;
 					}
@@ -217,6 +237,221 @@ class RegistrationController extends AdminController {
 			}
 		}
 		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx);
+	}
+
+	public function exportLiveData($competition, $xlsx = false) {
+		$liveResults = LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$competition->id,
+		), array(
+			'condition'=>'best != 0',
+		));
+		$registrations = array();
+		$events = array();
+		foreach ($liveResults as $liveResult) {
+			$key = $liveResult->user_type . '_' . $liveResult->user->id;
+			if (!isset($registrations[$key])) {
+				$registrations[$key] = array(
+					'user'=>$liveResult->user,
+					'number'=>$liveResult->number,
+					'events'=>array(),
+				);
+			}
+			if (!isset($events[$liveResult->event])) {
+				$events[$liveResult->event] = array(
+					'event'=>$liveResult->wcaEvent,
+					'rounds'=>array(),
+				);
+			}
+			if (!isset($events[$liveResult->event]['rounds'][$liveResult->round])) {
+				$events[$liveResult->event]['rounds'][$liveResult->round] = array(
+					'round'=>$liveResult->wcaRound,
+					'format'=>$liveResult->format,
+					'results'=>array(),
+				);
+			}
+			$events[$liveResult->event]['rounds'][$liveResult->round]['results'][] = $liveResult;
+			$registrations[$key]['events'][$liveResult->event] = $liveResult->event;
+		}
+		usort($registrations, function($regA, $regB) {
+			return $regA['number'] - $regB['number'];
+		});
+		//sort event
+		usort($events, function($eventA, $eventB) {
+			return $eventA['event']->rank - $eventB['event']->rank;
+		});
+		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
+		$export = new PHPExcel();
+		$export->getProperties()
+			->setCreator(Yii::app()->params->author)
+			->setLastModifiedBy(Yii::app()->params->author)
+			->setTitle($competition->wca_competition_id ?: $competition->name)
+			->setSubject($competition->name);
+		$export->removeSheetByIndex(0);
+		//注册页
+		$sheet = $template->getSheet(0);
+		$sheet->setCellValue('A1', $competition->wca_competition_id ?: $competition->name);
+		$col = 'J';
+		$cubecompsEvents = array(
+			'333'=>'3x3',
+			'444'=>'4x4',
+			'555'=>'5x5',
+			'666'=>'6x6',
+			'777'=>'7x7',
+			'222'=>'2x2',
+			'333bf'=>'333bld',
+			'333fm'=>'fmc',
+			'minx'=>'mega',
+			'pyram'=>'pyra',
+			'444bf'=>'444bld',
+			'555bf'=>'555bld',
+			'333mbf'=>'333mlt',
+		);
+		foreach ($events as $event) {
+			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
+			$sheet->setCellValue($col . 3, isset($cubecompsEvents[$event['event']->id]) ? $cubecompsEvents[$event['event']->id] : $event['event']->id);
+			$sheet->getColumnDimension($col)->setWidth(5.5);
+			$col++;
+		}
+		foreach ($registrations as $key=>$registration) {
+			$user = $registration['user'];
+			$row = $key + 4;
+			$sheet->setCellValue('A' . $row, $registration['number'])
+				->setCellValue('B' . $row, $user->getCompetitionName())
+				->setCellValue('C' . $row, $user->country->name)
+				->setCellValue('D' . $row, $user->wcaid)
+				->setCellValue('E' . $row, $user->getWcaGender())
+				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
+					date('Y', $user->birthday),
+					date('m', $user->birthday),
+					date('d', $user->birthday)
+				));
+			$col = 'J';
+			foreach ($events as $event) {
+				if (in_array($event['event']->id, $registration['events'])) {
+					$sheet->setCellValue($col . $row, 1);
+				}
+				$col++;
+			}
+		}
+		$export->addExternalSheet($sheet);
+		//各个项目
+		$compare = function($resA, $resB) {
+			$temp = 0;
+			if ($resA->format == 'm' || $resA->format == 'a') {
+				if ($resA->average > 0 && $resB->average <= 0) {
+					return -1;
+				}
+				if ($resB->average > 0 && $resA->average <= 0) {
+					return 1;
+				}
+				$temp = $resA->average - $resB->average;
+			}
+			if ($temp == 0) {
+				if ($resA->best > 0 && $resB->best <= 0) {
+					return -1;
+				}
+				if ($resB->best > 0 && $resA->best <= 0) {
+					return 1;
+				}
+				$temp = $resA->best - $resB->best;
+			}
+			if ($temp == 0) {
+				$temp = $resA->user->name < $resB->user->name ? -1 : 1;
+			}
+			return $temp;
+		};
+		foreach ($events as $event) {
+			usort($event['rounds'], function($roundA, $roundB) {
+				return $roundA['round']->rank - $roundB['round']->rank;
+			});
+			foreach ($event['rounds'] as $round) {
+				$formatName = Events::getExportFormat($event['event']->id, $round['format']);
+				$sheet = $template->getSheetByName($formatName);
+				if ($sheet === null) {
+					continue;
+				}
+				$sheet = clone $sheet;
+				$sheet->setTitle("{$event['event']->id}-{$round['round']->id}");
+				$template->addSheet($sheet);
+				$sheet->setCellValue('A1', Events::getFullEventName($event['event']->id) . ' - ' . Rounds::getFullRoundName($round['round']->id));
+				usort($round['results'], $compare);
+				$row = 5;
+				$num = Formats::getFormatNum($round['format']);
+				foreach ($round['results'] as $result) {
+					//user info
+					$user = $result->user;
+					$sheet->setCellValue('B' . $row, $user->getCompetitionName())
+						->setCellValue('C' . $row, $user->country->name)
+						->setCellValue('D' . $row, $user->wcaid);
+					//result
+					$col = 'E';
+					if ($result->event === '333mbf') {
+						for ($i = 1; $i <= $result->format; $i++) {
+							$value = $result->{'value' . $i};
+							if ($value == -1) {
+								//tried
+								$sheet->setCellValue($col . $row, LiveResult::formatTime($value, $result->event));
+								$col++;
+								//solved
+								$sheet->setCellValue($col . $row, 0);
+								$col++;
+								//seconds
+								$sheet->setCellValue($col . $row, 0);
+								$col++;
+								$col++;
+
+							} else {
+								$difference = 99 - substr($value, 0, 2);
+								$missed = intval(substr($value, -2));
+								$seconds = substr($value, 3, -2);
+								$solved = $difference + $missed;
+								$tried = $solved + $missed;
+								//tried
+								$sheet->setCellValue($col . $row, $tried);
+								$col++;
+								//solved
+								$sheet->setCellValue($col . $row, $solved);
+								$col++;
+								//seconds
+								$sheet->setCellValue($col . $row, $seconds);
+								$col++;
+								$col++;
+							}
+						}
+					} else {
+						for ($i = 1; $i <= $num; $i++) {
+							$sheet->setCellValue($col . $row, LiveResult::formatTime($result->{'value' . $i}, $result->event));
+							$col++;
+						}
+					}
+					if ($row > 5) {
+						$formula = $sheet->getCell('A' . ($row - 1))->getValue();
+						$formula = strtr($formula, array(
+							'-4'=>'_temp_',
+							$row - 1=>$row,
+							$row - 2=>$row - 1,
+							$row=>$row+1,
+						));
+						$formula = str_replace('_temp_', '-4', $formula);
+						$sheet->setCellValue('A' . $row, $formula);
+						//formula for best and average
+						while ($col != 'R') {
+							$formula = $sheet->getCell($col . ($row - 1))->getValue();
+							if (strpos($formula, '=') === 0) {
+								$formula = strtr($formula, array(
+									$row - 1=>$row,
+								));
+								$sheet->setCellValue($col . $row, $formula);
+							}
+							$col++;
+						}
+					}
+					$row++;
+				}
+				$export->addExternalSheet($sheet);
+			}
+		}
+		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx, true);
 	}
 
 	public function exportScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
@@ -454,7 +689,7 @@ class RegistrationController extends AdminController {
 		}
 	}
 
-	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true) {
+	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true, $preCalculateFormulas = false) {
 		$download = $path === 'php://output';
 		$excel->setActiveSheetIndex(0);
 		Yii::app()->controller->setIsAjaxRequest(true);
@@ -472,7 +707,7 @@ class RegistrationController extends AdminController {
 				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
 			}
 		}
-		$writer->setPreCalculateFormulas(false);
+		$writer->setPreCalculateFormulas($preCalculateFormulas);
 		$writer->save($path);
 		if ($download) {
 			exit;

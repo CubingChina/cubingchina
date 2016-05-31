@@ -48,6 +48,9 @@ class LiveUser extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'country'=>array(self::BELONGS_TO, 'Region', 'country_id'),
+			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
+			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
 		);
 	}
 
