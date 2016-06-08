@@ -80,6 +80,9 @@ a:hover {
   color: #fff;
   margin-right: 5px;
 }
+.btn.no-mr .fa {
+  margin-right: 0;
+}
 .btn .fa.fa-search {
   margin-right: 0;
 }
@@ -2917,4 +2920,20 @@ table.concise-schedule {
   .affix {
     position: static;
   }
+}
+.input-panel {
+  background-color: #fff;
+}
+.live .input-wrapper {
+  position: relative;
+}
+.live .competitors {
+  width: 100%;
+  position: absolute;
+  z-index: 99;
+}
+.live .competitors .active {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #337ab7;
 }

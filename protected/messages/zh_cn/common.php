@@ -17,9 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competitor' => '选手',
   'Fee' => '',
-  'Please login.' => '请登录',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小时',
@@ -102,6 +100,7 @@ return array (
   'Competition History' => '参赛经历',
   'Competition Site' => '分赛场',
   'Competitions' => '赛事',
+  'Competitor' => '选手',
   'Confirm' => '确认',
   'Contact' => '联系我们',
   'Cubing China' => '粗饼·中国魔方赛事网',
@@ -182,6 +181,7 @@ return array (
   'Please confirm your email:\\n{email}' => '请确认你的电子邮件：\\n{email}',
   'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他个人信息请联系管理员{email}。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '请在下面输入您的WCA ID。您可以在{here}查询您的WCA ID。',
+  'Please login.' => '请登录',
   'Please re-check your date of birth and ensure the consistency of ID cards.' => '请检查您所填写的出生日期，确保与身份证件上的一致。',
   'Please update your browser' => '请升级你的浏览器！',
   'Previous step' => '上一步',

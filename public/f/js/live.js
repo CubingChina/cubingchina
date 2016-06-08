@@ -22,7 +22,9 @@
   }).on('round.update', function(round) {
     store.dispatch('UPDATE_ROUND', round);
   }).on('message.new', function(message) {
-    newMessage(message);
+    if (state.options.showMessage) {
+      newMessage(message);
+    }
   }).on('result.all', function(results) {
     store.dispatch('UPDATE_RESULTS', results);
   });
@@ -41,16 +43,22 @@
     },
     loading: false,
     results: [],
-    messages: []
+    messages: [],
+    options: {
+      enableEntry: true,
+      showMessage: true,
+      alertResult: true,
+      alertRecord: true
+    }
   };
   var events = {};
   var eventRounds = {};
+  var current = {}
   var mutations = {
     CHANGE_EVENT_ROUND: function(state, params) {
       state.params = params;
     },
     UPDATE_ROUND: function(state, round) {
-      console.log(round, eventRounds)
       $.extend(eventRounds[round.event][round.id], round);
     },
     NEW_RESULT: function(state, result) {
@@ -99,6 +107,10 @@
     eventRounds[event.id] = {};
     event.rounds.forEach(function(round) {
       eventRounds[event.id][round.id] = round;
+      if (!current.event && round.status == 2) {
+        current.event = event.id;
+        current.round = round.id;
+      }
     });
   });
 
@@ -111,6 +123,26 @@
   var vm = Vue.extend({
     template: '#live-container-template',
     store: store,
+    data: function() {
+      return {
+      };
+    },
+    vuex: {
+      getters: {
+        options: function(state) {
+          return state.options;
+        },
+        hasPermission: function(state) {
+          var user = state.user;
+          return user.isOrganizer || user.isDelegate || user.isAdmin;
+        }
+      }
+    },
+    methods: {
+      showOptions: function() {
+        $('#options-modal').modal();
+      }
+    },
     components: {
       chat: {
         data: function() {
@@ -174,6 +206,9 @@
         },
         vuex: {
           getters: {
+            options: function(state) {
+              return state.options;
+            },
             hasPermission: function(state) {
               var user = state.user;
               return user.isOrganizer || user.isDelegate || user.isAdmin;
@@ -206,7 +241,10 @@
         },
         template: '#result-template',
         methods: {
-          click: function(result) {
+          goToUser: function(user) {
+            console.log(user)
+          },
+          edit: function(result) {
             if (this.hasPermission) {
               this.current = result;
               this.$nextTick(function() {
@@ -247,31 +285,44 @@
               return {
                 lastInput: null,
                 input: null,
-                inputNames: ['value1', 'value2', 'value3', 'value4', 'value5'],
                 competitor: {
                   name: ''
                 },
-                value: {
-                  value1: 0,
-                  value2: 0,
-                  value3: 0,
-                  value4: 0,
-                  value5: 0
-                },
+                value1: 0,
+                value2: 0,
+                value3: 0,
+                value4: 0,
+                value5: 0,
                 best: 0,
                 worst: 0,
-                average: 0
+                average: 0,
+                name: '',
+                searching: false,
+                selectedIndex: 0
+              }
+            },
+            computed: {
+              competitors: function() {
+                return this.results.filter(this.filterCompetitors.bind(this)).sort(function(resA, resB) {
+                  return resA.number - resB.number
+                }).slice(0, 5)
               }
             },
             watch: {
               result: function(result) {
                 var that = this;
-                that.competitor.name = result.user && result.user.name;
-                that.value.value1 = result.value1 || 0;
-                that.value.value2 = result.value2 || 0;
-                that.value.value3 = result.value3 || 0;
-                that.value.value4 = result.value4 || 0;
-                that.value.value5 = result.value5 || 0;
+                that.competitor = result.user;
+                that.value1 = result.value1 || 0;
+                that.value2 = result.value2 || 0;
+                that.value3 = result.value3 || 0;
+                that.value4 = result.value4 || 0;
+                that.value5 = result.value5 || 0;
+              },
+              name: function(name) {
+                this.selectedIndex = 0;
+                if (name == '') {
+                  this.result = {};
+                }
               }
             },
             attached: function() {
@@ -281,23 +332,33 @@
               }).trigger('resize');
             },
             methods: {
-              formatResult: function(value) {
-                if (value == 'DNF' || value == 'DNS' || value == '') {
-                  return value;
+              isDisabled: function(index) {
+                var that = this;
+                var result = that.result;
+                if (!result || !result.id) {
+                  return true;
                 }
-                var match = value.match(/(?:(\d+)?:)?(?:(\d{1,2})\.)?(\d{1,})?/);
-                var minute = match[1] ? parseInt(match[1]) : 0;
-                var second = match[2] ? parseInt(match[2]) : 0;
-                var msecond = match[3] ? parseInt(match[3]) * (match[3].length == 1 ? 10 : 1) : 0;
-                return decodeResult((minute * 60 + second) * 100 + msecond, state.params.event);
+                var round = eventRounds[state.params.event][state.params.round];
+                if (round.cut_off > 0) {
+                  var num = round.format == 'a' ? 2 : 1;
+                  var passed = false;
+                  for (var i = 1; i <= num; i++) {
+                    if (that['value' + i] / 100 < round.cut_off) {
+                      passed = true;
+                      break;
+                    }
+                  }
+                  return !(passed || index < num);
+                }
+                return false;
               },
               save: function() {
                 var that = this;
-                that.result.value1 = that.value.value1;
-                that.result.value2 = that.value.value2;
-                that.result.value3 = that.value.value3;
-                that.result.value4 = that.value.value4;
-                that.result.value5 = that.value.value5;
+                that.result.value1 = that.value1;
+                that.result.value2 = that.value2;
+                that.result.value3 = that.value3;
+                that.result.value4 = that.value4;
+                that.result.value5 = that.value5;
                 calculateAverage(that.result);
                 store.dispatch('UPDATE_RESULT', that.result);
                 ws.send({
@@ -307,138 +368,37 @@
                 });
                 that.result = {};
               },
-              focus: function(e, name) {
-                this.input = name;
-              },
-              blur: function(e) {
-                e.target.value = this.formatResult(e.target.value);
-                this.value[this.input] = encodeResult(e.target.value);
-                this.lastInput = null;
-              },
-              keydown: function(e) {
-                var code = e.which;
-                var value = e.target.value;
-                console.log(code)
-                switch (code) {
-                  //D,/ pressed
-                  case 68:
-                  case 111:
-                    this.value[this.lastInput] = -1;
-                    e.target.value = 'DNF'
-                    break;
-                  //S,* pressed
-                  case 106:
-                  case 83:
-                    this.value[this.lastInput] = -2;
-                    e.target.value = 'DNS'
-                    break;
-                  case 8:
-                  case 109:
-                    if (this.lastInput != this.input) {
-                      this.value[this.lastInput] = 0;
-                      e.target.value = '';
-                      this.lastInput = this.input;
-                    } else {
-                      value = value.replace(/^0./, '');
-                      value = value.replace(/:|\./g, '');
-                      if (this.lastInput != this.input || value == 'DNF' || value == 'DNS') {
-                        value = '';
-                      }
-                      value = value.slice(0, value.length - 1);
-                      switch (value.length) {
-                        case 1:
-                        case 2:
-                          break;
-                        case 3:
-                          value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
-                          break;
-                        case 4:
-                          value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
-                          break;
-                        case 5:
-                          value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
-                          break;
-                        case 6:
-                          value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
-                          break;
-                      }
-                      e.target.value = value;
-                    }
-                    break;
-                  case 107:
-                  case 9:
-                    if (e.shiftKey || code == 107) {
-                      var that = $(e.target).parent();
-                      var index = that.index();
-                      if (index > 0) {
-                        that.prev().find('input').focus();
-                      }
-                      break;
-                    }
-                  case 13:
-                    var that = $(e.target).parent();
-                    var index = that.index();
-                    if (index < this.inputNum - 1) {
-                      that.next().find('input').focus();
-                    } else {
-                      that.parent().next().focus();
-                    }
-                    break;
-                  //small keyboard
-                  case 96:
-                  case 97:
-                  case 98:
-                  case 99:
-                  case 100:
-                  case 101:
-                  case 102:
-                  case 103:
-                  case 104:
-                  case 105:
-                    code -= 48;
-                  //num
-                  case 48:
-                  case 49:
-                  case 50:
-                  case 51:
-                  case 52:
-                  case 53:
-                  case 54:
-                  case 55:
-                  case 56:
-                  case 57:
-                    if (value.length >= 8) {
-                      break;
-                    }
-                    value = value.replace(/^0./, '');
-                    value = value.replace(/:|\./g, '');
-                    if (this.lastInput != this.input || value == 'DNF' || value == 'DNS') {
-                      value = '';
-                    }
-                    value += code - 48;
-                    switch (value.length) {
-                      case 1:
-                      case 2:
-                        break;
-                      case 3:
-                        value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
-                        break;
-                      case 4:
-                        value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
-                        break;
-                      case 5:
-                        value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
-                        break;
-                      case 6:
-                        value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
-                        break;
-                    }
-                    e.target.value = value;
-                    if (this.lastInput != this.input) {
-                      this.lastInput = this.input;
-                    }
-                    break;
+              filterCompetitors: function(result) {
+                var that = this;
+                var name = that.name.trim();
+                if (name == '') {
+                  return false;
                 }
+                if (/^\d+$/.test(name)) {
+                  return !!result.number.toString().match(name);
+                }
+                return !!result.user.name.match(new RegExp(name, 'i'));
+              },
+              enter: function() {
+                if (this.competitors[this.selectedIndex]) {
+                  this.selectCompetitor(this.competitors[this.selectedIndex]);
+                }
+              },
+              up: function() {
+                var length = this.competitors.length;
+                if (length) {
+                  this.selectedIndex = (this.selectedIndex + length - 1) % length;
+                }
+              },
+              down: function() {
+                var length = this.competitors.length;
+                if (length) {
+                  this.selectedIndex = (this.selectedIndex + 1) % length;
+                }
+              },
+              selectCompetitor: function(result) {
+                this.$parent.edit(result);
+                this.name = result.number;
               }
             },
             vuex: {
@@ -475,6 +435,9 @@
                     default:
                       return 2;
                   }
+                },
+                results: function(state) {
+                  return state.results;
                 }
               }
             },
@@ -488,7 +451,174 @@
                 }
               }
             },
-            template: '#input-panel-template'
+            template: '#input-panel-template',
+            components: {
+              'result-input': {
+                props: ['value', 'index'],
+                data: function() {
+                  return {
+                    display: '',
+                  }
+                },
+                watch: {
+                  display: function(display, oldDisplay) {
+                    if (display != oldDisplay) {
+                      this.value = encodeResult(display, this.$store.state.params.event);
+                    }
+                  },
+                  value: function(value, oldValue) {
+                    if (value != oldValue) {
+                      this.display = decodeResult(value, this.$store.state.params.event);
+                    }
+                  }
+                },
+                methods: {
+                  formatResult: function(value) {
+                    if (value == 'DNF' || value == 'DNS' || value == '') {
+                      return value;
+                    }
+                    var match = value.match(/(?:(\d+)?:)?(?:(\d{1,2})\.)?(\d{1,})?/);
+                    var minute = match[1] ? parseInt(match[1]) : 0;
+                    var second = match[2] ? parseInt(match[2]) : 0;
+                    var msecond = match[3] ? parseInt(match[3]) * (match[3].length == 1 ? 10 : 1) : 0;
+                    return decodeResult((minute * 60 + second) * 100 + msecond, state.params.event);
+                  },
+                  focus: function(e, name) {
+                    this.$parent.input = name;
+                  },
+                  blur: function(e) {
+                    e.target.value = this.formatResult(e.target.value);
+                    this.value = encodeResult(e.target.value);
+                    this.$parent.lastInput = null;
+                  },
+                  keydown: function(e) {
+                    var code = e.which;
+                    var value = e.target.value;
+                    switch (code) {
+                      //D,/ pressed
+                      case 68:
+                      case 111:
+                        this.value = -1;
+                        e.target.value = 'DNF'
+                        break;
+                      //S,* pressed
+                      case 106:
+                      case 83:
+                        this.value = -2;
+                        e.target.value = 'DNS'
+                        break;
+                      case 8:
+                      case 109:
+                        if (this.lastInput != this.input) {
+                          this.value = 0;
+                          e.target.value = '';
+                          this.$parent.lastInput = this.$parent.input;
+                        } else {
+                          value = value.replace(/^0./, '');
+                          value = value.replace(/:|\./g, '');
+                          if (this.$parent.lastInput != this.$parent.input || value == 'DNF' || value == 'DNS') {
+                            value = '';
+                          }
+                          value = value.slice(0, value.length - 1);
+                          switch (value.length) {
+                            case 1:
+                            case 2:
+                              break;
+                            case 3:
+                              value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
+                              break;
+                            case 4:
+                              value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
+                              break;
+                            case 5:
+                              value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
+                              break;
+                            case 6:
+                              value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
+                              break;
+                          }
+                          e.target.value = value;
+                        }
+                        break;
+                      case 107:
+                      case 9:
+                        if (e.shiftKey || code == 107) {
+                          var that = $(e.target).parent();
+                          var index = that.index();
+                          if (index > 0) {
+                            that.prev().find('input').focus();
+                          }
+                          break;
+                        }
+                      case 13:
+                        var that = $(e.target).parent();
+                        var index = that.index();
+                        if (index < this.$parent.inputNum - 1) {
+                          that.next().find('input').focus();
+                        } else {
+                          that.parent().next().focus();
+                        }
+                        break;
+                      //small keyboard
+                      case 96:
+                      case 97:
+                      case 98:
+                      case 99:
+                      case 100:
+                      case 101:
+                      case 102:
+                      case 103:
+                      case 104:
+                      case 105:
+                        code -= 48;
+                      //num
+                      case 48:
+                      case 49:
+                      case 50:
+                      case 51:
+                      case 52:
+                      case 53:
+                      case 54:
+                      case 55:
+                      case 56:
+                      case 57:
+                        if (value.length >= 8) {
+                          break;
+                        }
+                        value = value.replace(/^0./, '');
+                        value = value.replace(/:|\./g, '');
+                        if (this.$parent.lastInput != this.$parent.input || value == 'DNF' || value == 'DNS') {
+                          value = '';
+                        }
+                        value += code - 48;
+                        switch (value.length) {
+                          case 1:
+                          case 2:
+                            break;
+                          case 3:
+                            value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
+                            break;
+                          case 4:
+                            value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
+                            break;
+                          case 5:
+                            value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
+                            break;
+                          case 6:
+                            value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
+                            break;
+                        }
+                        e.target.value = value;
+                        if (this.$parent.lastInput != this.$parent.input) {
+                          this.$parent.lastInput = this.$parent.input;
+                        }
+                        break;
+                    }
+                  }
+                },
+                template: '#result-input-template'
+              }
+            }
           }
         }
       }
@@ -498,14 +628,14 @@
   //router
   var router = new VueRouter();
   router.map({
-    '/:event/:round': {
+    '/event/:event/:round': {
       component: {}
     }
   });
   store.watch(function(state) {
     return state.params;
   }, function(params) {
-    router.go(['', params.event, params.round].join('/'));
+    router.go(['/event', params.event, params.round].join('/'));
     fetchResults();
   }, {
     deep: true,
@@ -520,7 +650,7 @@
     store.dispatch('CHANGE_EVENT_ROUND', params);
   });
   router.redirect({
-    '*': ['', state.params.event, state.params.round].join('/')
+    '*': ['/event', current.event || state.params.event, current.round || state.params.round].join('/')
   });
   router.start(vm, liveContainer.get(0));
 
@@ -540,33 +670,40 @@
     if (result.best == 0) {
       return;
     }
-    var message = {
-      user: {
-        name: 'System'
-      },
-      time: Math.floor(+new Date() / 1000)
-    };
-    var content = [];
-    var temp = [];
-    temp.push(result.user.name);
-    temp.push(events[result.event] && events[result.event].name);
-    temp.push(eventRounds[result.event] && eventRounds[result.event][result.round] && eventRounds[result.event][result.round].name);
-    content.push(temp.join(' - '));
-    if (result.average != 0) {
-      content.push('Average: ' + decodeResult(result.average, result.event));
-    }
-    content.push('Single: ' + decodeResult(result.best, result.event));
-    temp = [];
-    for (var i = 1; i <= 5; i++) {
-      if (result['value' + i] != 0) {
-        temp.push(decodeResult(result['value' + i], result.event));
-      } else {
-        temp.push('--');
+    if (state.options.alertResult) {
+      var message = {
+        user: {
+          name: 'System'
+        },
+        time: Math.floor(+new Date() / 1000)
+      };
+      var content = [];
+      var temp = [];
+      temp.push(result.user.name);
+      temp.push(events[result.event] && events[result.event].name);
+      temp.push(eventRounds[result.event] && eventRounds[result.event][result.round] && eventRounds[result.event][result.round].name);
+      content.push(temp.join(' - '));
+      if (result.average != 0) {
+        content.push('Average: ' + decodeResult(result.average, result.event));
       }
+      content.push('Single: ' + decodeResult(result.best, result.event));
+      temp = [];
+      var num = result.format == 'a' ? 5 : (result.format == '3' ? 3 : parseInt(result.format));
+      for (var i = 1; i <= num; i++) {
+        if (result['value' + i] != 0) {
+          temp.push(decodeResult(result['value' + i], result.event));
+        } else {
+          temp.push('--');
+        }
+      }
+      content.push('Detail: ' + temp.join('    '));
+      message.content = '<p class="text-danger">' + content.join('<br>') + '</p>';
+      newMessage(message);
     }
-    content.push('Detail: ' + temp.join('    '));
-    message.content = '<p class="text-danger">' + content.join('<br>') + '</p>';
-    newMessage(message);
+    //check record
+    if (state.options.alertRecord && (result.regional_single_record != '' || result.regional_average_record != '')) {
+      //@todo alert record
+    }
   }
   function fetchResults() {
     if (state.loading) {
@@ -584,8 +721,9 @@
     var best = 999999999;
     var worst = 0;
     var hasAverage = true;
-    var i, value, DNFCount = 0, zeroCount = 0, nonZeroCount = 0, sum = 0;
-    for (i = 1; i <= 5; i++) {
+    var i, value, DNFCount = 0, zeroCount = 0, sum = 0;
+    var num = result.format == 'a' ? 5 : (result.format == '3' ? 3 : parseInt(result.format));
+    for (i = 1; i <= num; i++) {
       value = result['value' + i];
       sum += value;
       if (value > 0 && value < best) {
@@ -593,8 +731,6 @@
       }
       if (value == 0) {
         zeroCount++;
-      } else {
-        nonZeroCount++;
       }
       if (value < 0) {
         DNFCount++;
@@ -604,10 +740,12 @@
       }
     }
     result.best = best;
+    //check best
     if (result.best === 999999999) {
       result.best = worst == 0 ? 0 : -1;
     }
-    if ((result.format == 'a' || result.format == 'm') && nonZeroCount < (result.format == 'm' ? 3 : 5)) {
+    //
+    if ((result.format == 'a' || result.format == 'm') && zeroCount > 0) {
       hasAverage = false;
     }
     if (DNFCount > 1 || (DNFCount == 1 && (result.format == 'm' || result.format == '3'))) {
@@ -623,7 +761,7 @@
         result.average = Math.round((sum - best - worst) / 3);
       }
     } else if (result.format == 'm' || result.format == 'a') {
-      result.average = nonZeroCount < (result.format == 'm' ? 3 : 5) ? 0 : -1;
+      result.average = zeroCount > 0 ? 0 : -1;
     } else if (result.event == '333bf') {
       result.average = 0;
     }

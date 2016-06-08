@@ -52,9 +52,15 @@ class ResultHandler extends MsgHandler {
 		$result->value5 = $data->value5;
 		$result->best = $data->best;
 		$result->average = $data->average;
-		$result->regional_single_record = $result->caculateRecord('single');
-		$result->regional_average_record = $result->caculateRecord('average');
+		$result->caculateRecord('single');
+		$result->caculateRecord('average');
 		$result->save();
+		foreach ($result->getBeatedRecords('single') as $res) {
+			$this->broadcastSuccess('result.update', $res->getShowAttributes());
+		}
+		foreach ($result->getBeatedRecords('average') as $res) {
+			$this->broadcastSuccess('result.update', $res->getShowAttributes());
+		}
 		$this->broadcastSuccess('result.update', $result->getShowAttributes());
 		$eventRound = $result->eventRound;
 		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {

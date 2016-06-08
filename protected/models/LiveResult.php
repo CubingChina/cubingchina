@@ -141,7 +141,68 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function caculateRecord($type) {
-		return $this->{"regional_{$type}_record"};
+		$user = $this->user;
+		$country = $user->country;
+		$wcaCountry = Countries::model()->findByAttributes(array(
+			'name'=>$country->name
+		));
+		$attribute = $type == 'single' ? 'best' : 'average';
+		$recordAttribute = "regional_{$type}_record";
+		$value = $this->$attribute;
+		$this->$recordAttribute = '';
+		if ($value <= 0) {
+			return;
+		}
+		//WR
+		$records = self::getRecords('World');
+		if ($value <= $records[$this->event][$type]) {
+			if (isset(self::$liveRecords['WR'][$this->event][$type])) {
+				$broken = false;
+				foreach (self::$liveRecords['WR'][$this->event][$type] as $record) {
+					if ($value < $record->$attribute) {
+						//check round
+						if ($this->wcaRound->rank <= $record->wcaRound->rank
+							//check date
+							|| date('Y-m-d', $this->create_time) == date('Y-m-d', $record->create_time)
+						) {
+							//assign
+							$this->$recordAttribute = 'WR';
+							self::$liveRecords['WR'][$this->event][$type] = array($this);
+							$this->_beatedRecords[$type][] = $record;
+						} else {
+
+						}
+						//assign
+						$this->$recordAttribute = 'WR';
+						self::$liveRecords['WR'][$this->event][$type] = array($this);
+						$this->_beatedRecords[$type][] = $record;
+						$broken = true;
+					} elseif ($value == $record->$attribute) {
+						$this->$recordAttribute = 'WR';
+					}
+				}
+			} else {
+				$this->$recordAttribute = 'WR';
+				self::$liveRecords['WR'][$this->event][$type][] = $this;
+			}
+			return;
+		}
+		//CR
+		$records = self::getRecords($wcaCountry->continent->name);
+		if ($value <= $records[$this->event][$type]) {
+			$this->$recordAttribute = $wcaCountry->continent->recordName;
+			return;
+		}
+		//NR
+		$records = self::getRecords($country->name);
+		if ($value <= $records[$this->event][$type]) {
+			$this->$recordAttribute = 'NR';
+			return;
+		}
+	}
+
+	public function getBeatedRecords($type) {
+		return isset($this->_beatedRecords[$type]) ? $this->_beatedRecords[$type] : array();
 	}
 
 	/**
