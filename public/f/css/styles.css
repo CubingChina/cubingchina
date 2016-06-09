@@ -2937,3 +2937,15 @@ table.concise-schedule {
   background-color: #337ab7;
   border-color: #337ab7;
 }
+.live .competitors b.number {
+  display: inline-block;
+  width: 60px;
+  padding-right: 5px;
+  text-align: right;
+}
+.live .event-round-area {
+  margin-top: 10px;
+}
+.live .page-heading {
+  margin-bottom: 0;
+}

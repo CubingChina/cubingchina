@@ -22,7 +22,7 @@
   }).on('round.update', function(round) {
     store.dispatch('UPDATE_ROUND', round);
   }).on('message.new', function(message) {
-    if (state.options.showMessage) {
+    if (options.showMessage) {
       newMessage(message);
     }
   }).on('result.all', function(results) {
@@ -43,13 +43,7 @@
     },
     loading: false,
     results: [],
-    messages: [],
-    options: {
-      enableEntry: true,
-      showMessage: true,
-      alertResult: true,
-      alertRecord: true
-    }
+    messages: []
   };
   var events = {};
   var eventRounds = {};
@@ -94,6 +88,10 @@
       state.results = results;
       state.loading = false;
     },
+    SHOW_LOADING: function(state) {
+      state.loading = true;
+      state.results = [];
+    },
     NEW_MESSAGE: function(state, message) {
       state.messages.push(message);
       if (state.messages.length > 1000) {
@@ -102,6 +100,13 @@
     }
   };
   $.extend(state, liveContainer.data());
+  var options = {
+    enableEntry: true,
+    showMessage: true,
+    alertResult: true,
+    alertRecord: true
+  };
+  $.extend(options, window.store.get('live_options'));
   state.events.forEach(function(event) {
     events[event.id] = event;
     eventRounds[event.id] = {};
@@ -117,6 +122,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
+    strict: true,
     mutations: mutations
   });
   //main component
@@ -125,17 +131,29 @@
     store: store,
     data: function() {
       return {
+        options: options
       };
     },
     vuex: {
       getters: {
-        options: function(state) {
-          return state.options;
-        },
         hasPermission: function(state) {
           var user = state.user;
           return user.isOrganizer || user.isDelegate || user.isAdmin;
         }
+      }
+    },
+    watch: {
+      'options.enableEntry': function() {
+        window.store.set('live_options', this.options);
+      },
+      'options.showMessage': function() {
+        window.store.set('live_options', this.options);
+      },
+      'options.alertResult': function() {
+        window.store.set('live_options', this.options);
+      },
+      'options.alertRecord': function() {
+        window.store.set('live_options', this.options);
       }
     },
     methods: {
@@ -145,6 +163,7 @@
     },
     components: {
       chat: {
+        props: ['options'],
         data: function() {
           return {
             message: ''
@@ -190,6 +209,7 @@
         }
       },
       result: {
+        props: ['options'],
         data: function() {
           return {
             eventRound: null,
@@ -206,9 +226,6 @@
         },
         vuex: {
           getters: {
-            options: function(state) {
-              return state.options;
-            },
             hasPermission: function(state) {
               var user = state.user;
               return user.isOrganizer || user.isDelegate || user.isAdmin;
@@ -245,7 +262,7 @@
             console.log(user)
           },
           edit: function(result) {
-            if (this.hasPermission) {
+            if (this.hasPermission && options.enableEntry) {
               this.current = result;
               this.$nextTick(function() {
                 $('.input-panel-result input').eq(0).focus();
@@ -303,7 +320,16 @@
             },
             computed: {
               competitors: function() {
-                return this.results.filter(this.filterCompetitors.bind(this)).sort(function(resA, resB) {
+                var that = this;
+                var searchText = that.searchText.toLowerCase();
+                return that.results.filter(that.filterCompetitors.bind(that)).sort(function(resA, resB) {
+                  if (!/^\d+$/.test(searchText)) {
+                    var temp = resA.user.name.toLowerCase().indexOf(searchText) - resB.user.name.toLowerCase().indexOf(searchText);
+                    if (temp == 0) {
+                      temp = resA.user.name < resB.user.name ? -1 : 1;
+                    }
+                    return temp;
+                  }
                   return resA.number - resB.number
                 }).slice(0, 5)
               }
@@ -401,8 +427,8 @@
                 }
               },
               selectCompetitor: function(result) {
-                this.$parent.edit(result);
                 this.name = result.number;
+                this.$parent.edit(result);
               }
             },
             vuex: {
@@ -674,7 +700,7 @@
     if (result.best == 0) {
       return;
     }
-    if (state.options.alertResult) {
+    if (options.alertResult) {
       var message = {
         user: {
           name: 'System'
@@ -705,7 +731,7 @@
       newMessage(message);
     }
     //check record
-    if (state.options.alertRecord && (result.regional_single_record != '' || result.regional_average_record != '')) {
+    if (options.alertRecord && (result.regional_single_record != '' || result.regional_average_record != '')) {
       //@todo alert record
     }
   }
@@ -713,8 +739,7 @@
     if (state.loading) {
       return;
     }
-    state.loading = true;
-    state.results = [];
+    store.dispatch('SHOW_LOADING');
     ws.send({
       type: 'result',
       action: 'fetch',

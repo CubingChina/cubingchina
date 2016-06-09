@@ -17,7 +17,7 @@
 
 <template id="live-container-template">
   <div class="col-lg-12">
-    <div class="options-area clearfix">
+    <div class="options-area">
       <div class="pull-right">
         <button class="btn btn-md btn-warning no-mr" @click="showOptions">
           <i class="fa fa-gear"></i>
@@ -55,15 +55,13 @@
         </div>
       </div>
     </div>
-    <chat></chat>
-    <result></result>
+    <chat :options="options" v-if="options.showMessage || options.alertResult || options.alertRecord"></chat>
+    <result :options="options"></result>
   </div>
 </template>
 
 <template id="chat-template">
   <div class="panel panel-info">
-    <div class="panel-heading">
-    </div>
     <div class="panel-body">
       <div class="message-container">
         <ul class="unstyled">
@@ -74,10 +72,10 @@
       </div>
       <div class="chat-input-panel">
         <div class="col-sm-10 col-lg-11">
-          <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest || !$store.state.options.showMessage" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
+          <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest || !options.showMessage" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
         </div>
         <div class="col-sm-2 col-lg-1">
-          <button class="btn btn-primary btn-md form-control" @click="send" :disabled="$store.state.user.isGuest || !$store.state.options.showMessage || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
+          <button class="btn btn-primary btn-md form-control" @click="send" :disabled="$store.state.user.isGuest || !options.showMessage || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
         </div>
       </div>
     </div>
@@ -103,7 +101,7 @@
     <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}}">
       <div class="clearfix">
         <h4 class="pull-left">{{eventName}} - {{roundName}}</h4>
-        <div class="pull-right">
+        <div class="pull-right event-round-area">
           <select @change="changeEventRound" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
               <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
@@ -219,9 +217,11 @@
             <li v-for="result in competitors"
               class="list-group-item"
               :class="{active: selectedIndex == $index}"
-              @mousedown="selectCompetitor(result)"
+              @mousedown.prevent="selectCompetitor(result)"
               @mouseenter="selectedIndex = $index"
-            >{{result.user.name}}</li>
+            >
+              <b class="number">No.{{result.number}}</b>{{result.user.name}}
+            </li>
           </ul>
         </div>
         <label><?php echo Yii::t('common', 'Results'); ?></label>
