@@ -296,7 +296,7 @@
                 best: 0,
                 worst: 0,
                 average: 0,
-                name: '',
+                searchText: '',
                 searching: false,
                 selectedIndex: 0
               }
@@ -309,6 +309,9 @@
               }
             },
             watch: {
+              results: function() {
+                this.searchText = '';
+              },
               result: function(result) {
                 var that = this;
                 that.competitor = result.user;
@@ -317,10 +320,11 @@
                 that.value3 = result.value3 || 0;
                 that.value4 = result.value4 || 0;
                 that.value5 = result.value5 || 0;
+                that.searchText = result.number || '';
               },
-              name: function(name) {
+              searchText: function(searchText) {
                 this.selectedIndex = 0;
-                if (name == '') {
+                if (searchText == '') {
                   this.result = {};
                 }
               }
@@ -370,14 +374,14 @@
               },
               filterCompetitors: function(result) {
                 var that = this;
-                var name = that.name.trim();
-                if (name == '') {
+                var searchText = that.searchText.trim();
+                if (searchText == '') {
                   return false;
                 }
-                if (/^\d+$/.test(name)) {
-                  return !!result.number.toString().match(name);
+                if (/^\d+$/.test(searchText)) {
+                  return !!result.number.toString().match(searchText);
                 }
-                return !!result.user.name.match(new RegExp(name, 'i'));
+                return !!result.user.name.match(new RegExp(searchText, 'i'));
               },
               enter: function() {
                 if (this.competitors[this.selectedIndex]) {

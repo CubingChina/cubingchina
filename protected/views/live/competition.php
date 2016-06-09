@@ -208,7 +208,7 @@
             id="input-panel-name"
             class="form-control"
             placeholder="请输入编号或姓名"
-            v-model="name"
+            v-model="searchText"
             @keydown.enter="enter"
             @keydown.down="down"
             @keydown.up="up"
