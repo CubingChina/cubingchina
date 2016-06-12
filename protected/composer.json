@@ -9,7 +9,7 @@
 	},
 	"repositories": [{
 		"type": "composer",
-		"url": "http://pkg.phpcomposer.com/repo/packagist/"
+		"url": "https://packagist.phpcomposer.com"
 	}, {
 		"packagist": false
 	}]
