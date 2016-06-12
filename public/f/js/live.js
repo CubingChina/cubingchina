@@ -213,15 +213,23 @@
         data: function() {
           return {
             eventRound: null,
-            current: null
+            current: {},
+            cut_off: 0,
+            time_limit: 0,
+            number: 0
           }
         },
         watch: {
           '$store.state.params': function(params) {
-            this.eventRound = {
+            var that = this;
+            that.eventRound = {
               event: params.event,
               round: params.round
             }
+            var round = eventRounds[params.event][params.round];
+            that.cut_off = round.cut_off;
+            that.time_limit = round.time_limit;
+            that.number = round.number;
           }
         },
         vuex: {
@@ -258,12 +266,39 @@
         },
         template: '#result-template',
         methods: {
+          showRoundSettings: function() {
+            $('#round-settings-modal').modal();
+          },
+          saveRoundSettings: function() {
+            var that = this;
+            var attrs = ['cut_off', 'time_limit', 'number'];
+            var i;
+            for (i = 0; i < attrs.length; i++) {
+              $('#' + attrs[i]).parent().removeClass('has-error');
+              if (isNaN(that[attrs[i]])) {
+                $('#' + attrs[i]).parent().addClass('has-error');
+                return;
+              }
+            }
+            ws.send({
+              type: 'result',
+              action: 'round',
+              round: {
+                event: state.params.event,
+                id: state.params.round,
+                cut_off: that.cut_off,
+                time_limit: that.time_limit,
+                number: that.number
+              }
+            });
+            $('#round-settings-modal').modal('hide');
+          },
           goToUser: function(user) {
             console.log(user)
           },
           edit: function(result) {
             if (this.hasPermission && options.enableEntry) {
-              this.current = result;
+              this.current = $.extend({}, result);
               this.$nextTick(function() {
                 $('.input-panel-result input').eq(0).focus();
               });
@@ -373,7 +408,7 @@
                   var num = round.format == 'a' ? 2 : 1;
                   var passed = false;
                   for (var i = 1; i <= num; i++) {
-                    if (that['value' + i] / 100 < round.cut_off) {
+                    if (that.result['value' + i] > 0 && that.result['value' + i] / 100 < round.cut_off) {
                       passed = true;
                       break;
                     }
@@ -384,11 +419,6 @@
               },
               save: function() {
                 var that = this;
-                that.result.value1 = that.value1;
-                that.result.value2 = that.value2;
-                that.result.value3 = that.value3;
-                that.result.value4 = that.value4;
-                that.result.value5 = that.value5;
                 calculateAverage(that.result);
                 store.dispatch('UPDATE_RESULT', that.result);
                 ws.send({

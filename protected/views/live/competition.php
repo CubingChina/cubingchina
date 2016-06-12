@@ -99,8 +99,41 @@
       <input-panel :result.sync="current"></input-panel>
     </div>
     <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}}">
+      <div tabindex="-1" id="round-settings-modal" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="form-group">
+                <label><?php echo Yii::t('Schedule', 'Cut Off'); ?></label>
+                <input type="tel" class="form-control" id="cut_off" v-model="cut_off">
+              </div>
+              <div class="form-group">
+                <label><?php echo Yii::t('Schedule', 'Time Limit'); ?></label>
+                <input type="tel" class="form-control" id="time_limit" v-model="time_limit">
+              </div>
+              <div class="form-group">
+                <label><?php echo Yii::t('Schedule', 'Number'); ?></label>
+                <input type="tel" class="form-control" id="number" v-model="number">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
+              <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="clearfix">
-        <h4 class="pull-left">{{eventName}} - {{roundName}}</h4>
+        <h4 class="pull-left">
+          {{eventName}} - {{roundName}}
+          <button type="button"
+            class="btn btn-sm btn-warning no-mr"
+            v-if="hasPermission && options.enableEntry"
+            @click="showRoundSettings"
+          >
+            <i class="fa fa-gear"></i>
+          </button>
+        </h4>
         <div class="pull-right event-round-area">
           <select @change="changeEventRound" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
@@ -227,7 +260,7 @@
         <label><?php echo Yii::t('common', 'Results'); ?></label>
         <div class="input-panel-result">
           <result-input v-for="i in inputNum"
-            :value.sync="$data['value' + (i + 1)]"
+            :value.sync="result['value' + (i + 1)]"
             :index="i"
           ></result-input>
         </div>
