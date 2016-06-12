@@ -34,6 +34,9 @@ class Registration extends ActiveRecord {
 	const PASSPORT_TYPE_PASSPORT = 2;
 	const PASSPORT_TYPE_OTHER = 3;
 
+	const AVATAR_TYPE_SUBMMITED = 0;
+	const AVATAR_TYPE_NOW = 1;
+
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
 
@@ -57,6 +60,18 @@ class Registration extends ActiveRecord {
 			->group('FROM_UNIXTIME(r.date, "%k")')
 			->queryAll();
 		return $data;
+	}
+
+	public static function getAvatarTypes($competition) {
+		switch ($competition->require_avatar) {
+			case Competition::REQUIRE_AVATAR_ACA:
+				return array(
+					self::AVATAR_TYPE_SUBMMITED=>Yii::t('Registration', 'I have submitted my photo to ACA before and I do not need to change my photo.'),
+					self::AVATAR_TYPE_NOW=>Yii::t('Registration', 'I have submitted my photo to ACA before and now I want to change it. / I have not submitted my photo before.'),
+				);
+			default:
+				return array();
+		}
 	}
 
 	public static function getPassportTypes() {
@@ -191,6 +206,21 @@ class Registration extends ActiveRecord {
 		}
 		if (!empty($this->repeatPassportNumber) && $this->passport_number != $this->repeatPassportNumber) {
 			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
+		}
+	}
+
+	public function checkAvatarType() {
+		switch ($this->competition->require_avatar) {
+			case Competition::REQUIRE_AVATAR_ACA:
+				if ($this->avatar_type == self::AVATAR_TYPE_NOW) {
+					if ($this->user->avatar == null) {
+						$this->avatar_type = null;
+						$this->addError('avatar_type', '');
+					} else {
+						$this->avatar_id = $this->user->avatar_id;
+					}
+				}
+				break;
 		}
 	}
 
@@ -332,8 +362,18 @@ class Registration extends ActiveRecord {
 					),
 					'type'=>'raw', 
 					'value'=>'date("Y-m-d", $data->user->birthday)', 
-				)
+				),
 			));
+			if ($this->competition->require_avatar != Competition::REQUIRE_AVATAR_NONE) {
+				array_splice($columns, 5, 0, array(
+					array(
+						'name'=>'avatar_type',
+						'header'=>Yii::t('common', 'Photo'),
+						'type'=>'raw', 
+						'value'=>'$data->getRegistrationAvatar()', 
+					)
+				));
+			}
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		$userLink = $isAdmin
@@ -402,6 +442,15 @@ class Registration extends ActiveRecord {
 			),
 		), $ipColumn);
 		return $columns;
+	}
+
+	public function getRegistrationAvatar() {
+		switch ($this->avatar_type) {
+			case self::AVATAR_TYPE_SUBMMITED:
+				return Yii::t('common', 'Submitted');
+			case self::AVATAR_TYPE_NOW:
+				return $this->avatar->img;
+		}
 	}
 
 	public function getCommentsButton() {
@@ -535,7 +584,7 @@ class Registration extends ActiveRecord {
 	 */
 	public function rules() {
 		$rules = array(
-			array('location_id, competition_id, user_id, events, date', 'required'),
+			array('competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, passport_number', 'length', 'max'=>20),
 			array('events', 'length', 'max'=>512),
@@ -550,6 +599,9 @@ class Registration extends ActiveRecord {
 			$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
 			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
 		}
+		if ($this->competition_id > 0 && $this->competition->require_avatar) {
+			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
+		}
 		return $rules;
 	}
 
@@ -563,6 +615,7 @@ class Registration extends ActiveRecord {
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
+			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
 			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
 		);
 	}

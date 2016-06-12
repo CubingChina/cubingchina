@@ -65,15 +65,39 @@
       ); ?>
     </div>
     <?php endif; ?>
+    <?php if ($competition->require_avatar): ?>
+    <div class="bg-info important-border">
+      <p>
+        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: A photo is needed to finish your registration.'); ?>
+      </p>
       <?php echo Html::formGroup(
-        $model, 'comments', array(),
-        $form->labelEx($model, 'comments'),
-        $form->textArea($model, 'comments', array(
-          'class'=>'form-control',
-          'rows'=>4,
+        $model, 'avatar_type', array(),
+        $form->labelEx($model, 'avatar_type', array(
+          'label'=>Yii::t('Registration', 'Please choose from the options listed below.'),
         )),
-        $form->error($model, 'comments', array('class'=>'text-danger'))
+        $form->dropDownList($model, 'avatar_type', Registration::getAvatarTypes($competition), array(
+          'prompt'=>'',
+          'class'=>'form-control',
+          'options'=>array(
+            Registration::AVATAR_TYPE_NOW=>array(
+              'disabled'=>$this->user->avatar == null,
+            ),
+          ),
+        )),
+        $form->error($model, 'avatar_type', array('class'=>'text-danger')),
+        CHtml::link(Yii::t('common', 'Upload Now'), array('/user/edit'))
       ); ?>
+    </div>
+    <?php endif; ?>
+    <?php echo Html::formGroup(
+      $model, 'comments', array(),
+      $form->labelEx($model, 'comments'),
+      $form->textArea($model, 'comments', array(
+        'class'=>'form-control',
+        'rows'=>4,
+      )),
+      $form->error($model, 'comments', array('class'=>'text-danger'))
+    ); ?>
     <button type="submit" class="btn btn-theme" id="submit-button"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
 </div>

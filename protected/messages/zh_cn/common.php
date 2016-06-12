@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Submitted' => '已提交',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小时',
@@ -175,6 +176,7 @@ return array (
   'Pending' => '待审核',
   'Personal Page' => '选手主页',
   'Persons' => '选手',
+  'Photo' => '照片',
   'Please <b>DO NOT</b> repeat registration!' => '<span class="large">请勿重复注册！</span>',
   'Please choose a payment channel.' => '请选择一个支付渠道：',
   'Please choose the correct English name below' => '请在下面选择正确的英文名',
@@ -230,6 +232,7 @@ return array (
   'Unknown' => '未知',
   'Unpaid' => '未付',
   'Upcoming Competitions' => '近期赛事',
+  'Upload Now' => '现在去上传',
   'Upload failed, please contact the administrator' => '上传失败，请联系管理员',
   'Verify Code' => '验证码',
   'WCA Competition' => 'WCA赛事',

@@ -49,6 +49,9 @@ class Competition extends ActiveRecord {
 	const LOCAL_TYPE_CITY = 2;
 	const LOCAL_TYPE_MAINLAND = 3;
 
+	const REQUIRE_AVATAR_NONE = 0;
+	const REQUIRE_AVATAR_ACA = 1;
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
