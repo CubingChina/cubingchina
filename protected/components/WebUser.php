@@ -4,8 +4,8 @@ class WebUser extends CWebUser {
 	const STATE_KEY_PREFIX = 'user';
 
 	public function init() {
-		parent::init();
 		$this->setStateKeyPrefix(self::STATE_KEY_PREFIX);
+		parent::init();
 	}
 
 	public function checkAccess($operation, $params = array()) {
