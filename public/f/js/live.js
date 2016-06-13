@@ -501,35 +501,32 @@
                 }
               }
             },
-            filters: {
-              result: {
-                read: function(value) {
-                  return decodeResult(value, state.params.event);
-                },
-                write: function(value) {
-                  return encodeResult(value, state.params.event);
-                }
-              }
-            },
             template: '#input-panel-template',
             components: {
               'result-input': {
                 props: ['value', 'index'],
                 data: function() {
                   return {
-                    display: '',
+                    tried: '',
+                    solved: '',
+                    display: ''
+                  }
+                },
+                vuex: {
+                  getters: {
+                    event: function(state) {
+                      return state.params.event;
+                    }
                   }
                 },
                 watch: {
                   display: function(display, oldDisplay) {
                     if (display != oldDisplay) {
-                      this.value = encodeResult(display, this.$store.state.params.event);
+                      this.value = encodeResult(display, this.event, false, this.tried, this.solved);
                     }
                   },
-                  value: function(value, oldValue) {
-                    if (value != oldValue) {
-                      this.display = decodeResult(value, this.$store.state.params.event);
-                    }
+                  '$parent.result.id': function() {
+                    this.display = decodeResult(this.value, this.event);
                   }
                 },
                 methods: {
@@ -541,14 +538,12 @@
                     var minute = match[1] ? parseInt(match[1]) : 0;
                     var second = match[2] ? parseInt(match[2]) : 0;
                     var msecond = match[3] ? parseInt(match[3]) * (match[3].length == 1 ? 10 : 1) : 0;
-                    return decodeResult((minute * 60 + second) * 100 + msecond, state.params.event);
+                    return decodeResult((minute * 60 + second) * 100 + msecond, this.event);
                   },
-                  focus: function(e, name) {
-                    this.$parent.input = name;
+                  focus: function(e) {
+                    this.$parent.input = this.index;
                   },
                   blur: function(e) {
-                    e.target.value = this.formatResult(e.target.value);
-                    this.value = encodeResult(e.target.value);
                     this.$parent.lastInput = null;
                   },
                   keydown: function(e) {
@@ -558,23 +553,20 @@
                       //D,/ pressed
                       case 68:
                       case 111:
-                        this.value = -1;
-                        e.target.value = 'DNF'
+                        this.display = 'DNF';
                         break;
                       //S,* pressed
                       case 106:
                       case 83:
-                        this.value = -2;
-                        e.target.value = 'DNS'
+                        this.display = 'DNS';
                         break;
                       case 8:
                       case 109:
                         if (this.lastInput != this.input) {
-                          this.value = 0;
-                          e.target.value = '';
+                          this.display = '';
                           this.$parent.lastInput = this.$parent.input;
                         } else {
-                          value = value.replace(/^0./, '');
+                          value = value.replace(/^0.0*/, '');
                           value = value.replace(/:|\./g, '');
                           if (this.$parent.lastInput != this.$parent.input || value == 'DNF' || value == 'DNS') {
                             value = '';
@@ -582,7 +574,10 @@
                           value = value.slice(0, value.length - 1);
                           switch (value.length) {
                             case 1:
+                              value = '0.0' + value;
+                              break;
                             case 2:
+                              value = '0.' + value;
                               break;
                             case 3:
                               value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
@@ -597,7 +592,7 @@
                               value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
                               break;
                           }
-                          e.target.value = value;
+                          this.display = value;
                         }
                         break;
                       case 107:
@@ -653,7 +648,10 @@
                         value += code - 48;
                         switch (value.length) {
                           case 1:
+                            value = '0.0' + value;
+                            break;
                           case 2:
+                            value = '0.' + value;
                             break;
                           case 3:
                             value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
@@ -668,7 +666,7 @@
                             value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
                             break;
                         }
-                        e.target.value = value;
+                        this.display = value;
                         if (this.$parent.lastInput != this.$parent.input) {
                           this.$parent.lastInput = this.$parent.input;
                         }
@@ -825,7 +823,7 @@
       result.average = 0;
     }
   }
-  function encodeResult(result, event, isAverage) {
+  function encodeResult(result, event, isAverage, tried, solved) {
     if (result === 'DNF') {
       return -1;
     }
@@ -841,7 +839,19 @@
       }
       return parseInt(result);
     } else if (event === '333mbf') {
-
+      var missed = tried - solved;
+      var difference = solved - missed;
+      if (missed > solved || solved < 2) {
+        return -1;
+      }
+      var match = result.match(/(?:(\d+)?:)?(\d{1,2})/);
+      if (!match) {
+        return 0;
+      }
+      var minute = match[1] ? parseInt(match[1]) : 0;
+      var second = parseInt(match[2]);
+      second = Math.min(minute * 60 + second, Math.min(6, tried) * 600);
+      return (99 - difference) * 1e7 + second * 100 + missed;
     } else {
       var match = result.match(/(?:(\d+)?:)?(\d{1,2})\.(\d{1,2})/);
       if (!match) {
@@ -855,15 +865,15 @@
   }
   function decodeResult(result, event) {
     var time;
+    if (result == 0 || result == undefined) {
+      return '';
+    }
     result = parseInt(result);
     if (result == -1) {
       return 'DNF';
     }
     if (result == -2) {
       return 'DNS';
-    }
-    if (result == 0) {
-      return '';
     }
     if (event === '333fm') {
       if (result > 1000) {

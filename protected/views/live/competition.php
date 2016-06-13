@@ -235,17 +235,20 @@
       <div class="panel-body">
         <label for="input-panel-name"><?php echo Yii::t('common', 'Competitor'); ?></label> {{competitor && competitor.name}}
         <div class="input-wrapper">
-          <input type="text"
-            id="input-panel-name"
-            class="form-control"
-            placeholder="请输入编号或姓名"
-            v-model="searchText"
-            @keydown.enter="enter"
-            @keydown.down="down"
-            @keydown.up="up"
-            @focus="searching = true"
-            @blur="searching = false"
-          >
+          <div class="input-group">
+            <span class="input-group-addon">No.</span>
+            <input type="text"
+              id="input-panel-name"
+              class="form-control"
+              placeholder="请输入编号或姓名"
+              v-model="searchText"
+              @keydown.enter="enter"
+              @keydown.down="down"
+              @keydown.up="up"
+              @focus="searching = true"
+              @blur="searching = false"
+            >
+          </div>
           <ul class="competitors list-group" :class="{hide: !searching}">
             <li v-for="result in competitors"
               class="list-group-item"
@@ -277,9 +280,25 @@
 <template id="result-input-template">
   <div class="input-group">
     <span class="input-group-addon">{{index + 1}}.</span>
+    <template v-if="event == '333mbf'">
+      <input type="tel" class="form-control"
+        v-model="tried"
+        @focus="focus"
+        @blur="blur"
+        :disabled="$parent.isDisabled(index)"
+        placeholder="<?php echo Yii::t('Results', 'Tried'); ?>"
+      >
+      <input type="tel" class="form-control"
+        v-model="solved"
+        @focus="focus"
+        @blur="blur"
+        :disabled="$parent.isDisabled(index)"
+        placeholder="<?php echo Yii::t('Results', 'Solved'); ?>"
+      >
+    </template>
     <input class="form-control" type="tel"
       v-model="display"
-      @focus="focus($event)"
+      @focus="focus"
       @blur="blur"
       @keydown.prevent="keydown"
       :disabled="$parent.isDisabled(index)"
