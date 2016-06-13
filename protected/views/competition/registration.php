@@ -85,7 +85,7 @@
           ),
         )),
         $form->error($model, 'avatar_type', array('class'=>'text-danger')),
-        CHtml::link(Yii::t('common', 'Upload Now'), array('/user/edit'))
+        CHtml::link(Yii::t('common', 'Upload Now'), array('/user/profile'))
       ); ?>
     </div>
     <?php endif; ?>
