@@ -2949,3 +2949,53 @@ table.concise-schedule {
 .live .page-heading {
   margin-bottom: 0;
 }
+.live .result-input-wrapper {
+  padding: 0;
+}
+.live .result-input-wrapper .result-input {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  z-index: -1;
+}
+@font-face {
+  font-family: 'lcd';
+  src: url('../fonts/lcd.ttf?v=4.5.0');
+  font-weight: bold;
+  font-style: normal;
+}
+.live .result-input-wrapper label {
+  cursor: pointer;
+  display: block;
+  text-align: right;
+  font-family: lcd;
+  font-size: 18px;
+  height: 32px;
+  line-height: 32px;
+  padding-right: 6px;
+  margin-bottom: 0;
+  color: #000;
+}
+.live .result-input-wrapper.active label {
+  background-color: rgb(93, 172, 129);
+  color: #fff;
+}
+.live .result-input-wrapper label .number {
+  color: rgb(136, 139, 131);
+}
+.live .result-input-wrapper.active label .number {
+  color: rgb(79, 114, 108);
+}
+.live .result-input-wrapper label .number.active {
+  color: inherit;
+}
+.live .result-input-wrapper.disabled label {
+  background-color: #dbdada;
+}
+.live .result-input-wrapper label .penalty {
+  letter-spacing: 6px;
+  color: inherit;
+}

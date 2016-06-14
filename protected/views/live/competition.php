@@ -268,6 +268,7 @@
           ></result-input>
         </div>
         <button type="button"
+          class="btn btn-md btn-success"
           @click="save"
           @keydown.enter.prevent="save"
           :disabled="result == null || result.id == null"
@@ -296,12 +297,30 @@
         placeholder="<?php echo Yii::t('Results', 'Solved'); ?>"
       >
     </template>
-    <input class="form-control" type="tel"
-      v-model="display"
-      @focus="focus"
-      @blur="blur"
-      @keydown.prevent="keydown"
-      :disabled="$parent.isDisabled(index)"
+    <div class="result-input-wrapper form-control"
+      :class="{active: index == $parent.currentIndex, disabled: $parent.isDisabled(index)}"
     >
+      <input class="result-input" type="tel"
+        id="result-input-{{index}}"
+        v-model="time"
+        @focus="focus"
+        @blur="blur"
+        @keydown.prevent="keydown"
+        :disabled="$parent.isDisabled(index)"
+      >
+      <label for="result-input-{{index}}">
+        <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
+          <span class="number" :class="{active: time.length > 5}">{{time.charAt(time.length - 6) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}">{{time.charAt(time.length - 5) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}">:</span>
+          <span class="number" :class="{active: time.length > 3}">{{time.charAt(time.length - 4) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}">{{time.charAt(time.length - 3) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}">.</span>
+          <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
+          <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
+        </span>
+        <span class="penalty" v-else>{{time}}</span>
+      </label>
+    </div>
   </div>
 </template>

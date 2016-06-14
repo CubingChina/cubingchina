@@ -335,8 +335,8 @@
             props: ['result'],
             data: function() {
               return {
-                lastInput: null,
-                input: null,
+                lastIndex: null,
+                currentIndex: null,
                 competitor: {
                   name: ''
                 },
@@ -427,6 +427,7 @@
                   result: that.result
                 });
                 that.result = {};
+                $('#input-panel-name').focus();
               },
               filterCompetitors: function(result) {
                 var that = this;
@@ -509,7 +510,7 @@
                   return {
                     tried: '',
                     solved: '',
-                    display: ''
+                    time: ''
                   }
                 },
                 vuex: {
@@ -520,85 +521,77 @@
                   }
                 },
                 watch: {
-                  display: function(display, oldDisplay) {
-                    if (display != oldDisplay) {
-                      this.value = encodeResult(display, this.event, false, this.tried, this.solved);
+                  time: function(time, oldTime) {
+                    var that = this;
+                    var round = eventRounds[state.params.event][state.params.round];
+                    if (time != oldTime) {
+                      that.value = encodeResult(that.formatTime(time), that.event, false, that.tried, that.solved);
+                      if (round.time_limit > 0 && that.value / 100 > round.time_limit) {
+                        that.time = 'DNF';
+                      }
                     }
                   },
                   '$parent.result.id': function() {
-                    this.display = decodeResult(this.value, this.event);
+                    var that = this;
+                    var time = decodeResult(that.value, that.event);
+                    if (that.event === '333mbf') {
+
+                    } else {
+                      that.time = time.replace(/[:\.]/g, '');
+                    }
                   }
                 },
                 methods: {
-                  formatResult: function(value) {
-                    if (value == 'DNF' || value == 'DNS' || value == '') {
-                      return value;
+                  formatTime: function(time) {
+                    if (time == 'DNF' || time == 'DNS' || time == '') {
+                      return time;
                     }
-                    var match = value.match(/(?:(\d+)?:)?(?:(\d{1,2})\.)?(\d{1,})?/);
-                    var minute = match[1] ? parseInt(match[1]) : 0;
-                    var second = match[2] ? parseInt(match[2]) : 0;
-                    var msecond = match[3] ? parseInt(match[3]) * (match[3].length == 1 ? 10 : 1) : 0;
-                    return decodeResult((minute * 60 + second) * 100 + msecond, this.event);
+                    var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
+                    var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
+                    var msecond = parseInt(time.slice(-2));
+                    return [
+                      minute ? minute + ':' : '',
+                      second + '.',
+                      msecond
+                    ].join('');
                   },
                   focus: function(e) {
-                    this.$parent.input = this.index;
+                    this.$parent.currentIndex = this.index;
                   },
                   blur: function(e) {
-                    this.$parent.lastInput = null;
+                    this.$parent.currentIndex = null;
+                    this.$parent.lastIndex = null;
                   },
                   keydown: function(e) {
                     var code = e.which;
-                    var value = e.target.value;
+                    var time = this.time;
                     switch (code) {
                       //D,/ pressed
                       case 68:
                       case 111:
-                        this.display = 'DNF';
+                        this.time = 'DNF';
                         break;
                       //S,* pressed
                       case 106:
                       case 83:
-                        this.display = 'DNS';
+                        this.time = 'DNS';
                         break;
                       case 8:
                       case 109:
-                        if (this.lastInput != this.input) {
-                          this.display = '';
-                          this.$parent.lastInput = this.$parent.input;
+                        if (this.lastIndex != this.input) {
+                          this.time = '';
+                          this.$parent.lastIndex = this.$parent.currentIndex;
                         } else {
-                          value = value.replace(/^0.0*/, '');
-                          value = value.replace(/:|\./g, '');
-                          if (this.$parent.lastInput != this.$parent.input || value == 'DNF' || value == 'DNS') {
-                            value = '';
+                          if (this.$parent.lastIndex != this.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
+                            time = '';
                           }
-                          value = value.slice(0, value.length - 1);
-                          switch (value.length) {
-                            case 1:
-                              value = '0.0' + value;
-                              break;
-                            case 2:
-                              value = '0.' + value;
-                              break;
-                            case 3:
-                              value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
-                              break;
-                            case 4:
-                              value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
-                              break;
-                            case 5:
-                              value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
-                              break;
-                            case 6:
-                              value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
-                              break;
-                          }
-                          this.display = value;
+                          this.time = time.slice(0, time.length - 1);
                         }
                         break;
                       case 107:
                       case 9:
                         if (e.shiftKey || code == 107) {
-                          var that = $(e.target).parent();
+                          var that = $(e.target).parent().parent();
                           var index = that.index();
                           if (index > 0) {
                             that.prev().find('input').focus();
@@ -606,7 +599,7 @@
                           break;
                         }
                       case 13:
-                        var that = $(e.target).parent();
+                        var that = $(e.target).parent().parent();
                         var index = that.index();
                         if (index < this.$parent.inputNum - 1) {
                           that.next().find('input').focus();
@@ -637,38 +630,16 @@
                       case 55:
                       case 56:
                       case 57:
-                        if (value.length >= 8) {
+                        if (time.length >= 6) {
                           break;
                         }
-                        value = value.replace(/^0./, '');
-                        value = value.replace(/:|\./g, '');
-                        if (this.$parent.lastInput != this.$parent.input || value == 'DNF' || value == 'DNS') {
-                          value = '';
+                        if (this.$parent.lastIndex != this.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
+                          time = '';
                         }
-                        value += code - 48;
-                        switch (value.length) {
-                          case 1:
-                            value = '0.0' + value;
-                            break;
-                          case 2:
-                            value = '0.' + value;
-                            break;
-                          case 3:
-                            value = value.charAt(0) + '.' + value.charAt(1) + value.charAt(2);
-                            break;
-                          case 4:
-                            value = value.charAt(0) + value.charAt(1) + '.' + value.charAt(2) + value.charAt(3);
-                            break;
-                          case 5:
-                            value = value.charAt(0) + ':' + value.charAt(1) + value.charAt(2) + '.' + value.charAt(3) + value.charAt(4);
-                            break;
-                          case 6:
-                            value = value.charAt(0) + value.charAt(1) + ':' + value.charAt(2) + value.charAt(3) + '.' + value.charAt(4) + value.charAt(5);
-                            break;
-                        }
-                        this.display = value;
-                        if (this.$parent.lastInput != this.$parent.input) {
-                          this.$parent.lastInput = this.$parent.input;
+                        time += code - 48;
+                        this.time = time;
+                        if (this.$parent.lastIndex != this.$parent.currentIndex) {
+                          this.$parent.lastIndex = this.$parent.currentIndex;
                         }
                         break;
                     }
