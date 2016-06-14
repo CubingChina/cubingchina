@@ -310,12 +310,12 @@
       >
       <label for="result-input-{{index}}">
         <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
-          <span class="number" :class="{active: time.length > 5}">{{time.charAt(time.length - 6) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}">{{time.charAt(time.length - 5) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}">:</span>
-          <span class="number" :class="{active: time.length > 3}">{{time.charAt(time.length - 4) || 0}}</span>
-          <span class="number" :class="{active: time.length > 2}">{{time.charAt(time.length - 3) || 0}}</span>
-          <span class="number" :class="{active: time.length > 2}">.</span>
+          <span class="number" :class="{active: time.length > 5}" v-if="event != '333fm'">{{time.charAt(time.length - 6) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm'">{{time.charAt(time.length - 5) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm'">:</span>
+          <span class="number" :class="{active: time.length > 3}" v-if="event != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">.</span>
           <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
           <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
         </span>

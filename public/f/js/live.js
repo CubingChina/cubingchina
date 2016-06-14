@@ -533,7 +533,7 @@
                   },
                   '$parent.result.id': function() {
                     var that = this;
-                    var time = decodeResult(that.value, that.event);
+                    var time = decodeResult(that.value, that.event) + '';
                     if (that.event === '333mbf') {
 
                     } else {
@@ -543,7 +543,7 @@
                 },
                 methods: {
                   formatTime: function(time) {
-                    if (time == 'DNF' || time == 'DNS' || time == '') {
+                    if (time == 'DNF' || time == 'DNS' || time == '' || this.event == '333fm') {
                       return time;
                     }
                     var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
@@ -564,47 +564,44 @@
                   },
                   keydown: function(e) {
                     var code = e.which;
-                    var time = this.time;
+                    var that = this;
+                    var time = that.time;
                     switch (code) {
                       //D,/ pressed
                       case 68:
                       case 111:
-                        this.time = 'DNF';
+                        that.time = 'DNF';
                         break;
                       //S,* pressed
                       case 106:
                       case 83:
-                        this.time = 'DNS';
+                        that.time = 'DNS';
                         break;
                       case 8:
                       case 109:
-                        if (this.lastIndex != this.input) {
-                          this.time = '';
-                          this.$parent.lastIndex = this.$parent.currentIndex;
-                        } else {
-                          if (this.$parent.lastIndex != this.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
-                            time = '';
-                          }
-                          this.time = time.slice(0, time.length - 1);
+                        if (that.$parent.lastIndex != that.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
+                          time = '';
                         }
+                        that.$parent.lastIndex = that.$parent.currentIndex;
+                        that.time = time.slice(0, time.length - 1);
                         break;
                       case 107:
                       case 9:
                         if (e.shiftKey || code == 107) {
-                          var that = $(e.target).parent().parent();
-                          var index = that.index();
+                          var group = $(e.target).parent().parent();
+                          var index = group.index();
                           if (index > 0) {
-                            that.prev().find('input').focus();
+                            group.prev().find('input').focus();
                           }
                           break;
                         }
                       case 13:
-                        var that = $(e.target).parent().parent();
-                        var index = that.index();
-                        if (index < this.$parent.inputNum - 1) {
-                          that.next().find('input').focus();
+                        var group = $(e.target).parent().parent();
+                        var index = group.index();
+                        if (index < that.$parent.inputNum - 1) {
+                          group.next().find('input').focus();
                         } else {
-                          that.parent().next().focus();
+                          group.parent().next().focus();
                         }
                         break;
                       //small keyboard
@@ -633,14 +630,20 @@
                         if (time.length >= 6) {
                           break;
                         }
-                        if (this.$parent.lastIndex != this.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
+                        if (that.event === '333fm' && time.length >= 2) {
+                          break;
+                        }
+                        if (that.$parent.lastIndex != that.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
                           time = '';
                         }
                         time += code - 48;
-                        this.time = time;
-                        if (this.$parent.lastIndex != this.$parent.currentIndex) {
-                          this.$parent.lastIndex = this.$parent.currentIndex;
+                        that.time = time;
+                        if (that.$parent.lastIndex != that.$parent.currentIndex) {
+                          that.$parent.lastIndex = that.$parent.currentIndex;
                         }
+                        break;
+                      default:
+                        e.preventDefault();
                         break;
                     }
                   }
@@ -750,7 +753,7 @@
     var worst = 0;
     var hasAverage = true;
     var i, value, DNFCount = 0, zeroCount = 0, sum = 0;
-    var num = result.format == 'a' ? 5 : (result.format == '3' ? 3 : parseInt(result.format));
+    var num = result.format == 'a' ? 5 : (result.format == 'm' ? 3 : parseInt(result.format));
     for (i = 1; i <= num; i++) {
       value = result['value' + i];
       sum += value;
@@ -784,6 +787,9 @@
     }
     if (hasAverage) {
       if (result.format == 'm' || result.format == '3') {
+        if (result.event === '333fm') {
+          sum *= 100;
+        }
         result.average = Math.round(sum / 3);
       } else {
         result.average = Math.round((sum - best - worst) / 3);
