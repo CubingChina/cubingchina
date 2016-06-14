@@ -81,6 +81,7 @@ class LiveClient {
 
 	public function send($msg) {
 		$msg = json_encode($msg);
+		Yii::log($msg, 'ws', 'respond');
 		return $this->conn->send($msg);
 	}
 }
