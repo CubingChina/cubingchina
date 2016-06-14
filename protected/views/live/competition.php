@@ -271,7 +271,7 @@
           id="save"
           class="btn btn-md btn-success"
           @click="save"
-          @keydown.enter.prevent="save"
+          @keydown.prevent="keydown"
           :disabled="result == null || result.id == null"
         ><?php echo Yii::t('live', 'Save'); ?></button>
       </div>

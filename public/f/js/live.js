@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
+  var ws = window._ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -421,6 +421,23 @@
                   return !(passed || index < num);
                 }
                 return false;
+              },
+              keydown: function(e) {
+                var code = e.which;
+                var that = this;
+                switch (code) {
+                  case 107:
+                  case 9:
+                    if (e.shiftKey || code == 107) {
+                      $('.result-input:not([disabled])').last().focus();
+                    } else {
+                      $('.result-input:not([disabled])').first().focus();
+                    }
+                    break;
+                  case 13:
+                    that.save();
+                    break;
+                }
               },
               save: function() {
                 var that = this;
