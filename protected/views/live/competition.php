@@ -95,10 +95,10 @@
 
 <template id="result-template">
   <div class="row">
-    <div class="col-md-3" v-if="hasPermission" v-show="options.enableEntry">
+    <div class="col-md-3 col-sm-4" v-if="enableEntry">
       <input-panel :result.sync="current"></input-panel>
     </div>
-    <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}}">
+    <div class="col-md-{{enableEntry ? 9 : 12}} col-sm-{{enableEntry ? 8 : 12}}">
       <div tabindex="-1" id="round-settings-modal" class="modal fade">
         <div class="modal-dialog">
           <div class="modal-content">

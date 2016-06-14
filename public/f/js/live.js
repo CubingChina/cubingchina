@@ -219,6 +219,11 @@
             number: 0
           }
         },
+        computed: {
+          enableEntry: function() {
+            return this.hasPermission && this.options.enableEntry;
+          }
+        },
         watch: {
           '$store.state.params': function(params) {
             var that = this;

@@ -836,6 +836,12 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a {
   border-bottom: 1px solid #3e6a8f;
   padding: 8px 20px;
 }
+.main-nav .nav .nav-item .dropdown-menu a:hover,
+body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
+  background: #3e6a8f;
+  color: #fff;
+  padding-left: 24px;
+}
 .main-nav.colorful .nav-item a:hover,
 .main-nav.colorful .nav-item a:focus {
   background: #202020;
@@ -844,19 +850,13 @@ body.competition-index .main-nav .nav .nav-item .dropdown-menu a {
   background: #202020;
 }
 .main-nav.colorful .nav-item.open a {
-  background: #202020 !important;
+  background: #202020;
 }
 .main-nav.colorful .nav-item .dropdown-menu a {
   border-bottom: 1px solid #2b2b2b;
 }
 .main-nav.colorful .nav-item .dropdown-menu a:hover {
   background: #2b2b2b;
-}
-.main-nav .nav .nav-item .dropdown-menu a:hover,
-body.competition-index .main-nav .nav .nav-item .dropdown-menu a:hover {
-  background: #3e6a8f;
-  color: #fff;
-  padding-left: 24px;
 }
 /* ======= Footer ======= */
  .footer {
@@ -2975,9 +2975,17 @@ table.concise-schedule {
   font-size: 18px;
   height: 32px;
   line-height: 32px;
-  padding-right: 6px;
+  padding: 0 6px;
   margin-bottom: 0;
   color: #000;
+  font-size: 0;
+  letter-spacing: 2px;
+}
+.live .result-input-wrapper label.text-center {
+  text-align: center;
+}
+.live .result-input-wrapper label.text-left {
+  text-align: left;
 }
 .live .result-input-wrapper.active label {
   background-color: rgb(93, 172, 129);
@@ -2985,6 +2993,7 @@ table.concise-schedule {
 }
 .live .result-input-wrapper label .number {
   color: rgb(136, 139, 131);
+  font-size: 18px;
 }
 .live .result-input-wrapper.active label .number {
   color: rgb(79, 114, 108);
@@ -2996,6 +3005,6 @@ table.concise-schedule {
   background-color: #dbdada;
 }
 .live .result-input-wrapper label .penalty {
-  letter-spacing: 6px;
   color: inherit;
+  font-size: 18px;
 }
