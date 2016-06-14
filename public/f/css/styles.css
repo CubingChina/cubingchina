@@ -2981,6 +2981,9 @@ table.concise-schedule {
   font-size: 0;
   letter-spacing: 2px;
 }
+.live .result-input-wrapper label span {
+  font-size: 18px;
+}
 .live .result-input-wrapper label.text-center {
   text-align: center;
 }
@@ -2993,7 +2996,6 @@ table.concise-schedule {
 }
 .live .result-input-wrapper label .number {
   color: rgb(136, 139, 131);
-  font-size: 18px;
 }
 .live .result-input-wrapper.active label .number {
   color: rgb(79, 114, 108);
@@ -3006,5 +3008,4 @@ table.concise-schedule {
 }
 .live .result-input-wrapper label .penalty {
   color: inherit;
-  font-size: 18px;
 }

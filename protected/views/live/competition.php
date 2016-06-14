@@ -304,7 +304,9 @@
           </label>
         </div>
         <div class="result-input-wrapper col-xs-2":class="{disabled: $parent.isDisabled(index)}">
-          <label class="text-center">/</label>
+          <label class="text-center">
+            <span>/</span>
+          </label>
         </div>
         <div class="result-input-wrapper col-xs-5"
           :class="{active: index == $parent.currentIndex && subIndex == 1, disabled: $parent.isDisabled(index)}"
