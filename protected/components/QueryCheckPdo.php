@@ -91,12 +91,18 @@ class QueryCheckPdo extends PDO {
 		$now = time();
 		if ($now - $this->lastActiveTime > self::TIMEOUT) {
 			try {
-				$this->_pdo->query('SHOW STATUS')->execute();
+				$query = $this->_pdo->query('SHOW STATUS');
+				if ($query && is_object($query)) {
+					$query->execute();
+				} else {
+					throw new Exception('MySQL server has gone away');
+				}
 			} catch (Exception $e) {
-				if ($e->getCode() != 'HY000' || !stristr($e->getMessage(), 'server has gone away')) {
+				if ($e->getCode() != 'HY000' && !stristr($e->getMessage(), 'server has gone away')) {
 					throw $e;
 				}
 				$this->_pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
+				$this->_pdo->exec('SET NAMES utf8');
 				$this->lastActiveTime = $now;
 			}
 		}
