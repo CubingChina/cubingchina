@@ -268,6 +268,7 @@
           ></result-input>
         </div>
         <button type="button"
+          id="save"
           class="btn btn-md btn-success"
           @click="save"
           @keydown.enter.prevent="save"
@@ -282,40 +283,69 @@
   <div class="input-group">
     <span class="input-group-addon">{{index + 1}}.</span>
     <template v-if="event == '333mbf'">
-      <input type="tel" class="form-control"
-        v-model="tried"
-        @focus="focus"
-        @blur="blur"
-        :disabled="$parent.isDisabled(index)"
-        placeholder="<?php echo Yii::t('Results', 'Tried'); ?>"
-      >
-      <input type="tel" class="form-control"
-        v-model="solved"
-        @focus="focus"
-        @blur="blur"
-        :disabled="$parent.isDisabled(index)"
-        placeholder="<?php echo Yii::t('Results', 'Solved'); ?>"
-      >
+      <div class="form-control result-input-wrapper">
+        <div class="result-input-wrapper col-xs-5"
+          :class="{active: index == $parent.currentIndex && subIndex == 0, disabled: $parent.isDisabled(index)}"
+        >
+          <input class="result-input" type="tel"
+            id="result-input-solved-{{index}}"
+            v-model="solved"
+            @focus="focus(0)"
+            @blur="blur"
+            @keydown.prevent="keydown($event, 'solved')"
+            :disabled="$parent.isDisabled(index)"
+          >
+          <label for="result-input-solved-{{index}}">
+            <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
+              <span class="number" :class="{active: solved.length > 1}">{{solved.charAt(solved.length - 2) || 0}}</span>
+              <span class="number" :class="{active: solved.length > 0}">{{solved.charAt(solved.length - 1) || 0}}</span>
+            </span>
+            <span class="penalty" v-else>{{time}}</span>
+          </label>
+        </div>
+        <div class="result-input-wrapper col-xs-2":class="{disabled: $parent.isDisabled(index)}">
+          <label class="text-center">/</label>
+        </div>
+        <div class="result-input-wrapper col-xs-5"
+          :class="{active: index == $parent.currentIndex && subIndex == 1, disabled: $parent.isDisabled(index)}"
+        >
+          <input class="result-input" type="tel"
+            id="result-input-tried-{{index}}"
+            v-model="tried"
+            @focus="focus(1)"
+            @blur="blur"
+            @keydown.prevent="keydown($event, 'tried')"
+            :disabled="$parent.isDisabled(index)"
+          >
+          <label for="result-input-tried-{{index}}" class="text-left">
+            <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
+              <span class="number" :class="{active: tried.length > 1}">{{tried.charAt(tried.length - 2) || 0}}</span>
+              <span class="number" :class="{active: tried.length > 0}">{{tried.charAt(tried.length - 1) || 0}}</span>
+            </span>
+            <span class="penalty" v-else>{{time}}</span>
+          </label>
+        </div>
+      </div>
     </template>
     <div class="result-input-wrapper form-control"
-      :class="{active: index == $parent.currentIndex, disabled: $parent.isDisabled(index)}"
+      :class="{active: index == $parent.currentIndex && subIndex == 2, disabled: $parent.isDisabled(index)}"
     >
       <input class="result-input" type="tel"
         id="result-input-{{index}}"
         v-model="time"
-        @focus="focus"
+        @focus="focus(2)"
         @blur="blur"
-        @keydown.prevent="keydown"
+        @keydown.prevent="keydown($event, 'time')"
         :disabled="$parent.isDisabled(index)"
       >
-      <label for="result-input-{{index}}">
+      <label for="result-input-{{index}}" :class="{'text-center': event === '333mbf'}">
         <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
-          <span class="number" :class="{active: time.length > 5}" v-if="event != '333fm'">{{time.charAt(time.length - 6) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm'">{{time.charAt(time.length - 5) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm'">:</span>
+          <span class="number" :class="{active: time.length > 5}" v-if="event != '333fm' && event !='333mbf'">{{time.charAt(time.length - 6) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm' && event !='333mbf'">{{time.charAt(time.length - 5) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm' && event !='333mbf'">:</span>
           <span class="number" :class="{active: time.length > 3}" v-if="event != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
           <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
-          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">.</span>
+          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">{{event !='333mbf' ? '.' : ':'}}</span>
           <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
           <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
         </span>

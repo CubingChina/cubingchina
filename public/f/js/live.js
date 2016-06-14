@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + '/ws');
+  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -508,6 +508,7 @@
                 props: ['value', 'index'],
                 data: function() {
                   return {
+                    subIndex: 2,
                     tried: '',
                     solved: '',
                     time: ''
@@ -521,27 +522,47 @@
                   }
                 },
                 watch: {
-                  time: function(time, oldTime) {
-                    var that = this;
-                    var round = eventRounds[state.params.event][state.params.round];
-                    if (time != oldTime) {
-                      that.value = encodeResult(that.formatTime(time), that.event, false, that.tried, that.solved);
-                      if (round.time_limit > 0 && that.value / 100 > round.time_limit) {
-                        that.time = 'DNF';
-                      }
-                    }
+                  time: function() {
+                    this.calculateValue();
+                  },
+                  tried: function() {
+                    this.calculateValue();
+                  },
+                  solved: function() {
+                    this.calculateValue();
                   },
                   '$parent.result.id': function() {
                     var that = this;
-                    var time = decodeResult(that.value, that.event) + '';
+                    var time = decodeResult(that.value, that.event);
                     if (that.event === '333mbf') {
-
+                      that.subIndex = 0;
+                      if (time.indexOf('/') > -1) {
+                        var match = time.match(/^(\d+)\/(\d+) (.+)$/);
+                        that.solved = match[1];
+                        that.tried = match[2];
+                        that.time = match[3].replace(/[:\.]/g, '');
+                      } else {
+                        that.solved = that.tried = '';
+                        that.time = time;
+                      }
                     } else {
                       that.time = time.replace(/[:\.]/g, '');
+                      that.subIndex = 2;
                     }
                   }
                 },
                 methods: {
+                  calculateValue: function() {
+                    var that = this;
+                    var round = eventRounds[state.params.event][state.params.round];
+                    that.value = encodeResult(that.formatTime(that.time), that.event, false, that.tried, that.solved);
+                    if (round.time_limit > 0 && that.value / 100 > round.time_limit) {
+                      that.time = 'DNF';
+                    }
+                    if (that.event === '333fm' && that.value > 80) {
+                      that.time = 'DNF';
+                    }
+                  },
                   formatTime: function(time) {
                     if (time == 'DNF' || time == 'DNS' || time == '' || this.event == '333fm') {
                       return time;
@@ -549,23 +570,32 @@
                     var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
                     var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
                     var msecond = parseInt(time.slice(-2));
+                    if (this.event === '333mbf') {
+                      if (this.solved == '' || this.tried == '') {
+                        return '';
+                      }
+                      minute = second;
+                      second = msecond;
+                      msecond = 0;
+                    }
                     return [
                       minute ? minute + ':' : '',
                       second + '.',
                       msecond
                     ].join('');
                   },
-                  focus: function(e) {
+                  focus: function(subIndex) {
+                    this.subIndex = subIndex;
                     this.$parent.currentIndex = this.index;
                   },
                   blur: function(e) {
                     this.$parent.currentIndex = null;
                     this.$parent.lastIndex = null;
                   },
-                  keydown: function(e) {
+                  keydown: function(e, attr) {
                     var code = e.which;
                     var that = this;
-                    var time = that.time;
+                    var value = that[attr];
                     switch (code) {
                       //D,/ pressed
                       case 68:
@@ -579,29 +609,34 @@
                         break;
                       case 8:
                       case 109:
-                        if (that.$parent.lastIndex != that.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
-                          time = '';
+                        if (that.$parent.lastIndex != that.$parent.currentIndex || that.time == 'DNF' || that.time == 'DNS') {
+                          if (that.time === 'DNF' || that.time === 'DNS') {
+                            that.solved = that.tried = that.time = '';
+                          }
+                          value = '';
                         }
                         that.$parent.lastIndex = that.$parent.currentIndex;
-                        that.time = time.slice(0, time.length - 1);
+                        that[attr] = value.slice(0, -1);
                         break;
                       case 107:
                       case 9:
                         if (e.shiftKey || code == 107) {
-                          var group = $(e.target).parent().parent();
-                          var index = group.index();
+                          var input = $(e.target);
+                          var inputs = $('.result-input:not([disabled])');
+                          var index = inputs.index(input);
                           if (index > 0) {
-                            group.prev().find('input').focus();
+                            inputs.eq(index - 1).focus();
                           }
                           break;
                         }
                       case 13:
-                        var group = $(e.target).parent().parent();
-                        var index = group.index();
-                        if (index < that.$parent.inputNum - 1) {
-                          group.next().find('input').focus();
+                        var input = $(e.target);
+                        var inputs = $('.result-input:not([disabled])');
+                        var index = inputs.index(input);
+                        if (index < inputs.length - 1) {
+                          inputs.eq(index + 1).focus();
                         } else {
-                          group.parent().next().focus();
+                          $('#save').focus();
                         }
                         break;
                       //small keyboard
@@ -627,17 +662,23 @@
                       case 55:
                       case 56:
                       case 57:
-                        if (time.length >= 6) {
+                        if (value.length >= 6) {
                           break;
                         }
-                        if (that.event === '333fm' && time.length >= 2) {
+                        if (that.$parent.lastIndex != that.$parent.currentIndex || that.time == 'DNF' || that.time == 'DNS') {
+                          if (that.time === 'DNF' || that.time === 'DNS') {
+                            that.solved = that.tried = that.time = '';
+                          }
+                          value = '';
+                        }
+                        if ((that.event === '333fm' || that.subIndex < 2) && value.length >= 2) {
                           break;
                         }
-                        if (that.$parent.lastIndex != that.$parent.currentIndex || time == 'DNF' || time == 'DNS') {
-                          time = '';
+                        if (that.event === '333mbf' && value.length >= 4) {
+                          break;
                         }
-                        time += code - 48;
-                        that.time = time;
+                        value += code - 48;
+                        that[attr] = value;
                         if (that.$parent.lastIndex != that.$parent.currentIndex) {
                           that.$parent.lastIndex = that.$parent.currentIndex;
                         }
@@ -720,7 +761,7 @@
       }
       content.push('Single: ' + decodeResult(result.best, result.event));
       temp = [];
-      var num = result.format == 'a' ? 5 : (result.format == '3' ? 3 : parseInt(result.format));
+      var num = result.format == 'a' ? 5 : (result.format == 'm' ? 3 : parseInt(result.format));
       for (var i = 1; i <= num; i++) {
         if (result['value' + i] != 0) {
           temp.push(decodeResult(result['value' + i], result.event));
@@ -828,6 +869,7 @@
       var minute = match[1] ? parseInt(match[1]) : 0;
       var second = parseInt(match[2]);
       second = Math.min(minute * 60 + second, Math.min(6, tried) * 600);
+      console.log(second);
       return (99 - difference) * 1e7 + second * 100 + missed;
     } else {
       var match = result.match(/(?:(\d+)?:)?(\d{1,2})\.(\d{1,2})/);
@@ -856,7 +898,7 @@
       if (result > 1000) {
         time = (result / 100).toFixed(2);
       } else {
-        time = result;
+        time = result + '';
       }
     } else if (event === '333mbf') {
       var difference = 99 - Math.floor(result / 1e7);
