@@ -1139,6 +1139,7 @@ class Competition extends ActiveRecord {
 			return array(
 				'event'=>$liveResult->event,
 				'round'=>$liveResult->round,
+				'filter'=>'all',
 			);
 		}
 		$event = current($events);
@@ -1146,11 +1147,13 @@ class Competition extends ActiveRecord {
 			return array(
 				'event'=>'',
 				'round'=>'',
+				'filter'=>'all',
 			);
 		}
 		return array(
 			'event'=>$event['id'],
 			'round'=>$event['rounds'][0]['id'],
+			'filter'=>'all',
 		);
 	}
 

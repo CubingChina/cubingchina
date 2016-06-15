@@ -27,16 +27,29 @@ class ResultHandler extends MsgHandler {
 			'round'=>"{$this->msg->params->round}",
 		));
 		if ($round !== null && $round->isClosed) {
-			$results = array_values(array_filter($results, function($result) use ($round) {
+			$results = array_filter($results, function($result) use ($round) {
 				if ($result->best == 0) {
 					return false;
 				}
 				return true;
-			}));
+			});
+		}
+		switch ($this->msg->params->filter) {
+			case 'females':
+				$results = array_filter($results, function($result) {
+					return $result->user->gender == User::GENDER_FEMALE;
+				});
+				break;
+			case 'children':
+				$birthday = $this->competition->date - (365 * 12 + 3) * 86400;
+				$results = array_filter($results, function($result) use($birthday) {
+					return $result->user->birthday >= $birthday;
+				});
+				break;
 		}
 		$this->success('result.all', array_map(function($result) {
 			return $result->getShowAttributes();
-		}, $results));
+		}, array_values($results)));
 	}
 
 	public function actionUpdate() {

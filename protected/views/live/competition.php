@@ -5,6 +5,20 @@
   'data-competition-id'=>$competition->id,
   'data-events'=>json_encode($events),
   'data-params'=>json_encode($params),
+  'data-filters'=>json_encode(array(
+    array(
+      'label'=>Yii::t('common', 'All'),
+      'value'=>'all',
+    ),
+    array(
+      'label'=>Yii::t('live', 'Females'),
+      'value'=>'females',
+    ),
+    array(
+      'label'=>Yii::t('live', 'Children'),
+      'value'=>'children',
+    ),
+  )),
   'data-user'=>json_encode(array(
     'isGuest'=>Yii::app()->user->isGuest,
     'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
@@ -141,6 +155,11 @@
                 {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.allStatus[round.status] : ''}}
               </option>
             </optgroup>
+          </select>
+          <select @change="changeEventRound" v-model="filter">
+            <option v-for="filter in filters" :value="filter.value">
+              {{filter.label}}
+            </option>
           </select>
         </div>
       </div>

@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Submitted' => '已提交',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小時',
@@ -222,6 +221,7 @@ return array (
   'Step Three' => '第三步',
   'Step Two' => '第二步',
   'Submit' => '提交',
+  'Submitted' => '已提交',
   'The WCA ID {wcaid} has been registered.' => '該WCA ID已被注冊。',
   'The format is YYYY-MM-DD' => '格式是YYYY-MM-DD',
   'Tips' => '重要提示',

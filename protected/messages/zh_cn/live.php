@@ -17,13 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Open' => '',
-  'Show Message on Chat' => '在聊天界面显示新消息',
+  'Children' => '少儿组',
+  'Females' => '女子组',
   'Enable Data Entry' => '开启成绩输入板',
   'Finished' => '已结束',
   'Input Panel' => '输入板',
   'Live' => '进行中',
   'Save' => '保存',
+  'Show Message on Chat' => '在聊天界面显示新消息',
   'Show Record on Chat' => '在聊天界面显示项目纪录',
   'Show Result on Chat' => '在聊天界面显示更新的成绩',
 );

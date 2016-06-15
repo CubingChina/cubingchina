@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + '/ws');
+  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -37,9 +37,11 @@
     user: {},
     competitionId: 0,
     events: [],
+    filters: [],
     params: {
       event: '',
       round: '',
+      filter: 'all'
     },
     loading: false,
     results: [],
@@ -49,7 +51,7 @@
   var eventRounds = {};
   var current = {}
   var mutations = {
-    CHANGE_EVENT_ROUND: function(state, params) {
+    CHANGE_PARAMS: function(state, params) {
       state.params = params;
     },
     UPDATE_ROUND: function(state, round) {
@@ -213,10 +215,11 @@
         data: function() {
           return {
             eventRound: null,
+            filter: 'all',
             current: {},
             cut_off: 0,
             time_limit: 0,
-            number: 0
+            number: 0,
           }
         },
         computed: {
@@ -266,8 +269,17 @@
             },
             results: function(state) {
               return state.results;
+            },
+            filters: function(state) {
+              return state.filters;
             }
           }
+        },
+        ready: function() {
+          this.eventRound = {
+            event: current.event,
+            round: current.round
+          };
         },
         template: '#result-template',
         methods: {
@@ -310,9 +322,10 @@
             }
           },
           changeEventRound: function() {
-            store.dispatch('CHANGE_EVENT_ROUND', {
+            store.dispatch('CHANGE_PARAMS', {
               event: this.eventRound.event,
-              round: this.eventRound.round
+              round: this.eventRound.round,
+              filter: this.filter
             });
           },
           isAdvanced: function(result) {
@@ -727,14 +740,14 @@
   //router
   var router = new VueRouter();
   router.map({
-    '/event/:event/:round': {
+    '/event/:event/:round/:filter': {
       component: {}
     }
   });
   store.watch(function(state) {
     return state.params;
   }, function(params) {
-    router.go(['/event', params.event, params.round].join('/'));
+    router.go(['/event', params.event, params.round, params.filter].join('/'));
     fetchResults();
   }, {
     deep: true,
@@ -743,13 +756,13 @@
   });
   router.afterEach(function(transition) {
     var params = transition.to.params;
-    if (params.event == state.params.event && params.round == state.params.round) {
+    if (params.event == state.params.event && params.round == state.params.round && params.filter == state.params.filter) {
       return;
     }
-    store.dispatch('CHANGE_EVENT_ROUND', params);
+    store.dispatch('CHANGE_PARAMS', params);
   });
   router.redirect({
-    '*': ['/event', current.event || state.params.event, current.round || state.params.round].join('/')
+    '*': ['/event', current.event || state.params.event, current.round || state.params.round, state.params.filter].join('/')
   });
   router.start(vm, liveContainer.get(0));
 
