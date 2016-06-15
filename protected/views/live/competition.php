@@ -240,12 +240,12 @@
             </tr>
           </tbody>
         </table>
-        <ul class="pagination">
-          <li v-for="i in totalPage" class="page" :class="{active: i == page - 1}">
-            <a href="javascript: void(0);" @click="page = i + 1">{{i + 1}}</a>
-          </li>
-        </ul>
       </div>
+      <ul class="pagination" v-if="totalPage > 1">
+        <li v-for="i in totalPage" class="page" :class="{active: i == page - 1}">
+          <a href="javascript: void(0);" @click="page = i + 1">{{i + 1}}</a>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
