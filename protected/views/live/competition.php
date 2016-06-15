@@ -75,7 +75,7 @@
           <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest || !options.showMessage" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
         </div>
         <div class="col-sm-2 col-lg-1">
-          <button class="btn btn-primary btn-md form-control" @click="send" :disabled="$store.state.user.isGuest || !options.showMessage || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
+          <button class="btn btn-theme btn-md" @click="send" :disabled="$store.state.user.isGuest || !options.showMessage || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-success" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
+              <button class="btn btn-theme" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
               <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
             </div>
           </div>
@@ -200,7 +200,7 @@
             </tr>
             <tr v-for="result in results" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
               <td v-if="hasPermission">
-                <button class="btn btn-xs btn-primary no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
+                <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.pos}}</td>
               <td>
@@ -269,7 +269,7 @@
         </div>
         <button type="button"
           id="save"
-          class="btn btn-md btn-success"
+          class="btn btn-md btn-theme"
           @click="save"
           @keydown.prevent="keydown"
           :disabled="result == null || result.id == null"

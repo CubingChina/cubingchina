@@ -427,8 +427,10 @@
                 var that = this;
                 switch (code) {
                   case 107:
+                  case 40:
+                  case 38:
                   case 9:
-                    if (e.shiftKey || code == 107) {
+                    if (e.shiftKey || code == 107 || code == 38) {
                       $('.result-input:not([disabled])').last().focus();
                     } else {
                       $('.result-input:not([disabled])').first().focus();
@@ -641,8 +643,9 @@
                         that[attr] = value.slice(0, -1);
                         break;
                       case 107:
+                      case 38:
                       case 9:
-                        if (e.shiftKey || code == 107) {
+                        if (e.shiftKey || code == 107 || code == 38) {
                           var input = $(e.target);
                           var inputs = $('.result-input:not([disabled])');
                           var index = inputs.index(input);
@@ -651,6 +654,7 @@
                           }
                           break;
                         }
+                      case 40:
                       case 13:
                         var input = $(e.target);
                         var inputs = $('.result-input:not([disabled])');

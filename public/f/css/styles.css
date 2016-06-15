@@ -2961,17 +2961,12 @@ table.concise-schedule {
   opacity: 0;
   z-index: -1;
 }
-@font-face {
-  font-family: 'lcd';
-  src: url('../fonts/lcd.ttf?v=4.5.0');
-  font-weight: bold;
-  font-style: normal;
-}
 .live .result-input-wrapper label {
   cursor: pointer;
   display: block;
   text-align: right;
-  font-family: lcd;
+  font-family: Arial, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-weight: normal;
   font-size: 18px;
   height: 32px;
   line-height: 32px;
@@ -2984,6 +2979,9 @@ table.concise-schedule {
 .live .result-input-wrapper label span {
   font-size: 18px;
 }
+.live .result-input-wrapper label span.number-group {
+  font-size: 0;
+}
 .live .result-input-wrapper label.text-center {
   text-align: center;
 }
@@ -2991,20 +2989,20 @@ table.concise-schedule {
   text-align: left;
 }
 .live .result-input-wrapper.active label {
-  background-color: rgb(93, 172, 129);
+  background-color: #6091ba;
   color: #fff;
 }
 .live .result-input-wrapper label .number {
-  color: rgb(136, 139, 131);
+  color: #888;
 }
 .live .result-input-wrapper.active label .number {
-  color: rgb(79, 114, 108);
+  color: #aaa;
 }
 .live .result-input-wrapper label .number.active {
   color: inherit;
 }
 .live .result-input-wrapper.disabled label {
-  background-color: #dbdada;
+  background-color: #eee;
 }
 .live .result-input-wrapper label .penalty {
   color: inherit;
