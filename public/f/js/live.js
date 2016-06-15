@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
+  var ws = window._ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -220,11 +220,19 @@
             cut_off: 0,
             time_limit: 0,
             number: 0,
+            page: 1,
+            limit: 100
           }
         },
         computed: {
           enableEntry: function() {
             return this.hasPermission && this.options.enableEntry;
+          },
+          offset: function() {
+            return (this.page - 1) * this.limit;
+          },
+          totalPage: function() {
+            return Math.ceil(this.results.length / this.limit);
           }
         },
         watch: {
@@ -234,6 +242,7 @@
               event: params.event,
               round: params.round
             }
+            that.filter = params.filter;
             var round = eventRounds[params.event][params.round];
             that.cut_off = round.cut_off;
             that.time_limit = round.time_limit;
@@ -321,7 +330,7 @@
               });
             }
           },
-          changeEventRound: function() {
+          changeParams: function() {
             store.dispatch('CHANGE_PARAMS', {
               event: this.eventRound.event,
               round: this.eventRound.round,

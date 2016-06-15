@@ -149,14 +149,14 @@
           </button>
         </h4>
         <div class="pull-right event-round-area">
-          <select @change="changeEventRound" v-model="eventRound">
+          <select @change="changeParams" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
               <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
                 {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.allStatus[round.status] : ''}}
               </option>
             </optgroup>
           </select>
-          <select @change="changeEventRound" v-model="filter">
+          <select @change="changeParams" v-model="filter">
             <option v-for="filter in filters" :value="filter.value">
               {{filter.label}}
             </option>
@@ -217,7 +217,7 @@
                 Loading...
               </td>
             </tr>
-            <tr v-for="result in results" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
+            <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
               <td v-if="hasPermission">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
@@ -240,6 +240,11 @@
             </tr>
           </tbody>
         </table>
+        <ul class="pagination">
+          <li v-for="i in totalPage" class="page" :class="{active: i == page - 1}">
+            <a href="javascript: void(0);" @click="page = i + 1">{{i + 1}}</a>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
