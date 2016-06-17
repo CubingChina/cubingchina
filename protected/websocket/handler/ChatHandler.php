@@ -17,9 +17,17 @@ class ChatHandler extends MsgHandler {
 
 	public function actionFetch() {
 		if ($this->competition != null) {
+			if (!isset(self::$messages[$this->competition->id])) {
+				self::$messages[$this->competition->id] = array_reverse(LiveMessage::model()->findAllByAttributes(array(
+					'competition_id'=>$this->competition->id,
+				), array(
+					'order'=>'create_time DESC',
+					'limit'=>self::RECENT_MESSAGE_NUM,
+				)));
+			}
 			$this->success('message.recent', array_map(function($message) {
 				return $message->getShowAttributes();
-			}, isset(self::$messages[$this->competition->id]) ? self::$messages[$this->competition->id] : array()));
+			}, self::$messages[$this->competition->id]));
 		}
 	}
 

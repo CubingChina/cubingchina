@@ -18,7 +18,9 @@
         action: 'fetch'
       });
     }
-    fetchResults();
+    if (state.results.length == 0) {
+      fetchResults();
+    }
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
     newMessageOnResult(result, 'new');
@@ -329,6 +331,10 @@
             isCurrentRoundOpen: function() {
               var round = eventRounds[state.params.event][state.params.round];
               return round.status != 1;
+            },
+            hasAverage: function() {
+              var round = eventRounds[state.params.event][state.params.round];
+              return round.format == 'a' || round.format == 'm' || (state.params.event == '333bf' && round.format == '3');
             },
             events: function(state) {
               return state.events;

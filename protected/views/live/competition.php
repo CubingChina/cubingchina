@@ -249,8 +249,8 @@
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
             <th><?php echo Yii::t('common', 'Best'); ?></th>
             <th></th>
-            <th><?php echo Yii::t('common', 'Average'); ?></th>
-            <th></th>
+            <th v-if="hasAverage"><?php echo Yii::t('common', 'Average'); ?></th>
+            <th v-if="hasAverage"></th>
             <th><?php echo Yii::t('common', 'Region'); ?></th>
             <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
@@ -268,10 +268,10 @@
               <td>
                 <a href="javascript:void(0)" @click="goToUser(result.user)">{{result.user.name}}</a>
               </td>
-              <td class="result">{{result.best | decodeResult result.event}}</td>
-              <td class="record">{{result.regional_single_record}}</td>
-              <td class="result">{{result.average | decodeResult result.event}}</td>
-              <td class="record">{{result.regional_average_record}}</td>
+              <td>{{result.best | decodeResult result.event}}</td>
+              <td>{{result.regional_single_record}}</td>
+              <td v-if="result.format == 'a' || result.format == 'm'">{{result.average | decodeResult result.event}}</td>
+              <td v-if="result.format == 'a' || result.format == 'm'">{{result.regional_average_record}}</td>
               <td>{{{result.user.region}}}</td>
               <td>
                 {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;

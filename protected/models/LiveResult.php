@@ -195,6 +195,8 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function calculateRecord($type) {
+		//todo it's too complicated
+		return;
 		$user = $this->user;
 		$country = $user->country;
 		$wcaCountry = Countries::model()->findByAttributes(array(
