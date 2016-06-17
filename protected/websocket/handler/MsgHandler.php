@@ -37,6 +37,13 @@ abstract class MsgHandler {
 		return $this->client->getCompetition();
 	}
 
+	public function getAction() {
+		if (isset($this->msg->action)) {
+			return $this->msg->action;
+		}
+		return '';
+	}
+
 	public function checkAccess() {
 		if ($this->user == null) {
 			return false;

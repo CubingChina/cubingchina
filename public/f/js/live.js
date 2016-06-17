@@ -12,6 +12,12 @@
       type: 'competition',
       competitionId: state.competitionId
     });
+    if (options.showMessage) {
+      ws.send({
+        type: 'chat',
+        action: 'fetch'
+      });
+    }
     fetchResults();
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
@@ -21,6 +27,13 @@
     newMessageOnResult(result, 'update');
   }).on('round.update', function(round) {
     store.dispatch('UPDATE_ROUND', round);
+  }).on('message.recent', function(messages) {
+    if (options.showMessage) {
+      store.dispatch('RECENT_MESSAGES', messages);
+      Vue.nextTick(function() {
+
+      })
+    }
   }).on('message.new', function(message) {
     if (options.showMessage) {
       newMessage(message);
@@ -94,7 +107,22 @@
       state.loading = true;
       state.results = [];
     },
+    RECENT_MESSAGES: function(state, messages) {
+      var ids = {};
+      state.messages.forEach(function(message) {
+        ids[message.id] = message.id;
+      });
+      messages.forEach(function(message) {
+        if (!ids[message.id]) {
+          state.messages.push(message);
+        }
+      });
+      newMessage({}, true);
+    },
     NEW_MESSAGE: function(state, message) {
+      if (!message.id) {
+        return;
+      }
       state.messages.push(message);
       if (state.messages.length > 1000) {
         state.messages.splice(0, 1);
@@ -187,7 +215,9 @@
             }
             ws.send({
               type: 'chat',
-              content: that.message
+              action: 'send',
+              content: that.message,
+              params: state.params
             });
             newMessage({
               user: state.user,

@@ -67,6 +67,16 @@ class ResultHandler extends MsgHandler {
 		$result->average = $data->average;
 		$result->calculateRecord('single');
 		$result->calculateRecord('average');
+		if ($result->best == 0) {
+			$result->create_time = 0;
+			$result->update_time = 0;
+		} else {
+			if ($result->create_time == 0) {
+				$result->create_time = time();
+			}
+			$result->update_time = time();
+		}
+		$result->operator_id = $this->user->id;
 		$result->save();
 		foreach ($result->getBeatedRecords('single') as $res) {
 			$this->broadcastSuccess('result.update', $res->getShowAttributes());
@@ -86,7 +96,7 @@ class ResultHandler extends MsgHandler {
 	public function actionResult() {
 	}
 
-	public function actionAttribute() {  
+	public function actionAttribute() {
 
 	}
 
@@ -160,12 +170,5 @@ class ResultHandler extends MsgHandler {
 
 	public function actionPerson() {
 
-	}
-
-	private function getAction() {
-		if (isset($this->msg->action)) {
-			return $this->msg->action;
-		}
-		return '';
 	}
 }
