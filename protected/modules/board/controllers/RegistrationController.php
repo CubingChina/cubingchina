@@ -775,6 +775,10 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
+			$model->avatar_type = isset($_POST['Registration']['avatar_type']) ? $_POST['Registration']['avatar_type'] : 0;
+			if ($model->competition->require_avatar && $model->avatar_type == Registration::AVATAR_TYPE_NOW) {
+				$model->avatar_id = $model->user->avatar_id;
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新报名信息成功');
 				$this->redirect(array('/board/registration/index', 'Registration'=>array(

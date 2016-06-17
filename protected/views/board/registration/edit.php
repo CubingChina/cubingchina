@@ -58,6 +58,24 @@
               )),
               $form->error($model, 'comments', array('class'=>'text-danger'))
             ); ?>
+            <?php if ($model->competition->require_avatar): ?>
+            <?php echo Html::formGroup(
+              $model, 'avatar_type', array(),
+              $form->labelEx($model, 'avatar_type', array(
+                'label'=>Yii::t('Registration', 'Please choose from the options listed below.'),
+              )),
+              $form->dropDownList($model, 'avatar_type', Registration::getAvatarTypes($model->competition), array(
+                'prompt'=>'',
+                'class'=>'form-control',
+                'options'=>array(
+                  Registration::AVATAR_TYPE_NOW=>array(
+                    'disabled'=>$model->user->avatar == null,
+                  ),
+                ),
+              )),
+              $form->error($model, 'avatar_type', array('class'=>'text-danger'))
+            ); ?>
+            <?php endif; ?>
             <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
           <?php $this->endWidget(); ?>
         </div>
