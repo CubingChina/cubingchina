@@ -14,7 +14,7 @@ class WebSocketCommand extends CConsoleCommand {
 	const ADDRESS = '127.0.0.1';
 
 	public function actionIndex() {
-		set_error_handler(array($this, 'errorHandler'));
+		// set_error_handler(array($this, 'errorHandler'));
 		try {
 			$db = Yii::app()->db;
 			$pdo = $db->getPdoInstance();

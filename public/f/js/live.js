@@ -132,7 +132,7 @@
       newMessage({}, true);
     },
     NEW_MESSAGE: function(state, message) {
-      if (!message.id) {
+      if (!message.id && !message.isSelf) {
         return;
       }
       state.messages.push(message);
