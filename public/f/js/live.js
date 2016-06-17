@@ -25,25 +25,25 @@
   }).on('result.update', function(result) {
     store.dispatch('UPDATE_RESULT', result);
     newMessageOnResult(result, 'update');
+  }).on('result.user', function(results) {
+    store.dispatch('UPDATE_USER_RESULTS', results);
+  }).on('result.all', function(results) {
+    store.dispatch('UPDATE_RESULTS', results);
   }).on('round.update', function(round) {
     store.dispatch('UPDATE_ROUND', round);
   }).on('message.recent', function(messages) {
     if (options.showMessage) {
       store.dispatch('RECENT_MESSAGES', messages);
-      Vue.nextTick(function() {
-
-      })
     }
   }).on('message.new', function(message) {
     if (options.showMessage) {
       newMessage(message);
     }
-  }).on('result.all', function(results) {
-    store.dispatch('UPDATE_RESULTS', results);
   });
 
   Vue.use(VueRouter);
   Vue.use(Vuex);
+  Vue.filter('decodeResult', decodeResult);
   var liveContainer = $('#live-container');
   var isTimeTraveling;
   var state = {
@@ -57,7 +57,9 @@
       filter: 'all'
     },
     loading: false,
+    loadingUserResults: false,
     results: [],
+    userResults: [],
     messages: []
   };
   var events = {};
@@ -103,9 +105,17 @@
       state.results = results;
       state.loading = false;
     },
-    SHOW_LOADING: function(state) {
+    UPDATE_USER_RESULTS: function(state, userResults) {
+      state.userResults = userResults;
+      state.loadingUserResults = false;
+    },
+    LOADING_RESULTS: function(state) {
       state.loading = true;
       state.results = [];
+    },
+    LOADING_USER_RESULTS: function(state) {
+      state.loadingUserResults = true;
+      state.userResults = [];
     },
     RECENT_MESSAGES: function(state, messages) {
       var ids = {};
@@ -166,6 +176,12 @@
     },
     vuex: {
       getters: {
+        userResults: function(state) {
+          return state.userResults;
+        },
+        loadingUserResults: function(state) {
+          return state.loadingUserResults;
+        },
         hasPermission: function(state) {
           var user = state.user;
           return user.isOrganizer || user.isDelegate || user.isAdmin;
@@ -187,6 +203,12 @@
       }
     },
     methods: {
+      getEventName: function(event) {
+        return events[event] && events[event].name;
+      },
+      getRoundName: function(event, round) {
+        return eventRounds[event][round] && eventRounds[event][round].name;
+      },
       showOptions: function() {
         $('#options-modal').modal();
       }
@@ -391,7 +413,13 @@
             }
           },
           goToUser: function(user) {
-            console.log(user)
+            $('#user-results-modal').modal('show');
+            store.dispatch('LOADING_USER_RESULTS');
+            ws.send({
+              type: 'result',
+              action: 'user',
+              user: user
+            });
           },
           edit: function(result) {
             if (this.hasPermission && options.enableEntry) {
@@ -421,11 +449,6 @@
               }
             }
             return false;
-          }
-        },
-        filters: {
-          decodeResult: function(result, event) {
-            return decodeResult(result, event);
           }
         },
         components: {
@@ -901,7 +924,7 @@
     if (state.loading) {
       return;
     }
-    store.dispatch('SHOW_LOADING');
+    store.dispatch('LOADING_RESULTS');
     ws.send({
       type: 'result',
       action: 'fetch',
@@ -988,7 +1011,6 @@
       var minute = match[1] ? parseInt(match[1]) : 0;
       var second = parseInt(match[2]);
       second = Math.min(minute * 60 + second, Math.min(6, tried) * 600);
-      console.log(second);
       return (99 - difference) * 1e7 + second * 100 + missed;
     } else {
       var match = result.match(/(?:(\d+)?:)?(\d{1,2})\.(\d{1,2})/);

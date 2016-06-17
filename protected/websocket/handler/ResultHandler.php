@@ -93,7 +93,33 @@ class ResultHandler extends MsgHandler {
 		}
 	}
 
-	public function actionResult() {
+	public function actionUser() {
+		$results = LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition->id,
+			'user_type'=>$this->msg->user->type,
+			'user_id'=>$this->msg->user->id,
+		));
+		usort($results, function($resA, $resB) {
+			$temp = $resA->wcaEvent->rank - $resB->wcaEvent->rank;
+			if ($temp == 0) {
+				$temp = $resB->wcaRound->rank - $resA->wcaRound->rank;
+			}
+			return $temp;
+		});
+		$temp = array();
+		foreach ($results as $result) {
+			if ($result->best == 0) {
+				continue;
+			}
+			if (!isset($temp[$result->event])) {
+				$temp[$result->event] = array(
+					'event'=>$result->event,
+					'results'=>array(),
+				);
+			}
+			$temp[$result->event]['results'][] = $result->getShowAttributes(true);
+		}
+		$this->success('result.user', array_values($temp));
 	}
 
 	public function actionAttribute() {

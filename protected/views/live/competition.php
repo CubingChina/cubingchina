@@ -69,6 +69,57 @@
         </div>
       </div>
     </div>
+    <div tabindex="-1" id="user-results-modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-condensed table-hover table-boxed">
+                <thead>
+                  <th><?php echo Yii::t('Results', 'Round'); ?></th>
+                  <th><?php echo Yii::t('Results', 'Place'); ?></th>
+                  <th><?php echo Yii::t('common', 'Best'); ?></th>
+                  <th></th>
+                  <th><?php echo Yii::t('common', 'Average'); ?></th>
+                  <th></th>
+                  <th><?php echo Yii::t('common', 'Detail'); ?></th>
+                </thead>
+                <tbody>
+                  <tr v-if="loadingUserResults" class="loading">
+                    <td colspan="8">
+                      Loading...
+                    </td>
+                  </tr>
+                  <template v-for="userResult in userResults">
+                    <tr>
+                      <td colspan="8">{{getEventName(userResult.event)}}</td>
+                    </tr>
+                    <tr v-for="result in userResult.results">
+                      <td>{{getRoundName(result.event, result.round)}}</td>
+                      <td>{{result.pos}}</td>
+                      <td class="result">{{result.best | decodeResult result.event}}</td>
+                      <td class="record">{{result.regional_single_record}}</td>
+                      <td class="result">{{result.average | decodeResult result.event}}</td>
+                      <td class="record">{{result.regional_average_record}}</td>
+                      <td>
+                        {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value2 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value3 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value4 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value5 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
+          </div>
+        </div>
+      </div>
+    </div>
     <chat :options="options" v-if="options.showMessage || options.alertResult || options.alertRecord"></chat>
     <result :options="options"></result>
   </div>
@@ -194,49 +245,14 @@
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>
             <th v-if="hasPermission && isCurrentRoundOpen"></th>
-            <?php $columns = array(
-              array(
-                'name'=>Yii::t('Results', 'Place'),
-                'value'=>'$data->pos',
-                'htmlOptions'=>array('class'=>'place'),
-              ),
-              array(
-                'name'=>Yii::t('Results', 'Person'),
-                'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
-              ),
-              array(
-                'name'=>Yii::t('common', 'Best'),
-                'value'=>'$data->getTime("best")',
-                'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'value'=>'$data->regionalSingleRecord',
-                'htmlOptions'=>array('class'=>'record'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Average'),
-                'value'=>'$data->getTime("average")',
-                'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'value'=>'$data->regionalAverageRecord',
-                'htmlOptions'=>array('class'=>'record'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Region'),
-                'value'=>'Region::getIconName($data->person->country->name, $data->person->country->iso2)',
-                'htmlOptions'=>array('class'=>'region'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Detail'),
-                'value'=>'$data->detail',
-              ),
-            ); ?>
-            <?php foreach ($columns as $column): ?>
-            <?php echo CHtml::tag('th', isset($column['htmlOptions']) ? $column['htmlOptions'] : array(), $column['name']); ?>
-            <?php endforeach; ?>
+            <th><?php echo Yii::t('Results', 'Place'); ?></th>
+            <th><?php echo Yii::t('Results', 'Person'); ?></th>
+            <th><?php echo Yii::t('common', 'Best'); ?></th>
+            <th></th>
+            <th><?php echo Yii::t('common', 'Average'); ?></th>
+            <th></th>
+            <th><?php echo Yii::t('common', 'Region'); ?></th>
+            <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
           <tbody>
             <tr v-if="loading" class="loading">

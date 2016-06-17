@@ -110,11 +110,13 @@ class LiveResult extends ActiveRecord {
 		return self::$records[$region] = $records;
 	}
 
-	public function getShowAttributes() {
-		return array(
+	public function getShowAttributes($calcPos = false) {
+		$attributes = array(
 			'id'=>$this->id,
 			'competitionId'=>$this->competition_id,
 			'user'=>array(
+				'type'=>$this->user_type,
+				'id'=>$this->user_id,
 				'name'=>$this->user->getCompetitionName(),
 				'wcaid'=>$this->user->wcaid,
 				'region'=>$this->user->country->name,
@@ -124,6 +126,7 @@ class LiveResult extends ActiveRecord {
 			'event'=>$this->event,
 			'round'=>$this->round,
 			'format'=>$this->format,
+			'pos'=>'-',
 			'best'=>intval($this->best),
 			'average'=>intval($this->average),
 			'value1'=>intval($this->value1),
@@ -134,6 +137,57 @@ class LiveResult extends ActiveRecord {
 			'regional_single_record'=>$this->regional_single_record,
 			'regional_average_record'=>$this->regional_average_record,
 		);
+		if ($calcPos) {
+			$attributes['pos'] = $this->getCalculatedPos();
+		}
+		return $attributes;
+	}
+
+	public function getCalculatedPos() {
+		if ($this->best == 0) {
+			return '-';
+		}
+		$attributes = array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		);
+		$best = $this->best;
+		$average = $this->average;
+		if ($this->format == 'a' || $this->format == 'm') {
+			if ($average > 0) {
+				$condition = 'average<:average';
+			} elseif ($average < 0) {
+				if ($best > 0) {
+					$condition = 'average>0 OR (average<0 AND best>0 AND best<:best)';
+				} else {
+					$condition = 'average>0 OR (average<0 AND best>0)';
+				}
+			} else {
+				if ($best > 0) {
+					$condition = 'average!=0 OR (average=0 AND best>0 AND best<:best)';
+				} else {
+					$condition = 'average!=0 OR (average=0 AND best>0)';
+				}
+			}
+		} else {
+			if ($best > 0) {
+				$condition = 'best>0 AND best<:best';
+			} else {
+				$condition = 'best>0';
+			}
+		}
+		$params = array();
+		if ($best > 0) {
+			$params[':best'] = $best;
+		}
+		if ($average > 0) {
+			$params[':average'] = $average;
+		}
+		return self::model()->countByAttributes($attributes, array(
+			'condition'=>$condition,
+			'params'=>$params,
+		)) + 1;
 	}
 
 	public function getUser() {
