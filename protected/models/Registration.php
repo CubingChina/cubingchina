@@ -601,6 +601,7 @@ class Registration extends ActiveRecord {
 		}
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
+			$rules[] = array('avatar_type', 'required', 'on'=>'register');
 		}
 		return $rules;
 	}
