@@ -17,9 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Close this round' => '結束本輪',
+  'Open' => '',
+  'Open this round' => '開啟本輪',
+  'Reset competitors' => '重置選手',
   'Children' => '少兒組',
-  'Females' => '女子組',
   'Enable Data Entry' => '開啟成績輸入板',
+  'Females' => '女子組',
   'Finished' => '已結束',
   'Input Panel' => '輸入板',
   'Live' => '進行中',

@@ -31,6 +31,29 @@ class LiveEventRound extends ActiveRecord {
 		);
 	}
 
+	public function getLastRound() {
+		$rounds = self::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+		));
+		usort($rounds, function($roundA, $roundB) {
+			return $roundA->wcaRound->rank - $roundB->wcaRound->rank;
+		});
+		foreach ($rounds as $key=>$round) {
+			if ($round->id == $this->id && isset($rounds[$key - 1])) {
+				return $rounds[$key - 1];
+			}
+		}
+	}
+
+	public function removeResults() {
+		LiveResult::model()->deleteAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		));
+	}
+
 	public function getBroadcastAttributes() {
 		return array(
 			'id'=>$this->round,
@@ -84,6 +107,16 @@ class LiveEventRound extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
+			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
+			'results'=>array(self::HAS_MANY, 'LiveResult', array(
+				'competition_id'=>'competition_id',
+				'event'=>'event',
+				'round'=>'round',
+			),
+				'order'=>'results.average>0 DESC, results.average ASC, results.best>0 DESC, results.best ASC',
+				'condition'=>'results.best>0',
+			),
 		);
 	}
 

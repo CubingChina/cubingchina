@@ -65,8 +65,8 @@ class ResultHandler extends MsgHandler {
 		$result->value5 = $data->value5;
 		$result->best = $data->best;
 		$result->average = $data->average;
-		$result->caculateRecord('single');
-		$result->caculateRecord('average');
+		$result->calculateRecord('single');
+		$result->calculateRecord('average');
 		$result->save();
 		foreach ($result->getBeatedRecords('single') as $res) {
 			$this->broadcastSuccess('result.update', $res->getShowAttributes());
@@ -104,6 +104,53 @@ class ResultHandler extends MsgHandler {
 			}
 			$round->save();
 			$this->broadcastSuccess('round.update', $round->getBroadcastAttributes());
+		}
+	}
+
+	public function actionReset() {
+		$round = LiveEventRound::model()->findByAttributes(array(
+			'competition_id'=>$this->competition->id,
+			'event'=>"{$this->msg->round->event}",
+			'round'=>"{$this->msg->round->id}",
+		));
+		if ($round != null) {
+			$round->removeResults();
+			$competition = $this->competition;
+			$results = array();
+			if ($round->round == '1' || $round->round == 'd') {
+				//empty results of first rounds
+				$registrations = Registration::getRegistrations($competition);
+				foreach ($registrations as $registration) {
+					foreach ($registration->events as $event) {
+						$model = new LiveResult();
+						$model->competition_id = $competition->id;
+						$model->user_id = $registration->user_id;
+						$model->number = $registration->number;
+						$model->event = $round->event;
+						$model->round = $round->round;
+						$model->format = $round->format;
+						$model->save();
+						$results[] = $model;
+					}
+				}
+			} else {
+				if (($lastRound = $round->lastRound) !== null) {
+					foreach (array_slice($lastRound->results, 0, $round->number) as $result) {
+						$model = new LiveResult();
+						$model->competition_id = $competition->id;
+						$model->user_id = $result->user_id;
+						$model->number = $result->number;
+						$model->event = $round->event;
+						$model->round = $round->round;
+						$model->format = $round->format;
+						$model->save();
+						$results[] = $model;
+					}
+				}
+			}
+			$this->success('result.all', array_map(function($result) {
+				return $result->getShowAttributes();
+			}, $results));
 		}
 	}
 

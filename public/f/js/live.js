@@ -221,7 +221,7 @@
             time_limit: 0,
             number: 0,
             page: 1,
-            limit: 100
+            limit: 300
           }
         },
         computed: {
@@ -243,6 +243,7 @@
               round: params.round
             }
             that.filter = params.filter;
+            that.page = 1;
             var round = eventRounds[params.event][params.round];
             that.cut_off = round.cut_off;
             that.time_limit = round.time_limit;
@@ -272,6 +273,10 @@
             },
             round: function(state) {
               return state.params.round;
+            },
+            isCurrentRoundOpen: function() {
+              var round = eventRounds[state.params.event][state.params.round];
+              return round.status != 1;
             },
             events: function(state) {
               return state.events;
@@ -318,6 +323,42 @@
               }
             });
             $('#round-settings-modal').modal('hide');
+          },
+          closeRound: function() {
+            ws.send({
+              type: 'result',
+              action: 'round',
+              round: {
+                event: state.params.event,
+                id: state.params.round,
+                status: 1
+              }
+            });
+            $('#round-settings-modal').modal('hide');
+          },
+          openRound: function() {
+            ws.send({
+              type: 'result',
+              action: 'round',
+              round: {
+                event: state.params.event,
+                id: state.params.round,
+                status: 0
+              }
+            });
+            $('#round-settings-modal').modal('hide');
+          },
+          resetCompetitors: function() {
+            if (this.results.length == 0 || confirm('Do you want reset competitors?')) {
+              ws.send({
+                type: 'result',
+                action: 'reset',
+                round: {
+                  event: state.params.event,
+                  id: state.params.round,
+                }
+              });
+            }
           },
           goToUser: function(user) {
             console.log(user)

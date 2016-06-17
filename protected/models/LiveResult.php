@@ -140,7 +140,7 @@ class LiveResult extends ActiveRecord {
 		return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
 	}
 
-	public function caculateRecord($type) {
+	public function calculateRecord($type) {
 		$user = $this->user;
 		$country = $user->country;
 		$wcaCountry = Countries::model()->findByAttributes(array(

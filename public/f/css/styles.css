@@ -2960,6 +2960,7 @@ table.concise-schedule {
   bottom: 0;
   opacity: 0;
   z-index: -1;
+  width: 100%;
 }
 .live .result-input-wrapper label {
   cursor: pointer;

@@ -56,7 +56,7 @@
                   <input type="checkbox" v-model="options.alertResult"> <?php echo Yii::t('live', 'Show Result on Chat'); ?>
                 </label>
               </div>
-              <div class="checkbox">
+              <div class="checkbox hide">
                 <label>
                   <input type="checkbox" v-model="options.alertRecord"> <?php echo Yii::t('live', 'Show Record on Chat'); ?>
                 </label>
@@ -129,6 +129,33 @@
                 <label><?php echo Yii::t('Schedule', 'Number'); ?></label>
                 <input type="tel" class="form-control" id="number" v-model="number">
               </div>
+              <div class="form-group">
+                <button type="button"
+                  class="btn btn-sm btn-danger"
+                  v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"
+                  @click="closeRound"
+                >
+                  <i class="fa fa-times"></i><?php echo Yii::t('live', 'Close this round'); ?>
+                </button>
+              </div>
+              <div class="form-group">
+                <button type="button"
+                  class="btn btn-sm btn-warning"
+                  v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"
+                  @click="resetCompetitors"
+                >
+                  <i class="fa fa-repeat"></i><?php echo Yii::t('live', 'Reset competitors'); ?>
+                </button>
+              </div>
+              <div class="form-group">
+                <button type="button"
+                  class="btn btn-sm btn-success"
+                  v-if="hasPermission && options.enableEntry && !isCurrentRoundOpen"
+                  @click="openRound"
+                >
+                  <i class="fa fa-check"></i><?php echo Yii::t('live', 'Open this round'); ?>
+                </button>
+              </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-theme" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
@@ -166,7 +193,7 @@
       <div class="table-responsive">
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>
-            <th v-if="hasPermission"></th>
+            <th v-if="hasPermission && isCurrentRoundOpen"></th>
             <?php $columns = array(
               array(
                 'name'=>Yii::t('Results', 'Place'),
@@ -218,7 +245,7 @@
               </td>
             </tr>
             <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
-              <td v-if="hasPermission">
+              <td v-if="hasPermission && isCurrentRoundOpen">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.pos}}</td>
