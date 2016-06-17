@@ -12,14 +12,14 @@
       type: 'competition',
       competitionId: state.competitionId
     });
+    if (state.results.length == 0) {
+      fetchResults();
+    }
     if (options.showMessage) {
       ws.send({
         type: 'chat',
         action: 'fetch'
       });
-    }
-    if (state.results.length == 0) {
-      fetchResults();
     }
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
@@ -66,7 +66,7 @@
   };
   var events = {};
   var eventRounds = {};
-  var current = {}
+  var current = {};
   var mutations = {
     CHANGE_PARAMS: function(state, params) {
       state.params = params;
@@ -160,6 +160,12 @@
       }
     });
   });
+  if (!current.event) {
+    current = {
+      event: state.params.event,
+      round: state.params.round
+    }
+  }
 
   //vuex
   var store = new Vuex.Store({
@@ -871,7 +877,7 @@
     store.dispatch('CHANGE_PARAMS', params);
   });
   router.redirect({
-    '*': ['/event', current.event || state.params.event, current.round || state.params.round, state.params.filter].join('/')
+    '*': ['/event', current.event, current.round, state.params.filter].join('/')
   });
   router.start(vm, liveContainer.get(0));
 
