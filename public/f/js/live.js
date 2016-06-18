@@ -1078,6 +1078,10 @@
     second = second % 60;
     minute = minute % 60;
     var temp = [second];
+    if (hour == 1) {
+      minute += 60;
+      hour = 0;
+    }
     if (hour > 0) {
       temp.push(minute, hour);
     } else if (minute > 0) {
