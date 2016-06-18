@@ -178,11 +178,10 @@ class LiveResult extends ActiveRecord {
 			}
 		}
 		$params = array();
-		if ($best > 0) {
-			$params[':best'] = $best;
-		}
-		if ($average > 0) {
+		if (($this->format == 'a' || $this->format == 'm') && $average > 0) {
 			$params[':average'] = $average;
+		} elseif ($best > 0) {
+			$params[':best'] = $best;
 		}
 		return self::model()->countByAttributes($attributes, array(
 			'condition'=>$condition,
