@@ -314,6 +314,7 @@
               @keydown.up="up"
               @focus="searching = true"
               @blur="searching = false"
+              :disabled="!$parent.isCurrentRoundOpen"
             >
           </div>
           <ul class="competitors list-group" :class="{hide: !searching}">

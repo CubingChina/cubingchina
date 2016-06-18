@@ -389,6 +389,7 @@
             $('#round-settings-modal').modal('hide');
           },
           closeRound: function() {
+            this.current = {};
             ws.send({
               type: 'result',
               action: 'round',
@@ -434,7 +435,7 @@
             });
           },
           edit: function(result) {
-            if (this.hasPermission && options.enableEntry) {
+            if (this.hasPermission && options.enableEntry && this.isCurrentRoundOpen) {
               this.current = $.extend({}, result);
               this.$nextTick(function() {
                 $('.input-panel-result input').eq(0).focus();
@@ -533,7 +534,7 @@
               isDisabled: function(index) {
                 var that = this;
                 var result = that.result;
-                if (!result || !result.id) {
+                if (!result || !result.id || !this.$parent.isCurrentRoundOpen) {
                   return true;
                 }
                 var round = eventRounds[state.params.event][state.params.round];
