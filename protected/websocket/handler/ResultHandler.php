@@ -8,7 +8,7 @@ class ResultHandler extends MsgHandler {
 		}
 		$action = $this->getAction();
 		if ($action !== '') {
-			if (strtolower($action) != 'fetch' && !$this->checkAccess()) {
+			if ($action != 'fetch' && $action != 'user' && !$this->checkAccess()) {
 				return;
 			}
 			$method = 'action' . ucfirst($action);

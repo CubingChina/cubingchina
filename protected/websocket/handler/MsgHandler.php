@@ -39,7 +39,7 @@ abstract class MsgHandler {
 
 	public function getAction() {
 		if (isset($this->msg->action)) {
-			return $this->msg->action;
+			return strtolower($this->msg->action);
 		}
 		return '';
 	}
