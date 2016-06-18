@@ -156,7 +156,7 @@ class LiveResult extends ActiveRecord {
 		$average = $this->average;
 		if ($this->format == 'a' || $this->format == 'm') {
 			if ($average > 0) {
-				$condition = 'average<:average';
+				$condition = 'average>0 AND average<:average';
 			} elseif ($average < 0) {
 				if ($best > 0) {
 					$condition = 'average>0 OR (average<0 AND best>0 AND best<:best)';
