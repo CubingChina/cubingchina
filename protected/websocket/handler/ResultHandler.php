@@ -3,6 +3,9 @@
 class ResultHandler extends MsgHandler {
 
 	public function process() {
+		if ($this->competition == null) {
+			return;
+		}
 		$action = $this->getAction();
 		if ($action !== '') {
 			if (strtolower($action) != 'fetch' && !$this->checkAccess()) {

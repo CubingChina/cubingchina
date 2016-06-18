@@ -42,7 +42,7 @@ class ChatHandler extends MsgHandler {
 			$message->create_time = time();
 			$message->save();
 			self::$messages[$this->competition->id][] = $message;
-			self::$messages[$this->competition->id] = array_slice(self::$messages[$this->competition->id], 0, self::RECENT_MESSAGE_NUM);
+			self::$messages[$this->competition->id] = array_slice(self::$messages[$this->competition->id], -self::RECENT_MESSAGE_NUM);
 			$this->broadcastSuccess('message.new', $message->getShowAttributes(), $this->competition, $this->client);
 		}
 	}
