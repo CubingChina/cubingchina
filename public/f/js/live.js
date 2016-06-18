@@ -899,6 +899,7 @@
     }
     if (options.alertResult) {
       var message = {
+        id: +new Date(),
         user: {
           name: 'System'
         },
