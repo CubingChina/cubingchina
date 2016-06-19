@@ -123,8 +123,8 @@ class ResultHandler extends MsgHandler {
 			$temp[$result->event]['results'][] = $result->getShowAttributes(true);
 		}
 		$events = array();
-		if ($this->user->wcaid != '') {
-			$personResults = Persons::getResults($this->user->wcaid);
+		if ($this->msg->user->wcaid != '') {
+			$personResults = Persons::getResults($this->msg->user->wcaid);
 			foreach ($personResults['personRanks'] as $rank) {
 				$events[$rank->eventId] = $rank->eventId;
 				if (!isset($temp[$rank->eventId])) {
