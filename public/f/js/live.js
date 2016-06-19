@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  // Vue.config.debug = true;
+  Vue.config.debug = true;
 
   //websocket
   var ws = window._ws = new WS('ws://' + location.host + '/ws');
@@ -170,7 +170,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
-    // strict: true,
+    strict: true,
     mutations: mutations
   });
   //main component
@@ -504,7 +504,10 @@
               }
             },
             watch: {
-              results: function() {
+              round: function() {
+                this.searchText = '';
+              },
+              event: function() {
                 this.searchText = '';
               },
               result: function(result) {
@@ -649,6 +652,12 @@
                     default:
                       return 2;
                   }
+                },
+                event: function(state) {
+                  return state.params.event;
+                },
+                round: function(state) {
+                  return state.params.round;
                 },
                 results: function(state) {
                   return state.results;
