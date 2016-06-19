@@ -270,8 +270,8 @@
               </td>
               <td>{{result.best | decodeResult result.event}}</td>
               <td>{{result.regional_single_record}}</td>
-              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.formt == '3')">{{result.average | decodeResult result.event}}</td>
-              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.formt == '3')">{{result.regional_average_record}}</td>
+              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.format == '3')">{{result.average | decodeResult result.event}}</td>
+              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.format == '3')">{{result.regional_average_record}}</td>
               <td>{{{result.user.region}}}</td>
               <td>
                 {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
