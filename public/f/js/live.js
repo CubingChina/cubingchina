@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  Vue.config.debug = true;
+  // Vue.config.debug = true;
 
   //websocket
   var ws = window._ws = new WS('ws://' + location.host + '/ws');
@@ -170,7 +170,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
-    strict: true,
+    // strict: true,
     mutations: mutations
   });
   //main component
@@ -1033,7 +1033,7 @@
       }
       var minute = match[1] ? parseInt(match[1]) : 0;
       var second = parseInt(match[2]);
-      var msecond = parseInt(match[3]) * (match[3].length == 1 ? 10 : 1);
+      var msecond = parseInt(match[3]);
       return (minute * 60 + second) * 100 + msecond;
     }
   }
