@@ -97,9 +97,9 @@
                     <tr v-for="result in userResult.results">
                       <td>{{getRoundName(result.event, result.round)}}</td>
                       <td>{{result.pos}}</td>
-                      <td class="result">{{result.best | decodeResult result.event}}</td>
+                      <td class="result" :class="{'new-best': newBest}">{{result.best | decodeResult result.event}}</td>
                       <td class="record">{{result.regional_single_record}}</td>
-                      <td class="result">{{result.average | decodeResult result.event}}</td>
+                      <td class="result" :class="{'new-best': newAverage}">{{result.average | decodeResult result.event}}</td>
                       <td class="record">{{result.regional_average_record}}</td>
                       <td>
                         {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;

@@ -129,6 +129,14 @@ class ResultHandler extends MsgHandler {
 
 	}
 
+	public function actionRounds() {
+		$this->success('round.all', array_map(function($round) {
+			return $round->getBroadcastAttributes();
+		}, LiveEventRound::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition->id,
+		))));
+	}
+
 	public function actionRound() {
 		$round = LiveEventRound::model()->findByAttributes(array(
 			'competition_id'=>$this->competition->id,

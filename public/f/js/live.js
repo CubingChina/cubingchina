@@ -15,6 +15,10 @@
     if (state.results.length == 0) {
       fetchResults();
     }
+    ws.send({
+      type: 'result',
+      action: 'rounds',
+    });
     if (options.showMessage) {
       ws.send({
         type: 'chat',
@@ -31,6 +35,8 @@
     store.dispatch('UPDATE_USER_RESULTS', results);
   }).on('result.all', function(results) {
     store.dispatch('UPDATE_RESULTS', results);
+  }).on('round.all', function(rounds) {
+    store.dispatch('UPDATE_ROUNDS', rounds);
   }).on('round.update', function(round) {
     store.dispatch('UPDATE_ROUND', round);
   }).on('message.recent', function(messages) {
@@ -70,6 +76,11 @@
   var mutations = {
     CHANGE_PARAMS: function(state, params) {
       state.params = params;
+    },
+    UPDATE_ROUNDS: function(state, rounds) {
+      rounds.forEach(function(round) {
+        $.extend(eventRounds[round.event][round.id], round);
+      });
     },
     UPDATE_ROUND: function(state, round) {
       $.extend(eventRounds[round.event][round.id], round);
