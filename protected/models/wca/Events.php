@@ -71,7 +71,7 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getExportFormat($event, $format) {
-		if ($event === '333mbo') {
+		if ($event === '333mbf') {
 			return 'multibf' . $format;
 		}
 		if ($event === '333fm') {

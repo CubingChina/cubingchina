@@ -388,7 +388,7 @@ class RegistrationController extends AdminController {
 					if ($result->event === '333mbf') {
 						for ($i = 1; $i <= $result->format; $i++) {
 							$value = $result->{'value' . $i};
-							if ($value == -1) {
+							if ($value == -1 || $value == -2) {
 								//tried
 								$sheet->setCellValue($col . $row, LiveResult::formatTime($value, $result->event));
 								$col++;
