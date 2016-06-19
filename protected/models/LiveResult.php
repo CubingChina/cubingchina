@@ -139,6 +139,7 @@ class LiveResult extends ActiveRecord {
 		);
 		if ($calcPos) {
 			$attributes['pos'] = $this->getCalculatedPos();
+			$attributes['newBest'] = $attributes['newAverage'] = false;
 		}
 		return $attributes;
 	}

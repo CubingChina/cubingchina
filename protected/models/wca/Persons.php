@@ -1,5 +1,7 @@
 <?php
 
+Yii::import('application.statistics.*');
+
 /**
  * This is the model class for table "Persons".
  *

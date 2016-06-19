@@ -105,7 +105,7 @@ class ResultHandler extends MsgHandler {
 		usort($results, function($resA, $resB) {
 			$temp = $resA->wcaEvent->rank - $resB->wcaEvent->rank;
 			if ($temp == 0) {
-				$temp = $resB->wcaRound->rank - $resA->wcaRound->rank;
+				$temp = $resA->wcaRound->rank - $resB->wcaRound->rank;
 			}
 			return $temp;
 		});
@@ -121,6 +121,44 @@ class ResultHandler extends MsgHandler {
 				);
 			}
 			$temp[$result->event]['results'][] = $result->getShowAttributes(true);
+		}
+		$events = array();
+		if ($this->user->wcaid != '') {
+			$personResults = Persons::getResults($this->user->wcaid);
+			foreach ($personResults['personRanks'] as $rank) {
+				$events[$rank->eventId] = $rank->eventId;
+				if (!isset($temp[$rank->eventId])) {
+					continue;
+				}
+				$best = $average = PHP_INT_MAX;
+				foreach ($temp[$rank->eventId]['results'] as &$result) {
+					if ($result['best'] > 0 && $result['best'] <= $best) {
+						$result['newBest'] = true;
+						$best = $result['best'];
+					}
+					if ($result['average'] > 0 && $result['average'] <= $average) {
+						$result['newAverage'] = true;
+						$average = $result['average'];
+					}
+				}
+			}
+		}
+		foreach ($temp as $event=>&$results) {
+			//event didn't attend before
+			if (!isset($events[$event])) {
+				$best = $average = PHP_INT_MAX;
+				foreach ($results['results'] as &$result) {
+					if ($result['best'] > 0 && $result['best'] <= $best) {
+						$result['newBest'] = true;
+						$best = $result['best'];
+					}
+					if ($result['average'] > 0 && $result['average'] <= $average) {
+						$result['newAverage'] = true;
+						$average = $result['average'];
+					}
+				}
+			}
+			$results['results'] = array_reverse($results['results']);
 		}
 		$this->success('result.user', array_values($temp));
 	}
