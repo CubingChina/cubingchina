@@ -177,7 +177,7 @@
                 <input type="tel" class="form-control" id="time_limit" v-model="time_limit">
               </div>
               <div class="form-group">
-                <label><?php echo Yii::t('Schedule', 'Number'); ?></label>
+                <label><?php echo Yii::t('Schedule', 'Competitors'); ?></label>
                 <input type="tel" class="form-control" id="number" v-model="number">
               </div>
               <div class="form-group">

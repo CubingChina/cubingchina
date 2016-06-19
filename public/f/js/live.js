@@ -450,6 +450,9 @@
             });
           },
           isAdvanced: function(result) {
+            if (this.filter != 'all') {
+              return false;
+            }
             if (result.round == 'c' || result.round == 'f') {
               return result.best > 0 && result.pos <= 3;
             }
