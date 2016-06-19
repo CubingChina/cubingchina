@@ -130,7 +130,8 @@ class ResultHandler extends MsgHandler {
 				if (!isset($temp[$rank->eventId])) {
 					continue;
 				}
-				$best = $average = PHP_INT_MAX;
+				$best = $rank->best;
+				$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
 				foreach ($temp[$rank->eventId]['results'] as &$result) {
 					if ($result['best'] > 0 && $result['best'] <= $best) {
 						$result['newBest'] = true;
