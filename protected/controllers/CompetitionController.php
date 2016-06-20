@@ -213,6 +213,8 @@ class CompetitionController extends Controller {
 	}
 
 	private function setCompetitionNavibar($competition) {
+		$showResults = $competition->hasResults && $this->id != 'live';
+		$showLive = $competition->live == Competition::YES && $competition->isRegistrationEnded();
 		$navibar = array(
 			array(
 				'label'=>Html::fontAwesome('home', 'a') . Yii::t('Competition', 'Cubing China'),
@@ -262,25 +264,25 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-white',
 				),
+				'visible'=>!$showResults && !$showLive,
 			),
-		);
-		if ($competition->hasResults && $this->id != 'live') {
-			$navibar[] = array(
+			array(
 				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),
 				'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-purple',
 				),
-			);
-		} elseif ($competition->live == Competition::YES && $competition->isRegistrationEnded()) {
-			$navibar[count($navibar) - 1] = array(
+				'visible'=>$showResults,
+			),
+			array(
 				'label'=>Html::fontAwesome('play', 'a') . Yii::t('Competition', 'Live'),
 				'url'=>array('/live/live', 'name'=>$competition->alias),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-pink',
 				),
-			);
-		}
+				'visible'=>!$showResults && $showLive,
+			),
+		);
 		$this->navibar = $navibar;
 	}
 }
