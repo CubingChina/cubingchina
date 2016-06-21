@@ -70,18 +70,21 @@
       </div>
     </div>
     <div tabindex="-1" id="user-results-modal" class="modal fade">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-body">
+            <div class="well well-sm">
+              <a href="/results/person/{{currentUser.wcaid}}" v-if="currentUser.wcaid">{{currentUser.name}}</a>
+              <span v-else>{{currentUser.name}}</span>
+              - {{currentUser.region}}
+            </div>
             <div class="table-responsive">
               <table class="table table-bordered table-condensed table-hover table-boxed">
                 <thead>
                   <th><?php echo Yii::t('Results', 'Round'); ?></th>
                   <th><?php echo Yii::t('Results', 'Place'); ?></th>
-                  <th><?php echo Yii::t('common', 'Best'); ?></th>
-                  <th></th>
-                  <th><?php echo Yii::t('common', 'Average'); ?></th>
-                  <th></th>
+                  <th class="text-right"><?php echo Yii::t('common', 'Best'); ?></th>
+                  <th class="text-right"><?php echo Yii::t('common', 'Average'); ?></th>
                   <th><?php echo Yii::t('common', 'Detail'); ?></th>
                 </thead>
                 <tbody>
@@ -97,16 +100,28 @@
                     <tr v-for="result in userResult.results">
                       <td>{{getRoundName(result.event, result.round)}}</td>
                       <td>{{result.pos}}</td>
-                      <td class="result" :class="{'new-best': result.newBest}">{{result.best | decodeResult result.event}}</td>
-                      <td class="record">{{result.regional_single_record}}</td>
-                      <td class="result" :class="{'new-best': result.newAverage}">{{result.average | decodeResult result.event}}</td>
-                      <td class="record">{{result.regional_average_record}}</td>
+                      <td class="text-right">
+                        <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
+                          {{result.regional_single_record}}
+                        </span>
+                        <span :class="{'new-best': result.newBest}">
+                          {{result.best | decodeResult result.event}}
+                        </span>
+                      </td>
+                      <td class="text-right">
+                        <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
+                          {{result.regional_average_record}}
+                        </span>
+                        <span :class="{'new-best': result.newAverage}">
+                          {{result.average | decodeResult result.event}}
+                        </span>
+                      </td>
                       <td>
-                        {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value2 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value3 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value4 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value5 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
                       </td>
                     </tr>
                   </template>
@@ -247,10 +262,8 @@
             <th v-if="hasPermission && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
-            <th><?php echo Yii::t('common', 'Best'); ?></th>
-            <th></th>
-            <th v-if="hasAverage"><?php echo Yii::t('common', 'Average'); ?></th>
-            <th v-if="hasAverage"></th>
+            <th class="text-right"><?php echo Yii::t('common', 'Best'); ?></th>
+            <th class="text-right" v-if="hasAverage()"><?php echo Yii::t('common', 'Average'); ?></th>
             <th><?php echo Yii::t('common', 'Region'); ?></th>
             <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
@@ -268,17 +281,25 @@
               <td>
                 <a href="javascript:void(0)" @click="goToUser(result.user)">{{result.user.name}}</a>
               </td>
-              <td>{{result.best | decodeResult result.event}}</td>
-              <td>{{result.regional_single_record}}</td>
-              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.format == '3')">{{result.average | decodeResult result.event}}</td>
-              <td v-if="result.format == 'a' || result.format == 'm' || (result.event == '333bf' && result.format == '3')">{{result.regional_average_record}}</td>
+              <td class="text-right">
+                <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
+                  {{result.regional_single_record}}
+                </span>
+                {{result.best | decodeResult result.event}}
+              </td>
+              <td class="text-right" v-if="hasAverage(result)">
+                <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
+                  {{result.regional_average_record}}
+                </span>
+                {{result.average | decodeResult result.event}}
+              </td>
               <td>{{{result.user.region}}}</td>
               <td>
-                {{result.value1 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value2 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value3 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value4 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value5 | decodeResult result.event '--'}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
               </td>
             </tr>
           </tbody>

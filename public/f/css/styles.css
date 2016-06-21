@@ -3008,3 +3008,21 @@ table.concise-schedule {
 .live .result-input-wrapper label .penalty {
   color: inherit;
 }
+.live span.record {
+  display: inline-block;
+  padding: 0 3px;
+  color: #fff;
+  border-radius: 4px;
+}
+.live span.record-wr {
+  background-color: #d2322d;
+}
+.live span.record-cr {
+  background-color: #f0ad4e;
+}
+.live span.record-nr {
+  background-color: #47a447;
+}
+.live .well-sm {
+  margin-bottom: 10px;
+}

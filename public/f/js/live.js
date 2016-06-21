@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + '/ws');
+  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -190,7 +190,8 @@
     store: store,
     data: function() {
       return {
-        options: options
+        options: options,
+        currentUser: {}
       };
     },
     vuex: {
@@ -222,6 +223,13 @@
       }
     },
     methods: {
+      getRecordClass: function(record) {
+        if (record == 'NR' || record == 'WR') {
+          return 'record-' + record.toLowerCase();
+        } else {
+          return 'record-cr';
+        }
+      },
       getEventName: function(event) {
         return events[event] && events[event].name;
       },
@@ -345,13 +353,9 @@
             round: function(state) {
               return state.params.round;
             },
-            isCurrentRoundOpen: function() {
+            isCurrentRoundOpen: function(state) {
               var round = eventRounds[state.params.event][state.params.round];
               return round.status != 1;
-            },
-            hasAverage: function() {
-              var round = eventRounds[state.params.event][state.params.round];
-              return round.format == 'a' || round.format == 'm' || (state.params.event == '333bf' && round.format == '3');
             },
             events: function(state) {
               return state.events;
@@ -372,6 +376,17 @@
         },
         template: '#result-template',
         methods: {
+          hasAverage: function(result) {
+            var r = result || eventRounds[this.event][this.round];
+            return r.format == 'a' || r.format == 'm' || (this.event == '333bf' && r.format == '3');
+          },
+          getRecordClass: function(record) {
+            if (record == 'NR' || record == 'WR') {
+              return 'record-' + record.toLowerCase();
+            } else {
+              return 'record-cr';
+            }
+          },
           showRoundSettings: function() {
             $('#round-settings-modal').modal();
           },
@@ -437,6 +452,7 @@
             }
           },
           goToUser: function(user) {
+            this.$parent.currentUser = user;
             $('#user-results-modal').modal('show');
             store.dispatch('LOADING_USER_RESULTS');
             ws.send({
