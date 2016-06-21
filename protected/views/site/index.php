@@ -22,9 +22,7 @@
       </div>
       <div class="details col-md-9 col-sm-8 col-xs-10">
         <h5 class="title">
-          <?php echo CHtml::link($competition->logo . $competition->getAttributeValue('name'), $competition->getUrl('detail'), array(
-            'class'=>'comp-type-' . strtolower($competition->type),
-          )); ?>
+          <?php echo $competition->getCompetitionLink(); ?>
         </h5>
         <p class="time text-muted"><?php echo $competition->tba == Competition::YES ? Yii::t('common', 'To be announced') : ($competition->isMultiLocation() ? $competition->getLocationInfo('venue') : $competition->location[0]->getFullAddress()); ?></p>
       </div>

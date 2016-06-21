@@ -434,7 +434,12 @@ class Competition extends ActiveRecord {
 	public function getCompetitionLink() {
 		$name = $this->getAttributeValue('name');
 		$logo = $this->getLogo();
-		return CHtml::link($logo . $name, $this->getUrl(), array('class'=>'comp-type-' . strtolower($this->type)));
+		if ($this->isRegistrationEnded() && $this->live == self::YES && !$this->hasResults) {
+			$type = 'live';
+		} else {
+			$type = 'detail';
+		}
+		return CHtml::link($logo . $name, $this->getUrl($type), array('class'=>'comp-type-' . strtolower($this->type)));
 	}
 
 	public function getWcaRegulationUrl() {
@@ -459,8 +464,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getUrl($type = 'detail') {
+		$controller = $type === 'live' ? 'live' : 'competition';
 		return array(
-			'/competition/' . $type,
+			"/$controller/$type",
 			'name'=>$this->getUrlName(),
 		);
 	}

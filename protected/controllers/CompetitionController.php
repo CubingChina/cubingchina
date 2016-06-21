@@ -276,7 +276,7 @@ class CompetitionController extends Controller {
 			),
 			array(
 				'label'=>Html::fontAwesome('play', 'a') . Yii::t('Competition', 'Live'),
-				'url'=>array('/live/live', 'name'=>$competition->alias),
+				'url'=>$competition->getUrl('live'),
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-pink',
 				),
