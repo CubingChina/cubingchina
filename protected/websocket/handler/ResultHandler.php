@@ -132,34 +132,34 @@ class ResultHandler extends MsgHandler {
 				}
 				$best = $rank->best;
 				$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
-				foreach ($temp[$rank->eventId]['results'] as &$result) {
+				foreach ($temp[$rank->eventId]['results'] as $key=>$result) {
 					if ($result['best'] > 0 && $result['best'] <= $best) {
-						$result['newBest'] = true;
+						$temp[$rank->eventId]['results'][$key]['newBest'] = true;
 						$best = $result['best'];
 					}
 					if ($result['average'] > 0 && $result['average'] <= $average) {
-						$result['newAverage'] = true;
+						$temp[$rank->eventId]['results'][$key]['newAverage'] = true;
 						$average = $result['average'];
 					}
 				}
 			}
 		}
-		foreach ($temp as $event=>&$results) {
+		foreach ($temp as $event=>$results) {
 			//event didn't attend before
 			if (!isset($events[$event])) {
 				$best = $average = PHP_INT_MAX;
-				foreach ($results['results'] as &$result) {
+				foreach ($results['results'] as $key=>$result) {
 					if ($result['best'] > 0 && $result['best'] <= $best) {
-						$result['newBest'] = true;
+						$results['results'][$key]['newBest'] = true;
 						$best = $result['best'];
 					}
 					if ($result['average'] > 0 && $result['average'] <= $average) {
-						$result['newAverage'] = true;
+						$results['results'][$key]['newAverage'] = true;
 						$average = $result['average'];
 					}
 				}
 			}
-			$results['results'] = array_reverse($results['results']);
+			$temp[$event]['results'] = array_reverse($results['results']);
 		}
 		$userResults = array();
 		foreach ($temp as $event=>$results) {
