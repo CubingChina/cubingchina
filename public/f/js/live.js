@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + ':8080/ws');
+  var ws = window._ws = new WS('ws://' + location.host + '/ws');
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
