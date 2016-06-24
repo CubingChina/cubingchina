@@ -98,7 +98,7 @@ class QueryCheckPdo extends PDO {
 					throw new Exception('MySQL server has gone away');
 				}
 			} catch (Exception $e) {
-				if ($e->getCode() != 'HY000' && !stristr($e->getMessage(), 'server has gone away')) {
+				if ($e->getCode() !== 'HY000' && !stristr($e->getMessage(), 'server has gone away')) {
 					throw $e;
 				}
 				$this->_pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
