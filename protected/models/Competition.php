@@ -977,7 +977,7 @@ class Competition extends ActiveRecord {
 					'header'=>CHtml::tag('span', array(
 						'class'=>'event-icon event-icon-white event-icon-' . $event,
 						'title'=>Yii::t('event', Events::getFullEventName($event)),
-					), $headerText ? $event : ''),
+					), $headerText ? $event : '&nbsp;'),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
