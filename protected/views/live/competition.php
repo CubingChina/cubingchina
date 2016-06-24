@@ -93,38 +93,34 @@
                       Loading...
                     </td>
                   </tr>
-                  <template v-for="userResult in userResults">
-                    <tr>
-                      <td colspan="8">{{getEventName(userResult.event)}}</td>
-                    </tr>
-                    <tr v-for="result in userResult.results">
-                      <td>{{getRoundName(result.event, result.round)}}</td>
-                      <td>{{result.pos}}</td>
-                      <td class="text-right">
-                        <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
-                          {{result.regional_single_record}}
-                        </span>
-                        <span :class="{'new-best': result.newBest}">
-                          {{result.best | decodeResult result.event}}
-                        </span>
-                      </td>
-                      <td class="text-right">
-                        <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
-                          {{result.regional_average_record}}
-                        </span>
-                        <span :class="{'new-best': result.newAverage}">
-                          {{result.average | decodeResult result.event}}
-                        </span>
-                      </td>
-                      <td>
-                        {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                      </td>
-                    </tr>
-                  </template>
+                  <tr v-for="result in userResults">
+                    <td colspan="8" v-if="result.type == 'event'">{{getEventName(result.event)}}</td>
+                    <td v-if="result.type == 'result'">{{getRoundName(result.event, result.round)}}</td>
+                    <td v-if="result.type == 'result'">{{result.pos}}</td>
+                    <td v-if="result.type == 'result'" class="text-right">
+                      <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
+                        {{result.regional_single_record}}
+                      </span>
+                      <span :class="{'new-best': result.newBest}">
+                        {{result.best | decodeResult result.event}}
+                      </span>
+                    </td>
+                    <td v-if="result.type == 'result'" class="text-right">
+                      <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
+                        {{result.regional_average_record}}
+                      </span>
+                      <span :class="{'new-best': result.newAverage}">
+                        {{result.average | decodeResult result.event}}
+                      </span>
+                    </td>
+                    <td v-if="result.type == 'result'">
+                      {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

@@ -161,7 +161,18 @@ class ResultHandler extends MsgHandler {
 			}
 			$results['results'] = array_reverse($results['results']);
 		}
-		$this->success('result.user', array_values($temp));
+		$userResults = array();
+		foreach ($temp as $event=>$results) {
+			$userResults[] = array(
+				'type'=>'event',
+				'event'=>$event,
+			);
+			foreach ($results['results'] as $result) {
+				$result['type'] = 'result';
+				$userResults[] = $result;
+			}
+		}
+		$this->success('result.user', $userResults);
 	}
 
 	public function actionAttribute() {

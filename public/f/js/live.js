@@ -140,7 +140,9 @@
           state.messages.push(message);
         }
       });
-      newMessage({}, true);
+      Vue.nextTick(function() {
+        newMessage({}, true);
+      });
     },
     NEW_MESSAGE: function(state, message) {
       if (!message.id && !message.isSelf) {
