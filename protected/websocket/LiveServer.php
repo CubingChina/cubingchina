@@ -6,9 +6,7 @@ class LiveServer implements MessageComponentInterface {
 	protected $clients = array();
 
 	private $_onlineNumbers = array();
-
-	public function __construct() {
-	}
+	private $_maxOnlineNumbers = array();
 
 	public function onOpen(ConnectionInterface $conn) {
 		$client = new LiveClient($this, $conn);
@@ -59,8 +57,13 @@ class LiveServer implements MessageComponentInterface {
 	public function increaseOnlineNumber($competitionId) {
 		if (!isset($this->_onlineNumbers[$competitionId])) {
 			$this->_onlineNumbers[$competitionId] = 0;
+			$this->_maxOnlineNumbers[$competitionId] = 0;
 		}
 		$this->_onlineNumbers[$competitionId]++;
+		if ($this->_onlineNumbers[$competitionId] > $this->_maxOnlineNumbers[$competitionId]) {
+			$this->_maxOnlineNumbers[$competitionId] = $this->_onlineNumbers[$competitionId];
+			Yii::log(sprintf('New max online: %d, competitionId: %d', $this->_maxOnlineNumbers[$competitionId], $competitionId), 'ws', 'online');
+		}
 	}
 
 	public function decreaseOnlineNumber($competitionId) {
