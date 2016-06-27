@@ -15,6 +15,9 @@ class LiveController extends CompetitionController {
 
 	public function actionLive() {
 		$competition = $this->getCompetition();
+		if ($competition->live == Competition::NO || $competition->canRegister()) {
+			$this->redirect($competition->getUrl());
+		}
 		$competition->initLiveData();
 		$min = DEV ? '' : '.min';
 		$version = Yii::app()->params->jsVer;

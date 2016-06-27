@@ -285,6 +285,10 @@ class Competition extends ActiveRecord {
 		)) >= $this->person_num;
 	}
 
+	public function canRegister() {
+		return !$this->isRegistrationEnded() && !$this->isRegistrationFull();
+	}
+
 	public function isInProgress() {
 		$now = time();
 		return $now > $this->date && $now - 86400 < max($this->date, $this->end_date);
@@ -824,6 +828,17 @@ class Competition extends ActiveRecord {
 		}
 		if ($this->status == self::STATUS_SHOW) {
 			$buttons[] = CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>array('competition_id'=>$this->id)), array('class'=>'btn btn-xs btn-purple btn-square'));
+			if (!$this->canRegister()) {
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+					'data-attribute'=>'live',
+					'data-value'=>$this->live,
+					'data-text'=>'["开启直播","关闭直播"]',
+					'data-name'=>$this->name_zh,
+				), $this->live ? '关闭直播' : '开启直播');
+			}
 		}
 		return implode(' ', $buttons);
 	}
