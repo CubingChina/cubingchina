@@ -403,7 +403,7 @@ class RegistrationController extends AdminController {
 							} else {
 								$difference = 99 - substr($value, 0, 2);
 								$missed = intval(substr($value, -2));
-								$seconds = substr($value, 3, -2);
+								$seconds = intval(substr($value, 3, -2));
 								$solved = $difference + $missed;
 								$tried = $solved + $missed;
 								//tried

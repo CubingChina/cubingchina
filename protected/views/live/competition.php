@@ -62,6 +62,17 @@
                   <input type="checkbox" v-model="options.alertRecord"> <?php echo Yii::t('live', 'Show Record on Chat'); ?>
                 </label>
               </div>
+              <hr v-if="hasPermission">
+              <?php $form = $this->beginWidget('ActiveForm', array(
+                'htmlOptions'=>array(
+                  'class'=>'form-horizontal',
+                  'v-if'=>'hasPermission',
+                ),
+                'action'=>array('/board/registration/exportLiveData', 'id'=>$competition->id),
+              )); ?>
+              <input type="hidden" value="1" name="xlsx">
+              <button type="submit" class="btn btn-theme"><?php echo Yii::t('live', 'Export'); ?></button>
+              <?php $this->endWidget(); ?>
             </div>
             <div class="modal-footer">
               <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
