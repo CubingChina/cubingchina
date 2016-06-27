@@ -3026,3 +3026,8 @@ table.concise-schedule {
 .live .well-sm {
   margin-bottom: 10px;
 }
+.live .online-number {
+  float: right;
+  height: 34px;
+  line-height: 34px;
+}

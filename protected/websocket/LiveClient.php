@@ -69,6 +69,7 @@ class LiveClient {
 			'code'=>self::CODE_OK,
 			'type'=>$type,
 			'data'=>$data,
+			'onlineNumber'=>$this->server->getOnlineNumber($this->competitionId),
 		));
 	}
 

@@ -32,10 +32,11 @@
 <template id="live-container-template">
   <div class="col-lg-12">
     <div class="options-area">
-      <div class="pull-right">
-        <button class="btn btn-md btn-warning no-mr" @click="showOptions">
-          <i class="fa fa-gear"></i>
-        </button>
+      <button class="btn btn-md btn-warning no-mr" @click="showOptions">
+        <i class="fa fa-gear"></i>
+      </button>
+      <div class="online-number">
+        <?php echo Yii::t('live', 'Online: '); ?>{{onlineNumber}}
       </div>
       <div tabindex="-1" id="options-modal" class="modal fade">
         <div class="modal-dialog">
@@ -171,10 +172,10 @@
 
 <template id="result-template">
   <div class="row">
-    <div class="col-md-3 col-sm-4" v-if="enableEntry">
+    <div class="col-md-3 col-sm-4" :class="{hide: !options.enableEntry}">
       <input-panel :result.sync="current"></input-panel>
     </div>
-    <div class="col-md-{{enableEntry ? 9 : 12}} col-sm-{{enableEntry ? 8 : 12}}">
+    <div class="col-md-{{options.enableEntry ? 9 : 12}} col-sm-{{options.enableEntry ? 8 : 12}}">
       <div tabindex="-1" id="round-settings-modal" class="modal fade">
         <div class="modal-dialog">
           <div class="modal-content">

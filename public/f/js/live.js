@@ -25,6 +25,10 @@
         action: 'fetch'
       });
     }
+  }).on('receive', function(data) {
+    if (data.onlineNumber) {
+      store.dispatch('UPDATE_ONLINE_NUMBER', data.onlineNumber);
+    }
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
     newMessageOnResult(result, 'new');
@@ -55,6 +59,7 @@
   var liveContainer = $('#live-container');
   var isTimeTraveling;
   var state = {
+    onlineNumber: 0,
     user: {},
     competitionId: 0,
     events: [],
@@ -152,6 +157,9 @@
       if (state.messages.length > 1000) {
         state.messages.splice(0, 1);
       }
+    },
+    UPDATE_ONLINE_NUMBER: function(state, onlineNumber) {
+      state.onlineNumber = onlineNumber;
     }
   };
   $.extend(state, liveContainer.data());
@@ -179,13 +187,63 @@
       round: state.params.round
     }
   }
-
+  var mixin = {
+    vuex: {
+      getters: {
+        hasPermission: function(state) {
+          var user = state.user;
+          return user.isOrganizer || user.isDelegate || user.isAdmin;
+        },
+        eventName: function(state) {
+          return events[state.params.event] && events[state.params.event].name;
+        },
+        roundName: function(state) {
+          var params = state.params;
+          if (eventRounds[params.event] && eventRounds[params.event][params.round]) {
+            return eventRounds[params.event][params.round].name;
+          }
+        },
+        events: function(state) {
+          return state.events;
+        },
+        event: function(state) {
+          return state.params.event;
+        },
+        round: function(state) {
+          return state.params.round;
+        },
+        isCurrentRoundOpen: function(state) {
+          var round = eventRounds[state.params.event][state.params.round];
+          return round.status != 1;
+        },
+        results: function(state) {
+          return state.results;
+        },
+        loading: function(state) {
+          return state.loading;
+        },
+        userResults: function(state) {
+          return state.userResults;
+        },
+        loadingUserResults: function(state) {
+          return state.loadingUserResults;
+        },
+        filters: function(state) {
+          return state.filters;
+        },
+        onlineNumber: function(state) {
+          return state.onlineNumber;
+        }
+      }
+    },
+  };
   //vuex
   var store = new Vuex.Store({
     state: state,
     strict: true,
     mutations: mutations
   });
+  Vue.mixin(mixin);
   //main component
   var vm = Vue.extend({
     template: '#live-container-template',
@@ -195,20 +253,6 @@
         options: options,
         currentUser: {}
       };
-    },
-    vuex: {
-      getters: {
-        userResults: function(state) {
-          return state.userResults;
-        },
-        loadingUserResults: function(state) {
-          return state.loadingUserResults;
-        },
-        hasPermission: function(state) {
-          var user = state.user;
-          return user.isOrganizer || user.isDelegate || user.isAdmin;
-        }
-      }
     },
     watch: {
       'options.enableEntry': function() {
@@ -306,9 +350,6 @@
           }
         },
         computed: {
-          enableEntry: function() {
-            return this.hasPermission && this.options.enableEntry;
-          },
           offset: function() {
             return (this.page - 1) * this.limit;
           },
@@ -329,45 +370,6 @@
             that.cut_off = round.cut_off;
             that.time_limit = round.time_limit;
             that.number = round.number;
-          }
-        },
-        vuex: {
-          getters: {
-            hasPermission: function(state) {
-              var user = state.user;
-              return user.isOrganizer || user.isDelegate || user.isAdmin;
-            },
-            eventName: function(state) {
-              return events[state.params.event] && events[state.params.event].name;
-            },
-            roundName: function(state) {
-              var params = state.params;
-              if (eventRounds[params.event] && eventRounds[params.event][params.round]) {
-                return eventRounds[params.event][params.round].name;
-              }
-            },
-            loading: function(state) {
-              return state.loading;
-            },
-            event: function(state) {
-              return state.params.event;
-            },
-            round: function(state) {
-              return state.params.round;
-            },
-            isCurrentRoundOpen: function(state) {
-              var round = eventRounds[state.params.event][state.params.round];
-              return round.status != 1;
-            },
-            events: function(state) {
-              return state.events;
-            },
-            results: function(state) {
-              return state.results;
-            },
-            filters: function(state) {
-              return state.filters;
-            }
           }
         },
         ready: function() {
@@ -684,15 +686,6 @@
                     default:
                       return 2;
                   }
-                },
-                event: function(state) {
-                  return state.params.event;
-                },
-                round: function(state) {
-                  return state.params.round;
-                },
-                results: function(state) {
-                  return state.results;
                 }
               }
             },
@@ -706,13 +699,6 @@
                     tried: '',
                     solved: '',
                     time: ''
-                  }
-                },
-                vuex: {
-                  getters: {
-                    event: function(state) {
-                      return state.params.event;
-                    }
                   }
                 },
                 watch: {

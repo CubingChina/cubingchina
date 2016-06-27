@@ -3,16 +3,17 @@ use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
 class LiveServer implements MessageComponentInterface {
-	protected $clients;
+	protected $clients = array();
+
+	private $_onlineNumbers = array();
 
 	public function __construct() {
-		$this->clients = new \SplObjectStorage();
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
 		$client = new LiveClient($this, $conn);
 		$conn->client = $client;
-		$this->clients->attach($client);
+		$this->clients[$conn->resourceId] = $client;
 		Yii::log("New connection: {$conn->resourceId}", 'ws', 'connect');
 	}
 
@@ -22,7 +23,8 @@ class LiveServer implements MessageComponentInterface {
 	}
 
 	public function onClose(ConnectionInterface $conn) {
-		$this->clients->detach($conn->client);
+		$this->decreaseOnlineNumber($this->clients[$conn->resourceId]->competitionId);
+		unset($this->clients[$conn->resourceId]);
 		Yii::log("Connection {$conn->resourceId} has disconnected", 'ws', 'disconnect');
 	}
 
@@ -44,6 +46,26 @@ class LiveServer implements MessageComponentInterface {
 			if ($client != $exclude && ($competition === null || $client->competitionId == $competition->id)) {
 				$client->success($type, $data);
 			}
+		}
+	}
+
+	public function getOnlineNumber($competitionId) {
+		if (!isset($this->_onlineNumbers[$competitionId])) {
+			$this->_onlineNumbers[$competitionId] = 0;
+		}
+		return $this->_onlineNumbers[$competitionId];
+	}
+
+	public function increaseOnlineNumber($competitionId) {
+		if (!isset($this->_onlineNumbers[$competitionId])) {
+			$this->_onlineNumbers[$competitionId] = 0;
+		}
+		$this->_onlineNumbers[$competitionId]++;
+	}
+
+	public function decreaseOnlineNumber($competitionId) {
+		if (isset($this->_onlineNumbers[$competitionId]) && $this->_onlineNumbers[$competitionId] > 0) {
+			$this->_onlineNumbers[$competitionId]--;
 		}
 	}
 }

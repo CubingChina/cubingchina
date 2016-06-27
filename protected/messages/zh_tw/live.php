@@ -17,16 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Close this round' => '結束本輪',
+  'Online: ' => '在線人數：',
   'Open' => '',
-  'Open this round' => '開啟本輪',
-  'Reset competitors' => '重置選手',
   'Children' => '少兒組',
+  'Close this round' => '結束本輪',
   'Enable Data Entry' => '開啟成績輸入板',
   'Females' => '女子組',
   'Finished' => '已結束',
   'Input Panel' => '輸入板',
   'Live' => '進行中',
+  'Open this round' => '開啟本輪',
+  'Reset competitors' => '重置選手',
   'Save' => '保存',
   'Show Message on Chat' => '在聊天界面顯示新消息',
   'Show Record on Chat' => '在聊天界面顯示項目紀錄',
