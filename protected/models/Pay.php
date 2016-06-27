@@ -24,6 +24,7 @@
 class Pay extends ActiveRecord {
 	const CHANNEL_NOWPAY = 'nowPay';
 	const CHANNEL_ALIPAY = 'alipay';
+	const CHANNEL_BALIPAY = 'balipay';
 
 	const TYPE_REGISTRATION = 0;
 
@@ -52,6 +53,7 @@ class Pay extends ActiveRecord {
 	const ALIPAY_TRADE_STATUS_WAIT_CONFIRM = 'WAIT_BUYER_CONFIRM_GOODS';
 	const ALIPAY_TRADE_STATUS_FINISHED = 'TRADE_FINISHED';
 	const ALIPAY_TRADE_STATUS_CLOSED = 'TRADE_CLOSED';
+	const ALIPAY_TRADE_SUCCESS = 'TRADE_SUCCESS';
 	const ALIPAY_SUCCESS = 'T';
 
 	const CHARSET = 'UTF-8';
@@ -109,24 +111,25 @@ class Pay extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_UNPAID=>Yii::t('common', 'Unpaid'), 
-			self::STATUS_PAID=>Yii::t('common', 'Paid'), 
-			self::STATUS_WAIT_SEND=>'待发货', 
-			self::STATUS_WAIT_CONFIRM=>'待收货', 
-			self::STATUS_WAIT_PAY=>'待付款', 
+			self::STATUS_UNPAID=>Yii::t('common', 'Unpaid'),
+			self::STATUS_PAID=>Yii::t('common', 'Paid'),
+			self::STATUS_WAIT_SEND=>'待发货',
+			self::STATUS_WAIT_CONFIRM=>'待收货',
+			self::STATUS_WAIT_PAY=>'待付款',
 		);
 	}
 
 	public static function getChannels() {
 		return array(
-			self::CHANNEL_ALIPAY=>'支付宝', 
-			self::CHANNEL_NOWPAY=>'现在支付', 
+			self::CHANNEL_ALIPAY=>'支付宝-担保交易',
+			self::CHANNEL_NOWPAY=>'现在支付',
+			self::CHANNEL_BALIPAY=>'支付宝-即时到帐'
 		);
 	}
 
 	public static function getTypes() {
 		return array(
-			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'), 
+			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'),
 		);
 	}
 
@@ -135,13 +138,13 @@ class Pay extends ActiveRecord {
 			case self::CHANNEL_NOWPAY:
 				return $this->validateNowPayNotify($params);
 			default:
-				return $this->validateAlipayNotify($params);
+				return $this->validateAlipayNotify($params, $channel);
 		}
 	}
 
-	public function validateAlipayNotify($params) {
+	public function validateAlipayNotify($params, $channel) {
 		$app = Yii::app();
-		$alipay = $app->params->alipay;
+		$alipay = $app->params->payments[$channel];
 		$sign = isset($params['sign']) ? $params['sign'] : '';
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
@@ -154,7 +157,7 @@ class Pay extends ActiveRecord {
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
-			$this->channel = self::CHANNEL_ALIPAY;
+			$this->channel = $channel;
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
 				case self::ALIPAY_TRADE_STATUS_WAIT_SEND:
@@ -166,6 +169,7 @@ class Pay extends ActiveRecord {
 				case self::ALIPAY_TRADE_STATUS_WAIT_CONFIRM:
 					$status = self::STATUS_WAIT_CONFIRM;
 					break;
+				case self::ALIPAY_TRADE_SUCCESS:
 				case self::ALIPAY_TRADE_STATUS_FINISHED:
 					$status = self::STATUS_PAID;
 					break;
@@ -182,7 +186,7 @@ class Pay extends ActiveRecord {
 
 	public function send() {
 		$app = Yii::app();
-		$alipay = $app->params->alipay;
+		$alipay = $app->params->payments['balipay'];
 		$params = array(
 			'service'=>'send_goods_confirm_by_platform',
 			'partner'=>$alipay['partner'],
@@ -260,37 +264,37 @@ class Pay extends ActiveRecord {
 			case self::CHANNEL_NOWPAY:
 				return $this->generateNowPayParams($isMobile);
 			default:
-				return $this->generateAlipayParams();
+				return $this->generateAlipayParams($isMobile);
 		}
 	}
 
-	public function generateAlipayParams() {
+	public function generateAlipayParams($isMobile) {
 		$app = Yii::app();
-		$alipay = $app->params->alipay;
+		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
 		$language = $app->language;
 		$app->language = 'zh_cn';
 		$params = array(
-			'service'=>'create_partner_trade_by_buyer',
+			'service'=>$isMobile ? 'alipay.wap.create.direct.pay.by.user' : 'create_direct_pay_by_user',
 			'partner'=>trim($alipay['partner']),
-			'seller_email'=>trim($alipay['seller_email']),
+			'seller_id'=>trim($alipay['seller_id']),
 			'payment_type'=>1,
-			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_ALIPAY)),
-			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_ALIPAY)),
+			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
+			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_BALIPAY)),
 			'out_trade_no'=>$this->order_no,
 			'subject'=>$this->order_name,
-			'price'=>number_format($this->amount / 100, 2, '.', ''),
+			'total_fee'=>number_format($this->amount / 100, 2, '.', ''),
 			'quantity'=>1,
-			'logistics_fee'=>'0.00',
-			'logistics_type'=>'EXPRESS',
-			'logistics_payment'=>'SELLER_PAY',
+			// 'logistics_fee'=>'0.00',
+			// 'logistics_type'=>'EXPRESS',
+			// 'logistics_payment'=>'SELLER_PAY',
 			'body'=>sprintf("ID: %s, Name: %s", $this->user_id, $this->user->getCompetitionName()),
 			'show_url'=>$this->getUrl(),
-			'receive_name'=>$this->user->getCompetitionName(),
-			'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
+			// 'receive_name'=>$this->user->getCompetitionName(),
+			// 'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
 			// 'receive_zip'=>$receive_zip,
 			// 'receive_phone'=>$receive_phone,
-			'receive_mobile'=>$this->user->mobile,
+			// 'receive_mobile'=>$this->user->mobile,
 			'_input_charset'=>strtolower(self::CHARSET),
 		);
 		self::buildAlipaySignature($params, $alipay['key']);
@@ -566,12 +570,12 @@ class Pay extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('user_id', $this->user_id, true);
-		$criteria->compare('channel', $this->channel, true);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('user_id', $this->user_id);
+		$criteria->compare('channel', $this->channel);
 		$criteria->compare('type', $this->type);
 		$criteria->compare('type_id', $this->type_id);
-		$criteria->compare('sub_type_id', $this->sub_type_id, true);
+		$criteria->compare('sub_type_id', $this->sub_type_id);
 		$criteria->compare('order_no', $this->order_no, true);
 		$criteria->compare('order_name', $this->order_name, true);
 		$criteria->compare('amount', $this->amount, true);
