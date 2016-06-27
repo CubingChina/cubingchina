@@ -90,7 +90,7 @@ $config = array(
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
-				'pay/<action:notify|frontNotify>/<channel:nowPay|alipay>'=>'pay/<action>',
+				'pay/<action:notify|frontNotify>/<channel:\w+>'=>'pay/<action>',
 				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
@@ -288,26 +288,14 @@ $config = array(
 			'height'=>1200,
 			'width'=>1200,
 		),
-		'nowPay'=>array(
-			'baseUrl'=>'http://api.ipaynow.cn/',
-			'types'=>array(
-				'pc'=>array(
-					'appId'=>'1436844603321385',
-					'securityKey'=>Env::get('PAYMENT_NOWPAY_PC'),
-					'deviceType'=>'02',
-				),
-				'mobile'=>array(
-					'appId'=>'1436844653265386',
-					'securityKey'=>Env::get('PAYMENT_NOWPAY_MOBILE'),
-					'deviceType'=>'06',
-				),
+		'payments'=>array(
+			'balipay'=>array(
+				'gateway'=>'https://mapi.alipay.com/gateway.do',
+				'partner'=>'2088221302462792',
+				'seller_id'=>'2088221302462792',
+				'key'=>Env::get('PAYMENT_BALIPAY'),
+				'img'=>'/f/images/pay/alipay.png',
 			),
-		),
-		'alipay'=>array(
-			'gateway'=>'https://mapi.alipay.com/gateway.do',
-			'partner'=>'2088002487607846',
-			'seller_email'=>'qiyuuu@gmail.com',
-			'key'=>Env::get('PAYMENT_ALIPAY'),
 		),
 		'regulations'=>array(
 			'common'=>array(
