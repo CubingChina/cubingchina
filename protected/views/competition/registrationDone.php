@@ -41,10 +41,13 @@
     </h4>
     <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
     <div class="pay-channels clearfix">
-      <?php foreach (Yii::app()->params->payments as $channel=>$payment); ?>
+      <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
+      <?php if (!isset($payment['active']) || $payment['active'] == true): ?>
       <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
         <img src="<?php echo $payment['img']; ?>">
       </div>
+      <?php endif; ?>
+      <?php endforeach; ?>
     </div>
     <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
     <div class="text-center">

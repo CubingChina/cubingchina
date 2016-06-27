@@ -53,6 +53,7 @@ class Pay extends ActiveRecord {
 	const ALIPAY_TRADE_STATUS_WAIT_CONFIRM = 'WAIT_BUYER_CONFIRM_GOODS';
 	const ALIPAY_TRADE_STATUS_FINISHED = 'TRADE_FINISHED';
 	const ALIPAY_TRADE_STATUS_CLOSED = 'TRADE_CLOSED';
+	const ALIPAY_TRADE_SUCCESS = 'TRADE_SUCCESS';
 	const ALIPAY_SUCCESS = 'T';
 
 	const CHARSET = 'UTF-8';
@@ -143,7 +144,7 @@ class Pay extends ActiveRecord {
 
 	public function validateAlipayNotify($params, $channel) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments[$channel];
 		$sign = isset($params['sign']) ? $params['sign'] : '';
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
@@ -168,6 +169,7 @@ class Pay extends ActiveRecord {
 				case self::ALIPAY_TRADE_STATUS_WAIT_CONFIRM:
 					$status = self::STATUS_WAIT_CONFIRM;
 					break;
+				case self::ALIPAY_TRADE_SUCCESS:
 				case self::ALIPAY_TRADE_STATUS_FINISHED:
 					$status = self::STATUS_PAID;
 					break;

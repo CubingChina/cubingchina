@@ -296,6 +296,13 @@ $config = array(
 				'key'=>Env::get('PAYMENT_BALIPAY'),
 				'img'=>'/f/images/pay/alipay.png',
 			),
+			'alipay'=>array(
+				'gateway'=>'https://mapi.alipay.com/gateway.do',
+				'partner'=>'2088002487607846',
+				'seller_email'=>'qiyuuu@gmail.com',
+				'key'=>Env::get('PAYMENT_ALIPAY'),
+				'active'=>false,
+			),
 		),
 		'regulations'=>array(
 			'common'=>array(
