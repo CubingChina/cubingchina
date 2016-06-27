@@ -438,7 +438,7 @@ class Competition extends ActiveRecord {
 	public function getCompetitionLink() {
 		$name = $this->getAttributeValue('name');
 		$logo = $this->getLogo();
-		if ($this->isRegistrationEnded() && $this->live == self::YES && !$this->hasResults) {
+		if (!$this->canRegister() && $this->live == self::YES && !$this->hasResults) {
 			$type = 'live';
 		} else {
 			$type = 'detail';
