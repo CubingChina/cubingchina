@@ -41,6 +41,7 @@
           return;
         }
         if (message.code === 200) {
+          this.fire('receive', message);
           this.fire(message.type, message.data);
         }
       } catch (e) {}
