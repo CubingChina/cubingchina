@@ -2632,7 +2632,7 @@ td .checkbox {
 td.scramble {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
-td pre {
+td pre, .result-detail pre {
   padding: 0;
   margin: 0;
   font-size: inherit;
@@ -2641,6 +2641,10 @@ td pre {
   background-color: transparent;
   color: inherit;
   line-height: inherit;
+}
+.result-detail pre {
+  display: inline;
+  white-space: pre-wrap;
 }
 .large {
   font-size: 2em;

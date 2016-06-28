@@ -141,6 +141,7 @@
         ids[message.id] = message.id;
       });
       messages.forEach(function(message) {
+        message.type = 'normal';
         if (!ids[message.id]) {
           state.messages.push(message);
         }
@@ -189,6 +190,19 @@
   }
   var mixin = {
     methods: {
+      getRecordClass: function(record) {
+        if (record == 'NR' || record == 'WR') {
+          return 'record-' + record.toLowerCase();
+        } else {
+          return 'record-cr';
+        }
+      },
+      getEventName: function(event) {
+        return events[event] && events[event].name;
+      },
+      getRoundName: function(event, round) {
+        return eventRounds[event][round] && eventRounds[event][round].name;
+      },
       getResultDetail: function(result) {
         var detail = [];
         var i, value;
@@ -281,19 +295,6 @@
       }
     },
     methods: {
-      getRecordClass: function(record) {
-        if (record == 'NR' || record == 'WR') {
-          return 'record-' + record.toLowerCase();
-        } else {
-          return 'record-cr';
-        }
-      },
-      getEventName: function(event) {
-        return events[event] && events[event].name;
-      },
-      getRoundName: function(event, round) {
-        return eventRounds[event][round] && eventRounds[event][round].name;
-      },
       showOptions: function() {
         $('#options-modal').modal();
       }
@@ -342,6 +343,16 @@
             filters: {
               formatTime: function(time) {
                 return time ? moment(new Date(time * 1000)).format('HH:mm:ss') : '';
+              }
+            },
+            components: {
+              'normal-message': {
+                props: ['message'],
+                template: '#normal-message-template'
+              },
+              'result-message': {
+                props: ['message', 'result'],
+                template: '#result-message-template'
               }
             }
           }
@@ -396,13 +407,6 @@
             var r = result || eventRounds[this.event][this.round];
             return r.format == 'a' || r.format == 'm' || (this.event == '333bf' && r.format == '3');
           },
-          getRecordClass: function(record) {
-            if (record == 'NR' || record == 'WR') {
-              return 'record-' + record.toLowerCase();
-            } else {
-              return 'record-cr';
-            }
-          },
           showRoundSettings: function() {
             $('#round-settings-modal').modal();
           },
@@ -456,7 +460,7 @@
             $('#round-settings-modal').modal('hide');
           },
           resetCompetitors: function() {
-            if (this.results.length == 0 || confirm('Do you want reset competitors?')) {
+            if (this.results.length == 0 || confirm('Do you want to reset competitors?')) {
               ws.send({
                 type: 'result',
                 action: 'reset',
@@ -930,6 +934,7 @@
         container = $('.message-container');
         ul = container.find('ul');
       }
+      message.type = message.type || 'normal';
       store.dispatch('NEW_MESSAGE', message);
       if (scroll || container.height() + container.scrollTop() > ul.height() - 30) {
         Vue.nextTick(function() {
@@ -945,32 +950,13 @@
     if (options.alertResult) {
       var message = {
         id: +new Date(),
+        type: 'result',
         user: {
           name: 'System'
         },
-        time: Math.floor(+new Date() / 1000)
+        time: Math.floor(+new Date() / 1000),
+        result: result
       };
-      var content = [];
-      var temp = [];
-      temp.push(result.user.name);
-      temp.push(events[result.event] && events[result.event].name);
-      temp.push(eventRounds[result.event] && eventRounds[result.event][result.round] && eventRounds[result.event][result.round].name);
-      content.push(temp.join(' - '));
-      if (result.average != 0) {
-        content.push('Average: ' + decodeResult(result.average, result.event));
-      }
-      content.push('Single: ' + decodeResult(result.best, result.event));
-      temp = [];
-      var num = result.format == 'a' ? 5 : (result.format == 'm' ? 3 : parseInt(result.format));
-      for (var i = 1; i <= num; i++) {
-        if (result['value' + i] != 0) {
-          temp.push(decodeResult(result['value' + i], result.event));
-        } else {
-          temp.push('--');
-        }
-      }
-      content.push('Detail: ' + temp.join('    '));
-      message.content = '<p class="text-danger">' + content.join('<br>') + '</p>';
       newMessage(message);
     }
     //check record

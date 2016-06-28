@@ -176,8 +176,22 @@
       {{message.user.name}} {{message.time | formatTime}}
     </div>
     <div class="message-body">
-      {{{message.content}}}
+      <normal-message v-if="message.type == 'normal'" :message="message"></normal-message>
+      <result-message v-if="message.type == 'result'" :message="message" :result="message.result"></result-message>
     </div>
+  </div>
+</template>
+
+<template id="normal-message-template">
+  {{message.content}}
+</template>
+
+<template id="result-message-template">
+  <div class="result-message text-danger">
+    {{result.user.name}} - {{getEventName(result.event)}} - {{getRoundName(result.event, result.round)}}<br>
+    <?php echo Yii::t('common', 'Best'); ?>: {{result.best | decodeResult result.event}}<br>
+    <span v-if="result.average != 0"><?php echo Yii::t('common', 'Average'); ?>: {{result.average | decodeResult result.event}}</span>
+    <div class="result-detail"><?php echo Yii::t('common', 'Detail'); ?>: {{{getResultDetail(result)}}}</div>
   </div>
 </template>
 
