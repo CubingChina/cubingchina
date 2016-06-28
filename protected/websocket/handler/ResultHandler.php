@@ -49,6 +49,10 @@ class ResultHandler extends MsgHandler {
 					return $result->user->birthday >= $birthday;
 				});
 				break;
+			case 'newcomers':
+				$results = array_filter($results, function($result) {
+					return $result->user->wcaid == '';
+				});
 		}
 		$this->success('result.all', array_map(function($result) {
 			return $result->getShowAttributes();

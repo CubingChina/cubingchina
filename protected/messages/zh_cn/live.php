@@ -17,7 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Online: ' => '在线人数：',
+  'Export' => '导出',
+  'New Comers' => '新人组',
   'Open' => '',
   'Children' => '少儿组',
   'Close this round' => '结束本轮',
@@ -26,6 +27,7 @@ return array (
   'Finished' => '已结束',
   'Input Panel' => '输入板',
   'Live' => '进行中',
+  'Online: ' => '在线人数：',
   'Open this round' => '开启本轮',
   'Reset competitors' => '重置选手',
   'Save' => '保存',

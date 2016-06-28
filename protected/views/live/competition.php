@@ -18,6 +18,10 @@
       'label'=>Yii::t('live', 'Children'),
       'value'=>'children',
     ),
+    array(
+      'label'=>Yii::t('live', 'New Comers'),
+      'value'=>'newcomers',
+    ),
   )),
   'data-user'=>json_encode(array(
     'isGuest'=>Yii::app()->user->isGuest,
