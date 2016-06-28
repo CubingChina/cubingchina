@@ -214,7 +214,7 @@ class CompetitionController extends Controller {
 
 	private function setCompetitionNavibar($competition) {
 		$showResults = $competition->hasResults && $this->id != 'live';
-		$showLive = $competition->live == Competition::YES && $competition->isRegistrationEnded();
+		$showLive = $competition->live == Competition::YES && !$competition->canRegister();
 		$navibar = array(
 			array(
 				'label'=>Html::fontAwesome('home', 'a') . Yii::t('Competition', 'Cubing China'),
