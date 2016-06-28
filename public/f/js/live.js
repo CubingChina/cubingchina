@@ -97,7 +97,7 @@
         var results = state.results;
         var index = findIndex(results, result);
         results.splice(index, 0, result);
-        calcPos(results, result);
+        calculatePos(results, result);
       }
     },
     UPDATE_RESULT: function(state, result) {
@@ -114,12 +114,12 @@
           }
         }
         results.sort(compare);
-        calcPos(results, result);
+        calculatePos(results, result);
       }
     },
     UPDATE_RESULTS: function(state, results) {
       results.sort(compare);
-      calcPos(results, {});
+      calculatePos(results, {});
       state.results = results;
       state.loading = false;
     },
@@ -1022,6 +1022,9 @@
       } else {
         result.average = Math.round((sum - best - worst) / 3);
       }
+      if (result.average / 100 > 600) {
+        result.average = Math.round(result.average / 100) * 100;
+      }
     } else if (result.format == 'm' || result.format == 'a') {
       result.average = zeroCount > 0 ? 0 : -1;
     } else if (result.event == '333bf') {
@@ -1065,6 +1068,11 @@
       var minute = match[1] ? parseInt(match[1]) : 0;
       var second = parseInt(match[2]);
       var msecond = parseInt(match[3]);
+      //above 10 minutes
+      if (minute * 60 + second > 600) {
+        second += msecond > 50 ? 1 : 0;
+        msecond = 0;
+      }
       return (minute * 60 + second) * 100 + msecond;
     }
   }
@@ -1140,7 +1148,7 @@
     }
     return left;
   }
-  function calcPos(results, result) {
+  function calculatePos(results, result) {
     for (var i = 0, len = results.length; i < len; i++) {
       if (!results[i - 1] || compare(results[i - 1], results[i], true) < 0) {
         results[i].pos = i + 1;
