@@ -282,7 +282,7 @@ class Pay extends ActiveRecord {
 			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
 			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_BALIPAY)),
 			'out_trade_no'=>$this->order_no,
-			'subject'=>$this->order_name,
+			'subject'=>'粗饼-' . $this->order_name,
 			'total_fee'=>number_format($this->amount / 100, 2, '.', ''),
 			'quantity'=>1,
 			// 'logistics_fee'=>'0.00',
