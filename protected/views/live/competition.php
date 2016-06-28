@@ -130,11 +130,7 @@
                       </span>
                     </td>
                     <td v-if="result.type == 'result'">
-                      {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                      {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                      {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                      {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                      {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                      {{{getResultDetail(result)}}}
                     </td>
                   </tr>
                 </tbody>
@@ -307,11 +303,7 @@
               </td>
               <td>{{{result.user.region}}}</td>
               <td>
-                {{result.value1 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value2 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value3 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value4 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
-                {{result.value5 | decodeResult result.event}}&nbsp;&nbsp;&nbsp;&nbsp;
+                {{{getResultDetail(result)}}}
               </td>
             </tr>
           </tbody>

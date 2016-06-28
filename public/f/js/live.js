@@ -188,6 +188,18 @@
     }
   }
   var mixin = {
+    methods: {
+      getResultDetail: function(result) {
+        var detail = [];
+        var i, value;
+        for (i = 1; i <= 5; i++) {
+          value = decodeResult(result['value' + i], result.event);
+          value = (value + '            ').slice(0, result.event === '333mbo' || result.event === '333mbf' ? 12 : 7);
+          detail.push(value);
+        }
+        return '<pre>' + detail.join('   ') + '</pre>';
+      }
+    },
     vuex: {
       getters: {
         hasPermission: function(state) {
