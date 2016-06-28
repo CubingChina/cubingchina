@@ -776,6 +776,7 @@
                     var code = e.which;
                     var that = this;
                     var value = that[attr];
+                    var isSameInput = that.$parent.lastIndex == that.$parent.currentIndex;
                     switch (code) {
                       //D,/ pressed
                       case 68:
@@ -789,7 +790,7 @@
                         break;
                       case 8:
                       case 109:
-                        if (that.$parent.lastIndex != that.$parent.currentIndex || that.time == 'DNF' || that.time == 'DNS') {
+                        if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
                           if (that.time === 'DNF' || that.time === 'DNS') {
                             that.solved = that.tried = that.time = '';
                           }
@@ -844,10 +845,10 @@
                       case 55:
                       case 56:
                       case 57:
-                        if (value.length >= 6) {
+                        if (value.length >= 6 && isSameInput) {
                           break;
                         }
-                        if (that.$parent.lastIndex != that.$parent.currentIndex || that.time == 'DNF' || that.time == 'DNS') {
+                        if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
                           if (that.time === 'DNF' || that.time === 'DNS') {
                             that.solved = that.tried = that.time = '';
                           }
@@ -861,7 +862,7 @@
                         }
                         value += code - 48;
                         that[attr] = value;
-                        if (that.$parent.lastIndex != that.$parent.currentIndex) {
+                        if (!isSameInput) {
                           that.$parent.lastIndex = that.$parent.currentIndex;
                         }
                         break;
