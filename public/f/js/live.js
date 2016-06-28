@@ -909,16 +909,22 @@
   });
   router.start(vm, liveContainer.get(0));
 
-  function newMessage(message, scroll) {
+  var newMessage = function() {
     var container = $('.message-container');
     var ul = container.find('ul');
-    store.dispatch('NEW_MESSAGE', message);
-    if (scroll || container.height() + container.scrollTop() > ul.height() - 30) {
-      Vue.nextTick(function() {
-        container.scrollTop(ul.height());
-      });
-    }
-  }
+    return function(message, scroll) {
+      if (container.length == 0) {
+        container = $('.message-container');
+        ul = container.find('ul');
+      }
+      store.dispatch('NEW_MESSAGE', message);
+      if (scroll || container.height() + container.scrollTop() > ul.height() - 30) {
+        Vue.nextTick(function() {
+          container.scrollTop(ul.height());
+        });
+      }
+    };
+  }();
   function newMessageOnResult(result, type) {
     if (result.best == 0) {
       return;
