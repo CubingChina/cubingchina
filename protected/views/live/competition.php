@@ -183,10 +183,10 @@
 
 <template id="result-template">
   <div class="row">
-    <div class="col-md-3 col-sm-4" :class="{hide: !options.enableEntry}">
+    <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}">
       <input-panel :result.sync="current"></input-panel>
     </div>
-    <div class="col-md-{{options.enableEntry ? 9 : 12}} col-sm-{{options.enableEntry ? 8 : 12}}">
+    <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}} col-sm-{{hasPermission && options.enableEntry ? 8 : 12}}">
       <div tabindex="-1" id="round-settings-modal" class="modal fade">
         <div class="modal-dialog">
           <div class="modal-content">
