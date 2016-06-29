@@ -188,7 +188,7 @@
 
 <template id="result-message-template">
   <div class="result-message text-danger">
-    {{result.user.name}} - {{getEventName(result.event)}} - {{getRoundName(result.event, result.round)}}<br>
+    {{result.user.name}} - {{getEventName(result)}} - {{getRoundName(result)}}<br>
     <?php echo Yii::t('common', 'Best'); ?>: {{result.best | decodeResult result.event}}<br>
     <span v-if="result.average != 0"><?php echo Yii::t('common', 'Average'); ?>: {{result.average | decodeResult result.event}}</span>
     <div class="result-detail"><?php echo Yii::t('common', 'Detail'); ?>: {{{getResultDetail(result)}}}</div>
