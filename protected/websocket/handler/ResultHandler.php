@@ -107,6 +107,12 @@ class ResultHandler extends MsgHandler {
 			'user_id'=>$this->msg->user->id,
 		));
 		usort($results, function($resA, $resB) {
+			if ($resA->wcaEvent === null) {
+				return 1;
+			}
+			if ($resB->wcaEvent === null) {
+				return -1;
+			}
 			$temp = $resA->wcaEvent->rank - $resB->wcaEvent->rank;
 			if ($temp == 0) {
 				$temp = $resA->wcaRound->rank - $resB->wcaRound->rank;
