@@ -1066,7 +1066,7 @@ class Competition extends ActiveRecord {
 
 	public function initLiveData($force = false) {
 		$attributes = array('competition_id'=>$this->id);
-		if (!$force && LiveEventRound::model()->countByAttributes() > 0) {
+		if (!$force && LiveEventRound::model()->countByAttributes($attributes) > 0) {
 			return;
 		}
 		LiveResult::model()->deleteAllByAttributes($attributes);
