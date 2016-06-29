@@ -110,8 +110,8 @@
                     </td>
                   </tr>
                   <tr v-for="result in userResults">
-                    <td colspan="8" v-if="result.type == 'event'">{{getEventName(result.event)}}</td>
-                    <td v-if="result.type == 'result'">{{getRoundName(result.event, result.round)}}</td>
+                    <td colspan="8" v-if="result.type == 'event'">{{getEventName(result)}}</td>
+                    <td v-if="result.type == 'result'">{{getRoundName(result)}}</td>
                     <td v-if="result.type == 'result'">{{result.pos}}</td>
                     <td v-if="result.type == 'result'" class="text-right">
                       <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
@@ -212,6 +212,16 @@
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Time Limit'); ?></label>
                 <input type="tel" class="form-control" id="time_limit" v-model="time_limit">
+              </div>
+              <div class="form-group">
+                <label><?php echo Yii::t('Schedule', 'Format'); ?></label>
+                <select v-model="format" class="form-control" id="format">
+                  <?php foreach (Formats::getAllFormats() as $id=>$value): ?>
+                  <?php if (strpos($id, '/') === false): ?>
+                  <option value="<?php echo $id; ?>"><?php echo Yii::t('common', $value); ?></option>
+                  <?php endif; ?>
+                  <?php endforeach; ?>
+                </select>
               </div>
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Competitors'); ?></label>

@@ -197,11 +197,13 @@
           return 'record-cr';
         }
       },
-      getEventName: function(event) {
-        return events[event] && events[event].name;
+      getEventName: function(result) {
+        var event = getEvent(result);
+        return event && event.name;
       },
-      getRoundName: function(event, round) {
-        return eventRounds[event][round] && eventRounds[event][round].name;
+      getRoundName: function(result) {
+        var round = getRound(result);
+        return round && round.name;
       },
       getResultDetail: function(result) {
         var detail = [];
@@ -221,13 +223,12 @@
           return user.isOrganizer || user.isDelegate || user.isAdmin;
         },
         eventName: function(state) {
-          return events[state.params.event] && events[state.params.event].name;
+          var event = getEvent(state.params)
+          return event && event.name;
         },
         roundName: function(state) {
-          var params = state.params;
-          if (eventRounds[params.event] && eventRounds[params.event][params.round]) {
-            return eventRounds[params.event][params.round].name;
-          }
+          var round = getRound(state.params);
+          return round && round.name;
         },
         events: function(state) {
           return state.events;
@@ -239,7 +240,7 @@
           return state.params.round;
         },
         isCurrentRoundOpen: function(state) {
-          var round = eventRounds[state.params.event][state.params.round];
+          var round = getRound(state.params);
           return round.status != 1;
         },
         results: function(state) {
@@ -367,6 +368,7 @@
             current: {},
             cut_off: 0,
             time_limit: 0,
+            format: '',
             number: 0,
             page: 1,
             limit: 300
@@ -389,10 +391,11 @@
             }
             that.filter = params.filter;
             that.page = 1;
-            var round = eventRounds[params.event][params.round];
+            var round = getRound(params);
             that.cut_off = round.cut_off;
             that.time_limit = round.time_limit;
             that.number = round.number;
+            that.format = round.format;
           }
         },
         ready: function() {
@@ -404,8 +407,8 @@
         template: '#result-template',
         methods: {
           hasAverage: function(result) {
-            var r = result || eventRounds[this.event][this.round];
-            return r.format == 'a' || r.format == 'm' || (this.event == '333bf' && r.format == '3');
+            var round = getRound(result || this);
+            return round.format == 'a' || round.format == 'm' || (round.event == '333bf' && round.format == '3');
           },
           showRoundSettings: function() {
             $('#round-settings-modal').modal();
@@ -421,6 +424,11 @@
                 return;
               }
             }
+            $('#format').parent().removeClass('has-error');
+            if (that.format == '') {
+              $('#format').parent().addClass('has-error');
+              return;
+            }
             ws.send({
               type: 'result',
               action: 'round',
@@ -429,6 +437,7 @@
                 id: state.params.round,
                 cut_off: that.cut_off,
                 time_limit: that.time_limit,
+                format: that.format,
                 number: that.number
               }
             });
@@ -672,7 +681,7 @@
               getters: {
                 inputNum: function(state) {
                   var params = state.params;
-                  var round = eventRounds[params.event] && eventRounds[params.event][params.round];
+                  var round = getRound(params);
                   var format = round && round.format;
                   switch (format) {
                     case '1':
@@ -688,7 +697,7 @@
                 },
                 minInputNum: function(state) {
                   var params = state.params;
-                  var round = eventRounds[params.event] && eventRounds[params.event][params.round];
+                  var round = getRound(params);
                   var format = round && round.format;
                   switch (format) {
                     case '1':
@@ -750,7 +759,7 @@
                 methods: {
                   calculateValue: function() {
                     var that = this;
-                    var round = eventRounds[state.params.event][state.params.round];
+                    var round = getRound(that);;
                     that.value = encodeResult(that.formatTime(that.time), that.event, false, that.tried, that.solved);
                     if (round.time_limit > 0 && that.value / 100 > round.time_limit) {
                       that.time = 'DNF';
@@ -975,12 +984,20 @@
       params: state.params
     });
   }
+  function getEvent(result) {
+    return events[result.event];
+  }
+  function getRound(result) {
+    return eventRounds[result.event][result.round];
+  }
   function calculateAverage(result) {
     var best = 999999999;
     var worst = 0;
     var hasAverage = true;
     var i, value, DNFCount = 0, zeroCount = 0, sum = 0;
-    var num = result.format == 'a' ? 5 : (result.format == 'm' ? 3 : parseInt(result.format));
+    var round = getRound(result);
+    var format = round.format;
+    var num = format == 'a' || format == '' ? 5 : (format == 'm' ? 3 : parseInt(format));
     for (i = 1; i <= num; i++) {
       value = result['value' + i];
       sum += value;
@@ -1002,18 +1019,21 @@
     if (result.best === 999999999) {
       result.best = worst == 0 ? 0 : -1;
     }
+    if (format == '') {
+      hasAverage = false;
+    }
     //
-    if ((result.format == 'a' || result.format == 'm') && zeroCount > 0) {
+    if ((format == 'a' || format == 'm') && zeroCount > 0) {
       hasAverage = false;
     }
-    if (DNFCount > 1 || (DNFCount == 1 && (result.format == 'm' || result.format == '3'))) {
+    if (DNFCount > 1 || (DNFCount == 1 && (format == 'm' || format == '3'))) {
       hasAverage = false;
     }
-    if (result.format == '1' || result.format == '2' || (result.format == '3' && result.event != '333bf')) {
+    if (format == '1' || format == '2' || (format == '3' && result.event != '333bf')) {
       hasAverage = false;
     }
     if (hasAverage) {
-      if (result.format == 'm' || result.format == '3') {
+      if (format == 'm' || format == '3') {
         if (result.event === '333fm') {
           sum *= 100;
         }
@@ -1024,9 +1044,9 @@
       if (result.average / 100 > 600) {
         result.average = Math.round(result.average / 100) * 100;
       }
-    } else if (result.format == 'm' || result.format == 'a') {
+    } else if (format == 'm' || format == 'a') {
       result.average = zeroCount > 0 ? 0 : -1;
-    } else if (result.event == '333bf') {
+    } else if (result.event == '333bf' || format == '') {
       result.average = 0;
     }
   }
@@ -1162,7 +1182,8 @@
   }
   function compare(resA, resB, onlyResult) {
     var temp = 0;
-    if (resA.format == 'm' || resA.format == 'a') {
+    var round = getRound(resA);
+    if (round.format == 'm' || round.format == 'a') {
       if (resA.average > 0 && resB.average <= 0) {
         return -1
       }

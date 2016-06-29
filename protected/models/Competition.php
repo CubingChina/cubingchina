@@ -1105,7 +1105,7 @@ class Competition extends ActiveRecord {
 		$registrations = Registration::getRegistrations($this);
 		foreach ($registrations as $registration) {
 			foreach ($registration->events as $event) {
-				if (!isset($formats[$event]) || !isset($rounds[$event])) {
+				if (!isset($rounds[$event])) {
 					continue;
 				}
 				$model = new LiveResult();
@@ -1114,7 +1114,7 @@ class Competition extends ActiveRecord {
 				$model->number = $registration->number;
 				$model->event = $event;
 				$model->round = $rounds[$event];
-				$model->format = $formats[$event];
+				// $model->format = $formats[$event];
 				$model->save();
 			}
 		}

@@ -40,7 +40,11 @@ class Schedule extends ActiveRecord {
 
 	public function getRealFormat() {
 		$formats = explode('/', $this->format);
-		return isset($formats[1]) ? $formats[1] : $formats[0];
+		$format = isset($formats[1]) ? $formats[1] : $formats[0];
+		if (empty($format)) {
+			$format = 'a';
+		}
+		return $format;
 	}
 
 	/**

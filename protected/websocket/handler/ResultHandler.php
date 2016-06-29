@@ -204,7 +204,7 @@ class ResultHandler extends MsgHandler {
 			'round'=>"{$this->msg->round->id}",
 		));
 		if ($round != null) {
-			foreach (array('number', 'cut_off', 'time_limit', 'status') as $attribute) {
+			foreach (array('number', 'cut_off', 'time_limit', 'format', 'status') as $attribute) {
 				if (isset($this->msg->round->$attribute)) {
 					$round->$attribute = $this->msg->round->$attribute;
 				}
