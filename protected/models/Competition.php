@@ -1064,10 +1064,13 @@ class Competition extends ActiveRecord {
 		$this->schedules = $schedules;
 	}
 
-	public function initLiveData() {
-		if (LiveResult::model()->countByAttributes(array('competition_id'=>$this->id)) > 0) {
+	public function initLiveData($force = false) {
+		$attributes = array('competition_id'=>$this->id);
+		if (!$force && LiveEventRound::model()->countByAttributes() > 0) {
 			return;
 		}
+		LiveResult::model()->deleteAllByAttributes($attributes);
+		LiveEventRound::model()->deleteAllByAttributes($attributes);
 		$this->formatEvents();
 		$schedules = array();
 		$temp = $this->schedule;
@@ -1077,7 +1080,6 @@ class Competition extends ActiveRecord {
 		}
 		unset($temp);
 		//events and rounds
-		$formats = array();
 		$rounds = array();
 		foreach ($this->events as $event=>$value) {
 			if ($value['round'] == 0) {
@@ -1085,7 +1087,6 @@ class Competition extends ActiveRecord {
 			}
 			if (isset($schedules[$event])) {
 				$first = current($schedules[$event]);
-				$formats[$event] = $first->getRealFormat();
 				$rounds[$event] = $first->round;
 				foreach ($schedules[$event] as $schedule) {
 					$model = new LiveEventRound();
@@ -1114,7 +1115,6 @@ class Competition extends ActiveRecord {
 				$model->number = $registration->number;
 				$model->event = $event;
 				$model->round = $rounds[$event];
-				// $model->format = $formats[$event];
 				$model->save();
 			}
 		}
@@ -1123,6 +1123,8 @@ class Competition extends ActiveRecord {
 	public function getEventsRounds() {
 		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
+		), array(
+			'order'=>'id ASC',
 		));
 		$events = array();
 		foreach ($eventRounds as $eventRound) {
