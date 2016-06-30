@@ -1418,6 +1418,10 @@ class Competition extends ActiveRecord {
 						return false;
 					}
 				} else {
+					if ($format == '') {
+						$this->addError($errorKey, '请设置赛制！');
+						return false;
+					}
 					if (in_array($round, $combinedRounds)) {
 						if ($format != '2/a' && $format != '1/m') {
 							$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
