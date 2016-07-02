@@ -56,7 +56,7 @@ class ResultHandler extends MsgHandler {
 		}
 		$this->success('result.all', array_map(function($result) {
 			return $result->getShowAttributes();
-		}, array_values($results)));
+		}, array_values($results)), $this->competition);
 	}
 
 	public function actionUpdate() {
@@ -86,17 +86,17 @@ class ResultHandler extends MsgHandler {
 		$result->calculateRecord('average');
 		$result->save();
 		foreach ($result->getBeatedRecords('single') as $res) {
-			$this->broadcastSuccess('result.update', $res->getShowAttributes());
+			$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
 		}
 		foreach ($result->getBeatedRecords('average') as $res) {
-			$this->broadcastSuccess('result.update', $res->getShowAttributes());
+			$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
 		}
-		$this->broadcastSuccess('result.update', $result->getShowAttributes());
+		$this->broadcastSuccess('result.update', $result->getShowAttributes(), $this->competition);
 		$eventRound = $result->eventRound;
 		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {
 			$eventRound->status = LiveEventRound::STATUS_LIVE;
 			$eventRound->save();
-			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes());
+			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes(), $this->competition);
 		}
 	}
 
@@ -194,7 +194,7 @@ class ResultHandler extends MsgHandler {
 			return $round->getBroadcastAttributes();
 		}, LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->competition->id,
-		))));
+		))), $this->competition);
 	}
 
 	public function actionRound() {
@@ -210,7 +210,7 @@ class ResultHandler extends MsgHandler {
 				}
 			}
 			$round->save();
-			$this->broadcastSuccess('round.update', $round->getBroadcastAttributes());
+			$this->broadcastSuccess('round.update', $round->getBroadcastAttributes(), $this->competition);
 		}
 	}
 
