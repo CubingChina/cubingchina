@@ -155,7 +155,8 @@ class LiveResult extends ActiveRecord {
 		);
 		$best = $this->best;
 		$average = $this->average;
-		if ($this->format == 'a' || $this->format == 'm') {
+		$format = $this->eventRound === null ? 'a' $this->eventRound->format;
+		if ($format == 'a' || $format == 'm') {
 			if ($average > 0) {
 				$condition = 'average>0 AND average<:average';
 			} elseif ($average < 0) {
@@ -179,7 +180,7 @@ class LiveResult extends ActiveRecord {
 			}
 		}
 		$params = array();
-		if (($this->format == 'a' || $this->format == 'm') && $average > 0) {
+		if (($format == 'a' || $format == 'm') && $average > 0) {
 			$params[':average'] = $average;
 		} elseif ($best > 0) {
 			$params[':best'] = $best;
