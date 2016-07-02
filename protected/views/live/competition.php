@@ -291,7 +291,7 @@
       <div class="table-responsive">
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>
-            <th v-if="hasPermission && isCurrentRoundOpen"></th>
+            <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
             <th class="text-right"><?php echo Yii::t('common', 'Best'); ?></th>
@@ -301,12 +301,12 @@
           </thead>
           <tbody>
             <tr v-if="loading" class="loading">
-              <td colspan="{{hasPermission ? 9 : 8}}">
+              <td colspan="{{hasPermission && options.enableEntry && isCurrentRoundOpen ? 9 : 8}}">
                 Loading...
               </td>
             </tr>
             <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
-              <td v-if="hasPermission && isCurrentRoundOpen">
+              <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.pos}}</td>
