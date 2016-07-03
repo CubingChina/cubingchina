@@ -335,9 +335,10 @@ class Persons extends ActiveRecord {
 			$competition->number = $key + 1;
 			$mapData[] = $data;
 		}
+		$competitionCount = count($competitions) ?: 1;
 		$mapCenter = array(
-			'longitude'=>number_format($temp['longitude'] / count($competitions), 6, ',', ''),
-			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
+			'longitude'=>number_format($temp['longitude'] / $competitionCount, 6, ',', ''),
+			'latitude'=>number_format($temp['latitude'] / $competitionCount, 6, ',', ''),
 		);
 		$byCompetition = call_user_func_array('array_merge', $byCompetition);
 		usort($byCompetition, function($resultA, $resultB) {
