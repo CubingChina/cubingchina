@@ -269,6 +269,7 @@ class RegistrationController extends AdminController {
 					'results'=>array(),
 				);
 			}
+			$liveResult->eventRound;
 			$events[$liveResult->event]['rounds'][$liveResult->round]['results'][] = $liveResult;
 			$registrations[$key]['events'][$liveResult->event] = $liveResult->event;
 		}
@@ -337,7 +338,9 @@ class RegistrationController extends AdminController {
 		//各个项目
 		$compare = function($resA, $resB) {
 			$temp = 0;
-			if ($resA->format == 'm' || $resA->format == 'a') {
+			$round = $resA->eventRound;
+			$format = $round ? $round->format : 'a';
+			if ($format == 'm' || $format == 'a') {
 				if ($resA->average > 0 && $resB->average <= 0) {
 					return -1;
 				}
