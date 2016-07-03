@@ -249,6 +249,7 @@ class RegistrationController extends AdminController {
 		$events = array();
 		foreach ($liveResults as $liveResult) {
 			$key = $liveResult->user_type . '_' . $liveResult->user->id;
+			$round = $liveResult->eventRound;
 			if (!isset($registrations[$key])) {
 				$registrations[$key] = array(
 					'user'=>$liveResult->user,
@@ -265,11 +266,10 @@ class RegistrationController extends AdminController {
 			if (!isset($events[$liveResult->event]['rounds'][$liveResult->round])) {
 				$events[$liveResult->event]['rounds'][$liveResult->round] = array(
 					'round'=>$liveResult->wcaRound,
-					'format'=>$liveResult->format,
+					'format'=>$round->format,
 					'results'=>array(),
 				);
 			}
-			$liveResult->eventRound;
 			$events[$liveResult->event]['rounds'][$liveResult->round]['results'][] = $liveResult;
 			$registrations[$key]['events'][$liveResult->event] = $liveResult->event;
 		}
@@ -338,8 +338,7 @@ class RegistrationController extends AdminController {
 		//各个项目
 		$compare = function($resA, $resB) {
 			$temp = 0;
-			$round = $resA->eventRound;
-			$format = $round ? $round->format : 'a';
+			$format = $resA->eventRound->format;
 			if ($format == 'm' || $format == 'a') {
 				if ($resA->average > 0 && $resB->average <= 0) {
 					return -1;
@@ -389,7 +388,7 @@ class RegistrationController extends AdminController {
 					//result
 					$col = 'E';
 					if ($result->event === '333mbf') {
-						for ($i = 1; $i <= $result->format; $i++) {
+						for ($i = 1; $i <= $result->eventRound->format; $i++) {
 							$value = $result->{'value' . $i};
 							if ($value == -1 || $value == -2) {
 								//tried
