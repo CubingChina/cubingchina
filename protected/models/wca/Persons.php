@@ -340,7 +340,9 @@ class Persons extends ActiveRecord {
 			'longitude'=>number_format($temp['longitude'] / $competitionCount, 6, ',', ''),
 			'latitude'=>number_format($temp['latitude'] / $competitionCount, 6, ',', ''),
 		);
-		$byCompetition = call_user_func_array('array_merge', $byCompetition);
+		if ($byCompetition != array()) {
+			$byCompetition = call_user_func_array('array_merge', $byCompetition);
+		}
 		usort($byCompetition, function($resultA, $resultB) {
 			$temp = $resultB->competition->year - $resultA->competition->year;
 			if ($temp == 0) {
