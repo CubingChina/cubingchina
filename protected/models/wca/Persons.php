@@ -360,7 +360,7 @@ class Persons extends ActiveRecord {
 			return $temp;
 		});
 		if ($byEvent != array()) {
-			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent))
+			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
 		}
 		return array(
 			'id'=>$id,
