@@ -1194,6 +1194,7 @@ class Competition extends ActiveRecord {
 		$this->name_zh = trim(preg_replace('{ +}', ' ', $this->name_zh));
 		$this->alias = str_replace(' ', '-', $this->name);
 		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
+		$this->alias = preg_replace('{-+}i', '-', $this->alias);
 		return parent::beforeSave();
 	}
 
