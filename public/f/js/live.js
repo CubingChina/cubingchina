@@ -25,8 +25,8 @@
         action: 'fetch'
       });
     }
-  }).on('receive', function(data) {
-    if (data.onlineNumber) {
+  }).on('*', function(data) {
+    if (data && data.onlineNumber) {
       store.dispatch('UPDATE_ONLINE_NUMBER', data.onlineNumber);
     }
   }).on('result.new', function(result) {
@@ -759,9 +759,9 @@
                 methods: {
                   calculateValue: function() {
                     var that = this;
-                    var round = getRound(that);;
+                    var round = getRound(that);
                     that.value = encodeResult(that.formatTime(that.time), that.event, false, that.tried, that.solved);
-                    if (round.time_limit > 0 && that.value / 100 > round.time_limit) {
+                    if (round.time_limit > 0 && that.event != '333mbf' && that.event != '333fm' && that.value / 100 > round.time_limit) {
                       that.time = 'DNF';
                     }
                     if (that.event === '333fm' && that.value > 80) {
