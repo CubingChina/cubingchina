@@ -25,9 +25,9 @@
         action: 'fetch'
       });
     }
-  }).on('*', function(data) {
-    if (data && data.onlineNumber) {
-      store.dispatch('UPDATE_ONLINE_NUMBER', data.onlineNumber);
+  }).on('*', function(data, origin) {
+    if (origin && origin.onlineNumber) {
+      store.dispatch('UPDATE_ONLINE_NUMBER', origin.onlineNumber);
     }
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);

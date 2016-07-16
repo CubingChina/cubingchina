@@ -41,7 +41,7 @@
           return;
         }
         if (message.code === 200) {
-          this.fire(message.type, message.data);
+          this.fire(message.type, message.data, message);
         }
       } catch (e) {}
     },
@@ -82,16 +82,16 @@
       }
       return this;
     },
-    fire: function(event, data) {
+    fire: function(event, data, origin) {
       var that = this;
       if (that._eventHandlers['*']) {
         that._eventHandlers['*'].forEach(function(callback) {
-          callback(data);
+          callback(data, origin);
         });
       }
       if (that._eventHandlers[event]) {
         that._eventHandlers[event].forEach(function(callback) {
-          callback(data);
+          callback(data, origin);
         });
       }
       return that;
