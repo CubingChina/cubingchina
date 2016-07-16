@@ -3033,3 +3033,6 @@ table.concise-schedule {
   height: 34px;
   line-height: 34px;
 }
+.live .sorting-column {
+  font-weight: bold;
+}
