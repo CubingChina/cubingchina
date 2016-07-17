@@ -467,12 +467,16 @@ class Competition extends ActiveRecord {
 		)) > 0;
 	}
 
-	public function getUrl($type = 'detail') {
-		$controller = $type === 'live' ? 'live' : 'competition';
-		return array(
+	public function getUrl($type = 'detail', $params = array()) {
+		$controller = $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
+		$url = array(
 			"/$controller/$type",
 			'name'=>$this->getUrlName(),
 		);
+		foreach ($params as $key=>$value) {
+			$url[$key] = $value;
+		}
+		return $url;
 	}
 
 	public function getUrlName() {
