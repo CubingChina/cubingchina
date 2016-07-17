@@ -77,7 +77,7 @@ class LiveController extends CompetitionController {
 		$this->breadcrumbs = array(
 			'Competitions'=>array('/competition/index'),
 			$name=>$competition->getUrl(),
-			ucfirst($this->action->id),
+			'Live'=>$competition->getUrl('live'),
 			'Sum of Ranks',
 		);
 		$liveResults = LiveResult::model()->with('eventRound')->findAllByAttributes(array(

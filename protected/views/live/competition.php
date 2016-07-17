@@ -272,6 +272,7 @@
           >
             <i class="fa fa-gear"></i>
           </button>
+          <?php echo CHtml::link('SOR', $competition->getUrl('statistics', array('type'=>'sum-of-ranks')), array('class'=>'btn btn-theme bth-sm')); ?>
         </h4>
         <div class="pull-right event-round-area">
           <select @change="changeParams" v-model="eventRound">

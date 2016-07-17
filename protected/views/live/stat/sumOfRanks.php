@@ -5,6 +5,7 @@
       'class'=>'form',
     ),
     'method'=>'get',
+    'action'=>$competition->getUrl('statistics', array('type'=>'sum-of-ranks')),
   )); ?>
     <div class="form-group row">
       <?php foreach (array_chunk($events, 3, true) as $events): ?>
