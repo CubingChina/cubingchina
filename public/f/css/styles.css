@@ -3035,10 +3035,8 @@ table.concise-schedule {
 }
 .live table tbody tr td.sorting-column {
   font-weight: bold;
-  background-color: #a7c2d9;
 }
 .live table tbody tr:hover td.sorting-column {
-  background-color: #84aac9;
 }
 .table-hover tbody tr:hover td {
   background-color: #e3ebf4;
