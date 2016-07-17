@@ -177,8 +177,13 @@ class ResultHandler extends MsgHandler {
 				'type'=>'event',
 				'event'=>$event,
 			);
-			foreach ($results['results'] as $result) {
+			foreach ($results['results'] as $key=>$result) {
 				$result['type'] = 'result';
+				if (($result['round'] == 'd' || $result['round'] == 'f') && $result['pos'] <= 3 && $result['best'] > 0) {
+					$result['isAdvanced'] = true;
+				} elseif (isset($results['results'][$key - 1])) {
+					$result['isAdvanced'] = true;
+				}
 				$userResults[] = $result;
 			}
 		}

@@ -109,7 +109,7 @@
                       Loading...
                     </td>
                   </tr>
-                  <tr v-for="result in userResults">
+                  <tr v-for="result in userResults" :class="{success: result.isAdvanced}">
                     <td colspan="8" v-if="result.type == 'event'">{{getEventName(result)}}</td>
                     <td v-if="result.type == 'result'">{{getRoundName(result)}}</td>
                     <td v-if="result.type == 'result'">{{result.pos}}</td>
