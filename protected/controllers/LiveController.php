@@ -160,7 +160,7 @@ class LiveController extends CompetitionController {
 			foreach ($eventIds as $event) {
 				if (isset($ranks[$event])) {
 					$ranks['sum'] += $ranks[$event];
-				} else {
+				} elseif (isset($penalty[$event])) {
 					$ranks[$event] = CHtml::tag('span', array('class'=>'penalty'), $penalty[$event]);
 					$ranks['sum'] += $penalty[$event];
 				}
