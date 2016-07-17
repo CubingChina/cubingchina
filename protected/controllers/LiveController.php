@@ -133,6 +133,9 @@ class LiveController extends CompetitionController {
 		//计算每个人的排名
 		$rankSum = array();
 		foreach ($eventIds as $event) {
+			if (!isset($groupedResults[$event])) {
+				continue;
+			}
 			foreach ($groupedResults[$event] as $results) {
 				foreach ($results as $result) {
 					$personId = $result->user_type . '_' . $result->user_id;
