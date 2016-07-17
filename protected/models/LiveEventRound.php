@@ -77,6 +77,22 @@ class LiveEventRound extends ActiveRecord {
 		));
 	}
 
+	public function getResults() {
+		if ($this->format == 'a' || $this->format == 'm') {
+			$order = 'average>0 DESC, average ASC, best>0 DESC, best ASC';
+		} else {
+			$order = 'best>0 DESC, best ASC';
+		}
+		return LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		), array(
+			'order'=>$order,
+			'condition'=>'best>0',
+		));
+	}
+
 	public function getIsClosed() {
 		return $this->status == self::STATUS_FINISHED;
 	}
@@ -120,14 +136,6 @@ class LiveEventRound extends ActiveRecord {
 		return array(
 			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
 			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
-			'results'=>array(self::HAS_MANY, 'LiveResult', array(
-				'competition_id'=>'competition_id',
-				'event'=>'event',
-				'round'=>'round',
-			),
-				'order'=>'results.average>0 DESC, results.average ASC, results.best>0 DESC, results.best ASC',
-				'condition'=>'results.best>0',
-			),
 		);
 	}
 
