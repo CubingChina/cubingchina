@@ -107,9 +107,9 @@ class LiveController extends CompetitionController {
 			foreach ($eventResults as $results) {
 				usort($results, array($this, 'compareResult'));
 				$this->calculatePos($results);
-			}
-			if (!isset($penalty[$event])) {
-				$penalty[$event] = count($results);
+				if (!isset($penalty[$event])) {
+					$penalty[$event] = count($results) + 1;
+				}
 			}
 		}
 		$columns = array(
