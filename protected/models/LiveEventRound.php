@@ -63,7 +63,18 @@ class LiveEventRound extends ActiveRecord {
 			'time_limit'=>$this->time_limit,
 			'number'=>$this->number,
 			'status'=>$this->status,
+			'resultsNumber'=>$this->resultsNumber,
 		);
+	}
+
+	public function getResultsNumber() {
+		return LiveResult::model()->countByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		), array(
+			'condition'=>'best!=0',
+		));
 	}
 
 	public function getIsClosed() {

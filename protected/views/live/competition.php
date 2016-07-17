@@ -264,7 +264,7 @@
       </div>
       <div class="clearfix">
         <h4 class="pull-left">
-          {{eventName}} - {{roundName}}
+          {{eventName}} - {{roundName}}{{currentRound && currentRound.status != 0 ? ' - ' + currentRound.allStatus[currentRound.status] : ''}}
           <button type="button"
             class="btn btn-sm btn-warning no-mr"
             v-if="hasPermission && options.enableEntry"
@@ -278,6 +278,7 @@
             <optgroup v-for="event in events" :label="event.name">
               <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
                 {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.allStatus[round.status] : ''}}
+                {{round.status == 1 ? ' (' + round.resultsNumber + ')' : ''}}
               </option>
             </optgroup>
           </select>
@@ -294,8 +295,9 @@
             <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
+            <th class="text-right" v-if="hasAverage() && event != '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th class="text-right" :class="{'sorting-column': !hasAverage() || event == '333bf'}"><?php echo Yii::t('common', 'Best'); ?></th>
-            <th class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage() && event != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
+            <th class="text-right" v-if="hasAverage() && event == '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th><?php echo Yii::t('common', 'Region'); ?></th>
             <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
@@ -313,13 +315,19 @@
               <td>
                 <a href="javascript:void(0)" @click="goToUser(result.user)">{{result.user.name}}</a>
               </td>
+              <td class="text-right" v-if="hasAverage() && event != '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}">
+                <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
+                  {{result.regional_average_record}}
+                </span>
+                {{result.average | decodeResult result.event}}
+              </td>
               <td class="text-right" :class="{'sorting-column': !hasAverage() || event == '333bf'}">
                 <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
                   {{result.regional_single_record}}
                 </span>
                 {{result.best | decodeResult result.event}}
               </td>
-              <td class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage() && event != '333bf'}">
+              <td class="text-right" v-if="hasAverage() && event == '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}">
                 <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
                   {{result.regional_average_record}}
                 </span>

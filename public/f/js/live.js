@@ -57,7 +57,6 @@
   Vue.use(Vuex);
   Vue.filter('decodeResult', decodeResult);
   var liveContainer = $('#live-container');
-  var isTimeTraveling;
   var state = {
     onlineNumber: 0,
     user: {},
@@ -75,6 +74,7 @@
     userResults: [],
     messages: []
   };
+  var lastFetchRoundsTime = Date.now();
   var events = {};
   var eventRounds = {};
   var current = {};
@@ -86,6 +86,7 @@
       rounds.forEach(function(round) {
         $.extend(eventRounds[round.event][round.id], round);
       });
+      lastFetchRoundsTime = Date.now();
     },
     UPDATE_ROUND: function(state, round) {
       $.extend(eventRounds[round.event][round.id], round);
@@ -239,6 +240,9 @@
         round: function(state) {
           return state.params.round;
         },
+        currentRound: function(state) {
+          return getRound(state.params);
+        },
         isCurrentRoundOpen: function(state) {
           var round = getRound(state.params);
           return round.status != 1;
@@ -343,7 +347,7 @@
             template: '#message-template',
             filters: {
               formatTime: function(time) {
-                return time ? moment(new Date(time * 1000)).format('HH:mm:ss') : '';
+                return time ? moment(new Date(time * 1000)).format('MM-DD HH:mm:ss') : '';
               }
             },
             components: {
@@ -454,6 +458,7 @@
                 status: 1
               }
             });
+            fetchResults();
             $('#round-settings-modal').modal('hide');
           },
           openRound: function() {
@@ -466,10 +471,11 @@
                 status: 0
               }
             });
+            fetchResults();
             $('#round-settings-modal').modal('hide');
           },
           resetCompetitors: function() {
-            if (this.results.length == 0 || confirm('Do you want to reset competitors?')) {
+            if (confirm('Do you want to reset competitors?')) {
               ws.send({
                 type: 'result',
                 action: 'reset',
@@ -504,6 +510,12 @@
               round: this.eventRound.round,
               filter: this.filter
             });
+            if (Date.now() - lastFetchRoundsTime > 300000) {
+              ws.send({
+                type: 'result',
+                action: 'rounds',
+              });
+            }
           },
           isAdvanced: function(result) {
             if (this.filter != 'all') {

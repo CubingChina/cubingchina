@@ -1145,6 +1145,7 @@ class Competition extends ActiveRecord {
 				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
 				'status'=>$eventRound->status,
 				'allStatus'=>$eventRound->allStatus,
+				'resultsNumber'=>$eventRound->resultsNumber,
 			);
 		}
 		return array_values($events);
