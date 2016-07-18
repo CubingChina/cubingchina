@@ -67,7 +67,7 @@
     'front'=>true,
     'rankKey'=>$statistic['rankKey'],
     'rank'=>$statistic['rank'],
-    'count'=>($page - 1) * 100,
+    'count'=>($page - 1) * SumOfCountryRanks::$limit,
     'columns'=>array_map(function($column) {
       $column['header'] = Yii::app()->evaluateExpression($column['header']);
       return $column;
