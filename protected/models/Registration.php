@@ -668,7 +668,14 @@ class Registration extends ActiveRecord {
 
 	private function sortRegistration($rA, $rB) {
 		$attribute = self::$sortAttribute;
-		if ($attribute === 'country_id') {
+		$temp = 0;
+		if ($attribute === 'number') {
+			if ($rA->number > 0 && $rB->number === null) {
+				$temp = -1;
+			} elseif ($rA->number === null && $rB->number > 0) {
+				$temp = 1;
+			}
+		} elseif ($attribute === 'country_id') {
 			$temp = $rA->user->country_id - $rB->user->country_id;
 			if ($temp == 0) {
 				$temp = $rA->user->province_id - $rB->user->province_id;
@@ -702,10 +709,15 @@ class Registration extends ActiveRecord {
 			$temp = $rA->$attribute - $rB->$attribute;
 		}
 		if ($temp == 0) {
-			return $rA->number - $rB->number;
-		} else {
-			return $temp;
+			$temp = $rA->number - $rB->number;
 		}
+		if ($temp == 0) {
+			$temp = $rA->date - $rB->date;
+		}
+		if ($temp == 0) {
+			$temp = $rA->id - $rB->id;
+		}
+		return $temp;
 	}
 
 	/**

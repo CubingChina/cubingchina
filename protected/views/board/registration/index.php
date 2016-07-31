@@ -34,6 +34,7 @@
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
         'dataProvider'=>$model->search($columns, false, true),
+        'template'=>'{pager}{items}{pager}',
         // 'filter'=>$model,
         'columns'=>$columns,
       )); ?>
