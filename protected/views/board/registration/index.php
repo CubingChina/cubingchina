@@ -33,7 +33,7 @@
       <?php endif; ?>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
-        'dataProvider'=>$model->search($columns, false),
+        'dataProvider'=>$model->search($columns, false, true),
         // 'filter'=>$model,
         'columns'=>$columns,
       )); ?>

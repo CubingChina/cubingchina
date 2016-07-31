@@ -720,7 +720,7 @@ class Registration extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search(&$columns = array(), $enableCache = true) {
+	public function search(&$columns = array(), $enableCache = true, $pagination = false) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 		$cacheKey = 'competitors_' . $this->competition_id;
 		$cache = Yii::app()->cache;
@@ -871,10 +871,15 @@ class Registration extends ActiveRecord {
 				$registrations = array_reverse($registrations);
 			}
 		}
-
+		if ($pagination !== false) {
+			$pagination = array(
+				'pageSize'=>200,
+				'pageVar'=>'page',
+			);
+		}
 		return new NonSortArrayDataProvider($registrations, array(
 			'sort'=>$this->getSort($columns),
-			'pagination'=>false,
+			'pagination'=>$pagination,
 		));
 	}
 
