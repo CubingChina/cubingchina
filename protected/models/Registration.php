@@ -576,6 +576,11 @@ class Registration extends ActiveRecord {
 		return parent::beforeValidate();
 	}
 
+	protected function afterSave() {
+		parent::afterSave();
+		Yii::app()->cache->delete('competitors_' . $this->competition_id);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -717,20 +722,24 @@ class Registration extends ActiveRecord {
 	 */
 	public function search(&$columns = array()) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
+		$cacheKey = 'competitors_' . $this->competition_id;
+		$cache = Yii::app()->cache;
+		if (($registrations = $cache->get($cacheKey)) === false) {
+			$criteria = new CDbCriteria;
+			$criteria->order = 't.date';
+			$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
-		$criteria = new CDbCriteria;
-		$criteria->order = 't.date';
-		$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
-
-		$criteria->compare('t.id', $this->id,true);
-		$criteria->compare('t.competition_id', $this->competition_id);
-		$criteria->compare('t.user_id', $this->user_id);
-		$criteria->compare('t.events', $this->events,true);
-		$criteria->compare('t.comments', $this->comments,true);
-		$criteria->compare('t.date', $this->date,true);
-		$criteria->compare('t.status', $this->status);
-		$criteria->compare('user.status', User::STATUS_NORMAL);
-		$registrations = $this->findAll($criteria);
+			$criteria->compare('t.id', $this->id,true);
+			$criteria->compare('t.competition_id', $this->competition_id);
+			$criteria->compare('t.user_id', $this->user_id);
+			$criteria->compare('t.events', $this->events,true);
+			$criteria->compare('t.comments', $this->comments,true);
+			$criteria->compare('t.date', $this->date,true);
+			$criteria->compare('t.status', $this->status);
+			$criteria->compare('user.status', User::STATUS_NORMAL);
+			$registrations = $this->findAll($criteria);
+			$cache->set($cacheKey, $registrations, 86400 * 7);
+		}
 		$number = 1;
 		$localType = $this->competition ? $this->competition->local_type : Competition::LOCAL_TYPE_NONE;
 		if (isset($competition->location[1])) {
@@ -820,7 +829,7 @@ class Registration extends ActiveRecord {
 					$modelName = 'RanksAverage';
 					break;
 			}
-			$results = $modelName::model()->findAllByAttributes(array(
+			$results = $modelName::model()->cache(86400)->findAllByAttributes(array(
 				'eventId'=>$sort,
 				'personId'=>array_keys($wcaIds),
 			));
