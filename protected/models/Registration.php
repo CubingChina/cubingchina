@@ -720,11 +720,11 @@ class Registration extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search(&$columns = array()) {
+	public function search(&$columns = array(), $enableCache = true) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 		$cacheKey = 'competitors_' . $this->competition_id;
 		$cache = Yii::app()->cache;
-		if (($registrations = $cache->get($cacheKey)) === false) {
+		if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
 			$criteria = new CDbCriteria;
 			$criteria->order = 't.date';
 			$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
@@ -738,7 +738,9 @@ class Registration extends ActiveRecord {
 			$criteria->compare('t.status', $this->status);
 			$criteria->compare('user.status', User::STATUS_NORMAL);
 			$registrations = $this->findAll($criteria);
-			$cache->set($cacheKey, $registrations, 86400 * 7);
+			if ($enableCache) {
+				$cache->set($cacheKey, $registrations, 86400 * 7);
+			}
 		}
 		$number = 1;
 		$localType = $this->competition ? $this->competition->local_type : Competition::LOCAL_TYPE_NONE;
