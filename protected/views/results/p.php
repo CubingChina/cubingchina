@@ -397,6 +397,9 @@
     <?php endif; ?>
     <li><a href="#person-map" data-toggle="tab"><?php echo Yii::t('Persons', 'Map'); ?></a></li>
     <li><a href="#competition-history" data-toggle="tab"><?php echo Yii::t('common', 'Competitions'); ?></a></li>
+    <?php if (count($competitions) > 1): ?>
+    <li><a href="#misc" data-toggle="tab"><?php echo Yii::t('common', 'Misc'); ?></a></li>
+    <?php endif; ?>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="history">
@@ -752,6 +755,33 @@
         ),
       )); ?>
     </div>
+    <?php if (count($competitions) > 1): ?>
+    <div class="tab-pane" id="misc">
+      <?php if (count($closestCubers) > 1): ?>
+      <h2><?php echo Yii::t('Results', 'Closest Cubers'); ?></h2>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($closestCubers, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'name'=>Yii::t('Results', 'Person'),
+            'type'=>'raw',
+            'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+          ),
+          array(
+            'name'=>'count',
+            'header'=>Yii::t('Results', 'Competitions'),
+          ),
+        ),
+      )); ?>
+      <?php endif; ?>
+    </div>
+    <?php endif; ?>
   </div>
 </div>
 <?php

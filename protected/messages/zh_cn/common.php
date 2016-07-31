@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Misc' => '杂项',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小时',
@@ -41,7 +42,6 @@ return array (
   'Fun Statistics' => '趣味统计',
   'It supports Unionpay and many China bankcards.' => '支持中国银联快捷支付和常见银行卡支付。',
   'Language' => '语言',
-  'Live' => '直播',
   'Mean of 3' => '三次计平均',
   'My Competitions' => '我的比赛',
   'NR' => '国家纪录',
@@ -145,6 +145,7 @@ return array (
   'Invalid region.' => '国家和地区不对。',
   'Limit: ' => '限制：',
   'Links' => '相关链接',
+  'Live' => '直播',
   'Login' => '登录',
   'Logo Url' => 'Logo地址',
   'Logout' => '退出',

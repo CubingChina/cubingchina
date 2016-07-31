@@ -19,6 +19,7 @@
 return array (
   'Average' => '',
   'Best' => '',
+  'Closest Cubers' => '最亲密魔友',
   'Country' => '',
   'Event' => '',
   'Format' => '',

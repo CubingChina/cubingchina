@@ -305,6 +305,7 @@ class Persons extends ActiveRecord {
 				return $result->regionalAverageRecord == 'NR';
 			})),
 		);
+		$competitionIds = array_keys($competitions);
 		usort($competitions, function($competitionA, $competitionB) {
 			$temp = $competitionB->year - $competitionA->year;
 			if ($temp == 0) {
@@ -362,6 +363,22 @@ class Persons extends ActiveRecord {
 		if ($byEvent != array()) {
 			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
 		}
+		$closestCubers = $db->createCommand()
+		->select(array(
+			'personId',
+			'personName',
+			'count(DISTINCT competitionId) AS count',
+		))
+		->from('Results')
+		->where(array('in', 'competitionId', $competitionIds))
+		->group('personId')
+		->having('count>1')
+		->order('count DESC')
+		->limit(21)
+		->queryAll();
+		$closestCubers = array_filter($closestCubers, function($cuber) use($id) {
+			return $cuber['personId'] != $id;
+		});
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
@@ -385,6 +402,7 @@ class Persons extends ActiveRecord {
 				'wcaid'=>$id,
 				'status'=>User::STATUS_NORMAL,
 			)),
+			'closestCubers'=>array_values($closestCubers),
 		);
 	}
 
