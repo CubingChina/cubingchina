@@ -277,8 +277,17 @@ class RegistrationController extends AdminController {
 			return $regA['number'] - $regB['number'];
 		});
 		//sort event
-		usort($events, function($eventA, $eventB) {
-			return $eventA['event']->rank - $eventB['event']->rank;
+		uasort($events, function($eventA, $eventB) {
+			if ($eventA['event'] && $eventB['event']) {
+				$temp = $eventA['event']->rank - $eventB['event']->rank;
+			} elseif ($eventA && !$eventB) {
+				$temp = -1;
+			} elseif (!$eventA && $eventB) {
+				$temp = 1;
+			} else {
+				$temp = 0;
+			}
+			return $temp;
 		});
 		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
 		$export = new PHPExcel();
@@ -307,9 +316,9 @@ class RegistrationController extends AdminController {
 			'555bf'=>'555bld',
 			'333mbf'=>'333mlt',
 		);
-		foreach ($events as $event) {
+		foreach ($events as $event=>$value) {
 			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
-			$sheet->setCellValue($col . 3, isset($cubecompsEvents[$event['event']->id]) ? $cubecompsEvents[$event['event']->id] : $event['event']->id);
+			$sheet->setCellValue($col . 3, $value['event'] ? (isset($cubecompsEvents[$value['event']->id]) ? $cubecompsEvents[$value['event']->id] : $value['event']->id) : $event);
 			$sheet->getColumnDimension($col)->setWidth(5.5);
 			$col++;
 		}
@@ -327,8 +336,8 @@ class RegistrationController extends AdminController {
 					date('d', $user->birthday)
 				));
 			$col = 'J';
-			foreach ($events as $event) {
-				if (in_array($event['event']->id, $registration['events'])) {
+			foreach ($events as $event=>$value) {
+				if (in_array($event, $registration['events'])) {
 					$sheet->setCellValue($col . $row, 1);
 				}
 				$col++;
@@ -362,20 +371,20 @@ class RegistrationController extends AdminController {
 			}
 			return $temp;
 		};
-		foreach ($events as $event) {
-			usort($event['rounds'], function($roundA, $roundB) {
+		foreach ($events as $event=>$value) {
+			usort($value['rounds'], function($roundA, $roundB) {
 				return $roundA['round']->rank - $roundB['round']->rank;
 			});
-			foreach ($event['rounds'] as $round) {
-				$formatName = Events::getExportFormat($event['event']->id, $round['format']);
+			foreach ($value['rounds'] as $round) {
+				$formatName = Events::getExportFormat($event, $round['format']);
 				$sheet = $template->getSheetByName($formatName);
 				if ($sheet === null) {
 					continue;
 				}
 				$sheet = clone $sheet;
-				$sheet->setTitle("{$event['event']->id}-{$round['round']->id}");
+				$sheet->setTitle("{$event}-{$round['round']->id}");
 				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getFullEventName($event['event']->id) . ' - ' . Rounds::getFullRoundName($round['round']->id));
+				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . Rounds::getFullRoundName($round['round']->id));
 				usort($round['results'], $compare);
 				$row = 5;
 				$num = Formats::getFormatNum($round['format']);
