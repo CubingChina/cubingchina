@@ -42,18 +42,23 @@ class ImportCommand extends CConsoleCommand {
 					$result->user_id = $users[$name]->user_id;
 				} else {
 					if (!isset($liveUsers[$name])) {
-						$user = new LiveUser();
-						$user->name_zh = $name;
-						$user->country_id = 1;
-						$user->gender = $gender == '女' ? User::GENDER_FEMALE : User::GENDER_MALE;
-						$user->save(false);
+						$user = User::model()->findByAttributes([
+							'name_zh'=>$name,
+						]);
+						if ($user === null) {
+							$user = new LiveUser();
+							$user->name_zh = $name;
+							$user->country_id = 1;
+							$user->gender = $gender == '女' ? User::GENDER_FEMALE : User::GENDER_MALE;
+							$user->save(false);
+						}
 						$liveUsers[$name] = [
 							'user'=>$user,
 							'number'=>$number++,
 						];
 					}
 					$result->number = $liveUsers[$name]['number'];
-					$result->user_type = LiveResult::USER_TYPE_LIVE;
+					$result->user_type = $liveUsers[$name]['user'] instanceof User ? 0 : LiveResult::USER_TYPE_LIVE;
 					$result->user_id = $liveUsers[$name]['user']->id;
 				}
 				$col++;
