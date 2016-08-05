@@ -16,6 +16,25 @@
  * @property integer $status
  */
 class LiveUser extends ActiveRecord {
+
+	public function getWcaLink($name = null) {
+		if ($name === null) {
+			$name = $this->getCompetitionName();
+		}
+		if ($this->wcaid === '' || $name === '') {
+			return $name;
+		}
+		return Persons::getLinkByNameNId($name, $this->wcaid);
+	}
+
+	public function getCompetitionName() {
+		$name = $this->name;
+		if ($this->name_zh != '') {
+			$name .= " ({$this->name_zh})";
+		}
+		return $name;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

@@ -4,6 +4,79 @@ class ImportCommand extends CConsoleCommand {
 	private $_provinceId = 215;
 	private $_cityId = 217;
 
+	public function actionResult() {
+		$file = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.xxx') . '.xls');
+		$users = [];
+		$competition = Competition::model()->findByPk(30);
+		$registrations = Registration::getRegistrations($competition);
+		foreach ($registrations as $registration) {
+			$users[$registration->user->name_zh] = $registration;
+		}
+		$number = count($registrations) + 1;
+		$liveUsers;
+		foreach ($file->getAllSheets() as $sheet) {
+			$title = $sheet->getTitle();
+			var_dump($title);
+			list($event, $round) = explode('-', $title);
+			$eventRound = new LiveEventRound();
+			$eventRound->competition_id = $competition->id;
+			$eventRound->event = $event;
+			$eventRound->round = $round;
+			$eventRound->format = $event === '555' ? '3' : 'a';
+			$eventRound->status = LiveEventRound::STATUS_FINISHED;
+			$eventRound->save();
+			for ($row = 3; ; $row++) {
+				$col = 'B';
+				$name = trim($sheet->getCell($col . $row)->getValue());
+				if ($name === '') {
+					break;
+				}
+				$col++;
+				$gender = trim($sheet->getCell($col . $row)->getValue());
+				$result = new LiveResult();
+				$result->competition_id = $competition->id;
+				$result->event = $event;
+				$result->round = $round;
+				if (isset($users[$name])) {
+					$result->number = $users[$name]->number;
+					$result->user_id = $users[$name]->user_id;
+				} else {
+					if (!isset($liveUsers[$name])) {
+						$user = new LiveUser();
+						$user->name_zh = $name;
+						$user->country_id = 1;
+						$user->gender = $gender == '女' ? User::GENDER_FEMALE : User::GENDER_MALE;
+						$user->save(false);
+						$liveUsers[$name] = [
+							'user'=>$user,
+							'number'=>$number++,
+						];
+					}
+					$result->number = $liveUsers[$name]['number'];
+					$result->user_type = LiveResult::USER_TYPE_LIVE;
+					$result->user_id = $liveUsers[$name]['user']->id;
+				}
+				$col++;
+				for ($i = 1; $i <= 5; $i++) {
+					$col++;
+					$value = trim($sheet->getCell($col . $row)->getValue());
+					$result->{'value' . $i} = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
+				}
+				$col++;
+				$col++;
+				$value = trim($sheet->getCell($col . $row)->getCalculatedValue());
+				$result->best = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
+				$col++;
+				$col++;
+				$col++;
+				$col++;
+				$value = trim($sheet->getCell($col . $row)->getCalculatedValue());
+				$result->average = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
+				$result->save();
+			}
+		}
+	}
+
 	public function actionCompetition() {
 		$provinces = CHtml::listData(Region::getRegionsByPid(1), 'id', 'name_zh');
 		$cities = Yii::app()->db

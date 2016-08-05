@@ -86,10 +86,23 @@ class LiveController extends CompetitionController {
 			'condition'=>'t.best != 0',
 		));
 		$liveResults = array_filter($liveResults, function($result) use($eventIds) {
+			$eventRound = $result->eventRound;
+			$eventRound->wcaEvent;
+			$eventRound->wcaRound;
 			return in_array($result->event, $eventIds);
 		});
 		usort($liveResults, function($resA, $resB) {
-			$temp = $resA->eventRound->wcaEvent->rank - $resB->eventRound->wcaEvent->rank;
+			$eventA = $resA->eventRound->wcaEvent;
+			$eventB = $resB->eventRound->wcaEvent;
+			if ($eventA && $eventB) {
+				$temp = $eventA->rank - $eventB->rank;
+			} elseif ($eventA && !$eventB) {
+				$temp = -1;
+			} elseif (!$eventA && $eventB) {
+				$temp = 1;
+			} else {
+				$temp = 0;
+			}
 			if ($temp == 0) {
 				$temp = $resA->eventRound->wcaRound->rank - $resB->eventRound->wcaRound->rank;
 			}
