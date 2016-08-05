@@ -4,28 +4,50 @@ class ImportCommand extends CConsoleCommand {
 	private $_provinceId = 215;
 	private $_cityId = 217;
 
-	public function actionResult() {
-		$file = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.xxx') . '.xls');
+	public function actionResult($file, $comp) {
+		$file = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data') . '/' . $file);
 		$users = [];
-		$competition = Competition::model()->findByPk(30);
+		$competition = Competition::model()->findByPk($comp);
 		$registrations = Registration::getRegistrations($competition);
 		foreach ($registrations as $registration) {
-			$users[$registration->user->name_zh] = $registration;
+			$users[$registration->user->getCompetitionName()] = $registration;
 		}
 		$number = count($registrations) + 1;
 		$liveUsers;
 		foreach ($file->getAllSheets() as $sheet) {
 			$title = $sheet->getTitle();
-			var_dump($title);
 			list($event, $round) = explode('-', $title);
+			$formatString = trim($sheet->getCell('A2')->getValue());
+			if (strpos($formatString, 'average') !== false) {
+				$format = 'a';
+			} elseif (strpos($formatString, 'mean') !== false) {
+				$format = 'm';
+			} elseif (($pos = strpos($formatString, 'best of ')) !== false) {
+				$format = substr($formatString, $pos + 8, 1);
+			} else {
+				$format = 'a';
+			}
 			$eventRound = new LiveEventRound();
 			$eventRound->competition_id = $competition->id;
 			$eventRound->event = $event;
 			$eventRound->round = $round;
-			$eventRound->format = $event === '555' ? '3' : 'a';
+			$eventRound->format = $format;
 			$eventRound->status = LiveEventRound::STATUS_FINISHED;
 			$eventRound->save();
-			for ($row = 3; ; $row++) {
+			switch ($format) {
+				case '1':
+				case '2':
+				case '3':
+					$valueNum = $format;
+					break;
+				case 'm':
+					$valueNum = 3;
+					break;
+				default:
+					$valueNum = 5;
+					break;
+			}
+			for ($row = 5; ; $row++) {
 				$col = 'B';
 				$name = trim($sheet->getCell($col . $row)->getValue());
 				if ($name === '') {
@@ -42,14 +64,20 @@ class ImportCommand extends CConsoleCommand {
 					$result->user_id = $users[$name]->user_id;
 				} else {
 					if (!isset($liveUsers[$name])) {
-						$user = User::model()->findByAttributes([
-							'name_zh'=>$name,
-						]);
+						preg_match('{([^(]+)( \([)]+\))?}i', $name, $matches);
+						$attributes = [
+							'name'=>$matches[1],
+						];
+						if (isset($matches[3])) {
+							$attributes['name_zh'] = $matches[3];
+						}
+						$user = User::model()->findByAttributes($attributes);
 						if ($user === null) {
 							$user = new LiveUser();
-							$user->name_zh = $name;
+							$user->name = $matches[1];
+							$user->name_zh = isset($matches[3]) ? $matches[3] : '';
 							$user->country_id = 1;
-							$user->gender = $gender == '女' ? User::GENDER_FEMALE : User::GENDER_MALE;
+							$user->gender = $gender == 'f' ? User::GENDER_FEMALE : User::GENDER_MALE;
 							$user->save(false);
 						}
 						$liveUsers[$name] = [
@@ -62,22 +90,27 @@ class ImportCommand extends CConsoleCommand {
 					$result->user_id = $liveUsers[$name]['user']->id;
 				}
 				$col++;
-				for ($i = 1; $i <= 5; $i++) {
+				for ($i = 1; $i <= $valueNum; $i++) {
 					$col++;
 					$value = trim($sheet->getCell($col . $row)->getValue());
-					$result->{'value' . $i} = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
+					$result->{'value' . $i} = $value === 'DNF' ? -1 : ($value === 'DNS' ? -2 : $value * 100);
 				}
-				$col++;
 				$col++;
 				$value = trim($sheet->getCell($col . $row)->getCalculatedValue());
 				$result->best = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
-				$col++;
-				$col++;
-				$col++;
-				$col++;
-				$value = trim($sheet->getCell($col . $row)->getCalculatedValue());
-				$result->average = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : $value * 100);
-				$result->save();
+				if ($format == 'm' || $format == 'a') {
+					if ($format == 'a') {
+						$col++;
+					}
+					$col++;
+					$col++;
+					$value = trim($sheet->getCell($col . $row)->getCalculatedValue());
+					$result->average = $value === 'DNF' ? -1 : ($value === 'DNS' ? -1 : intval($value * 100));
+				}
+				$r = $result->save();
+				if (!$r) {
+					var_dump($result->errors, $result->average);
+				}
 			}
 		}
 	}
