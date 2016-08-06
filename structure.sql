@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS `competition` (
   `check_person` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `local_type` tinyint(2) unsigned NOT NULL DEFAULT '0',
+  `tba` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `type` (`type`,`date`,`status`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
@@ -382,6 +384,7 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   `number` int(10) unsigned NOT NULL,
   `cut_off` int(10) unsigned NOT NULL,
   `time_limit` int(10) unsigned NOT NULL,
+  `cumulative` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
