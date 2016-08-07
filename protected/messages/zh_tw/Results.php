@@ -19,7 +19,6 @@
 return array (
   'Average' => '',
   'Best' => '',
-  'Closest Cubers' => '最親密魔友',
   'Country' => '',
   'Event' => '',
   'Format' => '',
@@ -37,6 +36,7 @@ return array (
   'History' => '歷史紀錄',
   'CR' => '洲際紀錄',
   'Career' => '參賽經歷',
+  'Closest Cubers' => '最親密魔友',
   'Competition' => '賽事',
   'Competitions' => '參賽次數',
   'Continental Championship Podiums' => '洲錦賽領獎台',

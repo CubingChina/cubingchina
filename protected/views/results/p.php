@@ -780,6 +780,50 @@
         ),
       )); ?>
       <?php endif; ?>
+      <?php if ($user && $user->isOrganizer() && $organizedCompetitions !== []): ?>
+      <h2><?php echo Yii::t('common', 'Organized Competitions'); ?></h2>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($organizedCompetitions, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'header'=>Yii::t('Competition', 'Date'),
+            'name'=>'date',
+            'type'=>'raw',
+            'value'=>'$data->getDisplayDate()',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Name'),
+            'name'=>'name',
+            'type'=>'raw',
+            'value'=>'$data->getCompetitionLink()',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Province'),
+            'name'=>'province_id',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("province")',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'City'),
+            'name'=>'city_id',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("city")',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Venue'),
+            'name'=>'venue',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("venue")',
+          ),
+        ),
+      )); ?>
+      <?php endif; ?>
     </div>
     <?php endif; ?>
   </div>

@@ -159,10 +159,23 @@ class ResultsController extends Controller {
 		}
 		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
 		$data['person'] = $person;
-		$data['user'] = User::model()->findByAttributes(array(
+		$data['user'] = $user = User::model()->findByAttributes(array(
 			'wcaid'=>$person->id,
 			'status'=>User::STATUS_NORMAL,
 		));
+		$data['organizedCompetitions'] = [];
+		if ($user && $user->isOrganizer()) {
+			$data['organizedCompetitions'] = Competition::model()->with([
+				'organizer'=>[
+					'together'=>true,
+					'condition'=>'organizer.organizer_id=' . $user->id,
+				],
+			])->findAllByAttributes([
+				'status'=>Competition::STATUS_SHOW,
+			], [
+				'order'=>'date DESC, end_date DESC',
+			]);
+		}
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Persons'=>array('/results/person'),

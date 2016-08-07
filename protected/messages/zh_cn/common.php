@@ -18,7 +18,7 @@
  */
 return array (
   'Fee' => '',
-  'Misc' => '杂项',
+  'Organized Competitions' => '组织过的比赛',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小时',
@@ -152,6 +152,7 @@ return array (
   'Lost password?' => '忘记密码？',
   'Lucky Draw' => '抽奖',
   'Male' => '男',
+  'Misc' => '杂项',
   'Mobile Number' => '手机号码',
   'More Info' => '其他',
   'Multiple' => '多地',
