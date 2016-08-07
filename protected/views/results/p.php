@@ -780,7 +780,7 @@
         ),
       )); ?>
       <?php endif; ?>
-      <?php if ($user && $user->isOrganizer() && $organizedCompetitions !== []): ?>
+      <?php if ($organizedCompetitions !== []): ?>
       <h2><?php echo Yii::t('common', 'Organized Competitions'); ?></h2>
       <?php
       $this->widget('GridView', array(

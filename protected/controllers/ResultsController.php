@@ -164,7 +164,7 @@ class ResultsController extends Controller {
 			'status'=>User::STATUS_NORMAL,
 		));
 		$data['organizedCompetitions'] = [];
-		if ($user && $user->isOrganizer()) {
+		if ($user) {
 			$data['organizedCompetitions'] = Competition::model()->with([
 				'organizer'=>[
 					'together'=>true,
