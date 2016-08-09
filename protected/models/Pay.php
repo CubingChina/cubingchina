@@ -457,11 +457,32 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function getTotal($status = self::STATUS_PAID) {
+	public function getBillFee() {
+		if ($this->status != self::STATUS_UNPAID && $this->status != self::STATUS_WAIT_PAY) {
+			switch ($this->channel) {
+				case self::CHANNEL_NOWPAY:
+					if ($this->device_type == self::DEVICE_TYPE_PC) {
+						return number_format(max($this->amount * 0.0002, 0.08), 2, '.', '');
+					} else {
+						return number_format(max($this->amount * 0.0006, 0.08), 2, '.', '');
+					}
+				default:
+					return number_format($this->amount * 0.00006, 2, '.', '');
+			}
+		} else {
+			return '0.00';
+		}
+	}
+
+	public function getTotal($status = self::STATUS_PAID, $channel = false) {
 		$criteria = new CDbCriteria;
+		if ($channel) {
+			$criteria->compare('channel', $this->channel);
+		}
 		$criteria->compare('type', $this->type);
 		$criteria->compare('type_id', $this->type_id);
 		$criteria->compare('status', $status);
+		$this->compareTime($criteria);
 		$criteria->select = 'SUM(amount) AS amount';
 		return number_format($this->find($criteria)->amount / 100, 2, '.', '');
 	}
@@ -475,6 +496,18 @@ class Pay extends ActiveRecord {
 			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
 			WHEN channel="nowPay" THEN amount*0.06
 			ELSE amount*0.012 END) / 100, 2)) AS amount';
+		return $this->find($criteria)->amount;
+	}
+
+	public function getBillTotalFee() {
+		$criteria = new CDbCriteria;
+		$criteria->compare('channel', $this->channel);
+		$this->compareTime($criteria);
+		$criteria->select = 'SUM(ROUND((CASE
+			WHEN status=0 OR status=5 THEN 0
+			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
+			WHEN channel="nowPay" THEN amount*0.06
+			ELSE amount*0.006 END) / 100, 2)) AS amount';
 		return $this->find($criteria)->amount;
 	}
 
@@ -551,6 +584,8 @@ class Pay extends ActiveRecord {
 			'status'=>Yii::t('Pay', 'Status'),
 			'create_time'=>Yii::t('Pay', 'Create Time'),
 			'update_time'=>Yii::t('Pay', 'Update Time'),
+			'update_time[0]'=>'开始时间',
+			'update_time[1]'=>'结束时间',
 		);
 	}
 
@@ -599,6 +634,50 @@ class Pay extends ActiveRecord {
 				'pageSize'=>100,
 			),
 		));
+	}
+
+	public function searchBill($pagination = ['pageSize'=>100]) {
+
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('user_id', $this->user_id);
+		$criteria->compare('channel', $this->channel);
+		$criteria->compare('type', $this->type);
+		$criteria->compare('type_id', $this->type_id);
+		$criteria->compare('sub_type_id', $this->sub_type_id);
+		$criteria->compare('order_no', $this->order_no, true);
+		$criteria->compare('order_name', $this->order_name, true);
+		$criteria->compare('amount', $this->amount, true);
+		$criteria->compare('device_type', $this->device_type);
+		$criteria->compare('pay_channel', $this->pay_channel, true);
+		$criteria->compare('pay_account', $this->pay_account, true);
+		$criteria->compare('trade_no', $this->trade_no, true);
+		$criteria->compare('status', $this->status);
+		$this->compareTime($criteria);
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'id DESC',
+			),
+			'pagination'=>$pagination,
+		));
+	}
+
+	private function compareTime($criteria) {
+		foreach (['create_time', 'update_time'] as $attribute) {
+			$time = $this->$attribute;
+			if (!is_array($time)) {
+				continue;
+			}
+			if (isset($time[0]) && ($temp = strtotime($time[0])) !== false) {
+				$criteria->compare($attribute, '>=' . $temp);
+			}
+			if (isset($time[1]) && ($temp = strtotime($time[1])) !== false) {
+				$criteria->compare($attribute, '<' . $temp);
+			}
+		}
 	}
 
 	/**

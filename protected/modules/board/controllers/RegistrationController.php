@@ -700,31 +700,6 @@ class RegistrationController extends AdminController {
 		}
 	}
 
-	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true, $preCalculateFormulas = false) {
-		$download = $path === 'php://output';
-		$excel->setActiveSheetIndex(0);
-		Yii::app()->controller->setIsAjaxRequest(true);
-		if ($xlsx) {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-		} else {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-		}
-		if ($download) {
-			if ($xlsx) {
-				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
-			} else {
-				header('Content-Type: application/vnd.ms-excel');
-				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
-			}
-		}
-		$writer->setPreCalculateFormulas($preCalculateFormulas);
-		$writer->save($path);
-		if ($download) {
-			exit;
-		}
-	}
-
 	public function actionSendNotice() {
 		$id = $this->iGet('id');
 		$competition = Competition::model()->findByPk($id);
