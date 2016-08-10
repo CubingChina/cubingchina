@@ -260,7 +260,7 @@ class Registration extends ActiveRecord {
 		if (empty($this->events)) {
 			return 0;
 		}
-		if ($this->isAccepted() && !$recalculate) {
+		if (($this->isAccepted() || $this->paid) && !$recalculate) {
 			return $this->total_fee;
 		}
 		$competition = $this->competition;
