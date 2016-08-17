@@ -755,31 +755,59 @@
         ),
       )); ?>
     </div>
-    <?php if (count($competitions) > 1): ?>
+    <?php if (count($competitions) > 1 || $organizedCompetitions != []): ?>
     <div class="tab-pane" id="misc">
-      <?php if (count($closestCubers) > 1): ?>
-      <h2><?php echo Yii::t('Results', 'Closest Cubers'); ?></h2>
-      <?php
-      $this->widget('GridView', array(
-        'dataProvider'=>new CArrayDataProvider($closestCubers, array(
-          'pagination'=>false,
-          'sort'=>false,
-        )),
-        'front'=>true,
-        'template'=>'{items}',
-        'columns'=>array(
-          array(
-            'name'=>Yii::t('Results', 'Person'),
-            'type'=>'raw',
-            'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
-          ),
-          array(
-            'name'=>'count',
-            'header'=>Yii::t('Results', 'Competitions'),
-          ),
-        ),
-      )); ?>
-      <?php endif; ?>
+      <div class="row">
+        <?php if (count($closestCubers) > 1): ?>
+        <div class="col-md-6">
+          <h2><?php echo Yii::t('Results', 'Closest Cubers'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($closestCubers, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>Yii::t('Results', 'Person'),
+                'type'=>'raw',
+                'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+              ),
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Competitions'),
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+        <?php if (count($seenCubers) > 1): ?>
+        <div class="col-md-6">
+          <h2><?php echo Yii::t('Results', 'Seen Cubers'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($seenCubers, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Times'),
+              ),
+              array(
+                'name'=>'competitors',
+                'header'=>Yii::t('Results', 'Competitors'),
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+      </div>
       <?php if ($organizedCompetitions !== []): ?>
       <h2><?php echo Yii::t('common', 'Organized Competitions'); ?></h2>
       <?php

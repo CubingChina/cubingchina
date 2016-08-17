@@ -363,7 +363,7 @@ class Persons extends ActiveRecord {
 		if ($byEvent != array()) {
 			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
 		}
-		$closestCubers = $db->createCommand()
+		$allCubers = $db->createCommand()
 		->select(array(
 			'personId',
 			'personName',
@@ -373,11 +373,47 @@ class Persons extends ActiveRecord {
 		->where(array('in', 'competitionId', $competitionIds))
 		->group('personId')
 		->having('count>1')
-		->order('count DESC, personName ASC')
-		->limit(21)
+		->order('count ASC, personName ASC')
+		// ->limit(21)
 		->queryAll();
-		$closestCubers = array_filter($closestCubers, function($cuber) use($id) {
+		$closestCubers = array_filter(array_slice(array_reverse($allCubers), 0, 21), function($cuber) use($id) {
 			return $cuber['personId'] != $id;
+		});
+		$seenCubers = [];
+		foreach ($allCubers as $cuber) {
+			$count = $cuber['count'];
+			if (!isset($seenCubers[$count])) {
+				$seenCubers[$count] = [
+					'count'=>$count,
+					'competitors'=>0,
+				];
+				if ($count == $competitionCount) {
+					$seenCubers[$count]['competitors']--;
+				}
+			}
+			$seenCubers[$count]['competitors']++;
+		}
+		ksort($seenCubers);
+		$allSeenCubers = $db->createCommand()
+		->select(array(
+			'count(DISTINCT personId) AS count',
+		))
+		->from('Results')
+		->where(array('in', 'competitionId', $competitionIds))
+		->queryScalar();
+		$sum = array_sum(array_map(function($data) {
+			return $data['competitors'];
+		}, $seenCubers));
+		array_unshift($seenCubers, [
+			'count'=>1,
+			'competitors'=>$allSeenCubers - $sum,
+		]);
+		$seenCubers[] = [
+			'count'=>'All',
+			'competitors'=>$allSeenCubers,
+		];
+		$seenCubers = array_filter($seenCubers, function($data) {
+			return $data['competitors'] > 0;
 		});
 		return array(
 			'id'=>$id,
@@ -403,6 +439,7 @@ class Persons extends ActiveRecord {
 				'status'=>User::STATUS_NORMAL,
 			)),
 			'closestCubers'=>array_values($closestCubers),
+			'seenCubers'=>array_values($seenCubers),
 		);
 	}
 

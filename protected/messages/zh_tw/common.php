@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Organized Competitions' => '組織過的比賽',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小時',
@@ -165,6 +164,7 @@ return array (
   'No file uploaded' => '沒有文件上傳',
   'None' => '無',
   'Normal User' => '普通用戶',
+  'Organized Competitions' => '組織過的比賽',
   'Organizer' => '主辦方',
   'Other' => '其它',
   'Overall' => '所有輪',

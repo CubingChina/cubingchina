@@ -19,6 +19,7 @@
 return array (
   'Average' => '',
   'Best' => '',
+  'Competitors' => '魔友',
   'Country' => '',
   'Event' => '',
   'Format' => '',
@@ -27,6 +28,8 @@ return array (
   'Pos' => '',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
+  'Seen Cubers' => '见过的魔友',
+  'Times' => '次数',
   'Value1' => '',
   'Value2' => '',
   'Value3' => '',
