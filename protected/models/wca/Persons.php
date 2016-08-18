@@ -373,7 +373,7 @@ class Persons extends ActiveRecord {
 		->where(array('in', 'competitionId', $competitionIds))
 		->group('personId')
 		->having('count>1')
-		->order('count ASC, personName ASC')
+		->order('count ASC, personName DESC')
 		// ->limit(21)
 		->queryAll();
 		$closestCubers = array_filter(array_slice(array_reverse($allCubers), 0, 21), function($cuber) use($id) {
