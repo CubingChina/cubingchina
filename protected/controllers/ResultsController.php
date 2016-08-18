@@ -152,7 +152,7 @@ class ResultsController extends Controller {
 	}
 
 	public function actionP() {
-		$id = $this->sGet('id');
+		$id = strtoupper($this->sGet('id'));
 		$person = Persons::model()->with('country')->findByAttributes(array('id' => $id));
 		if ($person == null) {
 			$this->redirect(array('/results/person'));
