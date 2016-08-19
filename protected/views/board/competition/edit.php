@@ -384,6 +384,7 @@
                   'numberOptions'=>array(
                     'min'=>0,
                     'max'=>4,
+                    'class'=>'round-number-input',
                   ),
                   'feeOptions'=>array(
                     'min'=>0,
@@ -398,6 +399,7 @@
                   'numberOptions'=>array(
                     'min'=>0,
                     'max'=>4,
+                    'class'=>'round-number-input',
                   ),
                   'feeOptions'=>array(
                     'min'=>0,

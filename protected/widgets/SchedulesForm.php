@@ -139,6 +139,36 @@ class SchedulesForm extends Widget {
     last.find('.datetime-picker').datetimepicker({
       autoclose: true
     });
+  }).on('focus', '.schedule-event', function(e) {
+    var that = $(this);
+    var allAvailableEvents = {$onlyScheculeEvents};
+    $('.round-number-input').each(function() {
+      if ($(this).val() <= 0) {
+        return;
+      }
+      var matches = $(this).attr('name').match(/\[events\]\[(.*?)\]/);
+      if (matches) {
+        allAvailableEvents[matches[1]] = $(this).val();
+      }
+    });
+    $('.schedule-event :selected').each(function() {
+      var event = $(this).val();
+      if (onlyScheculeEvents[event] !== undefined || allAvailableEvents[event] === undefined) {
+        return;
+      }
+      allAvailableEvents[event] -= 1;
+      if (allAvailableEvents[event] <= 0) {
+        delete allAvailableEvents[event];
+      }
+    });
+    that.find('option').each(function() {
+      var event = $(this).val();
+      if (event && allAvailableEvents[event] === undefined) {
+        $(this).attr('disabled', 'true');
+      } else {
+        $(this).removeAttr('disabled');
+      }
+    });
   }).on('change', '.schedule-event', function(e) {
     var that = $(this);
     var event = that.val();
