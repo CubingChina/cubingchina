@@ -588,6 +588,38 @@ Yii::app()->clientScript->registerScript('competition',
   }).on('changeDate', '#Competition_third_stage_date', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_second_stage_date').datetimepicker('setEndDate', new Date(+date - 1000));
+  }).on('change', '.round-number-input', function () {
+    var matches = $(this).attr('name').match(/\[events\]\[(.*?)\]/);
+    if (!matches) {
+      return true;
+    }
+    var event = matches[1],
+        allAvailableEvents = $(document).data('allAvailableEvents'),
+        beforeVal = allAvailableEvents[event],
+        afterVal = $(this).val(),
+        optionSelector = '.schedule-event option[value=' + event + ']';
+    allAvailableEvents[event] = afterVal;
+    $(document).data('allAvailableEvents', allAvailableEvents);
+    if (afterVal > beforeVal) {
+      $(optionSelector).prop('disabled', false);
+    } else {
+      var eventScheduleInfo = $(document).data('eventScheduleInfo');
+      if (eventScheduleInfo[event] !== undefined && eventScheduleInfo[event] >= afterVal) {
+        $(optionSelector).prop('disabled', true);
+        eventScheduleInfo[event] = afterVal;
+        $(document).data('eventScheduleInfo', eventScheduleInfo);
+        var toDeleteCount = eventScheduleInfo[event] - afterVal;
+        $(optionSelector + ':selected').each(function (i) {
+          if (i > afterVal - 1) {
+            $(this).parent().parent().parent().remove();
+          }
+        });
+      } else if (afterVal == 0) {
+        $(optionSelector).prop('disabled', true);
+      } else {
+        $(optionSelector).prop('disabled', false);
+      }
+    }
   });
   $('#Competition_date').trigger('changeDate');
   $('#Competition_reg_start').trigger('changeDate');
