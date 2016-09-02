@@ -363,6 +363,7 @@ class Persons extends ActiveRecord {
 		if ($byEvent != array()) {
 			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
 		}
+		//closest cubers and seen cubers
 		$allCubers = $db->createCommand()
 		->select(array(
 			'personId',
@@ -415,6 +416,26 @@ class Persons extends ActiveRecord {
 		$seenCubers = array_filter($seenCubers, function($data) {
 			return $data['competitors'] > 0;
 		});
+		//visited provinces
+		$visitedProvinces = [];
+		$chineseCompetitions = Competition::model()->findAllByAttributes([
+			'wca_competition_id'=>$competitionIds,
+		]);
+		foreach ($chineseCompetitions as $competition) {
+			if (!$competition->isMultiLocation()) {
+				$location = $competition->location[0];
+				if (!isset($visitedProvinces[$location->province_id])) {
+					$visitedProvinces[$location->province_id] = [
+						'province'=>$location->province,
+						'count'=>0,
+					];
+				}
+				$visitedProvinces[$location->province_id]['count']++;
+			}
+		}
+		usort($visitedProvinces, function($dataA, $dataB) {
+			return $dataB['count'] - $dataA['count'];
+		});
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
@@ -440,6 +461,7 @@ class Persons extends ActiveRecord {
 			)),
 			'closestCubers'=>array_values($closestCubers),
 			'seenCubers'=>array_values($seenCubers),
+			'visitedProvinces'=>array_values($visitedProvinces),
 		);
 	}
 
