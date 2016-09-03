@@ -759,7 +759,7 @@
     <div class="tab-pane" id="misc">
       <div class="row">
         <?php if (count($closestCubers) > 1): ?>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h2><?php echo Yii::t('Results', 'Closest Cubers'); ?></h2>
           <?php
           $this->widget('GridView', array(
@@ -784,7 +784,7 @@
         </div>
         <?php endif; ?>
         <?php if (count($seenCubers) > 1): ?>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h2><?php echo Yii::t('Results', 'Seen Cubers'); ?></h2>
           <?php
           $this->widget('GridView', array(
@@ -802,6 +802,30 @@
               array(
                 'name'=>'competitors',
                 'header'=>Yii::t('Results', 'Competitors'),
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+        <?php if (count($visitedProvinces) > 1): ?>
+        <div class="col-md-4">
+          <h2><?php echo Yii::t('Results', 'Visited Provinces'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($visitedProvinces, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Times'),
+              ),
+              array(
+                'header'=>Yii::t('common', 'Province'),
+                'value'=>'ActiveRecord::getModelAttributeValue($data["province"], "name")',
               ),
             ),
           )); ?>
