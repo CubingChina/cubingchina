@@ -807,7 +807,7 @@
           )); ?>
         </div>
         <?php endif; ?>
-        <?php if (count($visitedProvinces) > 1): ?>
+        <?php if (count($visitedProvinces) > 0): ?>
         <div class="col-md-4">
           <h2><?php echo Yii::t('Results', 'Visited Provinces'); ?></h2>
           <?php
@@ -825,7 +825,7 @@
               ),
               array(
                 'header'=>Yii::t('common', 'Province'),
-                'value'=>'ActiveRecord::getModelAttributeValue($data["province"], "name")',
+                'value'=>'Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name"))',
               ),
             ),
           )); ?>

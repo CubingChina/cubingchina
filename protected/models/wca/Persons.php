@@ -424,13 +424,30 @@ class Persons extends ActiveRecord {
 		foreach ($chineseCompetitions as $competition) {
 			if (!$competition->isMultiLocation()) {
 				$location = $competition->location[0];
+				//Hong Kong, Macau and Taiwan
+				if (in_array($location->province_id, [2, 3, 4])) {
+					continue;
+				}
 				if (!isset($visitedProvinces[$location->province_id])) {
 					$visitedProvinces[$location->province_id] = [
-						'province'=>$location->province,
+						'name'=>$location->province->name,
+						'name_zh'=>$location->province->name_zh,
 						'count'=>0,
 					];
 				}
 				$visitedProvinces[$location->province_id]['count']++;
+			}
+		}
+		foreach ($competitions as $competition) {
+			if (in_array($competition->countryId, ['Hong Kong', 'Taiwan', 'Macau'])) {
+				if (!isset($visitedProvinces[$competition->countryId])) {
+					$visitedProvinces[$competition->countryId] = [
+						'name'=>$competition->countryId,
+						'name_zh'=>$competition->countryId,
+						'count'=>0,
+					];
+				}
+				$visitedProvinces[$competition->countryId]['count']++;
 			}
 		}
 		usort($visitedProvinces, function($dataA, $dataB) {
