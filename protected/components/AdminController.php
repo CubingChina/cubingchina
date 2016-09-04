@@ -13,8 +13,9 @@ class AdminController extends Controller {
 					'together'=>true,
 				),
 			);
-			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+			$criteria->compare('t.id', '>370');
 			$criteria->compare('t.status', Competition::STATUS_SHOW);
+			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
 			$competitions = Competition::model()->findAll($criteria);
 			foreach ($competitions as $competition) {
 				if (!$competition->isScheduleFinished()) {
