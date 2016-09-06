@@ -1,9 +1,14 @@
 <?php
 
 if (DEV) {
-	class TempCache extends CDummyCache {}
+	class TempCache extends CDummyCache {
+		public $hostname;
+		public $port;
+		public $database;
+		public $options;
+	}
 } else {
-	class TempCache extends CFileCache {}
+	class TempCache extends CRedisCache {}
 }
 
 class CustomCache extends TempCache {

@@ -104,6 +104,10 @@ $config = array(
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
+			'hashKey'=>false,
+			'hostname'=>'localhost',
+			'port'=>6379,
+			'database'=>1,
 		),
 		'db'=>array(
 			'connectionString'=>'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
