@@ -285,7 +285,7 @@ class Pay extends ActiveRecord {
 			'subject'=>'粗饼-' . $this->order_name,
 			'total_fee'=>number_format($this->amount / 100, 2, '.', ''),
 			'quantity'=>1,
-			'it_b_pay'=>'15m',
+			// 'it_b_pay'=>'15m',
 			// 'logistics_fee'=>'0.00',
 			// 'logistics_type'=>'EXPRESS',
 			// 'logistics_payment'=>'SELLER_PAY',
