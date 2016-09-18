@@ -132,6 +132,10 @@ class CompetitionController extends Controller {
 			if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
 				$model->status = Registration::STATUS_ACCEPTED;
 			}
+			// for FMC Asia
+			if ($competition->multi_countries && $model->location->country_id != 1) {
+				$model->status = Registration::STATUS_ACCEPTED;
+			}
 			if ($model->save()) {
 				Yii::app()->mailer->sendRegistrationNotice($model);
 				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);

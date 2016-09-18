@@ -348,6 +348,7 @@
                 $this->widget('MultiLocations', array(
                   'model'=>$model,
                   'cities'=>$cities,
+                  'delegates'=>$wcaDelegates,
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>

@@ -3041,3 +3041,19 @@ table.concise-schedule {
 .table-hover tbody tr:hover td {
   background-color: #e3ebf4;
 }
+.location-delegate {
+  margin-bottom: 0;
+}
+dl.location-delegate dt, dl.location-delegate dd, .location-delegate p {
+  line-height: inherit;
+  margin-bottom: 0;
+}
+@media (min-width: 768px) {
+  .location-delegate dt {
+    text-align: left;
+    width: 70px;
+  }
+  .location-delegate dd {
+    margin-left: 80px;
+  }
+}

@@ -612,6 +612,9 @@ class Registration extends ActiveRecord {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
 			$rules[] = array('avatar_type', 'required', 'on'=>'register');
 		}
+		if ($this->competition_id > 0 && $this->competition->isMultiLocation()) {
+			$rules[] = array('location_id', 'required', 'on'=>'register');
+		}
 		return $rules;
 	}
 

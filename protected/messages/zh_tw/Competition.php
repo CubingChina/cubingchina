@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Delegate' => '代表',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '輪',

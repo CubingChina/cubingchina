@@ -1366,13 +1366,42 @@ class Competition extends ActiveRecord {
 			) {
 				continue;
 			}
-			if (empty($provinceId)) {
-				$this->addError('locations.province_id.' . $index, '省份不能为空');
-				$error = true;
+			if ($this->multi_countries) {
+				if (empty($locations['country_id'][$key])) {
+					continue;
+				}
+				if ($locations['country_id'][$key] != 1) {
+					$provinceId = 0;
+					$locations['city_id'][$key] = 0;
+					if (empty($locations['fee'][$key])) {
+						$this->addError('locations.fee.' . $index, '非大陆地区请填写费用！');
+						$error = true;
+					}
+					if ($locations['country_id'][$key] > 4) {
+						if (empty($locations['city_name'][$key])) {
+							$this->addError('locations.city_name.' . $index, '非大陆及港澳台地区请填写英文城市！');
+							$error = true;
+						}
+						if (empty($locations['city_name_zh'][$key])) {
+							$this->addError('locations.city_name_zh.' . $index, '非大陆及港澳台地区请填写中文城市！');
+							$error = true;
+						}
+					}
+				}
+				if (empty($locations['delegate_id'][$key]) && empty($locations['delegate_text'][$key])) {
+					$this->addError('locations.delegate_text.' . $index, '必须选择一个代表或者手动填写！');
+					$error = true;
+				}
 			}
-			if (empty($locations['city_id'][$key])) {
-				$this->addError('locations.city_id.' . $index, '城市不能为空');
-				$error = true;
+			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
+				if (empty($provinceId)) {
+					$this->addError('locations.province_id.' . $index, '省份不能为空');
+					$error = true;
+				}
+				if (empty($locations['city_id'][$key])) {
+					$this->addError('locations.city_id.' . $index, '城市不能为空');
+					$error = true;
+				}
 			}
 			if (trim($locations['venue'][$key]) == '') {
 				$this->addError('locations.venue.' . $index, '英文地址不能为空');
@@ -1383,10 +1412,16 @@ class Competition extends ActiveRecord {
 				$error = true;
 			}
 			$temp[] = array(
+				'country_id'=>$locations['country_id'][$key],
 				'province_id'=>$provinceId,
 				'city_id'=>$locations['city_id'][$key],
+				'city_name'=>$locations['city_name'][$key],
+				'city_name_zh'=>$locations['city_name_zh'][$key],
 				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
+				'delegate_id'=>$locations['delegate_id'][$key],
+				'delegate_text'=>$locations['delegate_text'][$key],
+				'fee'=>$locations['fee'][$key],
 			);
 			$index++;
 		}

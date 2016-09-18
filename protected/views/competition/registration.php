@@ -4,8 +4,10 @@
     'htmlOptions'=>array(
     ),
   )); ?>
+    <?php if (!$competition->multi_countries): ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
     <p><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry'); ?></p>
+    <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'events', array(),
       $form->labelEx($model, 'events'),
@@ -15,8 +17,8 @@
         'name'=>'events',
         'events'=>$competition->getRegistrationEvents(),
         'type'=>'checkbox',
-      ), true),
-      $form->error($model, 'events', array('class'=>'text-danger'))
+      ), true)
+      // $form->error($model, 'events', array('class'=>'text-danger'))
     );?>
     <div id="fee" class="hide">
       <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
@@ -120,7 +122,8 @@
 </div>
 <?php endif; ?>
 <?php
-$basicFee = $competition->getEventFee('entry');
+if (!$competition->multi_countries) {
+  $basicFee = $competition->getEventFee('entry');
 Yii::app()->clientScript->registerScript('registration',
 <<<EOT
   var basicFee = {$basicFee};
@@ -137,7 +140,8 @@ Yii::app()->clientScript->registerScript('registration',
     }
   });
 EOT
-);
+  );
+}
 if ($competition->fill_passport) {
   Yii::app()->clientScript->registerScript('registration-passport',
 <<<EOT

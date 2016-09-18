@@ -16,19 +16,7 @@
     <dd><?php echo $competition->getDisplayDate(); ?></dd>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
     <dd>
-      <?php if ($competition->tba == Competition::YES): ?>
-      <?php echo Yii::t('common', 'To be announced'); ?>
-      <?php elseif ($competition->isMultiLocation()): ?>
-      <ol>
-      <?php foreach ($competition->location as $location): ?>
-        <li>
-        <?php echo $location->getFullAddress(); ?>
-        </li>
-      <?php endforeach; ?>
-      </ol>
-      <?php else: ?>
-      <?php echo $competition->location[0]->getFullAddress(); ?>
-      <?php endif; ?>
+      <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
     <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
     <dd>
@@ -41,7 +29,7 @@
       <?php endforeach; ?>
       <?php endif; ?>
     </dd>
-    <?php if ($competition->delegate !== array()): ?>
+    <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
     <dd>
       <?php foreach ($competition->delegate as $key=>$delegate): ?>
@@ -61,6 +49,7 @@
         return Yii::t('event', $competition->getFullEventName($event));
       }, array_keys($competition->getRegistrationEvents()))); ?>
     </dd>
+    <?php if (!$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?>
       <?php if ($competition->tba == Competition::NO): ?>
       <?php echo CHtml::tag('span', array(
@@ -115,6 +104,7 @@
       </table>
       <?php endif; ?>
     </dd>
+    <?php endif; ?>
     <?php if ($competition->person_num > 0): ?>
     <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
     <dd><?php echo $competition->person_num; ?></dd>

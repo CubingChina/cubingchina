@@ -32,7 +32,6 @@ return array (
   'Value3' => '',
   'Value4' => '',
   'Value5' => '',
-  'Visited Provinces' => '去过的省份',
   'Current' => '当前纪录',
   'History' => '历史纪录',
   'CR' => '洲际纪录',
@@ -59,6 +58,7 @@ return array (
   'Round' => '轮次',
   'Seen Cubers' => '见过的魔友',
   'Times' => '次数',
+  'Visited Provinces' => '去过的省份',
   'WR' => '世界纪录',
   'World Championship Podiums' => '世锦赛领奖台',
 );

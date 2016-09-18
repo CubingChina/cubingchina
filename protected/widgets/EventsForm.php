@@ -51,12 +51,13 @@ class EventsForm extends Widget {
 				echo CHtml::closeTag('div');
 				echo '<br>';
 			}
+			echo CHtml::error($model, 'events', array('class'=>'text-danger'));
 			echo CHtml::closeTag('div');
-			if ($model->competition->isMultiLocation()) {
+			if ($competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
 				$locations = array();
-				foreach ($model->competition->location as $location) {
-					$locations[$location->location_id] = $location->getFullAddress(false);
+				foreach ($competition->location as $location) {
+					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
 				}
 				echo CHtml::activeLabelEx($model, 'location_id');
 				echo CHtml::activeDropDownList($model, 'location_id', $locations, array(
