@@ -41,7 +41,7 @@ class CompetitionLocation extends ActiveRecord {
 
 	public function getFullAddress($includeVenue = true) {
 		$isCN = Yii::app()->controller->isCN;
-		$country = $this->country ? $this->country->getAttributeValue('name') : '';
+		$country = $this->country ? Yii::t('Region', $this->country->getAttributeValue('name')) : '';
 		$province = $this->province ? $this->province->getAttributeValue('name') : '';
 		$city = $this->getCityName();
 		if ($city == $province) {
