@@ -802,7 +802,7 @@ class Competition extends ActiveRecord {
 							'regions'=>[],
 						];
 					}
-					$timezones[$timezone]['regions'][] = $country;
+					$timezones[$timezone]['regions'][$country->id] = $country;
 				}
 			}
 			usort($timezones, function($timezoneA, $timezoneB) {
