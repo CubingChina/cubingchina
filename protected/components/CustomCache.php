@@ -6,6 +6,7 @@ if (DEV) {
 		public $port;
 		public $database;
 		public $options;
+		public $hashKey = false;
 	}
 } else {
 	class TempCache extends CRedisCache {}
