@@ -57,6 +57,7 @@ class Competition extends ActiveRecord {
 	private $_locations;
 	private $_schedules;
 	private $_description;
+	private $_timezones;
 
 	public $year;
 	public $province;
@@ -675,6 +676,7 @@ class Competition extends ActiveRecord {
 			if (isset($specialEvents[$schedule->event])) {
 				$specialEvents[$schedule->event][$schedule->round][] = $key;
 			}
+			$schedule->competition = $this;
 		}
 		$scheduleEvents = Events::getOnlyScheduleEvents();
 		foreach ($schedules as $key=>$schedule) {
@@ -751,7 +753,7 @@ class Competition extends ActiveRecord {
 				'name'=>$key,
 				'header'=>Yii::t('Schedule', $key),
 				'headerHtmlOptions'=>array(
-					'style'=>sprintf("width: %dpx;min-width: %dpx", $width, $width),
+					'style'=>sprintf("width: %dpx;min-width: %dpx;vertical-align:bottom", $width, $width),
 				),
 			);
 			if ($key == 'Event') {
@@ -760,9 +762,55 @@ class Competition extends ActiveRecord {
 					"class"=>"event-icon event-icon-" . $data["event"],
 				), $data["Event"])';
 			}
+			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
+				if ($key == 'End Time') {
+					continue;
+				}
+				$headerHtmlOptions = $column['headerHtmlOptions'];
+				foreach ($this->timezones as $timezone) {
+					$regions = implode('<br>', array_map(function($country) {
+						return CHtml::tag('b', [], Yii::t('Region', $country->getAttributeValue('name')));
+					}, $timezone['regions']));
+					$column = [
+						'header'=>$regions . '<br> ' .$timezone['text'],
+						'headerHtmlOptions'=>$headerHtmlOptions,
+						'type'=>'raw',
+						'value'=>'$data["schedule"]->getTime(' . $timezone['second_offset'] . ')',
+						// 'footer'=>$regions,
+					];
+					$columns[] = $column;
+				}
+				continue;
+			}
 			$columns[] = $column;
 		}
 		return $columns;
+	}
+
+	public function getTimezones() {
+		if ($this->_timezones === null) {
+			foreach ($this->location as $location) {
+				$country = $location->country;
+				if ($country) {
+					$timezone = 8 + ($country->second_offset / 3600);
+					// $timezone = number_format($timezone, 1);
+					$timezone = $timezone >= 0 ? 'GMT +' . $timezone : 'GMT ' . $timezone;
+					if (!isset($timezones[$timezone])) {
+						$timezones[$timezone] = [
+							'second_offset'=>$country->second_offset,
+							'text'=>$timezone,
+							'regions'=>[],
+						];
+					}
+					$timezones[$timezone]['regions'][] = $country;
+				}
+			}
+			usort($timezones, function($timezoneA, $timezoneB) {
+				return $timezoneA['second_offset'] - $timezoneB['second_offset'];
+			});
+			$this->_timezones = $timezones;
+		}
+		return $this->_timezones;
 	}
 
 	private function getScheduleColumnWidth($name) {
