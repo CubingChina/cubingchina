@@ -16,7 +16,7 @@ class CompetitionLocation extends ActiveRecord {
 
 	public function getCityName() {
 		switch (true) {
-			case $this->country_id > 4:
+			case $this->country_id > 3:
 				return $this->getAttributeValue('city_name');
 			case $this->country_id > 1:
 				return $this->country->getAttributeValue('name');
