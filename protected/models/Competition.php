@@ -1460,16 +1460,16 @@ class Competition extends ActiveRecord {
 				$error = true;
 			}
 			$temp[] = array(
-				'country_id'=>$locations['country_id'][$key],
+				'country_id'=>$this->multi_countries ? $locations['country_id'][$key] : 0,
 				'province_id'=>$provinceId,
 				'city_id'=>$locations['city_id'][$key],
-				'city_name'=>$locations['city_name'][$key],
-				'city_name_zh'=>$locations['city_name_zh'][$key],
+				'city_name'=>$this->multi_countries ? $locations['city_name'][$key] : '',
+				'city_name_zh'=>$this->multi_countries ? $locations['city_name_zh'][$key] : '',
 				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
-				'delegate_id'=>$locations['delegate_id'][$key],
-				'delegate_text'=>$locations['delegate_text'][$key],
-				'fee'=>$locations['fee'][$key],
+				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
+				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
+				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
 			);
 			$index++;
 		}
