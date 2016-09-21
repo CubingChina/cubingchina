@@ -9,7 +9,13 @@ if (DEV) {
 		public $hashKey = false;
 	}
 } else {
-	class TempCache extends CRedisCache {}
+	class TempCache extends CFileCache {
+		public $hostname;
+		public $port;
+		public $database;
+		public $options;
+		public $hashKey = false;
+	}
 }
 
 class CustomCache extends TempCache {
