@@ -109,7 +109,7 @@ class Competition extends ActiveRecord {
 		), array(
 			'condition'=>'date>' . time() . ' AND reg_end>' . time(),
 			'limit'=>$limit,
-			'order'=>'date ASC',
+			'order'=>'date ASC, type DESC',
 		));
 	}
 
@@ -120,7 +120,7 @@ class Competition extends ActiveRecord {
 		), array(
 			'condition'=>"date > {$yesterday} OR end_date > {$yesterday}",
 			'limit'=>$limit,
-			'order'=>'date ASC',
+			'order'=>'date ASC, type DESC',
 		));
 	}
 
@@ -1732,7 +1732,7 @@ class Competition extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'date DESC, end_date DESC',
+				'defaultOrder'=>'date DESC, end_date DESC, type DESC',
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',
