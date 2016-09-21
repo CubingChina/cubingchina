@@ -2,7 +2,7 @@
 <?php echo Yii::t('common', 'To be announced'); ?>
 <?php elseif ($competition->isMultiLocation()): ?>
 <ol>
-<?php foreach ($competition->location as $location): ?>
+<?php foreach ($competition->sortedLocations as $location): ?>
   <li>
   <?php echo $location->getFullAddress(); ?><br>
   <?php if ($competition->multi_countries): ?>

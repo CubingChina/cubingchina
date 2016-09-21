@@ -56,7 +56,7 @@ class EventsForm extends Widget {
 			if ($competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
 				$locations = array();
-				foreach ($competition->location as $location) {
+				foreach ($competition->sortedLocations as $location) {
 					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
 				}
 				echo CHtml::activeLabelEx($model, 'location_id');

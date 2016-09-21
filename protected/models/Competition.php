@@ -353,6 +353,24 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function getSortedLocations() {
+		$locations = $this->location;
+		usort($locations, function($locationA, $locationB) {
+			$temp = $locationA->country_id - $locationB->country_id;
+			if ($temp == 0) {
+				$temp = $locationA->province_id - $locationB->province_id;
+			}
+			if ($temp == 0) {
+				$temp = $locationA->city_id - $locationB->city_id;
+			}
+			if ($temp == 0) {
+				$temp = strcmp($locationA->city_name, $locationB->city_name);
+			}
+			return $temp;
+		});
+		return $locations;
+	}
+
 	public function getDays() {
 		if ($this->end_date == 0) {
 			return 1;
@@ -789,7 +807,7 @@ class Competition extends ActiveRecord {
 
 	public function getTimezones() {
 		if ($this->_timezones === null) {
-			foreach ($this->location as $location) {
+			foreach ($this->sortedLocations as $location) {
 				$country = $location->country;
 				if ($country) {
 					$timezone = 8 + ($country->second_offset / 3600);
