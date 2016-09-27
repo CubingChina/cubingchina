@@ -268,7 +268,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-white',
 				),
-				'visible'=>!$showResults && !$showLive,
+				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
 			),
 			array(
 				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),
