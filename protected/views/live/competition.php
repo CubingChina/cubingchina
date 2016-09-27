@@ -2,7 +2,7 @@
 <?php $params = $competition->getLastActiveEventRound($events); ?>
 <?php echo CHtml::tag('div', array(
   'id'=>'live-container',
-  'data-competition-id'=>$competition->id,
+  'data-c'=>$competition->id,
   'data-events'=>json_encode($events),
   'data-params'=>json_encode($params),
   'data-filters'=>json_encode(array(
@@ -110,26 +110,26 @@
                     </td>
                   </tr>
                   <tr v-for="result in userResults">
-                    <td colspan="8" v-if="result.type == 'event'">{{getEventName(result)}}</td>
-                    <td v-if="result.type == 'result'">{{getRoundName(result)}}</td>
-                    <td v-if="result.type == 'result'">{{result.pos}}</td>
-                    <td v-if="result.type == 'result'" class="text-right">
-                      <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
-                        {{result.regional_single_record}}
+                    <td colspan="8" v-if="result.t == 'e'">{{getEventName(result)}}</td>
+                    <td v-if="result.t == 'r'">{{getRoundName(result)}}</td>
+                    <td v-if="result.t == 'r'">{{result.p}}</td>
+                    <td v-if="result.t == 'r'" class="text-right">
+                      <span class="record" v-if="result.sr" :class="getRecordClass(result.sr)">
+                        {{result.sr}}
                       </span>
-                      <span :class="{'new-best': result.newBest}">
-                        {{result.best | decodeResult result.event}}
-                      </span>
-                    </td>
-                    <td v-if="result.type == 'result'" class="text-right">
-                      <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
-                        {{result.regional_average_record}}
-                      </span>
-                      <span :class="{'new-best': result.newAverage}">
-                        {{result.average | decodeResult result.event}}
+                      <span :class="{'new-best': result.nb}">
+                        {{result.b | decodeResult result.e}}
                       </span>
                     </td>
-                    <td v-if="result.type == 'result'">
+                    <td v-if="result.t == 'r'" class="text-right">
+                      <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
+                        {{result.ar}}
+                      </span>
+                      <span :class="{'new-best': result.na}">
+                        {{result.a | decodeResult result.e}}
+                      </span>
+                    </td>
+                    <td v-if="result.t == 'r'">
                       {{{getResultDetail(result)}}}
                     </td>
                   </tr>
@@ -188,9 +188,9 @@
 
 <template id="result-message-template">
   <div class="result-message text-danger">
-    {{result.user.name}} - {{getEventName(result)}} - {{getRoundName(result)}}<br>
-    <?php echo Yii::t('common', 'Best'); ?>: {{result.best | decodeResult result.event}}<br>
-    <span v-if="result.average != 0"><?php echo Yii::t('common', 'Average'); ?>: {{result.average | decodeResult result.event}}</span>
+    {{getUser(result.n).name}} - {{getEventName(result)}} - {{getRoundName(result)}}<br>
+    <?php echo Yii::t('common', 'Best'); ?>: {{result.b | decodeResult result.e}}<br>
+    <span v-if="result.a != 0"><?php echo Yii::t('common', 'Average'); ?>: {{result.a | decodeResult result.e}}</span>
     <div class="result-detail"><?php echo Yii::t('common', 'Detail'); ?>: {{{getResultDetail(result)}}}</div>
   </div>
 </template>
@@ -207,15 +207,15 @@
             <div class="modal-body">
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Cut Off'); ?></label>
-                <input type="tel" class="form-control" id="cut_off" v-model="cut_off">
+                <input type="tel" class="form-control" id="co" v-model="co">
               </div>
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Time Limit'); ?></label>
-                <input type="tel" class="form-control" id="time_limit" v-model="time_limit">
+                <input type="tel" class="form-control" id="tl" v-model="tl">
               </div>
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Format'); ?></label>
-                <select v-model="format" class="form-control" id="format">
+                <select v-model="f" class="form-control" id="f">
                   <?php foreach (Formats::getAllFormats() as $id=>$value): ?>
                   <?php if (strpos($id, '/') === false): ?>
                   <option value="<?php echo $id; ?>"><?php echo Yii::t('common', $value); ?></option>
@@ -225,7 +225,7 @@
               </div>
               <div class="form-group">
                 <label><?php echo Yii::t('Schedule', 'Competitors'); ?></label>
-                <input type="tel" class="form-control" id="number" v-model="number">
+                <input type="tel" class="form-control" id="n" v-model="n">
               </div>
               <div class="form-group">
                 <button type="button"
@@ -264,7 +264,7 @@
       </div>
       <div class="clearfix">
         <h4 class="pull-left">
-          {{eventName}} - {{roundName}}{{currentRound && currentRound.status != 0 ? ' - ' + currentRound.allStatus[currentRound.status] : ''}}
+          {{eventName}} - {{roundName}}{{currentRound && currentRound.s != 0 ? ' - ' + currentRound.allStatus[currentRound.s] : ''}}
           <button type="button"
             class="btn btn-sm btn-warning no-mr"
             v-if="hasPermission && options.enableEntry"
@@ -277,9 +277,9 @@
         <div class="pull-right event-round-area">
           <select @change="changeParams" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
-              <option v-for="round in event.rounds" :value="{event: event.id, round: round.id}">
-                {{event.name}} - {{round.name}}{{round.status != 0 ? ' - ' + round.allStatus[round.status] : ''}}
-                {{round.status == 1 ? ' (' + round.resultsNumber + ')' : ''}}
+              <option v-for="round in event.rs" :value="{e: event.i, r: round.i}">
+                {{event.name}} - {{round.name}}{{round.s != 0 ? ' - ' + round.allStatus[round.s] : ''}}
+                {{round.s == 1 ? ' (' + round.rn + ')' : ''}}
               </option>
             </optgroup>
           </select>
@@ -296,9 +296,9 @@
             <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
-            <th class="text-right" v-if="hasAverage() && event != '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
-            <th class="text-right" :class="{'sorting-column': !hasAverage() || event == '333bf'}"><?php echo Yii::t('common', 'Best'); ?></th>
-            <th class="text-right" v-if="hasAverage() && event == '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
+            <th class="text-right" v-if="hasAverage() && e != '333bf'" :class="{'sorting-column': hasAverage() && e != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
+            <th class="text-right" :class="{'sorting-column': !hasAverage() || e == '333bf'}"><?php echo Yii::t('common', 'Best'); ?></th>
+            <th class="text-right" v-if="hasAverage() && e == '333bf'" :class="{'sorting-column': hasAverage() && e != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th><?php echo Yii::t('common', 'Region'); ?></th>
             <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
@@ -312,29 +312,29 @@
               <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
-              <td>{{result.pos}}</td>
+              <td>{{result.p}}</td>
               <td>
-                <a href="javascript:void(0)" @click="goToUser(result.user)">{{result.user.name}}</a>
+                <a href="javascript:void(0)" @click="goToUser(getUser(result.n))">{{getUser(result.n).name}}</a>
               </td>
-              <td class="text-right" v-if="hasAverage() && event != '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}">
-                <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
-                  {{result.regional_average_record}}
+              <td class="text-right" v-if="hasAverage() && e != '333bf'" :class="{'sorting-column': hasAverage() && e != '333bf'}">
+                <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
+                  {{result.ar}}
                 </span>
-                {{result.average | decodeResult result.event}}
+                {{result.a | decodeResult result.e}}
               </td>
-              <td class="text-right" :class="{'sorting-column': !hasAverage() || event == '333bf'}">
-                <span class="record" v-if="result.regional_single_record" :class="getRecordClass(result.regional_single_record)">
-                  {{result.regional_single_record}}
+              <td class="text-right" :class="{'sorting-column': !hasAverage() || e == '333bf'}">
+                <span class="record" v-if="result.sr" :class="getRecordClass(result.sr)">
+                  {{result.sr}}
                 </span>
-                {{result.best | decodeResult result.event}}
+                {{result.b | decodeResult result.e}}
               </td>
-              <td class="text-right" v-if="hasAverage() && event == '333bf'" :class="{'sorting-column': hasAverage() && event != '333bf'}">
-                <span class="record" v-if="result.regional_average_record" :class="getRecordClass(result.regional_average_record)">
-                  {{result.regional_average_record}}
+              <td class="text-right" v-if="hasAverage() && e == '333bf'" :class="{'sorting-column': hasAverage() && e != '333bf'}">
+                <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
+                  {{result.ar}}
                 </span>
-                {{result.average | decodeResult result.event}}
+                {{result.a | decodeResult result.e}}
               </td>
-              <td>{{{result.user.region}}}</td>
+              <td>{{{getUser(result.n).region}}}</td>
               <td>
                 {{{getResultDetail(result)}}}
               </td>
@@ -382,14 +382,14 @@
               @mousedown.prevent="selectCompetitor(result)"
               @mouseenter="selectedIndex = $index"
             >
-              <b class="number">No.{{result.number}}</b>{{result.user.name}}
+              <b class="number">No.{{result.n}}</b>{{getUser(result.n).name}}
             </li>
           </ul>
         </div>
         <label><?php echo Yii::t('common', 'Results'); ?></label>
         <div class="input-panel-result">
           <result-input v-for="i in inputNum"
-            :value.sync="result['value' + (i + 1)]"
+            :value.sync="result.v[i]"
             :index="i"
           ></result-input>
         </div>
@@ -398,7 +398,7 @@
           class="btn btn-md btn-theme"
           @click="save"
           @keydown.prevent="keydown"
-          :disabled="result == null || result.id == null"
+          :disabled="result == null || result.i == null"
         ><?php echo Yii::t('live', 'Save'); ?></button>
       </div>
     </div>
@@ -408,7 +408,7 @@
 <template id="result-input-template">
   <div class="input-group">
     <span class="input-group-addon">{{index + 1}}.</span>
-    <template v-if="event == '333mbf'">
+    <template v-if="e == '333mbf'">
       <div class="form-control result-input-wrapper">
         <div class="result-input-wrapper col-xs-5"
           :class="{active: index == $parent.currentIndex && subIndex == 0, disabled: $parent.isDisabled(index)}"
@@ -466,14 +466,14 @@
         @keydown.prevent="keydown($event, 'time')"
         :disabled="$parent.isDisabled(index)"
       >
-      <label for="result-input-{{index}}" :class="{'text-center': event === '333mbf'}">
+      <label for="result-input-{{index}}" :class="{'text-center': e === '333mbf'}">
         <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
-          <span class="number" :class="{active: time.length > 5}" v-if="event != '333fm' && event !='333mbf'">{{time.charAt(time.length - 6) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm' && event !='333mbf'">{{time.charAt(time.length - 5) || 0}}</span>
-          <span class="number" :class="{active: time.length > 4}" v-if="event != '333fm' && event !='333mbf'">:</span>
-          <span class="number" :class="{active: time.length > 3}" v-if="event != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
-          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
-          <span class="number" :class="{active: time.length > 2}" v-if="event != '333fm'">{{event !='333mbf' ? '.' : ':'}}</span>
+          <span class="number" :class="{active: time.length > 5}" v-if="e != '333fm' && e !='333mbf'">{{time.charAt(time.length - 6) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="e != '333fm' && e !='333mbf'">{{time.charAt(time.length - 5) || 0}}</span>
+          <span class="number" :class="{active: time.length > 4}" v-if="e != '333fm' && e !='333mbf'">:</span>
+          <span class="number" :class="{active: time.length > 3}" v-if="e != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}" v-if="e != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
+          <span class="number" :class="{active: time.length > 2}" v-if="e != '333fm'">{{e !='333mbf' ? '.' : ':'}}</span>
           <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
           <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
         </span>

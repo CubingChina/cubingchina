@@ -111,35 +111,38 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function getShowAttributes($calcPos = false) {
+		//use the first letter to save traffic
 		$attributes = array(
-			'id'=>$this->id,
-			'competitionId'=>$this->competition_id,
-			'user'=>array(
-				'type'=>$this->user_type,
-				'id'=>$this->user_id,
-				'name'=>$this->user->getCompetitionName(),
-				'wcaid'=>$this->user->wcaid,
-				'region'=>$this->user->country->name,
-			),
-			'region'=>$this->user->country->name,
-			'number'=>$this->number,
-			'event'=>$this->event,
-			'round'=>$this->round,
-			'format'=>$this->format,
-			'pos'=>'-',
-			'best'=>intval($this->best),
-			'average'=>intval($this->average),
-			'value1'=>intval($this->value1),
-			'value2'=>intval($this->value2),
-			'value3'=>intval($this->value3),
-			'value4'=>intval($this->value4),
-			'value5'=>intval($this->value5),
-			'regional_single_record'=>$this->regional_single_record,
-			'regional_average_record'=>$this->regional_average_record,
+			'i'=>$this->id,
+			'c'=>$this->competition_id,
+			// 'user'=>array(
+			// 	'type'=>$this->user_type,
+			// 	'id'=>$this->user_id,
+			// 	'name'=>$this->user->getCompetitionName(),
+			// 	'wcaid'=>$this->user->wcaid,
+			// 	'region'=>$this->user->country->name,
+			// ),
+			// 'r'=>$this->user->country->name,
+			'n'=>$this->number,
+			'e'=>$this->event,
+			'r'=>$this->round,
+			'f'=>$this->format,
+			// 'p'=>'',
+			'b'=>intval($this->best),
+			'a'=>intval($this->average),
+			'v'=>[
+				intval($this->value1),
+				intval($this->value2),
+				intval($this->value3),
+				intval($this->value4),
+				intval($this->value5),
+			],
+			'sr'=>$this->regional_single_record,
+			'ar'=>$this->regional_average_record,
 		);
 		if ($calcPos) {
-			$attributes['pos'] = $this->getCalculatedPos();
-			$attributes['newBest'] = $attributes['newAverage'] = false;
+			$attributes['p'] = $this->getCalculatedPos();
+			$attributes['nb'] = $attributes['na'] = false;
 		}
 		return $attributes;
 	}

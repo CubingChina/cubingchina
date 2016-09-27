@@ -56,14 +56,14 @@ class LiveEventRound extends ActiveRecord {
 
 	public function getBroadcastAttributes() {
 		return array(
-			'id'=>$this->round,
-			'event'=>$this->event,
-			'format'=>$this->format,
-			'cut_off'=>$this->cut_off,
-			'time_limit'=>$this->time_limit,
-			'number'=>$this->number,
-			'status'=>$this->status,
-			'resultsNumber'=>$this->resultsNumber,
+			'i'=>$this->round,
+			'e'=>$this->event,
+			'f'=>$this->format,
+			'co'=>$this->cut_off,
+			'tl'=>$this->time_limit,
+			'n'=>$this->number,
+			's'=>$this->status,
+			'rn'=>$this->resultsNumber,
 		);
 	}
 

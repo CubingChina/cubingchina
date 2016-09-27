@@ -61,6 +61,9 @@ class ResultHandler extends MsgHandler {
 
 	public function actionUpdate() {
 		$data = $this->msg->result;
+		if (!isset($data->id)) {
+			return;
+		}
 		$result = LiveResult::model()->findByPk($data->id);
 		if ($result == null) {
 			return;
@@ -103,8 +106,8 @@ class ResultHandler extends MsgHandler {
 	public function actionUser() {
 		$results = LiveResult::model()->findAllByAttributes(array(
 			'competition_id'=>$this->competition->id,
-			'user_type'=>$this->msg->user->type,
-			'user_id'=>$this->msg->user->id,
+			'number'=>$this->msg->user->number,
+			// 'user_id'=>$this->msg->user->id,
 		));
 		usort($results, function($resA, $resB) {
 			if ($resA->wcaEvent === null) {
@@ -143,13 +146,13 @@ class ResultHandler extends MsgHandler {
 				$best = $rank->best;
 				$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
 				foreach ($temp[$rank->eventId]['results'] as $key=>$result) {
-					if ($result['best'] > 0 && $result['best'] <= $best) {
-						$temp[$rank->eventId]['results'][$key]['newBest'] = true;
-						$best = $result['best'];
+					if ($result['b'] > 0 && $result['b'] <= $best) {
+						$temp[$rank->eventId]['results'][$key]['nb'] = true;
+						$best = $result['b'];
 					}
-					if ($result['average'] > 0 && $result['average'] <= $average) {
-						$temp[$rank->eventId]['results'][$key]['newAverage'] = true;
-						$average = $result['average'];
+					if ($result['a'] > 0 && $result['a'] <= $average) {
+						$temp[$rank->eventId]['results'][$key]['na'] = true;
+						$average = $result['a'];
 					}
 				}
 			}
@@ -159,13 +162,13 @@ class ResultHandler extends MsgHandler {
 			if (!isset($events[$event])) {
 				$best = $average = PHP_INT_MAX;
 				foreach ($results['results'] as $key=>$result) {
-					if ($result['best'] > 0 && $result['best'] <= $best) {
-						$results['results'][$key]['newBest'] = true;
-						$best = $result['best'];
+					if ($result['b'] > 0 && $result['b'] <= $best) {
+						$results['results'][$key]['nb'] = true;
+						$best = $result['b'];
 					}
-					if ($result['average'] > 0 && $result['average'] <= $average) {
-						$results['results'][$key]['newAverage'] = true;
-						$average = $result['average'];
+					if ($result['a'] > 0 && $result['a'] <= $average) {
+						$results['results'][$key]['na'] = true;
+						$average = $result['a'];
 					}
 				}
 			}
@@ -174,16 +177,11 @@ class ResultHandler extends MsgHandler {
 		$userResults = array();
 		foreach ($temp as $event=>$results) {
 			$userResults[] = array(
-				'type'=>'event',
-				'event'=>$event,
+				't'=>'e',
+				'e'=>$event,
 			);
 			foreach ($results['results'] as $key=>$result) {
-				$result['type'] = 'result';
-				if (($result['round'] == 'd' || $result['round'] == 'f') && $result['pos'] <= 3 && $result['best'] > 0) {
-					$result['isAdvanced'] = true;
-				} elseif (isset($results['results'][$key - 1])) {
-					$result['isAdvanced'] = true;
-				}
+				$result['t'] = 'r';
 				$userResults[] = $result;
 			}
 		}

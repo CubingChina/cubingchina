@@ -1200,23 +1200,15 @@ class Competition extends ActiveRecord {
 		foreach ($eventRounds as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
-					'id'=>$eventRound->event,
+					'i'=>$eventRound->event,
 					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
-					'rounds'=>array(),
+					'rs'=>array(),
 				);
 			}
-			$events[$eventRound->event]['rounds'][] = array(
-				'id'=>$eventRound->round,
-				'event'=>$eventRound->event,
-				'format'=>$eventRound->format,
-				'cut_off'=>$eventRound->cut_off,
-				'time_limit'=>$eventRound->time_limit,
-				'number'=>$eventRound->number,
-				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
-				'status'=>$eventRound->status,
-				'allStatus'=>$eventRound->allStatus,
-				'resultsNumber'=>$eventRound->resultsNumber,
-			);
+			$attributes = $eventRound->getBroadcastAttributes();
+			$attributes['name'] = Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round));
+			$attributes['allStatus'] = $eventRound->allStatus;
+			$events[$eventRound->event]['rs'][] = $attributes;
 		}
 		return array_values($events);
 	}
@@ -1231,22 +1223,22 @@ class Competition extends ActiveRecord {
 		));
 		if ($liveResult !== null) {
 			return array(
-				'event'=>$liveResult->event,
-				'round'=>$liveResult->round,
+				'e'=>$liveResult->event,
+				'r'=>$liveResult->round,
 				'filter'=>'all',
 			);
 		}
 		$event = current($events);
 		if ($event === false) {
 			return array(
-				'event'=>'',
-				'round'=>'',
+				'e'=>'',
+				'r'=>'',
 				'filter'=>'all',
 			);
 		}
 		return array(
-			'event'=>$event['id'],
-			'round'=>$event['rounds'][0]['id'],
+			'e'=>$event['i'],
+			'r'=>$event['rs'][0]['i'],
 			'filter'=>'all',
 		);
 	}

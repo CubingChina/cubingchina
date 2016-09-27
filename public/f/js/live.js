@@ -10,7 +10,7 @@
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
-      competitionId: state.competitionId
+      competitionId: state.c
     });
     if (state.results.length == 0) {
       fetchResults();
@@ -29,6 +29,8 @@
     if (origin && origin.onlineNumber) {
       store.dispatch('UPDATE_ONLINE_NUMBER', origin.onlineNumber);
     }
+  }).on('users', function(users) {
+    allUsers = users;
   }).on('result.new', function(result) {
     store.dispatch('NEW_RESULT', result);
     newMessageOnResult(result, 'new');
@@ -60,7 +62,7 @@
   var state = {
     onlineNumber: 0,
     user: {},
-    competitionId: 0,
+    c: 0,
     events: [],
     filters: [],
     params: {
@@ -77,6 +79,7 @@
   var lastFetchRoundsTime = Date.now();
   var events = {};
   var eventRounds = {};
+  var allUsers = {};
   var current = {};
   var mutations = {
     CHANGE_PARAMS: function(state, params) {
@@ -84,16 +87,16 @@
     },
     UPDATE_ROUNDS: function(state, rounds) {
       rounds.forEach(function(round) {
-        $.extend(eventRounds[round.event][round.id], round);
+        $.extend(eventRounds[round.e][round.i], round);
       });
       lastFetchRoundsTime = Date.now();
     },
     UPDATE_ROUND: function(state, round) {
-      $.extend(eventRounds[round.event][round.id], round);
+      $.extend(eventRounds[round.e][round.i], round);
     },
     NEW_RESULT: function(state, result) {
-      if (result.competitionId == state.competitionId && result.event == state.params.event && result.round == state.params.round) {
-        result.pos = '';
+      if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
+        result.p = '';
         result.isNew = true;
         var results = state.results;
         var index = findIndex(results, result);
@@ -102,14 +105,14 @@
       }
     },
     UPDATE_RESULT: function(state, result) {
-      if (result.competitionId == state.competitionId && result.event == state.params.event && result.round == state.params.round) {
+      if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
         var results = state.results;
         var i = 0, len = results.length;
-        result.pos = '';
+        result.p = '';
         result.isNew = true;
         for (; i < len; i++) {
-          if (results[i].id == result.id) {
-            result.user = results[i].user;
+          if (results[i].i == result.i) {
+            // result.user = results[i].user;
             results[i] = result;
             break;
           }
@@ -173,20 +176,20 @@
   };
   $.extend(options, window.store.get('live_options'));
   state.events.forEach(function(event) {
-    events[event.id] = event;
-    eventRounds[event.id] = {};
-    event.rounds.forEach(function(round) {
-      eventRounds[event.id][round.id] = round;
-      if (!current.event && round.status == 2) {
-        current.event = event.id;
-        current.round = round.id;
+    events[event.i] = event;
+    eventRounds[event.i] = {};
+    event.rs.forEach(function(round) {
+      eventRounds[event.i][round.i] = round;
+      if (!current.e && round.s == 2) {
+        current.e = event.i;
+        current.r = round.i;
       }
     });
   });
-  if (!current.event) {
+  if (!current.e) {
     current = {
-      event: state.params.event,
-      round: state.params.round
+      e: state.params.e,
+      r: state.params.r
     }
   }
   var mixin = {
@@ -206,12 +209,15 @@
         var round = getRound(result);
         return round && round.name;
       },
+      getUser: function(number) {
+        return getUser(number);
+      },
       getResultDetail: function(result) {
         var detail = [];
         var i, value;
-        for (i = 1; i <= 5; i++) {
-          value = decodeResult(result['value' + i], result.event);
-          value = (value + '            ').slice(0, result.event === '333mbo' || result.event === '333mbf' ? 13 : 8);
+        for (i = 0; i < 5; i++) {
+          value = decodeResult(result.v[i], result.e);
+          value = (value + '            ').slice(0, result.e === '333mbo' || result.e === '333mbf' ? 13 : 8);
           detail.push(value);
         }
         return '<pre>' + detail.join('   ') + '</pre>';
@@ -234,18 +240,18 @@
         events: function(state) {
           return state.events;
         },
-        event: function(state) {
-          return state.params.event;
+        e: function(state) {
+          return state.params.e;
         },
-        round: function(state) {
-          return state.params.round;
+        r: function(state) {
+          return state.params.r;
         },
         currentRound: function(state) {
           return getRound(state.params);
         },
         isCurrentRoundOpen: function(state) {
           var round = getRound(state.params);
-          return round.status != 1;
+          return round.s != 1;
         },
         results: function(state) {
           return state.results;
@@ -369,11 +375,13 @@
           return {
             eventRound: null,
             filter: 'all',
-            current: {},
-            cut_off: 0,
-            time_limit: 0,
-            format: '',
-            number: 0,
+            current: {
+              v: []
+            },
+            co: 0,
+            tl: 0,
+            f: '',
+            n: 0,
             page: 1,
             limit: 300
           }
@@ -390,36 +398,42 @@
           '$store.state.params': function(params) {
             var that = this;
             that.eventRound = {
-              event: params.event,
-              round: params.round
+              e: params.e,
+              r: params.r
             }
             that.filter = params.filter;
             that.page = 1;
             var round = getRound(params);
-            that.cut_off = round.cut_off;
-            that.time_limit = round.time_limit;
-            that.number = round.number;
-            that.format = round.format;
+            that.co = round.co;
+            that.tl = round.tl;
+            that.n = round.n;
+            that.f = round.f;
           }
         },
         ready: function() {
-          this.eventRound = {
-            event: current.event,
-            round: current.round
+          var that = this;
+          that.eventRound = {
+            e: current.e,
+            r: current.r
           };
+          var round = getRound(that);
+          that.co = round.co;
+          that.tl = round.tl;
+          that.n = round.n;
+          that.f = round.f;
         },
         template: '#result-template',
         methods: {
           hasAverage: function(result) {
             var round = getRound(result || this);
-            return round.format == 'a' || round.format == 'm' || (round.event == '333bf' && round.format == '3');
+            return round.f == 'a' || round.f == 'm' || (round.e == '333bf' && round.f == '3');
           },
           showRoundSettings: function() {
             $('#round-settings-modal').modal();
           },
           saveRoundSettings: function() {
             var that = this;
-            var attrs = ['cut_off', 'time_limit', 'number'];
+            var attrs = ['co', 'tl', 'n'];
             var i;
             for (i = 0; i < attrs.length; i++) {
               $('#' + attrs[i]).parent().removeClass('has-error');
@@ -428,33 +442,35 @@
                 return;
               }
             }
-            $('#format').parent().removeClass('has-error');
-            if (that.format == '') {
-              $('#format').parent().addClass('has-error');
+            $('#f').parent().removeClass('has-error');
+            if (that.f == '') {
+              $('#f').parent().addClass('has-error');
               return;
             }
             ws.send({
               type: 'result',
               action: 'round',
               round: {
-                event: state.params.event,
-                id: state.params.round,
-                cut_off: that.cut_off,
-                time_limit: that.time_limit,
-                format: that.format,
-                number: that.number
+                event: state.params.e,
+                id: state.params.r,
+                cut_off: that.co,
+                time_limit: that.tl,
+                format: that.f,
+                number: that.n
               }
             });
             $('#round-settings-modal').modal('hide');
           },
           closeRound: function() {
-            this.current = {};
+            this.current = {
+              v: []
+            };
             ws.send({
               type: 'result',
               action: 'round',
               round: {
-                event: state.params.event,
-                id: state.params.round,
+                event: state.params.e,
+                id: state.params.r,
                 status: 1
               }
             });
@@ -466,8 +482,8 @@
               type: 'result',
               action: 'round',
               round: {
-                event: state.params.event,
-                id: state.params.round,
+                event: state.params.e,
+                id: state.params.r,
                 status: 0
               }
             });
@@ -480,8 +496,8 @@
                 type: 'result',
                 action: 'reset',
                 round: {
-                  event: state.params.event,
-                  id: state.params.round,
+                  event: state.params.e,
+                  id: state.params.r,
                 }
               });
             }
@@ -498,7 +514,7 @@
           },
           edit: function(result) {
             if (this.hasPermission && options.enableEntry && this.isCurrentRoundOpen) {
-              this.current = $.extend({}, result);
+              this.current = JSON.parse(JSON.stringify(result));
               this.$nextTick(function() {
                 $('.input-panel-result input').eq(0).focus();
               });
@@ -506,8 +522,8 @@
           },
           changeParams: function() {
             store.dispatch('CHANGE_PARAMS', {
-              event: this.eventRound.event,
-              round: this.eventRound.round,
+              e: this.eventRound.e,
+              r: this.eventRound.r,
               filter: this.filter
             });
             if (Date.now() - lastFetchRoundsTime > 300000) {
@@ -521,14 +537,14 @@
             if (this.filter != 'all') {
               return false;
             }
-            if (result.round == 'c' || result.round == 'f') {
-              return result.best > 0 && result.pos <= 3;
+            if (result.r == 'c' || result.r == 'f') {
+              return result.b > 0 && result.p <= 3;
             }
             var i;
-            for (i = 0; i < events[result.event].rounds.length; i++) {
-              if (events[result.event].rounds[i].id == result.round) {
-                if (events[result.event].rounds[i + 1]) {
-                  return result.best > 0 && result.pos <= events[result.event].rounds[i + 1].number;
+            for (i = 0; i < events[result.e].rs.length; i++) {
+              if (events[result.e].rs[i].id == result.r) {
+                if (events[result.e].rs[i + 1]) {
+                  return result.b > 0 && result.p <= events[result.e].rs[i + 1].n;
                 }
               }
             }
@@ -545,11 +561,7 @@
                 competitor: {
                   name: ''
                 },
-                value1: 0,
-                value2: 0,
-                value3: 0,
-                value4: 0,
-                value5: 0,
+                v: [0, 0, 0, 0, 0],
                 best: 0,
                 worst: 0,
                 average: 0,
@@ -564,13 +576,13 @@
                 var searchText = that.searchText.toLowerCase();
                 return that.results.filter(that.filterCompetitors.bind(that)).sort(function(resA, resB) {
                   if (!/^\d+$/.test(searchText)) {
-                    var temp = resA.user.name.toLowerCase().indexOf(searchText) - resB.user.name.toLowerCase().indexOf(searchText);
+                    var temp = getUser(resA.n).name.toLowerCase().indexOf(searchText) - getUser(resB.n).name.toLowerCase().indexOf(searchText);
                     if (temp == 0) {
-                      temp = resA.user.name < resB.user.name ? -1 : 1;
+                      temp = getUser(resA.n).name < getUser(resB.n).name ? -1 : 1;
                     }
                     return temp;
                   }
-                  return resA.number - resB.number
+                  return resA.n - resB.n
                 }).slice(0, 5)
               }
             },
@@ -583,18 +595,16 @@
               },
               result: function(result) {
                 var that = this;
-                that.competitor = result.user;
-                that.value1 = result.value1 || 0;
-                that.value2 = result.value2 || 0;
-                that.value3 = result.value3 || 0;
-                that.value4 = result.value4 || 0;
-                that.value5 = result.value5 || 0;
-                that.searchText = result.number || '';
+                that.competitor = getUser(result.n);
+                that.v = result.v;
+                that.searchText = result.n || '';
               },
               searchText: function(searchText) {
                 this.selectedIndex = 0;
                 if (searchText == '') {
-                  this.result = {};
+                  this.result = {
+                    v: []
+                  };
                 }
               }
             },
@@ -608,15 +618,15 @@
               isDisabled: function(index) {
                 var that = this;
                 var result = that.result;
-                if (!result || !result.id || !this.$parent.isCurrentRoundOpen) {
+                if (!result || !result.i || !this.$parent.isCurrentRoundOpen) {
                   return true;
                 }
-                var round = eventRounds[state.params.event][state.params.round];
-                if (round.cut_off > 0) {
-                  var num = round.format == 'a' ? 2 : 1;
+                var round = eventRounds[state.params.e][state.params.r];
+                if (round.co > 0) {
+                  var num = round.f == 'a' ? 2 : 1;
                   var passed = false;
-                  for (var i = 1; i <= num; i++) {
-                    if (that.result['value' + i] > 0 && that.result['value' + i] / 100 < round.cut_off) {
+                  for (var i = 0; i < num; i++) {
+                    if (that.result.v[i] > 0 && that.result.v[i] / 100 < round.co) {
                       passed = true;
                       break;
                     }
@@ -648,12 +658,24 @@
                 var that = this;
                 calculateAverage(that.result);
                 store.dispatch('UPDATE_RESULT', that.result);
+                var result = that.result;
                 ws.send({
                   type: 'result',
                   action: 'update',
-                  result: that.result
+                  result: {
+                    id: result.i,
+                    value1: result.v[0],
+                    value2: result.v[1],
+                    value3: result.v[2],
+                    value4: result.v[3],
+                    value5: result.v[4],
+                    best: result.b,
+                    average: result.a
+                  }
                 });
-                that.result = {};
+                that.result = {
+                  v: []
+                };
                 $('#input-panel-name').focus();
               },
               filterCompetitors: function(result) {
@@ -663,9 +685,9 @@
                   return false;
                 }
                 if (/^\d+$/.test(searchText)) {
-                  return !!result.number.toString().match(searchText);
+                  return !!result.n.toString().match(searchText);
                 }
-                return !!result.user.name.match(new RegExp(searchText, 'i'));
+                return !!getUser(result.n).name.match(new RegExp(searchText, 'i'));
               },
               enter: function() {
                 if (this.competitors[this.selectedIndex]) {
@@ -685,7 +707,7 @@
                 }
               },
               selectCompetitor: function(result) {
-                this.name = result.number;
+                this.name = result.n;
                 this.$parent.edit(result);
               }
             },
@@ -694,8 +716,8 @@
                 inputNum: function(state) {
                   var params = state.params;
                   var round = getRound(params);
-                  var format = round && round.format;
-                  switch (format) {
+                  var f = round && round.f;
+                  switch (f) {
                     case '1':
                       return 1;
                     case '2':
@@ -710,8 +732,8 @@
                 minInputNum: function(state) {
                   var params = state.params;
                   var round = getRound(params);
-                  var format = round && round.format;
-                  switch (format) {
+                  var f = round && round.f;
+                  switch (f) {
                     case '1':
                       return 1;
                     case '2':
@@ -748,10 +770,10 @@
                   solved: function() {
                     this.calculateValue();
                   },
-                  '$parent.result.id': function() {
+                  '$parent.result.i': function() {
                     var that = this;
-                    var time = decodeResult(that.value, that.event);
-                    if (that.event === '333mbf') {
+                    var time = decodeResult(that.value, that.e);
+                    if (that.e === '333mbf') {
                       that.subIndex = 0;
                       if (time.indexOf('/') > -1) {
                         var match = time.match(/^(\d+)\/(\d+) (.+)$/);
@@ -772,22 +794,22 @@
                   calculateValue: function() {
                     var that = this;
                     var round = getRound(that);
-                    that.value = encodeResult(that.formatTime(that.time), that.event, false, that.tried, that.solved);
-                    if (round.time_limit > 0 && that.event != '333mbf' && that.event != '333fm' && that.value / 100 > round.time_limit) {
+                    that.value = encodeResult(that.formatTime(that.time), that.e, false, that.tried, that.solved);
+                    if (round.tl > 0 && that.e != '333mbf' && that.e != '333fm' && that.value / 100 > round.tl) {
                       that.time = 'DNF';
                     }
-                    if (that.event === '333fm' && that.value > 80) {
+                    if (that.e === '333fm' && that.value > 80) {
                       that.time = 'DNF';
                     }
                   },
                   formatTime: function(time) {
-                    if (time == 'DNF' || time == 'DNS' || time == '' || this.event == '333fm') {
+                    if (time == 'DNF' || time == 'DNS' || time == '' || this.e == '333fm') {
                       return time;
                     }
                     var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
                     var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
                     var msecond = parseInt(time.slice(-2));
-                    if (this.event === '333mbf') {
+                    if (this.e === '333mbf') {
                       if (this.solved == '' || this.tried == '') {
                         return '';
                       }
@@ -891,10 +913,10 @@
                           }
                           value = '';
                         }
-                        if ((that.event === '333fm' || that.subIndex < 2) && value.length >= 2) {
+                        if ((that.e === '333fm' || that.subIndex < 2) && value.length >= 2) {
                           break;
                         }
-                        if (that.event === '333mbf' && value.length >= 4) {
+                        if (that.e === '333mbf' && value.length >= 4) {
                           break;
                         }
                         value += code - 48;
@@ -921,14 +943,14 @@
   //router
   var router = new VueRouter();
   router.map({
-    '/event/:event/:round/:filter': {
+    '/event/:e/:r/:filter': {
       component: {}
     }
   });
   store.watch(function(state) {
     return state.params;
   }, function(params) {
-    router.go(['/event', params.event, params.round, params.filter].join('/'));
+    router.go(['/event', params.e, params.r, params.filter].join('/'));
     fetchResults();
   }, {
     deep: true,
@@ -937,13 +959,13 @@
   });
   router.afterEach(function(transition) {
     var params = transition.to.params;
-    if (params.event == state.params.event && params.round == state.params.round && params.filter == state.params.filter) {
+    if (params.e == state.params.e && params.r == state.params.r && params.filter == state.params.filter) {
       return;
     }
     store.dispatch('CHANGE_PARAMS', params);
   });
   router.redirect({
-    '*': ['/event', current.event, current.round, state.params.filter].join('/')
+    '*': ['/event', current.e, current.r, state.params.filter].join('/')
   });
   router.start(vm, liveContainer.get(0));
 
@@ -993,14 +1015,21 @@
     ws.send({
       type: 'result',
       action: 'fetch',
-      params: state.params
+      params: {
+        event: state.params.e,
+        round: state.params.r,
+        filter: state.params.filter
+      }
     });
   }
   function getEvent(result) {
-    return events[result.event];
+    return events[result.e];
   }
   function getRound(result) {
-    return eventRounds[result.event][result.round];
+    return eventRounds[result.e][result.r];
+  }
+  function getUser(number) {
+    return allUsers[number] || {};
   }
   function calculateAverage(result) {
     var best = 999999999;
@@ -1008,10 +1037,10 @@
     var hasAverage = true;
     var i, value, DNFCount = 0, zeroCount = 0, sum = 0;
     var round = getRound(result);
-    var format = round.format;
-    var num = format == 'a' || format == '' ? 5 : (format == 'm' ? 3 : parseInt(format));
-    for (i = 1; i <= num; i++) {
-      value = result['value' + i];
+    var f = round.f;
+    var num = f == 'a' || f == '' ? 5 : (f == 'm' ? 3 : parseInt(f));
+    for (i = 0; i < num; i++) {
+      value = result.v[i];
       sum += value;
       if (value > 0 && value < best) {
         best = value;
@@ -1026,40 +1055,40 @@
         worst = value;
       }
     }
-    result.best = best;
+    result.b = best;
     //check best
-    if (result.best === 999999999) {
-      result.best = worst == 0 ? 0 : -1;
+    if (result.b === 999999999) {
+      result.b = worst == 0 ? 0 : -1;
     }
-    if (format == '') {
+    if (f == '') {
       hasAverage = false;
     }
     //
-    if ((format == 'a' || format == 'm') && zeroCount > 0) {
+    if ((f == 'a' || f == 'm') && zeroCount > 0) {
       hasAverage = false;
     }
-    if (DNFCount > 1 || (DNFCount == 1 && (format == 'm' || format == '3'))) {
+    if (DNFCount > 1 || (DNFCount == 1 && (f == 'm' || f == '3'))) {
       hasAverage = false;
     }
-    if (format == '1' || format == '2' || (format == '3' && result.event != '333bf')) {
+    if (f == '1' || f == '2' || (f == '3' && result.e != '333bf')) {
       hasAverage = false;
     }
     if (hasAverage) {
-      if (format == 'm' || format == '3') {
-        if (result.event === '333fm') {
+      if (f == 'm' || f == '3') {
+        if (result.e === '333fm') {
           sum *= 100;
         }
-        result.average = Math.round(sum / 3);
+        result.a = Math.round(sum / 3);
       } else {
-        result.average = Math.round((sum - best - worst) / 3);
+        result.a = Math.round((sum - best - worst) / 3);
       }
-      if (result.average / 100 > 600) {
-        result.average = Math.round(result.average / 100) * 100;
+      if (result.a / 100 > 600) {
+        result.a = Math.round(result.a / 100) * 100;
       }
-    } else if (format == 'm' || format == 'a') {
-      result.average = zeroCount > 0 ? 0 : -1;
-    } else if (result.event == '333bf' || format == '') {
-      result.average = 0;
+    } else if (f == 'm' || f == 'a') {
+      result.a = zeroCount > 0 ? 0 : -1;
+    } else if (result.event == '333bf' || f == '') {
+      result.a = 0;
     }
   }
   function encodeResult(result, event, isAverage, tried, solved) {
@@ -1182,12 +1211,12 @@
   function calculatePos(results, result) {
     for (var i = 0, len = results.length; i < len; i++) {
       if (!results[i - 1] || compare(results[i - 1], results[i], true) < 0) {
-        results[i].pos = i + 1;
+        results[i].p = i + 1;
       } else {
-        results[i].pos = results[i - 1].pos;
+        results[i].p = results[i - 1].p;
       }
-      if (results[i].best == 0) {
-        results[i].pos = '-';
+      if (results[i].b == 0) {
+        results[i].p = '-';
       }
       results[i].isNew = results[i] === result;
     }
@@ -1195,26 +1224,26 @@
   function compare(resA, resB, onlyResult) {
     var temp = 0;
     var round = getRound(resA);
-    if (round.format == 'm' || round.format == 'a') {
-      if (resA.average > 0 && resB.average <= 0) {
+    if (round.f == 'm' || round.f == 'a') {
+      if (resA.a > 0 && resB.a <= 0) {
         return -1
       }
-      if (resB.average > 0 && resA.average <= 0) {
+      if (resB.a > 0 && resA.a <= 0) {
         return 1
       }
-      temp = resA.average - resB.average;
+      temp = resA.a - resB.a;
     }
     if (temp == 0) {
-      if (resA.best > 0 && resB.best <= 0) {
+      if (resA.b > 0 && resB.b <= 0) {
         return -1
       }
-      if (resB.best > 0 && resA.best <= 0) {
+      if (resB.b > 0 && resA.b <= 0) {
         return 1
       }
-      temp = resA.best - resB.best;
+      temp = resA.b - resB.b;
     }
     if (!onlyResult && temp == 0) {
-      temp = resA.user.name < resB.user.name ? -1 : 1;
+      temp = getUser(resA.n).name < getUser(resB.n).name ? -1 : 1;
     }
     return temp;
   }
