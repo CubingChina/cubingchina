@@ -194,9 +194,9 @@ class LiveResult extends ActiveRecord {
 		)) + 1;
 	}
 
-	public function getUser() {
-		return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
-	}
+	// public function getUser() {
+	// 	return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
+	// }
 
 	public function calculateRecord($type) {
 		//@todo it's too complicated
@@ -298,8 +298,7 @@ class LiveResult extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'liveUser'=>array(self::BELONGS_TO, 'LiveUser', 'user_id'),
-			'realUser'=>array(self::BELONGS_TO, 'User', 'user_id'),
+			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'eventRound'=>array(self::BELONGS_TO, 'LiveEventRound', array(
 				'competition_id'=>'competition_id',
 				'event'=>'event',

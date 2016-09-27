@@ -24,7 +24,7 @@ class ResultHandler extends MsgHandler {
 			'event'=>"{$this->msg->params->event}",
 			'round'=>"{$this->msg->params->round}",
 		));
-		$results = LiveResult::model()->findAllByAttributes(array(
+		$results = LiveResult::model()->with('user')->findAllByAttributes(array(
 			'competition_id'=>$this->competition->id,
 			'event'=>"{$this->msg->params->event}",
 			'round'=>"{$this->msg->params->round}",
