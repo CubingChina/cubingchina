@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Disable User Chatting' => '',
+  'Disable User Chatting' => '開啟全員禁言',
   'Open' => '',
   'Children' => '少兒組',
   'Close this round' => '結束本輪',
