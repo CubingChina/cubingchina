@@ -51,6 +51,11 @@
                   <input type="checkbox" v-model="options.enableEntry"> <?php echo Yii::t('live', 'Enable Data Entry'); ?>
                 </label>
               </div>
+              <div class="checkbox" v-if="hasPermission">
+                <label>
+                  <input type="checkbox" v-model="options.disableChat"> <?php echo Yii::t('live', 'Disable User Chatting'); ?>
+                </label>
+              </div>
               <div class="checkbox">
                 <label>
                   <input type="checkbox" v-model="options.showMessage"> <?php echo Yii::t('live', 'Show Message on Chat'); ?>
@@ -160,7 +165,18 @@
       </div>
       <div class="chat-input-panel">
         <div class="col-sm-10 col-lg-11">
-          <input v-model="message" class="form-control" @keyup.enter="send" :disabled="$store.state.user.isGuest || !options.showMessage" placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
+          <input v-model="message"
+            v-if="options.disableChat && !hasPermission"
+            class="form-control"
+            @keyup.enter="send"
+            :disabled="$store.state.user.isGuest || !options.showMessage || (options.disableChat && !hasPermission)"
+            placeholder="<?php echo Yii::t('common', 'Chatting has been disabled by administrator.'); ?>" />
+          <input v-model="message"
+            v-else
+            class="form-control"
+            @keyup.enter="send"
+            :disabled="$store.state.user.isGuest || !options.showMessage || (options.disableChat && !hasPermission)"
+            placeholder="<?php echo Yii::app()->user->isGuest ? Yii::t('common', 'Please login.') : ''; ?>" />
         </div>
         <div class="col-sm-2 col-lg-1">
           <button class="btn btn-theme btn-md" @click="send" :disabled="$store.state.user.isGuest || !options.showMessage || message == ''"><?php echo Yii::t('common', 'Submit'); ?></button>
