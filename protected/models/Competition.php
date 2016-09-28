@@ -1578,7 +1578,7 @@ class Competition extends ActiveRecord {
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
-		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
+		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = array('tba', 'safe');
 		}
 		if (!$this->isOld()) {

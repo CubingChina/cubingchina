@@ -6,7 +6,8 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = window._ws = new WS('ws://' + location.host + '/ws');
+  var ws = new WS('ws://' + location.host + '/ws');
+  ws.threshold = 55000;
   ws.on('connect', function() {
     ws.send({
       type: 'competition',
@@ -53,6 +54,8 @@
     if (options.showMessage) {
       newMessage(message);
     }
+  }).on('message.disable', function(disableChat) {
+    options.disableChat = disableChat;
   });
 
   Vue.use(VueRouter);
@@ -172,9 +175,14 @@
     enableEntry: true,
     showMessage: true,
     alertResult: true,
-    alertRecord: true
+    alertRecord: true,
+    disableChat: false
   };
-  $.extend(options, window.store.get('live_options'));
+  var storedOptions = window.store.get('live_options');
+  if (storedOptions && storedOptions.disableChat) {
+    delete storedOptions.disableChat;
+  }
+  $.extend(options, storedOptions);
   state.events.forEach(function(event) {
     events[event.i] = event;
     eventRounds[event.i] = {};
@@ -292,6 +300,13 @@
       };
     },
     watch: {
+      'options.disableChat': function(disableChat) {
+        ws.send({
+          type: 'chat',
+          action: 'disable',
+          disable_chat: disableChat
+        });
+      },
       'options.enableEntry': function() {
         window.store.set('live_options', this.options);
       },

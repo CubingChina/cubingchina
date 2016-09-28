@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Delegate' => '代表',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '輪',
@@ -39,6 +38,7 @@ return array (
   'Competitors' => '選手',
   'Cubing China' => '粗餅',
   'Date' => '日期',
+  'Delegate' => '代表',
   'Delegates' => '代表',
   'End Date' => '結束日期',
   'Entry Fee' => '報名費',

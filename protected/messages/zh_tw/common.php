@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Chatting has been disabled by administrator.' => '管理員已開啟全員禁言',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',

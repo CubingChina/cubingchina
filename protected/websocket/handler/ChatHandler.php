@@ -15,6 +15,19 @@ class ChatHandler extends MsgHandler {
 		}
 	}
 
+	public function actionDisable() {
+		if (!$this->checkAccess()) {
+			return;
+		}
+		if ($this->competition != null) {
+			$this->competition->disable_chat = (int)$this->msg->disable_chat;
+			$this->competition->save();
+			$this->competition->formatEvents();
+			$this->competition->formatDate();
+			$this->broadcastSuccess('message.disable', $this->msg->disable_chat);
+		}
+	}
+
 	public function actionFetch() {
 		if ($this->competition != null) {
 			if (!isset(self::$messages[$this->competition->id])) {
@@ -25,6 +38,7 @@ class ChatHandler extends MsgHandler {
 					'limit'=>self::RECENT_MESSAGE_NUM,
 				)));
 			}
+			$this->success('message.disable', !!$this->competition->disable_chat);
 			$this->success('message.recent', array_map(function($message) {
 				return $message->getShowAttributes();
 			}, self::$messages[$this->competition->id]));

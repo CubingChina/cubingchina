@@ -35,6 +35,8 @@ class LiveClient {
 				return self::$competitions[$this->competitionId];
 			}
 			$competition = self::$competitions[$this->competitionId] = Competition::model()->findByPk($this->competitionId);
+			$competition->formatEvents();
+			$competition->formatDate();
 			return $competition;
 		}
 	}
