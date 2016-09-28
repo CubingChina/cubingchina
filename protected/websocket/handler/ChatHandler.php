@@ -36,8 +36,8 @@ class ChatHandler extends MsgHandler {
 			$message = new LiveMessage();
 			$message->competition_id = $this->competition->id;
 			$message->user_id = $this->user->id;
-			$message->event = $this->msg->params->event;
-			$message->round = $this->msg->params->round;
+			$message->event = $this->msg->params->e;
+			$message->round = $this->msg->params->r;
 			$message->content = $this->msg->content;
 			$message->create_time = time();
 			$message->save();
