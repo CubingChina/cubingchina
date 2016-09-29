@@ -165,8 +165,17 @@ class CompetitionController extends Controller {
 
 	public function actionSchedule() {
 		$competition = $this->getCompetition();
+		$userSchedules = [];
+		if (!Yii::app()->user->isGuest) {
+			$user = $this->getUser();
+			$registration = Registration::getUserRegistration($competition->id, $user->id);
+			if ($registration !== null) {
+				$userSchedules = $competition->getUserSchedules($registration->user);
+			}
+		}
 		$this->render('schedule', array(
 			'competition'=>$competition,
+			'userSchedules'=>$userSchedules,
 		));
 	}
 

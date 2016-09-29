@@ -68,7 +68,7 @@ class Schedule extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competition_id, start_time, end_time, event, format, round, number, cut_off, time_limit', 'required'),
+			array('competition_id, start_time, end_time, event, format, round', 'required'),
 			array('competition_id, day, cumulative', 'numerical', 'integerOnly'=>true),
 			array('stage, start_time, end_time, group, format, round, cut_off, time_limit', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>32),

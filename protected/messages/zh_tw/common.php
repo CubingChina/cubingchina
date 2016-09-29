@@ -17,8 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Chatting has been disabled by administrator.' => '管理員已開啟全員禁言',
   'Fee' => '',
+  'My Schedule' => '我的賽程',
   'WCA ID' => '',
   'more' => '',
   '1 hour' => '1小時',
@@ -94,6 +94,7 @@ return array (
   'CCA Delegate' => 'CCA主裁判',
   'CNY' => '元',
   'Change Password' => '修改密碼',
+  'Chatting has been disabled by administrator.' => '管理員已開啟全員禁言',
   'Choose a competition' => '選擇一場比賽',
   'City' => '城市',
   'Close' => '關閉',

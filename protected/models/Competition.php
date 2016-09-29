@@ -663,6 +663,104 @@ class Competition extends ActiveRecord {
 		$this->_schedules = $schedules;
 	}
 
+	public function getUserSchedules($user) {
+		$listableSchedules = array();
+		$schedules = HeatScheduleUser::model()->findAllByAttributes([
+			'user_id'=>$user->id,
+			'competition_id'=>$this->id,
+		]);
+		$schedules = CHtml::listData($schedules, 'id', 'schedule');
+		usort($schedules, array($this, 'sortSchedules'));
+		$hasGroup = false;
+		$hasCutOff = false;
+		$hasTimeLimit = false;
+		$hasNumber = false;
+		$cumulative = Yii::t('common', 'Cumulative ');
+		$specialEvents = array(
+			'333fm'=>array(),
+			'333mbf'=>array(),
+		);
+		foreach ($schedules as $key=>$schedule) {
+			if (trim($schedule->group) != '') {
+				$hasGroup = true;
+			}
+			if ($schedule->cut_off > 0) {
+				$hasCutOff = true;
+			}
+			if ($schedule->time_limit > 0) {
+				$hasTimeLimit = true;
+			}
+			if ($schedule->number > 0) {
+				$hasNumber = true;
+			} else {
+				$schedule->number = '';
+			}
+			if (isset($specialEvents[$schedule->event])) {
+				$specialEvents[$schedule->event][$schedule->round][] = $key;
+			}
+			$schedule->competition = $this;
+		}
+		$scheduleEvents = Events::getOnlyScheduleEvents();
+		foreach ($schedules as $key=>$schedule) {
+			if (isset($scheduleEvents[$schedule->event])) {
+				$schedule->round = $schedule->group = $schedule->format = '';
+				$schedule->cut_off = $schedule->time_limit = 0;
+			}
+			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
+				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
+				switch ($times + 1) {
+					case 1:
+						$event .= Yii::t('common', ' (1st attempt)');
+						break;
+					case 2:
+						$event .= Yii::t('common', ' (2nd attempt)');
+						break;
+					case 3:
+						$event .= Yii::t('common', ' (3rd attempt)');
+						break;
+					default:
+						$event .= Yii::t('common', ' ({times}th attempt)', array(
+							'{times}'=>$times,
+						));
+						break;
+				}
+			}
+			$temp = array(
+				'Start Time'=>date('H:i', $schedule->start_time),
+				'End Time'=>date('H:i', $schedule->end_time),
+				'Event'=>$event,
+				'Group'=>$schedule->group,
+				'Round'=>Yii::t('Rounds', Rounds::getFullRoundName($schedule->round)),
+				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
+				'Cut Off'=>self::formatTime($schedule->cut_off),
+				'Time Limit'=>self::formatTime($schedule->time_limit),
+				'Competitors'=>$schedule->number,
+				'id'=>$schedule->id,
+				'event'=>$schedule->event,
+				'round'=>$schedule->round,
+				'schedule'=>$schedule,
+			);
+			if ($schedule->cumulative) {
+				$temp['Time Limit'] = $cumulative . $temp['Time Limit'];
+			}
+			if ($hasGroup === false) {
+				unset($temp['Group']);
+			}
+			if ($hasCutOff === false) {
+				unset($temp['Cut Off']);
+			}
+			if ($hasTimeLimit === false) {
+				unset($temp['Time Limit']);
+			}
+			if ($hasNumber === false) {
+				unset($temp['Competitors']);
+			}
+			$listableSchedules[$schedule->day][$schedule->stage][] = $temp;
+		}
+		return $listableSchedules;
+	}
+
 	public function getListableSchedules() {
 		$listableSchedules = array();
 		$schedules = $this->schedule;

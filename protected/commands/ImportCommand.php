@@ -4,6 +4,234 @@ class ImportCommand extends CConsoleCommand {
 	private $_provinceId = 215;
 	private $_cityId = 217;
 
+	public function actionHeatUser() {
+		$competition = Competition::model()->findByPk(440);
+		$heatSchedules = HeatSchedule::model()->findAllByAttributes([
+			'competition_id'=>$competition->id,
+		]);
+		$temp = [];
+		foreach ($heatSchedules as $heatSchedule) {
+			$temp[$heatSchedule->event][] = $heatSchedule;
+		}
+		$heatSchedules = $temp;
+		$registrations = Registration::getRegistrations($competition);
+		$temp = [];
+		foreach ($registrations as $registration) {
+			foreach ($registration->events as $event) {
+				$temp[$event][$registration->user_id] = $registration;
+			}
+		}
+		$registrations = $temp;
+		$userSchedules = [];
+		foreach ($heatSchedules as $event=>$schedules) {
+			$wcaIds = [];
+			foreach ($registrations[$event] as $registration) {
+				if ($registration->user->wcaid) {
+					$wcaIds[$registration->user->wcaid] = $registration;
+				}
+			}
+			switch ($event) {
+				case '333bf':
+				case '444bf':
+				case '555bf':
+				case '333mbf':
+					$modelName = 'RanksSingle';
+					break;
+				default:
+					$modelName = 'RanksAverage';
+					break;
+			}
+			$results = $modelName::model()->cache(86400)->findAllByAttributes(array(
+				'eventId'=>$event,
+				'personId'=>array_keys($wcaIds),
+			));
+			foreach ($results as $result) {
+				$wcaIds[$result->personId]->best = $result->best;
+			}
+			uasort($registrations[$event], function($rA, $rB) {
+				if ($rA->best > 0 && $rB->best > 0) {
+					$temp = $rA->best - $rB->best;
+				} elseif ($rA->best > 0) {
+					$temp = -1;
+				} elseif ($rB->best > 0) {
+					$temp = 1;
+				} else {
+					$temp = 0;
+				}
+				return -$temp;
+			});
+			$i = 0;
+			$count = count($schedules);
+			foreach ($registrations[$event] as $registration) {
+				$schedule = $schedules[$i % $count];
+				if ($event == '777' && isset($registrations['333fm'][$registration->user_id])) {
+					$j = $i;
+					while ($j < $i + $count) {
+						if ($schedule->start_time >= $heatSchedules['333fm'][0]->end_time) {
+							break;
+						}
+						$schedule = $schedules[++$j % $count];
+					}
+				} elseif (isset($userSchedules[$registration->user_id][$schedule->day])) {
+					$j = $i;
+					$temp = $userSchedules[$registration->user_id][$schedule->day];
+					while ($j < $i + $count) {
+						if (!isset($temp[$schedule->start_time])) {
+							break;
+						}
+						$schedule = $schedules[++$j % $count];
+					}
+				}
+				$heatScheduleUser = new HeatScheduleUser();
+				$heatScheduleUser->schedule = $schedule;
+				$heatScheduleUser->heat_id = $schedule->id;
+				$heatScheduleUser->competition_id = $schedule->competition_id;
+				$heatScheduleUser->user_id = $registration->user_id;
+				$heatScheduleUser->save();
+				if (!in_array($schedule->event, ["333bf", "444bf", "555bf", "333mbf", "333fm"])) {
+					$userSchedules[$registration->user_id][$schedule->day][$schedule->start_time] = $heatScheduleUser;
+				}
+				$i++;
+			}
+		}
+	}
+
+	public function actionHeat() {
+		$competition = Competition::model()->findByPk(440);
+		$stageNums = [
+			'main'=>[16, 16, 16],
+			'side'=>[24],
+		];
+		$events = [];
+		foreach ($competition->getListableSchedules() as $day=>$stages) {
+			foreach ($stages as $stage=>$schedules) {
+				foreach ($schedules as $schedule) {
+					$schedule = $schedule['schedule'];
+					if (isset($events[$schedule->event])) {
+						continue;
+					}
+					$events[$schedule->event] = 1;
+					if (!isset($stageNums[$stage])) {
+						$heatSchedule = new HeatSchedule();
+						$heatSchedule->attributes = $schedule->attributes;
+						$heatSchedule->save();
+						continue;
+					}
+					$group = count($stageNums[$stage]) > 1 ? 'A' : '';
+					foreach ($stageNums[$stage] as $num) {
+						for ($time = $schedule->start_time; $time < $schedule->end_time; $time += 15*60) {
+							$heatSchedule = new HeatSchedule();
+							$heatSchedule->attributes = $schedule->attributes;
+							$heatSchedule->start_time = $time;
+							$heatSchedule->end_time = min($schedule->end_time, $time + 900);
+							$heatSchedule->group = $group;
+							$heatSchedule->save();
+						}
+						$group++;
+					}
+				}
+			}
+		}
+	}
+
+	public function actionAC2() {
+		$competition = Competition::model()->findByPk(440);
+		$registrations = Registration::getRegistrations($competition);
+		$times = [
+			"333"=>[2],
+			"444"=>[2],
+			"555"=>[2],
+			"222"=>[2],
+			"333bf"=>[],
+			"333oh"=>[2],
+			"333fm"=>[],
+			"333ft"=>[0],
+			"minx"=>[1],
+			"pyram"=>[2],
+			"sq1"=>[1],
+			"clock"=>[1],
+			"skewb"=>[2],
+			"666"=>[0],
+			"777"=>[0],
+			"444bf"=>[],
+			"555bf"=>[],
+			"333mbf"=>[],
+		];
+		$coordinates = [
+			[334, 711],
+			[479, 711],
+			[334, 856],
+			[479, 856],
+		];
+		$basePath = Yii::getPathOfAlias('application.data');
+		$draw = new ImagickDraw();
+		$draw->setFont($basePath . '/msyhbd.ttf');
+		$draw->setFontSize(36);
+		$draw->setFontWeight(700);
+		$draw->setFillColor(new ImagickPixel('white'));
+		$corner = new Imagick($basePath . '/corner.jpg');
+		foreach ($registrations as $registration) {
+			$number = $registration->number;
+			$text = $registration->user->getCompetitionName();
+			$image = new Imagick($basePath . '/cert.jpg');
+			$len1 = mb_strlen($text, 'utf8');
+			$len2 = strlen($text);
+			$len = $len1 + ceil(($len2 - $len1) / 3);
+			$image->annotateImage($draw, 298 - 25, 1010, 0, $text);
+			$image->annotateImage($draw, (874 + 85) / 2 - 25 - strlen("$number") * 5, 1110, 0, "$number");
+			$numbers = [];
+			foreach ($registration->events as $event) {
+				$numbers = array_merge($numbers, $times[$event]);
+			}
+			foreach (array_unique($numbers) as $i) {
+				$coordinate = $coordinates[$i];
+				$image->compositeImage($corner, Imagick::COMPOSITE_DEFAULT, $coordinate[0], $coordinate[1]);
+			}
+			$image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+			$image->writeImage($basePath . '/competitors/' . $number . '.jpg');
+			var_dump($number);
+			// if ($number > 10) {break;}
+		}
+	}
+
+	public function actionAC() {
+		$competition = Competition::model()->findByPk(440);
+		$registrations = Registration::getRegistrations($competition);
+		$users = [];
+		foreach ($registrations as $registration) {
+			$users[$registration->user->name_zh ?: $registration->user->name] = $registration;
+		}
+		$excel = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data') . '/AC2016 Staff.xlsx');
+		$sheet = $excel->getSheet(0);
+		$events = Events::getNormalEvents();
+		for ($i = 2; ; $i++) {
+			$name = $sheet->getCell('B' . $i)->getValue();
+			if ($name == '') {
+				break;
+			}
+			$passport = $sheet->getCell('G' . $i)->getValue();
+			$mobile = $sheet->getCell('F' . $i)->getValue();
+			if (isset($users[$name])) {
+				if ($passport == '') {
+					$sheet->getCell('G' . $i)->setValue("'" . $users[$name]->passport_number);
+				}
+				if ($mobile == '') {
+					$sheet->getCell('F' . $i)->setValue($users[$name]->user->mobile);
+				}
+				$col = 'M';
+				foreach ($events as $event=>$e) {
+					if (in_array("$event", $users[$name]->events)) {
+						$sheet->getCell($col . $i)->setValue(1);
+					}
+					$col++;
+				}
+			}
+		}
+		$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		$writer->setPreCalculateFormulas(true);
+		$writer->save(Yii::getPathOfAlias('application.data') . '/AC2016 Staff1.xlsx');
+	}
+
 	public function actionResult($file, $comp) {
 		$file = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data') . '/' . $file);
 		$users = [];
