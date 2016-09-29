@@ -8,6 +8,8 @@ class ImportCommand extends CConsoleCommand {
 		$competition = Competition::model()->findByPk(440);
 		$heatSchedules = HeatSchedule::model()->findAllByAttributes([
 			'competition_id'=>$competition->id,
+		], [
+			'order'=>'id ASC',
 		]);
 		$temp = [];
 		foreach ($heatSchedules as $heatSchedule) {
