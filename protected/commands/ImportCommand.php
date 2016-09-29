@@ -25,6 +25,7 @@ class ImportCommand extends CConsoleCommand {
 		}
 		$registrations = $temp;
 		$userSchedules = [];
+		$oneHourEvents = [];
 		//long event
 		foreach (["444bf", "555bf", "333mbf", "333fm"] as $event) {
 			if (!isset($heatSchedules[$event])) {
@@ -44,6 +45,9 @@ class ImportCommand extends CConsoleCommand {
 					if ($event == '333fm' || $event == '333mbf' || $event == '444bf') {
 						for ($i = $schedule->start_time; $i < $schedule->end_time; $i += 15 * 60) {
 							$userSchedules[$registration->user_id][$schedule->day][$i] = $heatScheduleUser;
+						}
+						if ($event == '333fm' || $event == '333mbf') {
+							$oneHourEvents[$event][] = $schedule;
 						}
 					}
 				}
@@ -100,12 +104,18 @@ class ImportCommand extends CConsoleCommand {
 						$schedule = $schedules[++$j % $count];
 					}
 				}
-				if (in_array($event, ['sq1', 'clock']) && isset($registrations['444bf'][$registration->user_id])) {
+				if ((in_array($event, ['sq1', 'clock']) && isset($registrations['444bf'][$registration->user_id]))
+					|| in_array($event, ['666', '777']) && isset($registrations['555bf'][$registration->user_id])
+				) {
 					switch ($event) {
 						case 'sq1':
+						case '777':
 							$time = $schedule->start_time;
 							foreach ($schedules as $s) {
 								if ($s->start_time < $time) {
+									if ($event == '777' && $oneHourEvents['333fm'][0]->end_time > $s->start_time) {
+										continue;
+									}
 									$time = $s->start_time;
 									$schedule = $s;
 									break;
@@ -113,9 +123,13 @@ class ImportCommand extends CConsoleCommand {
 							}
 							break;
 						case 'clock':
+						case '666':
 							$time = $schedule->end_time;
 							foreach ($schedules as $s) {
 								if ($s->end_time > $time) {
+									if ($event == '666' && $oneHourEvents['333mbf'][0]->start_time <= $s->start_time) {
+										continue;
+									}
 									$time = $s->end_time;
 									$schedule = $s;
 									break;
