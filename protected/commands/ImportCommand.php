@@ -23,6 +23,30 @@ class ImportCommand extends CConsoleCommand {
 		}
 		$registrations = $temp;
 		$userSchedules = [];
+		//long event
+		foreach (["444bf", "555bf", "333mbf", "333fm"] as $event) {
+			if (!isset($heatSchedules[$event])) {
+				continue;
+			}
+			$schedules = $heatSchedules[$event];
+			unset($heatSchedules[$event]);
+			foreach ($registrations[$event] as $registration) {
+				foreach ($schedules as $schedule) {
+					$heatScheduleUser = new HeatScheduleUser();
+					$heatScheduleUser->schedule = $schedule;
+					$heatScheduleUser->heat_id = $schedule->id;
+					$heatScheduleUser->competition_id = $schedule->competition_id;
+					$heatScheduleUser->user_id = $registration->user_id;
+					$heatScheduleUser->save();
+					$userSchedules[$registration->user_id][$schedule->day][$schedule->start_time] = $heatScheduleUser;
+					if ($event == '333fm') {
+						for ($i = $schedule->start_time; $i < $schedule->start_time + 60 * 60; $i += 15 * 60) {
+							$userSchedules[$registration->user_id][$schedule->day][$i] = $heatScheduleUser;
+						}
+					}
+				}
+			}
+		}
 		foreach ($heatSchedules as $event=>$schedules) {
 			$wcaIds = [];
 			foreach ($registrations[$event] as $registration) {
@@ -64,15 +88,7 @@ class ImportCommand extends CConsoleCommand {
 			$count = count($schedules);
 			foreach ($registrations[$event] as $registration) {
 				$schedule = $schedules[$i % $count];
-				if ($event == '777' && isset($registrations['333fm'][$registration->user_id])) {
-					$j = $i;
-					while ($j < $i + $count) {
-						if ($schedule->start_time >= $heatSchedules['333fm'][0]->end_time) {
-							break;
-						}
-						$schedule = $schedules[++$j % $count];
-					}
-				} elseif (isset($userSchedules[$registration->user_id][$schedule->day])) {
+				if (isset($userSchedules[$registration->user_id][$schedule->day])) {
 					$j = $i;
 					$temp = $userSchedules[$registration->user_id][$schedule->day];
 					while ($j < $i + $count) {
@@ -88,7 +104,7 @@ class ImportCommand extends CConsoleCommand {
 				$heatScheduleUser->competition_id = $schedule->competition_id;
 				$heatScheduleUser->user_id = $registration->user_id;
 				$heatScheduleUser->save();
-				if (!in_array($schedule->event, ["333bf", "444bf", "555bf", "333mbf", "333fm"])) {
+				if (!in_array($schedule->event, ["444bf", "555bf", "333mbf", "333fm"])) {
 					$userSchedules[$registration->user_id][$schedule->day][$schedule->start_time] = $heatScheduleUser;
 				}
 				$i++;
@@ -99,8 +115,8 @@ class ImportCommand extends CConsoleCommand {
 	public function actionHeat() {
 		$competition = Competition::model()->findByPk(440);
 		$stageNums = [
-			'main'=>[16, 16, 16],
-			'side'=>[24],
+			'main'=>3,
+			'side'=>1,
 		];
 		$events = [];
 		foreach ($competition->getListableSchedules() as $day=>$stages) {
@@ -110,15 +126,18 @@ class ImportCommand extends CConsoleCommand {
 					if (isset($events[$schedule->event])) {
 						continue;
 					}
-					$events[$schedule->event] = 1;
-					if (!isset($stageNums[$stage])) {
+					if (!in_array($schedule->event, ["333fm", "333mbf"])) {
+						$events[$schedule->event] = 1;
+					}
+					if (!isset($stageNums[$stage]) && $schedule->event != '333bf') {
 						$heatSchedule = new HeatSchedule();
 						$heatSchedule->attributes = $schedule->attributes;
 						$heatSchedule->save();
 						continue;
 					}
-					$group = count($stageNums[$stage]) > 1 ? 'A' : '';
-					foreach ($stageNums[$stage] as $num) {
+					$num = isset($stageNums[$stage]) ? $stageNums[$stage] : 1;
+					$group = $num > 1 ? 'A' : '';
+					for ($i = 0; $i < $num; $i++) {
 						for ($time = $schedule->start_time; $time < $schedule->end_time; $time += 15*60) {
 							$heatSchedule = new HeatSchedule();
 							$heatSchedule->attributes = $schedule->attributes;
