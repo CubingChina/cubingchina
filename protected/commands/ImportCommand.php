@@ -39,8 +39,8 @@ class ImportCommand extends CConsoleCommand {
 					$heatScheduleUser->user_id = $registration->user_id;
 					$heatScheduleUser->save();
 					$userSchedules[$registration->user_id][$schedule->day][$schedule->start_time] = $heatScheduleUser;
-					if ($event == '333fm') {
-						for ($i = $schedule->start_time; $i < $schedule->start_time + 60 * 60; $i += 15 * 60) {
+					if ($event == '333fm' || $event == '333mbf' || $event == '444bf') {
+						for ($i = $schedule->start_time; $i < $schedule->end_time; $i += 15 * 60) {
 							$userSchedules[$registration->user_id][$schedule->day][$i] = $heatScheduleUser;
 						}
 					}
@@ -96,6 +96,30 @@ class ImportCommand extends CConsoleCommand {
 							break;
 						}
 						$schedule = $schedules[++$j % $count];
+					}
+				}
+				if (in_array($event, ['sq1', 'clock']) && isset($registrations['444bf'][$registration->user_id])) {
+					switch ($event) {
+						case 'sq1':
+							$time = $schedule->start_time;
+							foreach ($schedules as $s) {
+								if ($s->start_time < $time) {
+									$time = $s->start_time;
+									$schedule = $s;
+									break;
+								}
+							}
+							break;
+						case 'clock':
+							$time = $schedule->end_time;
+							foreach ($schedules as $s) {
+								if ($s->end_time > $time) {
+									$time = $s->end_time;
+									$schedule = $s;
+									break;
+								}
+							}
+							break;
 					}
 				}
 				$heatScheduleUser = new HeatScheduleUser();
