@@ -18,7 +18,7 @@
             scanType: ["qrCode"],
             success: function (res) {
               var result = res.resultStr;
-              var code = result.split('/').reverse()[0];
+              var code = result.split('code=').reverse()[0];
               that.loading = true;
               $.ajax({
                 data: {
