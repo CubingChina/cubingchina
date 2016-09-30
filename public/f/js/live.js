@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  Vue.config.debug = true;
+  // Vue.config.debug = true;
 
   //websocket
   var ws = new WS('ws://' + location.host + '/ws');
@@ -285,7 +285,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
-    strict: true,
+    // strict: true,
     mutations: mutations
   });
   Vue.mixin(mixin);
@@ -1002,7 +1002,7 @@
     };
   }();
   function newMessageOnResult(result, type) {
-    if (result.best == 0) {
+    if (result.b == 0) {
       return;
     }
     if (options.alertResult) {
@@ -1018,7 +1018,7 @@
       newMessage(message);
     }
     //check record
-    if (options.alertRecord && (result.regional_single_record != '' || result.regional_average_record != '')) {
+    if (options.alertRecord && (result.sr != '' || result.ar != '')) {
       //@todo alert record
     }
   }
