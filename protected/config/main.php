@@ -64,7 +64,7 @@ $config = array(
 						'name'=>'Asian-Championship-2016',
 					),
 				),
-				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration>'=>array(
+				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration|scan>'=>array(
 					'competition/<action>',
 					'defaultParams'=>array(
 						'name'=>'Asian-Championship-2016',
@@ -83,7 +83,7 @@ $config = array(
 					'urlSuffix'=>'.html'
 				),
 				'competition/<action:signin>'=>'competition/<action>',
-				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
+				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
 				'live/<name:[-A-z0-9]+>/statistics/<type:[-A-z0-9]+>'=>'live/statistics',
 				'live/<name:[-A-z0-9]+>'=>'live/live',
@@ -287,8 +287,8 @@ $config = array(
 		'weiboSharePic'=>'http://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>0 ? '/static/' : 'http://s.cubingchina.com/',
-		'jsVer'=>'20160928',
-		'cssVer'=>'20160918',
+		'jsVer'=>'20160930',
+		'cssVer'=>'20160930',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,

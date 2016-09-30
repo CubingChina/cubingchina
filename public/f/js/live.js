@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  // Vue.config.debug = true;
+  Vue.config.debug = true;
 
   //websocket
   var ws = new WS('ws://' + location.host + '/ws');
@@ -285,7 +285,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
-    // strict: true,
+    strict: true,
     mutations: mutations
   });
   Vue.mixin(mixin);

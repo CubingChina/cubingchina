@@ -1,4 +1,7 @@
 <?php
+
+use EasyWeChat\Foundation\Application;
+
 class CompetitionController extends Controller {
 
 	public function accessRules() {
@@ -79,6 +82,105 @@ class CompetitionController extends Controller {
 			throw new CHttpException(404, 'Error');
 		}
 		$this->redirect($registration->competition->getUrl());
+	}
+
+	public function actionScan() {
+		$competition = $this->getCompetition();
+		$session = Yii::app()->session;
+		if (isset($_POST['scan_code'])) {
+			$scanAuth = ScanAuth::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+				'code'=>$_POST['scan_code'],
+			]);
+			if ($scanAuth !== null) {
+				$session->add('scan_code', $scanAuth->code);
+			}
+		}
+		if ($session->get('scan_code') === null) {
+			$this->render('scanAuth', [
+				'competition'=>$competition,
+			]);
+			Yii::app()->end();
+		}
+		$code = $this->sPost('code');
+		if ($code != '') {
+			$registration = Registration::model()->findByAttributes(array(
+				'code'=>substr($code, 0, 64),
+			));
+			if ($registration == null) {
+				$this->ajaxError(404);
+			}
+			$this->ajaxOK([
+				'id'=>$registration->id,
+				'number'=>$registration->getUserNumber(),
+				'user'=>[
+					'name'=>$registration->user->getCompetitionName(),
+				],
+				'fee'=>$registration->getTotalFee(),
+				'paid'=>!!$registration->paid,
+				'signed_in'=>!!$registration->signed_in,
+				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
+			]);
+		}
+		if (isset($_POST['id'])) {
+			$registration = Registration::model()->findByAttributes(array(
+				'id'=>$_POST['id'],
+			));
+			if ($registration === null) {
+				$this->ajaxError(404);
+			}
+			$action = $this->sPost('action');
+			switch ($action) {
+				case 'pay':
+					$registration->paid = Registration::PAID;
+					break;
+				case 'signin':
+					$registration->signed_in = Registration::YES;
+					$registration->signed_date = time();
+					$registration->signed_code = $session->get('scan_code');
+			}
+			$registration->formatEvents();
+			$registration->save();
+			$this->ajaxOK([
+				'id'=>$registration->id,
+				'number'=>$registration->getUserNumber(),
+				'user'=>[
+					'name'=>$registration->user->getCompetitionName(),
+				],
+				'fee'=>$registration->getTotalFee(),
+				'paid'=>!!$registration->paid,
+				'signed_in'=>!!$registration->signed_in,
+				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
+			]);
+		}
+		$min = DEV ? '' : '.min';
+		$version = Yii::app()->params->jsVer;
+		$clientScript = Yii::app()->clientScript;
+		$clientScript->registerScriptFile('http://res.wx.qq.com/open/js/jweixin-1.0.0.js');
+		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
+		$clientScript->registerScriptFile('/f/js/scan' . $min . '.js?ver=' . $version);
+
+		$options = [
+			'debug'=>YII_DEBUG,
+			'app_id'=>Env::get('WECHAT_APP_ID'),
+			'secret'=> Env::get('WECHAT_SECRET'),
+			'token' => 'easywechat',
+		];
+		$application = new Application($options);
+		$js = $application->js;
+		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+		try {
+			$config = $js->config(array(
+				'hideAllNonBaseMenuItem',
+				'scanQRCode',
+			), YII_DEBUG);
+		} catch (Exception $e) {
+			$config = '{}';
+		}
+		$this->render('scan', [
+			'competition'=>$competition,
+			'config'=>$config,
+		]);
 	}
 
 	public function actionRegistration() {
