@@ -137,7 +137,7 @@ class CompetitionController extends Controller {
 				case 'signin':
 					$registration->signed_in = Registration::YES;
 					$registration->signed_date = time();
-					$registration->signed_code = $session->get('scan_code');
+					$registration->signed_scan_code = $session->get('scan_code');
 			}
 			$registration->formatEvents();
 			$registration->save();
