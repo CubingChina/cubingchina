@@ -113,6 +113,7 @@ class CompetitionController extends Controller {
 			$this->ajaxOK([
 				'id'=>$registration->id,
 				'number'=>$registration->getUserNumber(),
+				'passport'=>$registration->passport_number,
 				'user'=>[
 					'name'=>$registration->user->getCompetitionName(),
 				],
@@ -144,6 +145,7 @@ class CompetitionController extends Controller {
 			$this->ajaxOK([
 				'id'=>$registration->id,
 				'number'=>$registration->getUserNumber(),
+				'passport'=>$registration->passport_number,
 				'user'=>[
 					'name'=>$registration->user->getCompetitionName(),
 				],

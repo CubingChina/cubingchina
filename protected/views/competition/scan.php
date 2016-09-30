@@ -10,6 +10,8 @@
     <dd>{{registration.number}}</dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
     <dd>{{registration.user.name}}</dd>
+    <dt><?php echo Yii::t('common', 'Passport'); ?></dt>
+    <dd>{{registration.passport}}</dd>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
     <dd>{{registration.fee}}
       (<span v-if="registration.paid">
