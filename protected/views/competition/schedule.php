@@ -35,16 +35,16 @@
   <?php if ($hasManyStages || $userSchedules != []): ?>
   <ul class="nav nav-tabs">
     <?php if ($hasManyStages): ?>
-    <li class="active"><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
+    <li<?php if ($userSchedules == []) echo ' class="active"'; ?>><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
     <?php endif; ?>
-    <li<?php if (!$hasManyStages) echo ' class="active"'; ?>><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
+    <li<?php if (!$hasManyStages && $userSchedules == []) echo ' class="active"'; ?>><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
     <?php if ($userSchedules != []): ?>
-    <li><a href="#user" data-toggle="tab"><?php echo Yii::t('common', 'My Schedule'); ?></a></li>
+    <li<?php if ($userSchedules != []) echo ' class="active"'; ?>><a href="#user"data-toggle="tab"><?php echo Yii::t('common', 'My Schedule'); ?></a></li>
     <?php endif; ?>
   </ul>
   <div class="tab-content schedule">
     <?php if ($hasManyStages): ?>
-    <div class="tab-pane active" id="concise">
+    <div class="tab-pane<?php if ($userSchedules == []) echo ' active'; ?>" id="concise">
       <?php foreach ($listableSchedules as $day=>$schedules): ?>
       <div class="panel panel-info">
         <div class="panel-heading">
@@ -60,7 +60,7 @@
       <?php endforeach;?>
     </div>
     <?php endif; ?>
-    <div class="tab-pane<?php if (!$hasManyStages) echo ' active'; ?>" id="old-style">
+    <div class="tab-pane<?php if (!$hasManyStages && $userSchedules == []) echo ' active'; ?>" id="old-style">
   <?php endif; ?>
       <?php foreach ($listableSchedules as $day=>$stages): ?>
       <div class="panel panel-info">
@@ -92,7 +92,7 @@
   <?php if ($hasManyStages || $userSchedules != []): ?>
     </div>
     <?php if ($userSchedules != []): ?>
-    <div class="tab-pane" id="user">
+    <div class="tab-pane active" id="user">
       <?php foreach ($userSchedules as $day=>$stages): ?>
       <div class="panel panel-info">
         <div class="panel-heading">
