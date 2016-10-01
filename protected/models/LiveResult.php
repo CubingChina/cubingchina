@@ -147,6 +147,10 @@ class LiveResult extends ActiveRecord {
 		return $attributes;
 	}
 
+	public function getEvents() {
+		return [$this->event];
+	}
+
 	public function getCalculatedPos() {
 		if ($this->best == 0) {
 			return '-';

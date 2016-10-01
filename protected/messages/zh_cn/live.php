@@ -17,10 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Disable User Chatting' => '开启全员禁言',
+  'Export score card' => '导出成绩条',
   'Open' => '',
   'Children' => '少儿组',
   'Close this round' => '结束本轮',
+  'Disable User Chatting' => '开启全员禁言',
   'Enable Data Entry' => '开启成绩输入板',
   'Export' => '导出',
   'Females' => '女子组',

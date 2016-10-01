@@ -80,6 +80,26 @@ class RegistrationController extends AdminController {
 		));
 	}
 
+	public function actionLiveScoreCard() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		if (isset($_POST['event'])) {
+			$this->pagePerStack = $this->iPost('stack', 20);
+			$this->exportLiveScoreCard($model, $this->sPost('event'), $this->sPost('round'));
+		}
+		$this->render('scoreCard', array(
+			'model'=>$model,
+			'competition'=>$model,
+		));
+	}
+
 	public function actionScoreCard() {
 		$id = $this->iGet('id');
 		$model = Competition::model()->findByPk($id);
@@ -92,7 +112,7 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['order'])) {
 			$this->pagePerStack = $this->iPost('stack', 50);
-			$this->exportScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
+			$this->exportAllScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
 		}
 		$this->render('scoreCard', array(
 			'model'=>$model,
@@ -465,8 +485,23 @@ class RegistrationController extends AdminController {
 		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx, true);
 	}
 
-	public function exportScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
+	public function exportLiveScoreCard($competition, $event, $round) {
+		$liveResults = LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$competition->id,
+			'event'=>$event,
+			'round'=>$round,
+		], [
+			'order'=>'number'
+		]);
+		$this->exportScoreCard($competition, $liveResults);
+	}
+
+	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
+		$this->exportScoreCard($competition, $registrations, $split, $direction);
+	}
+
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical') {
 		$tempPath = Yii::app()->runtimePath;
 		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
 		$scoreCard = PHPExcel_IOFactory::load($templatePath);

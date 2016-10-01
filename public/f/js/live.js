@@ -505,6 +505,12 @@
             fetchResults();
             $('#round-settings-modal').modal('hide');
           },
+          exportScoreCard: function() {
+            var form = $('#export-scord-card-form');
+            form.find('.event').val(this.e);
+            form.find('.round').val(this.r);
+            form.submit();
+          },
           resetCompetitors: function() {
             if (confirm('Do you want to reset competitors?')) {
               ws.send({
