@@ -557,7 +557,7 @@
             }
             var i;
             for (i = 0; i < events[result.e].rs.length; i++) {
-              if (events[result.e].rs[i].id == result.r) {
+              if (events[result.e].rs[i].i == result.r) {
                 if (events[result.e].rs[i + 1]) {
                   return result.b > 0 && result.p <= events[result.e].rs[i + 1].n;
                 }

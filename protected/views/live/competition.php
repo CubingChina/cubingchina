@@ -311,6 +311,7 @@
           <thead>
             <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
+            <th v-if="hasPermission"><?php echo Yii::t('Results', 'No.'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
             <th class="text-right" v-if="hasAverage() && e != '333bf'" :class="{'sorting-column': hasAverage() && e != '333bf'}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th class="text-right" :class="{'sorting-column': !hasAverage() || e == '333bf'}"><?php echo Yii::t('common', 'Best'); ?></th>
@@ -329,6 +330,7 @@
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.p}}</td>
+              <td v-if="hasPermission">{{result.n}}</td>
               <td>
                 <a href="javascript:void(0)" @click="goToUser(getUser(result.n))">{{getUser(result.n).name}}</a>
               </td>
