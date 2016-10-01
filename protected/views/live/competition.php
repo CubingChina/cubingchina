@@ -33,6 +33,18 @@
   'v-cloak'=>true,
 ), ''); ?>
 
+
+<?php $form = $this->beginWidget('ActiveForm', array(
+  'htmlOptions'=>array(
+    'class'=>'hide',
+    'id'=>'export-scord-card-form',
+  ),
+  'action'=>array('/board/registration/liveScoreCard', 'id'=>$competition->id),
+)); ?>
+<input type="hidden" value="" name="event" class="event">
+<input type="hidden" value="" name="round" class="round">
+<?php $this->endWidget(); ?>
+
 <template id="live-container-template">
   <div class="col-lg-12">
     <div class="options-area">
@@ -270,6 +282,15 @@
                   <i class="fa fa-check"></i><?php echo Yii::t('live', 'Open this round'); ?>
                 </button>
               </div>
+              <div class="form-group">
+                <button type="button"
+                  class="btn btn-sm btn-info"
+                  v-if="hasPermission && options.enableEntry"
+                  @click="exportScoreCard"
+                >
+                  <i class="fa fa-share-square-o"></i><?php echo Yii::t('live', 'Export score card'); ?>
+                </button>
+              </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-theme" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
@@ -410,6 +431,34 @@
             :value.sync="result.v[i]"
             :index="i"
           ></result-input>
+          <div class="input-group" v-if="result.b > 0">
+            <span class="input-group-addon"><?php echo Yii::t('common', 'Single'); ?></span>
+            <select v-model="result.sr" class="form-control">
+              <option value=""></option>
+              <option value="NR">NR</option>
+              <option value="AsR">AsR</option>
+              <option value="WR">WR</option>
+              <option value="NaR">NaR</option>
+              <option value="SaR">SaR</option>
+              <option value="OcR">OcR</option>
+              <option value="ER">ER</option>
+              <option value="AfR">AfR</option>
+            </select>
+          </div>
+          <div class="input-group" v-if="result.a > 0">
+            <span class="input-group-addon"><?php echo Yii::t('common', 'Average'); ?></span>
+            <select v-model="result.ar" class="form-control">
+              <option value=""></option>
+              <option value="NR">NR</option>
+              <option value="AsR">AsR</option>
+              <option value="WR">WR</option>
+              <option value="NaR">NaR</option>
+              <option value="SaR">SaR</option>
+              <option value="OcR">OcR</option>
+              <option value="ER">ER</option>
+              <option value="AfR">AfR</option>
+            </select>
+          </div>
         </div>
         <button type="button"
           id="save"

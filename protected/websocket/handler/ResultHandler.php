@@ -75,6 +75,8 @@ class ResultHandler extends MsgHandler {
 		$result->value5 = $data->value5;
 		$result->best = $data->best;
 		$result->average = $data->average;
+		$result->regional_single_record = $data->regional_single_record;
+		$result->regional_average_record = $data->regional_average_record;
 		if ($result->best == 0) {
 			$result->create_time = 0;
 			$result->update_time = 0;
@@ -85,15 +87,15 @@ class ResultHandler extends MsgHandler {
 			$result->update_time = time();
 		}
 		$result->operator_id = $this->user->id;
-		$result->calculateRecord('single');
-		$result->calculateRecord('average');
+		// $result->calculateRecord('single');
+		// $result->calculateRecord('average');
 		$result->save();
-		foreach ($result->getBeatedRecords('single') as $res) {
-			$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
-		}
-		foreach ($result->getBeatedRecords('average') as $res) {
-			$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
-		}
+		// foreach ($result->getBeatedRecords('single') as $res) {
+		// 	$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
+		// }
+		// foreach ($result->getBeatedRecords('average') as $res) {
+		// 	$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
+		// }
 		$this->broadcastSuccess('result.update', $result->getShowAttributes(), $this->competition);
 		$eventRound = $result->eventRound;
 		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {

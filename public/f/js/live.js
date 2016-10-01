@@ -691,7 +691,9 @@
                     value4: result.v[3],
                     value5: result.v[4],
                     best: result.b,
-                    average: result.a
+                    average: result.a,
+                    regional_single_record: result.sr,
+                    regional_average_record: result.ar
                   }
                 });
                 that.result = {
