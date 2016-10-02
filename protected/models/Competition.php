@@ -1295,6 +1295,7 @@ class Competition extends ActiveRecord {
 			'order'=>'id ASC',
 		));
 		$events = array();
+		$ranks = [];
 		foreach ($eventRounds as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
@@ -1306,7 +1307,16 @@ class Competition extends ActiveRecord {
 			$attributes = $eventRound->getBroadcastAttributes();
 			$attributes['name'] = Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round));
 			$attributes['allStatus'] = $eventRound->allStatus;
+			if (!isset($ranks[$eventRound->round])) {
+				$ranks[$eventRound->round] = $eventRound->wcaRound->rank;
+			}
 			$events[$eventRound->event]['rs'][] = $attributes;
+		}
+		foreach ($events as $event=>$eventRound) {
+			usort($eventRound['rs'], function($roundA, $roundB) use($ranks) {
+				return $ranks[$roundA['i']] - $ranks[$roundB['i']];
+			});
+			$events[$event] = $eventRound;
 		}
 		return array_values($events);
 	}
