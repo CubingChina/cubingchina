@@ -91,7 +91,7 @@ class RegistrationController extends AdminController {
 			$this->redirect(array('/board/registration/index'));
 		}
 		if (isset($_POST['event'])) {
-			$this->pagePerStack = $this->iPost('stack', 20);
+			$this->pagePerStack = $this->iPost('stack', 10);
 			$this->exportLiveScoreCard($model, $this->sPost('event'), $this->sPost('round'));
 		}
 		$this->render('scoreCard', array(
@@ -413,7 +413,8 @@ class RegistrationController extends AdminController {
 					$user = $result->user;
 					$sheet->setCellValue('B' . $row, $user->getCompetitionName())
 						->setCellValue('C' . $row, $user->country->name)
-						->setCellValue('D' . $row, $user->wcaid);
+						->setCellValue('D' . $row, $user->wcaid)
+						->setCellValue('Z' . $row, $result->number);
 					//result
 					$col = 'E';
 					if ($result->event === '333mbf') {
