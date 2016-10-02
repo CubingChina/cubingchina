@@ -20,10 +20,10 @@ class ChatHandler extends MsgHandler {
 			return;
 		}
 		if ($this->competition != null) {
-			$this->competition->disable_chat = (int)$this->msg->disable_chat;
-			$this->competition->save();
 			$this->competition->formatEvents();
 			$this->competition->formatDate();
+			$this->competition->disable_chat = (int)$this->msg->disable_chat;
+			$this->competition->save();
 			$this->broadcastSuccess('message.disable', $this->msg->disable_chat);
 		}
 	}
