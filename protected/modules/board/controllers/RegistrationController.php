@@ -494,7 +494,7 @@ class RegistrationController extends AdminController {
 		], [
 			'order'=>'number'
 		]);
-		$this->exportScoreCard($competition, $liveResults);
+		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $round);
 	}
 
 	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
@@ -502,7 +502,7 @@ class RegistrationController extends AdminController {
 		$this->exportScoreCard($competition, $registrations, $split, $direction);
 	}
 
-	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical') {
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $roundName = '1st') {
 		$tempPath = Yii::app()->runtimePath;
 		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
 		$scoreCard = PHPExcel_IOFactory::load($templatePath);
@@ -566,7 +566,7 @@ class RegistrationController extends AdminController {
 					if (!in_array("$event", $registration->events)) {
 						continue;
 					}
-					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
+					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event, $roundName);
 					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
 				}
 			}
@@ -576,7 +576,7 @@ class RegistrationController extends AdminController {
 					if ($event === '333fm') {
 						continue;
 					}
-					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
+					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event, $roundName);
 					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
 				}
 			}
@@ -656,7 +656,7 @@ class RegistrationController extends AdminController {
 		}
 	}
 
-	private function fillScoreCard($competition, $sheet, $direction, $i, $registration = null, $event= '') {
+	private function fillScoreCard($competition, $sheet, $direction, $i, $registration = null, $event= '', $roundName = '1st') {
 		$oneCardRow = self::ROW_PER_CARD;
 		if ($direction === 'horizontal') {
 			$baseRow = $i * $oneCardRow;
@@ -702,7 +702,7 @@ class RegistrationController extends AdminController {
 			$eventName = Events::getFullEventName($event);
 			$eventName = sprintf('%s %s', Yii::t('event', $eventName), $event);
 			$sheet->setCellValue("B{$row}", $eventName);
-			$sheet->setCellValue("E{$row}", '1st');
+			$sheet->setCellValue("E{$row}", $roundName);
 			$sheet->setCellValue("J{$row}", 'No.' . $registration->number);
 			$sheet->getStyle("J{$row}")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$sheet->setCellValue("G{$row}", $user->country_id <= 4 && $user->name_zh ? $user->name_zh : $user->name);
