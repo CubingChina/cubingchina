@@ -165,7 +165,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 		), array(
-			'order'=>'personName, event.rank, round.rank DESC'
+			'order'=>'personName, personId, event.rank, round.rank DESC'
 		));
 		$scrambles = Scrambles::model()->with(array(
 			'round',
