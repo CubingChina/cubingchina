@@ -1,7 +1,7 @@
 {
 	"require": {
 		"phpoffice/phpexcel": "dev-develop",
-		"mpdf/mpdf": "6.1",
+		"mpdf/mpdf": "dev-master",
 		"overtrue/wechat": "~3.1",
 		"suin/php-rss-writer": "dev-master",
 		"ramsey/uuid": "dev-master",
