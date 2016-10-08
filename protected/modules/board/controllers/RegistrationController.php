@@ -541,7 +541,7 @@ class RegistrationController extends AdminController {
 		$pdf->useAdobeCJK = true;
 		$pdf->autoScriptToLang = true;
 		$pdf->autoLangToFont = true;
-		$pdf->simpleTables = true;
+		// $pdf->simpleTables = true;
 		$stylesheet = file_get_contents(Yii::getPathOfAlias('application.data') . '/scord-card.css');
 		$pdf->WriteHTML($stylesheet, 1);
 		foreach (array_chunk($scoreCards, $this->pagePerStack * self::CARD_PER_PAGE) as $scoreCards) {
