@@ -30,7 +30,7 @@ class Events extends ActiveRecord {
 		'222'=>'average5s',
 		'333bf'=>'best3m',
 		'333oh'=>'average5s',
-		'333fm'=>'best1n',
+		'333fm'=>'mean3n',
 		'333ft'=>'mean3m',
 		'minx'=>'average5m',
 		'pyram'=>'average5s',

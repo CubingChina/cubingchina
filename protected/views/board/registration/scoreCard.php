@@ -43,12 +43,12 @@
             <div class="col-lg-10 col-lg-offset-2">
               <div class="radio">
                 <label>
-                  <input type="radio" value="user" name="split" checked> 按人分割
+                  <input type="radio" value="user" name="split"> 按人分割
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" value="event" name="split"> 按项目分割
+                  <input type="radio" value="event" name="split" checked> 按项目分割
                 </label>
               </div>
             </div>
