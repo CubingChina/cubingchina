@@ -307,13 +307,6 @@ class Registration extends ActiveRecord {
 		));
 	}
 
-	public function getLocation() {
-		return CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
-			'competition_id'=>$this->competition_id,
-			'location_id'=>$this->location_id,
-		));
-	}
-
 	public function getNoticeColumns($model) {
 		if ($this->competition === null) {
 			$columns = array();
@@ -629,7 +622,10 @@ class Registration extends ActiveRecord {
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
 			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
-			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
+			'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
+				'competition_id'=>'competition_id',
+				'location_id'=>'location_id',
+			]),
 		);
 	}
 
@@ -806,6 +802,10 @@ class Registration extends ActiveRecord {
 			}
 			$statistics['number']++;
 			$statistics[$registration->user->gender]++;
+			if (!isset($statistics['location'][$registration->location_id])) {
+				$statistics['location'][$registration->location_id] = 0;
+			}
+			$statistics['location'][$registration->location_id]++;
 			if ($registration->user->wcaid === '') {
 				$statistics['new']++;
 			}
@@ -858,6 +858,30 @@ class Registration extends ActiveRecord {
 		$statistics['old'] = $statistics['number'] - $statistics['new'];
 		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
 		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
+		$statistics['location_id'] = [];
+		if ($this->competition && $this->competition->isMultiLocation()) {
+			$temp = [];
+			foreach ($this->competition->sortedLocations as $location) {
+				if (isset($statistics['location'][$location->location_id])) {
+					if (!isset($temp[$location->country_id])) {
+						$temp[$location->country_id] = [
+							'location'=>$location,
+							'statistics'=>[],
+						];
+					}
+					$temp[$location->country_id]['statistics'][] = $location->getCityName() . ': ' . $statistics['location'][$location->location_id];
+				}
+			}
+			if ($this->competition->multi_countries) {
+				foreach ($temp as $key=>$value) {
+					$statistics['location_id'][] = CHtml::tag('b', [], $value['location']->country->getAttributeValue('name') . ': ');
+					$statistics['location_id'][] = implode('<br>', $value['statistics']);
+				}
+			} elseif (isset($temp[0])) {
+				$statistics['location_id'] = $temp[0]['statistics'];
+			}
+		}
+		$statistics['location_id'] = implode('<br>', $statistics['location_id']);
 		if ($localType != Competition::LOCAL_TYPE_NONE) {
 			$statistics['country_id'] =  $statistics['local'] . '/' . $statistics['nonlocal'];
 		}

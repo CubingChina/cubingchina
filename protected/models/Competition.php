@@ -355,6 +355,9 @@ class Competition extends ActiveRecord {
 
 	public function getSortedLocations() {
 		$locations = $this->location;
+		if (!$this->multi_countries) {
+			return $locations;
+		}
 		usort($locations, function($locationA, $locationB) {
 			$temp = $locationA->country_id - $locationB->country_id;
 			if ($temp == 0) {
