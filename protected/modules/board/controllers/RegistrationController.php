@@ -559,7 +559,7 @@ class RegistrationController extends AdminController {
 				$scoreCard = $scoreCards[$n];
 				$this->fillScoreCard($pdf, $competition, $scoreCard, $roundName);
 				$i++;
-				if ($i % 3 == 0) {
+				if ($i % self::CARD_PER_PAGE == 0 && $i < $count) {
 					$pdf->AddPage();
 				}
 			}
