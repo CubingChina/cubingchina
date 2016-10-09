@@ -1580,11 +1580,11 @@ class Competition extends ActiveRecord {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 				$error = true;
 			}
-			if (!preg_match('{^-?\d+\.\d+$}', $locations['longitude'][$key])) {
+			if ($locations['longitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['longitude'][$key])) {
 				$this->addError('locations.longitude.' . $index, '经度无效！');
 				$error = true;
 			}
-			if (!preg_match('{^-?\d+\.\d+$}', $locations['latitude'][$key])) {
+			if ($locations['latitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['latitude'][$key])) {
 				$this->addError('locations.latitude.' . $index, '纬度无效！');
 				$error = true;
 			}
