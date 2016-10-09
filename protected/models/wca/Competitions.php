@@ -199,7 +199,7 @@ class Competitions extends ActiveRecord {
 	}
 
 	public static function getWcaUrl($id) {
-		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $id;
+		return 'https://www.worldcubeassociation.org/competitions/' . $id;
 	}
 
 	public function getCityInfo() {
