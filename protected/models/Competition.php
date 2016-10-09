@@ -1580,6 +1580,14 @@ class Competition extends ActiveRecord {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 				$error = true;
 			}
+			if (!preg_match('{^-?\d+\.\d+$}', $locations['longitude'][$key])) {
+				$this->addError('locations.longitude.' . $index, '经度无效！');
+				$error = true;
+			}
+			if (!preg_match('{^-?\d+\.\d+$}', $locations['latitude'][$key])) {
+				$this->addError('locations.latitude.' . $index, '纬度无效！');
+				$error = true;
+			}
 			$temp[] = array(
 				'country_id'=>$this->multi_countries ? $locations['country_id'][$key] : 0,
 				'province_id'=>$provinceId,
@@ -1588,6 +1596,8 @@ class Competition extends ActiveRecord {
 				'city_name_zh'=>$this->multi_countries ? $locations['city_name_zh'][$key] : '',
 				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
+				'longitude'=>$locations['longitude'][$key],
+				'latitude'=>$locations['latitude'][$key],
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',

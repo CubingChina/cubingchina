@@ -895,15 +895,13 @@ Yii::app()->clientScript->registerScript('person',
   }).resize();
   var map;
   $('a[href="#person-map"]').on('shown.bs.tab', function() {
-    console.log(111)
     if (!map) {
       var center = {$mapCenter},
         mapData = {$mapData},
         tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
           maxZoom: 18,
           attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
-        }),
-        latlng = L.latLng(-37.82, 175.24);
+        });
 
       map = L.map('competition-cluster', {
         center: L.latLng(center.latitude, center.longitude),

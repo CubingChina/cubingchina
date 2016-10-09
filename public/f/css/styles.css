@@ -3060,3 +3060,9 @@ dl.location-delegate dt, dl.location-delegate dd, .location-delegate p {
 [v-cloak] {
   display: none;
 }
+.location-map {
+  height: 350px;
+}
+.location-map div {
+  position: static;
+}

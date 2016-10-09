@@ -287,6 +287,7 @@ class CompetitionController extends Controller {
 		$competition = $this->getCompetition();
 		$this->render('travel', array(
 			'competition'=>$competition,
+			'showMap'=>true,
 		));
 	}
 

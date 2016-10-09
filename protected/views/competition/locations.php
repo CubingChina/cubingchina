@@ -1,3 +1,4 @@
+<?php $showMap = isset($showMap) && $showMap; ?>
 <?php if ($competition->tba == Competition::YES): ?>
 <?php echo Yii::t('common', 'To be announced'); ?>
 <?php elseif ($competition->isMultiLocation()): ?>
@@ -15,9 +16,21 @@
     <dd><?php echo $location->getFeeInfo(); ?></dd>
   </dl>
   <?php endif; ?>
+  <?php if ($showMap): ?>
+  <?php $this->widget('LocationMap', [
+    'competition'=>$competition,
+    'location'=>$location,
+  ]); ?>
+  <?php endif; ?>
   </li>
 <?php endforeach; ?>
 </ol>
 <?php else: ?>
 <?php echo $competition->location[0]->getFullAddress(); ?>
+<?php if ($showMap): ?>
+<?php $this->widget('LocationMap', [
+  'competition'=>$competition,
+  'location'=>$competition->location[0],
+]); ?>
+<?php endif; ?>
 <?php endif; ?>

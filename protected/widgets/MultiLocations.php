@@ -119,6 +119,29 @@ class MultiLocations extends Widget {
 				)),
 				CHtml::error($model, 'locations.venue.' . $key, array('class'=>'text-danger'))
 			);
+			echo '<div class="text-danger col-lg-12">填写经纬度将会自动生成地图。<br>
+			<a href="http://www.gpsspg.com/maps.htm" target="_blank">点击这里查询坐标</a>，国内请填写<b>Google地球</b>坐标。
+			</div>';
+			echo Html::formGroup(
+				$model, 'locations[longitude][]', array(
+					'class'=>'col-lg-6',
+				),
+				CHtml::label('经度', false),
+				CHtml::textField(CHtml::activeName($model, 'locations[longitude][]'), $location['longitude'], array(
+					'class'=>'form-control',
+				)),
+				CHtml::error($model, 'locations.longitude.' . $key, array('class'=>'text-danger'))
+			);
+			echo Html::formGroup(
+				$model, 'locations[latitude][]', array(
+					'class'=>'col-lg-6',
+				),
+				CHtml::label('纬度', false),
+				CHtml::textField(CHtml::activeName($model, 'locations[latitude][]'), $location['latitude'], array(
+					'class'=>'form-control',
+				)),
+				CHtml::error($model, 'locations.latitude.' . $key, array('class'=>'text-danger'))
+			);
 			if ($model->multi_countries) {
 				echo Html::formGroup(
 					$model, 'locations[delegate_id][]', array(

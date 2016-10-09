@@ -82,7 +82,7 @@ class CompetitionLocation extends ActiveRecord {
 			array('competition_id', 'required'),
 			array('location_id, country_id, province_id, city_id, delegate_id', 'numerical', 'integerOnly'=>true),
 			array('competition_id', 'length', 'max'=>10),
-			array('venue, venue_zh, city_name, city_name_zh, delegate_text, fee', 'length', 'max'=>512),
+			array('venue, venue_zh, city_name, city_name_zh, delegate_text, fee, longitude, latitude', 'length', 'max'=>512),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, province_id, city_id, venue, venue_zh', 'safe', 'on'=>'search'),

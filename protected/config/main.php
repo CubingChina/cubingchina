@@ -248,7 +248,7 @@ $config = array(
 				'leaflet'=>array(
 					'baseUrl'=>'f',
 					'css'=>array(
-						'leaflet/leaflet.css',
+						'leaflet/leaflet.css?20161009',
 						'leaflet/plugins/MarkerCluster/MarkerCluster.css',
 						'leaflet/plugins/MarkerCluster/MarkerCluster.Default.css',
 					),
@@ -288,7 +288,7 @@ $config = array(
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>0 ? '/static/' : 'http://s.cubingchina.com/',
 		'jsVer'=>'20161002',
-		'cssVer'=>'20160930',
+		'cssVer'=>'20161009',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,
