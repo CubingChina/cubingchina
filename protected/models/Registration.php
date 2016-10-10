@@ -307,6 +307,13 @@ class Registration extends ActiveRecord {
 		));
 	}
 
+	public function getLocation() {
+		return CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'location_id'=>$this->location_id,
+		));
+	}
+
 	public function getNoticeColumns($model) {
 		if ($this->competition === null) {
 			$columns = array();
@@ -622,10 +629,10 @@ class Registration extends ActiveRecord {
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
 			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
-			'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
-				'competition_id'=>'competition_id',
-				'location_id'=>'location_id',
-			]),
+			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
+			// 	'competition_id'=>'competition_id',
+			// 	'location_id'=>'location_id',
+			// ]),
 		);
 	}
 
