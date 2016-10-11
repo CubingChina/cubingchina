@@ -187,6 +187,33 @@ class ResultsController extends Controller {
 		$this->render('p', $data);
 	}
 
+	public function actionCert() {
+		$hash = $this->sGet('hash');
+		if (!$hash) {
+			throw new CHttpException(404, 'Error');
+		}
+		$cert = CompetitionCert::model()->findByAttributes([
+			'hash'=>$hash,
+		]);
+		if ($cert === null) {
+			throw new CHttpException(404, 'Error');
+		}
+		$competition = $cert->competition;
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Competitions'=>array('/results/competition'),
+			$competition->getAttributeValue('name')=>$competition->getUrl(),
+			'Certificate',
+		);
+		$this->pageTitle = array($competition->getAttributeValue('name'), 'Certificate');
+		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Certificate');
+		$this->render('cert', [
+			'cert'=>$cert,
+			'competition'=>$competition,
+			'user'=>$cert->user,
+		]);
+	}
+
 	public function actionBattle() {
 		$ids = isset($_GET['ids']) ? $_GET['ids'] : array();
 		if (is_string($ids)) {

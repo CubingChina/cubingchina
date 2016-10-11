@@ -252,6 +252,11 @@ class Controller extends CController {
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
+						'label'=>Yii::t('common', 'My Certificates'),
+						'url'=>Yii::app()->user->isGuest ? '' : array('/user/cert'),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->hasCerts,
+					),
+					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
 						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),

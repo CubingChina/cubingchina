@@ -80,6 +80,7 @@ return array (
   'WCA Official Page' => 'WCA官方頁面',
   'WCA regulations' => 'WCA比賽規則',
   'Wca Competition ID' => 'WCA比賽ID',
+  'You don\'t have any certificate.' => '您尚未獲得任何證書。',
   'You have not registered for any competition.' => '您尚未報名任何比賽。',
   'Your account is inactive now, please {activate} it before registration.' => '您的賬號尚未激活，報名前請先{activate}賬號。',
   'Your registration was submitted successfully.' => '您的報名已經成功提交。',

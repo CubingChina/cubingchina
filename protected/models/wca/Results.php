@@ -433,12 +433,10 @@ class Results extends ActiveRecord {
 			if ($boldBest && $value === $data['best']) {
 				$time = CHtml::Tag('b', array(), $time);
 			}
-			$detail[] = CHtml::tag('span', array(
-				'class'=>'result-value'
-			), $time);
+			$detail[] = $time;
 		}
 		return CHtml::tag('pre', array(
-		), implode('   ', $detail));
+		), trim(implode('   ', $detail)));
 	}
 
 	public function getTime($attribute) {

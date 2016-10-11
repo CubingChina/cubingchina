@@ -42,6 +42,8 @@ class User extends ActiveRecord {
 	const STATUS_BANNED = 1;
 	const STATUS_DELETED = 2;
 
+	private $_hasCerts;
+
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
 			->select('FROM_UNIXTIME(MIN(reg_time), "%Y-%m-%d") as day, COUNT(1) AS user')
@@ -209,6 +211,29 @@ class User extends ActiveRecord {
 
 	public function hasPermission($permission) {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
+	}
+
+	public function getHasCerts() {
+		if ($this->_hasCerts !== null) {
+			return $this->_hasCerts;
+		}
+		if ($this->wcaid == '') {
+			return $this->_hasCerts = false;
+		}
+		$competitions = Competition::model()->cache(86400)->findAllByAttributes([
+			'type'=>Competition::TYPE_WCA,
+			'status'=>Competition::STATUS_SHOW,
+		], [
+			'condition'=>'cert_name!=""',
+		]);
+		if ($competitions === []) {
+			return $this->_hasCerts = false;
+		}
+		$wcaIds = CHtml::listData($competitions, 'id', 'wca_competition_id');
+		return $this->_hasCerts = (Results::model()->countByAttributes([
+			'competitionId'=>$wcaIds,
+			'personId'=>$this->wcaid,
+		]) > 0);
 	}
 
 	public function getRoleName() {

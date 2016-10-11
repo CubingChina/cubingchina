@@ -484,9 +484,43 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getHasResults() {
-		return $this->type == self::TYPE_WCA && Results::model()->countByAttributes(array(
+		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
 			'competitionId'=>$this->wca_competition_id,
 		)) > 0;
+	}
+
+	public function hasUserResults($wcaid) {
+		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+			'personId'=>$wcaid,
+		)) > 0;
+	}
+
+	public function getMyCertUrl() {
+		$user = Yii::app()->controller->user;
+		return $this->getUserCertUrl($user);
+	}
+
+	public function getUserCertUrl($user) {
+		$cert = CompetitionCert::model()->findByAttributes([
+			'competition_id'=>$this->id,
+			'user_id'=>$user->id,
+		]);
+		if ($cert === null) {
+			$cert = new CompetitionCert();
+			$cert->competition_id = $this->id;
+			$cert->user_id = $user->id;
+			$cert->create_time = time();
+			$cert->save();
+		}
+		$cert->competition = $this;
+		$cert->user = $user;
+		if (!$cert->hasCert) {
+			$cert->generateCert();
+		}
+		$name = $this->getAttributeValue('name');
+		$logo = $this->getLogo();
+		return CHtml::link($logo . $name, $cert->getUrl());
 	}
 
 	public function getUrl($type = 'detail', $params = array()) {

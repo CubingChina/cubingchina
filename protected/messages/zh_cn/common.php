@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Download Result Certificate' => '下载成绩证书',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -96,6 +97,7 @@ return array (
   'By Event' => '按项目',
   'CCA Delegate' => 'CCA主裁判',
   'CNY' => '元',
+  'Certificate' => '证书',
   'Change Password' => '修改密码',
   'Chatting has been disabled by administrator.' => '管理员已开启全员禁言',
   'Choose a competition' => '选择一场比赛',
@@ -115,6 +117,7 @@ return array (
   'Delegate' => '代表',
   'Detail' => '详情',
   'Download' => '下载',
+  'Download Participation Certificate' => '下载参赛证明',
   'Edit' => '编辑',
   'Edit profile.' => '编辑资料',
   'Email' => '邮箱',
@@ -160,6 +163,7 @@ return array (
   'Mobile Number' => '手机号码',
   'More Info' => '其他',
   'Multiple' => '多地',
+  'My Certificates' => '我的证书',
   'My Homepage' => '我的主页',
   'My Registration' => '我的报名',
   'My Schedule' => '我的赛程',
@@ -176,6 +180,7 @@ return array (
   'Overall' => '所有轮',
   'Paid' => '已付',
   'Paid successfully' => '支付成功',
+  'Participation Certificate' => '参赛证明',
   'Passport' => '护照',
   'Password' => '密码',
   'Password is changed successfully. Log in with your new password.' => '密码修改成功，请使用新密码登录。',
@@ -211,6 +216,7 @@ return array (
   'Reset' => '重置',
   'Reset password' => '重设密码',
   'Result' => '成绩',
+  'Result Certificate' => '成绩证书',
   'Results' => '成绩',
   'Rivalries' => '交手',
   'Role' => '角色',
