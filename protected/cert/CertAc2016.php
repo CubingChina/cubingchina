@@ -32,6 +32,7 @@ class CertAc2016 extends ResultCert {
 			$results = $this->splitResults($results, $height);
 		} else {
 			$results = [$results];
+			$this->paddingTop = min(200, (692 - $height) / 2);
 		}
 		return [
 			'results'=>$results,
