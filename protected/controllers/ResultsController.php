@@ -205,10 +205,27 @@ class ResultsController extends Controller {
 			$competition->getAttributeValue('name')=>$competition->getUrl(),
 			'Certificate',
 		);
+		$application = $this->getWechatApplication([
+			'js'=>true,
+		]);
+		$js = $application->js;
+		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+		try {
+			$config = $js->config(array(
+				'onMenuShareTimeline',
+				'onMenuShareAppMessage',
+				'onMenuShareQQ',
+				'onMenuShareWeibo',
+				'onMenuShareQZone',
+			), YII_DEBUG);
+		} catch (Exception $e) {
+			$config = '{}';
+		}
 		$this->pageTitle = array($competition->getAttributeValue('name'), 'Certificate');
 		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Certificate');
 		$this->render('cert', [
 			'cert'=>$cert,
+			'config'=>$config,
 			'competition'=>$competition,
 			'user'=>$cert->user,
 		]);

@@ -48,3 +48,30 @@
     </p>
   </div>
 </div>
+<?php
+$data = json_encode([
+  'title'=>$cert->getShareTitle(),
+  'desc'=>$cert->getShareDesc(),
+  'imgUrl'=>$cert->getShareIcon(),
+]);
+Yii::app()->clientScript->registerScript('cert',
+<<<EOT
+  var data = {$data};
+  data.link = location.href;
+  wx.config({$config});
+  wx.ready(function() {
+    wx.onMenuShareTimeline(data);
+    wx.onMenuShareAppMessage(data);
+    wx.onMenuShareQQ(data);
+    wx.onMenuShareWeibo(data);
+    wx.onMenuShareQZone(data);
+  });
+  if (navigator.userAgent.match(/MicroMessenger/i) && !navigator.userAgent.match(/WindowsWechat/i)) {
+    $('a[download]').on('click', function(e) {
+      location.href = this.href;
+    });
+  }
+EOT
+);
+
+

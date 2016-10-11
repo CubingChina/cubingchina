@@ -1,7 +1,5 @@
 <?php
 
-use EasyWeChat\Foundation\Application;
-
 class CompetitionController extends Controller {
 
 	public function accessRules() {
@@ -162,13 +160,7 @@ class CompetitionController extends Controller {
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/scan' . $min . '.js?ver=' . $version);
 
-		$options = [
-			'debug'=>YII_DEBUG,
-			'app_id'=>Env::get('WECHAT_APP_ID'),
-			'secret'=> Env::get('WECHAT_SECRET'),
-			'token' => 'easywechat',
-		];
-		$application = new Application($options);
+		$application = $this->getWechatApplication();
 		$js = $application->js;
 		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
 		try {

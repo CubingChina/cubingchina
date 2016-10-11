@@ -87,5 +87,17 @@ abstract class ResultCert {
 		return $file;
 	}
 
+	public function getShareIcon() {
+
+	}
+
+	public function getShareTitle() {
+
+	}
+
+	public function getShareDesc() {
+
+	}
+
 	abstract public function getData($type = 'results');
 }

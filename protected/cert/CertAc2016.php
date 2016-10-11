@@ -6,6 +6,18 @@ class CertAc2016 extends ResultCert {
 	public $hasParticipations = true;
 	public $paddingTop = 0;
 
+	public function getShareIcon() {
+		return Yii::app()->request->getBaseUrl(true) . '/f/certs/' . $this->competition->cert_name . '/icon.jpg';
+	}
+
+	public function getShareTitle() {
+		return '我参加了2016WCA亚洲魔方锦标赛，快来围观我的参赛成绩吧！';
+	}
+
+	public function getShareDesc() {
+		return '近千的参赛选手，过百的工作人员，三天的国庆假期，一场伟大的魔方狂欢盛宴！';
+	}
+
 	public function getData($type = 'results') {
 		if ($type !== 'results') {
 			return [];

@@ -14,6 +14,22 @@ Yii::import('application.cert.*');
  * @property string $update_time
  */
 class CompetitionCert extends ActiveRecord {
+	private $_generator;
+
+	public function getShareIcon() {
+		$generator = $this->getGenerator();
+		return $generator->getShareIcon() ?: Yii::app()->request->getBaseUrl(true) . '/f/images/icon196.png';
+	}
+
+	public function getShareTitle() {
+		$generator = $this->getGenerator();
+		return $generator->getShareTitle();
+	}
+
+	public function getShareDesc() {
+		$generator = $this->getGenerator();
+		return $generator->getShareDesc();
+	}
 
 	public function getImageUrl($type = 'results') {
 		return sprintf("%scerts/%s/%s/%s.jpg",
@@ -36,12 +52,22 @@ class CompetitionCert extends ActiveRecord {
 	}
 
 	public function generateCert() {
+		$generator = $this->getGenerator();
+		if ($generator !== false) {
+			$generator->run();
+		}
+	}
+
+	public function getGenerator() {
+		if ($this->_generator !== null) {
+			return $this->_generator;
+		}
 		$competition = $this->competition;
 		$certName = $this->competition->cert_name;
 		if (class_exists($className = 'Cert' . ucfirst($certName))) {
-			$generater = new $className($this);
-			$generater->run();
+			return $this->_generator = new $className($this);
 		}
+		return $this->_generator = false;
 	}
 
 	/**
