@@ -64,7 +64,7 @@
   }
   .one-result {
     font-size: 1.6em;
-    padding-top: 200px;
+    /*padding-top: 200px;*/
   }
   .one-result-detail {
     font-size: 1.2em;
@@ -93,7 +93,7 @@
     text-align: left;
   }
   table tr.normal-round {
-    font-size: 12px;
+    /*font-size: 12px;*/
   }
   table td {
     line-height: 1.2;
