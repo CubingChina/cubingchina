@@ -132,6 +132,10 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
+		$events = array();
+		foreach ($winners as $result) {
+			$events[$result->eventId] = $result->eventId;
+		}
 		$top3 = Results::model()->with(array(
 			'person',
 			'person.country',
@@ -181,6 +185,7 @@ class Competitions extends ActiveRecord {
 			'all'=>$all,
 			'byPerson'=>$byPerson,
 			'scrambles'=>$scrambles,
+			'events'=>$events,
 		);
 	}
 

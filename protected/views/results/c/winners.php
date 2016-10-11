@@ -1,6 +1,6 @@
 <?php
 $this->widget('GridView', array(
-  'dataProvider'=>new CArrayDataProvider($results, array(
+  'dataProvider'=>new CArrayDataProvider($winners, array(
     'pagination'=>false,
     'sort'=>false,
   )),

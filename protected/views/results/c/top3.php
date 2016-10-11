@@ -1,6 +1,6 @@
 <?php
 $this->widget('GroupGridView', array(
-  'dataProvider'=>new CArrayDataProvider($results, array(
+  'dataProvider'=>new CArrayDataProvider($top3, array(
     'pagination'=>false,
     'sort'=>false,
   )),

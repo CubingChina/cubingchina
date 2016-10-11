@@ -1,7 +1,7 @@
 <?php
 $this->renderPartial('c/dropdownEvents', $_data_);
 $this->widget('GroupGridView', array(
-  'dataProvider'=>new CArrayDataProvider($results, array(
+  'dataProvider'=>new CArrayDataProvider($all, array(
     'pagination'=>false,
     'sort'=>false,
   )),
