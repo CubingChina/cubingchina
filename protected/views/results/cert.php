@@ -48,7 +48,7 @@
     </p>
   </div>
 </div>
-<div style="postion:absolute;top:-2000px;left:-2000px">
+<div style="position:absolute;top:-2000px;left:-2000px">
   <?php echo CHtml::image($cert->getShareIcon()); ?>
 </div>
 <?php
