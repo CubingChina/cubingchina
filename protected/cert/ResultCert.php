@@ -45,11 +45,11 @@ abstract class ResultCert {
 			$cert->hash = $this->hash;
 			$cert->has_participations = intval($this->hasParticipations);
 			$cert->update_time = time();
-			// $cert->save();
+			$cert->save();
 		} catch (Exception $e) {
 
 		}
-		// unlink($temp);
+		unlink($temp);
 	}
 
 	public function render($name = 'results', $_data_ = null) {
