@@ -47,7 +47,9 @@
   }
   .person-info .wcaid {
     float: right;
-    margin-right: 194px;
+    margin-right: 86px;
+    width: 347px;
+    text-align: center;
   }
   .results {
     margin-top: 20px;
