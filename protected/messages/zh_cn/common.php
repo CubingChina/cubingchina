@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Download Result Certificate' => '下载成绩证书',
+  'Alipay has been blocked by wechat.' => '微信屏蔽了支付宝。',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -118,6 +118,7 @@ return array (
   'Detail' => '详情',
   'Download' => '下载',
   'Download Participation Certificate' => '下载参赛证明',
+  'Download Result Certificate' => '下载成绩证书',
   'Edit' => '编辑',
   'Edit profile.' => '编辑资料',
   'Email' => '邮箱',
@@ -197,6 +198,7 @@ return array (
   'Please enter authentication code.' => '请输入授权码。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '请在下面输入您的WCA ID。您可以在{here}查询您的WCA ID。',
   'Please login.' => '请登录',
+  'Please open with browser!' => '请在浏览器中打开！',
   'Please re-check your date of birth and ensure the consistency of ID cards.' => '请检查您所填写的出生日期，确保与身份证件上的一致。',
   'Please update your browser' => '请升级你的浏览器！',
   'Previous step' => '上一步',
