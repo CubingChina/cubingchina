@@ -20,15 +20,81 @@
 class LiveEventRound extends ActiveRecord {
 
 	const STATUS_OPEN = 0;
-	const STATUS_CLOSED = 1;
+	const STATUS_FINISHED = 1;
 	const STATUS_LIVE = 2;
 
 	public static function getAllStatus() {
 		return array(
 			self::STATUS_OPEN=>Yii::t('live', 'Open'),
-			self::STATUS_CLOSED=>Yii::t('live', 'Closed'),
+			self::STATUS_FINISHED=>Yii::t('live', 'Finished'),
 			self::STATUS_LIVE=>Yii::t('live', 'Live'),
 		);
+	}
+
+	public function getLastRound() {
+		$rounds = self::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+		));
+		usort($rounds, function($roundA, $roundB) {
+			return $roundA->wcaRound->rank - $roundB->wcaRound->rank;
+		});
+		foreach ($rounds as $key=>$round) {
+			if ($round->id == $this->id && isset($rounds[$key - 1])) {
+				return $rounds[$key - 1];
+			}
+		}
+	}
+
+	public function removeResults() {
+		LiveResult::model()->deleteAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		));
+	}
+
+	public function getBroadcastAttributes() {
+		return array(
+			'i'=>$this->round,
+			'e'=>$this->event,
+			'f'=>$this->format,
+			'co'=>$this->cut_off,
+			'tl'=>$this->time_limit,
+			'n'=>$this->number,
+			's'=>$this->status,
+			'rn'=>$this->resultsNumber,
+		);
+	}
+
+	public function getResultsNumber() {
+		return LiveResult::model()->countByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		), array(
+			'condition'=>'best!=0',
+		));
+	}
+
+	public function getResults() {
+		if ($this->format == 'a' || $this->format == 'm') {
+			$order = 'average>0 DESC, average ASC, best>0 DESC, best ASC';
+		} else {
+			$order = 'best>0 DESC, best ASC';
+		}
+		return LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		), array(
+			'order'=>$order,
+			'condition'=>'best>0',
+		));
+	}
+
+	public function getIsClosed() {
+		return $this->status == self::STATUS_FINISHED;
 	}
 
 	public function getStatusText() {
@@ -68,6 +134,8 @@ class LiveEventRound extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
+			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
 		);
 	}
 

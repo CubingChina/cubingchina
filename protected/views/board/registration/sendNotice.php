@@ -68,7 +68,7 @@
             <div class="col-lg-12">
               <?php $columns = $registration->getNoticeColumns($model); ?>
               <?php $this->widget('RepeatHeaderGridView', array(
-                'dataProvider'=>$registration->search($columns),
+                'dataProvider'=>$registration->search($columns, false),
                 'columns'=>$columns,
               )); ?>
             </div>

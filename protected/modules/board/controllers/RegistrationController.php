@@ -60,6 +60,46 @@ class RegistrationController extends AdminController {
 		));
 	}
 
+	public function actionExportLiveData() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$model->formatEvents();
+		if (Yii::app()->request->getRequestType() === 'POST') {
+			$this->exportLiveData($model, $this->iPost('xlsx'));
+		}
+		$this->render('exportLiveData', array(
+			'model'=>$model,
+			'competition'=>$model,
+		));
+	}
+
+	public function actionLiveScoreCard() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		if (isset($_POST['event'])) {
+			$this->pagePerStack = $this->iPost('stack', 10);
+			$this->exportLiveScoreCard($model, $this->sPost('event'), $this->sPost('round'));
+		}
+		$this->render('scoreCard', array(
+			'model'=>$model,
+			'competition'=>$model,
+		));
+	}
+
 	public function actionScoreCard() {
 		$id = $this->iGet('id');
 		$model = Competition::model()->findByPk($id);
@@ -72,7 +112,7 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['order'])) {
 			$this->pagePerStack = $this->iPost('stack', 50);
-			$this->exportScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
+			$this->exportAllScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
 		}
 		$this->render('scoreCard', array(
 			'model'=>$model,
@@ -158,7 +198,7 @@ class RegistrationController extends AdminController {
 							'argb'=>'FFFFFF00',
 						),
 					),
-		 		));
+				));
 			}
 		}
 		$export->addExternalSheet($sheet);
@@ -208,7 +248,7 @@ class RegistrationController extends AdminController {
 										'argb'=>'FFFFFF00',
 									),
 								),
-					 		));
+							));
 						}
 						$row++;
 					}
@@ -219,58 +259,252 @@ class RegistrationController extends AdminController {
 		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx);
 	}
 
-	public function exportScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
-		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$tempPath = Yii::app()->runtimePath;
-		$templatePath = APP_PATH . '/public/static/score-card.xlsx';
-		$scoreCard = PHPExcel_IOFactory::load($templatePath);
-		$scoreCard->getProperties()
+	public function exportLiveData($competition, $xlsx = false) {
+		$liveResults = LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$competition->id,
+		), array(
+			'condition'=>'best != 0',
+		));
+		$registrations = array();
+		$events = array();
+		foreach ($liveResults as $liveResult) {
+			$key = $liveResult->user_type . '_' . $liveResult->user->id;
+			$round = $liveResult->eventRound;
+			if (!isset($registrations[$key])) {
+				$registrations[$key] = array(
+					'user'=>$liveResult->user,
+					'number'=>$liveResult->number,
+					'events'=>array(),
+				);
+			}
+			if (!isset($events[$liveResult->event])) {
+				$events[$liveResult->event] = array(
+					'event'=>$liveResult->wcaEvent,
+					'rounds'=>array(),
+				);
+			}
+			if (!isset($events[$liveResult->event]['rounds'][$liveResult->round])) {
+				$events[$liveResult->event]['rounds'][$liveResult->round] = array(
+					'round'=>$liveResult->wcaRound,
+					'format'=>$round->format,
+					'results'=>array(),
+				);
+			}
+			$events[$liveResult->event]['rounds'][$liveResult->round]['results'][] = $liveResult;
+			$registrations[$key]['events'][$liveResult->event] = $liveResult->event;
+		}
+		usort($registrations, function($regA, $regB) {
+			return $regA['number'] - $regB['number'];
+		});
+		//sort event
+		uasort($events, function($eventA, $eventB) {
+			if ($eventA['event'] && $eventB['event']) {
+				$temp = $eventA['event']->rank - $eventB['event']->rank;
+			} elseif ($eventA && !$eventB) {
+				$temp = -1;
+			} elseif (!$eventA && $eventB) {
+				$temp = 1;
+			} else {
+				$temp = 0;
+			}
+			return $temp;
+		});
+		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
+		$export = new PHPExcel();
+		$export->getProperties()
 			->setCreator(Yii::app()->params->author)
 			->setLastModifiedBy(Yii::app()->params->author)
 			->setTitle($competition->wca_competition_id ?: $competition->name)
 			->setSubject($competition->name);
-		$sheet = $scoreCard->getSheet(0);
-		$drawingCollection = $sheet->getDrawingCollection();
-		foreach ($drawingCollection as $i=>$drawing) {
-			$drawing->setWidthAndHeight(0, 0);
-		}
-		$rowHeights = array();
-		$xfIndexes = array();
-		$oneCardRow = 11;
-		for ($row = 1; $row <= $oneCardRow; $row++) {
-			$height = $sheet->getRowDimension($row)->getRowHeight();
-			if ($height === -1) {
-				$height = isset($rowHeights[$row - 1]) ? $rowHeights[$row - 1] - 1 : 10;
-			}
-			$rowHeights[$row] = $height;
-			$xfIndexes[$row] = array();
-			for ($col = 'A'; strcmp($col, 'K') != 0; $col++) {
-				$xfIndexes[$row][$col] = $sheet->getCell($col . $row)->getXfIndex();
-			}
-		}
-		//fix the height of last row
-		$rowHeights[$oneCardRow] = 10.75;
-		$staticCells = array(
-			'A2', 'D2', 'F2',
-			'A3', 'B3', 'C3', 'D3', 'E3', 'F3', 'G3', 'H3', 'I3', 'J3',
-			'A4', 'B4', 'C4', 'D4', 'E4', 'F4', 'G4', 'H4', 'I4', 'J4',
-			'A5', 'A6', 'A7', 'A8', 'A9',
-			'A10',
+		$export->removeSheetByIndex(0);
+		//注册页
+		$sheet = $template->getSheet(0);
+		$sheet->setCellValue('A1', $competition->wca_competition_id ?: $competition->name);
+		$col = 'J';
+		$cubecompsEvents = array(
+			'333'=>'3x3',
+			'444'=>'4x4',
+			'555'=>'5x5',
+			'666'=>'6x6',
+			'777'=>'7x7',
+			'222'=>'2x2',
+			'333bf'=>'333bld',
+			'333fm'=>'fmc',
+			'minx'=>'mega',
+			'pyram'=>'pyra',
+			'444bf'=>'444bld',
+			'555bf'=>'555bld',
+			'333mbf'=>'333mlt',
 		);
-		$values = array();
-		foreach ($staticCells as $cell) {
-			$value = $sheet->getCell($cell)->getValue();
-			$template = preg_replace('{\d+}', '{row}', $cell);
-			$row = preg_replace('{[A-Z]}', '', $cell);
-			$values[] = array(
-				'value'=>$value,
-				'template'=>$template,
-				'row'=>$row,
-			);
+		foreach ($events as $event=>$value) {
+			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
+			$sheet->setCellValue($col . 3, $value['event'] ? (isset($cubecompsEvents[$value['event']->id]) ? $cubecompsEvents[$value['event']->id] : $value['event']->id) : $event);
+			$sheet->getColumnDimension($col)->setWidth(5.5);
+			$col++;
 		}
-		$this->scoreCardInfo = compact('rowHeights', 'xfIndexes', 'values', 'drawingCollection');
-		$i = 0;
-		$count = 0;
+		foreach ($registrations as $key=>$registration) {
+			$user = $registration['user'];
+			$row = $key + 4;
+			$sheet->setCellValue('A' . $row, $registration['number'])
+				->setCellValue('B' . $row, $user->getCompetitionName())
+				->setCellValue('C' . $row, $user->country->name)
+				->setCellValue('D' . $row, $user->wcaid)
+				->setCellValue('E' . $row, $user->getWcaGender())
+				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
+					date('Y', $user->birthday),
+					date('m', $user->birthday),
+					date('d', $user->birthday)
+				));
+			$col = 'J';
+			foreach ($events as $event=>$value) {
+				if (in_array($event, $registration['events'])) {
+					$sheet->setCellValue($col . $row, 1);
+				}
+				$col++;
+			}
+		}
+		$export->addExternalSheet($sheet);
+		//各个项目
+		$compare = function($resA, $resB) {
+			$temp = 0;
+			$format = $resA->eventRound->format;
+			if ($format == 'm' || $format == 'a') {
+				if ($resA->average > 0 && $resB->average <= 0) {
+					return -1;
+				}
+				if ($resB->average > 0 && $resA->average <= 0) {
+					return 1;
+				}
+				$temp = $resA->average - $resB->average;
+			}
+			if ($temp == 0) {
+				if ($resA->best > 0 && $resB->best <= 0) {
+					return -1;
+				}
+				if ($resB->best > 0 && $resA->best <= 0) {
+					return 1;
+				}
+				$temp = $resA->best - $resB->best;
+			}
+			if ($temp == 0) {
+				$temp = $resA->user->name < $resB->user->name ? -1 : 1;
+			}
+			return $temp;
+		};
+		foreach ($events as $event=>$value) {
+			usort($value['rounds'], function($roundA, $roundB) {
+				return $roundA['round']->rank - $roundB['round']->rank;
+			});
+			foreach ($value['rounds'] as $round) {
+				$formatName = Events::getExportFormat($event, $round['format']);
+				$sheet = $template->getSheetByName($formatName);
+				if ($sheet === null) {
+					continue;
+				}
+				$sheet = clone $sheet;
+				$sheet->setTitle("{$event}-{$round['round']->id}");
+				$template->addSheet($sheet);
+				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . Rounds::getFullRoundName($round['round']->id));
+				usort($round['results'], $compare);
+				$row = 5;
+				$num = Formats::getFormatNum($round['format']);
+				foreach ($round['results'] as $result) {
+					//user info
+					$user = $result->user;
+					$sheet->setCellValue('B' . $row, $user->getCompetitionName())
+						->setCellValue('C' . $row, $user->country->name)
+						->setCellValue('D' . $row, $user->wcaid)
+						->setCellValue('Z' . $row, $result->number);
+					//result
+					$col = 'E';
+					if ($result->event === '333mbf') {
+						for ($i = 1; $i <= $result->eventRound->format; $i++) {
+							$value = $result->{'value' . $i};
+							if ($value == -1 || $value == -2) {
+								//tried
+								$sheet->setCellValue($col . $row, LiveResult::formatTime($value, $result->event));
+								$col++;
+								//solved
+								$sheet->setCellValue($col . $row, 0);
+								$col++;
+								//seconds
+								$sheet->setCellValue($col . $row, 0);
+								$col++;
+								$col++;
+
+							} else {
+								$difference = 99 - substr($value, 0, 2);
+								$missed = intval(substr($value, -2));
+								$seconds = intval(substr($value, 3, -2));
+								$solved = $difference + $missed;
+								$tried = $solved + $missed;
+								//tried
+								$sheet->setCellValue($col . $row, $tried);
+								$col++;
+								//solved
+								$sheet->setCellValue($col . $row, $solved);
+								$col++;
+								//seconds
+								$sheet->setCellValue($col . $row, $seconds);
+								$col++;
+								$col++;
+							}
+						}
+					} else {
+						for ($i = 1; $i <= $num; $i++) {
+							$sheet->setCellValue($col . $row, LiveResult::formatTime($result->{'value' . $i}, $result->event));
+							$col++;
+						}
+					}
+					if ($row > 5) {
+						$formula = $sheet->getCell('A' . ($row - 1))->getValue();
+						$formula = strtr($formula, array(
+							'-4'=>'_temp_',
+							$row - 1=>$row,
+							$row - 2=>$row - 1,
+							$row=>$row+1,
+						));
+						$formula = str_replace('_temp_', '-4', $formula);
+						$sheet->setCellValue('A' . $row, $formula);
+						//formula for best and average
+						while ($col != 'R') {
+							$formula = $sheet->getCell($col . ($row - 1))->getValue();
+							if (strpos($formula, '=') === 0) {
+								$formula = strtr($formula, array(
+									$row - 1=>$row,
+								));
+								$sheet->setCellValue($col . $row, $formula);
+							}
+							$col++;
+						}
+					}
+					$row++;
+				}
+				$export->addExternalSheet($sheet);
+			}
+		}
+		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx, true);
+	}
+
+	public function exportLiveScoreCard($competition, $event, $round) {
+		$liveResults = LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$competition->id,
+			'event'=>$event,
+			'round'=>$round,
+		], [
+			'order'=>'number'
+		]);
+		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $round);
+	}
+
+	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
+		$registrations = Registration::getRegistrations($competition, $all, $order);
+		$this->exportScoreCard($competition, $registrations, $split, $direction);
+	}
+
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $roundName = '1st') {
+		$tempPath = Yii::app()->runtimePath;
+		$scoreCards = [];
 		if ($split === 'event') {
 			$competition->formatEvents();
 			foreach ($competition->events as $event=>$value) {
@@ -284,8 +518,10 @@ class RegistrationController extends AdminController {
 					if (!in_array("$event", $registration->events)) {
 						continue;
 					}
-					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
-					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
+					$scoreCards[] = [
+						'registration'=>$registration,
+						'event'=>$event,
+					];
 				}
 			}
 		} else {
@@ -294,189 +530,211 @@ class RegistrationController extends AdminController {
 					if ($event === '333fm') {
 						continue;
 					}
-					$this->fillScoreCard($competition, $sheet, $direction, $i, $registration, $event);
-					$this->splitScoreCard($scoreCard, $sheet, $count, $i, $competition);
+					$scoreCards[] = [
+						'registration'=>$registration,
+						'event'=>$event,
+					];
 				}
 			}
 		}
-		if ($direction !== 'horizontal') {
-			$temp = self::CARD_PER_PAGE * $this->pagePerStack;
-			$total = ceil($i / $temp) * $temp;
-		} else {
-			$total = ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE;
-		}
-		while ($i < $total) {
-			$this->fillScoreCard($competition, $sheet, $direction, $i);
-			$i++;
-		}
-		if ($count == 0) {
-			$sheet->getPageSetup()->setPrintArea('A1:J' . (ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE * self::ROW_PER_CARD));
-			$this->exportToExcel($scoreCard, 'php://output', $competition->name);
-		} else {
-			//压缩成zip
-			$path = $tempPath . '/' . $competition->name . ".$count.xlsx";
-			$this->exportToExcel($scoreCard, $path);
-			//释放内存
-			$scoreCard->disconnectWorksheets();
-			unset($scoreCard, $sheet);
-			$count++;
-			$zip = new ZipArchive();
-			$tempName = tempnam($tempPath, 'scoreCardTmp');
-			if ($zip->open($tempName, ZipArchive::CREATE) !== true) {
-				throw new CHttpException(500, '创建压缩文件失败');
-			}
-			$dir = 'score-card';
-			$zip->addEmptyDir($dir);
-			for ($i = 0; $i < $count; $i++) {
-				$path = $tempPath . '/' . $competition->name . ".$i.xlsx";
-				$zip->addFile($path, $dir. '/' . basename($path));
-			}
-			$zip->close();
-			header('Content-Type: application/zip');
-			header('Content-Disposition: attachment;filename="' . $competition->name . '.zip"');
-			readfile($tempName);
-			//删除临时文件
-			for ($i = 0; $i < $count; $i++) {
-				$path = $tempPath . '/' . $competition->name . ".$i.xlsx";
-				unlink($path);
-			}
-			unlink($tempName);
-			exit;
-		}
-	}
-
-	private function splitScoreCard(&$scoreCard, &$sheet, &$count, &$i, $competition) {
-		$i++;
-		//200页做个分割
-		if ($i == 600) {
-			$path = Yii::app()->runtimePath . '/' . $competition->name . ".$count.xlsx";
-			$sheet->getPageSetup()->setPrintArea('A1:J' . (ceil($i / self::CARD_PER_PAGE) * self::CARD_PER_PAGE * self::ROW_PER_CARD));
-			$this->exportToExcel($scoreCard, $path);
-			//释放内存
-			$scoreCard->disconnectWorksheets();
-			// unset($scoreCard, $sheet);
-			$count++;
+		$pdf = new mPDF();
+		$pdf->useAdobeCJK = true;
+		$pdf->autoScriptToLang = true;
+		$pdf->autoLangToFont = true;
+		// $pdf->simpleTables = true;
+		$stylesheet = file_get_contents(Yii::getPathOfAlias('application.data') . '/scord-card.css');
+		$pdf->WriteHTML($stylesheet, 1);
+		foreach (array_chunk($scoreCards, $this->pagePerStack * self::CARD_PER_PAGE) as $scoreCards) {
+			$count = count($scoreCards);
 			$i = 0;
-			//新开excel
-			$scoreCard = PHPExcel_IOFactory::load(APP_PATH . '/public/static/score-card.xlsx');
-			$scoreCard->getProperties()
-				->setCreator(Yii::app()->params->author)
-				->setLastModifiedBy(Yii::app()->params->author)
-				->setTitle($competition->wca_competition_id ?: $competition->name)
-				->setSubject($competition->name);
-			$sheet = $scoreCard->getSheet(0);
-			//修复图片宽高及偏移
-			$drawingCollection = $sheet->getDrawingCollection();
-			foreach ($drawingCollection as $drawing) {
-				$drawing->setWidthAndHeight(0, 0);
+			$pagePerStack = min($this->pagePerStack, ceil($count / self::CARD_PER_PAGE));
+			while ($i < $count) {
+				if ($direction == 'horizontal') {
+					$n = $i;
+				} else {
+					$j = floor($i / self::CARD_PER_PAGE);
+					$k = $i % self::CARD_PER_PAGE;
+					$n = intval($k * $pagePerStack + $j);
+				}
+				$scoreCard = $scoreCards[$n];
+				$this->fillScoreCard($pdf, $competition, $scoreCard, $roundName);
+				$i++;
+				if ($i % self::CARD_PER_PAGE == 0 && $i < $count) {
+					$pdf->AddPage();
+				}
 			}
-			$this->scoreCardInfo['drawingCollection'] = $drawingCollection;
 		}
+		$pdf->Output($competition->name_zh . '成绩条.pdf', 'D');
 	}
 
-	private function fillScoreCard($competition, $sheet, $direction, $i, $registration = null, $event= '') {
-		$oneCardRow = self::ROW_PER_CARD;
-		if ($direction === 'horizontal') {
-			$baseRow = $i * $oneCardRow;
-		} else {
-			//n张一摞
-			$temp = self::CARD_PER_PAGE * $this->pagePerStack;
-			$group = floor($i / $temp);
-			$subGroup = $i % $temp;
-			$x = floor($subGroup / $this->pagePerStack);
-			$y = $subGroup % $this->pagePerStack;
-			$baseRow = $oneCardRow * ($group * $temp + $y * self::CARD_PER_PAGE + $x);
-		}
-		//merge cells
-		//wcaid
-		$sheet->mergeCells(sprintf('I%d:J%d', $baseRow + 1, $baseRow + 1));
-		//event
-		$sheet->mergeCells(sprintf('B%d:C%d', $baseRow + 2, $baseRow + 2));
-		//name
-		$sheet->mergeCells(sprintf('G%d:I%d', $baseRow + 2, $baseRow + 2));
+	private function fillScoreCard($pdf, $competition, $scoreCard, $roundName = '1st') {
+		$registration = $scoreCard['registration'];
+		$user = $registration->user;
+		$event = $scoreCard['event'];
+		$imageDir = Yii::getPathOfAlias('application.data.penalty-images');
+		ob_start();
+		ob_implicit_flush(false);
+		echo CHtml::openTag('table');
+		echo CHtml::openTag('tbody');
 
-		//调整各行高度及样式
-		for ($j = 1; $j <= $oneCardRow; $j++) {
-			$row = $baseRow + $j;
-			$sheet->getRowDimension($row)->setRowHeight($this->scoreCardInfo['rowHeights'][$j]);
-			foreach ($this->scoreCardInfo['xfIndexes'][$j] as $col=>$xfIndex) {
-				$sheet->getCell($col . $row)->setXfIndex($xfIndex);
-			}
-		}
-		//填写固定内容
-		foreach ($this->scoreCardInfo['values'] as $value) {
-			$row = $baseRow + $value['row'];
-			$cell = str_replace('{row}', $row, $value['template']);
-			$sheet->setCellValue($cell, $value['value']);
-		}
-		//比赛名字
-		$row = $baseRow + 1;
-		$sheet->setCellValue("A{$row}", sprintf('%s成绩条 - %s Score Card', $competition->name_zh, $competition->name));
-		if ($registration !== null) {
-			$user = $registration->user;
-			$sheet->setCellValue("I{$row}", $user->wcaid);
-			//项目、轮次、编号等
-			$row = $baseRow + 2;
-			$eventName = Events::getFullEventName($event);
-			$eventName = sprintf('%s %s', Yii::t('event', $eventName), $event);
-			$sheet->setCellValue("B{$row}", $eventName);
-			$sheet->setCellValue("E{$row}", '1st');
-			$sheet->setCellValue("J{$row}", 'No.' . $registration->number);
-			$sheet->getStyle("J{$row}")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->setCellValue("G{$row}", $user->country_id <= 4 && $user->name_zh ? $user->name_zh : $user->name);
-		}
-		//8个图片
-		$row = $baseRow + 3;
-		$col = 'D';
-		for ($j = 0; $j < 4; $j++) {
-			$drawing = new PHPExcelDrawing();
-			$drawing->setImageIndex($this->scoreCardInfo['drawingCollection'][$j]->getImageIndex());
-			$drawing->setWorksheet($sheet);
-			$drawing->setPath($this->scoreCardInfo['drawingCollection'][$j]->getPath(), false);
-			$drawing->setResizeProportional(false);
-			$drawing->setCoordinates("{$col}{$row}");
-			$drawing->setWidth($this->imageStyle[0]['width'])->setHeight($this->imageStyle[0]['height']);
-			$drawing->setOffsetX($this->imageStyle[0]['offsetX'])->setOffsetY($this->imageStyle[0]['offsetY']);
-			$col++;
-		}
-		$row = $baseRow + 4;
-		$col = 'D';
-		for ($j = 4; $j < 8; $j++) {
-			$drawing = new PHPExcelDrawing();
-			$drawing->setImageIndex($this->scoreCardInfo['drawingCollection'][$j]->getImageIndex());
-			$drawing->setWorksheet($sheet);
-			$drawing->setPath($this->scoreCardInfo['drawingCollection'][$j]->getPath(), false);
-			$drawing->setResizeProportional(false);
-			$drawing->setCoordinates("{$col}{$row}");
-			$drawing->setWidth($this->imageStyle[1]['width'])->setHeight($this->imageStyle[1]['height']);
-			$drawing->setOffsetX($this->imageStyle[1]['offsetX'])->setOffsetY($this->imageStyle[1]['offsetY']);
-			$col++;
-		}
-	}
+		//competition name and wcaid
+		echo CHtml::openTag('tr');
+		echo CHtml::openTag('td', [
+			'colspan'=>8,
+			'class'=>'tal no-bd'
+		]);
+		echo sprintf('%s - %s', $competition->name_zh, $competition->name);
+		echo CHtml::closeTag('td');
+		echo CHtml::openTag('td', [
+			'colspan'=>2,
+			'class'=>'no-bd'
+		]);
+		echo $user->wcaid;
+		echo CHtml::closeTag('td');
+		echo CHtml::closeTag('tr');
 
-	private function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true) {
-		$download = $path === 'php://output';
-		$excel->setActiveSheetIndex(0);
-		Yii::app()->controller->setIsAjaxRequest(true);
-		if ($xlsx) {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-		} else {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+		//event, round, name and number
+		echo CHtml::openTag('tr');
+		echo CHtml::tag('td', [
+		], '项目<br>Event');
+		echo CHtml::openTag('td', [
+			'colspan'=>2,
+			'class'=>'bdld',
+		]);
+		echo Yii::t('event', Events::getFullEventName($event)) . ' ' . $event;
+		echo CHtml::closeTag('td');
+		echo CHtml::tag('td', [
+		], '轮次<br>Round');
+		echo CHtml::tag('td', [
+			'class'=>'bdld',
+		], $roundName);
+		echo CHtml::tag('td', [
+		], '姓名<br>Name');
+		echo CHtml::openTag('td', [
+			'colspan'=>3,
+			'class'=>'bdld',
+		]);
+		echo $user->country_id <= 4 && $user->name_zh ? $user->name_zh : $user->name;
+		echo CHtml::closeTag('td');
+		echo CHtml::tag('td', [
+			'class'=>'bdr'
+		], 'No.' . $registration->number);
+		echo CHtml::closeTag('tr');
+
+		//headers
+		echo CHtml::openTag('tr');
+		echo CHtml::tag('td', [
+			'rowspan'=>2,
+		], '次序<br>Trial');
+		echo CHtml::tag('td', [
+			'class'=>'signature',
+			'rowspan'=>2,
+		], '打乱员<br>Scrambler');
+		echo CHtml::tag('td', [
+			'class'=>'time',
+			'rowspan'=>2,
+		], '显示时间<br>Display Time');
+		//@todo 4 pics
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/1.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/2.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/3.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/4.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::tag('td', [
+			'class'=>'time',
+			'rowspan'=>2,
+		], '最终时间<br>Final Time');
+		echo CHtml::tag('td', [
+			'class'=>'signature',
+			'rowspan'=>2,
+		], '裁判员<br>Judge');
+		echo CHtml::tag('td', [
+			'class'=>'bdr signature',
+			'rowspan'=>2,
+		], '选手核实<br>Competitor');
+		echo CHtml::closeTag('tr');
+
+		echo CHtml::openTag('tr');
+		//@todo 4 pics
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/5.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/6.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/7.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::openTag('td', [
+			'class'=>'penalty',
+		]);
+		echo CHtml::image($imageDir . '/8.png', '', [
+			'width'=>45
+		]);
+		echo CHtml::closeTag('tr');
+
+		//5 trials
+		for ($i = 0; $i < 5; $i++) {
+			echo CHtml::openTag('tr');
+			echo CHtml::tag('td', [
+				'class'=>'trial-no'
+			], $i + 1);
+			echo CHtml::tag('td', []);
+			echo CHtml::tag('td', []);
+			//@todo 4 pics
+			echo CHtml::tag('td', [
+				'colspan'=>4,
+			]);
+			echo CHtml::tag('td', [
+				'class'=>'bd2 bd2-' . ($i + 1)
+			]);
+			echo CHtml::tag('td', []);
+			echo CHtml::tag('td', [
+				'class'=>'bdr'
+			]);
+			echo CHtml::closeTag('tr');
 		}
-		if ($download) {
-			if ($xlsx) {
-				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
-			} else {
-				header('Content-Type: application/vnd.ms-excel');
-				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
-			}
-		}
-		$writer->setPreCalculateFormulas(false);
-		$writer->save($path);
-		if ($download) {
-			exit;
-		}
+
+		//remark
+		echo CHtml::openTag('tr');
+		echo CHtml::tag('td', [
+			'class'=>'tal bdr remark',
+			'colspan'=>10,
+		], '备注 Remark:');
+		echo CHtml::closeTag('tr');
+
+		echo CHtml::closeTag('tbody');
+		echo CHtml::closeTag('table');
+		$table = ob_get_clean();
+		$pdf->WriteHTML($table, 2);
 	}
 
 	public function actionSendNotice() {
@@ -540,6 +798,10 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
+			$model->avatar_type = isset($_POST['Registration']['avatar_type']) ? $_POST['Registration']['avatar_type'] : 0;
+			if ($model->competition->require_avatar && $model->avatar_type == Registration::AVATAR_TYPE_NOW) {
+				$model->avatar_id = $model->user->avatar_id;
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新报名信息成功');
 				$this->redirect(array('/board/registration/index', 'Registration'=>array(
@@ -618,7 +880,7 @@ class RegistrationController extends AdminController {
 		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
 			throw new CHttpException(401, 'Unauthorized');
 		}
-		if ($this->user->role != User::ROLE_ADMINISTRATOR && $attribute == 'status' && ($competition->isRegistrationFull() || $competition->isRegistrationEnded())) {
+		if ($this->user->role != User::ROLE_ADMINISTRATOR && $attribute == 'status' && !$competition->canRegister()) {
 			throw new CHttpException(401, '报名已截止，如需变更请联系代表或管理员');
 		}
 		$model->$attribute = 1 - $model->$attribute;

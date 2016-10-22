@@ -24,13 +24,17 @@
       ); ?>
       <?php $this->endWidget(); ?>
       <?php if ($model->competition !== null): ?>
+      <?php if ($model->competition->live && $model->competition->liveResults != array()): ?>
+      <?php echo CHtml::link('导出直播成绩表', array('/board/registration/exportLiveData', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-orange')); ?>
+      <?php endif; ?>
       <?php echo CHtml::link('导出成绩表及名单', array('/board/registration/export', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-purple')); ?>
       <?php echo CHtml::link('导出初赛成绩单', array('/board/registration/scoreCard', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-green')); ?>
       <?php echo CHtml::link('发邮件给选手', array('/board/registration/sendNotice', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-blue')); ?>
       <?php endif; ?>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
-        'dataProvider'=>$model->search($columns),
+        'dataProvider'=>$model->search($columns, false, true),
+        'template'=>'{pager}{items}{pager}',
         // 'filter'=>$model,
         'columns'=>$columns,
       )); ?>

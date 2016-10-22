@@ -3,6 +3,7 @@ protected/runtime/*
 protected/composer.lock
 protected/config/wcaDb
 protected/commands/shell/last
+protected/bin
 public/.htaccess
 .tag*
 

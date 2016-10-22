@@ -1,6 +1,6 @@
 <?php
 $this->widget('GroupRankGridView', array(
-  'dataProvider'=>new CArrayDataProvider($results, array(
+  'dataProvider'=>new CArrayDataProvider($byPerson, array(
     'pagination'=>false,
     'sort'=>false,
   )),

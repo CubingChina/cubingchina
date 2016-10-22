@@ -64,7 +64,7 @@ $config = array(
 						'name'=>'Asian-Championship-2016',
 					),
 				),
-				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration>'=>array(
+				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration|scan>'=>array(
 					'competition/<action>',
 					'defaultParams'=>array(
 						'name'=>'Asian-Championship-2016',
@@ -83,14 +83,16 @@ $config = array(
 					'urlSuffix'=>'.html'
 				),
 				'competition/<action:signin>'=>'competition/<action>',
-				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration>'=>'competition/<action>',
+				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
+				'live/<name:[-A-z0-9]+>/statistics/<type:[-A-z0-9]+>'=>'live/statistics',
 				'live/<name:[-A-z0-9]+>'=>'live/live',
+				'live/<name:[-A-z0-9]+>/<action:\w+>'=>'live/<action>',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
-				'pay/<action:notify|frontNotify>/<channel:nowPay|alipay>'=>'pay/<action>',
+				'pay/<action:notify|frontNotify>/<channel:\w+>'=>'pay/<action>',
 				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
 				'board'=>'board/competition/index',
 				'<controller:\w+>'=>'<controller>/index',
@@ -102,6 +104,10 @@ $config = array(
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
+			'hashKey'=>false,
+			'hostname'=>'localhost',
+			'port'=>6379,
+			'database'=>1,
 		),
 		'db'=>array(
 			'connectionString'=>'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
@@ -242,7 +248,7 @@ $config = array(
 				'leaflet'=>array(
 					'baseUrl'=>'f',
 					'css'=>array(
-						'leaflet/leaflet.css',
+						'leaflet/leaflet.css?20161009',
 						'leaflet/plugins/MarkerCluster/MarkerCluster.css',
 						'leaflet/plugins/MarkerCluster/MarkerCluster.Default.css',
 					),
@@ -280,34 +286,29 @@ $config = array(
 		),
 		'weiboSharePic'=>'http://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
-		'staticUrlPrefix'=>0 ? '/static/' : 'http://s.cubingchina.com/',
-		'jsVer'=>'20160528',
-		'cssVer'=>'20160528',
+		'staticUrlPrefix'=>DEV ? '/static/' : 'http://s.cubingchina.com/',
+		'jsVer'=>'20161002',
+		'cssVer'=>'20161009',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,
 			'width'=>1200,
 		),
-		'nowPay'=>array(
-			'baseUrl'=>'http://api.ipaynow.cn/',
-			'types'=>array(
-				'pc'=>array(
-					'appId'=>'1436844603321385',
-					'securityKey'=>Env::get('PAYMENT_NOWPAY_PC'),
-					'deviceType'=>'02',
-				),
-				'mobile'=>array(
-					'appId'=>'1436844653265386',
-					'securityKey'=>Env::get('PAYMENT_NOWPAY_MOBILE'),
-					'deviceType'=>'06',
-				),
+		'payments'=>array(
+			'balipay'=>array(
+				'gateway'=>'https://mapi.alipay.com/gateway.do',
+				'partner'=>'2088221302462792',
+				'seller_id'=>'2088221302462792',
+				'key'=>Env::get('PAYMENT_BALIPAY'),
+				'img'=>'/f/images/pay/alipay.png',
 			),
-		),
-		'alipay'=>array(
-			'gateway'=>'https://mapi.alipay.com/gateway.do',
-			'partner'=>'2088002487607846',
-			'seller_email'=>'qiyuuu@gmail.com',
-			'key'=>Env::get('PAYMENT_ALIPAY'),
+			// 'alipay'=>array(
+			// 	'gateway'=>'https://mapi.alipay.com/gateway.do',
+			// 	'partner'=>'2088002487607846',
+			// 	'seller_email'=>'qiyuuu@gmail.com',
+			// 	'key'=>Env::get('PAYMENT_ALIPAY'),
+			// 	'active'=>false,
+			// ),
 		),
 		'regulations'=>array(
 			'common'=>array(

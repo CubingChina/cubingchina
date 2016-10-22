@@ -32,13 +32,19 @@
     <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if (!empty($listableSchedules)): ?>
-  <?php if ($hasManyStages): ?>
+  <?php if ($hasManyStages || $userSchedules != []): ?>
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
-    <li><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
+    <?php if ($hasManyStages): ?>
+    <li<?php if ($userSchedules == []) echo ' class="active"'; ?>><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
+    <?php endif; ?>
+    <li<?php if (!$hasManyStages && $userSchedules == []) echo ' class="active"'; ?>><a href="#old-style" data-toggle="tab"><?php echo Yii::t('common', 'Schedule'); ?></a></li>
+    <?php if ($userSchedules != []): ?>
+    <li<?php if ($userSchedules != []) echo ' class="active"'; ?>><a href="#user"data-toggle="tab"><?php echo Yii::t('common', 'My Schedule'); ?></a></li>
+    <?php endif; ?>
   </ul>
   <div class="tab-content schedule">
-    <div class="tab-pane active" id="concise">
+    <?php if ($hasManyStages): ?>
+    <div class="tab-pane<?php if ($userSchedules == []) echo ' active'; ?>" id="concise">
       <?php foreach ($listableSchedules as $day=>$schedules): ?>
       <div class="panel panel-info">
         <div class="panel-heading">
@@ -53,7 +59,8 @@
       </div>
       <?php endforeach;?>
     </div>
-    <div class="tab-pane" id="old-style">
+    <?php endif; ?>
+    <div class="tab-pane<?php if (!$hasManyStages && $userSchedules == []) echo ' active'; ?>" id="old-style">
   <?php endif; ?>
       <?php foreach ($listableSchedules as $day=>$stages): ?>
       <div class="panel panel-info">
@@ -82,8 +89,39 @@
         </div>
       </div>
       <?php endforeach; ?>
-  <?php if ($hasManyStages): ?>
+  <?php if ($hasManyStages || $userSchedules != []): ?>
     </div>
+    <?php if ($userSchedules != []): ?>
+    <div class="tab-pane active" id="user">
+      <?php foreach ($userSchedules as $day=>$stages): ?>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo date('Y-m-d', $competition->date + ($day - 1) * 86400); ?></h3>
+        </div>
+        <div class="panel-body">
+          <?php foreach ($stages as $stage=>$schedules): ?>
+          <?php if ($hasManyStages): ?>
+          <h3><?php echo Schedule::getStageText($stage); ?></h3>
+          <?php endif; ?>
+          <?php $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($schedules, array(
+              'pagination'=>false,
+            )),
+            'enableSorting'=>false,
+            'front'=>true,
+            'rowCssClassExpression'=>'"event-" . $data["event"]',
+            'rowHtmlOptionsExpression'=>'array(
+              "data-round"=>$data["round"],
+            )',
+            'columns'=>$competition->getScheduleColumns($schedules),
+          ));
+          ?>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
   <?php else: ?>

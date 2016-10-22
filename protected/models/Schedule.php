@@ -38,9 +38,20 @@ class Schedule extends ActiveRecord {
 		return array_search($stage, array_keys(self::getStages()));
 	}
 
+	public function getTime($offset) {
+		$chineseTime = $this->start_time;
+		$time = $chineseTime + $offset;
+		$time = date('H:i', $time);
+		return $time;
+	}
+
 	public function getRealFormat() {
 		$formats = explode('/', $this->format);
-		return isset($formats[1]) ? $formats[1] : $formats[0];
+		$format = isset($formats[1]) ? $formats[1] : $formats[0];
+		if (empty($format)) {
+			$format = 'a';
+		}
+		return $format;
 	}
 
 	/**
@@ -57,7 +68,7 @@ class Schedule extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competition_id, start_time, end_time, event, format, round, number, cut_off, time_limit', 'required'),
+			array('competition_id, start_time, end_time, event, format, round', 'required'),
 			array('competition_id, day, cumulative', 'numerical', 'integerOnly'=>true),
 			array('stage, start_time, end_time, group, format, round, cut_off, time_limit', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>32),
@@ -74,6 +85,9 @@ class Schedule extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
+			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
+			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
 		);
 	}
 

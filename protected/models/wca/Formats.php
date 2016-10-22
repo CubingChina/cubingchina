@@ -8,7 +8,15 @@
  * @property string $name
  */
 class Formats extends ActiveRecord {
+	public static $formatNums = array(
+		'1'=>1,
+		'2'=>2,
+		'3'=>3,
+		'm'=>3,
+		'a'=>5,
+	);
 	private static $_allFormats;
+
 	public static function getFullFormatName($format) {
 		if (self::$_allFormats === null) {
 			self::$_allFormats = self::getAllFormats();
@@ -26,6 +34,10 @@ class Formats extends ActiveRecord {
 			'1'=>'Best of 1',
 			'2'=>'Best of 2',
 		);
+	}
+
+	public static function getFormatNum($format) {
+		return isset(self::$formatNums[$format]) ? self::$formatNums[$format] : 5;
 	}
 
 	public static function getDefaultFormat($event) {

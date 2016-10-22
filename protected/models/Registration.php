@@ -34,6 +34,9 @@ class Registration extends ActiveRecord {
 	const PASSPORT_TYPE_PASSPORT = 2;
 	const PASSPORT_TYPE_OTHER = 3;
 
+	const AVATAR_TYPE_SUBMMITED = 0;
+	const AVATAR_TYPE_NOW = 1;
+
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
 
@@ -57,6 +60,18 @@ class Registration extends ActiveRecord {
 			->group('FROM_UNIXTIME(r.date, "%k")')
 			->queryAll();
 		return $data;
+	}
+
+	public static function getAvatarTypes($competition) {
+		switch ($competition->require_avatar) {
+			case Competition::REQUIRE_AVATAR_ACA:
+				return array(
+					self::AVATAR_TYPE_SUBMMITED=>Yii::t('Registration', 'I have submitted my photo to ACA before and I do not need to change my photo.'),
+					self::AVATAR_TYPE_NOW=>Yii::t('Registration', 'I have submitted my photo to ACA before and now I want to change it. / I have not submitted my photo before.'),
+				);
+			default:
+				return array();
+		}
 	}
 
 	public static function getPassportTypes() {
@@ -194,6 +209,21 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function checkAvatarType() {
+		switch ($this->competition->require_avatar) {
+			case Competition::REQUIRE_AVATAR_ACA:
+				if ($this->avatar_type == self::AVATAR_TYPE_NOW) {
+					if ($this->user->avatar == null) {
+						$this->avatar_type = null;
+						$this->addError('avatar_type', '');
+					} else {
+						$this->avatar_id = $this->user->avatar_id;
+					}
+				}
+				break;
+		}
+	}
+
 	public function getEventsString($event) {
 		$str = '';
 		if (in_array($event, $this->events)) {
@@ -230,7 +260,7 @@ class Registration extends ActiveRecord {
 		if (empty($this->events)) {
 			return 0;
 		}
-		if ($this->isAccepted() && !$recalculate) {
+		if (($this->isAccepted() || $this->paid) && !$recalculate) {
 			return $this->total_fee;
 		}
 		$competition = $this->competition;
@@ -332,8 +362,18 @@ class Registration extends ActiveRecord {
 					),
 					'type'=>'raw', 
 					'value'=>'date("Y-m-d", $data->user->birthday)', 
-				)
+				),
 			));
+			if ($this->competition->require_avatar != Competition::REQUIRE_AVATAR_NONE) {
+				array_splice($columns, 5, 0, array(
+					array(
+						'name'=>'avatar_type',
+						'header'=>Yii::t('common', 'Photo'),
+						'type'=>'raw', 
+						'value'=>'$data->getRegistrationAvatar()', 
+					)
+				));
+			}
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		$userLink = $isAdmin
@@ -404,6 +444,15 @@ class Registration extends ActiveRecord {
 		return $columns;
 	}
 
+	public function getRegistrationAvatar() {
+		switch ($this->avatar_type) {
+			case self::AVATAR_TYPE_SUBMMITED:
+				return Yii::t('common', 'Submitted');
+			case self::AVATAR_TYPE_NOW:
+				return $this->avatar->img;
+		}
+	}
+
 	public function getCommentsButton() {
 		if ($this->comments !== '') {
 			return CHtml::tag('button', array(
@@ -462,7 +511,11 @@ class Registration extends ActiveRecord {
 				'competition_id'=>$this->competition_id,
 				'status'=>self::STATUS_ACCEPTED,
 			), array(
-				'condition'=>'date<=' . $this->date,
+				'condition'=>'date<:date OR (date=:date AND id<=:id)',
+				'params'=>array(
+					':date'=>$this->date,
+					':id'=>$this->id,
+				),
 			));
 		} else {
 			return '-';
@@ -523,6 +576,11 @@ class Registration extends ActiveRecord {
 		return parent::beforeValidate();
 	}
 
+	protected function afterSave() {
+		parent::afterSave();
+		Yii::app()->cache->delete('competitors_' . $this->competition_id);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -535,7 +593,7 @@ class Registration extends ActiveRecord {
 	 */
 	public function rules() {
 		$rules = array(
-			array('location_id, competition_id, user_id, events, date', 'required'),
+			array('competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, passport_number', 'length', 'max'=>20),
 			array('events', 'length', 'max'=>512),
@@ -550,6 +608,13 @@ class Registration extends ActiveRecord {
 			$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
 			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
 		}
+		if ($this->competition_id > 0 && $this->competition->require_avatar) {
+			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
+			$rules[] = array('avatar_type', 'required', 'on'=>'register');
+		}
+		if ($this->competition_id > 0 && $this->competition->isMultiLocation()) {
+			$rules[] = array('location_id', 'required', 'on'=>'register');
+		}
 		return $rules;
 	}
 
@@ -563,7 +628,11 @@ class Registration extends ActiveRecord {
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
-			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', '', 'on'=>'t.competition_id=location.competition_id AND t.location_id=location.location_id'),
+			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
+			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
+			// 	'competition_id'=>'competition_id',
+			// 	'location_id'=>'location_id',
+			// ]),
 		);
 	}
 
@@ -605,7 +674,14 @@ class Registration extends ActiveRecord {
 
 	private function sortRegistration($rA, $rB) {
 		$attribute = self::$sortAttribute;
-		if ($attribute === 'country_id') {
+		$temp = 0;
+		if ($attribute === 'number') {
+			if ($rA->number > 0 && $rB->number === null) {
+				$temp = -1;
+			} elseif ($rA->number === null && $rB->number > 0) {
+				$temp = 1;
+			}
+		} elseif ($attribute === 'country_id') {
 			$temp = $rA->user->country_id - $rB->user->country_id;
 			if ($temp == 0) {
 				$temp = $rA->user->province_id - $rB->user->province_id;
@@ -639,10 +715,15 @@ class Registration extends ActiveRecord {
 			$temp = $rA->$attribute - $rB->$attribute;
 		}
 		if ($temp == 0) {
-			return $rA->number - $rB->number;
-		} else {
-			return $temp;
+			$temp = $rA->number - $rB->number;
 		}
+		if ($temp == 0) {
+			$temp = $rA->date - $rB->date;
+		}
+		if ($temp == 0) {
+			$temp = $rA->id - $rB->id;
+		}
+		return $temp;
 	}
 
 	/**
@@ -657,22 +738,28 @@ class Registration extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search(&$columns = array()) {
+	public function search(&$columns = array(), $enableCache = true, $pagination = false) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
+		$cacheKey = 'competitors_' . $this->competition_id;
+		$cache = Yii::app()->cache;
+		if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
+			$criteria = new CDbCriteria;
+			$criteria->order = 't.date';
+			$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
-		$criteria = new CDbCriteria;
-		$criteria->order = 't.date';
-		$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
-
-		$criteria->compare('t.id', $this->id,true);
-		$criteria->compare('t.competition_id', $this->competition_id);
-		$criteria->compare('t.user_id', $this->user_id);
-		$criteria->compare('t.events', $this->events,true);
-		$criteria->compare('t.comments', $this->comments,true);
-		$criteria->compare('t.date', $this->date,true);
-		$criteria->compare('t.status', $this->status);
-		$criteria->compare('user.status', User::STATUS_NORMAL);
-		$registrations = $this->findAll($criteria);
+			$criteria->compare('t.id', $this->id,true);
+			$criteria->compare('t.competition_id', $this->competition_id);
+			$criteria->compare('t.user_id', $this->user_id);
+			$criteria->compare('t.events', $this->events,true);
+			$criteria->compare('t.comments', $this->comments,true);
+			$criteria->compare('t.date', $this->date,true);
+			$criteria->compare('t.status', $this->status);
+			$criteria->compare('user.status', User::STATUS_NORMAL);
+			$registrations = $this->findAll($criteria);
+			if ($enableCache) {
+				$cache->set($cacheKey, $registrations, 86400 * 7);
+			}
+		}
 		$number = 1;
 		$localType = $this->competition ? $this->competition->local_type : Competition::LOCAL_TYPE_NONE;
 		if (isset($competition->location[1])) {
@@ -722,6 +809,10 @@ class Registration extends ActiveRecord {
 			}
 			$statistics['number']++;
 			$statistics[$registration->user->gender]++;
+			if (!isset($statistics['location'][$registration->location_id])) {
+				$statistics['location'][$registration->location_id] = 0;
+			}
+			$statistics['location'][$registration->location_id]++;
 			if ($registration->user->wcaid === '') {
 				$statistics['new']++;
 			}
@@ -762,7 +853,7 @@ class Registration extends ActiveRecord {
 					$modelName = 'RanksAverage';
 					break;
 			}
-			$results = $modelName::model()->findAllByAttributes(array(
+			$results = $modelName::model()->cache(86400)->findAllByAttributes(array(
 				'eventId'=>$sort,
 				'personId'=>array_keys($wcaIds),
 			));
@@ -774,6 +865,30 @@ class Registration extends ActiveRecord {
 		$statistics['old'] = $statistics['number'] - $statistics['new'];
 		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
 		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
+		$statistics['location_id'] = [];
+		if ($this->competition && $this->competition->isMultiLocation()) {
+			$temp = [];
+			foreach ($this->competition->sortedLocations as $location) {
+				if (isset($statistics['location'][$location->location_id])) {
+					if (!isset($temp[$location->country_id])) {
+						$temp[$location->country_id] = [
+							'location'=>$location,
+							'statistics'=>[],
+						];
+					}
+					$temp[$location->country_id]['statistics'][] = $location->getCityName() . ': ' . $statistics['location'][$location->location_id];
+				}
+			}
+			if ($this->competition->multi_countries) {
+				foreach ($temp as $key=>$value) {
+					$statistics['location_id'][] = CHtml::tag('b', [], Yii::t('Region', $value['location']->country->getAttributeValue('name')) . ': ');
+					$statistics['location_id'][] = implode('<br>', $value['statistics']);
+				}
+			} elseif (isset($temp[0])) {
+				$statistics['location_id'] = $temp[0]['statistics'];
+			}
+		}
+		$statistics['location_id'] = implode('<br>', $statistics['location_id']);
 		if ($localType != Competition::LOCAL_TYPE_NONE) {
 			$statistics['country_id'] =  $statistics['local'] . '/' . $statistics['nonlocal'];
 		}
@@ -802,10 +917,15 @@ class Registration extends ActiveRecord {
 				$registrations = array_reverse($registrations);
 			}
 		}
-
+		if ($pagination !== false) {
+			$pagination = array(
+				'pageSize'=>200,
+				'pageVar'=>'page',
+			);
+		}
 		return new NonSortArrayDataProvider($registrations, array(
 			'sort'=>$this->getSort($columns),
-			'pagination'=>false,
+			'pagination'=>$pagination,
 		));
 	}
 

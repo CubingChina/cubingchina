@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2015 年 10 月 20 日 18:17
--- 服务器版本: 5.5.37-log
--- PHP 版本: 5.6.14
+-- 生成日期: 2016 年 08 月 06 日 15:53
+-- 服务器版本: 5.5.24-log
+-- PHP 版本: 5.4.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `competition` (
   `old_competition_id` int(10) unsigned NOT NULL DEFAULT '0',
   `name` char(128) NOT NULL DEFAULT '',
   `name_zh` char(50) NOT NULL DEFAULT '',
+  `tba` tinyint(1) NOT NULL DEFAULT '0',
   `alias` char(128) NOT NULL,
   `date` int(11) unsigned NOT NULL,
   `end_date` int(11) unsigned NOT NULL DEFAULT '0',
@@ -61,6 +62,12 @@ CREATE TABLE IF NOT EXISTS `competition` (
   `travel_zh` longtext,
   `person_num` mediumint(6) unsigned NOT NULL DEFAULT '0',
   `check_person` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `fill_passport` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `show_regulations` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `show_qrcode` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `require_avatar` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `local_type` tinyint(1) NOT NULL DEFAULT '0',
+  `live` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -119,6 +126,21 @@ CREATE TABLE IF NOT EXISTS `competition_organizer` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `delegate`
+--
+
+DROP TABLE IF EXISTS `delegate`;
+CREATE TABLE IF NOT EXISTS `delegate` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(128) NOT NULL,
+  `name_zh` char(128) NOT NULL,
+  `email` char(128) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `faq`
 --
 
@@ -161,6 +183,130 @@ CREATE TABLE IF NOT EXISTS `faq_category` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `live_event_round`
+--
+
+DROP TABLE IF EXISTS `live_event_round`;
+CREATE TABLE IF NOT EXISTS `live_event_round` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` int(10) unsigned NOT NULL,
+  `event` varchar(6) NOT NULL DEFAULT '',
+  `round` char(1) NOT NULL DEFAULT '',
+  `format` char(1) NOT NULL DEFAULT '',
+  `cut_off` int(10) unsigned NOT NULL DEFAULT '0',
+  `time_limit` int(10) unsigned NOT NULL DEFAULT '0',
+  `number` int(10) unsigned NOT NULL DEFAULT '0',
+  `operator_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `live_message`
+--
+
+DROP TABLE IF EXISTS `live_message`;
+CREATE TABLE IF NOT EXISTS `live_message` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `event` varchar(6) NOT NULL DEFAULT '',
+  `round` char(1) NOT NULL DEFAULT '',
+  `content` blob NOT NULL,
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`,`user_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `live_registration`
+--
+
+DROP TABLE IF EXISTS `live_registration`;
+CREATE TABLE IF NOT EXISTS `live_registration` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` int(10) unsigned NOT NULL,
+  `location_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL,
+  `events` varchar(512) NOT NULL,
+  `total_fee` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `comments` varchar(2048) NOT NULL DEFAULT '',
+  `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `ip` char(15) NOT NULL DEFAULT '',
+  `date` int(10) unsigned NOT NULL,
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `live_result`
+--
+
+DROP TABLE IF EXISTS `live_result`;
+CREATE TABLE IF NOT EXISTS `live_result` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `user_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `number` mediumint(6) unsigned NOT NULL,
+  `event` varchar(6) NOT NULL DEFAULT '',
+  `round` char(1) NOT NULL DEFAULT '',
+  `format` char(1) NOT NULL DEFAULT '',
+  `best` int(11) NOT NULL DEFAULT '0',
+  `average` int(11) NOT NULL DEFAULT '0',
+  `value1` int(11) NOT NULL DEFAULT '0',
+  `value2` int(11) NOT NULL DEFAULT '0',
+  `value3` int(11) NOT NULL DEFAULT '0',
+  `value4` int(11) NOT NULL DEFAULT '0',
+  `value5` int(11) NOT NULL DEFAULT '0',
+  `regional_single_record` char(3) NOT NULL DEFAULT '',
+  `regional_average_record` char(3) NOT NULL DEFAULT '',
+  `operator_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`,`user_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`,`average`,`best`) USING BTREE
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `live_user`
+--
+
+DROP TABLE IF EXISTS `live_user`;
+CREATE TABLE IF NOT EXISTS `live_user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `wcaid` char(10) NOT NULL DEFAULT '',
+  `name` char(128) NOT NULL,
+  `name_zh` char(128) NOT NULL DEFAULT '',
+  `birthday` bigint(20) NOT NULL DEFAULT '0',
+  `gender` tinyint(1) unsigned NOT NULL,
+  `country_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `province_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `city_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(4) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `wcaid` (`wcaid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `login_history`
 --
 
@@ -189,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `logtime` int(11) DEFAULT NULL,
   `message` text,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -280,7 +426,7 @@ DROP TABLE IF EXISTS `pay`;
 CREATE TABLE IF NOT EXISTS `pay` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
-  `channel` char(6) NOT NULL DEFAULT '',
+  `channel` char(10) NOT NULL DEFAULT '',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `type_id` int(10) unsigned NOT NULL DEFAULT '0',
   `sub_type_id` int(10) unsigned NOT NULL DEFAULT '0',
@@ -333,12 +479,19 @@ CREATE TABLE IF NOT EXISTS `registration` (
   `events` varchar(512) NOT NULL,
   `total_fee` smallint(3) unsigned NOT NULL DEFAULT '0',
   `comments` varchar(2048) NOT NULL DEFAULT '',
+  `passport_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `passport_name` varchar(100) NOT NULL DEFAULT '',
+  `passport_number` varchar(20) NOT NULL DEFAULT '',
+  `avatar_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `avatar_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `code` varchar(64) NOT NULL DEFAULT '',
   `paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `ip` char(15) NOT NULL DEFAULT '',
   `date` int(10) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `competition_id` (`competition_id`)
+  KEY `competition_id` (`competition_id`),
+  KEY `code` (`code`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -359,7 +512,7 @@ CREATE TABLE IF NOT EXISTS `review` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `status_weight_date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -382,9 +535,25 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   `number` int(10) unsigned NOT NULL,
   `cut_off` int(10) unsigned NOT NULL,
   `time_limit` int(10) unsigned NOT NULL,
+  `cumulative` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `sess_id` varbinary(128) NOT NULL,
+  `sess_data` blob NOT NULL,
+  `sess_lifetime` mediumint(9) NOT NULL,
+  `sess_time` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`sess_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 

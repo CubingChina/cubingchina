@@ -124,11 +124,11 @@
               'url'=>array('/board/pay/index'),
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
             ),
-            // array(
-            //  'label'=>'<i class="fa fa-angle-double-right"></i> 财务报表',
-            //  'url'=>array('/board/pay/statistics'),
-            //  'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
-            // ),
+            array(
+             'label'=>'<i class="fa fa-angle-double-right"></i> 对账单',
+             'url'=>array('/board/pay/bill'),
+             'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+            ),
           ),
         ),
         array(

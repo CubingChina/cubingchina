@@ -18,25 +18,15 @@
     </div>
   </div>
   <?php if (count($winners) > 0): ?>
-  <?php $form = $this->beginWidget('ActiveForm', array(
-    'htmlOptions'=>array(
-      'role'=>'form',
-      'class'=>'form-inline',
-    ),
-    'method'=>'get',
-    'action'=>array('/results/c', 'id'=>$competition->id),
-  )); ?>
-    <?php foreach ($types as $_type=>$name): ?>
-    <?php echo CHtml::tag('button', array(
-      'type'=>'submit',
-      'name'=>'type',
-      'value'=>$_type,
-      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
-    ), $name); ?>
-    <?php endforeach; ?>
-  <?php $this->endWidget(); ?>
-  <?php $this->renderPartial('c/' . $type, array(
-    'results'=>$$type,
-  )); ?>
+  <?php foreach ($types as $_type=>$name): ?>
+  <?php echo CHtml::link($name, array(
+    '/results/c',
+    'id'=>$competition->id,
+    'type'=>$_type,
+  ), array(
+    'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
+  ), $name); ?>
+  <?php endforeach; ?>
+  <?php $this->renderPartial('c/' . $type, $_data_); ?>
   <?php endif; ?>
 </div>

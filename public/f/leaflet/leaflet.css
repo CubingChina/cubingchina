@@ -14,7 +14,7 @@
 .leaflet-zoom-box,
 .leaflet-image-layer,
 .leaflet-layer {
-	position: absolute;
+	position: absolute !important;
 	left: 0;
 	top: 0;
 	}
@@ -72,7 +72,7 @@
 .lvml {
 	behavior: url(#default#VML);
 	display: inline-block;
-	position: absolute;
+	position: absolute !important;
 	}
 
 
@@ -85,7 +85,7 @@
 	}
 .leaflet-top,
 .leaflet-bottom {
-	position: absolute;
+	position: absolute !important;
 	z-index: 1000;
 	pointer-events: none;
 	}
@@ -384,7 +384,7 @@
 /* popup */
 
 .leaflet-popup {
-	position: absolute;
+	position: absolute !important;
 	text-align: center;
 	}
 .leaflet-popup-content-wrapper {
@@ -426,7 +426,7 @@
 	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
 .leaflet-container a.leaflet-popup-close-button {
-	position: absolute;
+	position: absolute !important;
 	top: 0;
 	right: 0;
 	padding: 4px 4px 0 0;

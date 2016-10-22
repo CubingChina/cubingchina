@@ -69,6 +69,7 @@ class LiveClient {
 			'code'=>self::CODE_OK,
 			'type'=>$type,
 			'data'=>$data,
+			'onlineNumber'=>$this->server->getOnlineNumber($this->competitionId),
 		));
 	}
 
@@ -81,6 +82,9 @@ class LiveClient {
 
 	public function send($msg) {
 		$msg = json_encode($msg);
+		if (YII_DEBUG) {
+			Yii::log($msg, 'ws', 'respond');
+		}
 		return $this->conn->send($msg);
 	}
 }

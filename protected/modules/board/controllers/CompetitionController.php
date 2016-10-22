@@ -127,15 +127,15 @@ class CompetitionController extends AdminController {
 	public function actionToggle() {
 		$id = $this->iRequest('id');
 		$model = Competition::model()->findByPk($id);
+		$attribute = $this->sRequest('attribute');
 		if ($model === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		if ($this->user->isOrganizer()) {
+		if ($this->user->isOrganizer() && $attribute == 'status') {
 			throw new CHttpException(401, 'Unauthorized');
 		}
 		$model->formatEvents();
 		$model->formatDate();
-		$attribute = $this->sRequest('attribute');
 		$model->$attribute = 1 - $model->$attribute;
 		$model->save();
 		$this->ajaxOk(array(

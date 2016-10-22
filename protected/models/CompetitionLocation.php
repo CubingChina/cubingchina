@@ -14,17 +14,46 @@
  */
 class CompetitionLocation extends ActiveRecord {
 
+	public function getCityName() {
+		switch (true) {
+			case $this->country_id > 3:
+				return $this->getAttributeValue('city_name');
+			case $this->country_id > 1:
+				return $this->country->getAttributeValue('name');
+			case in_array($this->province_id, [215, 525, 567, 642]):
+				return $this->province->getAttributeValue('name');
+			default:
+				return $this->city ? $this->city->getAttributeValue('name') : $this->getAttributeValue('venue');
+		}
+	}
+
+	public function getDelegateInfo() {
+		if ($this->delegate) {
+			return CHtml::mailto(Html::fontAwesome('envelope', 'a') . $this->delegate->getAttributeValue('name', true), $this->delegate->email);
+		} else {
+			return $this->delegate_text;
+		}
+	}
+
+	public function getFeeInfo() {
+		return $this->country_id == 1 ? $this->competition->getEventFee('entry') : $this->fee;
+	}
+
 	public function getFullAddress($includeVenue = true) {
 		$isCN = Yii::app()->controller->isCN;
-		$province = $this->province->getAttributeValue('name');
-		$city = $this->city->getAttributeValue('name');
+		$country = $this->country ? Yii::t('Region', $this->country->getAttributeValue('name')) : '';
+		$province = $this->province ? $this->province->getAttributeValue('name') : '';
+		$city = $this->getCityName();
 		if ($city == $province) {
 			$city = '';
 		}
+		if ($city == $country) {
+			$city = '';
+		}
 		if ($isCN) {
-			$address = $province . $city;
+			$address = $country . $province . $city;
 		} else {
-			$address = ($city ? $city . ', ' : '') . $province;
+			$address = implode(', ', array_filter([$city, $province, $country]));
 		}
 		if ($includeVenue) {
 			if ($isCN) {
@@ -51,9 +80,9 @@ class CompetitionLocation extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id', 'required'),
-			array('location_id, province_id, city_id', 'numerical', 'integerOnly'=>true),
+			array('location_id, country_id, province_id, city_id, delegate_id', 'numerical', 'integerOnly'=>true),
 			array('competition_id', 'length', 'max'=>10),
-			array('venue, venue_zh', 'length', 'max'=>512),
+			array('venue, venue_zh, city_name, city_name_zh, delegate_text, fee, longitude, latitude', 'length', 'max'=>512),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, province_id, city_id, venue, venue_zh', 'safe', 'on'=>'search'),
@@ -67,8 +96,11 @@ class CompetitionLocation extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
+			'country'=>array(self::BELONGS_TO, 'Region', 'country_id'),
 			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
 			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
+			'delegate'=>array(self::BELONGS_TO, 'User', 'delegate_id'),
 		);
 	}
 

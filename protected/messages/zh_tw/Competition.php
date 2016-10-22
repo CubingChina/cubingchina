@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Live' => '直播',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '輪',
@@ -39,6 +38,7 @@ return array (
   'Competitors' => '選手',
   'Cubing China' => '粗餅',
   'Date' => '日期',
+  'Delegate' => '代表',
   'Delegates' => '代表',
   'End Date' => '結束日期',
   'Entry Fee' => '報名費',
@@ -48,6 +48,7 @@ return array (
   'It will be verified by the organisation team soon. Please wait with patience.' => '主辦方會盡快審核您的報名，請耐心等待。',
   'Limited Number of Competitor' => '報名人數限制',
   'Links' => '鏈接',
+  'Live' => '直播',
   'Location' => '地點',
   'Main Page' => '詳情',
   'Name' => '比賽名稱',
@@ -79,6 +80,7 @@ return array (
   'WCA Official Page' => 'WCA官方頁面',
   'WCA regulations' => 'WCA比賽規則',
   'Wca Competition ID' => 'WCA比賽ID',
+  'You don\'t have any certificate.' => '您尚未獲得任何證書。',
   'You have not registered for any competition.' => '您尚未報名任何比賽。',
   'Your account is inactive now, please {activate} it before registration.' => '您的賬號尚未激活，報名前請先{activate}賬號。',
   'Your registration was submitted successfully.' => '您的報名已經成功提交。',

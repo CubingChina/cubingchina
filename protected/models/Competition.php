@@ -49,11 +49,15 @@ class Competition extends ActiveRecord {
 	const LOCAL_TYPE_CITY = 2;
 	const LOCAL_TYPE_MAINLAND = 3;
 
+	const REQUIRE_AVATAR_NONE = 0;
+	const REQUIRE_AVATAR_ACA = 1;
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
 	private $_schedules;
 	private $_description;
+	private $_timezones;
 
 	public $year;
 	public $province;
@@ -105,7 +109,7 @@ class Competition extends ActiveRecord {
 		), array(
 			'condition'=>'date>' . time() . ' AND reg_end>' . time(),
 			'limit'=>$limit,
-			'order'=>'date ASC',
+			'order'=>'date ASC, type DESC',
 		));
 	}
 
@@ -116,7 +120,7 @@ class Competition extends ActiveRecord {
 		), array(
 			'condition'=>"date > {$yesterday} OR end_date > {$yesterday}",
 			'limit'=>$limit,
-			'order'=>'date ASC',
+			'order'=>'date ASC, type DESC',
 		));
 	}
 
@@ -282,6 +286,10 @@ class Competition extends ActiveRecord {
 		)) >= $this->person_num;
 	}
 
+	public function canRegister() {
+		return !$this->isRegistrationEnded() && !$this->isRegistrationFull();
+	}
+
 	public function isInProgress() {
 		$now = time();
 		return $now > $this->date && $now - 86400 < max($this->date, $this->end_date);
@@ -343,6 +351,27 @@ class Competition extends ActiveRecord {
 					return $this->location[0]->getAttributeValue($type);
 			}
 		}
+	}
+
+	public function getSortedLocations() {
+		$locations = $this->location;
+		if (!$this->multi_countries) {
+			return $locations;
+		}
+		usort($locations, function($locationA, $locationB) {
+			$temp = $locationA->country_id - $locationB->country_id;
+			if ($temp == 0) {
+				$temp = $locationA->province_id - $locationB->province_id;
+			}
+			if ($temp == 0) {
+				$temp = $locationA->city_id - $locationB->city_id;
+			}
+			if ($temp == 0) {
+				$temp = strcmp($locationA->city_name, $locationB->city_name);
+			}
+			return $temp;
+		});
+		return $locations;
 	}
 
 	public function getDays() {
@@ -431,7 +460,12 @@ class Competition extends ActiveRecord {
 	public function getCompetitionLink() {
 		$name = $this->getAttributeValue('name');
 		$logo = $this->getLogo();
-		return CHtml::link($logo . $name, $this->getUrl(), array('class'=>'comp-type-' . strtolower($this->type)));
+		if (!$this->canRegister() && $this->live == self::YES && !$this->isEnded() && !$this->hasResults) {
+			$type = 'live';
+		} else {
+			$type = 'detail';
+		}
+		return CHtml::link($logo . $name, $this->getUrl($type), array('class'=>'comp-type-' . strtolower($this->type)));
 	}
 
 	public function getWcaRegulationUrl() {
@@ -450,16 +484,55 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getHasResults() {
-		return $this->type == self::TYPE_WCA && Results::model()->countByAttributes(array(
+		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
 			'competitionId'=>$this->wca_competition_id,
 		)) > 0;
 	}
 
-	public function getUrl($type = 'detail') {
-		return array(
-			'/competition/' . $type,
+	public function hasUserResults($wcaid) {
+		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+			'personId'=>$wcaid,
+		)) > 0;
+	}
+
+	public function getMyCertUrl() {
+		$user = Yii::app()->controller->user;
+		return $this->getUserCertUrl($user);
+	}
+
+	public function getUserCertUrl($user) {
+		$cert = CompetitionCert::model()->findByAttributes([
+			'competition_id'=>$this->id,
+			'user_id'=>$user->id,
+		]);
+		if ($cert === null) {
+			$cert = new CompetitionCert();
+			$cert->competition_id = $this->id;
+			$cert->user_id = $user->id;
+			$cert->create_time = time();
+			$cert->save();
+		}
+		$cert->competition = $this;
+		$cert->user = $user;
+		if (!$cert->hasCert) {
+			$cert->generateCert();
+		}
+		$name = $this->getAttributeValue('name');
+		$logo = $this->getLogo();
+		return CHtml::link($logo . $name, $cert->getUrl());
+	}
+
+	public function getUrl($type = 'detail', $params = array()) {
+		$controller = $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
+		$url = array(
+			"/$controller/$type",
 			'name'=>$this->getUrlName(),
 		);
+		foreach ($params as $key=>$value) {
+			$url[$key] = $value;
+		}
+		return $url;
 	}
 
 	public function getUrlName() {
@@ -627,6 +700,104 @@ class Competition extends ActiveRecord {
 		$this->_schedules = $schedules;
 	}
 
+	public function getUserSchedules($user) {
+		$listableSchedules = array();
+		$schedules = HeatScheduleUser::model()->findAllByAttributes([
+			'user_id'=>$user->id,
+			'competition_id'=>$this->id,
+		]);
+		$schedules = CHtml::listData($schedules, 'id', 'schedule');
+		usort($schedules, array($this, 'sortSchedules'));
+		$hasGroup = false;
+		$hasCutOff = false;
+		$hasTimeLimit = false;
+		$hasNumber = false;
+		$cumulative = Yii::t('common', 'Cumulative ');
+		$specialEvents = array(
+			'333fm'=>array(),
+			'333mbf'=>array(),
+		);
+		foreach ($schedules as $key=>$schedule) {
+			if (trim($schedule->group) != '') {
+				$hasGroup = true;
+			}
+			if ($schedule->cut_off > 0) {
+				$hasCutOff = true;
+			}
+			if ($schedule->time_limit > 0) {
+				$hasTimeLimit = true;
+			}
+			if ($schedule->number > 0) {
+				$hasNumber = true;
+			} else {
+				$schedule->number = '';
+			}
+			if (isset($specialEvents[$schedule->event])) {
+				$specialEvents[$schedule->event][$schedule->round][] = $key;
+			}
+			$schedule->competition = $this;
+		}
+		$scheduleEvents = Events::getOnlyScheduleEvents();
+		foreach ($schedules as $key=>$schedule) {
+			if (isset($scheduleEvents[$schedule->event])) {
+				$schedule->round = $schedule->group = $schedule->format = '';
+				$schedule->cut_off = $schedule->time_limit = 0;
+			}
+			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
+				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
+				switch ($times + 1) {
+					case 1:
+						$event .= Yii::t('common', ' (1st attempt)');
+						break;
+					case 2:
+						$event .= Yii::t('common', ' (2nd attempt)');
+						break;
+					case 3:
+						$event .= Yii::t('common', ' (3rd attempt)');
+						break;
+					default:
+						$event .= Yii::t('common', ' ({times}th attempt)', array(
+							'{times}'=>$times,
+						));
+						break;
+				}
+			}
+			$temp = array(
+				'Start Time'=>date('H:i', $schedule->start_time),
+				'End Time'=>date('H:i', $schedule->end_time),
+				'Event'=>$event,
+				'Group'=>$schedule->group,
+				'Round'=>Yii::t('Rounds', Rounds::getFullRoundName($schedule->round)),
+				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
+				'Cut Off'=>self::formatTime($schedule->cut_off),
+				'Time Limit'=>self::formatTime($schedule->time_limit),
+				'Competitors'=>$schedule->number,
+				'id'=>$schedule->id,
+				'event'=>$schedule->event,
+				'round'=>$schedule->round,
+				'schedule'=>$schedule,
+			);
+			if ($schedule->cumulative) {
+				$temp['Time Limit'] = $cumulative . $temp['Time Limit'];
+			}
+			if ($hasGroup === false) {
+				unset($temp['Group']);
+			}
+			if ($hasCutOff === false) {
+				unset($temp['Cut Off']);
+			}
+			if ($hasTimeLimit === false) {
+				unset($temp['Time Limit']);
+			}
+			if ($hasNumber === false) {
+				unset($temp['Competitors']);
+			}
+			$listableSchedules[$schedule->day][$schedule->stage][] = $temp;
+		}
+		return $listableSchedules;
+	}
+
 	public function getListableSchedules() {
 		$listableSchedules = array();
 		$schedules = $this->schedule;
@@ -658,6 +829,7 @@ class Competition extends ActiveRecord {
 			if (isset($specialEvents[$schedule->event])) {
 				$specialEvents[$schedule->event][$schedule->round][] = $key;
 			}
+			$schedule->competition = $this;
 		}
 		$scheduleEvents = Events::getOnlyScheduleEvents();
 		foreach ($schedules as $key=>$schedule) {
@@ -734,7 +906,7 @@ class Competition extends ActiveRecord {
 				'name'=>$key,
 				'header'=>Yii::t('Schedule', $key),
 				'headerHtmlOptions'=>array(
-					'style'=>sprintf("width: %dpx;min-width: %dpx", $width, $width),
+					'style'=>sprintf("width: %dpx;min-width: %dpx;vertical-align:bottom", $width, $width),
 				),
 			);
 			if ($key == 'Event') {
@@ -743,9 +915,55 @@ class Competition extends ActiveRecord {
 					"class"=>"event-icon event-icon-" . $data["event"],
 				), $data["Event"])';
 			}
+			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
+				if ($key == 'End Time') {
+					continue;
+				}
+				$headerHtmlOptions = $column['headerHtmlOptions'];
+				foreach ($this->timezones as $timezone) {
+					$regions = implode('<br>', array_map(function($country) {
+						return CHtml::tag('b', [], Yii::t('Region', $country->getAttributeValue('name')));
+					}, $timezone['regions']));
+					$column = [
+						'header'=>$regions . '<br> ' .$timezone['text'],
+						'headerHtmlOptions'=>$headerHtmlOptions,
+						'type'=>'raw',
+						'value'=>'$data["schedule"]->getTime(' . $timezone['second_offset'] . ')',
+						// 'footer'=>$regions,
+					];
+					$columns[] = $column;
+				}
+				continue;
+			}
 			$columns[] = $column;
 		}
 		return $columns;
+	}
+
+	public function getTimezones() {
+		if ($this->_timezones === null) {
+			foreach ($this->sortedLocations as $location) {
+				$country = $location->country;
+				if ($country) {
+					$timezone = 8 + ($country->second_offset / 3600);
+					// $timezone = number_format($timezone, 1);
+					$timezone = $timezone >= 0 ? 'GMT +' . $timezone : 'GMT ' . $timezone;
+					if (!isset($timezones[$timezone])) {
+						$timezones[$timezone] = [
+							'second_offset'=>$country->second_offset,
+							'text'=>$timezone,
+							'regions'=>[],
+						];
+					}
+					$timezones[$timezone]['regions'][$country->id] = $country;
+				}
+			}
+			usort($timezones, function($timezoneA, $timezoneB) {
+				return $timezoneA['second_offset'] - $timezoneB['second_offset'];
+			});
+			$this->_timezones = $timezones;
+		}
+		return $this->_timezones;
 	}
 
 	private function getScheduleColumnWidth($name) {
@@ -815,6 +1033,17 @@ class Competition extends ActiveRecord {
 		}
 		if ($this->status == self::STATUS_SHOW) {
 			$buttons[] = CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>array('competition_id'=>$this->id)), array('class'=>'btn btn-xs btn-purple btn-square'));
+			if (!$this->canRegister()) {
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+					'data-attribute'=>'live',
+					'data-value'=>$this->live,
+					'data-text'=>'["开启直播","关闭直播"]',
+					'data-name'=>$this->name_zh,
+				), $this->live ? '关闭直播' : '开启直播');
+			}
 		}
 		return implode(' ', $buttons);
 	}
@@ -968,7 +1197,7 @@ class Competition extends ActiveRecord {
 					'header'=>CHtml::tag('span', array(
 						'class'=>'event-icon event-icon-white event-icon-' . $event,
 						'title'=>Yii::t('event', Events::getFullEventName($event)),
-					), $headerText ? $event : ''),
+					), $headerText ? $event : '&nbsp;'),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
@@ -1040,10 +1269,13 @@ class Competition extends ActiveRecord {
 		$this->schedules = $schedules;
 	}
 
-	public function initLiveData() {
-		if (LiveResult::model()->countByAttributes(array('competition_id'=>$this->id)) > 0) {
+	public function initLiveData($force = false) {
+		$attributes = array('competition_id'=>$this->id);
+		if (!$force && LiveEventRound::model()->countByAttributes($attributes) > 0) {
 			return;
 		}
+		LiveResult::model()->deleteAllByAttributes($attributes);
+		LiveEventRound::model()->deleteAllByAttributes($attributes);
 		$this->formatEvents();
 		$schedules = array();
 		$temp = $this->schedule;
@@ -1053,7 +1285,6 @@ class Competition extends ActiveRecord {
 		}
 		unset($temp);
 		//events and rounds
-		$formats = array();
 		$rounds = array();
 		foreach ($this->events as $event=>$value) {
 			if ($value['round'] == 0) {
@@ -1061,7 +1292,6 @@ class Competition extends ActiveRecord {
 			}
 			if (isset($schedules[$event])) {
 				$first = current($schedules[$event]);
-				$formats[$event] = $first->getRealFormat();
 				$rounds[$event] = $first->round;
 				foreach ($schedules[$event] as $schedule) {
 					$model = new LiveEventRound();
@@ -1081,7 +1311,7 @@ class Competition extends ActiveRecord {
 		$registrations = Registration::getRegistrations($this);
 		foreach ($registrations as $registration) {
 			foreach ($registration->events as $event) {
-				if (!isset($formats[$event]) || !isset($rounds[$event])) {
+				if (!isset($rounds[$event])) {
 					continue;
 				}
 				$model = new LiveResult();
@@ -1090,7 +1320,6 @@ class Competition extends ActiveRecord {
 				$model->number = $registration->number;
 				$model->event = $event;
 				$model->round = $rounds[$event];
-				$model->format = $formats[$event];
 				$model->save();
 			}
 		}
@@ -1099,23 +1328,32 @@ class Competition extends ActiveRecord {
 	public function getEventsRounds() {
 		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
+		), array(
+			'order'=>'id ASC',
 		));
 		$events = array();
+		$ranks = [];
 		foreach ($eventRounds as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
-					'id'=>$eventRound->event,
+					'i'=>$eventRound->event,
 					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
-					'rounds'=>array(),
+					'rs'=>array(),
 				);
 			}
-			$events[$eventRound->event]['rounds'][] = array(
-				'id'=>$eventRound->round,
-				'format'=>$eventRound->format,
-				'name'=>Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round)),
-				'status'=>$eventRound->status,
-				'statusText'=>$eventRound->statusText,
-			);
+			$attributes = $eventRound->getBroadcastAttributes();
+			$attributes['name'] = Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round));
+			$attributes['allStatus'] = $eventRound->allStatus;
+			if (!isset($ranks[$eventRound->round])) {
+				$ranks[$eventRound->round] = $eventRound->wcaRound->rank;
+			}
+			$events[$eventRound->event]['rs'][] = $attributes;
+		}
+		foreach ($events as $event=>$eventRound) {
+			usort($eventRound['rs'], function($roundA, $roundB) use($ranks) {
+				return $ranks[$roundA['i']] - $ranks[$roundB['i']];
+			});
+			$events[$event] = $eventRound;
 		}
 		return array_values($events);
 	}
@@ -1130,20 +1368,23 @@ class Competition extends ActiveRecord {
 		));
 		if ($liveResult !== null) {
 			return array(
-				'event'=>$liveResult->event,
-				'round'=>$liveResult->round,
+				'e'=>$liveResult->event,
+				'r'=>$liveResult->round,
+				'filter'=>'all',
 			);
 		}
 		$event = current($events);
 		if ($event === false) {
 			return array(
-				'event'=>'',
-				'round'=>'',
+				'e'=>'',
+				'r'=>'',
+				'filter'=>'all',
 			);
 		}
 		return array(
-			'event'=>$event['id'],
-			'round'=>$event['rounds'][0]['id'],
+			'e'=>$event['i'],
+			'r'=>$event['rs'][0]['i'],
+			'filter'=>'all',
 		);
 	}
 
@@ -1161,6 +1402,7 @@ class Competition extends ActiveRecord {
 		$this->name_zh = trim(preg_replace('{ +}', ' ', $this->name_zh));
 		$this->alias = str_replace(' ', '-', $this->name);
 		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
+		$this->alias = preg_replace('{-+}i', '-', $this->alias);
 		return parent::beforeSave();
 	}
 
@@ -1327,13 +1569,42 @@ class Competition extends ActiveRecord {
 			) {
 				continue;
 			}
-			if (empty($provinceId)) {
-				$this->addError('locations.province_id.' . $index, '省份不能为空');
-				$error = true;
+			if ($this->multi_countries) {
+				if (empty($locations['country_id'][$key])) {
+					continue;
+				}
+				if ($locations['country_id'][$key] != 1) {
+					$provinceId = 0;
+					$locations['city_id'][$key] = 0;
+					if (empty($locations['fee'][$key])) {
+						$this->addError('locations.fee.' . $index, '非大陆地区请填写费用！');
+						$error = true;
+					}
+					if ($locations['country_id'][$key] > 4) {
+						if (empty($locations['city_name'][$key])) {
+							$this->addError('locations.city_name.' . $index, '非大陆及港澳台地区请填写英文城市！');
+							$error = true;
+						}
+						if (empty($locations['city_name_zh'][$key])) {
+							$this->addError('locations.city_name_zh.' . $index, '非大陆及港澳台地区请填写中文城市！');
+							$error = true;
+						}
+					}
+				}
+				if (empty($locations['delegate_id'][$key]) && empty($locations['delegate_text'][$key])) {
+					$this->addError('locations.delegate_text.' . $index, '必须选择一个代表或者手动填写！');
+					$error = true;
+				}
 			}
-			if (empty($locations['city_id'][$key])) {
-				$this->addError('locations.city_id.' . $index, '城市不能为空');
-				$error = true;
+			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
+				if (empty($provinceId)) {
+					$this->addError('locations.province_id.' . $index, '省份不能为空');
+					$error = true;
+				}
+				if (empty($locations['city_id'][$key])) {
+					$this->addError('locations.city_id.' . $index, '城市不能为空');
+					$error = true;
+				}
 			}
 			if (trim($locations['venue'][$key]) == '') {
 				$this->addError('locations.venue.' . $index, '英文地址不能为空');
@@ -1343,11 +1614,27 @@ class Competition extends ActiveRecord {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 				$error = true;
 			}
+			if ($locations['longitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['longitude'][$key])) {
+				$this->addError('locations.longitude.' . $index, '经度无效！');
+				$error = true;
+			}
+			if ($locations['latitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['latitude'][$key])) {
+				$this->addError('locations.latitude.' . $index, '纬度无效！');
+				$error = true;
+			}
 			$temp[] = array(
+				'country_id'=>$this->multi_countries ? $locations['country_id'][$key] : 0,
 				'province_id'=>$provinceId,
 				'city_id'=>$locations['city_id'][$key],
+				'city_name'=>$this->multi_countries ? $locations['city_name'][$key] : '',
+				'city_name_zh'=>$this->multi_countries ? $locations['city_name_zh'][$key] : '',
 				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
+				'longitude'=>$locations['longitude'][$key],
+				'latitude'=>$locations['latitude'][$key],
+				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
+				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
+				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
 			);
 			$index++;
 		}
@@ -1385,6 +1672,10 @@ class Competition extends ActiveRecord {
 						return false;
 					}
 				} else {
+					if ($format == '') {
+						$this->addError($errorKey, '请设置赛制！');
+						return false;
+					}
 					if (in_array($round, $combinedRounds)) {
 						if ($format != '2/a' && $format != '1/m') {
 							$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
@@ -1442,7 +1733,7 @@ class Competition extends ActiveRecord {
 			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
 			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
 		);
-		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
+		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = array('tba', 'safe');
 		}
 		if (!$this->isOld()) {
@@ -1466,6 +1757,7 @@ class Competition extends ActiveRecord {
 			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
 			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
+			'liveResults'=>array(self::HAS_MANY, 'LiveResult', 'competition_id'),
 		);
 	}
 
@@ -1587,7 +1879,7 @@ class Competition extends ActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultOrder'=>'date DESC, end_date DESC',
+				'defaultOrder'=>'date DESC, end_date DESC, type DESC',
 			),
 			'pagination'=>array(
 				'pageVar'=>'page',

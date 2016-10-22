@@ -132,6 +132,10 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
+		$events = array();
+		foreach ($winners as $result) {
+			$events[$result->eventId] = $result->eventId;
+		}
 		$top3 = Results::model()->with(array(
 			'person',
 			'person.country',
@@ -165,7 +169,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 		), array(
-			'order'=>'personName, event.rank, round.rank DESC'
+			'order'=>'personName, personId, event.rank, round.rank DESC'
 		));
 		$scrambles = Scrambles::model()->with(array(
 			'round',
@@ -181,6 +185,7 @@ class Competitions extends ActiveRecord {
 			'all'=>$all,
 			'byPerson'=>$byPerson,
 			'scrambles'=>$scrambles,
+			'events'=>$events,
 		);
 	}
 
@@ -199,7 +204,7 @@ class Competitions extends ActiveRecord {
 	}
 
 	public static function getWcaUrl($id) {
-		return 'http://www.worldcubeassociation.org/results/c.php?i=' . $id;
+		return 'https://www.worldcubeassociation.org/competitions/' . $id;
 	}
 
 	public function getCityInfo() {
@@ -296,7 +301,7 @@ class Competitions extends ActiveRecord {
 			array('id', 'length', 'max'=>32),
 			array('name, cityName, countryId', 'length', 'max'=>50),
 			array('wcaDelegate, venue', 'length', 'max'=>240),
-			array('organiser, website', 'length', 'max'=>200),
+			array('organiser', 'length', 'max'=>200),
 			array('venueAddress, venueDetails', 'length', 'max'=>120),
 			array('cellName', 'length', 'max'=>45),
 			array('information', 'safe'),
@@ -365,27 +370,6 @@ class Competitions extends ActiveRecord {
 
 		$criteria->with = 'country';
 
-		$criteria->compare('t.id',$this->id,true);
-		// $criteria->compare('t.name',$this->name,true);
-		$criteria->compare('t.cityName',$this->cityName,true);
-		$criteria->compare('t.countryId',$this->countryId,true);
-		$criteria->compare('t.information',$this->information,true);
-		// $criteria->compare('t.year',$this->year);
-		// $criteria->compare('t.month',$this->month);
-		// $criteria->compare('t.day',$this->day);
-		$criteria->compare('t.endMonth',$this->endMonth);
-		$criteria->compare('t.endDay',$this->endDay);
-		$criteria->compare('t.eventSpecs',$this->eventSpecs,true);
-		$criteria->compare('t.wcaDelegate',$this->wcaDelegate,true);
-		$criteria->compare('t.organiser',$this->organiser,true);
-		$criteria->compare('t.venue',$this->venue,true);
-		$criteria->compare('t.venueAddress',$this->venueAddress,true);
-		$criteria->compare('t.venueDetails',$this->venueDetails,true);
-		$criteria->compare('t.website',$this->website,true);
-		$criteria->compare('t.cellName',$this->cellName,true);
-		$criteria->compare('t.latitude',$this->latitude);
-		$criteria->compare('t.longitude',$this->longitude);
-
 		$pageSize = 100;
 		if (in_array($this->year, self::getYears())) {
 			$criteria->compare('year', $this->year);
@@ -446,27 +430,6 @@ class Competitions extends ActiveRecord {
 				'together'=>true,
 			),
 		);
-
-		$criteria->compare('t.id',$this->id,true);
-		// $criteria->compare('t.name',$this->name,true);
-		$criteria->compare('t.cityName',$this->cityName,true);
-		$criteria->compare('t.countryId',$this->countryId,true);
-		$criteria->compare('t.information',$this->information,true);
-		// $criteria->compare('t.year',$this->year);
-		// $criteria->compare('t.month',$this->month);
-		// $criteria->compare('t.day',$this->day);
-		$criteria->compare('t.endMonth',$this->endMonth);
-		$criteria->compare('t.endDay',$this->endDay);
-		$criteria->compare('t.eventSpecs',$this->eventSpecs,true);
-		$criteria->compare('t.wcaDelegate',$this->wcaDelegate,true);
-		$criteria->compare('t.organiser',$this->organiser,true);
-		$criteria->compare('t.venue',$this->venue,true);
-		$criteria->compare('t.venueAddress',$this->venueAddress,true);
-		$criteria->compare('t.venueDetails',$this->venueDetails,true);
-		$criteria->compare('t.website',$this->website,true);
-		$criteria->compare('t.cellName',$this->cellName,true);
-		$criteria->compare('t.latitude',$this->latitude);
-		$criteria->compare('t.longitude',$this->longitude);
 		$criteria->compare('results.personId', $personId);
 
 		$criteria->group = 't.id';

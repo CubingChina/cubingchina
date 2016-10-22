@@ -1,16 +1,30 @@
 {
 	"require": {
 		"phpoffice/phpexcel": "dev-develop",
+		"mpdf/mpdf": "dev-master",
+		"overtrue/wechat": "~3.1",
 		"suin/php-rss-writer": "dev-master",
 		"ramsey/uuid": "dev-master",
 		"endroid/qrcode": "dev-master",
 		"zhuzhichao/ip-location-zh": "dev-master",
-		"cboden/ratchet": "dev-master"
+		"cboden/ratchet": "dev-master",
+		"jonnyw/php-phantomjs": "4.*"
 	},
 	"repositories": [{
 		"type": "composer",
-		"url": "http://pkg.phpcomposer.com/repo/packagist/"
+		"url": "https://packagist.phpcomposer.com"
 	}, {
 		"packagist": false
-	}]
+	}],
+	"config": {
+		"bin-dir": "/bin"
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"PhantomInstaller\\Installer::installPhantomJS"
+		],
+		"post-update-cmd": [
+			"PhantomInstaller\\Installer::installPhantomJS"
+		]
+	}
 }

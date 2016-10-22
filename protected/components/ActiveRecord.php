@@ -63,9 +63,6 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	public function getRegIpDisplay($attribute = 'ip') {
-		if (!class_exists('\Zhuzhichao\IpLocationZh\Ip', false) || empty($this->$attribute)) {
-			return $this->$attribute;
-		}
 		$result = \Zhuzhichao\IpLocationZh\Ip::find($this->$attribute);
 		return CHtml::tag('button', array(
 			'class'=>'btn btn-xs btn-orange tips',

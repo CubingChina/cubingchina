@@ -30,7 +30,7 @@ class Events extends ActiveRecord {
 		'222'=>'average5s',
 		'333bf'=>'best3m',
 		'333oh'=>'average5s',
-		'333fm'=>'best1n',
+		'333fm'=>'mean3n',
 		'333ft'=>'mean3m',
 		'minx'=>'average5m',
 		'pyram'=>'average5s',
@@ -68,6 +68,29 @@ class Events extends ActiveRecord {
 
 	public static function getDefaultExportFormat($event) {
 		return isset(self::$_defaultExportFormats[$event]) ? self::$_defaultExportFormats[$event] : self::$_defaultExportFormats['default'];
+	}
+
+	public static function getExportFormat($event, $format) {
+		if ($event === '333mbf') {
+			return 'multibf' . $format;
+		}
+		if ($event === '333fm') {
+			if ($format == 'm') {
+				return 'mean3n';
+			} else {
+				return 'best' . $format . 'n';
+			}
+		}
+		switch ($format) {
+			case '1':
+			case '2':
+			case '3':
+				return 'best' . $format . 's';
+			case 'm':
+				return 'mean3s';
+			default:
+				return 'average5s';
+		}
 	}
 
 	public static function getColumnName($event) {

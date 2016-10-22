@@ -1,9 +1,21 @@
 <?php
 
 if (DEV) {
-	class TempCache extends CDummyCache {}
+	class TempCache extends CDummyCache {
+		public $hostname;
+		public $port;
+		public $database;
+		public $options;
+		public $hashKey = false;
+	}
 } else {
-	class TempCache extends CFileCache {}
+	class TempCache extends CFileCache {
+		public $hostname;
+		public $port;
+		public $database;
+		public $options;
+		public $hashKey = false;
+	}
 }
 
 class CustomCache extends TempCache {

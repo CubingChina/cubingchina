@@ -397,6 +397,9 @@
     <?php endif; ?>
     <li><a href="#person-map" data-toggle="tab"><?php echo Yii::t('Persons', 'Map'); ?></a></li>
     <li><a href="#competition-history" data-toggle="tab"><?php echo Yii::t('common', 'Competitions'); ?></a></li>
+    <?php if (count($competitions) > 1): ?>
+    <li><a href="#misc" data-toggle="tab"><?php echo Yii::t('common', 'Misc'); ?></a></li>
+    <?php endif; ?>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="history">
@@ -752,6 +755,129 @@
         ),
       )); ?>
     </div>
+    <?php if (count($competitions) > 1 || $organizedCompetitions != []): ?>
+    <div class="tab-pane" id="misc">
+      <div class="row">
+        <?php if (count($closestCubers) > 1): ?>
+        <div class="col-md-4">
+          <h2><?php echo Yii::t('Results', 'Closest Cubers'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($closestCubers, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>Yii::t('Results', 'Person'),
+                'type'=>'raw',
+                'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+              ),
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Competitions'),
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+        <?php if (count($seenCubers) > 1): ?>
+        <div class="col-md-4">
+          <h2><?php echo Yii::t('Results', 'Seen Cubers'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($seenCubers, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Times'),
+              ),
+              array(
+                'name'=>'competitors',
+                'header'=>Yii::t('Results', 'Competitors'),
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+        <?php if (count($visitedProvinces) > 0): ?>
+        <div class="col-md-4">
+          <h2><?php echo Yii::t('Results', 'Visited Provinces'); ?></h2>
+          <?php
+          $this->widget('GridView', array(
+            'dataProvider'=>new CArrayDataProvider($visitedProvinces, array(
+              'pagination'=>false,
+              'sort'=>false,
+            )),
+            'front'=>true,
+            'template'=>'{items}',
+            'columns'=>array(
+              array(
+                'name'=>'count',
+                'header'=>Yii::t('Results', 'Times'),
+              ),
+              array(
+                'header'=>Yii::t('common', 'Province'),
+                'value'=>'Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name"))',
+              ),
+            ),
+          )); ?>
+        </div>
+        <?php endif; ?>
+      </div>
+      <?php if ($organizedCompetitions !== []): ?>
+      <h2><?php echo Yii::t('common', 'Organized Competitions'); ?></h2>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($organizedCompetitions, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'header'=>Yii::t('Competition', 'Date'),
+            'name'=>'date',
+            'type'=>'raw',
+            'value'=>'$data->getDisplayDate()',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Name'),
+            'name'=>'name',
+            'type'=>'raw',
+            'value'=>'$data->getCompetitionLink()',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Province'),
+            'name'=>'province_id',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("province")',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'City'),
+            'name'=>'city_id',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("city")',
+          ),
+          array(
+            'header'=>Yii::t('Competition', 'Venue'),
+            'name'=>'venue',
+            'type'=>'raw',
+            'value'=>'$data->getLocationInfo("venue")',
+          ),
+        ),
+      )); ?>
+      <?php endif; ?>
+    </div>
+    <?php endif; ?>
   </div>
 </div>
 <?php
@@ -769,15 +895,13 @@ Yii::app()->clientScript->registerScript('person',
   }).resize();
   var map;
   $('a[href="#person-map"]').on('shown.bs.tab', function() {
-    console.log(111)
     if (!map) {
       var center = {$mapCenter},
         mapData = {$mapData},
         tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
           maxZoom: 18,
           attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
-        }),
-        latlng = L.latLng(-37.82, 175.24);
+        });
 
       map = L.map('competition-cluster', {
         center: L.latLng(center.latitude, center.longitude),

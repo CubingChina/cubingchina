@@ -23,6 +23,11 @@
           'label'=>Yii::t('common', 'Competition History'),
           'visible'=>$this->user->wcaid != '',
         ),
+        array(
+          'url'=>array('/user/cert'),
+          'label'=>Yii::t('common', 'My Certificates'),
+          'visible'=>$this->user->hasCerts,
+        ),
       ),
     )); ?>
   </section><!--//widget-->

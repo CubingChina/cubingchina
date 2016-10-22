@@ -1,4 +1,6 @@
 <?php
+use EasyWeChat\Foundation\Application;
+
 /**
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
@@ -27,6 +29,7 @@ class Controller extends CController {
 	private $_navibar;
 	private $_weiboShareDefaultText;
 	private $_weiboSharePic;
+	private $_wechatApplication;
 
 	public function filters() {
 		return array(
@@ -53,6 +56,23 @@ class Controller extends CController {
 		} else {
 			unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		}
+	}
+
+	public function getWechatApplication($config = []) {
+		if ($this->_wechatApplication !== null) {
+			return $this->_wechatApplication;
+		}
+		$options = [
+			'debug'=>YII_DEBUG,
+			'app_id'=>Env::get('WECHAT_APP_ID'),
+			'secret'=> Env::get('WECHAT_SECRET'),
+		];
+		$application = new Application($options);
+		$clientScript = Yii::app()->clientScript;
+		if (isset($config['js'])) {
+			$clientScript->registerScriptFile('http://res.wx.qq.com/open/js/jweixin-1.0.0.js');
+		}
+		return $this->_wechatApplication = $application;
 	}
 
 	public function getCacheKey() {
@@ -252,6 +272,11 @@ class Controller extends CController {
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
+						'label'=>Yii::t('common', 'My Certificates'),
+						'url'=>Yii::app()->user->isGuest ? '' : array('/user/cert'),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->hasCerts,
+					),
+					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
 						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
@@ -412,7 +437,7 @@ class Controller extends CController {
 			);
 			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
-		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay') {
+		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan') {
 			$app = Yii::app();
 			$request = $app->request;
 			$request->enableCsrfValidation = true;

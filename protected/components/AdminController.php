@@ -13,8 +13,9 @@ class AdminController extends Controller {
 					'together'=>true,
 				),
 			);
-			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+			$criteria->compare('t.id', '>370');
 			$criteria->compare('t.status', Competition::STATUS_SHOW);
+			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
 			$competitions = Competition::model()->findAll($criteria);
 			foreach ($competitions as $competition) {
 				if (!$competition->isScheduleFinished()) {
@@ -46,5 +47,30 @@ class AdminController extends Controller {
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	protected function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true, $preCalculateFormulas = false) {
+		$download = $path === 'php://output';
+		$excel->setActiveSheetIndex(0);
+		Yii::app()->controller->setIsAjaxRequest(true);
+		if ($xlsx) {
+			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		} else {
+			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+		}
+		if ($download) {
+			if ($xlsx) {
+				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+			} else {
+				header('Content-Type: application/vnd.ms-excel');
+				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+			}
+		}
+		$writer->setPreCalculateFormulas($preCalculateFormulas);
+		$writer->save($path);
+		if ($download) {
+			exit;
+		}
 	}
 }

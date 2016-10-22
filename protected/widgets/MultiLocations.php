@@ -2,6 +2,7 @@
 
 class MultiLocations extends Widget {
 	public $model;
+	public $delegates = [];
 	public $cities = array();
 	public function run() {
 		$model = $this->model;
@@ -41,6 +42,19 @@ class MultiLocations extends Widget {
 				'class'=>'tab-pane location' . ($key == 0 ? ' active' : ''),
 				'id'=>'location-' . $index,
 			));
+			if ($model->multi_countries) {
+				echo Html::formGroup(
+					$model, 'locations[country_id][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('国家/地区', false),
+					CHtml::dropDownList(CHtml::activeName($model, 'locations[country_id][]'), $location['country_id'], Region::getCountries(), array(
+						'class'=>'form-control country',
+						// 'prompt'=>'',
+					)),
+					CHtml::error($model, 'locations.country_id.' . $key, array('class'=>'text-danger'))
+				);
+			}
 			echo Html::formGroup(
 				$model, 'locations[province_id][]', array(
 					'class'=>'col-lg-6',
@@ -63,6 +77,28 @@ class MultiLocations extends Widget {
 				)),
 				CHtml::error($model, 'locations.city_id.' . $key, array('class'=>'text-danger'))
 			);
+			if ($model->multi_countries) {
+				echo Html::formGroup(
+					$model, 'locations[city_name][]', array(
+						'class'=>'col-lg-6',
+					),
+					CHtml::label('英文城市', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[city_name][]'), $location['city_name'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.city_name.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
+					$model, 'locations[city_name_zh][]', array(
+						'class'=>'col-lg-6',
+					),
+					CHtml::label('中文城市', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[city_name_zh][]'), $location['city_name_zh'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.city_name_zh.' . $key, array('class'=>'text-danger'))
+				);
+			}
 			echo Html::formGroup(
 				$model, 'locations[venue_zh][]', array(
 					'class'=>'col-lg-12',
@@ -83,6 +119,62 @@ class MultiLocations extends Widget {
 				)),
 				CHtml::error($model, 'locations.venue.' . $key, array('class'=>'text-danger'))
 			);
+			echo '<div class="text-danger col-lg-12">填写经纬度将会自动生成地图。<br>
+			<a href="http://www.gpsspg.com/maps.htm" target="_blank">点击这里查询坐标</a>，国内请填写<b>Google地球</b>坐标。
+			</div>';
+			echo Html::formGroup(
+				$model, 'locations[longitude][]', array(
+					'class'=>'col-lg-6',
+				),
+				CHtml::label('经度', false),
+				CHtml::textField(CHtml::activeName($model, 'locations[longitude][]'), $location['longitude'], array(
+					'class'=>'form-control',
+				)),
+				CHtml::error($model, 'locations.longitude.' . $key, array('class'=>'text-danger'))
+			);
+			echo Html::formGroup(
+				$model, 'locations[latitude][]', array(
+					'class'=>'col-lg-6',
+				),
+				CHtml::label('纬度', false),
+				CHtml::textField(CHtml::activeName($model, 'locations[latitude][]'), $location['latitude'], array(
+					'class'=>'form-control',
+				)),
+				CHtml::error($model, 'locations.latitude.' . $key, array('class'=>'text-danger'))
+			);
+			if ($model->multi_countries) {
+				echo Html::formGroup(
+					$model, 'locations[delegate_id][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('代表', false),
+					CHtml::dropDownList(CHtml::activeName($model, 'locations[delegate_id][]'), $location['delegate_id'], $this->delegates, array(
+						'class'=>'form-control delegate',
+						'prompt'=>'',
+					)),
+					CHtml::error($model, 'locations.delegate_id.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
+					$model, 'locations[delegate_text][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('手写代表', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[delegate_text][]'), $location['delegate_text'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.delegate_text.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
+					$model, 'locations[fee][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('费用', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[fee][]'), $location['fee'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.fee.' . $key, array('class'=>'text-danger'))
+				);
+			}
 			echo CHtml::closeTag('div');
 		}
 		echo CHtml::closeTag('div');

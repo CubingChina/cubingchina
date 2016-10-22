@@ -4,8 +4,10 @@
     'htmlOptions'=>array(
     ),
   )); ?>
+    <?php if (!$competition->multi_countries): ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
     <p><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry'); ?></p>
+    <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'events', array(),
       $form->labelEx($model, 'events'),
@@ -15,8 +17,8 @@
         'name'=>'events',
         'events'=>$competition->getRegistrationEvents(),
         'type'=>'checkbox',
-      ), true),
-      $form->error($model, 'events', array('class'=>'text-danger'))
+      ), true)
+      // $form->error($model, 'events', array('class'=>'text-danger'))
     );?>
     <div id="fee" class="hide">
       <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
@@ -65,15 +67,39 @@
       ); ?>
     </div>
     <?php endif; ?>
+    <?php if ($competition->require_avatar): ?>
+    <div class="bg-info important-border">
+      <p>
+        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: A photo is needed to finish your registration.'); ?>
+      </p>
       <?php echo Html::formGroup(
-        $model, 'comments', array(),
-        $form->labelEx($model, 'comments'),
-        $form->textArea($model, 'comments', array(
-          'class'=>'form-control',
-          'rows'=>4,
+        $model, 'avatar_type', array(),
+        $form->labelEx($model, 'avatar_type', array(
+          'label'=>Yii::t('Registration', 'Please choose from the options listed below.'),
         )),
-        $form->error($model, 'comments', array('class'=>'text-danger'))
+        $form->dropDownList($model, 'avatar_type', Registration::getAvatarTypes($competition), array(
+          'prompt'=>'',
+          'class'=>'form-control',
+          'options'=>array(
+            Registration::AVATAR_TYPE_NOW=>array(
+              'disabled'=>$this->user->avatar == null,
+            ),
+          ),
+        )),
+        $form->error($model, 'avatar_type', array('class'=>'text-danger')),
+        CHtml::link(Yii::t('common', 'Upload Now'), array('/user/profile'))
       ); ?>
+    </div>
+    <?php endif; ?>
+    <?php echo Html::formGroup(
+      $model, 'comments', array(),
+      $form->labelEx($model, 'comments'),
+      $form->textArea($model, 'comments', array(
+        'class'=>'form-control',
+        'rows'=>4,
+      )),
+      $form->error($model, 'comments', array('class'=>'text-danger'))
+    ); ?>
     <button type="submit" class="btn btn-theme" id="submit-button"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
 </div>
@@ -96,7 +122,8 @@
 </div>
 <?php endif; ?>
 <?php
-$basicFee = $competition->getEventFee('entry');
+if (!$competition->multi_countries) {
+  $basicFee = $competition->getEventFee('entry');
 Yii::app()->clientScript->registerScript('registration',
 <<<EOT
   var basicFee = {$basicFee};
@@ -113,7 +140,8 @@ Yii::app()->clientScript->registerScript('registration',
     }
   });
 EOT
-);
+  );
+}
 if ($competition->fill_passport) {
   Yii::app()->clientScript->registerScript('registration-passport',
 <<<EOT

@@ -39,24 +39,20 @@
     <h4>
       <?php echo Yii::t('common', 'Total Fee:'); ?>&nbsp; <b class="text-danger"><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></b>
     </h4>
+    <?php if (count(Yii::app()->params->payments) > 1): ?>
     <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
+    <?php endif; ?>
     <div class="pay-channels clearfix">
-      <div class="pay-channel alipay col-sm-6 active" data-channel="alipay">
-        <img src="/f/images/pay/alipay.png">
-        <p>
-          <?php if (Yii::app()->language === 'zh_cn'): ?>
-          支持绑定银行卡和支付宝余额支付，<br>
-          <span class="text-danger">不支持余额宝</span>。
-          <?php endif; ?>
-        </p>
+      <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
+      <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
+        <img src="<?php echo $payment['img']; ?>">
       </div>
-      <div class="pay-channel nowpay col-sm-6" data-channel="nowPay">
-        <img src="/f/images/pay/nowpay.png">
-        <p>
-          <?php echo Yii::t('common', 'It supports Unionpay and many China bankcards.'); ?>
-        </p>
-      </div>
+      <?php endforeach; ?>
     </div>
+    <p class="hide lead text-danger" id="redirect-tips">
+      <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
+      <?php echo Yii::t('common', 'Please open with browser!'); ?>
+    </p>
     <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
     <div class="text-center">
       <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
@@ -73,6 +69,11 @@
 if ($registration->payable) {
   Yii::app()->clientScript->registerScript('pay',
 <<<EOT
+  if (navigator.userAgent.match(/MicroMessenger/i)) {
+    $('#redirect-tips').removeClass('hide').nextAll().hide();
+    $('#pay').prop('disabled', true);
+  }
+  $('.pay-channel').first().addClass('active');
   var channel = $('.pay-channel.active').data('channel');
   $('.pay-channel').on('click', function() {
     channel = $(this).data('channel');

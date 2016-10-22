@@ -1,5 +1,7 @@
 <?php
 
+Yii::import('application.statistics.*');
+
 /**
  * This is the model class for table "Persons".
  *
@@ -303,6 +305,7 @@ class Persons extends ActiveRecord {
 				return $result->regionalAverageRecord == 'NR';
 			})),
 		);
+		$competitionIds = array_keys($competitions);
 		usort($competitions, function($competitionA, $competitionB) {
 			$temp = $competitionB->year - $competitionA->year;
 			if ($temp == 0) {
@@ -333,11 +336,14 @@ class Persons extends ActiveRecord {
 			$competition->number = $key + 1;
 			$mapData[] = $data;
 		}
+		$competitionCount = count($competitions) ?: 1;
 		$mapCenter = array(
-			'longitude'=>number_format($temp['longitude'] / count($competitions), 6, ',', ''),
-			'latitude'=>number_format($temp['latitude'] / count($competitions), 6, ',', ''),
+			'longitude'=>number_format($temp['longitude'] / $competitionCount, 6, ',', ''),
+			'latitude'=>number_format($temp['latitude'] / $competitionCount, 6, ',', ''),
 		);
-		$byCompetition = call_user_func_array('array_merge', $byCompetition);
+		if ($byCompetition != array()) {
+			$byCompetition = call_user_func_array('array_merge', $byCompetition);
+		}
 		usort($byCompetition, function($resultA, $resultB) {
 			$temp = $resultB->competition->year - $resultA->competition->year;
 			if ($temp == 0) {
@@ -354,11 +360,104 @@ class Persons extends ActiveRecord {
 			}
 			return $temp;
 		});
+		if ($byEvent != array()) {
+			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
+		}
+		//closest cubers and seen cubers
+		$allCubers = $db->createCommand()
+		->select(array(
+			'personId',
+			'personName',
+			'count(DISTINCT competitionId) AS count',
+		))
+		->from('Results')
+		->where(array('in', 'competitionId', $competitionIds))
+		->group('personId')
+		->having('count>1')
+		->order('count ASC, personName DESC')
+		// ->limit(21)
+		->queryAll();
+		$closestCubers = array_filter(array_slice(array_reverse($allCubers), 0, 21), function($cuber) use($id) {
+			return $cuber['personId'] != $id;
+		});
+		$seenCubers = [];
+		foreach ($allCubers as $cuber) {
+			$count = $cuber['count'];
+			if (!isset($seenCubers[$count])) {
+				$seenCubers[$count] = [
+					'count'=>$count,
+					'competitors'=>0,
+				];
+				if ($count == $competitionCount) {
+					$seenCubers[$count]['competitors']--;
+				}
+			}
+			$seenCubers[$count]['competitors']++;
+		}
+		ksort($seenCubers);
+		$allSeenCubers = $db->createCommand()
+		->select(array(
+			'count(DISTINCT personId) AS count',
+		))
+		->from('Results')
+		->where(array('in', 'competitionId', $competitionIds))
+		->queryScalar();
+		$sum = array_sum(array_map(function($data) {
+			return $data['competitors'];
+		}, $seenCubers));
+		array_unshift($seenCubers, [
+			'count'=>1,
+			'competitors'=>$allSeenCubers - $sum,
+		]);
+		$seenCubers[] = [
+			'count'=>'All',
+			'competitors'=>$allSeenCubers,
+		];
+		$seenCubers = array_filter($seenCubers, function($data) {
+			return $data['competitors'] > 0;
+		});
+		//visited provinces
+		$visitedProvinces = [];
+		$chineseCompetitions = Competition::model()->findAllByAttributes([
+			'wca_competition_id'=>$competitionIds,
+		]);
+		foreach ($chineseCompetitions as $competition) {
+			if (!$competition->isMultiLocation()) {
+				$location = $competition->location[0];
+				//Hong Kong, Macau and Taiwan
+				if (in_array($location->province_id, [2, 3, 4])) {
+					continue;
+				}
+				if (!isset($visitedProvinces[$location->province_id])) {
+					$visitedProvinces[$location->province_id] = [
+						'name'=>$location->province->name,
+						'name_zh'=>$location->province->name_zh,
+						'count'=>0,
+					];
+				}
+				$visitedProvinces[$location->province_id]['count']++;
+			}
+		}
+		foreach ($competitions as $competition) {
+			if (in_array($competition->countryId, ['Hong Kong', 'Taiwan', 'Macau'])) {
+				if (!isset($visitedProvinces[$competition->countryId])) {
+					$visitedProvinces[$competition->countryId] = [
+						'name'=>$competition->countryId,
+						'name_zh'=>$competition->countryId,
+						'count'=>0,
+					];
+				}
+				$visitedProvinces[$competition->countryId]['count']++;
+			}
+		}
+		usort($visitedProvinces, function($dataA, $dataB) {
+			return $dataB['count'] - $dataA['count'];
+		});
 		return array(
 			'id'=>$id,
 			'personRanks'=>$personRanks,
 			'sumOfRanks'=>$sumOfRanks,
-			'byEvent'=>call_user_func_array('array_merge', array_map('array_reverse', $byEvent)),
+			'byEvent'=>$byEvent,
 			'byCompetition'=>$byCompetition,
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
@@ -368,8 +467,8 @@ class Persons extends ActiveRecord {
 			'historyNR'=>$historyNR,
 			'overAll'=>$overAll,
 			'score'=>$overAll['WR'] * 10 + $overAll['CR'] * 5 + $overAll['NR'],
-			'firstCompetition'=>$firstCompetitionResult->competition,
-			'lastCompetition'=>$lastCompetitionResult->competition,
+			'firstCompetition'=>$firstCompetitionResult ? $firstCompetitionResult->competition : null,
+			'lastCompetition'=>$lastCompetitionResult ? $lastCompetitionResult->competition : null,
 			'mapData'=>$mapData,
 			'mapCenter'=>$mapCenter,
 			'competitions'=>array_reverse($competitions),
@@ -377,6 +476,9 @@ class Persons extends ActiveRecord {
 				'wcaid'=>$id,
 				'status'=>User::STATUS_NORMAL,
 			)),
+			'closestCubers'=>array_values($closestCubers),
+			'seenCubers'=>array_values($seenCubers),
+			'visitedProvinces'=>array_values($visitedProvinces),
 		);
 	}
 

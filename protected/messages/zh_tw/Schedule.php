@@ -18,8 +18,9 @@
  */
 return array (
   'Cumulative' => '',
-  'Classroom' => '教室',
   'ID' => '',
+  'Number' => '',
+  'Classroom' => '教室',
   'Competition' => '比賽',
   'Competitors' => '人數',
   'Cut Off' => '及格線',

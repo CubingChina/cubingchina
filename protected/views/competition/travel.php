@@ -2,19 +2,7 @@
   <dl>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
     <dd>
-      <?php if ($competition->tba == Competition::YES): ?>
-      <?php echo Yii::t('common', 'To be announced'); ?>
-      <?php elseif ($competition->isMultiLocation()): ?>
-      <ol>
-      <?php foreach ($competition->location as $location): ?>
-        <li>
-        <?php echo $location->getFullAddress(); ?>
-        </li>
-      <?php endforeach; ?>
-      </ol>
-      <?php else: ?>
-      <?php echo $competition->location[0]->getFullAddress(); ?>
-      <?php endif; ?>
+      <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
     <dt><?php echo Yii::t('Competition', 'Travel Info'); ?></dt>
     <dd><?php echo $competition->getAttributeValue('travel'); ?></dd>

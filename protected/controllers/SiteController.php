@@ -95,7 +95,7 @@ class SiteController extends Controller {
 		}
 		$referrer = Yii::app()->request->urlReferrer;
 		$hostInfo = Yii::app()->request->hostInfo;
-		if (strpos($referrer, $hostInfo) !== false && strpos($referrer, 'login') === false) {
+		if (strpos($referrer, $hostInfo) !== false && strpos($referrer, 'login') === false && Yii::app()->user->returnUrl == '') {
 			Yii::app()->user->returnUrl = $referrer;
 		}
 

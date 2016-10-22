@@ -11,6 +11,21 @@ class UserController extends Controller {
 		));
 	}
 
+	public function actionCert() {
+		$competitions = Competition::model()->cache(86400)->findAllByAttributes([
+			'type'=>Competition::TYPE_WCA,
+			'status'=>Competition::STATUS_SHOW,
+		], [
+			'condition'=>'cert_name!=""',
+		]);
+		$competitions = array_filter($competitions, function($competition) {
+			return $competition->hasUserResults($this->user->wcaid);
+		});
+		$this->render('cert', array(
+			'competitions'=>$competitions,
+		));
+	}
+
 	public function actionCompetitionHistory() {
 		if ($this->user->id === '') {
 			$this->redirect(array('/user/competitions'));

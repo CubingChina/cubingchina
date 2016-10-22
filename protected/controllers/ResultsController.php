@@ -152,17 +152,30 @@ class ResultsController extends Controller {
 	}
 
 	public function actionP() {
-		$id = $this->sGet('id');
+		$id = strtoupper($this->sGet('id'));
 		$person = Persons::model()->with('country')->findByAttributes(array('id' => $id));
 		if ($person == null) {
 			$this->redirect(array('/results/person'));
 		}
 		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
 		$data['person'] = $person;
-		$data['user'] = User::model()->findByAttributes(array(
+		$data['user'] = $user = User::model()->findByAttributes(array(
 			'wcaid'=>$person->id,
 			'status'=>User::STATUS_NORMAL,
 		));
+		$data['organizedCompetitions'] = [];
+		if ($user) {
+			$data['organizedCompetitions'] = Competition::model()->with([
+				'organizer'=>[
+					'together'=>true,
+					'condition'=>'organizer.organizer_id=' . $user->id,
+				],
+			])->findAllByAttributes([
+				'status'=>Competition::STATUS_SHOW,
+			], [
+				'order'=>'date DESC, end_date DESC',
+			]);
+		}
 		$this->breadcrumbs = array(
 			'Results'=>array('/results/index'),
 			'Persons'=>array('/results/person'),
@@ -172,6 +185,50 @@ class ResultsController extends Controller {
 		$this->title = Yii::t('common', 'Personal Page');
 		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
 		$this->render('p', $data);
+	}
+
+	public function actionCert() {
+		$hash = $this->sGet('hash');
+		if (!$hash) {
+			throw new CHttpException(404, 'Error');
+		}
+		$cert = CompetitionCert::model()->findByAttributes([
+			'hash'=>$hash,
+		]);
+		if ($cert === null) {
+			throw new CHttpException(404, 'Error');
+		}
+		$competition = $cert->competition;
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Competitions'=>array('/results/competition'),
+			$competition->getAttributeValue('name')=>$competition->getUrl(),
+			'Certificate',
+		);
+		$application = $this->getWechatApplication([
+			'js'=>true,
+		]);
+		$js = $application->js;
+		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+		try {
+			$config = $js->config(array(
+				'onMenuShareTimeline',
+				'onMenuShareAppMessage',
+				'onMenuShareQQ',
+				'onMenuShareWeibo',
+				'onMenuShareQZone',
+			), YII_DEBUG);
+		} catch (Exception $e) {
+			$config = '{}';
+		}
+		$this->pageTitle = array($competition->getAttributeValue('name'), 'Certificate');
+		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Certificate');
+		$this->render('cert', [
+			'cert'=>$cert,
+			'config'=>$config,
+			'competition'=>$competition,
+			'user'=>$cert->user,
+		]);
 	}
 
 	public function actionBattle() {
