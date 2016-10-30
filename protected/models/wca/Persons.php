@@ -231,6 +231,7 @@ class Persons extends ActiveRecord {
 		//洲/国锦赛获奖记录
 		$ccPodiums = isset($podiums['continent']) ? $podiums['continent'] : array();
 		$ncPodiums = isset($podiums['country']) ? $podiums['country'] : array();
+		$rcPodiums = isset($podiums['region']) ? $podiums['region'] : array();
 		//WR们
 		$historyWR = Results::model()->with(array(
 			'competition',
@@ -462,6 +463,7 @@ class Persons extends ActiveRecord {
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
 			'ncPodiums'=>$ncPodiums,
+			'rcPodiums'=>$rcPodiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,
