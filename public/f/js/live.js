@@ -6,7 +6,7 @@
   Vue.config.debug = true;
 
   //websocket
-  var ws = new WS('ws://' + location.host + '/ws');
+  var ws = new WS((location.protocol === 'https' ? 'wss' : 'ws') + '://' + location.host + '/ws');
   ws.threshold = 55000;
   ws.on('connect', function() {
     ws.send({
