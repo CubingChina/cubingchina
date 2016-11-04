@@ -1,3 +1,4 @@
+<?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <?php if ($competition->tba == Competition::NO): ?>
   <div class="row schedule-event">

@@ -1,3 +1,4 @@
+<?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
