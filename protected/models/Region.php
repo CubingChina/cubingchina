@@ -14,7 +14,7 @@ class Region extends ActiveRecord {
 	public static $HKMCTW = array(2, 3, 4);
 
 	public static function getIconName($country, $iso2) {
-		return CHtml::image('http://s.cubingchina.com/flag/' . strtolower($iso2) . '.png', $country, array('class'=>'flag-icon')) . Yii::t('Region', $country);
+		return CHtml::image('https://i.cubingchina.com/flag/' . strtolower($iso2) . '.png', $country, array('class'=>'flag-icon')) . Yii::t('Region', $country);
 	}
 
 	//wac stands for Wolrd, Asia and China

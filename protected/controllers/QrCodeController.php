@@ -21,7 +21,7 @@ class QrCodeController extends Controller {
 
 	public function init() {
 		if (!DEV) {
-			Yii::app()->urlManager->setBaseUrl('http://cubingchina.com');
+			Yii::app()->urlManager->setBaseUrl(Yii::app()->params->baseUrl);
 		}
 		parent::init();
 	}

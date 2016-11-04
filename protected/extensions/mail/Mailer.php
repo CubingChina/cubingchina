@@ -15,7 +15,7 @@ class Mailer extends CApplicationComponent {
 
 	public function init() {
 		parent::init();
-		$this->baseUrl = 'http://cubingchina.com';
+		$this->baseUrl = Yii::app()->params->baseUrl;
 		$this->viewPath = dirname(__FILE__) . '/views/';
 	}
 
