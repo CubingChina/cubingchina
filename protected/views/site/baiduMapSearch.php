@@ -1,5 +1,5 @@
 <div id="map" style="width:100%; height:100%"></div>
-<script charset="utf-8" src="http://api.map.baidu.com/api?ak=5MnAdRxax54stQ29hR91Fxl1&v=2.0"></script>
+<script charset="utf-8" src="https://api.map.baidu.com/api?ak=5MnAdRxax54stQ29hR91Fxl1&v=2.0&s=1"></script>
 <script>
   var map = new BMap.Map('map');
   var point = new BMap.Point(116.331398,39.897445);
