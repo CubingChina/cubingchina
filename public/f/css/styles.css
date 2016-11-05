@@ -3066,3 +3066,6 @@ dl.location-delegate dt, dl.location-delegate dd, .location-delegate p {
 .location-map div {
   position: static;
 }
+.tab-content > .tab-pane {
+  padding-top: 1px;
+}
