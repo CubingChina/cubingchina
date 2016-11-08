@@ -1,3 +1,4 @@
+<?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
@@ -58,7 +59,7 @@
       <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
     </div>
     <div class="hide text-center" id="pay-tips">
-      <?php echo CHtml::image('http://s.cubingchina.com/animatedcube.gif'); ?>
+      <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
       <br>
       <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
     </div>

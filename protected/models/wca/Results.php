@@ -43,7 +43,7 @@ class Results extends ActiveRecord {
 		$podiums = array();
 		//continent championship podiums
 		$patterns = Competitions::getChampionshipPattern($type);
-		if (in_array($regionId, $chineseRegioins)) {
+		if (in_array($regionId, $chineseRegioins) && $type == 'country') {
 			$regionId = 'China';
 		}
 		if (!isset($patterns[$regionId])) {
@@ -118,9 +118,11 @@ class Results extends ActiveRecord {
 		}
 		$allPodiums['continent'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('continent', $person->country->continentId));
 		$allPodiums['country'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('country', $person->country->id));
+		$allPodiums['region'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('region', $person->country->id));
 		return array(
 			'continent'=>isset($allPodiums['continent'][$personId]) ? $allPodiums['continent'][$personId] : array(),
 			'country'=>isset($allPodiums['country'][$personId]) ? $allPodiums['country'][$personId] : array(),
+			'region'=>isset($allPodiums['region'][$personId]) ? $allPodiums['region'][$personId] : array(),
 		);
 	}
 

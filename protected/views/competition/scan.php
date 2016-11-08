@@ -3,7 +3,7 @@
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
   </div>
   <div class="text-center" v-if="loading">
-    <?php echo CHtml::image('http://s.cubingchina.com/animatedcube.gif'); ?>
+    <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
   </div>
   <dl class="dl-horizontal" v-if="registration.id">
     <dt>No.</dt>

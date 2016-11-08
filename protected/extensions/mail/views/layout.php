@@ -15,7 +15,7 @@
 			<tr>
 				<td style="padding-top:23px;padding-left:39px;padding-right:13px;padding-bottom:23px;text-align:left">
 					<p>Cubing China (粗饼·中国魔方赛事网)</p>
-					<p><a href="http://cubingchina.com">http://cubingchina.com</a></p>
+					<p><?php echo CHtml::link(Yii::app()->params->baseUrl, Yii::app()->params->baseUrl); ?></p>
 				</td>
 			</tr>
 		</tbody>

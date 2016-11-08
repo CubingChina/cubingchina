@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Alipay has been blocked by wechat.' => '微信屏蔽了支付寶。',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -86,6 +85,7 @@ return array (
   'Activate Account' => '激活賬號',
   'Activate my account' => '激活我的賬號',
   'Administrator' => '管理員',
+  'Alipay has been blocked by wechat.' => '微信屏蔽了支付寶。',
   'All' => '所有',
   'An activation mail was sent to your email address, please follow the description to activate your account.' => '激活郵件已經發送到您的郵箱，請根據郵箱里的指示進行激活操作。',
   'Average' => '平均',

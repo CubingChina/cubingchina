@@ -1,3 +1,4 @@
+<?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <dl>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>

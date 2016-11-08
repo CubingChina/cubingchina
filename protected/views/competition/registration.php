@@ -1,3 +1,4 @@
+<?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <?php $form = $this->beginWidget('ActiveForm', array(
     'id'=>'registration-form',

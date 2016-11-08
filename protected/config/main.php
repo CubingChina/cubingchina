@@ -58,18 +58,19 @@ $config = array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'http://ac2016.cubingchina.com/'=>array(
-					'competition/detail',
-					'defaultParams'=>array(
-						'name'=>'Asian-Championship-2016',
-					),
-				),
-				'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration|scan>'=>array(
-					'competition/<action>',
-					'defaultParams'=>array(
-						'name'=>'Asian-Championship-2016',
-					),
-				),
+				// due to ssl cert
+				// 'http://ac2016.cubingchina.com/'=>array(
+				// 	'competition/detail',
+				// 	'defaultParams'=>array(
+				// 		'name'=>'Asian-Championship-2016',
+				// 	),
+				// ),
+				// 'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration|scan>'=>array(
+				// 	'competition/<action>',
+				// 	'defaultParams'=>array(
+				// 		'name'=>'Asian-Championship-2016',
+				// 	),
+				// ),
 				'<page:\d+>'=>'site/index',
 				'faq/<category_id:\d+>'=>array(
 					'faq/index',
@@ -100,7 +101,7 @@ $config = array(
 			),
 			'appendParams'=>false,
 			'showScriptName'=>false,
-			// 'baseUrl'=>DEV ? null : 'http://cubingchina.com',
+			// 'baseUrl'=>DEV ? null : 'https://cubingchina.com',
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
@@ -274,6 +275,7 @@ $config = array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'admin@cubingchina.com',
+		'baseUrl'=>'https://cubingchina.com',
 		'languages'=>array('en', 'zh_cn', 'zh_tw'),
 		'author'=>'Baiqiang Dong',
 		'description'=>'The Chinese speedcubing website.',
@@ -284,11 +286,11 @@ $config = array(
 			"Rubik's Cube",
 			'Speedcubing',
 		),
-		'weiboSharePic'=>'http://cubingchina.com/f/images/logo2x.png',
+		'weiboSharePic'=>'https://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
-		'staticUrlPrefix'=>DEV ? '/static/' : 'http://s.cubingchina.com/',
-		'jsVer'=>'20161002',
-		'cssVer'=>'20161009',
+		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
+		'jsVer'=>'20161105',
+		'cssVer'=>'20161105',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,

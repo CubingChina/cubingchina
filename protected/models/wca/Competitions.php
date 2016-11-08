@@ -75,6 +75,9 @@ class Competitions extends ActiveRecord {
 			'USA'=>'^US(Open|Nationals)?[[:digit:]]\{4\}$',
 			'Venezuela'=>'^VenezuelaNationals[[:digit:]]\{4\}$',
 		),
+		'region'=>array(
+			'Taiwan'=>'^TaiwanChampionship[[:digit:]]\{4\}$',
+		),
 	);
 
 	public $region;

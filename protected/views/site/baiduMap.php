@@ -1,7 +1,7 @@
 <div id="map" style="height:100%"></div>
 <script>
   var isTouch = 'ontouchstart' in window;
-  var src = 'http://api.map.baidu.com/api?ak=5MnAdRxax54stQ29hR91Fxl1&v=2.0';
+  var src = 'https://api.map.baidu.com/api?ak=5MnAdRxax54stQ29hR91Fxl1&v=2.0&s=1';
   if (isTouch) {
     src += '&type=quick';
   }

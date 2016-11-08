@@ -30,14 +30,4 @@
     <?php endforeach; ?>
   </section>
   <?php endif; ?>
-  <section class="widget">
-    <div class="panel panel-theme weibo-widget">
-      <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-weibo"></i> 微博</h3>
-      </div>
-      <div class="panel-body">
-        <iframe width="100%" height="380" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=420&fansRow=2&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=1&isFans=0&uid=5118940638&verifier=2f59659a&dpc=1"></iframe>
-      </div>
-    </div>
-  </section>
 </aside>

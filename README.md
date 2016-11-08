@@ -1,7 +1,7 @@
 Cubingchina
 ===========
 
-The official website of Cubing China http://cubingchina.com.
+The official website of Cubing China https://cubingchina.com.
 
 Installation
 ------------
