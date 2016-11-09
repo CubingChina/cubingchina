@@ -168,6 +168,7 @@
             )),
             $form->error($model, 'role', array('class'=>'text-danger'))
           );?>
+          <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'avatar_id', array(
               'class'=>'col-lg-12',
