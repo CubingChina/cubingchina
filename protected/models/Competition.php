@@ -1753,7 +1753,7 @@ class Competition extends ActiveRecord {
 		return array(
 			'organizer'=>array(self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'),
 			'delegate'=>array(self::HAS_MANY, 'CompetitionDelegate', 'competition_id'),
-			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id'),
+			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'),
 			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
 			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
 			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
