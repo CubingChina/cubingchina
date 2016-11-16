@@ -70,7 +70,7 @@ class Controller extends CController {
 		$application = new Application($options);
 		$clientScript = Yii::app()->clientScript;
 		if (isset($config['js'])) {
-			$clientScript->registerScriptFile('http://res.wx.qq.com/open/js/jweixin-1.0.0.js');
+			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		}
 		return $this->_wechatApplication = $application;
 	}
