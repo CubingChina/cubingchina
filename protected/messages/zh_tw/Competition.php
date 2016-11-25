@@ -17,8 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'I have read and know the {disclaimer} of Cubing China.' => '我已閱讀並知曉粗餅網{disclaimer}。',
   'ID' => '',
   'Online Pay' => '',
+  'disclaimer' => '免責聲明',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
@@ -37,6 +39,7 @@ return array (
   'Competition Name' => '比賽名字',
   'Competitors' => '選手',
   'Cubing China' => '粗餅',
+  'Cubing China is an information sharing platform for speedsolving competitions, we are not the organizer of such competitions and thus are not responsible for them. Check {link} for our full disclaimer.' => '粗餅網是信息發布平台。我們不是賽事主辦方，因此不對比賽具體實施負責。請點擊{link}了解更詳細的免責聲明。',
   'Date' => '日期',
   'Delegate' => '代表',
   'Delegates' => '代表',
@@ -67,6 +70,7 @@ return array (
   'Second Stage Date' => '第二階段時間',
   'Second Stage Ratio' => '第二階段倍率',
   'Status' => '狀態',
+  'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此處為比賽主辦預計賽程，可能會依據比賽現場情況進行調整，請在比賽日注意現場通知以免耽誤您的參賽。',
   'The limited number of competitor has been reached.' => '報名人數已達到上限。',
   'The registration has been closed.' => '比賽報名已截止。',
   'The registration is not open yet.' => '比賽報名尚未開放。',
@@ -84,4 +88,5 @@ return array (
   'You have not registered for any competition.' => '您尚未報名任何比賽。',
   'Your account is inactive now, please {activate} it before registration.' => '您的賬號尚未激活，報名前請先{activate}賬號。',
   'Your registration was submitted successfully.' => '您的報名已經成功提交。',
+  'here' => '這里',
 );

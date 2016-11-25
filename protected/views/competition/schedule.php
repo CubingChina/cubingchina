@@ -33,6 +33,7 @@
     <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if (!empty($listableSchedules)): ?>
+  <p><?php echo Yii::t('Competition', 'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.'); ?></p>
   <?php if ($hasManyStages || $userSchedules != []): ?>
   <ul class="nav nav-tabs">
     <?php if ($hasManyStages): ?>
