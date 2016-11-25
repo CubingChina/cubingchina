@@ -17,6 +17,10 @@
           'url'=>array('/site/page', 'view'=>'links'),
           'label'=>Yii::t('common', 'Links'),
         ),
+        array(
+          'url'=>array('/site/page', 'view'=>'disclaimer'),
+          'label'=>Config::getConfig('disclaimer')->getAttributeValue('title'),
+        ),
       ),
     )); ?>
   </section><!--//widget-->

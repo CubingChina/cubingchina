@@ -1,4 +1,5 @@
 <?php
+
 class NewsController extends AdminController {
 
 	public function accessRules() {

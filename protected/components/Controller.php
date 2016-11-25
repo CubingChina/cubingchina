@@ -229,6 +229,10 @@ class Controller extends CController {
 							'url'=>array('/site/page', 'view'=>'links'),
 							'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
 						),
+						array(
+							'url'=>array('/site/page', 'view'=>'disclaimer'),
+							'label'=>Html::fontAwesome('list-alt', 'a') . Config::getConfig('disclaimer')->getAttributeValue('title'),
+						),
 					),
 				),
 			));

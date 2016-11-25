@@ -79,7 +79,7 @@ $config = array(
 				''=>'site/index',
 				'register/<step:\d>'=>'site/register',
 				'<action:login|logout|register|forgetPassword|resetPassword|activate|reactivate|banned>'=>'site/<action>',
-				'<view:about|contact|links|please-update-your-browser>'=>array(
+				'<view:about|contact|links|disclaimer|please-update-your-browser>'=>array(
 					'site/page',
 					'urlSuffix'=>'.html'
 				),

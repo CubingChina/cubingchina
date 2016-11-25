@@ -165,6 +165,31 @@
           ),
         ),
         array(
+          'label'=>'<i class="fa fa-bullhorn"></i> 配置 <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'config',
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#config',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'config',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 配置管理',
+              'url'=>array('/board/config/index'),
+            ),
+          ),
+        ),
+        array(
           'label'=>'<i class="fa fa-bullhorn"></i> 评价<i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'review',
