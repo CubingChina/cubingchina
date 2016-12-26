@@ -40,7 +40,7 @@ class SummaryController extends Controller {
 		]);
 		$this->pageTitle = [$this->title];
 		$this->breadcrumbs = [
-			'Annual Summary'=>['/summary/index', 'year'=>$year],
+			'Annual Summary',
 			$person->name,
 		];
 		$this->render('person' . $year, $summary);
