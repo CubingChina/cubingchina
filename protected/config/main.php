@@ -107,7 +107,7 @@ $config = array(
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
-			'hashKey'=>false,
+			// 'hashKey'=>false,
 			'hostname'=>'localhost',
 			'port'=>6379,
 			'database'=>1,
@@ -292,7 +292,7 @@ $config = array(
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
 		'jsVer'=>'20161105',
-		'cssVer'=>'20161105',
+		'cssVer'=>'20161227',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,
