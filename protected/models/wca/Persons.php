@@ -186,6 +186,8 @@ class Persons extends ActiveRecord {
 		$byCompetition = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
+		$lastBest = $lastAverage = null;
+		$year = 0;
 		$results = Results::model()->with(array(
 			'competition',
 			'competition.country',
@@ -206,40 +208,52 @@ class Persons extends ActiveRecord {
 			'years'=>[],
 			'events'=>[],
 		];
+		$personalBestResults = [];
 		foreach($results as $result) {
 			if ($eventId != $result->eventId) {
+				$personalBestResults[$year][$eventId]['best'] = $lastBest;
+				$personalBestResults[$year][$eventId]['average'] = $lastAverage;
 				//重置各值
 				$eventId = $result->eventId;
 				$best = $average = PHP_INT_MAX;
 				$byEvent[$eventId] = array();
+				$year = 0;
+				$lastBest = $lastAverage = null;
+			}
+			if ($year != $result->competition->year) {
+				$personalBestResults[$year][$eventId]['best'] = $lastBest;
+				$personalBestResults[$year][$eventId]['average'] = $lastAverage;
+				$year = $result->competition->year;
 			}
 			if ($result->best > 0 && $result->best <= $best) {
 				$result->newBest = true;
 				$best = $result->best;
+				$lastBest = $result;
 			}
 			if ($result->average > 0 && $result->average <= $average) {
 				$result->newAverage = true;
 				$average = $result->average;
+				$lastAverage = $result;
 			}
-			$year = $result->competition->year;
+			$key = $result->competition->year;
 			if ($result->newBest || $result->newAverage) {
-				if (!isset($personalBests['years'][$year][$result->eventId])) {
-					$personalBests['years'][$year][$result->eventId] = $pbTemplate;
+				if (!isset($personalBests['years'][$key][$result->eventId])) {
+					$personalBests['years'][$key][$result->eventId] = $pbTemplate;
 				}
 				if (!isset($personalBests['events'][$result->eventId])) {
 					$personalBests['events'][$result->eventId] = $pbTemplate;
 				}
 				if ($result->newBest) {
-					$personalBests['years'][$year][$result->eventId]['best']++;
-					$personalBests['years'][$year][$result->eventId]['total']++;
+					$personalBests['years'][$key][$result->eventId]['best']++;
+					$personalBests['years'][$key][$result->eventId]['total']++;
 					$personalBests['events'][$result->eventId]['best']++;
 					$personalBests['events'][$result->eventId]['total']++;
 					$personalBests['total']['best']++;
 					$personalBests['total']['total']++;
 				}
 				if ($result->newAverage) {
-					$personalBests['years'][$year][$result->eventId]['average']++;
-					$personalBests['years'][$year][$result->eventId]['total']++;
+					$personalBests['years'][$key][$result->eventId]['average']++;
+					$personalBests['years'][$key][$result->eventId]['total']++;
 					$personalBests['events'][$result->eventId]['average']++;
 					$personalBests['events'][$result->eventId]['total']++;
 					$personalBests['total']['average']++;
@@ -250,6 +264,9 @@ class Persons extends ActiveRecord {
 			$byCompetition[$result->competitionId][] = $result;
 			$competitions[$result->competitionId] = $result->competition;
 		}
+		$personalBestResults[$year][$eventId]['best'] = $lastBest;
+		$personalBestResults[$year][$eventId]['average'] = $lastAverage;
+		krsort($personalBestResults);
 		//世锦赛获奖记录
 		$wcPodiums = Results::model()->with(array(
 			'competition',
@@ -492,6 +509,7 @@ class Persons extends ActiveRecord {
 			'byEvent'=>$byEvent,
 			'byCompetition'=>$byCompetition,
 			'personalBests'=>$personalBests,
+			'personalBestResults'=>$personalBestResults,
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
 			'ncPodiums'=>$ncPodiums,

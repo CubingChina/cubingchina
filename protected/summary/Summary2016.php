@@ -158,10 +158,22 @@ class Summary2016 extends Statistics {
 			uasort($personalBests['events'], function($pbA, $pbB) {
 				return $pbB['total'] - $pbA['total'];
 			});
+			$personalBestsComparison = [];
+			$thisYearsBests = $data['personalBestResults'][$this->year];
 			foreach ($personalBests['events'] as $event=>$pb) {
 				$personalBests['events'][$event]['event'] = $event;
+				$personalBestsComparison['best'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], $event, 'best');
+				$personalBestsComparison['average'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], $event, 'average');
 			}
 			$personalBests['events'] = array_values($personalBests['events']);
+			foreach (['best', 'average'] as $key) {
+				$personalBestsComparison[$key] = array_filter($personalBestsComparison[$key], function($data) {
+					return $data['thisYearsBest'] != null && ($data['improvement'] > 0 || $data['event'] == '333mbf');
+				});
+				usort($personalBestsComparison[$key], function($dataA, $dataB) {
+					return $dataB['improvementPercent'] - $dataA['improvementPercent'];
+				});
+			}
 		}
 
 		//closest cubers and seen cubers
@@ -245,12 +257,43 @@ class Summary2016 extends Statistics {
 			'visitedCityList'=>$visitedCityList,
 			'visitedCities'=>$visitedCities,
 			'personalBests'=>$personalBests,
+			'personalBestsComparison'=>$personalBestsComparison,
 			'seenCubers'=>$seenCubers,
 			'closestCubers'=>$closestCubers,
 			'cubers'=>$allSeenCubers,
 			'onceCubers'=>$allSeenCubers - $sum,
 			'onlyOne'=>$onlyOne,
 		];
+	}
+
+	public function getBestsComparison($thisYearsBests, $personalBestResults, $event, $type) {
+		$thisYearsBest = $thisYearsBests[$event][$type];
+		$lastYearsBest = null;
+		foreach ($personalBestResults as $year=>$value) {
+			if ($value != $thisYearsBests && isset($value[$event][$type])) {
+				$lastYearsBest = $value[$event][$type];
+				break;
+			}
+		}
+		if ($lastYearsBest === null) {
+			$improvement = null;
+			$improvementPercent = null;
+		} else {
+			if ($event === '333mbf') {
+				$thisYearsScore = Results::getMBFPoints($thisYearsBest->$type);
+				$lastYearsScore = Results::getMBFPoints($lastYearsBest->$type);
+				$improvement = $thisYearsScore - $lastYearsScore;
+				$improvementPercent = number_format($improvement / $lastYearsScore * 100, 2, '.', '');
+				//if two years' scores are the same
+				if ($improvement == 0) {
+
+				}
+			} else {
+				$improvement = $lastYearsBest->$type - $thisYearsBest->$type;
+				$improvementPercent = number_format($improvement / $thisYearsBest->$type * 100, 2, '.', '');
+			}
+		}
+		return compact('event', 'improvement', 'improvementPercent', 'thisYearsBest', 'lastYearsBest');
 	}
 
 	public static function getRecordsDetail($records, $person) {

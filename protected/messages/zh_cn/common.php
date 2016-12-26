@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Improvement' => '提升',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

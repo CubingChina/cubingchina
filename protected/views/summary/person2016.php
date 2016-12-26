@@ -7,7 +7,7 @@
   <p>
     <?php echo Yii::t('summary', 'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}.', [
       '{year}'=>$year,
-      '{personName}'=>$person->name,
+      '{personName}'=>Persons::getLinkByNameNId($person->name, $person->id),
       '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitions),
       '{rounds}'=>CHtml::tag('span', ['class'=>'num'], $rounds),
       '{events}'=>CHtml::tag('span', ['class'=>'num'], $events),
@@ -26,53 +26,54 @@
       '{recordsDetail}'=>Summary2016::getRecordsDetail($records, $person),
     ]); ?>
   </p>
-  <div class="col-lg-12 row">
-    <?php
-    $this->widget('GroupGridView', array(
-      'dataProvider'=>new CArrayDataProvider($recordList, array(
-        'pagination'=>false,
-        'sort'=>false,
-      )),
-      'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-      'groupKey'=>'eventId',
-      'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
-      'columns'=>array(
-        array(
-          'name'=>Yii::t('common', 'Event'),
-          'type'=>'raw',
-          'value'=>'',
+  <div class="row">
+    <div class="col-lg-12">
+      <?php
+      $this->widget('GroupGridView', array(
+        'dataProvider'=>new CArrayDataProvider($recordList, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+        'groupKey'=>'eventId',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'columns'=>array(
+          array(
+            'name'=>Yii::t('common', 'Event'),
+            'type'=>'raw',
+            'value'=>'',
+          ),
+          array(
+            'name'=>Yii::t('common', 'Single'),
+            'type'=>'raw',
+            'value'=>'$data->regionalSingleRecord != "" ? $data->getTime("best", false, true) : ""',
+          ),
+          array(
+            'name'=>Yii::t('common', 'Average'),
+            'type'=>'raw',
+            'value'=>'$data->regionalAverageRecord != "" ? $data->getTime("average", false, true): ""',
+          ),
+          array(
+            'name'=>Yii::t('Results', 'Competition'),
+            'type'=>'raw',
+            'value'=>'$data->competitionLink',
+            'headerHtmlOptions'=>array('class'=>'competition_name'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Round'),
+            'type'=>'raw',
+            'value'=>'Yii::t("Rounds", $data->round->cellName)',
+            'headerHtmlOptions'=>array('class'=>'round'),
+          ),
+          array(
+            'name'=>Yii::t('common', 'Detail'),
+            'type'=>'raw',
+            'value'=>'$data->getDetail(true)',
+          ),
         ),
-        array(
-          'name'=>Yii::t('common', 'Single'),
-          'type'=>'raw',
-          'value'=>'$data->regionalSingleRecord != "" ? $data->getTime("best", false, true) : ""',
-        ),
-        array(
-          'name'=>Yii::t('common', 'Average'),
-          'type'=>'raw',
-          'value'=>'$data->regionalAverageRecord != "" ? $data->getTime("average", false, true): ""',
-        ),
-        array(
-          'name'=>Yii::t('Results', 'Competition'),
-          'type'=>'raw',
-          'value'=>'$data->competitionLink',
-          'headerHtmlOptions'=>array('class'=>'competition_name'),
-        ),
-        array(
-          'name'=>Yii::t('common', 'Round'),
-          'type'=>'raw',
-          'value'=>'Yii::t("Rounds", $data->round->cellName)',
-          'headerHtmlOptions'=>array('class'=>'round'),
-        ),
-        array(
-          'name'=>Yii::t('common', 'Detail'),
-          'type'=>'raw',
-          'value'=>'$data->getDetail(true)',
-        ),
-      ),
-    )); ?>
+      )); ?>
+    </div>
   </div>
-  <div class="clearfix"></div>
   <?php endif; ?>
   <?php if (($temp = array_sum($medals)) != 0): ?>
   <h3><?php echo Yii::t('common', 'Podiums'); ?></h3>
@@ -84,40 +85,41 @@
       '{medalsDetail}'=>Summary2016::getMedalsDetail($medals, $person),
     ]); ?>
   </p>
-  <div class="col-md-6 col-lg-4 row">
-    <?php
-    $this->widget('GridView', array(
-      'dataProvider'=>new CArrayDataProvider($medalList, array(
-        'pagination'=>false,
-        'sort'=>false,
-      )),
-      'front'=>true,
-      'template'=>'{items}',
-      'columns'=>array(
-        array(
-          'type'=>'raw',
-          'value'=>'Events::getFullEventNameWithIcon($data["event"])',
-          'header'=>Yii::t('common', 'Event'),
+  <div class="row">
+    <div class="col-md-6 col-lg-4">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($medalList, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'type'=>'raw',
+            'value'=>'Events::getFullEventNameWithIcon($data["event"])',
+            'header'=>Yii::t('common', 'Event'),
+          ),
+          array(
+            'name'=>'gold',
+            'value'=>'$data["gold"] ?: ""',
+            'header'=>Yii::t('statistics', 'Gold'),
+          ),
+          array(
+            'name'=>'silver',
+            'value'=>'$data["silver"] ?: ""',
+            'header'=>Yii::t('statistics', 'Silver'),
+          ),
+          array(
+            'name'=>'bronze',
+            'value'=>'$data["bronze"] ?: ""',
+            'header'=>Yii::t('statistics', 'Bronze'),
+          ),
         ),
-        array(
-          'name'=>'gold',
-          'value'=>'$data["gold"] ?: ""',
-          'header'=>Yii::t('statistics', 'Gold'),
-        ),
-        array(
-          'name'=>'silver',
-          'value'=>'$data["silver"] ?: ""',
-          'header'=>Yii::t('statistics', 'Silver'),
-        ),
-        array(
-          'name'=>'bronze',
-          'value'=>'$data["bronze"] ?: ""',
-          'header'=>Yii::t('statistics', 'Bronze'),
-        ),
-      ),
-    )); ?>
+      )); ?>
+    </div>
   </div>
-  <div class="clearfix"></div>
   <?php endif; ?>
   <h3><?php echo Yii::t('statistics', 'Solves/Attempts'); ?></h3>
   <p>
@@ -127,33 +129,34 @@
       '{solve}'=>CHtml::tag('span', ['class'=>'num'], $solves['total']['solve']),
     ]); ?>
   </p>
-  <div class="col-md-6 col-lg-4 row">
-    <?php
-    $this->widget('GridView', array(
-      'dataProvider'=>new CArrayDataProvider($solves['events'], array(
-        'pagination'=>false,
-        'sort'=>false,
-      )),
-      'front'=>true,
-      'template'=>'{items}',
-      'columns'=>array(
-        array(
-          'type'=>'raw',
-          'value'=>'Events::getFullEventNameWithIcon($data["event"])',
-          'header'=>Yii::t('common', 'Event'),
+  <div class="row">
+    <div class="col-md-6 col-lg-4">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($solves['events'], array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'type'=>'raw',
+            'value'=>'Events::getFullEventNameWithIcon($data["event"])',
+            'header'=>Yii::t('common', 'Event'),
+          ),
+          array(
+            'name'=>'solve',
+            'header'=>Yii::t('statistics', 'Solves'),
+          ),
+          array(
+            'name'=>'attempt',
+            'header'=>Yii::t('statistics', 'Attempts'),
+          ),
         ),
-        array(
-          'name'=>'solve',
-          'header'=>Yii::t('statistics', 'Solves'),
-        ),
-        array(
-          'name'=>'attempt',
-          'header'=>Yii::t('statistics', 'Attempts'),
-        ),
-      ),
-    )); ?>
+      )); ?>
+    </div>
   </div>
-  <div class="clearfix"></div>
   <?php if ($personalBests != []): ?>
   <h3><?php echo Yii::t('Results', 'Personal Bests'); ?></h3>
   <p>
@@ -167,37 +170,105 @@
       '{as}'=>$personalBests['total']['average'] > 1 ? 's' : '',
     ]); ?>
   </p>
-  <div class="col-md-6 col-lg-4 row">
-    <?php
-    $this->widget('GridView', array(
-      'dataProvider'=>new CArrayDataProvider($personalBests['events'], array(
-        'pagination'=>false,
-        'sort'=>false,
-      )),
-      'front'=>true,
-      'template'=>'{items}',
-      'columns'=>array(
-        array(
-          'type'=>'raw',
-          'value'=>'Events::getFullEventNameWithIcon($data["event"])',
-          'header'=>Yii::t('common', 'Event'),
+  <div class="row">
+    <div class="col-md-6 col-lg-4">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($personalBests['events'], array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'type'=>'raw',
+            'value'=>'Events::getFullEventNameWithIcon($data["event"])',
+            'header'=>Yii::t('common', 'Event'),
+          ),
+          array(
+            'name'=>'total',
+            'header'=>Yii::t('Results', 'Times'),
+          ),
+          array(
+            'name'=>'best',
+            'header'=>Yii::t('common', 'Single'),
+          ),
+          array(
+            'name'=>'average',
+            'header'=>Yii::t('common', 'Average'),
+          ),
         ),
-        array(
-          'name'=>'total',
-          'header'=>Yii::t('Results', 'Times'),
+      )); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-md-6 col-lg-4">
+      <h4><?php echo Yii::t('summary', 'Improvements of Single'); ?></h4>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($personalBestsComparison['best'], array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'type'=>'raw',
+            'value'=>'Events::getFullEventNameWithIcon($data["event"])',
+            'header'=>Yii::t('common', 'Event'),
+          ),
+          array(
+            'value'=>'$data["lastYearsBest"] == null ? "" : $data["lastYearsBest"]->getTime("best", false)',
+            'type'=>'raw',
+            'header'=>'≤2015',
+          ),
+          array(
+            'value'=>'$data["thisYearsBest"]->getTime("best")',
+            'type'=>'raw',
+            'header'=>2016,
+          ),
+          array(
+            'value'=>'Results::formatImprovement($data)',
+            'header'=>Yii::t('common', 'Improvement'),
+          ),
         ),
-        array(
-          'name'=>'best',
-          'header'=>Yii::t('common', 'Single'),
+      )); ?>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <h4><?php echo Yii::t('summary', 'Improvements of Average'); ?></h4>
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($personalBestsComparison['average'], array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'type'=>'raw',
+            'value'=>'Events::getFullEventNameWithIcon($data["event"])',
+            'header'=>Yii::t('common', 'Event'),
+          ),
+          array(
+            'value'=>'$data["lastYearsBest"] == null ? "" : $data["lastYearsBest"]->getTime("average", false)',
+            'type'=>'raw',
+            'header'=>'≤2015',
+          ),
+          array(
+            'value'=>'$data["thisYearsBest"]->getTime("average")',
+            'type'=>'raw',
+            'header'=>2016,
+          ),
+          array(
+            'value'=>'Results::formatImprovement($data)',
+            'header'=>Yii::t('common', 'Improvement'),
+          ),
         ),
-        array(
-          'name'=>'average',
-          'header'=>Yii::t('common', 'Average'),
-        ),
-      ),
-    )); ?>
+      )); ?>
+    </div>
   </div>
-  <div class="clearfix"></div>
   <?php endif; ?>
   <h3><?php echo Yii::t('common', 'Cubers'); ?></h3>
   <p>
@@ -263,7 +334,6 @@
     </div>
     <?php endif; ?>
   </div>
-  <div class="clearfix"></div>
   <?php if ($visitedCities != 0): ?>
   <h3><?php echo Yii::t('common', 'Cities'); ?></h3>
   <p>
@@ -273,28 +343,29 @@
       '{ies}'=>$visitedCities > 1 ? 'ies' : 'y',
     ]); ?>
   </p>
-  <div class="col-md-6 col-lg-4 row">
-    <?php
-    $this->widget('GridView', array(
-      'dataProvider'=>new CArrayDataProvider($visitedCityList, array(
-        'pagination'=>false,
-        'sort'=>false,
-      )),
-      'front'=>true,
-      'template'=>'{items}',
-      'columns'=>array(
-        array(
-          'name'=>'count',
-          'header'=>Yii::t('Results', 'Times'),
+  <div class="row">
+    <div class="col-md-6 col-lg-4">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($visitedCityList, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'name'=>'count',
+            'header'=>Yii::t('Results', 'Times'),
+          ),
+          array(
+            'header'=>Yii::t('common', 'City'),
+            'value'=>'Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name"))',
+          ),
         ),
-        array(
-          'header'=>Yii::t('common', 'City'),
-          'value'=>'Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name"))',
-        ),
-      ),
-    )); ?>
+      )); ?>
+    </div>
   </div>
-  <div class="clearfix"></div>
   <?php endif; ?>
   <?php endif; ?>
 </div>

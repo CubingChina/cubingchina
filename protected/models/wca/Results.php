@@ -368,6 +368,21 @@ class Results extends ActiveRecord {
 		return call_user_func_array('array_merge', $rows);
 	}
 
+	public static function getMBFPoints($result) {
+		$difference = 99 - substr($result, 0, 2);
+		return $difference;
+	}
+
+	public static function formatImprovement($data) {
+		if ($data['lastYearsBest'] === null || $data['improvement'] == 0) {
+			return '-';
+		}
+		if ($data['event'] !== '333mbf') {
+			$data['improvement'] = self::formatTime($data['improvement'], $data['event']);
+		}
+		return $data['improvement'] . " ({$data['improvementPercent']}%)";
+	}
+
 	public static function formatTime($result, $eventId, $encode = true) {
 		if ($result == -1) {
 			return 'DNF';
@@ -379,7 +394,7 @@ class Results extends ActiveRecord {
 			return '';
 		}
 		if ($eventId === '333fm') {
-			if ($result > 1000) {
+			if ($result > 80) {
 				$time = sprintf('%.2f', $result / 100);
 			} else {
 				$time = $result;
@@ -397,7 +412,7 @@ class Results extends ActiveRecord {
 			$time = self::formatGMTime(substr($result, -5), true);
 			$time = $solved . '/' . $attempted . ' ' . $time;
 		} else {
-			$msecond = substr($result, -2);
+			$msecond = str_pad(substr($result, -2), 2, '0', STR_PAD_LEFT);
 			$second = substr($result, 0, -2);
 			$time = self::formatGMTime(intval($second)) . '.' . $msecond;
 		}
