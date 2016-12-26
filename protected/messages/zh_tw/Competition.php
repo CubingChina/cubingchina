@@ -17,10 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'I have read and know the {disclaimer} of Cubing China.' => '我已閱讀並知曉粗餅網{disclaimer}。',
   'ID' => '',
   'Online Pay' => '',
-  'disclaimer' => '免責聲明',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
@@ -46,6 +44,7 @@ return array (
   'End Date' => '結束日期',
   'Entry Fee' => '報名費',
   'Events' => '項目',
+  'I have read and know the {disclaimer} of Cubing China.' => '我已閱讀並知曉粗餅網{disclaimer}。',
   'Information' => '詳情',
   'It will be verified automatically after your {paying}.' => '在您{paying}報名費後，系統將自動審核你的報名。',
   'It will be verified by the organisation team soon. Please wait with patience.' => '主辦方會盡快審核您的報名，請耐心等待。',
@@ -88,5 +87,6 @@ return array (
   'You have not registered for any competition.' => '您尚未報名任何比賽。',
   'Your account is inactive now, please {activate} it before registration.' => '您的賬號尚未激活，報名前請先{activate}賬號。',
   'Your registration was submitted successfully.' => '您的報名已經成功提交。',
+  'disclaimer' => '免責聲明',
   'here' => '這里',
 );

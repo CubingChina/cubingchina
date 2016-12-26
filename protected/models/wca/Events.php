@@ -107,6 +107,14 @@ class Events extends ActiveRecord {
 		return isset(self::$_allEvents[$event]) ? self::$_allEvents[$event] : $event;
 	}
 
+	public static function getFullEventNameWithIcon($event) {
+		$name = self::getFullEventName($event);
+		return CHtml::tag("span", array(
+			"class"=>"event-icon event-icon event-icon-" . $event,
+			"title"=>Yii::t("event", $name),
+		), Yii::t("event", $name));
+	}
+
 	public static function getScheduleEvents() {
 		return self::getOnlyScheduleEvents() + self::getAllEvents();
 	}

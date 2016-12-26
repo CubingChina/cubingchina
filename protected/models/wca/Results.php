@@ -441,21 +441,22 @@ class Results extends ActiveRecord {
 		), trim(implode('   ', $detail)));
 	}
 
-	public function getTime($attribute) {
+	public function getTime($attribute, $highlight = true, $showRecord = false) {
 		$time = self::formatTime($this->$attribute, $this->eventId);
-		if (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage)) {
+		if ($highlight && (($attribute == 'best' && $this->newBest) || ($attribute == 'average' && $this->newAverage))) {
 			$time = '<span class="new-best">' . $time . '</strong>';
+		}
+		if ($showRecord) {
+			$temp = sprintf('regional%sRecord', $attribute === 'best' ? 'Single' : 'Average');
+			$record = $this->$temp;
+			$class = $record == 'WR' || $record == 'NR' ? strtolower($record) : 'cr';
+			$time .= CHtml::tag('span', ['class'=>'record record-' . $class], $record);
 		}
 		return $time;
 	}
 
 	public function getCompetitionLink() {
-		$competition = Statistics::getCompetition(array(
-			'competitionId'=>$this->competitionId,
-			'cellName'=>$this->competition->cellName,
-			'cityName'=>$this->competition->cityName,
-		));
-		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
+		return $this->competition->getCompetitionLink();
 	}
 
 	public function getDetail($boldBest = false) {

@@ -196,6 +196,16 @@ class Persons extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, competition.year, competition.month, competition.day, round.rank'
 		));
+		$pbTemplate = [
+			'best'=>0,
+			'average'=>0,
+			'total'=>0,
+		];
+		$personalBests = [
+			'total'=>$pbTemplate,
+			'years'=>[],
+			'events'=>[],
+		];
 		foreach($results as $result) {
 			if ($eventId != $result->eventId) {
 				//重置各值
@@ -210,6 +220,31 @@ class Persons extends ActiveRecord {
 			if ($result->average > 0 && $result->average <= $average) {
 				$result->newAverage = true;
 				$average = $result->average;
+			}
+			$year = $result->competition->year;
+			if ($result->newBest || $result->newAverage) {
+				if (!isset($personalBests['years'][$year][$result->eventId])) {
+					$personalBests['years'][$year][$result->eventId] = $pbTemplate;
+				}
+				if (!isset($personalBests['events'][$result->eventId])) {
+					$personalBests['events'][$result->eventId] = $pbTemplate;
+				}
+				if ($result->newBest) {
+					$personalBests['years'][$year][$result->eventId]['best']++;
+					$personalBests['years'][$year][$result->eventId]['total']++;
+					$personalBests['events'][$result->eventId]['best']++;
+					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['total']['best']++;
+					$personalBests['total']['total']++;
+				}
+				if ($result->newAverage) {
+					$personalBests['years'][$year][$result->eventId]['average']++;
+					$personalBests['years'][$year][$result->eventId]['total']++;
+					$personalBests['events'][$result->eventId]['average']++;
+					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['total']['average']++;
+					$personalBests['total']['total']++;
+				}
 			}
 			$byEvent[$eventId][] = $result;
 			$byCompetition[$result->competitionId][] = $result;
@@ -325,11 +360,7 @@ class Persons extends ActiveRecord {
 		foreach ($competitions as $key=>$competition) {
 			$temp['longitude'] += $competition->longitude / 1e6;
 			$temp['latitude'] += $competition->latitude / 1e6;
-			$data = Statistics::getCompetition(array(
-				'competitionId'=>$competition->id,
-				'cellName'=>$competition->cellName,
-				'cityName'=>$competition->cityName,
-			));
+			$data = $competition->getExtraData();
 			$data['longitude'] = $competition->longitude / 1e6;
 			$data['latitude'] = $competition->latitude / 1e6;
 			$data['url'] = CHtml::normalizeUrl($data['url']);
@@ -460,6 +491,7 @@ class Persons extends ActiveRecord {
 			'sumOfRanks'=>$sumOfRanks,
 			'byEvent'=>$byEvent,
 			'byCompetition'=>$byCompetition,
+			'personalBests'=>$personalBests,
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
 			'ncPodiums'=>$ncPodiums,

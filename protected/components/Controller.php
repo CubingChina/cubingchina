@@ -276,6 +276,13 @@ class Controller extends CController {
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(
+						'label'=>Yii::t('common', 'My Annual Summary', [
+							'{year}'=>2016,
+						]),
+						'url'=>Yii::app()->user->isGuest ? '' : array('/summary/person', 'id'=>$this->user->wcaid, 'year'=>2016),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+					),
+					array(
 						'label'=>Yii::t('common', 'My Certificates'),
 						'url'=>Yii::app()->user->isGuest ? '' : array('/user/cert'),
 						'visible'=>!Yii::app()->user->isGuest && $this->user->hasCerts,
