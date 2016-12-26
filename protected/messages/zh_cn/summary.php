@@ -25,7 +25,7 @@ return array (
   'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}.' => '在过去的一年（{year}）里，{personName}参加了{competitions}场比赛，上场{rounds}个轮次，包括{events}个项目。',
   'all of them were {type}s' => '都是{type}',
   'both were {type}s' => '都是{type}',
-  'her' => '她的',
+  'her' => '她',
   'including {n1} {type1}{s1} and {n2} {type2}{s2}' => '包括{n1}个{type1}和{n2}个{type2}',
   'including {n1} {type1}{s1}, {n2} {type2}{s2}, and {n3} {type3}{s3}' => '包括{n1}个{type1}、{n2}个{type2}和{n3}个{type3}',
   'which was a {type}' => '是一个{type}',

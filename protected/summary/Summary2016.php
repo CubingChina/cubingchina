@@ -104,7 +104,7 @@ class Summary2016 extends Statistics {
 				}
 			}
 			if ($result->best > 0) {
-				if ($result->pos <= 3) {
+				if ($result->pos <= 3 && in_array($result->roundId, ['c', 'f'])) {
 					$medals[$medalKeys[$result->pos - 1]]++;
 					if (!isset($medalList[$result->eventId])) {
 						$medalList[$result->eventId] = $medalsTemplate;
@@ -162,8 +162,8 @@ class Summary2016 extends Statistics {
 			$thisYearsBests = $data['personalBestResults'][$this->year];
 			foreach ($personalBests['events'] as $event=>$pb) {
 				$personalBests['events'][$event]['event'] = $event;
-				$personalBestsComparison['best'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], $event, 'best');
-				$personalBestsComparison['average'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], $event, 'average');
+				$personalBestsComparison['best'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], "$event", 'best');
+				$personalBestsComparison['average'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], "$event", 'average');
 			}
 			$personalBests['events'] = array_values($personalBests['events']);
 			foreach (['best', 'average'] as $key) {
