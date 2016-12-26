@@ -171,7 +171,7 @@ class Summary2016 extends Statistics {
 					return $data['thisYearsBest'] != null && ($data['improvement'] > 0 || $data['event'] == '333mbf');
 				});
 				usort($personalBestsComparison[$key], function($dataA, $dataB) {
-					return $dataB['improvementPercent'] - $dataA['improvementPercent'];
+					return floatval($dataB['improvementPercent']) - floatval($dataA['improvementPercent']) > 0 ? 1 : -1;
 				});
 			}
 		}

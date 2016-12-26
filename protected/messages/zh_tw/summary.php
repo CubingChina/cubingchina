@@ -19,7 +19,7 @@
 return array (
   'Improvements of Average' => '平均成績提升',
   'Improvements of Single' => '單次成績提升',
-  ' {cuber} was the only one who accompanied the whole {competitions} competitions.' => '{cuber}是唯一一個共同比完所有{competitions}場比賽的',
+  ' {cuber} was the only one who accompanied the whole {competitions} competitions.' => '{cuber}是唯一一個共同比完所有{competitions}場比賽的。',
   ', {moreThanOne} of them competed with {genderPronoun3} more than once' => '，其中{moreThanOne}個和{genderPronoun3}一起比過兩次或以上',
   'In China, {genderPronoun} visited {cities} cit{ies} while competing.' => '在比賽過程中，{genderPronoun}游覽了{cities}個中國城市。',
   'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}.' => '在過去的一年（{year}）里，{personName}參加了{competitions}場比賽，上場{rounds}個輪次，包括{events}個項目。',
