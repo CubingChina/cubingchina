@@ -115,7 +115,7 @@ class Summary2016 extends Summary {
 			}
 			for ($i = 1; $i <= 5; $i++) {
 				$value = $result['value' . $i];
-				if ($value != 0) {
+				if ($value != 0 && $value != -2) {
 					$solves['total']['attempt']++;
 					$solves['events'][$result->eventId]['attempt']++;
 					if ($value > 0) {
