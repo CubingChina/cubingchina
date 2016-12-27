@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Improvement' => '提升',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -151,6 +150,7 @@ return array (
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活過程中有任何問題，請發送郵件到{email}聯系管理員。',
   'If you were unable to pay online, please contact the organizer.' => '如果你無法在線支付，請聯系主辦方。',
   'Image height or width exceeded, the limited width is {width} and height is {height}' => '圖像寬度或高度過大，最大寬度是{width}，最大高度是{height}',
+  'Improvement' => '提升',
   'Inactive User' => '未激活用戶',
   'Incorrect email or password.' => '郵箱或密碼錯誤',
   'Invalid birthday format' => '生日格式錯誤',
@@ -223,6 +223,7 @@ return array (
   'Recommended Browsers:' => '推薦瀏覽器：',
   'Records' => '紀錄',
   'Region' => '地區',
+  'Regions' => '國家/地區',
   'Register' => '注冊',
   'Registration' => '在線報名',
   'Registration Done' => '完成注冊',

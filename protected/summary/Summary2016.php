@@ -1,19 +1,34 @@
 <?php
 
-Yii::import('application.statistics.*');
-
-class Summary2016 extends Statistics {
+class Summary2016 extends Summary {
 	public $year = 2016;
 
 	public function person($person, $data) {
 		//competitions, cities
 		$competitions = 0;
 		$competitionIds = [];
+		$visitedRegionList = [];
 		$visitedCityList = [];
+		$firstCompetition = $lastCompetition = null;
 		foreach ($data['competitions'] as $competition) {
 			if ($competition->year == $this->year) {
+				if ($lastCompetition === null) {
+					$lastCompetition = $competition;
+				}
+				$firstCompetition = $competition;
 				$competitions++;
 				$competitionIds[] = $competition->id;
+				if (!in_array($competition->countryId, ['XA', 'XE', 'XS'])) {
+					if (!isset($visitedRegionList[$competition->countryId])) {
+						$visitedRegionList[$competition->countryId] = [
+							'name'=>$competition->countryId,
+							'name_zh'=>$competition->countryId,
+							'iso2'=>$competition->country->iso2,
+							'count'=>0,
+						];
+					}
+					$visitedRegionList[$competition->countryId]['count']++;
+				}
 				if (in_array($competition->countryId, ['Hong Kong', 'Macau'])) {
 					if (!isset($visitedCityList[$competition->countryId])) {
 						$visitedCityList[$competition->countryId] = [
@@ -26,6 +41,8 @@ class Summary2016 extends Statistics {
 				}
 			}
 		}
+		$firstDate = strtotime(sprintf('%d-%d-%d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day));
+		$lastDate = strtotime(sprintf('%d-%d-%d', $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay));
 		if ($competitions == 0) {
 			return [
 				'competitions'=>$competitions,
@@ -53,9 +70,13 @@ class Summary2016 extends Statistics {
 				$visitedCityList[$city->id]['count']++;
 			}
 		}
+		usort($visitedRegionList, function($dataA, $dataB) {
+			return $dataB['count'] - $dataA['count'];
+		});
 		usort($visitedCityList, function($dataA, $dataB) {
 			return $dataB['count'] - $dataA['count'];
 		});
+		$visitedRegions = count($visitedRegionList);
 		$visitedCities = count($visitedCityList);
 
 		//solves, rounds, records, medals
@@ -247,6 +268,8 @@ class Summary2016 extends Statistics {
 			'year'=>$this->year,
 			'person'=>$person,
 			'competitions'=>$competitions,
+			'firstDate'=>$firstDate,
+			'lastDate'=>$lastDate,
 			'rounds'=>$rounds,
 			'events'=>$events,
 			'solves'=>$solves,
@@ -254,6 +277,8 @@ class Summary2016 extends Statistics {
 			'recordList'=>$recordList,
 			'medals'=>$medals,
 			'medalList'=>$medalList,
+			'visitedRegionList'=>$visitedRegionList,
+			'visitedRegions'=>$visitedRegions,
 			'visitedCityList'=>$visitedCityList,
 			'visitedCities'=>$visitedCities,
 			'personalBests'=>$personalBests,
@@ -314,9 +339,9 @@ class Summary2016 extends Statistics {
 					case 1:
 						return Yii::t('summary', 'which was a {type}', $params);
 					case 2:
-						return Yii::t('summary', 'both were {type}s', $params);
+						return Yii::t('summary', 'and both were {type}s', $params);
 					default:
-						return Yii::t('summary', 'all of them were {type}s', $params);
+						return Yii::t('summary', 'and all were {type}s', $params);
 				}
 				break;
 			case 2:
@@ -373,9 +398,9 @@ class Summary2016 extends Statistics {
 					case 1:
 						return Yii::t('summary', 'which was a {type}', $params);
 					case 2:
-						return Yii::t('summary', 'both were {type}s', $params);
+						return Yii::t('summary', 'and both were {type}s', $params);
 					default:
-						return Yii::t('summary', 'all of them were {type}s', $params);
+						return Yii::t('summary', 'and all were {type}s', $params);
 				}
 				break;
 			case 2:

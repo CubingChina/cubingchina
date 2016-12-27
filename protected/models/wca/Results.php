@@ -374,13 +374,21 @@ class Results extends ActiveRecord {
 	}
 
 	public static function formatImprovement($data) {
-		if ($data['lastYearsBest'] === null || $data['improvement'] == 0) {
+		if ($data['lastYearsBest'] === null || ($data['event'] !== '333mbf' && $data['improvement'] == 0)) {
 			return '-';
 		}
 		if ($data['event'] !== '333mbf') {
-			$data['improvement'] = self::formatTime($data['improvement'], $data['event']);
+			return self::formatTime($data['improvement'], $data['event']) . " ({$data['improvementPercent']}%)";
+		} else {
+			if ($data['improvement'] > 0) {
+				return $data['improvement'] . " ({$data['improvementPercent']}%)";
+			} else {
+				$lastYearsTime = substr($data['lastYearsBest']->best, 3, -2);
+				$thisYearsTime = substr($data['thisYearsBest']->best, 3, -2);
+				$deltaTime = $lastYearsTime - $thisYearsTime;
+				return self::formatGMTime($deltaTime, true);
+			}
 		}
-		return $data['improvement'] . " ({$data['improvementPercent']}%)";
 	}
 
 	public static function formatTime($result, $eventId, $encode = true) {

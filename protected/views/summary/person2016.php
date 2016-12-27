@@ -5,7 +5,7 @@
   ]); ?></p>
   <?php else: ?>
   <p>
-    <?php echo Yii::t('summary', 'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}.', [
+    <?php echo Yii::t('summary', 'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}, {date}.', [
       '{year}'=>$year,
       '{personName}'=>Persons::getLinkByNameNId($person->name, $person->id),
       '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitions),
@@ -14,6 +14,12 @@
       '{cs}'=>$competitions > 1 ? 's' : '',
       '{rs}'=>$rounds > 1 ? 's' : '',
       '{es}'=>$events > 1 ? 's' : '',
+      '{date}'=>$firstDate == $lastDate ? Yii::t('summary', 'on {date}', [
+        '{date}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate) : date('m月d日', $firstDate),
+      ]) : Yii::t('summary', 'from {date1} to {date2}', [
+        '{date1}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate) : date('m月d日', $firstDate),
+        '{date2}'=>Yii::app()->language == 'en' ? date('M jS', $lastDate) : date('m月d日', $lastDate),
+      ]),
     ]); ?>
   </p>
   <?php if (($temp = array_sum($records)) != 0): ?>
@@ -78,10 +84,14 @@
   <?php if (($temp = array_sum($medals)) != 0): ?>
   <h3><?php echo Yii::t('common', 'Podiums'); ?></h3>
   <p>
-    <?php echo Yii::t('summary', '{genderPronoun} has been on the podium {medal} times, {medalsDetail}.', [
+    <?php echo Yii::t('summary', '{genderPronoun} has been on the podium {medal} times {acrossEvents}, {medalsDetail}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
       '{medal}'=>CHtml::tag('span', ['class'=>'num'], $temp),
       '{ms}'=>$temp > 1 ? 's' : '',
+      '{acrossEvents}'=>Yii::t('summary', 'across {event} event{es}', [
+        '{event}'=>CHtml::tag('span', ['class'=>'num'], count($medalList)),
+        '{es}'=>count($medalList) > 1 ? 's' : '',
+      ]),
       '{medalsDetail}'=>Summary2016::getMedalsDetail($medals, $person),
     ]); ?>
   </p>
@@ -160,10 +170,14 @@
   <?php if ($personalBests != []): ?>
   <h3><?php echo Yii::t('Results', 'Personal Bests'); ?></h3>
   <p>
-    <?php echo Yii::t('summary', '{genderPronoun} broke {genderPronoun2} personal best {total} times, including {best} single{bs} and {average} average{as}.', [
+    <?php echo Yii::t('summary', '{genderPronoun} broke {genderPronoun2} personal best {total} times {acrossEvents}, including {best} single{bs} and {average} average{as}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
       '{genderPronoun2}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'her') : Yii::t('common', 'his'),
       '{total}'=>CHtml::tag('span', ['class'=>'num'], $personalBests['total']['total']),
+      '{acrossEvents}'=>Yii::t('summary', 'across {event} event{es}', [
+        '{event}'=>CHtml::tag('span', ['class'=>'num'], count($personalBests['events'])),
+        '{es}'=>count($personalBests['events']) > 1 ? 's' : '',
+      ]),
       '{best}'=>CHtml::tag('span', ['class'=>'num'], $personalBests['total']['best']),
       '{average}'=>CHtml::tag('span', ['class'=>'num'], $personalBests['total']['average']),
       '{bs}'=>$personalBests['total']['best'] > 1 ? 's' : '',
@@ -275,7 +289,7 @@
     <?php echo Yii::t('summary', '{genderPronoun} met {cubers} cubers{moreThanOne}.{onlyOne}', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
       '{cubers}'=>CHtml::tag('span', ['class'=>'num'], $cubers),
-      '{moreThanOne}'=>$cubers == $onceCubers ? '' : Yii::t('summary', ', {moreThanOne} of them competed with {genderPronoun3} more than once', [
+      '{moreThanOne}'=>$cubers == $onceCubers ? '' : Yii::t('summary', ', {moreThanOne} of whom competed with {genderPronoun3} more than once', [
         '{genderPronoun3}'=>strtolower($person->gender) == 'f' ? Yii::t('summary', 'her') : Yii::t('common', 'him'),
         '{moreThanOne}'=>CHtml::tag('span', ['class'=>'num'], $cubers - $onceCubers),
       ]),
@@ -334,6 +348,41 @@
     </div>
     <?php endif; ?>
   </div>
+  <?php if ($visitedRegions != 0): ?>
+  <h3><?php echo Yii::t('common', 'Regions'); ?></h3>
+  <p>
+    <?php echo Yii::t('summary', '{genderPronoun} competed in {countries} countr{ies}/region{rs}.', [
+      '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
+      '{countries}'=>CHtml::tag('span', ['class'=>'num'], $visitedRegions),
+      '{ies}'=>$visitedRegions > 1 ? 'ies' : 'y',
+      '{rs}'=>$visitedRegions > 1 ? 's' : '',
+    ]); ?>
+  </p>
+  <div class="row">
+    <div class="col-md-6 col-lg-4">
+      <?php
+      $this->widget('GridView', array(
+        'dataProvider'=>new CArrayDataProvider($visitedRegionList, array(
+          'pagination'=>false,
+          'sort'=>false,
+        )),
+        'front'=>true,
+        'template'=>'{items}',
+        'columns'=>array(
+          array(
+            'header'=>Yii::t('common', 'Region'),
+            'value'=>'Region::getIconName(Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name")), $data["iso2"])',
+            'type'=>'raw',
+          ),
+          array(
+            'name'=>'count',
+            'header'=>Yii::t('Results', 'Times'),
+          ),
+        ),
+      )); ?>
+    </div>
+  </div>
+  <?php endif; ?>
   <?php if ($visitedCities != 0): ?>
   <h3><?php echo Yii::t('common', 'Cities'); ?></h3>
   <p>
@@ -355,12 +404,12 @@
         'template'=>'{items}',
         'columns'=>array(
           array(
-            'name'=>'count',
-            'header'=>Yii::t('Results', 'Times'),
-          ),
-          array(
             'header'=>Yii::t('common', 'City'),
             'value'=>'Yii::t("Region", ActiveRecord::getModelAttributeValue($data, "name"))',
+          ),
+          array(
+            'name'=>'count',
+            'header'=>Yii::t('Results', 'Times'),
           ),
         ),
       )); ?>
