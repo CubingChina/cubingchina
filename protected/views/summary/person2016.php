@@ -216,6 +216,7 @@
       )); ?>
     </div>
     <div class="clearfix"></div>
+    <?php if ($personalBestsComparison['best'] != []): ?>
     <div class="col-md-6 col-lg-4">
       <h4><?php echo Yii::t('summary', 'Improvements of Single'); ?></h4>
       <?php
@@ -249,6 +250,8 @@
         ),
       )); ?>
     </div>
+    <?php endif; ?>
+    <?php if ($personalBestsComparison['average'] != []): ?>
     <div class="col-md-6 col-lg-4">
       <h4><?php echo Yii::t('summary', 'Improvements of Average'); ?></h4>
       <?php
@@ -282,6 +285,7 @@
         ),
       )); ?>
     </div>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
   <h2><?php echo Yii::t('common', 'Cubers'); ?></h2>
