@@ -23,7 +23,7 @@
     ]); ?>
   </p>
   <?php if (($temp = array_sum($records)) != 0): ?>
-  <h3><?php echo Yii::t('common', 'Records'); ?></h3>
+  <h2><?php echo Yii::t('common', 'Records'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} broke {record} record{rs}, {recordsDetail}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -82,7 +82,7 @@
   </div>
   <?php endif; ?>
   <?php if (($temp = array_sum($medals)) != 0): ?>
-  <h3><?php echo Yii::t('common', 'Podiums'); ?></h3>
+  <h2><?php echo Yii::t('common', 'Podiums'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} has been on the podium {medal} times {acrossEvents}, {medalsDetail}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -131,7 +131,7 @@
     </div>
   </div>
   <?php endif; ?>
-  <h3><?php echo Yii::t('statistics', 'Solves/Attempts'); ?></h3>
+  <h2><?php echo Yii::t('statistics', 'Solves/Attempts'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} attempted {attempt} solves and completed {solve}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -168,7 +168,7 @@
     </div>
   </div>
   <?php if ($personalBests != []): ?>
-  <h3><?php echo Yii::t('Results', 'Personal Bests'); ?></h3>
+  <h2><?php echo Yii::t('Results', 'Personal Bests'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} broke {genderPronoun2} personal best {total} times {acrossEvents}, including {best} single{bs} and {average} average{as}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -284,7 +284,7 @@
     </div>
   </div>
   <?php endif; ?>
-  <h3><?php echo Yii::t('common', 'Cubers'); ?></h3>
+  <h2><?php echo Yii::t('common', 'Cubers'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} met {cubers} cubers{moreThanOne}.{onlyOne}', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -349,7 +349,7 @@
     <?php endif; ?>
   </div>
   <?php if ($visitedRegions != 0): ?>
-  <h3><?php echo Yii::t('common', 'Regions'); ?></h3>
+  <h2><?php echo Yii::t('common', 'Regions'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} competed in {countries} countr{ies}/region{rs}.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -384,7 +384,7 @@
   </div>
   <?php endif; ?>
   <?php if ($visitedCities != 0): ?>
-  <h3><?php echo Yii::t('common', 'Cities'); ?></h3>
+  <h2><?php echo Yii::t('common', 'Cities'); ?></h2>
   <p>
     <?php echo Yii::t('summary', 'In China, {genderPronoun} visited {cities} cit{ies} while competing.', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'she') : Yii::t('common', 'he'),
@@ -418,3 +418,23 @@
   <?php endif; ?>
   <?php endif; ?>
 </div>
+<?php
+$data = json_encode([
+  'title'=>$person->getLocalName() . '在2016年是如此的好事多魔',
+  'desc'=>'快来围观我的2016年度WCA赛事个人总结！',
+  'imgUrl'=>'https://cubingchina.com/f/images/icon196.png',
+]);
+Yii::app()->clientScript->registerScript('summary',
+<<<EOT
+  var data = {$data};
+  data.link = location.href;
+  wx.config({$config});
+  wx.ready(function() {
+    wx.onMenuShareTimeline(data);
+    wx.onMenuShareAppMessage(data);
+    wx.onMenuShareQQ(data);
+    wx.onMenuShareWeibo(data);
+    wx.onMenuShareQZone(data);
+  });
+EOT
+);

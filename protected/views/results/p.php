@@ -47,6 +47,15 @@
       </div>
     </div>
   </div>
+  <?php echo CHtml::link(Html::fontAwesome('object-group') . Yii::t('summary', '{year} Annual Summary', [
+    '{year}'=>2016,
+  ]), [
+    '/summary/person',
+    'year'=>2016,
+    'id'=>$person->id
+  ], [
+    'class'=>'btn btn-lg btn-theme',
+  ]); ?>
   <h2><?php echo Yii::t('Results', 'Current Personal Records') . Persons::getBattleCheckBox($person->name, $person->id, 'span', array('class'=>'small')); ?></h2>
   <?php
   $this->widget('GridView', array(

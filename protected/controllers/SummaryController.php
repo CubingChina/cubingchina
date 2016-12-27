@@ -39,10 +39,28 @@ class SummaryController extends Controller {
 			'{year}'=>$year,
 		]);
 		$this->pageTitle = [$this->title];
+		$this->description = $this->title;
 		$this->breadcrumbs = [
 			'Annual Summary',
 			$person->name,
 		];
+		$application = $this->getWechatApplication([
+			'js'=>true,
+		]);
+		$js = $application->js;
+		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+		try {
+			$config = $js->config(array(
+				'onMenuShareTimeline',
+				'onMenuShareAppMessage',
+				'onMenuShareQQ',
+				'onMenuShareWeibo',
+				'onMenuShareQZone',
+			), YII_DEBUG);
+		} catch (Exception $e) {
+			$config = '{}';
+		}
+		$summary['config'] = $config;
 		$this->render('person' . $year, $summary);
 	}
 }

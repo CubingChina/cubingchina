@@ -41,14 +41,14 @@ class Summary2016 extends Summary {
 				}
 			}
 		}
-		$firstDate = strtotime(sprintf('%d-%d-%d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day));
-		$lastDate = strtotime(sprintf('%d-%d-%d', $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay));
 		if ($competitions == 0) {
 			return [
 				'competitions'=>$competitions,
 				'person'=>$person,
 			];
 		}
+		$firstDate = strtotime(sprintf('%d-%d-%d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day));
+		$lastDate = strtotime(sprintf('%d-%d-%d', $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay));
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
 			'wca_competition_id'=>$competitionIds,
 		]);

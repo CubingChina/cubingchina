@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Annual Summary'=>'年度总结',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -49,7 +50,7 @@ return array (
   'Language' => '语言',
   'Mean of 3' => '三次计平均',
   'My Competitions' => '我的比赛',
-  'NR' => '国家纪录',
+  'NR' => '国家/地区纪录',
   'NaR' => '北美洲纪录',
   'Not found' => '未找到',
   'OcR' => '大洋洲纪录',

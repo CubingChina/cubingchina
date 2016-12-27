@@ -542,6 +542,13 @@ class Persons extends ActiveRecord {
 		));
 	}
 
+	public function getLocalName() {
+		if (preg_match('{\((.+)\)}', $this->name, $matches)) {
+			return $matches[1];
+		}
+		return $this->name;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
