@@ -422,7 +422,7 @@
 $data = json_encode([
   'title'=>$person->getLocalName() . '在2016年是如此的好事多魔',
   'desc'=>'快来围观我的2016年度WCA赛事个人总结！',
-  'imgUrl'=>'https://cubingchina.com/f/images/icon196.png',
+  'imgUrl'=>Yii::app()->request->getBaseUrl(true) . '/f/images/2016.jpg',
 ]);
 Yii::app()->clientScript->registerScript('summary',
 <<<EOT
