@@ -233,7 +233,7 @@
             'header'=>Yii::t('common', 'Event'),
           ),
           array(
-            'value'=>'$data["lastYearsBest"] == null ? "" : $data["lastYearsBest"]->getTime("best", false)',
+            'value'=>'$data["lastYearsBest"] == null ? "-" : $data["lastYearsBest"]->getTime("best", false)',
             'type'=>'raw',
             'header'=>'≤2015',
           ),
@@ -266,7 +266,7 @@
             'header'=>Yii::t('common', 'Event'),
           ),
           array(
-            'value'=>'$data["lastYearsBest"] == null ? "" : $data["lastYearsBest"]->getTime("average", false)',
+            'value'=>'$data["lastYearsBest"] == null ? "-" : $data["lastYearsBest"]->getTime("average", false)',
             'type'=>'raw',
             'header'=>'≤2015',
           ),

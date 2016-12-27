@@ -167,6 +167,7 @@ class Summary2016 extends Summary {
 
 		//personalbests
 		$personalBests = [];
+		$personalBestsComparison = [];
 		if (isset($data['personalBests']['years'][$this->year])) {
 			$personalBests = [
 				'events'=>$data['personalBests']['years'][$this->year],
@@ -179,7 +180,6 @@ class Summary2016 extends Summary {
 			uasort($personalBests['events'], function($pbA, $pbB) {
 				return $pbB['total'] - $pbA['total'];
 			});
-			$personalBestsComparison = [];
 			$thisYearsBests = $data['personalBestResults'][$this->year];
 			foreach ($personalBests['events'] as $event=>$pb) {
 				$personalBests['events'][$event]['event'] = $event;
@@ -189,7 +189,7 @@ class Summary2016 extends Summary {
 			$personalBests['events'] = array_values($personalBests['events']);
 			foreach (['best', 'average'] as $key) {
 				$personalBestsComparison[$key] = array_filter($personalBestsComparison[$key], function($data) {
-					return $data['thisYearsBest'] != null && ($data['improvement'] > 0 || $data['event'] == '333mbf');
+					return $data['thisYearsBest'] != null && ($data['improvement'] > 0 || $data['event'] == '333mbf' || $data['lastYearsBest'] == null);
 				});
 				usort($personalBestsComparison[$key], function($dataA, $dataB) {
 					return floatval($dataB['improvementPercent']) - floatval($dataA['improvementPercent']) > 0 ? 1 : -1;
