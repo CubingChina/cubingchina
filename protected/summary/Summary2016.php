@@ -308,11 +308,7 @@ class Summary2016 extends Summary {
 				$thisYearsScore = Results::getMBFPoints($thisYearsBest->$type);
 				$lastYearsScore = Results::getMBFPoints($lastYearsBest->$type);
 				$improvement = $thisYearsScore - $lastYearsScore;
-				$improvementPercent = number_format($improvement / $lastYearsScore * 100, 2, '.', '');
-				//if two years' scores are the same
-				if ($improvement == 0) {
-
-				}
+				$improvementPercent = number_format($improvement / max($lastYearsScore, 1) * 100, 2, '.', '');
 			} else {
 				$improvement = $lastYearsBest->$type - $thisYearsBest->$type;
 				$improvementPercent = number_format($improvement / $thisYearsBest->$type * 100, 2, '.', '');
