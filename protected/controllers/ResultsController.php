@@ -654,13 +654,18 @@ class ResultsController extends Controller {
 	private function statMostPersons() {
 		$page = $this->iGet('page', 1);
 		$region = $this->sGet('region', 'China');
+		$gender = $this->sGet('gender', 'all');
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
 		}
 		$statistic = array(
 			'class'=>'MostNumber',
 			'region'=>$region,
 			'group'=>'competitionId',
+			'gender'=>$gender,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -682,6 +687,47 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'region'=>$region,
+			'gender'=>$gender,
+		));
+	}
+
+	private function statMostCompetitions() {
+		$page = $this->iGet('page', 1);
+		$region = $this->sGet('region', 'China');
+		$gender = $this->sGet('gender', 'all');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		$statistic = array(
+			'class'=>'MostNumber',
+			'region'=>$region,
+			'gender'=>$gender,
+			'group'=>'personId',
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Most Competitions');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/mostCompetitions', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'region'=>$region,
+			'gender'=>$gender,
 		));
 	}
 

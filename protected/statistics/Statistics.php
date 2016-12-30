@@ -130,6 +130,10 @@ class Statistics {
 			'class'=>'MostNumber',
 			'group'=>'personId',
 			'width'=>6,
+			'more'=>array(
+				'/results/statistics',
+				'name'=>'most-competitions',
+			),
 		),
 		'Most persons in one competition'=>array(
 			'class'=>'MostNumber',

@@ -63,6 +63,7 @@ return array (
   'Medals' => '獎牌',
   'Most Personal Solves' => '復原榜',
   'Most Persons' => '選手人數排行榜',
+  'Most Competitions' => '比賽次數排行榜',
   'NR' => '地區排名',
   'Person' => '姓名',
   'Rank' => '排名',

@@ -20,6 +20,12 @@
           'class'=>'form-control',
         )); ?>
       </div>
+      <div class="form-group">
+        <label for="Competition_year"><?php echo Yii::t('common', 'Gender'); ?></label>
+        <?php echo CHtml::dropDownList('gender', $gender, Persons::getGenders(), array(
+          'class'=>'form-control',
+        )); ?>
+      </div>
       <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
     </div>
   <?php $this->endWidget(); ?>

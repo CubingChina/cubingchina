@@ -52,6 +52,17 @@ class MostNumber extends Statistics {
 				);
 				break;
 		}
+		if (isset($statistic['gender'])) {
+			$command->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1');
+			switch ($statistic['gender']) {
+				case 'female':
+					$command->andWhere('p.gender="f"');
+					break;
+				case 'male':
+					$command->andWhere('p.gender="m"');
+					break;
+			}
+		}
 		$limit = self::$limit;
 		$cmd = clone $command;
 		$rows = $command
