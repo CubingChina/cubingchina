@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Annual Summary'=>'年度总结',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -28,6 +27,7 @@ return array (
   '1 hour' => '1小时',
   'About us' => '关于本站',
   'AfR' => '非洲纪录',
+  'Annual Summary' => '年度总结',
   'AsR' => '亚洲纪录',
   'Average of 5' => '五次计平均',
   'Best of 1' => '单次计最好',
@@ -300,4 +300,5 @@ return array (
   '{minute} minutes' => '{minute}分',
   '{minute} minutes {second} seconds' => '{minute}分{second}秒',
   '{personName}\'s {year} Annual Summary' => '{personName}的{year}年度总结',
+  '{year} Annual Summary' => '{year}年度总结',
 );

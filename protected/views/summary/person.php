@@ -29,7 +29,7 @@
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
       '{record}'=>CHtml::tag('span', ['class'=>'num'], $temp),
       '{rs}'=>$temp > 1 ? 's' : '',
-      '{recordsDetail}'=>Summary2016::getRecordsDetail($records, $person),
+      '{recordsDetail}'=>Summary::getRecordsDetail($records, $person),
     ]); ?>
   </p>
   <div class="row">
@@ -92,7 +92,7 @@
         '{event}'=>CHtml::tag('span', ['class'=>'num'], count($medalList)),
         '{es}'=>count($medalList) > 1 ? 's' : '',
       ]),
-      '{medalsDetail}'=>Summary2016::getMedalsDetail($medals, $person),
+      '{medalsDetail}'=>Summary::getMedalsDetail($medals, $person),
     ]); ?>
   </p>
   <div class="row">
@@ -236,12 +236,12 @@
           array(
             'value'=>'$data["lastYearsBest"] == null ? "-" : $data["lastYearsBest"]->getTime("best", false)',
             'type'=>'raw',
-            'header'=>'≤2015',
+            'header'=>'≤' . ($year - 1),
           ),
           array(
             'value'=>'$data["thisYearsBest"]->getTime("best")',
             'type'=>'raw',
-            'header'=>2016,
+            'header'=>$year,
           ),
           array(
             'value'=>'Results::formatImprovement($data)',
@@ -271,12 +271,12 @@
           array(
             'value'=>'$data["lastYearsBest"] == null ? "-" : $data["lastYearsBest"]->getTime("average", false)',
             'type'=>'raw',
-            'header'=>'≤2015',
+            'header'=>'≤' . ($year - 1),
           ),
           array(
             'value'=>'$data["thisYearsBest"]->getTime("average")',
             'type'=>'raw',
-            'header'=>2016,
+            'header'=>$year,
           ),
           array(
             'value'=>'Results::formatImprovement($data)',
@@ -424,9 +424,9 @@
 </div>
 <?php
 $data = json_encode([
-  'title'=>$person->getLocalName() . '在2016年是如此的好事多魔',
-  'desc'=>'快来围观我的2016年度WCA赛事个人总结！',
-  'imgUrl'=>Yii::app()->request->getBaseUrl(true) . '/f/images/2016.jpg',
+  'title'=>$person->getLocalName() . "在{$year}年是如此的好事多魔",
+  'desc'=>'快来围观我的{$year}年度WCA赛事个人总结！',
+  'imgUrl'=>Yii::app()->request->getBaseUrl(true) . '/f/images/' . (is_file(APP_PATH . "/public/f/images/summary/{$year}.jpg") ? "summary/{$year}.jpg" : 'icon64.png'),
 ]);
 Yii::app()->clientScript->registerScript('summary',
 <<<EOT

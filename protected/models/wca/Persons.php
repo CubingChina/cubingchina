@@ -549,6 +549,10 @@ class Persons extends ActiveRecord {
 		return $this->name;
 	}
 
+	public function getStartYear() {
+		return substr($this->id, 0, 4);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
