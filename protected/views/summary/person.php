@@ -1,4 +1,12 @@
 <div class="col-lg-12 summary-person results-person">
+  <div class="form-inline">
+    <div class="form-group">
+      <label for="year"><?php echo Yii::t('common', 'Year'); ?></label>
+      <?php echo CHtml::dropDownList('year', $year, $person->getSummaryYears(), array(
+        'class'=>'form-control',
+      )); ?>
+    </div>
+  </div>
   <?php if ($competitions == 0): ?>
   <p><?php echo Yii::t('summary', '{genderPronoun} was very lazy so that nothing left.', [
     '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
@@ -428,7 +436,7 @@
 <?php
 $data = json_encode([
   'title'=>$person->getLocalName() . "在{$year}年是如此的好事多魔",
-  'desc'=>'快来围观我的{$year}年度WCA赛事个人总结！',
+  'desc'=>"快来围观我的{$year}年度WCA赛事个人总结！",
   'imgUrl'=>Yii::app()->request->getBaseUrl(true) . '/f/images/' . (is_file(APP_PATH . "/public/f/images/summary/{$year}.jpg") ? "summary/{$year}.jpg" : 'icon64.png'),
 ]);
 Yii::app()->clientScript->registerScript('summary',
@@ -442,6 +450,10 @@ Yii::app()->clientScript->registerScript('summary',
     wx.onMenuShareQQ(data);
     wx.onMenuShareWeibo(data);
     wx.onMenuShareQZone(data);
+  });
+  $(document).on('change', '#year', function() {
+    var year = this.value;
+    location.href = location.href.replace(/\\/\d{4}\\//g, '/' + year + '/');
   });
 EOT
 );

@@ -11,7 +11,7 @@ class Summary {
 
 	public function isExists($person = null) {
 		$year = date('Y');
-		if ($this->year > $year || $this->year < 2004) {
+		if ($this->year > $year || $this->year < 2003) {
 			return false;
 		}
 		if ($this->year == $year && date('z') < 357) {
@@ -72,6 +72,7 @@ class Summary {
 			return [
 				'competitions'=>$competitions,
 				'person'=>$person,
+				'year'=>$this->year,
 			];
 		}
 		$firstDate = strtotime(sprintf('%d-%d-%d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day));

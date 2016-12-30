@@ -553,6 +553,16 @@ class Persons extends ActiveRecord {
 		return substr($this->id, 0, 4);
 	}
 
+	public function getSummaryYears() {
+		$years = [];
+		$startYear = $this->startYear;
+		$endYear = date('z') < 357 ? date('Y') - 1 : date('Y');
+		for ($year = $endYear; $year >= $startYear && $year >= 2003; $year--) {
+			$years[$year] = $year;
+		}
+		return $years;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
