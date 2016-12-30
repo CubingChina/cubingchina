@@ -129,6 +129,14 @@ class SchedulesForm extends Widget {
   var onlyScheculeEvents = {$onlyScheculeEvents};
   var combinedRounds = ['c', 'd', 'e', 'g'];
   var length = $('#schedules table tbody tr').length;
+  var allAvailableEvents = {};
+  $('.round-number-input').each(function() {
+    var matches = $(this).attr('name').match(/\[events\]\[(.*?)\]/);
+    if (matches) {
+      allAvailableEvents[matches[1]] = $(this).val();
+    }
+  });
+  $(document).data('allAvailableEvents', allAvailableEvents);
   $(document).on('focus', '#schedules table tbody tr:last-child', function() {
     var last = $(this).clone().insertAfter(this);
     last.find('input, select').each(function() {
@@ -142,11 +150,30 @@ class SchedulesForm extends Widget {
   }).on('change', '.schedule-event', function(e) {
     var that = $(this);
     var event = that.val();
+    var beforeEvent = that.data('beforeEvent'),
+        eventScheduleInfo = $(document).data('eventScheduleInfo') || {},
+        allAvailableEvents = $(document).data('allAvailableEvents');
     if (onlyScheculeEvents[event] !== undefined) {
       that.parent().nextAll().find('select, input').prop('disabled', true);
-    } else {
+    } else if (event !== beforeEvent) {
       that.parent().nextAll().find('select, input').prop('disabled', false);
+      if (eventScheduleInfo[event] !== undefined) {
+        eventScheduleInfo[event] += 1;
+      } else {
+        eventScheduleInfo[event] = 1;
+      }
+      if (allAvailableEvents[event] <= eventScheduleInfo[event]) {
+        $('.schedule-event option[value=' + event + ']').prop('disabled', true);
+      }
     }
+    if (beforeEvent !== undefined && onlyScheculeEvents[beforeEvent] === undefined && event != beforeEvent) {
+      eventScheduleInfo[beforeEvent] -= 1;
+      if (eventScheduleInfo[beforeEvent] < allAvailableEvents[beforeEvent]) {
+        $('.schedule-event option[value=' + beforeEvent + ']').prop('disabled', false);
+      }
+    }
+    that.data('beforeEvent', event);
+    $(document).data('eventScheduleInfo', eventScheduleInfo);
   }).on('change', '.schedule-round', function(e) {
     var that = $(this);
     var round = that.val();
@@ -162,6 +189,12 @@ class SchedulesForm extends Widget {
     }
   });
   $('.schedule-event, .schedule-round').change();
+  var eventScheduleInfo = $(document).data('eventScheduleInfo');
+  $.each(allAvailableEvents, function (k, v) {
+    if (v <= 0 || (eventScheduleInfo[k] !== undefined && v <= eventScheduleInfo[k])) {
+      $('.schedule-event option[value=' + k + ']').prop('disabled', true);
+    }
+  });
 EOT
 		);
 	}
