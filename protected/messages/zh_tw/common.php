@@ -18,7 +18,9 @@
  */
 return array (
   'Fee' => '',
+  'Name in Local Characters' => '',
   'WCA ID' => '',
+  'Your name will be displayed as ' => '你的名字將會顯示成：',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
