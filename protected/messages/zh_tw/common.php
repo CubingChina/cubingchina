@@ -183,7 +183,7 @@ return array (
   'My Registration' => '我的報名',
   'My Schedule' => '我的賽程',
   'Name' => '英文名',
-  'Name in Local Characters' => '中文名',
+  'Name in Local Characters (for Chinese, Japanese, Korean, etc)' => '中文名',
   'Names (One name per line)' => '名字（一行一個）',
   'No' => '沒有',
   'No file uploaded' => '沒有文件上傳',

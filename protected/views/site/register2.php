@@ -67,6 +67,9 @@ $this->renderPartial('registerSide', $_data_);
     $form->error($model, 'local_name', array('class'=>'text-danger')),
     Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-warning">请使用真实姓名注册粗饼网并报名比赛。</div>' : ''
   );?>
+  <div class="help-block text-info">
+    <?php echo Yii::t('common', 'Your name will be displayed as '); ?><b id="final-name"></b>
+  </div>
   <?php echo Html::formGroup(
     $model, 'gender', array(),
     $form->labelEx($model, 'gender'),
@@ -191,10 +194,21 @@ Yii::app()->clientScript->registerScript('register2',
     '尉迟': ['yu', 'chi'],
     '万俟': ['mo', 'qi']
   }
+  var nameDom = $('#RegisterForm_name'),
+    localNameDom = $('#RegisterForm_local_name'),
+    finalNameDom = $('#final-name');
+  nameDom.on('change keyup', showFinalName);
+  localNameDom.on('change keyup', showFinalName).trigger('change');
   String.prototype.ucfirst = function() {
     return this.charAt(0).toUpperCase() + this.substr(1);
   }
   toggleCountry();
+  function showFinalName() {
+    var name = nameDom.val();
+    var localName = localNameDom.val();
+    var finalName = name + (localName ? ' (' + localName + ')' : '');
+    finalNameDom.text(finalName).parent()[finalName ? 'show' : 'hide']();
+  }
   function toggleCountry() {
     var countryId = $('#RegisterForm_country_id').val();
     if (countryId == 1) {
@@ -206,12 +220,10 @@ Yii::app()->clientScript->registerScript('register2',
     }
   }
   function setPinyin(enable) {
-    var nameDom = $('#RegisterForm_name'),
-      localNameDom = $('#RegisterForm_local_name'),
-      nameHelpDom = $('#name-help');
+    var nameHelpDom = $('#name-help');
     if (!enable) {;
       nameDom.prop('readonly', false);
-      localNameDom.off('change keyup');
+      localNameDom.off('change keyup', generatePinyin);
       $('#name').insertBefore($('#local_name'))
       nameHelpDom.addClass('hide');
     } else {
