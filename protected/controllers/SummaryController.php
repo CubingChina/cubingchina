@@ -64,7 +64,7 @@ class SummaryController extends Controller {
 			throw new CHttpException(404);
 		}
 		$personData = Yii::app()->cache->getData(['Persons', 'getResults'], $id);
-		$data = Yii::app()->cache->getData([$summary, 'person'], [$person, $personData]);
+		$data = Yii::app()->cache->getData([$summary, 'person'], [$person, $personData, $year]);
 		$this->title = Yii::t('common', '{personName}\'s {year} Annual Summary', [
 			'{personName}'=>$person->name,
 			'{year}'=>$year,
