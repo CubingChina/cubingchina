@@ -290,9 +290,12 @@
   <?php endif; ?>
   <h2><?php echo Yii::t('common', 'Cubers'); ?></h2>
   <p>
-    <?php echo Yii::t('summary', '{genderPronoun} met {cubers} cubers{moreThanOne}.{onlyOne}', [
+    <?php echo Yii::t('summary', '{genderPronoun} met {cubers} cubers{fromRegions}{moreThanOne}.{onlyOne}', [
       '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
       '{cubers}'=>CHtml::tag('span', ['class'=>'num'], $cubers),
+      '{fromRegions}'=>$cuberRegions == 1 ? '' : Yii::t('summary', ' from {cuberRegions} countries/regions', [
+        '{cuberRegions}'=>CHtml::tag('span', ['class'=>'num'], $cuberRegions),
+      ]),
       '{moreThanOne}'=>$cubers == $onceCubers ? '' : Yii::t('summary', ', {moreThanOne} of whom competed with {genderPronoun3} more than once', [
         '{genderPronoun3}'=>strtolower($person->gender) == 'f' ? Yii::t('summary', 'her') : Yii::t('common', 'him'),
         '{moreThanOne}'=>CHtml::tag('span', ['class'=>'num'], $cubers - $onceCubers),

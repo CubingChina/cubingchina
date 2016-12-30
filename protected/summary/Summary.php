@@ -27,7 +27,7 @@ class Summary {
 	}
 
 	public function site() {
-		
+
 	}
 
 	public function person($person, $data) {
@@ -240,6 +240,11 @@ class Summary {
 		->order('count ASC, personName DESC')
 		// ->limit(21)
 		->queryAll();
+		$cuberRegions = $db->createCommand()
+		->select('count(DISTINCT personCountryId)')
+		->from('Results')
+		->where(array('in', 'competitionId', $competitionIds))
+		->queryScalar();
 		$closestCubers = array_values(array_filter(array_slice(array_reverse($allCubers), 0, 11), function($cuber) use($person, $competitions) {
 			return $cuber['personId'] != $person->id && $cuber['count'] > 1;
 		}));
@@ -312,6 +317,7 @@ class Summary {
 			'personalBests'=>$personalBests,
 			'personalBestsComparison'=>$personalBestsComparison,
 			'seenCubers'=>$seenCubers,
+			'cuberRegions'=>$cuberRegions,
 			'closestCubers'=>$closestCubers,
 			'cubers'=>$allSeenCubers,
 			'onceCubers'=>$allSeenCubers - $sum,
