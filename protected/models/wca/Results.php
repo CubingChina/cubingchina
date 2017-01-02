@@ -443,6 +443,9 @@ class Results extends ActiveRecord {
 			if ($time == '3600') {
 				return '60:00';
 			}
+			if ($time < 60) {
+				return '0:' . $time;
+			}
 		} else if ($time == 0) {
 			return '0';
 		}
