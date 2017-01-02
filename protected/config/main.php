@@ -136,7 +136,7 @@ $config = array(
 		),
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-			'errorAction'=>'site/error',
+			// 'errorAction'=>'site/error',
 			'discardOutput'=>false,
 		),
 		'log'=>array(
@@ -291,7 +291,7 @@ $config = array(
 		'weiboSharePic'=>'https://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
-		'jsVer'=>'20161105',
+		'jsVer'=>'20170102',
 		'cssVer'=>'20161227',
 		'avatar'=>array(
 			'size'=>2097152,
