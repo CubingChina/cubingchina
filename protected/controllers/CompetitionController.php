@@ -156,7 +156,7 @@ class CompetitionController extends Controller {
 		$min = DEV ? '' : '.min';
 		$version = Yii::app()->params->jsVer;
 		$clientScript = Yii::app()->clientScript;
-		$clientScript->registerScriptFile('http://res.wx.qq.com/open/js/jweixin-1.0.0.js');
+		$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/scan' . $min . '.js?ver=' . $version);
 

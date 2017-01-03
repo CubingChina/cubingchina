@@ -12,4 +12,5 @@
     <dt><?php echo Yii::t('Competition', 'Regulations'); ?></dt>
     <dd><?php echo $competition->getAttributeValue('regulations'); ?></dd>
   </dl>
+  <?php $this->renderPartial('disclaimer'); ?>
 </div>

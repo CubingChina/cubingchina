@@ -3010,19 +3010,19 @@ table.concise-schedule {
 .live .result-input-wrapper label .penalty {
   color: inherit;
 }
-.live span.record {
+table span.record {
   display: inline-block;
   padding: 0 3px;
   color: #fff;
   border-radius: 4px;
 }
-.live span.record-wr {
+table span.record-wr {
   background-color: #d2322d;
 }
-.live span.record-cr {
+table span.record-cr {
   background-color: #f0ad4e;
 }
-.live span.record-nr {
+table span.record-nr {
   background-color: #47a447;
 }
 .live .well-sm {
@@ -3068,4 +3068,15 @@ dl.location-delegate dt, dl.location-delegate dd, .location-delegate p {
 }
 .tab-content > .tab-pane {
   padding-top: 1px;
+}
+.summary-person p {
+  font-size: 16px;
+}
+.summary-person span.num {
+  font-size: 20px;
+  font-weight: bold;
+  color: #f60;
+}
+.summary-person h3 {
+  margin-top: 0;
 }

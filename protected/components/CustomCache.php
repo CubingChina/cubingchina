@@ -6,7 +6,7 @@ if (DEV) {
 		public $port;
 		public $database;
 		public $options;
-		public $hashKey = false;
+		public $hashKey = true;
 	}
 } else {
 	class TempCache extends CFileCache {
@@ -14,7 +14,7 @@ if (DEV) {
 		public $port;
 		public $database;
 		public $options;
-		public $hashKey = false;
+		public $hashKey = true;
 	}
 }
 

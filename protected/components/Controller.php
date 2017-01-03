@@ -70,7 +70,7 @@ class Controller extends CController {
 		$application = new Application($options);
 		$clientScript = Yii::app()->clientScript;
 		if (isset($config['js'])) {
-			$clientScript->registerScriptFile('http://res.wx.qq.com/open/js/jweixin-1.0.0.js');
+			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		}
 		return $this->_wechatApplication = $application;
 	}
@@ -229,6 +229,10 @@ class Controller extends CController {
 							'url'=>array('/site/page', 'view'=>'links'),
 							'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
 						),
+						array(
+							'url'=>array('/site/page', 'view'=>'disclaimer'),
+							'label'=>Html::fontAwesome('list-alt', 'a') . Config::getConfig('disclaimer')->getAttributeValue('title'),
+						),
 					),
 				),
 			));
@@ -269,6 +273,13 @@ class Controller extends CController {
 					array(
 						'label'=>Yii::t('common', 'My Homepage'),
 						'url'=>Yii::app()->user->isGuest ? '' : array('/results/p', 'id'=>$this->user->wcaid),
+						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+					),
+					array(
+						'label'=>Yii::t('common', 'My Annual Summary', [
+							'{year}'=>2016,
+						]),
+						'url'=>Yii::app()->user->isGuest ? '' : array('/summary/person', 'id'=>$this->user->wcaid, 'year'=>2016),
 						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
 					),
 					array(

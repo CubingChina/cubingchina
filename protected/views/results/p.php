@@ -47,6 +47,15 @@
       </div>
     </div>
   </div>
+  <?php echo CHtml::link(Html::fontAwesome('object-group') . Yii::t('summary', '{year} Annual Summary', [
+    '{year}'=>2016,
+  ]), [
+    '/summary/person',
+    'year'=>2016,
+    'id'=>$person->id
+  ], [
+    'class'=>'btn btn-lg btn-theme',
+  ]); ?>
   <h2><?php echo Yii::t('Results', 'Current Personal Records') . Persons::getBattleCheckBox($person->name, $person->id, 'span', array('class'=>'small')); ?></h2>
   <?php
   $this->widget('GridView', array(
@@ -942,9 +951,11 @@ Yii::app()->clientScript->registerScript('person',
     if (!map) {
       var center = {$mapCenter},
         mapData = {$mapData},
-        tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
           maxZoom: 18,
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+          attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a>',
+          id: 'baiqiang.22k7e3en',
+          accessToken: 'pk.eyJ1IjoiYmFpcWlhbmciLCJhIjoiY2l2YjZ1cHoxMDBnMDJ4bG04dzdseHd6bSJ9.MsHNIxGXeC_w2BRpMUE4ng'
         });
 
       map = L.map('competition-cluster', {

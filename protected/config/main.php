@@ -79,7 +79,7 @@ $config = array(
 				''=>'site/index',
 				'register/<step:\d>'=>'site/register',
 				'<action:login|logout|register|forgetPassword|resetPassword|activate|reactivate|banned>'=>'site/<action>',
-				'<view:about|contact|links|please-update-your-browser>'=>array(
+				'<view:about|contact|links|disclaimer|please-update-your-browser>'=>array(
 					'site/page',
 					'urlSuffix'=>'.html'
 				),
@@ -93,6 +93,8 @@ $config = array(
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
+				'summary/<year:\d{4}>/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'summary/person',
+				'summary/<year:\d{4}>'=>'summary/index',
 				'pay/<action:notify|frontNotify>/<channel:\w+>'=>'pay/<action>',
 				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
 				'board'=>'board/competition/index',
@@ -105,7 +107,7 @@ $config = array(
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
-			'hashKey'=>false,
+			// 'hashKey'=>false,
 			'hostname'=>'localhost',
 			'port'=>6379,
 			'database'=>1,
@@ -289,8 +291,8 @@ $config = array(
 		'weiboSharePic'=>'https://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
-		'jsVer'=>'20161105',
-		'cssVer'=>'20161105',
+		'jsVer'=>'20170102',
+		'cssVer'=>'20161227',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,

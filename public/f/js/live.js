@@ -1207,7 +1207,7 @@
     }
     if (hour > 0) {
       temp.push(minute, hour);
-    } else if (minute > 0) {
+    } else if (minute > 0 || multi) {
       temp.push(minute);
     }
     for (var i = 1; i < temp.length; i++) {

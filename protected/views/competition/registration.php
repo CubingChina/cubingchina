@@ -101,6 +101,14 @@
       )),
       $form->error($model, 'comments', array('class'=>'text-danger'))
     ); ?>
+    <div class="checkbox">
+      <label>
+        <input id="disclaimer" value="agree" type="checkbox" name="disclaimer" checked>
+        <?php echo Yii::t('Competition', 'I have read and know the {disclaimer} of Cubing China.', [
+          '{disclaimer}'=>CHtml::link(Yii::t('Competition', 'disclaimer'), ['/site/page', 'view'=>'disclaimer']),
+        ]); ?>
+      </label>
+    </div>
     <button type="submit" class="btn btn-theme" id="submit-button"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
 </div>
@@ -123,6 +131,14 @@
 </div>
 <?php endif; ?>
 <?php
+Yii::app()->clientScript->registerScript('registration-disclaimer',
+<<<EOT
+  $(document).on('change', '#disclaimer', function() {
+    $('#submit-button').prop('disabled', !this.checked);
+  });
+EOT
+);
+
 if (!$competition->multi_countries) {
   $basicFee = $competition->getEventFee('entry');
 Yii::app()->clientScript->registerScript('registration',

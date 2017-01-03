@@ -8,4 +8,5 @@
     <dt><?php echo Yii::t('Competition', 'Travel Info'); ?></dt>
     <dd><?php echo $competition->getAttributeValue('travel'); ?></dd>
   </dl>
+  <?php $this->renderPartial('disclaimer'); ?>
 </div>

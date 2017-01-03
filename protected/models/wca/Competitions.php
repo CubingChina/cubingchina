@@ -232,12 +232,16 @@ class Competitions extends ActiveRecord {
 	}
 
 	public function getCompetitionLink() {
-		$competition = Statistics::getCompetition(array(
+		$competition = $this->getExtraData();
+		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
+	}
+
+	public function getExtraData() {
+		return Statistics::getCompetition(array(
 			'competitionId'=>$this->id,
 			'cellName'=>$this->cellName,
 			'cityName'=>$this->cityName,
 		));
-		return CHtml::link(ActiveRecord::getModelAttributeValue($competition, 'name'), $competition['url']);
 	}
 
 	public function getDate() {

@@ -186,6 +186,8 @@ class Persons extends ActiveRecord {
 		$byCompetition = array();
 		$eventId = '';
 		$best = $average = PHP_INT_MAX;
+		$lastBest = $lastAverage = null;
+		$year = 0;
 		$results = Results::model()->with(array(
 			'competition',
 			'competition.country',
@@ -196,25 +198,75 @@ class Persons extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, competition.year, competition.month, competition.day, round.rank'
 		));
+		$pbTemplate = [
+			'best'=>0,
+			'average'=>0,
+			'total'=>0,
+		];
+		$personalBests = [
+			'total'=>$pbTemplate,
+			'years'=>[],
+			'events'=>[],
+		];
+		$personalBestResults = [];
 		foreach($results as $result) {
 			if ($eventId != $result->eventId) {
+				$personalBestResults[$year][$eventId]['best'] = $lastBest;
+				$personalBestResults[$year][$eventId]['average'] = $lastAverage;
 				//重置各值
 				$eventId = $result->eventId;
 				$best = $average = PHP_INT_MAX;
 				$byEvent[$eventId] = array();
+				$year = 0;
+				$lastBest = $lastAverage = null;
+			}
+			if ($year != $result->competition->year) {
+				$personalBestResults[$year][$eventId]['best'] = $lastBest;
+				$personalBestResults[$year][$eventId]['average'] = $lastAverage;
+				$year = $result->competition->year;
 			}
 			if ($result->best > 0 && $result->best <= $best) {
 				$result->newBest = true;
 				$best = $result->best;
+				$lastBest = $result;
 			}
 			if ($result->average > 0 && $result->average <= $average) {
 				$result->newAverage = true;
 				$average = $result->average;
+				$lastAverage = $result;
+			}
+			$key = $result->competition->year;
+			if ($result->newBest || $result->newAverage) {
+				if (!isset($personalBests['years'][$key][$result->eventId])) {
+					$personalBests['years'][$key][$result->eventId] = $pbTemplate;
+				}
+				if (!isset($personalBests['events'][$result->eventId])) {
+					$personalBests['events'][$result->eventId] = $pbTemplate;
+				}
+				if ($result->newBest) {
+					$personalBests['years'][$key][$result->eventId]['best']++;
+					$personalBests['years'][$key][$result->eventId]['total']++;
+					$personalBests['events'][$result->eventId]['best']++;
+					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['total']['best']++;
+					$personalBests['total']['total']++;
+				}
+				if ($result->newAverage) {
+					$personalBests['years'][$key][$result->eventId]['average']++;
+					$personalBests['years'][$key][$result->eventId]['total']++;
+					$personalBests['events'][$result->eventId]['average']++;
+					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['total']['average']++;
+					$personalBests['total']['total']++;
+				}
 			}
 			$byEvent[$eventId][] = $result;
 			$byCompetition[$result->competitionId][] = $result;
 			$competitions[$result->competitionId] = $result->competition;
 		}
+		$personalBestResults[$year][$eventId]['best'] = $lastBest;
+		$personalBestResults[$year][$eventId]['average'] = $lastAverage;
+		krsort($personalBestResults);
 		//世锦赛获奖记录
 		$wcPodiums = Results::model()->with(array(
 			'competition',
@@ -325,11 +377,7 @@ class Persons extends ActiveRecord {
 		foreach ($competitions as $key=>$competition) {
 			$temp['longitude'] += $competition->longitude / 1e6;
 			$temp['latitude'] += $competition->latitude / 1e6;
-			$data = Statistics::getCompetition(array(
-				'competitionId'=>$competition->id,
-				'cellName'=>$competition->cellName,
-				'cityName'=>$competition->cityName,
-			));
+			$data = $competition->getExtraData();
 			$data['longitude'] = $competition->longitude / 1e6;
 			$data['latitude'] = $competition->latitude / 1e6;
 			$data['url'] = CHtml::normalizeUrl($data['url']);
@@ -460,6 +508,8 @@ class Persons extends ActiveRecord {
 			'sumOfRanks'=>$sumOfRanks,
 			'byEvent'=>$byEvent,
 			'byCompetition'=>$byCompetition,
+			'personalBests'=>$personalBests,
+			'personalBestResults'=>$personalBestResults,
 			'wcPodiums'=>$wcPodiums,
 			'ccPodiums'=>$ccPodiums,
 			'ncPodiums'=>$ncPodiums,
@@ -490,6 +540,27 @@ class Persons extends ActiveRecord {
 		), array(
 			'select'=>'COUNT(DISTINCT competitionId)',
 		));
+	}
+
+	public function getLocalName() {
+		if (preg_match('{\((.+)\)}', $this->name, $matches)) {
+			return $matches[1];
+		}
+		return $this->name;
+	}
+
+	public function getStartYear() {
+		return substr($this->id, 0, 4);
+	}
+
+	public function getSummaryYears() {
+		$years = [];
+		$startYear = $this->startYear;
+		$endYear = date('z') < 357 ? date('Y') - 1 : date('Y');
+		for ($year = $endYear; $year >= $startYear && $year >= 2003; $year--) {
+			$years[$year] = $year;
+		}
+		return $years;
 	}
 
 	/**

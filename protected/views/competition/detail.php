@@ -125,4 +125,5 @@
     </dd>
     <?php endif; ?>
   </dl>
+  <?php $this->renderPartial('disclaimer'); ?>
 </div>
