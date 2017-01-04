@@ -14,13 +14,13 @@
  */
 class CompetitionLocation extends ActiveRecord {
 
-	public function getCityName() {
+	public function getCityName($showDisinct = true) {
 		switch (true) {
 			case $this->country_id > 3:
 				return $this->getAttributeValue('city_name');
 			case $this->country_id > 1:
 				return $this->country->getAttributeValue('name');
-			case in_array($this->province_id, [215, 525, 567, 642]):
+			case $showDisinct && in_array($this->province_id, [215, 525, 567, 642]):
 				return $this->province->getAttributeValue('name');
 			default:
 				return $this->city ? $this->city->getAttributeValue('name') : $this->getAttributeValue('venue');
@@ -43,7 +43,7 @@ class CompetitionLocation extends ActiveRecord {
 		$isCN = Yii::app()->controller->isCN;
 		$country = $this->country ? Yii::t('Region', $this->country->getAttributeValue('name')) : '';
 		$province = $this->province ? $this->province->getAttributeValue('name') : '';
-		$city = $this->getCityName();
+		$city = $this->getCityName(false);
 		if ($city == $province) {
 			$city = '';
 		}
