@@ -548,7 +548,7 @@ class Pay extends ActiveRecord {
 			array('order_name', 'length', 'max'=>50),
 			array('pay_channel', 'length', 'max'=>4),
 			array('pay_account, trade_no', 'length', 'max'=>64),
-			array('create_time, update_time', 'length', 'max'=>11),
+			array('create_time, update_time, paid_time', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_id, channel, type, type_id, sub_type_id, order_no, order_name, amount, device_type, pay_channel, pay_account, trade_no, status, create_time, update_time', 'safe', 'on'=>'search'),
@@ -589,8 +589,9 @@ class Pay extends ActiveRecord {
 			'status'=>Yii::t('Pay', 'Status'),
 			'create_time'=>Yii::t('Pay', 'Create Time'),
 			'update_time'=>Yii::t('Pay', 'Update Time'),
-			'update_time[0]'=>'开始时间',
-			'update_time[1]'=>'结束时间',
+			'paid_time'=>Yii::t('Pay', 'Paid Time'),
+			'paid_time[0]'=>'开始时间',
+			'paid_time[1]'=>'结束时间',
 		);
 	}
 
@@ -671,7 +672,7 @@ class Pay extends ActiveRecord {
 	}
 
 	private function compareTime($criteria) {
-		foreach (['create_time', 'update_time'] as $attribute) {
+		foreach (['create_time', 'update_time', 'paid_time'] as $attribute) {
 			$time = $this->$attribute;
 			if (!is_array($time)) {
 				continue;

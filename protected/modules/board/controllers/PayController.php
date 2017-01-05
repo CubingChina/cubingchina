@@ -57,7 +57,7 @@ class PayController extends AdminController {
 			$sheet->setCellValue('G1', '订单号');
 			$sheet->setCellValue('H1', '支付宝订单号');
 			$sheet->setCellValue('I1', '创建时间');
-			$sheet->setCellValue('J1', '更新时间');
+			$sheet->setCellValue('J1', '支付时间');
 			$sheet->setCellValue('K1', '状态');
 			$paid = $model->getTotal(Pay::STATUS_PAID, true);
 			$fee = $model->getBillTotalFee();
@@ -69,13 +69,13 @@ class PayController extends AdminController {
 				$sheet->setCellValue('A' . $row, $value->id);
 				$sheet->setCellValue('B' . $row, $value->getTypeText());
 				$sheet->setCellValue('C' . $row, $value->order_name);
-				$sheet->setCellValue('D' . $row, $value->amount / 100);
+				$sheet->setCellValue('D' . $row, $value->paid_amount / 100);
 				$sheet->setCellValue('E' . $row, $value->getBillFee());
-				$sheet->setCellValue('F' . $row, $value->amount / 100 - $value->getBillFee());
+				$sheet->setCellValue('F' . $row, $value->paid_amount / 100 - $value->getBillFee());
 				$sheet->setCellValue('G' . $row, $value->order_no);
 				$sheet->setCellValue('H' . $row, $value->trade_no);
 				$sheet->setCellValue('I' . $row, date('Y-m-d H:i:s', $value->create_time));
-				$sheet->setCellValue('J' . $row, date('Y-m-d H:i:s', $value->update_time));
+				$sheet->setCellValue('J' . $row, date('Y-m-d H:i:s', $value->paid_time));
 				$sheet->setCellValue('K' . $row, $value->getStatusText());
 			}
 			$this->exportToExcel($excel, 'php://output', '对账单');
