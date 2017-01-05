@@ -37,6 +37,13 @@ $config = array(
 			),
 		),
 	),
+	'commandMap'=>array(
+		'migrate'=>array(
+			'class'=>'system.cli.commands.MigrateCommand',
+			'migrationTable'=>'migration',
+			'interactive'=>false,
+		),
+	),
 	// application components
 	'components'=>array(
 		'user'=>array(

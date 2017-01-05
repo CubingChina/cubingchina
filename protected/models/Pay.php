@@ -154,6 +154,7 @@ class Pay extends ActiveRecord {
 			'sign_type',
 		));
 		$result = $sign === $params['sign'];
+		$paidAmount = isset($params['total_fee']) ? $params['total_fee'] * 100 : 0;
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
@@ -179,7 +180,7 @@ class Pay extends ActiveRecord {
 				default:
 					return $result;
 			}
-			$this->updateStatus($status);
+			$this->updateStatus($status, $paidAmount);
 		}
 		return $result;
 	}
@@ -238,8 +239,12 @@ class Pay extends ActiveRecord {
 		return $result;
 	}
 
-	public function updateStatus($status = self::STATUS_PAID) {
+	public function updateStatus($status = self::STATUS_PAID, $paidAmount = 0) {
 		if (!$this->isPaid()) {
+			if ($this->paid_time == 0) {
+				$this->paid_time = time();
+				$this->paid_amount = $paidAmount;
+			}
 			$this->status = $status;
 		}
 		$this->update_time = time();
