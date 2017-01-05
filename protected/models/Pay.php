@@ -543,7 +543,7 @@ class Pay extends ActiveRecord {
 			array('user_id, order_no, order_name', 'required'),
 			array('type, device_type, status', 'numerical', 'integerOnly'=>true),
 			array('user_id, type_id, sub_type_id, amount', 'length', 'max'=>10),
-			array('channel', 'length', 'max'=>6),
+			array('channel', 'length', 'max'=>10),
 			array('order_no', 'length', 'max'=>32),
 			array('order_name', 'length', 'max'=>50),
 			array('pay_channel', 'length', 'max'=>4),
