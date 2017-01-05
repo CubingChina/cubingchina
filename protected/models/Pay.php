@@ -495,7 +495,7 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function getTotal($status = self::STATUS_PAID, $channel = false) {
+	public function getTotal($status = self::STATUS_PAID, $channel = false, $attribute = 'paid_amount') {
 		$criteria = new CDbCriteria;
 		if ($channel) {
 			$criteria->compare('channel', $this->channel);
@@ -504,8 +504,8 @@ class Pay extends ActiveRecord {
 		$criteria->compare('type_id', $this->type_id);
 		$criteria->compare('status', $status);
 		$this->compareTime($criteria);
-		$criteria->select = 'SUM(paid_amount) AS paid_amount';
-		return number_format($this->find($criteria)->paid_amount / 100, 2, '.', '');
+		$criteria->select = "SUM({$attribute}) AS {$attribute}";
+		return number_format($this->find($criteria)->$attribute / 100, 2, '.', '');
 	}
 
 	public function getTotalFee() {
