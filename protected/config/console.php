@@ -7,4 +7,11 @@ if (is_file($autoload = APP_PATH . '/protected/vendor/autoload.php')) {
 }
 $config = require APP_PATH . '/protected/config/main.php';
 unset($config['components']['log']['routes'][count($config['components']['log']['routes']) - 1]);
+$config['commandMap'] = array(
+	'migrate'=>array(
+		'class'=>'system.cli.commands.MigrateCommand',
+		'migrationTable'=>'migration',
+		'interactive'=>false,
+	),
+);
 return $config;
