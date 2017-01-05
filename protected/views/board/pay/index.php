@@ -30,6 +30,7 @@
 　合计： {$total}
 </pre>",
             'filter'=>$model,
+            'rowCssClassExpression'=>'$data->amountMismatch() ? "danger" : ""',
             'columns'=>$model->getColumns(),
           )); ?>
         </div>
