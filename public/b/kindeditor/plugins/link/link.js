@@ -45,8 +45,8 @@ KindEditor.plugin('link', function(K) {
 				urlBox = K('input[name="url"]', div),
 				typeBox = K('select[name="type"]', div);
 			urlBox.val('http://');
-			typeBox[0].options[0] = new Option(lang.newWindow, '_blank');
-			typeBox[0].options[1] = new Option(lang.selfWindow, '');
+			typeBox[0].options[0] = new Option(lang.selfWindow, '');
+			typeBox[0].options[1] = new Option(lang.newWindow, '_blank');
 			self.cmd.selection();
 			var a = self.plugin.getSelectedLink();
 			if (a) {
