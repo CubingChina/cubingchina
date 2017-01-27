@@ -297,8 +297,8 @@ class NewsController extends AdminController {
 		$temp = new stdClass();
 		$temp->name = $result->personName;
 		$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
-		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->personId), array('target'=>'_blank'));
-		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->personId), array('target'=>'_blank'));
+		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->personId), array());
+		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->personId), array());
 		$temp->score = Results::formatTime($score, $result->eventId);
 		$temp->score_zh = $temp->score;
 		if ($appendUnit && is_numeric($temp->score)) {
