@@ -15,6 +15,9 @@
 class RanksAverage extends ActiveRecord {
 
 	public function getRank($attribute) {
+		if ($this->$attribute <= 0) {
+			return '-';
+		}
 		if ($this->$attribute <= 10) {
 			return CHtml::tag('span', array('class'=>'top10'), $this->$attribute);
 		}
