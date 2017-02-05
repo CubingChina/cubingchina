@@ -10,7 +10,7 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionAdd() {
-		if (!$this->user->isAdmin()) {
+		if (!$this->user->isAdministrator()) {
 			Yii::app()->user->setFlash('danger', '如需创建比赛，请与管理员联系 admin@cubingchina.com');
 			$this->redirect(array('/board/competition/index'));
 		}
