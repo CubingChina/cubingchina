@@ -50,9 +50,7 @@ class SumOfRanks extends Statistics {
 				$rankSum[$personId]['sum'] += $row['rank'] - $penalty[$eventId];
 			}
 			$columns[] = array(
-				'header'=>"CHtml::tag('span', array(
-					'class'=>'event-icon event-icon-white event-icon-$eventId'
-				), '&nbsp;')",
+				'header'=>"Events::getEventIcon('$eventId')",
 				'name'=>$eventId,
 				'type'=>'raw',
 			);
