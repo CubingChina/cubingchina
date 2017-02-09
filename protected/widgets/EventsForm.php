@@ -29,10 +29,8 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('div', array(
 					'class'=>'checkbox checkbox-inline',
 				));
-				echo CHtml::openTag('label', array(
-					'class'=>'event-icon event-icon-' . $event,
-				));
-				$text = $value;
+				echo CHtml::openTag('label');
+				$text = Events::getFullEventNameWithIcon($event);
 				$fee = 0;
 				$originFee = $competition->events[$event]['fee'];
 				if ($competition instanceof Competition && isset($competition->events[$event]) && $originFee > 0) {

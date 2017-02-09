@@ -24,10 +24,7 @@ $this->widget('GroupRankGridView', array(
       'class'=>'RankColumn',
       'name'=>Yii::t('common', 'Event'),
       'type'=>'raw',
-      'value'=>'$displayRank ? CHtml::link(CHtml::tag("span", array(
-        "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-        "title"=>Yii::t("event", $data->event->cellName),
-      ), Yii::t("event", $data->event->cellName)), array(
+      'value'=>'$displayRank ? CHtml::link(Events::getFullEventNameWithIcon($data->eventId), array(
         "/results/c",
         "id"=>$data->competitionId,
         "type"=>"all",

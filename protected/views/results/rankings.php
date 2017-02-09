@@ -40,9 +40,7 @@
     <?php endforeach; ?>
   <?php $this->endWidget(); ?>
   <div class="event-title">
-    <?php echo CHtml::tag('span', array(
-      'class'=>'event-icon event-icon-' . $event,
-    ), Yii::t('event', Events::getFullEventName($event))); ?>
+    <?php echo Events::getFullEventNameWithIcon($event); ?>
     &nbsp;&nbsp;
     <?php echo Yii::t('Region', $region); ?>
     &nbsp;&nbsp;

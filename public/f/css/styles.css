@@ -2284,123 +2284,113 @@ table.table th a.desc {
 .page-wrapper .page-sidebar .widget .panel .fa {
   color: #fff;
 }
+@font-face {
+  font-family: 'event-icon';
+  src:  url('../fonts/event-icon.eot?f7dtet');
+  src:  url('../fonts/event-icon.eot?f7dtet#iefix') format('embedded-opentype'),
+    url('../fonts/event-icon.ttf?f7dtet') format('truetype'),
+    url('../fonts/event-icon.woff?f7dtet') format('woff'),
+    url('../fonts/event-icon.svg?f7dtet#event-icon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .event-icon {
-  padding-left: 26px;
-  position: relative;
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'event-icon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 1.625em;
 }
-.header-event .event-icon {
-  padding-left: 20px;
-}
-.event-icon:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  margin-top: -10px;
-  display: block;
-  width: 20px;
-  height: 20px;
-  background-image: url('../images/events-icon.png');
-  background-repeat: no-repeat;
-  background-color: transparent;
-  -webkit-background-size: 150px auto;
-  -moz-background-size: 150px auto;
-  -o-background-size: 150px auto;
-  background-size: 150px auto;
-  background-position: -65px -155px;
-}
-.event-icon-white:before {
-  background-image: url('../images/events-icon-white.png');
-}
-.ie8 .event-icon:before {
-  background-image: url('../images/events-icon-half.png');
-}
-.ie8 .event-icon-white:before {
-  background-image: url('../images/events-icon-white-half.png');
+
+.event-icon-333:before {
+  content: "\e900";
 }
 .event-icon-222:before {
-  background-position: -5px -5px;
-}
-.event-icon-333:before {
-  background-position: -35px -5px;
+  content: "\e901";
 }
 .event-icon-444:before {
-  background-position: -65px -5px;
+  content: "\e902";
 }
 .event-icon-555:before {
-  background-position: -95px -5px;
+  content: "\e903";
 }
 .event-icon-666:before {
-  background-position: -125px -5px;
-}
-.event-icon-333mbf:before {
-  background-position: -5px -35px;
-}
-.event-icon-333mbo:before {
-  background-position: -5px -35px;
-}
-.event-icon-333fm:before {
-  background-position: -35px -35px;
-}
-.event-icon-333ft:before {
-  background-position: -65px -35px;
-}
-.event-icon-333oh:before {
-  background-position: -95px -35px;
+  content: "\e904";
 }
 .event-icon-777:before {
-  background-position: -125px -35px;
+  content: "\e905";
 }
 .event-icon-333bf:before {
-  background-position: -5px -65px;
+  content: "\e906";
 }
-.event-icon-444bf:before {
-  background-position: -35px -65px;
+.event-icon-333fm:before {
+  content: "\e907";
 }
-.event-icon-555bf:before {
-  background-position: -65px -65px;
+.event-icon-333oh:before {
+  content: "\e908";
 }
-.event-icon-skewb:before {
-  background-position: -95px -65px;
-}
-.event-icon-sq1:before {
-  background-position: -125px -65px;
-}
-.event-icon-pyram:before {
-  background-position: -5px -95px;
+.event-icon-333ft:before {
+  content: "\e909";
 }
 .event-icon-minx:before {
-  background-position: -35px -95px;
+  content: "\e90a";
+}
+.event-icon-pyram:before {
+  content: "\e90b";
 }
 .event-icon-clock:before {
-  background-position: -65px -95px;
+  content: "\e90c";
+}
+.event-icon-skewb:before {
+  content: "\e90d";
+}
+.event-icon-sq1:before {
+  content: "\e90e";
+}
+.event-icon-444bf:before {
+  content: "\e90f";
+}
+.event-icon-555bf:before {
+  content: "\e910";
+}
+.event-icon-333mbf:before {
+  content: "\e911";
 }
 .event-icon-magic:before {
-  background-position: -95px -95px;
+  content: "\e912";
 }
 .event-icon-mmagic:before {
-  background-position: -125px -95px;
+  content: "\e913";
 }
 .event-icon-stack:before {
-  background-position: -5px -125px;
-}
-.event-icon-lunch:before {
-  background-position: -35px -125px;
-}
-.event-icon-lucky:before {
-  background-position: -65px -125px;
-}
-.event-icon-ceremony:before {
-  background-position: -95px -125px;
-}
-.event-icon-intro:before {
-  background-position: -125px -125px;
-}
-.event-icon-break:before {
-  background-position: -5px -155px;
+  content: "\e914";
 }
 .event-icon-registration:before {
-  background-position: -35px -155px;
+  content: "\e915";
+}
+.event-icon-intro:before {
+  content: "\e916";
+}
+.event-icon-break:before {
+  content: "\e917";
+}
+.event-icon-lunch:before {
+  content: "\e918";
+}
+.event-icon-ceremony:before {
+  content: "\e919";
+}
+.event-icon-lucky:before {
+  content: "\e91a";
 }
 span.top10 {
   color: #00B700;

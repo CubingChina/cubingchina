@@ -161,9 +161,7 @@ class LiveController extends CompetitionController {
 				}
 			}
 			$columns[] = array(
-				'header'=>"CHtml::tag('span', array(
-					'class'=>'event-icon event-icon-white event-icon-$event'
-				), '&nbsp;')",
+				'header'=>"Events::getFullEventNameWithIcon($event)",
 				'name'=>$event,
 				'type'=>'raw',
 			);

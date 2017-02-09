@@ -911,9 +911,7 @@ class Competition extends ActiveRecord {
 			);
 			if ($key == 'Event') {
 				$column['type'] = 'raw';
-				$column['value'] = 'CHtml::tag("span", array(
-					"class"=>"event-icon event-icon-" . $data["event"],
-				), $data["Event"])';
+				$column['value'] = 'Events::getFullEventNameWithIcon($data["event"])';
 			}
 			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
 				if ($key == 'End Time') {
@@ -1194,10 +1192,7 @@ class Competition extends ActiveRecord {
 			if ($value['round'] > 0) {
 				$columns[] = array(
 					'name'=>(string)$event,
-					'header'=>CHtml::tag('span', array(
-						'class'=>'event-icon event-icon-white event-icon-' . $event,
-						'title'=>Yii::t('event', Events::getFullEventName($event)),
-					), $headerText ? $event : '&nbsp;'),
+					'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
