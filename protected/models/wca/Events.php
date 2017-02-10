@@ -13,6 +13,7 @@
 class Events extends ActiveRecord {
 	private static $_allEvents;
 	private static $_normalEvents;
+	private static $_deprecatedEvents;
 	private static $_specialEventNames = array(
 		'pyram'=>'pyra',
 		'minx'=>'mega',
@@ -102,24 +103,24 @@ class Events extends ActiveRecord {
 
 	public static function getFullEventName($event) {
 		if (self::$_allEvents === null) {
-			self::$_allEvents = self::getScheduleEvents();
+			self::$_allEvents = self::getScheduleEvents() + self::getDeprecatedEvents();
 		}
-		return isset(self::$_allEvents[$event]) ? self::$_allEvents[$event] : $event;
+		return isset(self::$_allEvents[$event]) ? Yii::t('event', self::$_allEvents[$event]) : $event;
 	}
 
 	public static function getFullEventNameWithIcon($event) {
 		$name = self::getFullEventName($event);
 		return CHtml::tag("i", array(
 			"class"=>"event-icon event-icon event-icon-" . $event,
-			"title"=>Yii::t("event", $name),
-		), '') . ' ' . Yii::t("event", $name);
+			"title"=>$name,
+		), '') . ' ' . $name;
 	}
 
 	public static function getEventIcon($event) {
 		$name = self::getFullEventName($event);
 		return CHtml::tag("i", array(
 			"class"=>"event-icon event-icon event-icon-" . $event,
-			"title"=>Yii::t("event", $name),
+			"title"=>$name,
 		), '');
 	}
 
@@ -169,6 +170,18 @@ class Events extends ActiveRecord {
 			$events[$eventId] = Yii::t('event', $eventName);
 		}
 		return $events;
+	}
+
+	public static function getDeprecatedEvents() {
+		if (self::$_deprecatedEvents !== null) {
+			return self::$_deprecatedEvents;
+		}
+		$events = self::model()->cache(86500 * 7)->findAll(array(
+			'condition'=>'rank>=900 AND rank<1000',
+			'order'=>'rank',
+		));
+		$events = CHtml::listData($events, 'id', 'cellName');
+		return self::$_deprecatedEvents = $events;
 	}
 
 	/**

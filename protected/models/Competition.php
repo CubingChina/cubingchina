@@ -743,7 +743,7 @@ class Competition extends ActiveRecord {
 				$schedule->round = $schedule->group = $schedule->format = '';
 				$schedule->cut_off = $schedule->time_limit = 0;
 			}
-			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			$event = Events::getFullEventName($schedule->event);
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				switch ($times + 1) {
@@ -837,7 +837,7 @@ class Competition extends ActiveRecord {
 				$schedule->round = $schedule->group = $schedule->format = '';
 				$schedule->cut_off = $schedule->time_limit = 0;
 			}
-			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			$event = Events::getFullEventName($schedule->event);
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				switch ($times + 1) {
@@ -1332,7 +1332,7 @@ class Competition extends ActiveRecord {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
 					'i'=>$eventRound->event,
-					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
+					'name'=>Events::getFullEventName($eventRound->event),
 					'rs'=>array(),
 				);
 			}
