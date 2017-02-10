@@ -8,6 +8,7 @@ $this->widget('GroupGridView', array(
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
   'groupKey'=>'eventId',
   'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(
+    CHtml::tag("a", ["id"=>$data->eventId], ""),
     Events::getFullEventNameWithIcon($data->eventId),
     Yii::t("Rounds", $data->round->cellName),
     Yii::t("common", $data->format->name),
