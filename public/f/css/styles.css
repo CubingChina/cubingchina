@@ -1,9 +1,11 @@
-/*   
+/*
  * Template Name: College Green - Responsive Website Template for Education & Training
  * Version: 1.0
  * Author: 3rd Wave Media
  * Website: http://elearning.3rdwavemedia.com
 */
+
+@import '../plugins/event-icon/style.css'
 
 /* ======= Base ======= */
  html, body {
@@ -2284,120 +2286,13 @@ table.table th a.desc {
 .page-wrapper .page-sidebar .widget .panel .fa {
   color: #fff;
 }
-@font-face {
-  font-family: 'event-icon';
-  src:  url('../fonts/event-icon.eot?3xcr3i');
-  src:  url('../fonts/event-icon.eot?3xcr3i#iefix') format('embedded-opentype'),
-    url('../fonts/event-icon.ttf?3xcr3i') format('truetype'),
-    url('../fonts/event-icon.woff?3xcr3i') format('woff'),
-    url('../fonts/event-icon.svg?3xcr3i#event-icon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
 
 .event-icon {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'event-icon' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
   vertical-align: middle;
   font-size: 1.625em;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.event-icon-333:before {
-  content: "\e900";
-}
-.event-icon-222:before {
-  content: "\e901";
-}
-.event-icon-444:before {
-  content: "\e902";
-}
-.event-icon-555:before {
-  content: "\e903";
-}
-.event-icon-666:before {
-  content: "\e904";
-}
-.event-icon-777:before {
-  content: "\e905";
-}
-.event-icon-333bf:before {
-  content: "\e906";
-}
-.event-icon-333fm:before {
-  content: "\e907";
-}
-.event-icon-333oh:before {
-  content: "\e908";
-}
-.event-icon-333ft:before {
-  content: "\e909";
-}
-.event-icon-minx:before {
-  content: "\e90a";
-}
-.event-icon-pyram:before {
-  content: "\e90b";
-}
-.event-icon-clock:before {
-  content: "\e90c";
-}
-.event-icon-skewb:before {
-  content: "\e90d";
-}
-.event-icon-sq1:before {
-  content: "\e90e";
-}
-.event-icon-444bf:before {
-  content: "\e90f";
-}
-.event-icon-555bf:before {
-  content: "\e910";
-}
-.event-icon-333mbf:before {
-  content: "\e911";
 }
 .event-icon-333mbo:before {
   content: "\e911";
-}
-.event-icon-magic:before {
-  content: "\e912";
-}
-.event-icon-mmagic:before {
-  content: "\e913";
-}
-.event-icon-stack:before {
-  content: "\e914";
-}
-.event-icon-funny:before {
-  content: "\e91b";
-}
-.event-icon-registration:before {
-  content: "\e915";
-}
-.event-icon-intro:before {
-  content: "\e916";
-}
-.event-icon-break:before {
-  content: "\e917";
-}
-.event-icon-lunch:before {
-  content: "\e918";
-}
-.event-icon-ceremony:before {
-  content: "\e919";
-}
-.event-icon-lucky:before {
-  content: "\e91a";
 }
 span.top10 {
   color: #00B700;
