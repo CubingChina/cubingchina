@@ -601,7 +601,7 @@ class RegistrationController extends AdminController {
 			'colspan'=>2,
 			'class'=>'bdld',
 		]);
-		echo Yii::t('event', Events::getFullEventName($event)) . ' ' . $event;
+		echo Events::getFullEventName($event) . ' ' . $event;
 		echo CHtml::closeTag('td');
 		echo CHtml::tag('td', [
 		], '轮次<br>Round');

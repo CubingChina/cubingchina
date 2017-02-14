@@ -64,7 +64,7 @@ class OldestStandingRecords extends Statistics {
 			),
 			array(
 				'header'=>'Yii::t("common", "Event")',
-				'value'=>'Yii::t("event", Events::getFullEventName($data["eventId"]))',
+				'value'=>'Events::getFullEventName($data["eventId"])',
 			),
 			array(
 				'header'=>'Yii::t("common", "Type")',

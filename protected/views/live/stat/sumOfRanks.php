@@ -18,9 +18,7 @@
                 <?php echo CHtml::checkBox('event[]', in_array("$eventId", $eventIds), array(
                   'value'=>$eventId,
                 )); ?>
-                <?php echo CHtml::tag('span', array(
-                  'class'=>'event-icon event-icon-' . $eventId,
-                ), '&nbsp;'); ?>
+                <?php echo Events::getEventIcon($eventId); ?>
               </label>
             </div>
           </div>

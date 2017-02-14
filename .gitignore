@@ -3,8 +3,11 @@ protected/runtime/*
 protected/composer.lock
 protected/config/wcaDb
 protected/commands/shell/last
+protected/commands/Test*Command.php
 protected/bin
 public/.htaccess
+build
+node_modules
 .tag*
 
 # Except this file

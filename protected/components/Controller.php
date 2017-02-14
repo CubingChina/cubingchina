@@ -421,16 +421,16 @@ class Controller extends CController {
 		$userAgent = Yii::app()->request->getUserAgent();
 		if ($this->module === null) {
 			$clientScript = Yii::app()->clientScript;
-			$min = DEV ? '' : '.min';
-			$version = Yii::app()->params->jsVer;
-			if (DEV) {
-				$clientScript->packages['main']['js'][] = 'plugins/jquery-1.10.2.min.js?v=' . $version;
-				$clientScript->packages['main']['js'][] = 'plugins/bootstrap/js/bootstrap.min.js?v=' . $version;
-				$clientScript->packages['main']['js'][] = 'plugins/bootstrap-hover-dropdown.min.js?v=' . $version;
-				$clientScript->packages['main']['js'][] = 'plugins/back-to-top.min.js?v=' . $version;
-				$clientScript->packages['main']['js'][] = 'plugins/jquery-placeholder/jquery.placeholder.min.js?v=' . $version;
+			$map = json_decode(file_get_contents(APP_PATH . '/public/f/build/assets-map.json'), true);
+			foreach ($map['chunks'] as $name=>$files) {
+				foreach ($files as $file) {
+					$ext = pathinfo($file, PATHINFO_EXTENSION);
+					$type = explode('?', $ext)[0];
+					$clientScript->packages['main'][$type][] = ltrim($file, '/');
+				}
 			}
-			$clientScript->packages['main']['js'][] = 'js/main' . $min . '.js?v=' . $version;
+			// don't load jquery
+			$clientScript->packages['jquery'] = false;
 			$clientScript->registerPackage('main');
 		}
 		if (preg_match('{MSIE ([\d.]+)}', $userAgent, $matches) && version_compare($this->_IEVersion = $matches[1], $this->minIEVersion, '<')

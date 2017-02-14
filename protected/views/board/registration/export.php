@@ -25,7 +25,7 @@
           <div class="form-group">
             <?php echo $form->labelEx($model, 'name_zh', array(
               'class'=>'col-lg-2 control-label',
-              'label'=>Yii::t('event', Events::getFullEventName($event)),
+              'label'=>Events::getFullEventName($event),
             )); ?>
             <div class="col-lg-10 checkbox">
               <?php for ($i = 0; $i < $data['round']; $i++): ?>

@@ -35,6 +35,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 新增比赛',
               'url'=>array('/board/competition/add'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
           ),
         ),

@@ -151,20 +151,17 @@ class ConciseSchedule extends Widget {
 			'event-' . $schedule['event'],
 			'round-' . $schedule['round'],
 		);
-		$spanClass = array(
-			'event-icon',
-			'event-icon-' . $schedule['event'],
-		);
 		if (in_array($schedule['event'], array(
 			'sq1', 'skewb', 'pyram', 'clock', 'minx',
 			'lunch', 'registration', 'break', 'ceremony', 'lucky', 'intro',
 		))) {
 			$tdClass[] = 'inverse';
-			$spanClass[] = 'event-icon-white';
 		}
-		$text = array(CHtml::tag('span', array(
-			'class'=>implode(' ', $spanClass),
-		), $schedule['Event'] . ' ' . $schedule['Round']));
+		$text[] = implode(' ', [
+			Events::getEventIcon($schedule['event']), 
+			$schedule['Event'],
+			$schedule['Round'],
+		]);
 		foreach (array('Cut Off', 'Time Limit', 'Group') as $key) {
 			if (isset($schedule[$key]) && $schedule[$key] != '') {
 				$text[] = Yii::t('Schedule', $key) . $this->space . $schedule[$key];

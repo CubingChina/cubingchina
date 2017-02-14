@@ -7,12 +7,10 @@ $this->widget('GroupGridView', array(
   )),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
   'groupKey'=>'eventId',
-  'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(CHtml::tag("span", array(
-      "id"=>$data->eventId,
-      "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-      "title"=>Yii::t("event", $data->event->cellName),
-    ), Yii::t("event", $data->event->cellName)),
+  'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(
+    Events::getFullEventNameWithIcon($data->eventId),
     Yii::t("Rounds", $data->round->cellName),
+    CHtml::tag("a", ["id"=>$data->eventId], ""),
   ))',
   'repeatHeader'=>true,
   'rowHtmlOptionsExpression'=>'array(

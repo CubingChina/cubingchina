@@ -10,8 +10,8 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionAdd() {
-		if ($this->user->isOrganizer() && Competition::getUnpublicCount() >= 2) {
-			Yii::app()->user->setFlash('danger', '仅可同时创建两场比赛，如有疑问，请与管理员联系 admin@cubingchina.com');
+		if (!$this->user->isAdministrator()) {
+			Yii::app()->user->setFlash('danger', '如需创建比赛，请与管理员联系 admin@cubingchina.com');
 			$this->redirect(array('/board/competition/index'));
 		}
 		$model = new Competition();

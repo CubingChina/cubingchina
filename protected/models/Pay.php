@@ -154,6 +154,7 @@ class Pay extends ActiveRecord {
 			'sign_type',
 		));
 		$result = $sign === $params['sign'];
+		$paidAmount = isset($params['total_fee']) ? $params['total_fee'] * 100 : 0;
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
@@ -179,7 +180,7 @@ class Pay extends ActiveRecord {
 				default:
 					return $result;
 			}
-			$this->updateStatus($status);
+			$this->updateStatus($status, $paidAmount);
 		}
 		return $result;
 	}
@@ -238,8 +239,12 @@ class Pay extends ActiveRecord {
 		return $result;
 	}
 
-	public function updateStatus($status = self::STATUS_PAID) {
+	public function updateStatus($status = self::STATUS_PAID, $paidAmount = 0) {
 		if (!$this->isPaid()) {
+			if ($this->paid_time == 0) {
+				$this->paid_time = time();
+				$this->paid_amount = $paidAmount;
+			}
 			$this->status = $status;
 		}
 		$this->update_time = time();
@@ -357,6 +362,10 @@ class Pay extends ActiveRecord {
 		return $this->status == self::STATUS_PAID;
 	}
 
+	public function amountMismatch() {
+		return $this->isPaid() && $this->amount != $this->paid_amount;
+	}
+
 	public function getStatusText() {
 		$status = self::getAllStatus();
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
@@ -371,32 +380,34 @@ class Pay extends ActiveRecord {
 		$criteria = clone self::$_criteria;
 		$criteria->select = 'SUM(amount) AS amount';
 		$amount = $this->find($criteria)->amount;
+		$criteria = clone self::$_criteria;
+		$criteria->select = 'SUM(paid_amount) AS paid_amount';
+		$paidAmount = $this->find($criteria)->paid_amount;
 		$criteria->select = 'SUM(ROUND((CASE
 			WHEN status=0 OR status=5 THEN 0
-			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
-			WHEN channel="nowPay" THEN amount*0.06
-			ELSE amount*0.012 END) / 100, 2)) AS amount';
-		$fee = $this->find($criteria)->amount;
+			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
+			WHEN channel="nowPay" THEN paid_amount*0.06
+			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+		$fee = $this->find($criteria)->paid_amount;
 		$columns = array(
-			'id',
+			array(
+				'name'=>'id',
+				'filter'=>false,
+			),
 			array(
 				'name'=>'user_id',
 				'value'=>'$data->user->getCompetitionName()',
+				'filter'=>false,
 			),
 			array(
-				'name'=>'channel',
-				'value'=>'$data->channel',
-				'filter'=>Pay::getChannels(),
-			),
-			array(
-				'name'=>'type',
-				'value'=>'$data->getTypeText()',
-				'filter'=>Pay::getTypes(),
-			),
-			array(
-				'name'=>'amount',
+				'header'=>'订单金额',
 				'value'=>'number_format($data->amount / 100, 2)',
 				'footer'=>number_format($amount / 100, 2),
+			),
+			array(
+				'header'=>'支付金额',
+				'value'=>'number_format($data->paid_amount / 100, 2)',
+				'footer'=>number_format($paidAmount / 100, 2),
 			),
 			array(
 				'name'=>'fee',
@@ -411,9 +422,9 @@ class Pay extends ActiveRecord {
 				'filter'=>false,
 			),
 			array(
-				'name'=>'update_time',
+				'name'=>'paid_time',
 				'type'=>'raw',
-				'value'=>'date("Y-m-d H:i:s", $data->update_time)',
+				'value'=>'$data->paid_time > 0 ? date("Y-m-d H:i:s", $data->paid_time) : "-"',
 				'filter'=>false,
 			),
 			array(
@@ -422,11 +433,21 @@ class Pay extends ActiveRecord {
 				'value'=>'$data->getStatusText()',
 				'filter'=>Pay::getAllStatus(),
 			),
+			array(
+				'name'=>'type',
+				'value'=>'$data->getTypeText()',
+				'filter'=>Pay::getTypes(),
+			),
+			array(
+				'name'=>'channel',
+				'value'=>'$data->channel',
+				'filter'=>Pay::getChannels(),
+			),
 		);
 		if ($this->type !== '') {
 			switch ($this->type) {
 				case self::TYPE_REGISTRATION:
-					array_splice($columns, 4, 0, array(
+					array_splice($columns, 1, 0, array(
 						array(
 							'name'=>'type_id',
 							'header'=>Yii::t('common', 'Competition'),
@@ -474,7 +495,7 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function getTotal($status = self::STATUS_PAID, $channel = false) {
+	public function getTotal($status = self::STATUS_PAID, $channel = false, $attribute = 'paid_amount') {
 		$criteria = new CDbCriteria;
 		if ($channel) {
 			$criteria->compare('channel', $this->channel);
@@ -483,8 +504,8 @@ class Pay extends ActiveRecord {
 		$criteria->compare('type_id', $this->type_id);
 		$criteria->compare('status', $status);
 		$this->compareTime($criteria);
-		$criteria->select = 'SUM(amount) AS amount';
-		return number_format($this->find($criteria)->amount / 100, 2, '.', '');
+		$criteria->select = "SUM({$attribute}) AS {$attribute}";
+		return number_format($this->find($criteria)->$attribute / 100, 2, '.', '');
 	}
 
 	public function getTotalFee() {
@@ -493,10 +514,10 @@ class Pay extends ActiveRecord {
 		$criteria->compare('type_id', $this->type_id);
 		$criteria->select = 'SUM(ROUND((CASE
 			WHEN status=0 OR status=5 THEN 0
-			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
-			WHEN channel="nowPay" THEN amount*0.06
-			ELSE amount*0.012 END) / 100, 2)) AS amount';
-		return $this->find($criteria)->amount;
+			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
+			WHEN channel="nowPay" THEN paid_amount*0.06
+			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+		return $this->find($criteria)->paid_amount;
 	}
 
 	public function getBillTotalFee() {
@@ -538,12 +559,12 @@ class Pay extends ActiveRecord {
 			array('user_id, order_no, order_name', 'required'),
 			array('type, device_type, status', 'numerical', 'integerOnly'=>true),
 			array('user_id, type_id, sub_type_id, amount', 'length', 'max'=>10),
-			array('channel', 'length', 'max'=>6),
+			array('channel', 'length', 'max'=>10),
 			array('order_no', 'length', 'max'=>32),
 			array('order_name', 'length', 'max'=>50),
 			array('pay_channel', 'length', 'max'=>4),
 			array('pay_account, trade_no', 'length', 'max'=>64),
-			array('create_time, update_time', 'length', 'max'=>11),
+			array('create_time, update_time, paid_time', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_id, channel, type, type_id, sub_type_id, order_no, order_name, amount, device_type, pay_channel, pay_account, trade_no, status, create_time, update_time', 'safe', 'on'=>'search'),
@@ -584,8 +605,9 @@ class Pay extends ActiveRecord {
 			'status'=>Yii::t('Pay', 'Status'),
 			'create_time'=>Yii::t('Pay', 'Create Time'),
 			'update_time'=>Yii::t('Pay', 'Update Time'),
-			'update_time[0]'=>'开始时间',
-			'update_time[1]'=>'结束时间',
+			'paid_time'=>Yii::t('Pay', 'Paid Time'),
+			'paid_time[0]'=>'开始时间',
+			'paid_time[1]'=>'结束时间',
 		);
 	}
 
@@ -666,7 +688,7 @@ class Pay extends ActiveRecord {
 	}
 
 	private function compareTime($criteria) {
-		foreach (['create_time', 'update_time'] as $attribute) {
+		foreach (['create_time', 'update_time', 'paid_time'] as $attribute) {
 			$time = $this->$attribute;
 			if (!is_array($time)) {
 				continue;

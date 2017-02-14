@@ -249,9 +249,7 @@
       </tr>
       <tr class="event-row">
         <td colspan="<?php echo count($persons) + 2; ?>">
-          <?php echo CHtml::tag('span', array(
-            'class'=>'event-icon event-icon-' . $eventId,
-          ), $eventName); ?>
+          <?php echo Events::getFullEventNameWithIcon($eventId); ?>
         </td>
       </tr>
       <tr class="event-row">

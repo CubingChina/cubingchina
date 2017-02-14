@@ -69,10 +69,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::link(CHtml::tag("span", array(
-          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-          "title"=>Yii::t("event", $data->event->cellName),
-        ), Yii::t("event", $data->event->cellName)), "#" . $data->event->id)',
+        'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->eventId), "#" . $data->event->id)',
       ),
       array(
         'name'=>Yii::t('statistics', 'NR'),
@@ -220,10 +217,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::tag("span", array(
-          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-          "title"=>Yii::t("event", $data->event->cellName),
-        ), Yii::t("event", $data->event->cellName))',
+        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
       ),
       array(
         'name'=>Yii::t('Results', 'Place'),
@@ -264,10 +258,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::tag("span", array(
-          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-          "title"=>Yii::t("event", $data->event->cellName),
-        ), Yii::t("event", $data->event->cellName))',
+        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
       ),
       array(
         'name'=>Yii::t('Results', 'Place'),
@@ -308,10 +299,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::tag("span", array(
-          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-          "title"=>Yii::t("event", $data->event->cellName),
-        ), Yii::t("event", $data->event->cellName))',
+        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
       ),
       array(
         'name'=>Yii::t('Results', 'Place'),
@@ -352,10 +340,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::tag("span", array(
-          "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-          "title"=>Yii::t("event", $data->event->cellName),
-        ), Yii::t("event", $data->event->cellName))',
+        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
       ),
       array(
         'name'=>Yii::t('Results', 'Place'),
@@ -472,10 +457,7 @@
             'groupKey'=>'eventId',
             'groupHeader'=>'CHtml::openTag("a", array(
                 "name"=>$data->eventId,
-              )) . "</a>" . CHtml::tag("span", array(
-                "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-                "title"=>Yii::t("event", $data->event->cellName),
-              ), Yii::t("event", $data->event->cellName))',
+              )) . "</a>" . Events::getFullEventNameWithIcon($data->eventId)',
             'rankKey'=>'competitionId',
             'repeatHeader'=>true,
             'columns'=>array(
@@ -549,10 +531,7 @@
                 'class'=>'RankColumn',
                 'name'=>Yii::t('common', 'Event'),
                 'type'=>'raw',
-                'value'=>'$displayRank ? CHtml::link(CHtml::tag("span", array(
-                  "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-                  "title"=>Yii::t("event", $data->event->cellName),
-                ), Yii::t("event", $data->event->cellName)), array(
+                'value'=>'$displayRank ? CHtml::link(Events::getFullEventNameWithIcon($data->eventId), array(
                   "/results/c",
                   "id"=>$data->competitionId,
                   "type"=>"all",
@@ -619,10 +598,7 @@
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
         'groupKey'=>'eventId',
-        'groupHeader'=>'CHtml::tag("span", array(
-            "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-            "title"=>Yii::t("event", $data->event->cellName),
-          ), Yii::t("event", $data->event->cellName))',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -669,10 +645,7 @@
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
         'groupKey'=>'eventId',
-        'groupHeader'=>'CHtml::tag("span", array(
-            "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-            "title"=>Yii::t("event", $data->event->cellName),
-          ), Yii::t("event", $data->event->cellName))',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -719,10 +692,7 @@
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
         'groupKey'=>'eventId',
-        'groupHeader'=>'CHtml::tag("span", array(
-            "class"=>"event-icon event-icon event-icon-" . $data->eventId,
-            "title"=>Yii::t("event", $data->event->cellName),
-          ), Yii::t("event", $data->event->cellName))',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),

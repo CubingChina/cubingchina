@@ -8,11 +8,11 @@
           continue;
         }
     ?>
-    <div class="col-lg-3 col-md-4 col-xs-<?php echo Yii::app()->language == 'zh_cn' ? 6 : 12; ?>">
+    <div class="col-lg-3 col-md-4 col-xs-6">
       <div class="checkbox">
-        <label class="event-icon event-icon-<?php echo $event; ?>">
+        <label>
           <input type="checkbox" data-event="<?php echo $event; ?>">
-          <?php echo Yii::t('event', Events::getFullEventName($event)); ?>
+          <?php echo Events::getEventIcon($event); ?>
           - <?php echo $value['round']; ?><?php echo Yii::t('Competition', $value['round'] > 1 ? ' rounds' : ' round'); ?>
           <?php if ($value['fee'] > 0): ?>
           (<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($event); ?>)

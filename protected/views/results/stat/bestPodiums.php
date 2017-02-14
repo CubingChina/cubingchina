@@ -24,9 +24,7 @@
                 <?php echo CHtml::radioButton('event', $eventId == $event, array(
                   'value'=>$eventId,
                 )); ?>
-                <?php echo CHtml::tag('span', array(
-                  'class'=>'event-icon event-icon-' . $eventId,
-                ), '&nbsp;'); ?>
+                <?php echo Events::getEventIcon($eventId); ?>
               </label>
             </div>
           </div>

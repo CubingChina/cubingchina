@@ -743,7 +743,7 @@ class Competition extends ActiveRecord {
 				$schedule->round = $schedule->group = $schedule->format = '';
 				$schedule->cut_off = $schedule->time_limit = 0;
 			}
-			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			$event = Events::getFullEventName($schedule->event);
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				switch ($times + 1) {
@@ -837,7 +837,7 @@ class Competition extends ActiveRecord {
 				$schedule->round = $schedule->group = $schedule->format = '';
 				$schedule->cut_off = $schedule->time_limit = 0;
 			}
-			$event = Yii::t('event', Events::getFullEventName($schedule->event));
+			$event = Events::getFullEventName($schedule->event);
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				switch ($times + 1) {
@@ -911,9 +911,7 @@ class Competition extends ActiveRecord {
 			);
 			if ($key == 'Event') {
 				$column['type'] = 'raw';
-				$column['value'] = 'CHtml::tag("span", array(
-					"class"=>"event-icon event-icon-" . $data["event"],
-				), $data["Event"])';
+				$column['value'] = 'Events::getFullEventNameWithIcon($data["event"])';
 			}
 			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
 				if ($key == 'End Time') {
@@ -1194,10 +1192,7 @@ class Competition extends ActiveRecord {
 			if ($value['round'] > 0) {
 				$columns[] = array(
 					'name'=>(string)$event,
-					'header'=>CHtml::tag('span', array(
-						'class'=>'event-icon event-icon-white event-icon-' . $event,
-						'title'=>Yii::t('event', Events::getFullEventName($event)),
-					), $headerText ? $event : '&nbsp;'),
+					'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
 					'headerHtmlOptions'=>array(
 						'class'=>'header-event',
 					),
@@ -1337,7 +1332,7 @@ class Competition extends ActiveRecord {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
 					'i'=>$eventRound->event,
-					'name'=>Yii::t('event', Events::getFullEventName($eventRound->event)),
+					'name'=>Events::getFullEventName($eventRound->event),
 					'rs'=>array(),
 				);
 			}

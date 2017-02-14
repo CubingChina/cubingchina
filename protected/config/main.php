@@ -200,8 +200,8 @@ $config = array(
 					'depends'=>array('jquery'),
 				),
 				'main'=>array(
-					'baseUrl'=>'f',
-					'depends'=>array('jquery'),
+					'baseUrl'=>'',
+					// 'depends'=>array('jquery'),
 				),
 				'datepicker'=>array(
 					'baseUrl'=>'f/plugins/bootstrap-datepicker',
@@ -249,15 +249,15 @@ $config = array(
 					),
 				),
 				'leaflet'=>array(
-					'baseUrl'=>'f',
+					'baseUrl'=>'f/plugins/leaflet',
 					'css'=>array(
-						'leaflet/leaflet.css?20161009',
-						'leaflet/plugins/MarkerCluster/MarkerCluster.css',
-						'leaflet/plugins/MarkerCluster/MarkerCluster.Default.css',
+						'leaflet.css?20161009',
+						'plugins/MarkerCluster/MarkerCluster.css',
+						'plugins/MarkerCluster/MarkerCluster.Default.css',
 					),
 					'js'=>array(
-						'leaflet/leaflet.js',
-						'leaflet/plugins/MarkerCluster/leaflet.markercluster.js',
+						'leaflet.js',
+						'plugins/MarkerCluster/leaflet.markercluster.js',
 					),
 				),
 			),
@@ -292,7 +292,7 @@ $config = array(
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
 		'jsVer'=>'20170102',
-		'cssVer'=>'20161227',
+		'cssVer'=>'20170210',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,
@@ -306,13 +306,6 @@ $config = array(
 				'key'=>Env::get('PAYMENT_BALIPAY'),
 				'img'=>'/f/images/pay/alipay.png',
 			),
-			// 'alipay'=>array(
-			// 	'gateway'=>'https://mapi.alipay.com/gateway.do',
-			// 	'partner'=>'2088002487607846',
-			// 	'seller_email'=>'qiyuuu@gmail.com',
-			// 	'key'=>Env::get('PAYMENT_ALIPAY'),
-			// 	'active'=>false,
-			// ),
 		),
 		'regulations'=>array(
 			'common'=>array(

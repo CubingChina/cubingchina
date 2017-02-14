@@ -18,7 +18,8 @@
  */
 return array (
   'ID' => '',
-  'Order Name' => '',
+  'Order Name' => '訂單名',
+  'Paid Time' => '支付時間',
   'Sub Type' => '',
   'Now Pay Account' => '現在支付賬號',
   'Amount' => '金額',

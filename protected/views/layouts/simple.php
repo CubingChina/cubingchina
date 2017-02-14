@@ -5,16 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-siteapp">
-  <!-- Theme CSS -->
-  <?php if (DEV): ?>
-  <link id="theme-style" rel="stylesheet" href="/f/plugins/bootstrap/css/bootstrap.min.css?v=<?php echo Yii::app()->params->cssVer; ?>">
-  <link id="theme-style" rel="stylesheet" href="/f/plugins/font-awesome/css/font-awesome.min.css?v=<?php echo Yii::app()->params->cssVer; ?>">
-  <link id="theme-style" rel="stylesheet" href="/f/css/styles.css?v=<?php echo Yii::app()->params->cssVer; ?>">
-  <?php else: ?>
-  <link id="theme-style" rel="stylesheet" href="/f/css/main.css?v=<?php echo Yii::app()->params->cssVer; ?>">
-  <?php endif; ?>
   <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-  <link rel="icon" sizes="196x196" href="/f/images/icon196.png"> 
+  <link rel="icon" sizes="196x196" href="/f/images/icon196.png">
   <link rel="apple-touch-icon" href="/f/images/icon196.png">
   <link rel="apple-touch-icon-precomposed" sizes="128x128" href="/f/images/icon196.png">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo CHtml::normalizeUrl(array('/feed/index')); ?>">

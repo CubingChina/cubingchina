@@ -18,19 +18,19 @@
             ),
           )); ?>
           <?php echo Html::formGroup(
-            $model, 'update_time[0]', array(
+            $model, 'paid_time[0]', array(
               'class'=>'col-xs-6 col-lg-3',
             ),
-            Html::activeTextField($model, 'update_time[0]', array(
+            Html::activeTextField($model, 'paid_time[0]', array(
               'class'=>'datetime-picker',
               'data-date-format'=>'yyyy-mm-dd hh:ii:00',
             ))
           ); ?>
           <?php echo Html::formGroup(
-            $model, 'update_time[1]', array(
+            $model, 'paid_time[1]', array(
               'class'=>'col-xs-6 col-lg-3',
             ),
-            Html::activeTextField($model, 'update_time[1]', array(
+            Html::activeTextField($model, 'paid_time[1]', array(
               'class'=>'datetime-picker',
               'data-date-format'=>'yyyy-mm-dd hh:ii:00',
             ))
@@ -93,9 +93,9 @@
                 'filter'=>false,
               ),
               array(
-                'name'=>'update_time',
+                'name'=>'paid_time',
                 'type'=>'raw',
-                'value'=>'date("Y-m-d H:i:s", $data->update_time)',
+                'value'=>'date("Y-m-d H:i:s", $data->paid_time)',
                 'filter'=>false,
               ),
               array(

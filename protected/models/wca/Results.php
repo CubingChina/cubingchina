@@ -436,11 +436,12 @@ class Results extends ActiveRecord {
 	 * @param boolean $multi 是否是多盲
 	 */
 	private static function formatGMTime($time, $multi = false) {
+		$time = intval($time);
 		if ($multi) {
-			if ($time == '99999') {
+			if ($time == 99999) {
 				return 'unknown';
 			}
-			if ($time == '3600') {
+			if ($time == 3600) {
 				return '60:00';
 			}
 			if ($time < 60) {

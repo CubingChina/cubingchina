@@ -63,7 +63,7 @@ class ResultsController extends Controller {
 		$this->pageTitle = array(
 			'Personal Rankings',
 			Yii::t('Region', $region),
-			Yii::t('event', Events::getFullEventName($event)),
+			Events::getFullEventName($event),
 			ucfirst($gender),
 			ucfirst($type),
 		);
@@ -102,7 +102,7 @@ class ResultsController extends Controller {
 			Yii::t('Region', $region),
 		);
 		if ($type === 'history') {
-			$pageTitle[] = Yii::t('event', Events::getFullEventName($event));
+			$pageTitle[] = Events::getFullEventName($event);
 		}
 		$pageTitle[] = Yii::t('Results', ucfirst($type));
 		$this->pageTitle = $pageTitle;
