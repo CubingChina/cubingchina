@@ -89,7 +89,7 @@ module.exports = {
         }
       }
     }),
-    new AssetMapPlugin(path.resolve('build/assets-map.json')),
+    new AssetMapPlugin(path.resolve('assets-map.json')),
     new ExtractTextPlugin(getName('css/[name].css?[contenthash:8]')),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['common'],
