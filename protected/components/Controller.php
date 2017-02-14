@@ -429,6 +429,7 @@ class Controller extends CController {
 					$clientScript->packages['main'][$type][] = ltrim($file, '/');
 				}
 			}
+			// don't load jquery
 			$clientScript->packages['jquery'] = false;
 			$clientScript->registerPackage('main');
 		}

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import 'font-awesome/css/font-awesome.css'
-import '../css/styles.css'
+import '../less/styles.less'
 
 import 'jquery-cookie'
 import '../plugins/back-to-top/back-to-top'
