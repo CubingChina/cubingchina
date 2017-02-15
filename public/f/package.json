@@ -4,7 +4,7 @@
   "description": "Frontend resources for Cubing China",
   "main": "js/main.js",
   "scripts": {
-    "build": "rimraf build && webpack -p",
+    "build": "webpack -p",
     "watch": "webpack --watch",
     "clean": "rimraf build"
   },
