@@ -5,7 +5,6 @@
   "main": "js/main.js",
   "scripts": {
     "build": "rimraf build && webpack -p",
-    "develop": "rimraf build && webpack --watch",
     "watch": "webpack --watch",
     "clean": "rimraf build"
   },

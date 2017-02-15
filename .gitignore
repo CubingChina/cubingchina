@@ -7,6 +7,7 @@ protected/commands/Test*Command.php
 protected/bin
 public/.htaccess
 build
+assets-map.json
 node_modules
 .tag*
 
