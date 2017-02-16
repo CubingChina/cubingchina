@@ -167,6 +167,12 @@ $config = array(
 					'maxFileSize'=>102400,
 				),
 				array(
+					'class'=>'CFileLogRoute',
+					'levels'=>'git',
+					'logFile'=>'application.git.log',
+					'maxFileSize'=>102400,
+				),
+				array(
 					'class'=>'CDbLogRoute',
 					'levels'=>'test',
 					'connectionID'=>'db',
