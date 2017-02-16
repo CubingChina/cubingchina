@@ -421,7 +421,7 @@ class Controller extends CController {
 		$userAgent = Yii::app()->request->getUserAgent();
 		if ($this->module === null) {
 			$clientScript = Yii::app()->clientScript;
-			$map = json_decode(file_get_contents(APP_PATH . '/public/f/build/assets-map.json'), true);
+			$map = json_decode(file_get_contents(APP_PATH . '/public/f/assets-map.json'), true);
 			foreach ($map['chunks'] as $name=>$files) {
 				foreach ($files as $file) {
 					$ext = pathinfo($file, PATHINFO_EXTENSION);
@@ -448,7 +448,7 @@ class Controller extends CController {
 			);
 			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
-		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan') {
+		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan' && $this->id !== 'git') {
 			$app = Yii::app();
 			$request = $app->request;
 			$request->enableCsrfValidation = true;

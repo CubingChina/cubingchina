@@ -12,9 +12,9 @@ mysql_user='cubingchina'
 mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
-wget $wca_home/results/misc/export.html
+wget $wca_home/results/misc/export.html || exit 
 zipname=`grep -o '\(WCA_export[0-9]\+_[0-9]\{8\}\.sql\.zip\)' export.html | tail -1`
-
+_log "zipname: $zipname"
 #check version and date
 version=`echo $zipname | grep -o '\(WCA_export[0-9]\+\)' | grep -o '[0-9]\+' | tail -1`
 date=`echo $zipname | grep -o '\([0-9]\{8\}\)' | tail -1`

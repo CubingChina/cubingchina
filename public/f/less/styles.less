@@ -754,20 +754,20 @@ table.concise-schedule {
   }
 }
 .concise-schedule {
-  td[rowspan] {
+  tbody > tr > td[rowspan] {
     cursor: pointer;
     &.inverse {
       color: #f0f0f0;
     }
     .loop-concise-schedule-event()
   }
-  &.highlight td[rowspan].unselected {
+  &.highlight tbody > tr > td[rowspan].unselected {
     background-color: #bdbdbd;
     &:hover {
       background-color: #a9a9a9;
     }
   }
-  td.time {
+  tbody > tr > td.time {
     position: relative;
     span {
       position: absolute;
@@ -779,19 +779,19 @@ table.concise-schedule {
       top: 100%;
     }
   }
-  td.has-time span.hover,
-  tr.hover,
-  tr:hover > td.has-time {
+  tbody > tr > td.has-time span.hover,
+  tbody > tr.hover,
+  tr:hover > td.has-time span {
     background-color: #d9edf7;
     font-weight: bold;
     z-index: 999;
   }
-  td.end-time {
+  tbody > tr > td.end-time {
     border-top: none;
     height: 0;
     padding: 0;
   }
-  th {
+  thead > tr > th {
     background-color: #83838d;
     border: none;
     color: #ffffff;
