@@ -20,10 +20,10 @@ class GitController extends Controller {
 		$payload = file_get_contents('php://input');
 		try {
 			if ($event == '' || $delivery == '') {
-				// throw new CHttpException(403, 'Forbidden');
+				throw new CHttpException(403, 'Forbidden');
 			}
 			if (!$this->validateSignature($signature, $payload)) {
-				// throw new CHttpException(401, 'Unauthorized');
+				throw new CHttpException(401, 'Unauthorized');
 			}
 			Yii::log($payload, 'git');
 			$data = json_decode($payload);
