@@ -30,8 +30,24 @@ class GitController extends Controller {
 			switch ($event) {
 				case 'ping':
 					$this->ajaxOK('pong');
+					break;
 				case 'push':
-
+					$ref = $data->ref;
+					if ($ref == 'refs/heads/master') {
+						$path = APP_PATH;
+					} else {
+						$path = Env::get('DEVELOP_PATH');
+						if (!is_dir($path)) {
+							$this->ajaxOK('success');
+						}
+					}
+					exec('sh ' . $path . '/protected/commands/shell/deploy.sh', $output, $ret);
+					Yii::log($output, 'git', 'deploy');
+					if ($ret == 0) {
+						$this->ajaxOK('success');
+					} else {
+						$this->ajaxError(500, 'error');
+					}
 					break;
 			}
 		} catch (CHttpException $e) {
