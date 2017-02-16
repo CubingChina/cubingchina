@@ -42,7 +42,7 @@ class GitController extends Controller {
 						}
 					}
 					exec('sh ' . $path . '/protected/commands/shell/deploy.sh', $output, $ret);
-					Yii::log($output, 'git', 'deploy');
+					Yii::log(json_encode($output), 'git', 'deploy');
 					if ($ret == 0) {
 						$this->ajaxOK('success');
 					} else {
