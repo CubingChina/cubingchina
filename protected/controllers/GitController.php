@@ -44,7 +44,9 @@ class GitController extends Controller {
 					exec('sh ' . $path . '/protected/commands/shell/deploy.sh 2>&1', $output, $ret);
 					Yii::log(implode(PHP_EOL, $output), 'git', 'deploy');
 					if ($ret == 0) {
-						$this->ajaxOK('success');
+						echo 'success';
+						fastcgi_finish_request();
+						exec("cd $path/public/f && npm run build");
 					} else {
 						Yii::log($ret, 'git', 'deploy');
 						throw new CHttpException(500, 'Intenal Error');
