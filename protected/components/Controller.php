@@ -448,7 +448,7 @@ class Controller extends CController {
 			);
 			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
-		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan') {
+		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan' && $this->id !== 'git') {
 			$app = Yii::app();
 			$request = $app->request;
 			$request->enableCsrfValidation = true;
