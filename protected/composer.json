@@ -9,22 +9,5 @@
 		"zhuzhichao/ip-location-zh": "dev-master",
 		"cboden/ratchet": "dev-master",
 		"jonnyw/php-phantomjs": "4.*"
-	},
-	"repositories": [{
-		"type": "composer",
-		"url": "https://packagist.phpcomposer.com"
-	}, {
-		"packagist": false
-	}],
-	"config": {
-		"bin-dir": "/bin"
-	},
-	"scripts": {
-		"post-install-cmd": [
-			"PhantomInstaller\\Installer::installPhantomJS"
-		],
-		"post-update-cmd": [
-			"PhantomInstaller\\Installer::installPhantomJS"
-		]
 	}
 }
