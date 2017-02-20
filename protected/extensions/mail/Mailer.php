@@ -11,7 +11,6 @@ class Mailer extends CApplicationComponent {
 
 	protected $titlePrefix = 'Cubing China (粗饼) - ';
 	protected $viewPath;
-	private $_mailer;
 
 	public function init() {
 		parent::init();
@@ -19,12 +18,6 @@ class Mailer extends CApplicationComponent {
 		$this->viewPath = dirname(__FILE__) . '/views/';
 	}
 
-	public function getMailer() {
-		if ($this->_mailer === null) {
-			$this->_mailer = new \Mailgun\Mailgun($this->api);
-		}
-		return $this->_mailer;
-	}
 
 	public function sendActivate($user) {
 		$to = $user->email;
@@ -217,10 +210,6 @@ class Mailer extends CApplicationComponent {
 			}
 			return false;
 		}
-	}
-
-	public function reset() {
-		$this->_mailer = null;
 	}
 
 	protected function render($_view_, $_data_) {
