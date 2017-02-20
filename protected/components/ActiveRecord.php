@@ -1,9 +1,6 @@
 <?php
 
 class ActiveRecord extends CActiveRecord {
-	private static $_qqwry;
-	private static $_qqwryFile;
-
 	const YES = 1;
 	const NO = 0;
 
@@ -46,20 +43,6 @@ class ActiveRecord extends CActiveRecord {
 			self::YES=>'是',
 			self::NO=>'否',
 		);
-	}
-
-	public static function getQQWRY() {
-		if (self::$_qqwry === null) {
-			self::$_qqwry = new qqwry(self::getQQWRYFile());
-		}
-		return self::$_qqwry;
-	}
-
-	public static function getQQWRYFile() {
-		if (self::$_qqwryFile === null) {
-			self::$_qqwryFile = Yii::getPathOfAlias('application.data.qqwry').'.dat';
-		}
-		return self::$_qqwryFile;
 	}
 
 	public function getRegIpDisplay($attribute = 'ip') {
