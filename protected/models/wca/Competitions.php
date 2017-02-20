@@ -68,7 +68,7 @@ class Competitions extends ActiveRecord {
 			'Singapore'=>'^SingaporeOpen[[:digit:]]\{4\}$',
 			'Slovenia'=>'^SlovenianOpen[[:digit:]]\{4\}$',
 			'Spain'=>'^(Spain|SpanishChampionship)[[:digit:]]\{4\}$',
-			'Sweden'=>'^Swedish(CubeDays?|Championship)[[:digit:]]\{4\}$',
+			'Sweden'=>'^Swedish(Open|Championship)[[:digit:]]\{4\}$',
 			'Thailand'=>'^Thailand(Championship)?[[:digit:]]\{4\}$',
 			'Ukraine'=>'^UkrainianNationals[[:digit:]]\{4\}$',
 			'United Kingdom'=>'^UK(Open|Championship)[[:digit:]]\{4\}$',
