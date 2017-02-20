@@ -114,7 +114,7 @@ class ConciseSchedule extends Widget {
 		), CHtml::tag('span', array(), date('H:i', $time)));
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('tbody');
-		
+
 		echo CHtml::closeTag('table');
 		echo CHtml::closeTag('div');
 	}
@@ -158,7 +158,7 @@ class ConciseSchedule extends Widget {
 			$tdClass[] = 'inverse';
 		}
 		$text[] = implode(' ', [
-			Events::getEventIcon($schedule['event']), 
+			Events::getEventIcon($schedule['event']),
 			$schedule['Event'],
 			$schedule['Round'],
 		]);

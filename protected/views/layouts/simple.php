@@ -19,7 +19,6 @@
   <meta name="description" content="<?php echo CHtml::encode($this->description); ?>">
   <meta name="keywords" content="<?php echo CHtml::encode($this->keywords); ?>">
   <meta name="author" content="<?php echo Yii::app()->params->author; ?>">
-  <meta property="wb:webmaster" content="c86bdd248e65def9">
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
     <script src="/f/js/html5shiv.js"></script>

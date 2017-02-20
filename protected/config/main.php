@@ -16,7 +16,6 @@ $config = array(
 		'application.models.*',
 		'application.models.wca.*',
 		'application.forms.*',
-		'application.levels.*',
 		'application.widgets.*',
 		'application.extensions.debugtb.*',
 		'application.extensions.mail.*',
@@ -24,17 +23,6 @@ $config = array(
 	'modules'=>array(
 		'board'=>array(
 			'defaultController'=>'competition',
-		),
-		// uncomment the following to enable the Gii tool
-		'gii'=>array(
-			'class'=>'system.gii.GiiModule',
-			'password'=>'123',
-			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array(
-				'10.*.*.*',
-				'127.0.0.1',
-				'::1'
-			),
 		),
 	),
 	// application components
@@ -103,7 +91,6 @@ $config = array(
 			),
 			'appendParams'=>false,
 			'showScriptName'=>false,
-			// 'baseUrl'=>DEV ? null : 'https://cubingchina.com',
 		),
 		'cache'=>array(
 			'class'=>'CustomCache',
@@ -297,8 +284,6 @@ $config = array(
 		'weiboSharePic'=>'https://cubingchina.com/f/images/logo2x.png',
 		'staticPath'=>dirname(dirname(__DIR__)) . '/public/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
-		'jsVer'=>'20170102',
-		'cssVer'=>'20170210',
 		'avatar'=>array(
 			'size'=>2097152,
 			'height'=>1200,

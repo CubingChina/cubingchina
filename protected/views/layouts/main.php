@@ -31,7 +31,6 @@
       <?php if ($this->title != ''): ?>
       <header class="page-heading clearfix">
         <h1 class="heading-title pull-left"><?php echo $this->title; ?></h1>
-        <?php $this->renderPartial('/layouts/weiboShare', $_data_); ?>
         <?php $this->widget('Breadcrumbs'); ?>
       </header>
       <?php endif; ?>
