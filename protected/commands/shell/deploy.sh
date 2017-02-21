@@ -3,7 +3,7 @@ cd $dir
 cd ../../../
 git pull
 cd protected
-composer update
+composer install
 ./yiic migrate
 cd ../public/f
 #it takes long time to build
