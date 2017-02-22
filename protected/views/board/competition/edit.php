@@ -417,6 +417,7 @@
             </div>
             <?php if ($model->isAccepted()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
+              <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
                 $model, 'information_zh', array(
                   'class'=>'col-lg-6',
@@ -444,6 +445,7 @@
               <div class="clearfix"></div>
             </div>
             <div role="tabpanel" class="tab-pane" id="regulation">
+              <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
                 $model, 'regulations_zh', array(
                   'class'=>'col-lg-6',
@@ -487,6 +489,7 @@
               );?>
             </div>
             <div role="tabpanel" class="tab-pane" id="transportation">
+              <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
                 $model, 'travel_zh', array(
                   'class'=>'col-lg-6',
