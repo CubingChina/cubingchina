@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="page-title">
-      <h1><?php echo $model->isNewRecord ? '新增' : '编辑'; ?>比赛</h1>
+      <h1><?php echo $model->isNewRecord ? '申请' : '编辑'; ?>比赛</h1>
     </div>
   </div>
   <!-- /.col-lg-12 -->
@@ -28,10 +28,15 @@
           )); ?>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
-            <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab">赛程安排</a></li>
-            <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">比赛规则</a></li>
-            <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">比赛详情</a></li>
-            <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通信息</a></li>
+            <li role="presentation"><a href="#event" role="tab" data-toggle="tab">项目</a></li>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+            <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
+            <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
+            <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab">赛程</a></li>
+            <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
+            <?php else: ?>
+            <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
+            <?php endif; ?>
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
@@ -62,18 +67,14 @@
               );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
-                $model, 'check_person', array(
+                $model, 'person_num', array(
                   'class'=>'col-md-4',
                 ),
-                $form->labelEx($model, 'check_person', array(
-                  'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
+                $form->labelEx($model, 'person_num', array(
+                  'label'=>'人数限制',
                 )),
-                $form->dropDownList($model, 'check_person', $checkPersons, array(
-                  'class'=>'form-control',
-                )),
-                $form->error($model, 'check_person', array('class'=>'text-danger'))
+                Html::activeTextField($model, 'person_num'),
+                $form->error($model, 'person_num', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
                 $model, 'type', array(
@@ -109,6 +110,20 @@
                 $form->error($model, 'entry_fee', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
+                $model, 'check_person', array(
+                  'class'=>'col-md-4',
+                ),
+                $form->labelEx($model, 'check_person', array(
+                  'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
+                  'data-toggle'=>'tooltip',
+                  'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
+                )),
+                $form->dropDownList($model, 'check_person', $checkPersons, array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'check_person', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
                 $model, 'online_pay', array(
                   'class'=>'col-md-4',
                 ),
@@ -121,16 +136,6 @@
                   'class'=>'form-control',
                 )),
                 $form->error($model, 'online_pay', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'person_num', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'person_num', array(
-                  'label'=>'人数限制',
-                )),
-                Html::activeTextField($model, 'person_num'),
-                $form->error($model, 'person_num', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
@@ -278,7 +283,7 @@
                   Html::activeTextField($model, 'oldOrganizer'),
                   $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
                 );
-              } else {
+              } elseif ($model->isAccepted() || $this->user->isAdministrator()) {
                 echo Html::formGroup(
                   $model, 'organizers', array(
                     'class'=>'col-lg-12',
@@ -352,6 +357,8 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="event">
               <?php echo Html::formGroup(
                 $model, 'events',array(
                   'class'=>'col-lg-12',
@@ -408,21 +415,33 @@
               );?>
               <div class="clearfix"></div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="schedule">
+            <?php if ($model->isAccepted()): ?>
+            <div role="tabpanel" class="tab-pane" id="detail">
               <?php echo Html::formGroup(
-                $model, 'schedules', array(
-                  'class'=>'col-lg-12',
+                $model, 'information_zh', array(
+                  'class'=>'col-lg-6',
                 ),
-                $form->labelEx($model, 'schedules', array(
-                  'label'=>'赛程',
+                $form->labelEx($model, 'information_zh', array(
+                  'label'=>'中文详情',
                 )),
-                '<div class="text-danger">时间会自动排序，留空时间即可删除某项，无分组请留空</div>',
-                $this->widget('SchedulesForm', array(
-                  'model'=>$model,
-                  'name'=>'schedules',
-                ), true),
-                $form->error($model, 'schedules', array('class'=>'text-danger'))
+                $form->textArea($model, 'information_zh', array(
+                  'class'=>'editor form-control'
+                )),
+                $form->error($model, 'information_zh', array('class'=>'text-danger'))
               );?>
+              <?php echo Html::formGroup(
+                $model, 'information', array(
+                  'class'=>'col-lg-6',
+                ),
+                $form->labelEx($model, 'information', array(
+                  'label'=>'英文详情',
+                )),
+                $form->textArea($model, 'information', array(
+                  'class'=>'editor form-control'
+                )),
+                $form->error($model, 'information', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
             </div>
             <div role="tabpanel" class="tab-pane" id="regulation">
               <?php echo Html::formGroup(
@@ -451,32 +470,21 @@
               );?>
               <div class="clearfix"></div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="detail">
+            <div role="tabpanel" class="tab-pane" id="schedule">
               <?php echo Html::formGroup(
-                $model, 'information_zh', array(
-                  'class'=>'col-lg-6',
+                $model, 'schedules', array(
+                  'class'=>'col-lg-12',
                 ),
-                $form->labelEx($model, 'information_zh', array(
-                  'label'=>'中文详情',
+                $form->labelEx($model, 'schedules', array(
+                  'label'=>'赛程',
                 )),
-                $form->textArea($model, 'information_zh', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'information_zh', array('class'=>'text-danger'))
+                '<div class="text-danger">时间会自动排序，留空时间即可删除某项，无分组请留空</div>',
+                $this->widget('SchedulesForm', array(
+                  'model'=>$model,
+                  'name'=>'schedules',
+                ), true),
+                $form->error($model, 'schedules', array('class'=>'text-danger'))
               );?>
-              <?php echo Html::formGroup(
-                $model, 'information', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'information', array(
-                  'label'=>'英文详情',
-                )),
-                $form->textArea($model, 'information', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'information', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
             </div>
             <div role="tabpanel" class="tab-pane" id="transportation">
               <?php echo Html::formGroup(
@@ -504,6 +512,7 @@
                 $form->error($model, 'travel', array('class'=>'text-danger'))
               );?>
             </div>
+            <?php endif; ?>
           </div>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>

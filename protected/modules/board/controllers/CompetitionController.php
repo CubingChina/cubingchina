@@ -1,5 +1,28 @@
 <?php
+
 class CompetitionController extends AdminController {
+
+	public function accessRules() {
+		return array(
+			array(
+				'allow',
+				'actions'=>array('index', 'add', 'edit'),
+				'users'=>array('@'),
+			),
+			array(
+				'allow',
+				'actions'=>array('toggle'),
+				'roles'=>array(
+					'role'=>User::ROLE_ADMINISTRATOR,
+				),
+			),
+			array(
+				'deny',
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	public function actionIndex() {
 		$model = new Competition();
 		$model->unsetAttributes();
@@ -10,8 +33,9 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionAdd() {
-		if (!$this->user->isAdministrator()) {
-			Yii::app()->user->setFlash('danger', '如需创建比赛，请与管理员联系 admin@cubingchina.com');
+		$user = $this->user;
+		if (!$user->isAdministrator() && Competition::getUnacceptedCount($user) >= 1) {
+			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
 			$this->redirect(array('/board/competition/index'));
 		}
 		$model = new Competition();
@@ -20,7 +44,7 @@ class CompetitionController extends AdminController {
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
 			if ($model->save()) {
-				if ($this->user->isOrganizer()) {
+				if ($user->isOrganizer()) {
 					Yii::app()->mailer->sendAddCompetitionNotice($model);
 				}
 				Yii::app()->user->setFlash('success', '新加比赛成功');
@@ -28,10 +52,10 @@ class CompetitionController extends AdminController {
 			}
 			$model->formatSchedule();
 		}
-		if ($this->user->isOrganizer()) {
+		if ($user->isAdministrator()) {
 			$organizer = new CompetitionOrganizer();
-			$organizer->organizer_id = $this->user->id;
-			$organizer->user = $this->user;
+			$organizer->organizer_id = $user->id;
+			$organizer->user = $user;
 			$model->organizer = array(
 				$organizer,
 			);

@@ -33,6 +33,9 @@ class Competition extends ActiveRecord {
 	const STATUS_HIDE = 0;
 	const STATUS_SHOW = 1;
 	const STATUS_DELETE = 2;
+	const STATUS_UNCONFIRMED = 3;
+	const STATUS_CONFIRMED = 4;
+	const STATUS_REFUSED = 5;
 
 	const NOT_CHECK_PERSON = 0;
 	const CHECK_PERSON = 1;
@@ -92,11 +95,11 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public static function getUnpublicCount() {
+	public static function getUnacceptedCount($user) {
 		return self::model()->with(array(
 			'organizer'=>array(
 				'together'=>true,
-				'condition'=>'organizer.organizer_id=' . Yii::app()->user->id,
+				'condition'=>'organizer.organizer_id=' . $user->id,
 			),
 		))->countByAttributes(array(
 			'status'=>self::STATUS_HIDE,
@@ -325,6 +328,11 @@ class Competition extends ActiveRecord {
 			}
 		}
 		return true;
+	}
+
+	public function isAccepted() {
+		return !$this->isNewRecord &&
+			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
 	}
 
 	public function getLogo() {
@@ -1834,10 +1842,7 @@ class Competition extends ActiveRecord {
 		if ($this->status !== '' && $this->status !== null) {
 			$criteria->compare('t.status', $this->status);
 		} else {
-			$criteria->compare('t.status', array(
-				Competition::STATUS_SHOW,
-				Competition::STATUS_HIDE,
-			));
+			$criteria->addCondition('t.status!=' . self::STATUS_DELETE);
 		}
 
 		if (!$admin) {
@@ -1861,14 +1866,35 @@ class Competition extends ActiveRecord {
 			}
 		}
 
-		if ($admin && Yii::app()->controller->user->isOrganizer()) {
-			$criteria->with = array(
-				'organizer'=>array(
-					'together'=>true,
-				),
-				'location', 'location.province', 'location.city'
-			);
-			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+		if ($admin) {
+			$user = Yii::app()->controller->user;
+			switch (true) {
+				case $user->isAdministrator():
+					break;
+				case $user->isOrganizer():
+					$criteria->with = array(
+						'organizer'=>array(
+							'together'=>true,
+						),
+						'location', 'location.province', 'location.city'
+					);
+					$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+					break;
+				case $user->isDelegate():
+					$criteria->with = array(
+						'organizer'=>array(
+							'together'=>true,
+						),
+						'delegate'=>array(
+							'together'=>true,
+						),
+						'location', 'location.province', 'location.city'
+					);
+					$criteria->addCondition('organizer.organizer_id=:user_id OR delegate.delegate_id=:user_id');
+					$criteria->params[':user_id'] = $user->id;
+					break;
+			}
+
 		}
 
 		return new CActiveDataProvider($this, array(
