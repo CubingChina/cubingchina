@@ -84,8 +84,8 @@ class Registration extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_WAITING=>Yii::t('common', 'Pending'), 
-			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'), 
+			self::STATUS_WAITING=>Yii::t('common', 'Pending'),
+			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
 		);
 	}
 
@@ -360,8 +360,8 @@ class Registration extends ActiveRecord {
 					'headerHtmlOptions'=>array(
 						'class'=>'header-birthday',
 					),
-					'type'=>'raw', 
-					'value'=>'date("Y-m-d", $data->user->birthday)', 
+					'type'=>'raw',
+					'value'=>'date("Y-m-d", $data->user->birthday)',
 				),
 			));
 			if ($this->competition->require_avatar != Competition::REQUIRE_AVATAR_NONE) {
@@ -369,8 +369,8 @@ class Registration extends ActiveRecord {
 					array(
 						'name'=>'avatar_type',
 						'header'=>Yii::t('common', 'Photo'),
-						'type'=>'raw', 
-						'value'=>'$data->getRegistrationAvatar()', 
+						'type'=>'raw',
+						'value'=>'$data->getRegistrationAvatar()',
 					)
 				));
 			}
@@ -398,7 +398,7 @@ class Registration extends ActiveRecord {
 			array(
 				'name'=>'user_id',
 				'header'=>'用户ID',
-				'value'=>'$data->user_id', 
+				'value'=>'$data->user_id',
 			),
 		), $columns, array(
 			array(
@@ -407,8 +407,8 @@ class Registration extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-email',
 				),
-				'type'=>'raw', 
-				'value'=>'$data->user->getEmailLink()', 
+				'type'=>'raw',
+				'value'=>'$data->user->getEmailLink()',
 			),
 			array(
 				'name'=>'mobile',
@@ -416,14 +416,14 @@ class Registration extends ActiveRecord {
 				'headerHtmlOptions'=>array(
 					'class'=>'header-mobile',
 				),
-				'type'=>'raw', 
-				'value'=>'$data->user->mobile', 
+				'type'=>'raw',
+				'value'=>'$data->user->mobile',
 			),
 			array(
 				'name'=>'fee',
 				'header'=>Yii::t('common', 'Fee'),
-				'type'=>'raw', 
-				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")', 
+				'type'=>'raw',
+				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")',
 			),
 			array(
 				'name'=>'comment',
@@ -437,8 +437,8 @@ class Registration extends ActiveRecord {
 			array(
 				'name'=>'date',
 				'header'=>Yii::t('Registration', 'Registration Date'),
-				'type'=>'raw', 
-				'value'=>'date("Y-m-d H:i:s", $data->date)', 
+				'type'=>'raw',
+				'value'=>'date("Y-m-d H:i:s", $data->date)',
 			),
 		), $ipColumn);
 		return $columns;
@@ -528,7 +528,7 @@ class Registration extends ActiveRecord {
 			if ($this->pay === null) {
 				$this->pay = $this->createPay();
 			}
-			if ($this->pay->amount !== $totalFee * 100) {
+			if ($this->pay->amount !== $totalFee * 100 && !$this->pay->isPaid()) {
 				$this->pay->amount = $totalFee * 100;
 				$this->pay->save(false);
 			}
