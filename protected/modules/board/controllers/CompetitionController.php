@@ -6,7 +6,7 @@ class CompetitionController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'actions'=>array('index', 'apply', 'edit'),
+				'actions'=>array('index', 'application', 'apply', 'edit', 'editApplication', 'view'),
 				'users'=>array('@'),
 			),
 			array(
@@ -31,33 +31,50 @@ class CompetitionController extends AdminController {
 		));
 	}
 
+	public function actionApplication() {
+		$model = new Competition('application');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('Competition');
+		$this->render('index', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionView() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		$this->render('view', [
+			'competition'=>$model,
+		]);
+	}
+
 	public function actionApply() {
 		$user = $this->user;
 		if (!$user->isAdministrator() && Competition::getUnacceptedCount($user) >= 1) {
 			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
-			$this->redirect(array('/board/competition/index'));
+			$this->redirect(array('/board/competition/application'));
 		}
 		$model = new Competition();
 		$model->date = $model->end_date = $model->reg_start = $model->reg_end = '';
 		$model->province_id = $model->city_id = '';
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
+			$model->status = Competition::STATUS_UNCONFIRMED;
+			if (!$user->isAdministrator()) {
+				$model->organizers = [$user->id];
+			}
 			if ($model->save()) {
-				if ($user->isOrganizer()) {
-					Yii::app()->mailer->sendAddCompetitionNotice($model);
-				}
 				Yii::app()->user->setFlash('success', '新加比赛成功');
-				$this->redirect(array('/board/competition/index'));
+				$this->redirect(array('/board/competition/application'));
 			}
 			$model->formatSchedule();
-		}
-		if ($user->isAdministrator()) {
-			$organizer = new CompetitionOrganizer();
-			$organizer->organizer_id = $user->id;
-			$organizer->user = $user;
-			$model->organizer = array(
-				$organizer,
-			);
 		}
 		$model->formatEvents();
 		$model->formatDate();
@@ -117,6 +134,34 @@ class CompetitionController extends AdminController {
 		$model->formatEvents();
 		$model->formatDate();
 		$this->render('edit', $this->getCompetitionData($model));
+	}
+
+	public function actionEditApplication() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->application == null) {
+			$model->application = new CompetitionApplication();
+			$model->application->competition_id = $model->id;
+			$model->application->create_time = time();
+		}
+		if (isset($_POST['CompetitionApplication'])) {
+			$model->application->attributes = $_POST['CompetitionApplication'];
+			if ($model->application->save()) {
+				Yii::app()->user->setFlash('success', '更新申请资料成功');
+				$this->redirect($this->getReferrer());
+			}
+		}
+		$this->render('editApplication', [
+			'competition'=>$model,
+			'model'=>$model->application,
+		]);
 	}
 
 	private function getCompetitionData($model) {

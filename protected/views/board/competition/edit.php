@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="page-title">
-      <h1><?php echo $model->isNewRecord ? '申请' : '编辑'; ?>比赛</h1>
+      <h1>比赛信息</h1>
     </div>
   </div>
   <!-- /.col-lg-12 -->

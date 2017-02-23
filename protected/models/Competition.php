@@ -102,7 +102,8 @@ class Competition extends ActiveRecord {
 				'condition'=>'organizer.organizer_id=' . $user->id,
 			),
 		))->countByAttributes(array(
-			'status'=>self::STATUS_HIDE,
+			'status'=>self::STATUS_CONFIRMED,
+			'status'=>self::STATUS_UNCONFIRMED,
 		));
 	}
 
@@ -247,12 +248,21 @@ class Competition extends ActiveRecord {
 		return $years;
 	}
 
-	public static function getAllStatus() {
-		return array(
-			self::STATUS_HIDE=>'隐藏',
-			self::STATUS_SHOW=>'公示',
-			// self::STATUS_DELETE=>'删除',
-		);
+	public static function getAllStatus($actionId = 'index') {
+		switch ($actionId) {
+			case 'application':
+				return [
+					self::STATUS_UNCONFIRMED=>'未确认',
+					self::STATUS_CONFIRMED=>'已确认',
+					self::STATUS_REFUSED=>'已拒绝',
+				];
+			case 'index':
+			default:
+				return [
+					self::STATUS_HIDE=>'隐藏',
+					self::STATUS_SHOW=>'公示',
+				];
+		}
 	}
 
 	public static function getCheckPersons() {
@@ -1008,47 +1018,47 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getOperationButton() {
-		$buttons = array();
-		$buttons[] = CHtml::link('预览', $this->getUrl('detail'), array('class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank'));
-		$buttons[] = CHtml::link('编辑', array('/board/competition/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
-			switch ($this->status) {
-				case self::STATUS_HIDE:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-green btn-square toggle',
+		$buttons = [];
+		$isAdministrator = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
+		switch ($this->status) {
+			case self::STATUS_HIDE:
+			case self::STATUS_SHOW:
+				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank']);
+				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
+				if ($isAdministrator) {
+					$buttons[] = CHtml::tag('button', [
+						'class'=>'btn btn-xs btn-square toggle btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
 						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+						'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
 						'data-attribute'=>'status',
 						'data-value'=>$this->status,
 						'data-text'=>'["公示","隐藏"]',
 						'data-name'=>$this->name_zh,
-					), '公示');
-					break;
-				case self::STATUS_SHOW:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-red btn-square toggle',
-						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>'["公示","隐藏"]',
-						'data-name'=>$this->name_zh,
-					), '隐藏');
-					break;
-			}
+					], $this->status == self::STATUS_HIDE ? '公示' : '隐藏');
+				}
+				break;
+			case self::STATUS_UNCONFIRMED:
+			case self::STATUS_CONFIRMED:
+			case self::STATUS_REFUSED:
+				$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
+				if ($this->status == self::STATUS_UNCONFIRMED || $isAdministrator) {
+					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
+					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
+				}
+				break;
 		}
 		if ($this->status == self::STATUS_SHOW) {
-			$buttons[] = CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>array('competition_id'=>$this->id)), array('class'=>'btn btn-xs btn-purple btn-square'));
+			$buttons[] = CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-xs btn-purple btn-square']);
 			if (!$this->canRegister()) {
-				$buttons[] = CHtml::tag('button', array(
+				$buttons[] = CHtml::tag('button', [
 					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
 					'data-id'=>$this->id,
-					'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+					'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
 					'data-attribute'=>'live',
 					'data-value'=>$this->live,
 					'data-text'=>'["开启直播","关闭直播"]',
 					'data-name'=>$this->name_zh,
-				), $this->live ? '关闭直播' : '开启直播');
+				], $this->live ? '关闭直播' : '开启直播');
 			}
 		}
 		return implode(' ', $buttons);
@@ -1424,7 +1434,7 @@ class Competition extends ActiveRecord {
 			if ($oldValues != $newValues) {
 				$modelName = 'Competition' . ucfirst($attribute);
 				foreach ($oldValues as $value) {
-					if (!in_array($value, $newValues) && $isAdmin) {
+					if (!in_array($value, $newValues)) {
 						$modelName::model()->deleteAllByAttributes(array(
 							'competition_id'=>$this->id,
 							$attributeId=>$value,
@@ -1722,8 +1732,6 @@ class Competition extends ActiveRecord {
 			array('name_zh', 'length', 'max'=>50),
 			array('name', 'length', 'max'=>128),
 			array('name', 'checkName', 'skipOnError'=>true),
-			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true),
-			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true),
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
@@ -1843,7 +1851,7 @@ class Competition extends ActiveRecord {
 		if ($this->status !== '' && $this->status !== null) {
 			$criteria->compare('t.status', $this->status);
 		} else {
-			$criteria->addCondition('t.status!=' . self::STATUS_DELETE);
+			$criteria->compare('t.status', array_keys(self::getAllStatus($this->scenario)));
 		}
 
 		if (!$admin) {

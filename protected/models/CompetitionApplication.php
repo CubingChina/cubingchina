@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'competition_application':
  * @property string $id
  * @property string $competition_id
+ * @property string $schedule
  * @property string $organized_competition
  * @property string $self_introduction
  * @property string $team_introduction
@@ -28,14 +29,11 @@ class CompetitionApplication extends ActiveRecord {
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return [
-			array('competition_id, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, create_time, update_time', 'required'),
-			array('competition_id, create_time, update_time', 'length', 'max'=>11),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, create_time, update_time', 'safe', 'on'=>'search'),
+			['competition_id, create_time', 'required'],
+			['competition_id, create_time, update_time', 'length', 'max'=>11],
+			['schedule, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other', 'safe'],
+			['id, competition_id, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, create_time, update_time', 'safe', 'on'=>'search'],
 		];
 	}
 
@@ -57,6 +55,7 @@ class CompetitionApplication extends ActiveRecord {
 		return [
 			'id' => 'ID',
 			'competition_id' => 'Competition',
+			'schedule' => 'Schedule',
 			'organized_competition' => 'Organized Competition',
 			'self_introduction' => 'Self Introduction',
 			'team_introduction' => 'Team Introduction',
@@ -88,6 +87,7 @@ class CompetitionApplication extends ActiveRecord {
 
 		$criteria->compare('id', $this->id,true);
 		$criteria->compare('competition_id', $this->competition_id,true);
+		$criteria->compare('schedule', $this->schedule,true);
 		$criteria->compare('organized_competition', $this->organized_competition,true);
 		$criteria->compare('self_introduction', $this->self_introduction,true);
 		$criteria->compare('team_introduction', $this->team_introduction,true);

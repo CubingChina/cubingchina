@@ -31,10 +31,15 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 比赛管理',
               'url'=>array('/board/competition/index'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 申请比赛',
               'url'=>array('/board/competition/apply'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 申请列表',
+              'url'=>array('/board/competition/application'),
             ),
           ),
         ),

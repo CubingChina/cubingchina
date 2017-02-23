@@ -5,6 +5,7 @@ class m170115_091016_competition_application extends CDbMigration {
 		$this->createTable('competition_application', [
 			'id'=>'int(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
 			'competition_id'=>"int(11) UNSIGNED NOT NULL",
+			'schedule'=>'text NOT NULL',
 			'organized_competition'=>'text NOT NULL',
 			'self_introduction'=>'text NOT NULL',
 			'team_introduction'=>'text NOT NULL',

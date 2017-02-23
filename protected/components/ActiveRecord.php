@@ -55,6 +55,13 @@ class ActiveRecord extends CActiveRecord {
 		), $this->$attribute);
 	}
 
+	protected function beforeSave() {
+		if ($this->hasAttribute('update_time')) {
+			$this->update_time = time();
+		}
+		return parent::beforeSave();
+	}
+
 	protected function afterSave() {
 		// Yii::app()->cache->flush();
 		parent::afterSave();

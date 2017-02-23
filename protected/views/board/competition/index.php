@@ -63,7 +63,7 @@
                 'name'=>'status',
                 'type'=>'raw',
                 'value'=>'$data->getStatusText()',
-                'filter'=>Competition::getAllStatus(),
+                'filter'=>Competition::getAllStatus($this->action->id),
               ),
             ),
           )); ?>
