@@ -1040,7 +1040,9 @@ class Competition extends ActiveRecord {
 			case self::STATUS_UNCONFIRMED:
 			case self::STATUS_CONFIRMED:
 			case self::STATUS_REFUSED:
-				$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
+				if ($this->application !== null) {
+					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
+				}
 				if ($this->status == self::STATUS_UNCONFIRMED || $isAdministrator) {
 					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
 					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
@@ -1489,6 +1491,8 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
+			$location->longitude = floatval($location->longitude);
+			$location->latitude = floatval($location->latitude);
 			$location->save(false);
 		}
 		if ($this->isOld()) {

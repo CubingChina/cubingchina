@@ -50,6 +50,11 @@ class CompetitionController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
+		if ($model->application === null) {
+			Yii::app()->user->setFlash('danger', '该比赛尚未填写申请资料！');
+			$this->redirect($this->getReferrer());
+		}
+		$model->formatEvents();
 		$this->render('view', [
 			'competition'=>$model,
 		]);
