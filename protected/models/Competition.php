@@ -1753,15 +1753,16 @@ class Competition extends ActiveRecord {
 	public function relations() {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
-			'organizer'=>array(self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'),
-			'delegate'=>array(self::HAS_MANY, 'CompetitionDelegate', 'competition_id'),
-			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'),
-			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
-			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
-			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
-			'liveResults'=>array(self::HAS_MANY, 'LiveResult', 'competition_id'),
-		);
+		return [
+			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
+			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
+			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
+			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
+			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
+			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
+			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
+			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
+		];
 	}
 
 	/**
