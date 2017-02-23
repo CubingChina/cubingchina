@@ -6,7 +6,7 @@ class CompetitionController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'actions'=>array('index', 'application', 'apply', 'edit', 'editApplication', 'view'),
+				'actions'=>array('index', 'application', 'apply', 'edit', 'editApplication', 'view', 'confirm'),
 				'users'=>array('@'),
 			),
 			array(
@@ -46,7 +46,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if (!$model->checkPermission($this->user)) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -92,7 +92,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if (!$model->checkPermission($this->user)) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -147,7 +147,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if (!$this->user->isAdministrator() && !isset($model->organizers[$this->user->id])) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -204,8 +204,8 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		if ($this->user->isOrganizer() && $attribute == 'status') {
-			throw new CHttpException(401, 'Unauthorized');
+		if (!$this->user->isAdministrator() && $attribute == 'status') {
+			throw new CHttpException(401, '未授权');
 		}
 		$model->formatEvents();
 		$model->formatDate();
@@ -214,5 +214,24 @@ class CompetitionController extends AdminController {
 		$this->ajaxOk(array(
 			'value'=>$model->$attribute,
 		));
+	}
+
+	public function actionConfirm() {
+		$id = $this->iRequest('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		if (!$model->checkPermission($this->user)) {
+			throw new CHttpException(401, '未授权');
+		}
+		if ($model->application === null) {
+			throw new CHttpException(403, '该比赛尚未填写申请资料！');
+		}
+		$model->formatEvents();
+		$model->formatDate();
+		$model->status = Competition::STATUS_CONFIRMED;
+		$model->save();
+		$this->ajaxOk([]);
 	}
 }

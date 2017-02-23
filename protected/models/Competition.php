@@ -102,8 +102,7 @@ class Competition extends ActiveRecord {
 				'condition'=>'organizer.organizer_id=' . $user->id,
 			),
 		))->countByAttributes(array(
-			'status'=>self::STATUS_CONFIRMED,
-			'status'=>self::STATUS_UNCONFIRMED,
+			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED]
 		));
 	}
 
@@ -259,6 +258,14 @@ class Competition extends ActiveRecord {
 			case 'index':
 			default:
 				return [
+					self::STATUS_HIDE=>'隐藏',
+					self::STATUS_SHOW=>'公示',
+				];
+			case 'all':
+				return [
+					self::STATUS_UNCONFIRMED=>'未确认',
+					self::STATUS_CONFIRMED=>'已确认',
+					self::STATUS_REFUSED=>'已拒绝',
 					self::STATUS_HIDE=>'隐藏',
 					self::STATUS_SHOW=>'公示',
 				];
@@ -466,7 +473,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getStatusText() {
-		$status = self::getAllStatus();
+		$status = self::getAllStatus('all');
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
 	}
 
@@ -1043,9 +1050,19 @@ class Competition extends ActiveRecord {
 				if ($this->application !== null) {
 					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
 				}
-				if ($this->status == self::STATUS_UNCONFIRMED || $isAdministrator) {
+				if ($this->status == self::STATUS_UNCONFIRMED) {
 					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
 					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
+					if ($this->application !== null) {
+						$buttons[] = CHtml::tag('button', [
+							'class'=>'btn btn-xs btn-square confirm btn-red',
+							'data-id'=>$this->id,
+							'data-url'=>CHtml::normalizeUrl(['/board/competition/confirm']),
+							'data-attribute'=>'status',
+							'data-value'=>$this->status,
+							'data-name'=>$this->name_zh,
+						], '确认');
+					}
 				}
 				break;
 		}
@@ -1401,6 +1418,19 @@ class Competition extends ActiveRecord {
 			'r'=>$event['rs'][0]['i'],
 			'filter'=>'all',
 		);
+	}
+
+	public function checkPermission($user) {
+		if ($user->isAdministrator()) {
+			return true;
+		}
+		if ($user->isDelegate() && isset($this->delegates[$user->id])) {
+			return true;
+		}
+		if (isset($this->organizers[$user->id])) {
+			return true;
+		}
+		return false;
 	}
 
 	protected function beforeValidate() {
