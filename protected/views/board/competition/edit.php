@@ -418,7 +418,7 @@
               );?>
               <div class="clearfix"></div>
             </div>
-            <?php if ($model->isAccepted()): ?>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
               <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
