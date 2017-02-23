@@ -1871,15 +1871,6 @@ class Competition extends ActiveRecord {
 			switch (true) {
 				case $user->isAdministrator():
 					break;
-				case $user->isOrganizer():
-					$criteria->with = array(
-						'organizer'=>array(
-							'together'=>true,
-						),
-						'location', 'location.province', 'location.city'
-					);
-					$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
-					break;
 				case $user->isDelegate():
 					$criteria->with = array(
 						'organizer'=>array(
@@ -1892,6 +1883,16 @@ class Competition extends ActiveRecord {
 					);
 					$criteria->addCondition('organizer.organizer_id=:user_id OR delegate.delegate_id=:user_id');
 					$criteria->params[':user_id'] = $user->id;
+					break;
+				case $user->isOrganizer():
+				default:
+					$criteria->with = array(
+						'organizer'=>array(
+							'together'=>true,
+						),
+						'location', 'location.province', 'location.city'
+					);
+					$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
 					break;
 			}
 

@@ -26,6 +26,11 @@
           <?php echo $form->errorSummary($model, null, null, array(
             'class'=>'text-danger col-lg-12',
           )); ?>
+          <div class="col-sm-12">
+            <p class="text-danger">
+              <b>友情提示</b>：比赛信息可以多次编辑，请注意保存。
+            </p>
+          </div>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <li role="presentation"><a href="#event" role="tab" data-toggle="tab">项目</a></li>
@@ -34,8 +39,6 @@
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
             <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab">赛程</a></li>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
-            <?php else: ?>
-            <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <?php endif; ?>
           </ul>
           <div class="tab-content">

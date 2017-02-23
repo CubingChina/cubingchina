@@ -6,12 +6,11 @@ class CompetitionController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'actions'=>array('index', 'add', 'edit'),
+				'actions'=>array('index', 'apply', 'edit'),
 				'users'=>array('@'),
 			),
 			array(
 				'allow',
-				'actions'=>array('toggle'),
 				'roles'=>array(
 					'role'=>User::ROLE_ADMINISTRATOR,
 				),
@@ -32,7 +31,7 @@ class CompetitionController extends AdminController {
 		));
 	}
 
-	public function actionAdd() {
+	public function actionApply() {
 		$user = $this->user;
 		if (!$user->isAdministrator() && Competition::getUnacceptedCount($user) >= 1) {
 			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
