@@ -24,6 +24,9 @@
             <li role="presentation"><a href="#venue" role="tab" data-toggle="tab">场地</a></li>
             <li role="presentation"><a href="#sponsor" role="tab" data-toggle="tab">赞助</a></li>
             <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
+            <?php if ($this->user->isAdministrator()): ?>
+            <li role="presentation"><a href="#admin" role="tab" data-toggle="tab">操作</a></li>
+            <?php endif; ?>
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
@@ -176,6 +179,40 @@
                 </dd>
               </dl>
             </div>
+            <?php if ($this->user->isAdministrator()): ?>
+            <div role="tabpanel" class="tab-pane" id="admin">
+              <div class="col-lg-12">
+                <?php $form = $this->beginWidget('ActiveForm', array(
+                  'htmlOptions'=>array(
+                    'class'=>'clearfix row',
+                  ),
+                  'enableClientValidation'=>true,
+                )); ?>
+                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_HIDE]); ?>
+                <button type="submit" class="btn btn-default btn-square btn-green">通过</button>
+                <?php $this->endWidget(); ?>
+                <?php $form = $this->beginWidget('ActiveForm', array(
+                  'htmlOptions'=>array(
+                    'class'=>'clearfix row',
+                  ),
+                  'enableClientValidation'=>true,
+                )); ?>
+                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_UNCONFIRMED]); ?>
+                <button type="submit" class="btn btn-default btn-square btn-green">驳回</button>
+                <?php $this->endWidget(); ?>
+                <?php $form = $this->beginWidget('ActiveForm', array(
+                  'htmlOptions'=>array(
+                    'class'=>'clearfix row',
+                  ),
+                  'enableClientValidation'=>true,
+                )); ?>
+                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_REFUSED]); ?>
+                <button type="submit" class="btn btn-default btn-square btn-green">拒绝</button>
+                <?php $this->endWidget(); ?>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            <?php endif; ?>
         </div>
       </div>
     </div>

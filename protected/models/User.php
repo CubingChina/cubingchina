@@ -205,6 +205,10 @@ class User extends ActiveRecord {
 		return $this->identity != self::IDENTITY_NONE;
 	}
 
+	public function isWCADelegate() {
+		return $this->identity == self::IDENTITY_WCA_DELEGATE;
+	}
+
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
 	}

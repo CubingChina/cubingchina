@@ -55,6 +55,23 @@ class CompetitionController extends AdminController {
 			$this->redirect($this->getReferrer());
 		}
 		$model->formatEvents();
+		if (isset($_POST['Competition']) && $this->user->isAdministrator()) {
+			$model->attributes = $_POST['Competition'];
+			$model->formatDate();
+			if ($model->save()) {
+				switch ($model->isAccepted()) {
+					case true:
+						Yii::app()->user->setFlash('success', '通过比赛成功');
+						$this->redirect(['/board/competition/index']);
+						break;
+					case false:
+						Yii::app()->user->setFlash('success', '拒绝/驳回比赛成功');
+						$this->redirect(['/board/competition/application']);
+						break;
+				}
+			}
+			$this->handleDate();
+		}
 		$this->render('view', [
 			'competition'=>$model,
 		]);
@@ -94,6 +111,10 @@ class CompetitionController extends AdminController {
 		}
 		if (!$model->checkPermission($this->user)) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->isConfirmed() && !$this->user->isAdministrator()) {
+			Yii::app()->user->setFlash('danger', '申请已确认，不能编辑！');
 			$this->redirect($this->getReferrer());
 		}
 		$cannotEditAttr = array(

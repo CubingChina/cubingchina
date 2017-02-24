@@ -353,6 +353,10 @@ class Competition extends ActiveRecord {
 			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
 	}
 
+	public function isConfirmed() {
+		return $this->status == self::STATUS_CONFIRMED;
+	}
+
 	public function getLogo() {
 		$logo = '';
 		switch ($this->type) {
@@ -1112,6 +1116,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleEvents() {
+		$this->formatEvents();
 		$temp = $this->events;
 		foreach ($temp as $key=>$value) {
 			if (!is_array($value) || !isset($value['round']) || $value['round'] == 0) {
@@ -1425,7 +1430,7 @@ class Competition extends ActiveRecord {
 		if ($user->isAdministrator()) {
 			return true;
 		}
-		if ($user->isDelegate() && isset($this->delegates[$user->id])) {
+		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
 			return true;
 		}
 		if (isset($this->organizers[$user->id])) {
