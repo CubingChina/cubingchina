@@ -49,7 +49,18 @@ class OldestStandingRecords extends Statistics {
 			}
 			return $temp;
 		});
-		$rows = array_slice($rows, 0, self::$limit);
+		$temp = [];
+		$day = $rows[0]['day'];
+		foreach ($rows as $row) {
+			if ($row['day'] != $day) {
+				$day = $row['day'];
+				if (count($temp) >= self::$limit) {
+					break;
+				}
+			}
+			$temp[] = $row;
+		}
+		$rows = $temp;
 		//person days event type result record competition
 		$columns = array(
 			array(
