@@ -231,7 +231,11 @@ class CompetitionController extends AdminController {
 		$model->formatEvents();
 		$model->formatDate();
 		$model->status = Competition::STATUS_CONFIRMED;
-		$model->save();
-		$this->ajaxOk([]);
+		if ($model->save()) {
+			Yii::app()->mailer->sendCompetitionConfirmNotice($model);
+			$this->ajaxOk([]);
+		} else {
+			throw new CHttpException(500, json_encode($model->errors));
+		}
 	}
 }

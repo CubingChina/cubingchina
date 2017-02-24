@@ -186,6 +186,7 @@ class Competition extends ActiveRecord {
 	public static function getCompetitionByName($name) {
 		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
+			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE],
 		));
 	}
 

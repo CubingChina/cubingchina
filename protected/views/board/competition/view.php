@@ -28,14 +28,12 @@
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
               <dl>
-                <?php if ($competition->type == Competition::TYPE_WCA): ?>
+                <dt>中文名</dt>
+                <dd><?php echo $competition->name_zh; ?></dd>
+                <dt>英文名</dt>
+                <dd><?php echo $competition->name; ?></dd>
                 <dt>类型</dt>
                 <dd><?php echo $competition->getTypeText(); ?></dd>
-                <?php endif; ?>
-                <?php if ($competition->wca_competition_id != ''): ?>
-                <dt><?php echo Yii::t('Competition', 'WCA Official Page'); ?></dt>
-                <dd><?php echo CHtml::link($competition->getWcaUrl(), $competition->getWcaUrl(), array('target'=>'_blank')); ?>
-                <?php endif; ?>
                 <dt><?php echo Yii::t('Competition', 'Date'); ?></dt>
                 <dd><?php echo $competition->getDisplayDate(); ?></dd>
                 <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
@@ -44,14 +42,10 @@
                 </dd>
                 <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
                 <dd>
-                  <?php if ($competition->isOld()): ?>
-                  <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('organizer')); ?>
-                  <?php else: ?>
                   <?php foreach ($competition->organizer as $key=>$organizer): ?>
                   <?php if ($key > 0) echo Yii::t('common', ', '); ?>
                   <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $organizer->user->getAttributeValue('name', true), $organizer->user->email); ?>
                   <?php endforeach; ?>
-                  <?php endif; ?>
                 </dd>
                 <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
                 <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>

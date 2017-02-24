@@ -39,20 +39,29 @@ class Mailer extends CApplicationComponent {
 		return $this->add($to, $subject, $message);
 	}
 
-	public function sendAddCompetitionNotice($competition) {
-		$to = Yii::app()->params->adminEmail;
-		$subject = $this->makeTitle('新增比赛通知');
-		$message = $this->render('addCompetitionNotice', array(
+	public function sendCompetitionConfirmNotice($competition) {
+		$to = [Yii::app()->params->adminEmail];
+		$subject = $this->makeTitle("【{$competition->name_zh}】确认通知");
+		$message = $this->render('competitionConfirmNotice', array(
 			'user'=>Yii::app()->controller->user,
 			'competition'=>$competition,
 			'url'=>$this->getUrl(Yii::app()->createUrl(
-				'/board/competition/edit',
+				'/board/competition/view',
 				array(
 					'id'=>$competition->id,
 				)
 			)),
 		));
-		return $this->add($to, $subject, $message);
+		if ($competition->type == Competition::TYPE_WCA) {
+			foreach ($competition->delegate as $delegate) {
+				$to[] = $delegate->user->email;
+			}
+		}
+		$cc = [];
+		foreach ($competition->organizer as $organizer) {
+			$cc[] = $organizer->user->email;
+		}
+		return $this->add($to, $subject, $message, $cc[0], $cc);
 	}
 
 	public function sendRegistrationNotice($registration) {
@@ -115,7 +124,7 @@ class Mailer extends CApplicationComponent {
 		));
 		//用bcc方式发送会被ban掉。。
 		foreach ($users as $user) {
-			$this->add($user, $subject, $message, Yii::app()->user->name);
+			$this->add($user, $subject, $message, Yii::app()->user->email);
 		}
 		return true;
 	}

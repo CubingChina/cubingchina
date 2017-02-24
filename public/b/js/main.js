@@ -64,6 +64,10 @@ $(function() {
       },
       timeout: 10000,
       success: function(data) {
+        if (data.status !==  0) {
+          alert(data.msg);
+          return
+        }
         alert('比赛已提交,请等待管理员/代表审核!');
         location.href = location.href;
       },
