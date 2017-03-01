@@ -166,16 +166,16 @@ class Mailer extends CApplicationComponent {
 
 	public function send($mail) {
 		$fields = array(
-			'api_user'=>$this->api['user'],
-			'api_key'=>$this->api['key'],
+			'apiUser'=>$this->api['user'],
+			'apiKey'=>$this->api['key'],
 			'from'=>$this->from,
-			'fromname'=>$this->fromname,
+			'fromName'=>$this->fromname,
 			'to'=>$mail->to,
 			'subject'=>$mail->subject,
 			'html'=>$mail->message,
 		);
 		if ($mail->reply_to) {
-			$fields['replyto'] = $mail->reply_to;
+			$fields['replyTo'] = $mail->reply_to;
 		}
 		if ($mail->cc) {
 			$fields['cc'] = $mail->cc;
@@ -187,7 +187,7 @@ class Mailer extends CApplicationComponent {
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($ch, CURLOPT_URL, 'https://sendcloud.sohu.com/webapi/mail.send.json');
+		curl_setopt($ch, CURLOPT_URL, 'http://api.sendcloud.net/apiv2/mail/send');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 
 		$result = curl_exec($ch);
@@ -202,11 +202,11 @@ class Mailer extends CApplicationComponent {
 		if ($result === false) {
 			return false;
 		}
-		if (isset($result->message) && $result->message == 'success') {
+		if (isset($result->statusCode) && $result->statusCode == 200) {
 			return true;
 		} else {
-			if (isset($result->errors)) {
-				Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, json_encode($result->errors))), 'error', 'sendmail');
+			if (isset($result->message)) {
+				Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, json_encode($result->message))), 'error', 'sendmail');
 			}
 			return false;
 		}
