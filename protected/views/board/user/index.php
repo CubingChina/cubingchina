@@ -81,15 +81,25 @@
                 'headerHtmlOptions'=>array(
                   'class'=>'header-birthday',
                 ),
-                'filter'=>false,
-                'type'=>'raw', 
-                'value'=>'date("Y-m-d", $data->birthday)', 
+                'filter'=>CHtml::activeTextField($model, 'birthday[0]', [
+                    'class'=>'datetime-picker',
+                    'data-date-format'=>'yyyy-mm-dd',
+                    'data-min-view'=>'2',
+                  ])
+                  . '<br>~<br>'
+                  . CHtml::activeTextField($model, 'birthday[1]', [
+                    'class'=>'datetime-picker',
+                    'data-date-format'=>'yyyy-mm-dd',
+                    'data-min-view'=>'2',
+                  ]),
+                'type'=>'raw',
+                'value'=>'date("Y-m-d", $data->birthday)',
               ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-country',
                 ),
-                'filter'=>false,
+                'filter'=>Region::getCountries(),
                 'name'=>'country_id',
                 'type'=>'raw',
                 'value'=>'$data->getRegionName($data->country)',
@@ -160,6 +170,7 @@
 <?php
 $url = $this->createUrl('/board/user/registration');
 $historyUrl = $this->createUrl('/board/user/loginHistory');
+Yii::app()->clientScript->registerPackage('datetimepicker');
 Yii::app()->clientScript->registerScript('user',
 <<<EOT
   var modal = $('#modal');
@@ -191,6 +202,10 @@ Yii::app()->clientScript->registerScript('user',
         $('.tips').tooltip();
       }
     })
+  }).on('mousedown touchstart', '.datetime-picker', function() {
+    $(this).datetimepicker({
+      autoclose: true
+    });
   });
   if ('ontouchstart' in window) {
     $('.modal.fade').removeClass('fade');

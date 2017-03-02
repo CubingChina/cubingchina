@@ -465,7 +465,6 @@ class User extends ActiveRecord {
 		$criteria->compare('t.email', $this->email, true);
 		$criteria->compare('t.password', $this->password, true);
 		$criteria->compare('t.avatar_id', $this->avatar_id, true);
-		$criteria->compare('t.birthday', $this->birthday, true);
 		$criteria->compare('t.gender', $this->gender);
 		$criteria->compare('t.mobile', $this->mobile, true);
 		$criteria->compare('t.country_id', $this->country_id);
@@ -476,6 +475,17 @@ class User extends ActiveRecord {
 		$criteria->compare('t.reg_time', $this->reg_time, true);
 		$criteria->compare('t.reg_ip', $this->reg_ip, true);
 		$criteria->compare('t.status', $this->status);
+		foreach (['reg_time', 'birthday'] as $attribute) {
+			$value = $this->$attribute;
+			if (is_array($value)) {
+				if (isset($value[0]) && ($temp = strtotime($value[0])) !== false) {
+					$criteria->compare('t.' . $attribute, '>=' . $temp);
+				}
+				if (isset($value[1]) && ($temp = strtotime($value[1])) !== false) {
+					$criteria->compare('t.' . $attribute, '<=' . $temp);
+				}
+			}
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
