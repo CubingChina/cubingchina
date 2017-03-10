@@ -18,6 +18,10 @@
  */
 return array (
   'Fee' => '',
+  'Days' => '天',
+  'Hours' => '小时',
+  'Minutes' => '分',
+  'Seconds' => '秒',
   'Name in Local Characters' => '',
   'WCA ID' => '',
   'more' => '',

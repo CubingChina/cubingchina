@@ -112,11 +112,23 @@
 		<?php endif; ?>
 		<?php if ($competition->reg_start > 0 && $competition->tba == Competition::NO): ?>
 		<dt><?php echo Yii::t('Competition', 'Registration Starting Time'); ?></dt>
-		<dd><?php echo date('Y-m-d H:i:s', $competition->reg_start); ?></dd>
+		<dd>
+			<?php echo date('Y-m-d H:i:s', $competition->reg_start); ?>
+			<?php if (time() < $competition->reg_start): ?>
+			<?php echo Html::countdown($competition->reg_start); ?>
+			<?php endif; ?>
+		</dd>
 		<?php endif; ?>
 		<?php if ($competition->tba == Competition::NO): ?>
 		<dt><?php echo Yii::t('Competition', 'Registration Ending Time'); ?></dt>
-		<dd><?php echo date('Y-m-d H:i:s', $competition->reg_end); ?></dd>
+		<dd>
+			<?php echo date('Y-m-d H:i:s', $competition->reg_end); ?>
+			<?php if (time() > $competition->reg_start && !$competition->isRegistrationFull() && !$competition->isRegistrationEnded()): ?>
+			<?php echo Html::countdown($competition->reg_end, [
+				'data-total-days'=>$competition->reg_start > 0 ? floor(($competition->reg_end - $competition->reg_start) / 86400) : 30,
+			]); ?>
+			<?php endif; ?>
+		</dd>
 		<?php endif; ?>
 		<?php if (trim(strip_tags($competition->getAttributeValue('information'), '<img>')) != ''): ?>
 		<dt><?php echo Yii::t('Competition', 'About the Competition'); ?></dt>

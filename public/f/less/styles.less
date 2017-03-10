@@ -1022,3 +1022,51 @@ dl.location-delegate {
     margin-top: 0;
   }
 }
+.square-content {
+  position: relative;
+
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+
+  .square-inner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+}
+.countdown-timer {
+  overflow: hidden;
+
+  .square-content {
+    width: 100px;
+    float: left;
+    margin-left: 10px;
+    margin-bottom: 10px;
+
+    .square-inner {
+      text-align: center;
+      padding-top: 18px;
+
+      .text {
+        font-size: 26px;
+      }
+
+      .small {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .progress-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+}
