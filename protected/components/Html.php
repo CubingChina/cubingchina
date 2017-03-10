@@ -63,7 +63,7 @@ EOT
 		$cutVar = json_encode($cut);
 		return "(function () {
 			var {$name} = {$var}, {$cutName} = {$cutVar};
-			
+
 			for (var i = 0; i < {$cutName}.length; i ++) {
 				{$name} = {$name}.substring(0, {$cutName}[i][0]) + {$name}.substring({$cutName}[i][1]);
 			}
@@ -130,5 +130,27 @@ EOT
 				break;
 		}
 		return $icon;
+	}
+
+	public static function countdown($time, $options = []) {
+		if ($time <= time()) {
+			return '';
+		}
+		foreach (['days', 'hours', 'minutes', 'seconds'] as $unit) {
+			$containers[] = self::tag('div', [
+				'class'=>'square-content',
+			], self::tag('div', [
+				'class'=>'square-inner',
+			], implode('', [
+				self::tag('div', ['class'=>"text $unit"], ''),
+				self::tag('div', ['class'=>'unit'], Yii::t('common', ucfirst($unit))),
+				self::tag('div', ['class'=>'progress-container'], ''),
+			])));
+		}
+		array_splice($containers, 2, 0, self::tag('div', ['class'=>'clearfix hidden-sm'], ''));
+		return self::tag('div', array_merge([
+			'class'=>'countdown-timer',
+			'data-time'=>$time * 1000,
+		], $options), implode('', $containers));
 	}
 }
