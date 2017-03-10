@@ -3,6 +3,8 @@ import 'font-awesome/css/font-awesome.css'
 import '../less/styles.less'
 
 import 'jquery-cookie'
+import 'jquery-countdown'
+import ProgressBar from 'progressbar.js'
 import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
 import 'bootstrap-hover-dropdown'
@@ -175,6 +177,60 @@ $(function() {
       fa.addClass('fa-plus').removeClass('fa-minus');
       dd.height(104).css('overflow-y', 'hidden');
     }
+  })
+  $('.countdown-timer').each(function() {
+    var that = $(this), containers = [
+      {
+        key: 'days',
+        total: 30,
+        offsetKey: 'totalDays',
+        progressOptions: {
+            color: '#d9534f',
+            trailColor: 'rgba(217, 83, 79, 0.5)'
+        }
+      },
+      {
+        key: 'hours',
+        total: 24,
+        progressOptions: {
+            color: '#f0ad4e',
+            trailColor: 'rgba(240, 164, 78, 0.5)'
+        }
+      },
+      {
+        key: 'minutes',
+        total: 60,
+        progressOptions: {
+            color: '#5cb85c',
+            trailColor: 'rgba(92, 184, 92, 0.5)'
+        }
+      },
+      {
+        key: 'seconds',
+        total: 60,
+        progressOptions: {
+            color: '#5bc0de',
+            trailColor: 'rgba(91, 192, 222, 0.5)'
+        }
+      }
+    ]
+    containers.forEach(container => {
+      container.dom = that.find('.' + container.key)
+      container.offsetKey = container.offsetKey || container.key
+      container.progress = new ProgressBar.Circle(container.dom.nextAll('.progress-container').get(0), $.extend({
+        strokeWidth: 3,
+        trailWidth: 1,
+        duration: 1000
+      }, container.progressOptions))
+    })
+
+    that.countdown(that.data('time')).on('update.countdown', e => {
+      var offset = e.offset
+      containers.forEach(container => {
+        container.dom.text(offset[container.offsetKey])
+        container.progress.animate(offset[container.offsetKey] / container.total)
+      })
+    })
   })
   if (location.hostname.indexOf('cubingchina.com') > -1){
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
