@@ -147,7 +147,7 @@ EOT
 				self::tag('div', ['class'=>'progress-container'], ''),
 			])));
 		}
-		array_splice($containers, 2, 0, self::tag('div', ['class'=>'clearfix hidden-sm'], ''));
+		array_splice($containers, 2, 0, self::tag('div', ['class'=>'clearfix visible-sm visible-xs'], ''));
 		return self::tag('div', array_merge([
 			'class'=>'countdown-timer',
 			'data-time'=>$time * 1000,
