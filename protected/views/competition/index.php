@@ -48,7 +48,7 @@
     'enableSorting'=>false,
     'front'=>true,
     'emptyText'=>Yii::t('Competition', 'No competitions now.'),
-    'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : "info")',
+    'rowCssClassExpression'=>'$data->isInProgress() ? "success" : ($data->isEnded() ? "active" : ($data->isRegistrationStarted() ? ($data->canRegister() ? "danger" : "info") : "warning"))',
     'columns'=>array(
       array(
         'name'=>'date',
@@ -58,7 +58,7 @@
       array(
         'name'=>'name',
         'type'=>'raw',
-        'value'=>'$data->getCompetitionLink()',
+        'value'=>'$data->getCompetitionLink() . $data->getCountdown("small", true)',
       ),
       array(
         'name'=>'province_id',

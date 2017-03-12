@@ -1055,10 +1055,6 @@ dl.location-delegate {
       .text {
         font-size: 26px;
       }
-
-      .small {
-        font-size: 12px;
-      }
     }
   }
 
@@ -1068,5 +1064,29 @@ dl.location-delegate {
     right: 0;
     top: 0;
     bottom: 0;
+  }
+
+  &.small {
+    .square-content {
+      width: 36px;
+      margin-left: 5px;
+      margin-bottom: 0;
+
+      .square-inner {
+        padding-top: 8px;
+
+        .text {
+          font-size: 14px;
+        }
+
+        .unit {
+          display: none;
+        }
+      }
+    }
+
+    .clearfix {
+      display: none !important;
+    }
   }
 }

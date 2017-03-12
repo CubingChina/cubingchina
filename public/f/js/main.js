@@ -182,7 +182,7 @@ $(function() {
     var that = $(this), containers = [
       {
         key: 'days',
-        total: 30,
+        total: that.data('totalDays') || 30,
         offsetKey: 'totalDays',
         progressOptions: {
             color: '#d9534f',
