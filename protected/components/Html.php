@@ -136,6 +136,12 @@ EOT
 		if ($time <= time()) {
 			return '';
 		}
+		if (!isset($options['class'])) {
+			$options['class'] = 'countdown-timer';
+		} else {
+			$options['class'] .= ' countdown-timer';
+		}
+		$options['data-time'] = $time * 1000;
 		foreach (['days', 'hours', 'minutes', 'seconds'] as $unit) {
 			$containers[] = self::tag('div', [
 				'class'=>'square-content',
@@ -148,9 +154,6 @@ EOT
 			])));
 		}
 		array_splice($containers, 2, 0, self::tag('div', ['class'=>'clearfix visible-sm visible-xs'], ''));
-		return self::tag('div', array_merge([
-			'class'=>'countdown-timer',
-			'data-time'=>$time * 1000,
-		], $options), implode('', $containers));
+		return self::tag('div', $options, implode('', $containers));
 	}
 }

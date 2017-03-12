@@ -58,6 +58,7 @@ class Competition extends ActiveRecord {
 	private $_schedules;
 	private $_description;
 	private $_timezones;
+	private $_registrationFull;
 
 	public $year;
 	public $province;
@@ -276,7 +277,10 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationFull() {
-		return $this->person_num > 0 && Registration::model()->with(array(
+		if ($this->_registrationFull !== null) {
+			return $this->_registrationFull;
+		}
+		return $this->_registrationFull = $this->person_num > 0 && Registration::model()->with(array(
 			'user'=>array(
 				'condition'=>'user.status=' . User::STATUS_NORMAL,
 			),
@@ -487,6 +491,21 @@ class Competition extends ActiveRecord {
 		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
 			'competitionId'=>$this->wca_competition_id,
 		)) > 0;
+	}
+
+	public function getCountdown($type = 'normal') {
+		if (!$this->canRegister()) {
+			return '';
+		}
+		$options = [
+			'class'=>$type,
+		];
+		if (!$this->isRegistrationStarted()) {
+			return Html::countdown($this->reg_start, $options);
+		} else {
+			$options['data-total-days'] = $this->reg_start > 0 ? floor(($this->reg_end - $this->reg_start) / 86400) : 30;
+			return Html::countdown($this->reg_end, $options);
+		}
 	}
 
 	public function hasUserResults($wcaid) {
