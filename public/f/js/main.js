@@ -178,6 +178,7 @@ $(function() {
       dd.height(104).css('overflow-y', 'hidden');
     }
   })
+  var i = 0, lastTime = Date.now()
   $('.countdown-timer').each(function() {
     var that = $(this), containers = [
       {
@@ -224,7 +225,7 @@ $(function() {
       }, container.progressOptions))
     })
 
-    that.countdown(that.data('time')).on('update.countdown', e => {
+    that.countdown(new Date(lastTime + that.data('remaining'))).on('update.countdown', e => {
       var offset = e.offset
       containers.forEach(container => {
         container.dom.text(offset[container.offsetKey])
@@ -232,6 +233,17 @@ $(function() {
       })
     })
   })
+  setInterval(() => {
+    if (parseInt((Date.now() - lastTime) / 1000) == ++i) {
+      return
+    }
+    i = 0
+    lastTime = Date.now()
+    $('.countdown-timer').each(function() {
+      var that = $(this)
+      that.countdown(new Date(lastTime + that.data('remaining')))
+    })
+  }, 1000)
   if (location.hostname.indexOf('cubingchina.com') > -1){
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
