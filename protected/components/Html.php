@@ -142,6 +142,7 @@ EOT
 			$options['class'] .= ' countdown-timer';
 		}
 		$options['data-time'] = $time * 1000;
+		$options['data-remaining'] = ($time - time()) * 1000;
 		foreach (['days', 'hours', 'minutes', 'seconds'] as $unit) {
 			$containers[] = self::tag('div', [
 				'class'=>'square-content',
