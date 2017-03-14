@@ -16,11 +16,11 @@ class CustomCache extends CCache {
 		$redis->select($this->database);
 		$redisCache = new \Doctrine\Common\Cache\RedisCache();
 		$redisCache->setRedis($redis);
-		$arrayCache = new \Doctrine\Common\Cache\ArrayCache();
-		$chainCache = new \Doctrine\Common\Cache\ChainCache([
-			$arrayCache,
-			$redisCache,
-		]);
+		$chain = [new \Doctrine\Common\Cache\ArrayCache()];
+		if (!DEV) {
+			$chain[] = $redisCache;
+		}
+		$chainCache = new \Doctrine\Common\Cache\ChainCache($chain);
 		$this->_cache = $chainCache;
 	}
 
@@ -70,6 +70,6 @@ class CustomCache extends CCache {
 		if (is_object($params)) {
 			return get_class($params);
 		}
-		return serialize($params);
+		return md5(serialize($params));
 	}
 }
