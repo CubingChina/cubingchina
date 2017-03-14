@@ -1,24 +1,52 @@
 <?php
 
-if (DEV) {
-	class TempCache extends CDummyCache {
-		public $hostname;
-		public $port;
-		public $database;
-		public $options;
-		public $hashKey = true;
-	}
-} else {
-	class TempCache extends CFileCache {
-		public $hostname;
-		public $port;
-		public $database;
-		public $options;
-		public $hashKey = true;
-	}
-}
+class CustomCache extends CCache {
+	public $hostname;
+	public $port;
+	public $database;
+	public $options;
 
-class CustomCache extends TempCache {
+	private $_cache;
+	private $_redis;
+
+	public function init() {
+		parent::init();
+		$this->_redis = $redis = new Redis();
+		$redis->connect($this->hostname, $this->port);
+		$redis->select($this->database);
+		$redisCache = new \Doctrine\Common\Cache\RedisCache();
+		$redisCache->setRedis($redis);
+		$chain = [new \Doctrine\Common\Cache\ArrayCache()];
+		if (!DEV) {
+			$chain[] = $redisCache;
+		}
+		$chainCache = new \Doctrine\Common\Cache\ChainCache($chain);
+		$this->_cache = $chainCache;
+	}
+
+	public function getValue($key) {
+		return $this->_cache->fetch($key);
+	}
+
+	public function setValue($key, $value, $expire) {
+		return $this->_cache->save($key, $value, $expire);
+	}
+
+	public function addValue($key ,$value, $expire) {
+		return $this->_cache->save($key, $value, $expire);
+	}
+
+	public function deleteValue($key) {
+		return $this->_cache->delete($key);
+	}
+
+	public function getValues($keys) {
+		return $this->_cache->fetchMultiple($key);
+	}
+
+	public function flushValues() {
+		return $this->_cache->deleteAll();
+	}
 
 	public function getData($callback, $params = array(), $expire = 604800) {
 		if (!is_array($params)) {
@@ -42,6 +70,6 @@ class CustomCache extends TempCache {
 		if (is_object($params)) {
 			return get_class($params);
 		}
-		return serialize($params);
+		return md5(serialize($params));
 	}
 }
