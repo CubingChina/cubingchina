@@ -45,7 +45,7 @@ class CustomCache extends CCache {
 	}
 
 	public function flushValues() {
-		return $this->_cache->deleteAll();
+		return $this->_cache->flushAll();
 	}
 
 	public function getData($callback, $params = array(), $expire = 604800) {
