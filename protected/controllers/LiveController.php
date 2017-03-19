@@ -160,7 +160,7 @@ class LiveController extends CompetitionController {
 				}
 			}
 			$columns[] = array(
-				'header'=>"Events::getFullEventNameWithIcon($event)",
+				'header'=>"Events::getFullEventNameWithIcon('$event')",
 				'name'=>$event,
 				'type'=>'raw',
 			);
