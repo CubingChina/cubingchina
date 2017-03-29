@@ -35,7 +35,7 @@ class Competition extends ActiveRecord {
 	const STATUS_DELETE = 2;
 	const STATUS_UNCONFIRMED = 3;
 	const STATUS_CONFIRMED = 4;
-	const STATUS_REFUSED = 5;
+	const STATUS_REJECTED = 5;
 
 	const NOT_CHECK_PERSON = 0;
 	const CHECK_PERSON = 1;
@@ -254,7 +254,7 @@ class Competition extends ActiveRecord {
 				return [
 					self::STATUS_UNCONFIRMED=>'未确认',
 					self::STATUS_CONFIRMED=>'已确认',
-					self::STATUS_REFUSED=>'已拒绝',
+					self::STATUS_REJECTED=>'已拒绝',
 				];
 			case 'index':
 			default:
@@ -266,7 +266,7 @@ class Competition extends ActiveRecord {
 				return [
 					self::STATUS_UNCONFIRMED=>'未确认',
 					self::STATUS_CONFIRMED=>'已确认',
-					self::STATUS_REFUSED=>'已拒绝',
+					self::STATUS_REJECTED=>'已拒绝',
 					self::STATUS_HIDE=>'隐藏',
 					self::STATUS_SHOW=>'公示',
 				];
@@ -351,6 +351,10 @@ class Competition extends ActiveRecord {
 	public function isAccepted() {
 		return !$this->isNewRecord &&
 			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
+	}
+
+	public function isRejected() {
+		return $this->status == self::STATUS_REJECTED;
 	}
 
 	public function isConfirmed() {
@@ -1051,23 +1055,13 @@ class Competition extends ActiveRecord {
 				break;
 			case self::STATUS_UNCONFIRMED:
 			case self::STATUS_CONFIRMED:
-			case self::STATUS_REFUSED:
+			case self::STATUS_REJECTED:
 				if ($this->application !== null) {
 					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
 				}
 				if ($this->status == self::STATUS_UNCONFIRMED) {
 					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
 					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
-					if ($this->application !== null) {
-						$buttons[] = CHtml::tag('button', [
-							'class'=>'btn btn-xs btn-square confirm btn-red',
-							'data-id'=>$this->id,
-							'data-url'=>CHtml::normalizeUrl(['/board/competition/confirm']),
-							'data-attribute'=>'status',
-							'data-value'=>$this->status,
-							'data-name'=>$this->name_zh,
-						], '确认');
-					}
 				}
 				break;
 		}
@@ -1772,6 +1766,8 @@ class Competition extends ActiveRecord {
 			array('name_zh', 'length', 'max'=>50),
 			array('name', 'length', 'max'=>128),
 			array('name', 'checkName', 'skipOnError'=>true),
+			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept'),
+			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept'),
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),

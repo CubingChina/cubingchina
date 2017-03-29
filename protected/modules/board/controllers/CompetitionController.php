@@ -54,24 +54,33 @@ class CompetitionController extends AdminController {
 			Yii::app()->user->setFlash('danger', '该比赛尚未填写申请资料！');
 			$this->redirect($this->getReferrer());
 		}
-		$model->formatEvents();
 		if (isset($_POST['Competition']) && $this->user->isAdministrator()) {
+			$status = $model->status;
 			$model->attributes = $_POST['Competition'];
 			$model->formatDate();
+			if ($model->isAccepted()) {
+				$model->scenario = 'accept';
+			}
 			if ($model->save()) {
+				$model->application->attributes = $_POST['CompetitionApplication'] ?? [];
+				$model->application->save();
 				switch ($model->isAccepted()) {
 					case true:
+						Yii::app()->mailer->sendCompetitionAcceptNotice($model);
 						Yii::app()->user->setFlash('success', '通过比赛成功');
 						$this->redirect(['/board/competition/index']);
 						break;
 					case false:
+						Yii::app()->mailer->sendCompetitionRejectNotice($model);
 						Yii::app()->user->setFlash('success', '拒绝/驳回比赛成功');
 						$this->redirect(['/board/competition/application']);
 						break;
 				}
 			}
-			$this->handleDate();
+			$model->status = $status;
+			$model->handleDate();
 		}
+		$model->formatEvents();
 		$this->render('view', [
 			'competition'=>$model,
 		]);

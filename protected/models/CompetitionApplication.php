@@ -14,6 +14,7 @@
  * @property string $budget
  * @property string $sponsor
  * @property string $other
+ * @property string $reason
  * @property string $create_time
  * @property string $update_time
  */
@@ -32,7 +33,7 @@ class CompetitionApplication extends ActiveRecord {
 		return [
 			['competition_id, create_time', 'required'],
 			['competition_id, create_time, update_time', 'length', 'max'=>11],
-			['schedule, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other', 'safe'],
+			['schedule, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, reason', 'safe'],
 			['id, competition_id, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, create_time, update_time', 'safe', 'on'=>'search'],
 		];
 	}
@@ -63,6 +64,7 @@ class CompetitionApplication extends ActiveRecord {
 			'budget' => 'Budget',
 			'sponsor' => 'Sponsor',
 			'other' => 'Other',
+			'reason' => 'Reason',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
 		];

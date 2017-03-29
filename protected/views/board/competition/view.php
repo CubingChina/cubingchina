@@ -17,6 +17,9 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
+          <?php echo CHtml::errorSummary($competition, null, null, array(
+            'class'=>'text-danger col-lg-12',
+          )); ?>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <li role="presentation"><a href="#organizer" role="tab" data-toggle="tab">主办团队</a></li>
@@ -24,9 +27,7 @@
             <li role="presentation"><a href="#venue" role="tab" data-toggle="tab">场地</a></li>
             <li role="presentation"><a href="#sponsor" role="tab" data-toggle="tab">赞助</a></li>
             <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
-            <?php if ($this->user->isAdministrator()): ?>
             <li role="presentation"><a href="#admin" role="tab" data-toggle="tab">操作</a></li>
-            <?php endif; ?>
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
@@ -70,7 +71,10 @@
                     return Yii::t('event', $competition->getFullEventName($event));
                   }, array_keys($competition->getRegistrationEvents()))); ?>
                 </dd>
-                <?php if (!$competition->multi_countries): ?>
+                <dt>在线支付</dt>
+                <dd><?php echo $competition->online_pay == Competition::YES ? '是' : '否'; ?></dd>
+                <dt>自动审核</dt>
+                <dd><?php echo $competition->check_person == Competition::YES ? '是' : '否'; ?></dd>
                 <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
                 <dd class="table-responsive">
                   <table class="table table-bordered table-hover table-condensed">
@@ -114,7 +118,6 @@
                     </tbody>
                   </table>
                 </dd>
-                <?php endif; ?>
                 <?php if ($competition->person_num > 0): ?>
                 <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
                 <dd><?php echo $competition->person_num; ?></dd>
@@ -179,40 +182,87 @@
                 </dd>
               </dl>
             </div>
-            <?php if ($this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="admin">
-              <div class="col-lg-12">
-                <?php $form = $this->beginWidget('ActiveForm', array(
-                  'htmlOptions'=>array(
-                    'class'=>'clearfix row',
-                  ),
-                  'enableClientValidation'=>true,
-                )); ?>
-                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_HIDE]); ?>
-                <button type="submit" class="btn btn-default btn-square btn-green">通过</button>
-                <?php $this->endWidget(); ?>
-                <?php $form = $this->beginWidget('ActiveForm', array(
-                  'htmlOptions'=>array(
-                    'class'=>'clearfix row',
-                  ),
-                  'enableClientValidation'=>true,
-                )); ?>
-                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_UNCONFIRMED]); ?>
-                <button type="submit" class="btn btn-default btn-square btn-green">驳回</button>
-                <?php $this->endWidget(); ?>
-                <?php $form = $this->beginWidget('ActiveForm', array(
-                  'htmlOptions'=>array(
-                    'class'=>'clearfix row',
-                  ),
-                  'enableClientValidation'=>true,
-                )); ?>
-                <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_REFUSED]); ?>
-                <button type="submit" class="btn btn-default btn-square btn-green">拒绝</button>
-                <?php $this->endWidget(); ?>
+              <?php if (!$competition->isConfirmed()): ?>
+              <?php if ($competition->application->reason): ?>
+              <div class="help-block">
+                上一次被驳回原因如下，请确保已经修改完毕再提交申请：
+                <p class="text-danger"><?php echo $competition->application->reason; ?></p>
               </div>
+              <?php endif; ?>
+              <?php echo CHtml::tag('button', [
+                'class'=>'btn btn-square confirm btn-red',
+                'data-id'=>$competition->id,
+                'data-url'=>CHtml::normalizeUrl(['/board/competition/confirm']),
+                'data-attribute'=>'status',
+                'data-value'=>$competition->status,
+                'data-name'=>$competition->name_zh,
+              ], '确认') ;?>
+              <?php elseif ($this->user->isAdministrator()): ?>
+              <?php $form = $this->beginWidget('ActiveForm', array(
+                'htmlOptions'=>array(
+                  'class'=>'clearfix row',
+                ),
+                'enableClientValidation'=>true,
+              )); ?>
+              <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_HIDE]); ?>
+              <div class="col-lg-12">
+                <button type="submit" class="btn btn-square btn-green">通过</button>
+              </div>
+              <?php $this->endWidget(); ?>
+              <hr>
+              <?php $form = $this->beginWidget('ActiveForm', array(
+                'htmlOptions'=>array(
+                  'class'=>'clearfix row',
+                ),
+                'enableClientValidation'=>true,
+              )); ?>
+              <?php echo Html::formGroup(
+                $competition->application, 'reason', array(
+                  'class'=>'col-lg-12',
+                ),
+                $form->labelEx($competition->application, 'reason', array(
+                  'label'=>'驳回原因',
+                  'required'=>true,
+                )),
+                $form->textArea($competition->application, 'reason', array(
+                  'class'=>'form-control'
+                )),
+                $form->error($competition->application, 'reason', array('class'=>'text-danger'))
+              );?>
+              <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_UNCONFIRMED]); ?>
+              <div class="col-lg-12">
+                <button type="submit" class="btn btn-square btn-orange">驳回</button>
+              </div>
+              <?php $this->endWidget(); ?>
+              <hr>
+              <?php $form = $this->beginWidget('ActiveForm', array(
+                'htmlOptions'=>array(
+                  'class'=>'clearfix row',
+                ),
+                'enableClientValidation'=>true,
+              )); ?>
+              <?php echo Html::formGroup(
+                $competition->application, 'reason', array(
+                  'class'=>'col-lg-12',
+                ),
+                $form->labelEx($competition->application, 'reason', array(
+                  'label'=>'拒绝原因',
+                  'required'=>true,
+                )),
+                $form->textArea($competition->application, 'reason', array(
+                  'class'=>'form-control'
+                )),
+                $form->error($competition->application, 'reason', array('class'=>'text-danger'))
+              );?>
+              <?php echo $form->hiddenField($competition, 'status', ['value'=>Competition::STATUS_REJECTED]); ?>
+              <div class="col-lg-12">
+                <button type="submit" class="btn btn-square btn-red">拒绝</button>
+              </div>
+              <?php $this->endWidget(); ?>
               <div class="clearfix"></div>
+              <?php endif; ?>
             </div>
-            <?php endif; ?>
         </div>
       </div>
     </div>
