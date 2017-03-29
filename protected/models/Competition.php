@@ -65,6 +65,7 @@ class Competition extends ActiveRecord {
 	public $year;
 	public $province;
 	public $event;
+	public $distance;
 
 	public static function formatTime($second) {
 		$second = intval($second);
@@ -259,16 +260,16 @@ class Competition extends ActiveRecord {
 			case 'index':
 			default:
 				return [
-					self::STATUS_HIDE=>'隐藏',
-					self::STATUS_SHOW=>'公示',
+					self::STATUS_HIDE=>'待公示',
+					self::STATUS_SHOW=>'已公示',
 				];
 			case 'all':
 				return [
 					self::STATUS_UNCONFIRMED=>'未确认',
 					self::STATUS_CONFIRMED=>'已确认',
 					self::STATUS_REJECTED=>'已拒绝',
-					self::STATUS_HIDE=>'隐藏',
-					self::STATUS_SHOW=>'公示',
+					self::STATUS_HIDE=>'待公示',
+					self::STATUS_SHOW=>'已公示',
 				];
 		}
 	}
@@ -278,6 +279,10 @@ class Competition extends ActiveRecord {
 			self::CHECK_PERSON=>'否',
 			self::NOT_CHECK_PERSON=>'是',
 		);
+	}
+
+	public function isWCACompetition() {
+		return $this->type == self::TYPE_WCA;
 	}
 
 	public function isOnlinePay() {
@@ -359,6 +364,38 @@ class Competition extends ActiveRecord {
 
 	public function isConfirmed() {
 		return $this->status == self::STATUS_CONFIRMED;
+	}
+
+	public function getNearbyCompetitions($days = 26, $distance = 200, $isWCA = true) {
+		if (!$this->isWCACompetition() && $isWCA) {
+			return [];
+		}
+		if ($this->isMultiLocation()) {
+			return [];
+		}
+		$criteria = new CDbCriteria();
+		$criteria->compare('date', '>=' . ($this->date - $days * 86400));
+		$criteria->compare('date', '<=' . ($this->date + $days * 86400));
+		$criteria->addInCondition('status', [
+			self::STATUS_HIDE,
+			self::STATUS_SHOW,
+			self::STATUS_CONFIRMED,
+		]);
+		if ($isWCA) {
+			$criteria->compare('type', self::TYPE_WCA);
+		}
+		$criteria->compare('id', '<>' . $this->id);
+		$competitions = self::model()->findAll($criteria);
+		$city1 = $this->location[0]->city;
+		$competitions = array_filter($competitions, function($competition) use ($distance, $city1) {
+			if ($competition->isMultiLocation()) {
+				return false;
+			}
+			$city2 = $competition->location[0]->city;
+			$competition->distance = Region::getDistance($city1->latitude, $city1->longitude, $city2->latitude, $city2->longitude) / 1000;
+			return $competition->distance <= $distance;
+		});
+		return array_values($competitions);
 	}
 
 	public function getLogo() {

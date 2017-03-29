@@ -86,6 +86,7 @@ class CompetitionController extends AdminController {
 		$model->formatEvents();
 		$this->render('view', [
 			'competition'=>$model,
+			'nearbyCompetitions'=>$model->getNearbyCompetitions(),
 		]);
 	}
 

@@ -183,6 +183,43 @@
               </dl>
             </div>
             <div role="tabpanel" class="tab-pane" id="admin">
+              <?php if ($nearbyCompetitions !== [] && $this->user->isAdministrator()): ?>
+              <p class="text-danger">请注意！该比赛与下列比赛（及申请）直线距离低于200KM，日期小于26天！</p>
+              <?php $this->widget('GridView', [
+                'dataProvider'=>new CArrayDataProvider($nearbyCompetitions),
+                'columns'=>[
+                  [
+                    'header'=>'日期',
+                    'value'=>'$data->getDisplayDate()',
+                  ],
+                  [
+                    'header'=>'类型',
+                    'value'=>'$data->getTypeText()',
+                    'filter'=>Competition::getTypes()
+                  ],
+                  [
+                    'header'=>'比赛名称',
+                    'value'=>'$data->name_zh',
+                  ],
+                  [
+                    'header'=>'省份',
+                    'value'=>'$data->getLocationInfo("province")',
+                  ],
+                  [
+                    'header'=>'城市',
+                    'value'=>'$data->getLocationInfo("city")',
+                  ],
+                  [
+                    'header'=>'距离（估算）',
+                    'value'=>'$data->distance . "km"',
+                  ],
+                  [
+                    'header'=>'状态',
+                    'value'=>'$data->getStatusText()',
+                  ],
+                ],
+              ]); ?>
+              <?php endif; ?>
               <?php if (!$competition->isConfirmed()): ?>
               <?php if ($competition->application->reason): ?>
               <div class="help-block">
@@ -197,7 +234,7 @@
                 'data-attribute'=>'status',
                 'data-value'=>$competition->status,
                 'data-name'=>$competition->name_zh,
-              ], '确认') ;?>
+              ], '确认无误，提交！') ;?>
               <?php elseif ($this->user->isAdministrator()): ?>
               <?php $form = $this->beginWidget('ActiveForm', array(
                 'htmlOptions'=>array(
