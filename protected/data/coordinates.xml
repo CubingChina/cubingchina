@@ -1,0 +1,3932 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<China>
+<Province Name='北京市' >
+    <City Name='北京市' >
+        <District Name='北京市' Lon='116.4' Lat='39.9'/>
+        <District Name='天安门' Lon='116.38' Lat='39.9'/>
+        <District Name='东城区' Lon='116.42' Lat='39.93'/>
+        <District Name='西城区' Lon='116.37' Lat='39.92'/>
+        <District Name='崇文区' Lon='116.43' Lat='39.88'/>
+        <District Name='宣武区' Lon='116.35' Lat='39.87'/>
+        <District Name='朝阳区' Lon='116.43' Lat='39.92'/>
+        <District Name='丰台区' Lon='116.28' Lat='39.85'/>
+        <District Name='石景山区' Lon='116.22' Lat='39.9'/>
+        <District Name='海淀区' Lon='116.3' Lat='39.95'/>
+        <District Name='门头沟区' Lon='116.1' Lat='39.93'/>
+        <District Name='房山区' Lon='116.13' Lat='39.75'/>
+        <District Name='通州区' Lon='116.65' Lat='39.92'/>
+        <District Name='顺义区' Lon='116.65' Lat='40.13'/>
+        <District Name='昌平区' Lon='116.23' Lat='40.22'/>
+        <District Name='大兴区' Lon='116.33' Lat='39.73'/>
+        <District Name='怀柔区' Lon='116.63' Lat='40.32'/>
+        <District Name='平谷区' Lon='117.12' Lat='40.13'/>
+        <District Name='密云县' Lon='116.83' Lat='40.37'/>
+        <District Name='延庆县' Lon='115.97' Lat='40.45'/>
+    </City>
+</Province>
+<Province Name='天津市' >
+    <City Name='天津市' >
+        <District Name='天津市' Lon='117.2' Lat='39.12'/>
+        <District Name='和平区' Lon='117.2' Lat='39.12'/>
+        <District Name='河东区' Lon='117.22' Lat='39.12'/>
+        <District Name='河西区' Lon='117.22' Lat='39.12'/>
+        <District Name='南开区' Lon='117.15' Lat='39.13'/>
+        <District Name='河北区' Lon='117.18' Lat='39.15'/>
+        <District Name='红桥区' Lon='117.15' Lat='39.17'/>
+        <District Name='塘沽区' Lon='117.65' Lat='39.02'/>
+        <District Name='汉沽区' Lon='117.8' Lat='39.25'/>
+        <District Name='大港区' Lon='117.45' Lat='38.83'/>
+        <District Name='东丽区' Lon='117.3' Lat='39.08'/>
+        <District Name='西青区' Lon='117' Lat='39.13'/>
+        <District Name='津南区' Lon='117.38' Lat='38.98'/>
+        <District Name='北辰区' Lon='117.13' Lat='39.22'/>
+        <District Name='武清区' Lon='117.03' Lat='39.38'/>
+        <District Name='宝坻区' Lon='117.3' Lat='39.72'/>
+        <District Name='滨海新区' Lon='117.68' Lat='39.03'/>
+        <District Name='宁河县' Lon='117.82' Lat='39.33'/>
+        <District Name='静海县' Lon='116.92' Lat='38.93'/>
+        <District Name='蓟县' Lon='117.4' Lat='40.05'/>
+    </City>
+</Province>
+<Province Name='河北省' >
+    <City Name='石家庄市' >
+        <District Name='石家庄市' Lon='114.52' Lat='38.05'/>
+        <District Name='长安区' Lon='114.52' Lat='38.05'/>
+        <District Name='桥东区' Lon='114.5' Lat='38.05'/>
+        <District Name='桥东区' Lon='114.9' Lat='40.78'/>
+        <District Name='桥东区' Lon='114.5' Lat='37.07'/>
+        <District Name='桥西区' Lon='114.47' Lat='37.05'/>
+        <District Name='桥西区' Lon='114.87' Lat='40.83'/>
+        <District Name='桥西区' Lon='114.47' Lat='38.03'/>
+        <District Name='新华区' Lon='114.47' Lat='38.05'/>
+        <District Name='新华区' Lon='116.87' Lat='38.32'/>
+        <District Name='井陉矿区' Lon='114.05' Lat='38.08'/>
+        <District Name='裕华区' Lon='114.52' Lat='38.02'/>
+        <District Name='井陉县' Lon='114.13' Lat='38.03'/>
+        <District Name='正定县' Lon='114.57' Lat='38.15'/>
+        <District Name='栾城县' Lon='114.65' Lat='37.88'/>
+        <District Name='行唐县' Lon='114.55' Lat='38.43'/>
+        <District Name='灵寿县' Lon='114.37' Lat='38.3'/>
+        <District Name='高邑县' Lon='114.6' Lat='37.6'/>
+        <District Name='深泽县' Lon='115.2' Lat='38.18'/>
+        <District Name='赞皇县' Lon='114.38' Lat='37.67'/>
+        <District Name='无极县' Lon='114.97' Lat='38.18'/>
+        <District Name='平山县' Lon='114.2' Lat='38.25'/>
+        <District Name='元氏县' Lon='114.52' Lat='37.75'/>
+        <District Name='赵县' Lon='114.77' Lat='37.75'/>
+        <District Name='辛集市' Lon='115.22' Lat='37.92'/>
+        <District Name='藁城市' Lon='114.83' Lat='38.03'/>
+        <District Name='晋州市' Lon='115.03' Lat='38.03'/>
+        <District Name='新乐市' Lon='114.68' Lat='38.35'/>
+        <District Name='鹿泉市' Lon='114.3' Lat='38.08'/>
+    </City>
+    <City Name='唐山市' >
+        <District Name='唐山市' Lon='118.2' Lat='39.63'/>
+        <District Name='路南区' Lon='118.17' Lat='39.63'/>
+        <District Name='路北区' Lon='118.22' Lat='39.63'/>
+        <District Name='古冶区' Lon='118.42' Lat='39.73'/>
+        <District Name='开平区' Lon='118.27' Lat='39.68'/>
+        <District Name='丰南区' Lon='118.1' Lat='39.57'/>
+        <District Name='丰润区' Lon='118.17' Lat='39.83'/>
+        <District Name='滦县' Lon='118.7' Lat='39.75'/>
+        <District Name='滦南县' Lon='118.68' Lat='39.5'/>
+        <District Name='乐亭县' Lon='118.9' Lat='39.42'/>
+        <District Name='迁西县' Lon='118.32' Lat='40.15'/>
+        <District Name='玉田县' Lon='117.73' Lat='39.88'/>
+        <District Name='唐海县' Lon='118.45' Lat='39.27'/>
+        <District Name='遵化市' Lon='117.95' Lat='40.18'/>
+        <District Name='迁安市' Lon='118.7' Lat='40.02'/>
+    </City>
+    <City Name='秦皇岛市' >
+        <District Name='秦皇岛市' Lon='119.6' Lat='39.93'/>
+        <District Name='海港区' Lon='119.6' Lat='39.93'/>
+        <District Name='山海关区' Lon='119.77' Lat='40'/>
+        <District Name='北戴河区' Lon='119.48' Lat='39.83'/>
+        <District Name='青龙满族自治县' Lon='118.95' Lat='40.4'/>
+        <District Name='昌黎县' Lon='119.17' Lat='39.7'/>
+        <District Name='抚宁县' Lon='119.23' Lat='39.88'/>
+        <District Name='卢龙县' Lon='118.87' Lat='39.88'/>
+    </City>
+    <City Name='邯郸市' >
+        <District Name='邯郸市' Lon='114.48' Lat='36.62'/>
+        <District Name='邯山区' Lon='114.48' Lat='36.6'/>
+        <District Name='丛台区' Lon='114.48' Lat='36.63'/>
+        <District Name='复兴区' Lon='114.45' Lat='36.63'/>
+        <District Name='峰峰矿区' Lon='114.2' Lat='36.42'/>
+        <District Name='邯郸县' Lon='114.53' Lat='36.6'/>
+        <District Name='临漳县' Lon='114.62' Lat='36.35'/>
+        <District Name='成安县' Lon='114.68' Lat='36.43'/>
+        <District Name='大名县' Lon='115.15' Lat='36.28'/>
+        <District Name='涉县' Lon='113.67' Lat='36.57'/>
+        <District Name='磁县' Lon='114.37' Lat='36.35'/>
+        <District Name='肥乡县' Lon='114.8' Lat='36.55'/>
+        <District Name='永年县' Lon='114.48' Lat='36.78'/>
+        <District Name='邱县' Lon='115.17' Lat='36.82'/>
+        <District Name='鸡泽县' Lon='114.87' Lat='36.92'/>
+        <District Name='广平县' Lon='114.93' Lat='36.48'/>
+        <District Name='馆陶县' Lon='115.3' Lat='36.53'/>
+        <District Name='魏县' Lon='114.93' Lat='36.37'/>
+        <District Name='曲周县' Lon='114.95' Lat='36.78'/>
+        <District Name='武安市' Lon='114.2' Lat='36.7'/>
+    </City>
+    <City Name='邢台市' >
+        <District Name='邢台市' Lon='114.48' Lat='37.07'/>
+        <District Name='桥东区' Lon='114.5' Lat='38.05'/>
+        <District Name='桥东区' Lon='114.9' Lat='40.78'/>
+        <District Name='桥东区' Lon='114.5' Lat='37.07'/>
+        <District Name='桥西区' Lon='114.87' Lat='40.83'/>
+        <District Name='桥西区' Lon='114.47' Lat='38.03'/>
+        <District Name='桥西区' Lon='114.47' Lat='37.05'/>
+        <District Name='邢台县' Lon='114.5' Lat='37.08'/>
+        <District Name='临城县' Lon='114.5' Lat='37.43'/>
+        <District Name='内丘县' Lon='114.52' Lat='37.3'/>
+        <District Name='柏乡县' Lon='114.68' Lat='37.5'/>
+        <District Name='隆尧县' Lon='114.77' Lat='37.35'/>
+        <District Name='任县' Lon='114.68' Lat='37.13'/>
+        <District Name='南和县' Lon='114.68' Lat='37'/>
+        <District Name='宁晋县' Lon='114.92' Lat='37.62'/>
+        <District Name='巨鹿县' Lon='115.03' Lat='37.22'/>
+        <District Name='新河县' Lon='115.25' Lat='37.53'/>
+        <District Name='广宗县' Lon='115.15' Lat='37.07'/>
+        <District Name='平乡县' Lon='115.03' Lat='37.07'/>
+        <District Name='威县' Lon='115.25' Lat='36.98'/>
+        <District Name='清河县' Lon='115.67' Lat='37.07'/>
+        <District Name='临西县' Lon='115.5' Lat='36.85'/>
+        <District Name='南宫市' Lon='115.38' Lat='37.35'/>
+        <District Name='沙河市' Lon='114.5' Lat='36.85'/>
+    </City>
+    <City Name='保定市' >
+        <District Name='保定市' Lon='115.47' Lat='38.87'/>
+        <District Name='新市区' Lon='115.45' Lat='38.87'/>
+        <District Name='北市区' Lon='115.48' Lat='38.87'/>
+        <District Name='南市区' Lon='115.5' Lat='38.85'/>
+        <District Name='满城县' Lon='115.32' Lat='38.95'/>
+        <District Name='清苑县' Lon='115.48' Lat='38.77'/>
+        <District Name='涞水县' Lon='115.72' Lat='39.4'/>
+        <District Name='阜平县' Lon='114.18' Lat='38.85'/>
+        <District Name='徐水县' Lon='115.65' Lat='39.02'/>
+        <District Name='定兴县' Lon='115.77' Lat='39.27'/>
+        <District Name='唐县' Lon='114.98' Lat='38.75'/>
+        <District Name='高阳县' Lon='115.78' Lat='38.68'/>
+        <District Name='容城县' Lon='115.87' Lat='39.05'/>
+        <District Name='涞源县' Lon='114.68' Lat='39.35'/>
+        <District Name='望都县' Lon='115.15' Lat='38.72'/>
+        <District Name='安新县' Lon='115.93' Lat='38.92'/>
+        <District Name='易县' Lon='115.5' Lat='39.35'/>
+        <District Name='曲阳县' Lon='114.7' Lat='38.62'/>
+        <District Name='蠡县' Lon='115.57' Lat='38.48'/>
+        <District Name='顺平县' Lon='115.13' Lat='38.83'/>
+        <District Name='博野县' Lon='115.47' Lat='38.45'/>
+        <District Name='雄县' Lon='116.1' Lat='38.98'/>
+        <District Name='涿州市' Lon='115.97' Lat='39.48'/>
+        <District Name='定州市' Lon='114.97' Lat='38.52'/>
+        <District Name='安国市' Lon='115.32' Lat='38.42'/>
+        <District Name='高碑店市' Lon='115.85' Lat='39.33'/>
+    </City>
+    <City Name='张家口市' >
+        <District Name='张家口市' Lon='114.88' Lat='40.82'/>
+        <District Name='桥东区' Lon='114.5' Lat='38.05'/>
+        <District Name='桥东区' Lon='114.9' Lat='40.78'/>
+        <District Name='桥东区' Lon='114.5' Lat='37.07'/>
+        <District Name='桥西区' Lon='114.87' Lat='40.83'/>
+        <District Name='桥西区' Lon='114.47' Lat='38.03'/>
+        <District Name='桥西区' Lon='114.47' Lat='37.05'/>
+        <District Name='宣化区' Lon='115.05' Lat='40.6'/>
+        <District Name='下花园区' Lon='115.27' Lat='40.48'/>
+        <District Name='宣化县' Lon='115.02' Lat='40.55'/>
+        <District Name='张北县' Lon='114.7' Lat='41.15'/>
+        <District Name='康保县' Lon='114.62' Lat='41.85'/>
+        <District Name='沽源县' Lon='115.7' Lat='41.67'/>
+        <District Name='尚义县' Lon='113.97' Lat='41.08'/>
+        <District Name='蔚县' Lon='114.57' Lat='39.85'/>
+        <District Name='阳原县' Lon='114.17' Lat='40.12'/>
+        <District Name='怀安县' Lon='114.42' Lat='40.67'/>
+        <District Name='万全县' Lon='114.72' Lat='40.75'/>
+        <District Name='怀来县' Lon='115.52' Lat='40.4'/>
+        <District Name='涿鹿县' Lon='115.22' Lat='40.38'/>
+        <District Name='赤城县' Lon='115.83' Lat='40.92'/>
+        <District Name='崇礼县' Lon='115.27' Lat='40.97'/>
+    </City>
+    <City Name='承德市' >
+        <District Name='承德市' Lon='117.93' Lat='40.97'/>
+        <District Name='双桥区' Lon='117.93' Lat='40.97'/>
+        <District Name='双滦区' Lon='117.78' Lat='40.95'/>
+        <District Name='鹰手营子矿区' Lon='117.65' Lat='40.55'/>
+        <District Name='承德县' Lon='118.17' Lat='40.77'/>
+        <District Name='兴隆县' Lon='117.52' Lat='40.43'/>
+        <District Name='平泉县' Lon='118.68' Lat='41'/>
+        <District Name='滦平县' Lon='117.33' Lat='40.93'/>
+        <District Name='隆化县' Lon='117.72' Lat='41.32'/>
+        <District Name='丰宁满族自治县' Lon='116.65' Lat='41.2'/>
+        <District Name='宽城满族自治县' Lon='118.48' Lat='40.6'/>
+        <District Name='围场满族蒙古族自治县' Lon='117.75' Lat='41.93'/>
+    </City>
+    <City Name='沧州市' >
+        <District Name='沧州市' Lon='116.83' Lat='38.3'/>
+        <District Name='新华区' Lon='114.47' Lat='38.05'/>
+        <District Name='新华区' Lon='116.87' Lat='38.32'/>
+        <District Name='运河区' Lon='116.85' Lat='38.32'/>
+        <District Name='沧县' Lon='116.87' Lat='38.3'/>
+        <District Name='青县' Lon='116.82' Lat='38.58'/>
+        <District Name='东光县' Lon='116.53' Lat='37.88'/>
+        <District Name='海兴县' Lon='117.48' Lat='38.13'/>
+        <District Name='盐山县' Lon='117.22' Lat='38.05'/>
+        <District Name='肃宁县' Lon='115.83' Lat='38.43'/>
+        <District Name='南皮县' Lon='116.7' Lat='38.03'/>
+        <District Name='吴桥县' Lon='116.38' Lat='37.62'/>
+        <District Name='献县' Lon='116.12' Lat='38.18'/>
+        <District Name='孟村回族自治县' Lon='117.1' Lat='38.07'/>
+        <District Name='泊头市' Lon='116.57' Lat='38.07'/>
+        <District Name='任丘市' Lon='116.1' Lat='38.72'/>
+        <District Name='黄骅市' Lon='117.35' Lat='38.37'/>
+        <District Name='河间市' Lon='116.08' Lat='38.43'/>
+    </City>
+    <City Name='廊坊市' >
+        <District Name='廊坊市' Lon='116.7' Lat='39.52'/>
+        <District Name='安次区' Lon='116.68' Lat='39.52'/>
+        <District Name='广阳区' Lon='116.72' Lat='39.53'/>
+        <District Name='固安县' Lon='116.3' Lat='39.43'/>
+        <District Name='永清县' Lon='116.5' Lat='39.32'/>
+        <District Name='香河县' Lon='117' Lat='39.77'/>
+        <District Name='大城县' Lon='116.63' Lat='38.7'/>
+        <District Name='文安县' Lon='116.47' Lat='38.87'/>
+        <District Name='大厂回族自治县' Lon='116.98' Lat='39.88'/>
+        <District Name='霸州市' Lon='116.4' Lat='39.1'/>
+        <District Name='三河市' Lon='117.07' Lat='39.98'/>
+    </City>
+    <City Name='衡水市' >
+        <District Name='衡水市' Lon='115.68' Lat='37.73'/>
+        <District Name='桃城区' Lon='115.68' Lat='37.73'/>
+        <District Name='枣强县' Lon='115.72' Lat='37.52'/>
+        <District Name='武邑县' Lon='115.88' Lat='37.82'/>
+        <District Name='武强县' Lon='115.98' Lat='38.03'/>
+        <District Name='饶阳县' Lon='115.73' Lat='38.23'/>
+        <District Name='安平县' Lon='115.52' Lat='38.23'/>
+        <District Name='故城县' Lon='115.97' Lat='37.35'/>
+        <District Name='景县' Lon='116.27' Lat='37.7'/>
+        <District Name='阜城县' Lon='116.15' Lat='37.87'/>
+        <District Name='冀州市' Lon='115.57' Lat='37.57'/>
+        <District Name='深州市' Lon='115.55' Lat='38.02'/>
+    </City>
+</Province>
+<Province Name='山西省' >
+    <City Name='太原市' >
+        <District Name='太原市' Lon='112.55' Lat='37.87'/>
+        <District Name='小店区' Lon='112.57' Lat='37.73'/>
+        <District Name='迎泽区' Lon='112.57' Lat='37.87'/>
+        <District Name='杏花岭区' Lon='112.57' Lat='37.88'/>
+        <District Name='尖草坪区' Lon='112.48' Lat='37.93'/>
+        <District Name='万柏林区' Lon='112.52' Lat='37.87'/>
+        <District Name='晋源区' Lon='112.48' Lat='37.73'/>
+        <District Name='清徐县' Lon='112.35' Lat='37.6'/>
+        <District Name='阳曲县' Lon='112.67' Lat='38.07'/>
+        <District Name='娄烦县' Lon='111.78' Lat='38.07'/>
+        <District Name='古交市' Lon='112.17' Lat='37.92'/>
+    </City>
+    <City Name='大同市' >
+        <District Name='大同市' Lon='113.3' Lat='40.08'/>
+        <District Name='城区' Lon='113.28' Lat='40.08'/>
+        <District Name='城区' Lon='113.6' Lat='37.85'/>
+        <District Name='城区' Lon='113.12' Lat='36.22'/>
+        <District Name='城区' Lon='112.83' Lat='35.5'/>
+        <District Name='矿区' Lon='113.17' Lat='40.03'/>
+        <District Name='矿区' Lon='113.57' Lat='37.87'/>
+        <District Name='南郊区' Lon='113.13' Lat='40'/>
+        <District Name='新荣区' Lon='113.15' Lat='40.27'/>
+        <District Name='阳高县' Lon='113.75' Lat='40.37'/>
+        <District Name='天镇县' Lon='114.08' Lat='40.42'/>
+        <District Name='广灵县' Lon='114.28' Lat='39.77'/>
+        <District Name='灵丘县' Lon='114.23' Lat='39.43'/>
+        <District Name='浑源县' Lon='113.68' Lat='39.7'/>
+        <District Name='左云县' Lon='112.7' Lat='40'/>
+        <District Name='大同县' Lon='113.6' Lat='40.03'/>
+    </City>
+    <City Name='阳泉市' >
+        <District Name='阳泉市' Lon='113.57' Lat='37.85'/>
+        <District Name='城区' Lon='113.28' Lat='40.08'/>
+        <District Name='城区' Lon='113.6' Lat='37.85'/>
+        <District Name='城区' Lon='113.12' Lat='36.22'/>
+        <District Name='城区' Lon='112.83' Lat='35.5'/>
+        <District Name='矿区' Lon='113.17' Lat='40.03'/>
+        <District Name='矿区' Lon='113.57' Lat='37.87'/>
+        <District Name='郊区' Lon='113.58' Lat='37.93'/>
+        <District Name='郊区' Lon='113.12' Lat='36.2'/>
+        <District Name='平定县' Lon='113.62' Lat='37.8'/>
+        <District Name='盂县' Lon='113.4' Lat='38.08'/>
+    </City>
+    <City Name='长治市' >
+        <District Name='长治市' Lon='113.12' Lat='36.2'/>
+        <District Name='城区' Lon='113.28' Lat='40.08'/>
+        <District Name='城区' Lon='113.6' Lat='37.85'/>
+        <District Name='城区' Lon='113.12' Lat='36.22'/>
+        <District Name='城区' Lon='112.83' Lat='35.5'/>
+        <District Name='郊区' Lon='113.58' Lat='37.93'/>
+        <District Name='郊区' Lon='113.12' Lat='36.2'/>
+        <District Name='长治县' Lon='113.03' Lat='36.05'/>
+        <District Name='襄垣县' Lon='113.05' Lat='36.53'/>
+        <District Name='屯留县' Lon='112.88' Lat='36.32'/>
+        <District Name='平顺县' Lon='113.43' Lat='36.2'/>
+        <District Name='黎城县' Lon='113.38' Lat='36.5'/>
+        <District Name='壶关县' Lon='113.2' Lat='36.12'/>
+        <District Name='长子县' Lon='112.87' Lat='36.12'/>
+        <District Name='武乡县' Lon='112.85' Lat='36.83'/>
+        <District Name='沁县' Lon='112.7' Lat='36.75'/>
+        <District Name='沁源县' Lon='112.33' Lat='36.5'/>
+        <District Name='潞城市' Lon='113.22' Lat='36.33'/>
+    </City>
+    <City Name='晋城市' >
+        <District Name='晋城市' Lon='112.83' Lat='35.5'/>
+        <District Name='城区' Lon='113.28' Lat='40.08'/>
+        <District Name='城区' Lon='113.6' Lat='37.85'/>
+        <District Name='城区' Lon='113.12' Lat='36.22'/>
+        <District Name='城区' Lon='112.83' Lat='35.5'/>
+        <District Name='沁水县' Lon='112.18' Lat='35.68'/>
+        <District Name='阳城县' Lon='112.42' Lat='35.48'/>
+        <District Name='陵川县' Lon='113.27' Lat='35.78'/>
+        <District Name='泽州县' Lon='112.83' Lat='35.5'/>
+        <District Name='高平市' Lon='112.92' Lat='35.8'/>
+    </City>
+    <City Name='朔州市' >
+        <District Name='朔州市' Lon='112.43' Lat='39.33'/>
+        <District Name='朔城区' Lon='112.43' Lat='39.33'/>
+        <District Name='山阴县' Lon='112.82' Lat='39.52'/>
+        <District Name='应县' Lon='113.18' Lat='39.55'/>
+        <District Name='右玉县' Lon='112.47' Lat='39.98'/>
+        <District Name='怀仁县' Lon='113.08' Lat='39.83'/>
+    </City>
+    <City Name='晋中市' >
+        <District Name='晋中市' Lon='112.75' Lat='37.68'/>
+        <District Name='榆次区' Lon='112.75' Lat='37.68'/>
+        <District Name='榆社县' Lon='112.97' Lat='37.07'/>
+        <District Name='左权县' Lon='113.37' Lat='37.07'/>
+        <District Name='和顺县' Lon='113.57' Lat='37.33'/>
+        <District Name='昔阳县' Lon='113.7' Lat='37.62'/>
+        <District Name='寿阳县' Lon='113.18' Lat='37.88'/>
+        <District Name='太谷县' Lon='112.55' Lat='37.42'/>
+        <District Name='祁县' Lon='112.33' Lat='37.35'/>
+        <District Name='平遥县' Lon='112.17' Lat='37.18'/>
+        <District Name='灵石县' Lon='111.77' Lat='36.85'/>
+        <District Name='介休市' Lon='111.92' Lat='37.03'/>
+    </City>
+    <City Name='运城市' >
+        <District Name='运城市' Lon='110.98' Lat='35.02'/>
+        <District Name='盐湖区' Lon='110.98' Lat='35.02'/>
+        <District Name='临猗县' Lon='110.77' Lat='35.15'/>
+        <District Name='万荣县' Lon='110.83' Lat='35.42'/>
+        <District Name='闻喜县' Lon='111.22' Lat='35.35'/>
+        <District Name='稷山县' Lon='110.97' Lat='35.6'/>
+        <District Name='新绛县' Lon='111.22' Lat='35.62'/>
+        <District Name='绛县' Lon='111.57' Lat='35.48'/>
+        <District Name='垣曲县' Lon='111.67' Lat='35.3'/>
+        <District Name='夏县' Lon='111.22' Lat='35.15'/>
+        <District Name='平陆县' Lon='111.22' Lat='34.83'/>
+        <District Name='芮城县' Lon='110.68' Lat='34.7'/>
+        <District Name='河津市' Lon='110.7' Lat='35.6'/>
+    </City>
+    <City Name='忻州市' >
+        <District Name='忻州市' Lon='112.73' Lat='38.42'/>
+        <District Name='忻府区' Lon='112.73' Lat='38.42'/>
+        <District Name='定襄县' Lon='112.95' Lat='38.48'/>
+        <District Name='五台县' Lon='113.25' Lat='38.73'/>
+        <District Name='代县' Lon='112.95' Lat='39.07'/>
+        <District Name='繁峙县' Lon='113.25' Lat='39.18'/>
+        <District Name='宁武县' Lon='112.3' Lat='39'/>
+        <District Name='静乐县' Lon='111.93' Lat='38.37'/>
+        <District Name='神池县' Lon='112.2' Lat='39.08'/>
+        <District Name='五寨县' Lon='111.85' Lat='38.9'/>
+        <District Name='岢岚县' Lon='111.57' Lat='38.7'/>
+        <District Name='河曲县' Lon='111.13' Lat='39.38'/>
+        <District Name='偏关县' Lon='111.5' Lat='39.43'/>
+        <District Name='原平市' Lon='112.7' Lat='38.73'/>
+    </City>
+    <City Name='临汾市' >
+        <District Name='临汾市' Lon='111.52' Lat='36.08'/>
+        <District Name='尧都区' Lon='111.52' Lat='36.08'/>
+        <District Name='曲沃县' Lon='111.47' Lat='35.63'/>
+        <District Name='翼城县' Lon='111.72' Lat='35.73'/>
+        <District Name='襄汾县' Lon='111.43' Lat='35.88'/>
+        <District Name='洪洞县' Lon='111.67' Lat='36.25'/>
+        <District Name='古县' Lon='111.92' Lat='36.27'/>
+        <District Name='安泽县' Lon='112.25' Lat='36.15'/>
+        <District Name='浮山县' Lon='111.83' Lat='35.97'/>
+        <District Name='吉县' Lon='110.68' Lat='36.1'/>
+        <District Name='乡宁县' Lon='110.83' Lat='35.97'/>
+        <District Name='大宁县' Lon='110.75' Lat='36.47'/>
+        <District Name='隰县' Lon='110.93' Lat='36.7'/>
+        <District Name='永和县' Lon='110.63' Lat='36.77'/>
+        <District Name='蒲县' Lon='111.08' Lat='36.42'/>
+        <District Name='汾西县' Lon='111.57' Lat='36.65'/>
+        <District Name='侯马市' Lon='111.35' Lat='35.62'/>
+        <District Name='霍州市' Lon='111.72' Lat='36.57'/>
+    </City>
+    <City Name='吕梁市' >
+        <District Name='吕梁市' Lon='111.13' Lat='37.52'/>
+        <District Name='离石区' Lon='111.13' Lat='37.52'/>
+        <District Name='文水县' Lon='112.02' Lat='37.43'/>
+        <District Name='交城县' Lon='112.15' Lat='37.55'/>
+        <District Name='兴县' Lon='111.12' Lat='38.47'/>
+        <District Name='临县' Lon='110.98' Lat='37.95'/>
+        <District Name='柳林县' Lon='110.9' Lat='37.43'/>
+        <District Name='石楼县' Lon='110.83' Lat='37'/>
+        <District Name='岚县' Lon='111.67' Lat='38.28'/>
+        <District Name='方山县' Lon='111.23' Lat='37.88'/>
+        <District Name='中阳县' Lon='111.18' Lat='37.33'/>
+        <District Name='交口县' Lon='111.2' Lat='36.97'/>
+        <District Name='孝义市' Lon='111.77' Lat='37.15'/>
+        <District Name='汾阳市' Lon='111.78' Lat='37.27'/>
+    </City>
+</Province>
+<Province Name='内蒙古自治区' >
+    <City Name='呼和浩特市' >
+        <District Name='呼和浩特市' Lon='111.73' Lat='40.83'/>
+        <District Name='新城区' Lon='111.65' Lat='40.87'/>
+        <District Name='回民区' Lon='111.6' Lat='40.8'/>
+        <District Name='玉泉区' Lon='111.67' Lat='40.75'/>
+        <District Name='赛罕区' Lon='111.68' Lat='40.8'/>
+        <District Name='土默特左旗' Lon='111.13' Lat='40.72'/>
+        <District Name='托克托县' Lon='111.18' Lat='40.27'/>
+        <District Name='和林格尔县' Lon='111.82' Lat='40.38'/>
+        <District Name='清水河县' Lon='111.68' Lat='39.92'/>
+        <District Name='武川县' Lon='111.45' Lat='41.08'/>
+    </City>
+    <City Name='包头市' >
+        <District Name='包头市' Lon='109.83' Lat='40.65'/>
+        <District Name='东河区' Lon='110.02' Lat='40.58'/>
+        <District Name='昆都仑区' Lon='109.83' Lat='40.63'/>
+        <District Name='青山区' Lon='109.9' Lat='40.65'/>
+        <District Name='石拐区' Lon='110.27' Lat='40.68'/>
+        <District Name='九原区' Lon='109.97' Lat='40.6'/>
+        <District Name='土默特右旗' Lon='110.52' Lat='40.57'/>
+        <District Name='固阳县' Lon='110.05' Lat='41.03'/>
+        <District Name='达尔罕茂明安联合旗' Lon='110.43' Lat='41.7'/>
+    </City>
+    <City Name='乌海市' >
+        <District Name='乌海市' Lon='106.82' Lat='39.67'/>
+        <District Name='海勃湾区' Lon='106.83' Lat='39.7'/>
+        <District Name='海南区' Lon='106.88' Lat='39.43'/>
+        <District Name='乌达区' Lon='106.7' Lat='39.5'/>
+    </City>
+    <City Name='赤峰市' >
+        <District Name='赤峰市' Lon='118.92' Lat='42.27'/>
+        <District Name='红山区' Lon='118.97' Lat='42.28'/>
+        <District Name='元宝山区' Lon='119.28' Lat='42.03'/>
+        <District Name='松山区' Lon='118.92' Lat='42.28'/>
+        <District Name='阿鲁科尔沁旗' Lon='120.08' Lat='43.88'/>
+        <District Name='巴林左旗' Lon='119.38' Lat='43.98'/>
+        <District Name='巴林右旗' Lon='118.67' Lat='43.52'/>
+        <District Name='林西县' Lon='118.05' Lat='43.6'/>
+        <District Name='克什克腾旗' Lon='117.53' Lat='43.25'/>
+        <District Name='翁牛特旗' Lon='119.02' Lat='42.93'/>
+        <District Name='喀喇沁旗' Lon='118.7' Lat='41.93'/>
+        <District Name='宁城县' Lon='119.33' Lat='41.6'/>
+        <District Name='敖汉旗' Lon='119.9' Lat='42.28'/>
+    </City>
+    <City Name='通辽市' >
+        <District Name='通辽市' Lon='122.27' Lat='43.62'/>
+        <District Name='科尔沁区' Lon='122.27' Lat='43.62'/>
+        <District Name='科尔沁左翼中旗' Lon='123.32' Lat='44.13'/>
+        <District Name='科尔沁左翼后旗' Lon='122.35' Lat='42.95'/>
+        <District Name='开鲁县' Lon='121.3' Lat='43.6'/>
+        <District Name='库伦旗' Lon='121.77' Lat='42.73'/>
+        <District Name='奈曼旗' Lon='120.65' Lat='42.85'/>
+        <District Name='扎鲁特旗' Lon='120.92' Lat='44.55'/>
+        <District Name='霍林郭勒市' Lon='119.65' Lat='45.53'/>
+    </City>
+    <City Name='鄂尔多斯市' >
+        <District Name='鄂尔多斯市' Lon='109.8' Lat='39.62'/>
+        <District Name='东胜区' Lon='110' Lat='39.82'/>
+        <District Name='达拉特旗' Lon='110.03' Lat='40.4'/>
+        <District Name='准格尔旗' Lon='111.23' Lat='39.87'/>
+        <District Name='鄂托克前旗' Lon='107.48' Lat='38.18'/>
+        <District Name='鄂托克旗' Lon='107.98' Lat='39.1'/>
+        <District Name='杭锦旗' Lon='108.72' Lat='39.83'/>
+        <District Name='乌审旗' Lon='108.85' Lat='38.6'/>
+        <District Name='伊金霍洛旗' Lon='109.73' Lat='39.57'/>
+    </City>
+    <City Name='呼伦贝尔市' >
+        <District Name='呼伦贝尔市' Lon='119.77' Lat='49.22'/>
+        <District Name='海拉尔区' Lon='119.77' Lat='49.22'/>
+        <District Name='阿荣旗' Lon='123.47' Lat='48.13'/>
+        <District Name='鄂伦春自治旗' Lon='123.72' Lat='50.58'/>
+        <District Name='鄂温克族自治旗' Lon='119.75' Lat='49.13'/>
+        <District Name='陈巴尔虎旗' Lon='119.43' Lat='49.32'/>
+        <District Name='新巴尔虎左旗' Lon='118.27' Lat='48.22'/>
+        <District Name='新巴尔虎右旗' Lon='116.82' Lat='48.67'/>
+        <District Name='满洲里市' Lon='117.45' Lat='49.58'/>
+        <District Name='牙克石市' Lon='120.73' Lat='49.28'/>
+        <District Name='扎兰屯市' Lon='122.75' Lat='47.98'/>
+        <District Name='额尔古纳市' Lon='120.18' Lat='50.23'/>
+        <District Name='根河市' Lon='121.52' Lat='50.78'/>
+    </City>
+    <City Name='巴彦淖尔市' >
+        <District Name='巴彦淖尔市' Lon='107.42' Lat='40.75'/>
+        <District Name='临河区' Lon='107.4' Lat='40.75'/>
+        <District Name='五原县' Lon='108.27' Lat='41.1'/>
+        <District Name='磴口县' Lon='107.02' Lat='40.33'/>
+        <District Name='乌拉特前旗' Lon='108.65' Lat='40.72'/>
+        <District Name='乌拉特中旗' Lon='108.52' Lat='41.57'/>
+        <District Name='乌拉特后旗' Lon='107.07' Lat='41.1'/>
+        <District Name='杭锦后旗' Lon='107.15' Lat='40.88'/>
+    </City>
+    <City Name='乌兰察布市' >
+        <District Name='乌兰察布市' Lon='113.12' Lat='40.98'/>
+        <District Name='集宁区' Lon='113.1' Lat='41.03'/>
+        <District Name='卓资县' Lon='112.57' Lat='40.9'/>
+        <District Name='化德县' Lon='114' Lat='41.9'/>
+        <District Name='商都县' Lon='113.53' Lat='41.55'/>
+        <District Name='兴和县' Lon='113.88' Lat='40.88'/>
+        <District Name='凉城县' Lon='112.48' Lat='40.53'/>
+        <District Name='察哈尔右翼前旗' Lon='113.22' Lat='40.78'/>
+        <District Name='察哈尔右翼中旗' Lon='112.63' Lat='41.27'/>
+        <District Name='察哈尔右翼后旗' Lon='113.18' Lat='41.45'/>
+        <District Name='四子王旗' Lon='111.7' Lat='41.52'/>
+        <District Name='丰镇市' Lon='113.15' Lat='40.43'/>
+    </City>
+    <City Name='兴安盟' >
+        <District Name='兴安盟' Lon='122.05' Lat='46.08'/>
+        <District Name='乌兰浩特市' Lon='122.05' Lat='46.08'/>
+        <District Name='阿尔山市' Lon='119.93' Lat='47.18'/>
+        <District Name='科尔沁右翼前旗' Lon='121.92' Lat='46.07'/>
+        <District Name='科尔沁右翼中旗' Lon='121.47' Lat='45.05'/>
+        <District Name='扎赉特旗' Lon='122.9' Lat='46.73'/>
+        <District Name='突泉县' Lon='121.57' Lat='45.38'/>
+    </City>
+    <City Name='锡林郭勒盟' >
+        <District Name='锡林郭勒盟' Lon='116.07' Lat='43.95'/>
+        <District Name='二连浩特市' Lon='111.98' Lat='43.65'/>
+        <District Name='锡林浩特市' Lon='116.07' Lat='43.93'/>
+        <District Name='阿巴嘎旗' Lon='114.97' Lat='44.02'/>
+        <District Name='苏尼特左旗' Lon='113.63' Lat='43.85'/>
+        <District Name='苏尼特右旗' Lon='112.65' Lat='42.75'/>
+        <District Name='东乌珠穆沁旗' Lon='116.97' Lat='45.52'/>
+        <District Name='西乌珠穆沁旗' Lon='117.6' Lat='44.58'/>
+        <District Name='太仆寺旗' Lon='115.28' Lat='41.9'/>
+        <District Name='镶黄旗' Lon='113.83' Lat='42.23'/>
+        <District Name='正镶白旗' Lon='115' Lat='42.3'/>
+        <District Name='正蓝旗' Lon='116' Lat='42.25'/>
+        <District Name='多伦县' Lon='116.47' Lat='42.18'/>
+    </City>
+    <City Name='阿拉善盟' >
+        <District Name='阿拉善盟' Lon='105.67' Lat='38.83'/>
+        <District Name='阿拉善左旗' Lon='105.67' Lat='38.83'/>
+        <District Name='阿拉善右旗' Lon='101.68' Lat='39.2'/>
+        <District Name='额济纳旗' Lon='101.07' Lat='41.97'/>
+    </City>
+</Province>
+<Province Name='辽宁省' >
+    <City Name='沈阳市' >
+        <District Name='沈阳市' Lon='123.43' Lat='41.8'/>
+        <District Name='和平区' Lon='123.4' Lat='41.78'/>
+        <District Name='沈河区' Lon='123.45' Lat='41.8'/>
+        <District Name='大东区' Lon='123.47' Lat='41.8'/>
+        <District Name='皇姑区' Lon='123.42' Lat='41.82'/>
+        <District Name='铁西区' Lon='122.95' Lat='41.12'/>
+        <District Name='铁西区' Lon='123.35' Lat='41.8'/>
+        <District Name='苏家屯区' Lon='123.33' Lat='41.67'/>
+        <District Name='东陵区' Lon='123.47' Lat='41.77'/>
+        <District Name='新城子区' Lon='123.52' Lat='42.05'/>
+        <District Name='于洪区' Lon='123.3' Lat='41.78'/>
+        <District Name='辽中县' Lon='122.72' Lat='41.52'/>
+        <District Name='康平县' Lon='123.35' Lat='42.75'/>
+        <District Name='法库县' Lon='123.4' Lat='42.5'/>
+        <District Name='新民市' Lon='122.82' Lat='42'/>
+    </City>
+    <City Name='大连市' >
+        <District Name='大连市' Lon='121.62' Lat='38.92'/>
+        <District Name='中山区' Lon='121.63' Lat='38.92'/>
+        <District Name='西岗区' Lon='121.6' Lat='38.92'/>
+        <District Name='沙河口区' Lon='121.58' Lat='38.9'/>
+        <District Name='甘井子区' Lon='121.57' Lat='38.95'/>
+        <District Name='旅顺口区' Lon='121.27' Lat='38.82'/>
+        <District Name='金州区' Lon='121.7' Lat='39.1'/>
+        <District Name='长海县' Lon='122.58' Lat='39.27'/>
+        <District Name='瓦房店市' Lon='122' Lat='39.62'/>
+        <District Name='普兰店市' Lon='121.95' Lat='39.4'/>
+        <District Name='庄河市' Lon='122.98' Lat='39.7'/>
+    </City>
+    <City Name='鞍山市' >
+        <District Name='鞍山市' Lon='122.98' Lat='41.1'/>
+        <District Name='铁东区' Lon='122.98' Lat='41.1'/>
+        <District Name='铁西区' Lon='122.95' Lat='41.12'/>
+        <District Name='铁西区' Lon='123.35' Lat='41.8'/>
+        <District Name='立山区' Lon='123' Lat='41.15'/>
+        <District Name='千山区' Lon='122.97' Lat='41.07'/>
+        <District Name='台安县' Lon='122.42' Lat='41.38'/>
+        <District Name='岫岩满族自治县' Lon='123.28' Lat='40.28'/>
+        <District Name='海城市' Lon='122.7' Lat='40.88'/>
+    </City>
+    <City Name='抚顺市' >
+        <District Name='抚顺市' Lon='123.98' Lat='41.88'/>
+        <District Name='新抚区' Lon='123.88' Lat='41.87'/>
+        <District Name='东洲区' Lon='124.02' Lat='41.85'/>
+        <District Name='望花区' Lon='123.78' Lat='41.85'/>
+        <District Name='顺城区' Lon='123.93' Lat='41.88'/>
+        <District Name='抚顺县' Lon='123.9' Lat='41.88'/>
+        <District Name='新宾满族自治县' Lon='125.03' Lat='41.73'/>
+        <District Name='清原满族自治县' Lon='124.92' Lat='42.1'/>
+    </City>
+    <City Name='本溪市' >
+        <District Name='本溪市' Lon='123.77' Lat='41.3'/>
+        <District Name='平山区' Lon='123.77' Lat='41.3'/>
+        <District Name='溪湖区' Lon='123.77' Lat='41.33'/>
+        <District Name='明山区' Lon='123.82' Lat='41.3'/>
+        <District Name='南芬区' Lon='123.73' Lat='41.1'/>
+        <District Name='本溪满族自治县' Lon='124.12' Lat='41.3'/>
+        <District Name='桓仁满族自治县' Lon='125.35' Lat='41.27'/>
+    </City>
+    <City Name='丹东市' >
+        <District Name='丹东市' Lon='124.38' Lat='40.13'/>
+        <District Name='元宝区' Lon='124.38' Lat='40.13'/>
+        <District Name='振兴区' Lon='124.35' Lat='40.08'/>
+        <District Name='振安区' Lon='124.42' Lat='40.17'/>
+        <District Name='宽甸满族自治县' Lon='124.78' Lat='40.73'/>
+        <District Name='东港市' Lon='124.15' Lat='39.87'/>
+        <District Name='凤城市' Lon='124.07' Lat='40.45'/>
+    </City>
+    <City Name='锦州市' >
+        <District Name='锦州市' Lon='121.13' Lat='41.1'/>
+        <District Name='古塔区' Lon='121.12' Lat='41.13'/>
+        <District Name='凌河区' Lon='121.15' Lat='41.12'/>
+        <District Name='太和区' Lon='121.1' Lat='41.1'/>
+        <District Name='黑山县' Lon='122.12' Lat='41.7'/>
+        <District Name='义县' Lon='121.23' Lat='41.53'/>
+        <District Name='凌海市' Lon='121.35' Lat='41.17'/>
+    </City>
+    <City Name='营口市' >
+        <District Name='营口市' Lon='122.23' Lat='40.67'/>
+        <District Name='站前区' Lon='122.27' Lat='40.68'/>
+        <District Name='西市区' Lon='122.22' Lat='40.67'/>
+        <District Name='鲅鱼圈区' Lon='122.12' Lat='40.27'/>
+        <District Name='老边区' Lon='122.37' Lat='40.67'/>
+        <District Name='盖州市' Lon='122.35' Lat='40.4'/>
+        <District Name='大石桥市' Lon='122.5' Lat='40.65'/>
+    </City>
+    <City Name='阜新市' >
+        <District Name='阜新市' Lon='121.67' Lat='42.02'/>
+        <District Name='海州区' Lon='121.65' Lat='42.02'/>
+        <District Name='太平区' Lon='121.67' Lat='42.02'/>
+        <District Name='清河门区' Lon='121.42' Lat='41.75'/>
+        <District Name='细河区' Lon='121.68' Lat='42.03'/>
+        <District Name='阜新蒙古族自治县' Lon='121.75' Lat='42.07'/>
+        <District Name='彰武县' Lon='122.53' Lat='42.38'/>
+    </City>
+    <City Name='辽阳市' >
+        <District Name='辽阳市' Lon='123.17' Lat='41.27'/>
+        <District Name='白塔区' Lon='123.17' Lat='41.27'/>
+        <District Name='文圣区' Lon='123.18' Lat='41.27'/>
+        <District Name='宏伟区' Lon='123.2' Lat='41.2'/>
+        <District Name='弓长岭区' Lon='123.45' Lat='41.13'/>
+        <District Name='太子河区' Lon='123.18' Lat='41.25'/>
+        <District Name='辽阳县' Lon='123.07' Lat='41.22'/>
+        <District Name='灯塔市' Lon='123.33' Lat='41.42'/>
+    </City>
+    <City Name='盘锦市' >
+        <District Name='盘锦市' Lon='122.07' Lat='41.12'/>
+        <District Name='双台子区' Lon='122.05' Lat='41.2'/>
+        <District Name='兴隆台区' Lon='122.07' Lat='41.12'/>
+        <District Name='大洼县' Lon='122.07' Lat='40.98'/>
+        <District Name='盘山县' Lon='122.02' Lat='41.25'/>
+    </City>
+    <City Name='铁岭市' >
+        <District Name='铁岭市' Lon='123.83' Lat='42.28'/>
+        <District Name='银州区' Lon='123.85' Lat='42.28'/>
+        <District Name='清河区' Lon='124.15' Lat='42.53'/>
+        <District Name='铁岭县' Lon='123.83' Lat='42.3'/>
+        <District Name='西丰县' Lon='124.72' Lat='42.73'/>
+        <District Name='昌图县' Lon='124.1' Lat='42.78'/>
+        <District Name='调兵山市' Lon='123.55' Lat='42.47'/>
+        <District Name='开原市' Lon='124.03' Lat='42.55'/>
+    </City>
+    <City Name='朝阳市' >
+        <District Name='朝阳市' Lon='120.45' Lat='41.57'/>
+        <District Name='双塔区' Lon='120.45' Lat='41.57'/>
+        <District Name='龙城区' Lon='120.43' Lat='41.6'/>
+        <District Name='朝阳县' Lon='120.47' Lat='41.58'/>
+        <District Name='建平县' Lon='119.63' Lat='41.4'/>
+        <District Name='北票市' Lon='120.77' Lat='41.8'/>
+        <District Name='凌源市' Lon='119.4' Lat='41.25'/>
+    </City>
+    <City Name='葫芦岛市' >
+        <District Name='葫芦岛市' Lon='120.83' Lat='40.72'/>
+        <District Name='连山区' Lon='120.87' Lat='40.77'/>
+        <District Name='龙港区' Lon='120.93' Lat='40.72'/>
+        <District Name='南票区' Lon='120.75' Lat='41.1'/>
+        <District Name='绥中县' Lon='120.33' Lat='40.32'/>
+        <District Name='建昌县' Lon='119.8' Lat='40.82'/>
+        <District Name='兴城市' Lon='120.72' Lat='40.62'/>
+    </City>
+</Province>
+<Province Name='吉林省' >
+    <City Name='长春市' >
+        <District Name='长春市' Lon='125.32' Lat='43.9'/>
+        <District Name='南关区' Lon='125.33' Lat='43.87'/>
+        <District Name='宽城区' Lon='125.32' Lat='43.92'/>
+        <District Name='朝阳区' Lon='125.28' Lat='43.83'/>
+        <District Name='二道区' Lon='125.37' Lat='43.87'/>
+        <District Name='绿园区' Lon='125.25' Lat='43.88'/>
+        <District Name='双阳区' Lon='125.67' Lat='43.52'/>
+        <District Name='农安县' Lon='125.18' Lat='44.43'/>
+        <District Name='九台市' Lon='125.83' Lat='44.15'/>
+        <District Name='榆树市' Lon='126.55' Lat='44.82'/>
+        <District Name='德惠市' Lon='125.7' Lat='44.53'/>
+    </City>
+    <City Name='吉林市' >
+        <District Name='吉林市' Lon='126.55' Lat='43.83'/>
+        <District Name='昌邑区' Lon='126.57' Lat='43.88'/>
+        <District Name='龙潭区' Lon='126.57' Lat='43.92'/>
+        <District Name='船营区' Lon='126.53' Lat='43.83'/>
+        <District Name='丰满区' Lon='126.57' Lat='43.82'/>
+        <District Name='永吉县' Lon='126.5' Lat='43.67'/>
+        <District Name='蛟河市' Lon='127.33' Lat='43.72'/>
+        <District Name='桦甸市' Lon='126.73' Lat='42.97'/>
+        <District Name='舒兰市' Lon='126.95' Lat='44.42'/>
+        <District Name='磐石市' Lon='126.05' Lat='42.95'/>
+    </City>
+    <City Name='四平市' >
+        <District Name='四平市' Lon='124.35' Lat='43.17'/>
+        <District Name='铁西区' Lon='124.35' Lat='43.15'/>
+        <District Name='铁东区' Lon='124.38' Lat='43.17'/>
+        <District Name='梨树县' Lon='124.33' Lat='43.32'/>
+        <District Name='伊通满族自治县' Lon='125.3' Lat='43.35'/>
+        <District Name='公主岭市' Lon='124.82' Lat='43.5'/>
+        <District Name='双辽市' Lon='123.5' Lat='43.52'/>
+    </City>
+    <City Name='辽源市' >
+        <District Name='辽源市' Lon='125.13' Lat='42.88'/>
+        <District Name='龙山区' Lon='125.12' Lat='42.9'/>
+        <District Name='西安区' Lon='125.15' Lat='42.92'/>
+        <District Name='东丰县' Lon='125.53' Lat='42.68'/>
+        <District Name='东辽县' Lon='125' Lat='42.92'/>
+    </City>
+    <City Name='通化市' >
+        <District Name='通化市' Lon='125.93' Lat='41.73'/>
+        <District Name='东昌区' Lon='125.95' Lat='41.73'/>
+        <District Name='二道江区' Lon='126.03' Lat='41.77'/>
+        <District Name='通化县' Lon='125.75' Lat='41.68'/>
+        <District Name='辉南县' Lon='126.03' Lat='42.68'/>
+        <District Name='柳河县' Lon='125.73' Lat='42.28'/>
+        <District Name='梅河口市' Lon='125.68' Lat='42.53'/>
+        <District Name='集安市' Lon='126.18' Lat='41.12'/>
+    </City>
+    <City Name='白山市' >
+        <District Name='白山市' Lon='126.42' Lat='41.93'/>
+        <District Name='八道江区' Lon='126.4' Lat='41.93'/>
+        <District Name='抚松县' Lon='127.28' Lat='42.33'/>
+        <District Name='靖宇县' Lon='126.8' Lat='42.4'/>
+        <District Name='长白朝鲜族自治县' Lon='128.2' Lat='41.42'/>
+        <District Name='临江市' Lon='126.9' Lat='41.8'/>
+    </City>
+    <City Name='松原市' >
+        <District Name='松原市' Lon='124.82' Lat='45.13'/>
+        <District Name='宁江区' Lon='124.8' Lat='45.17'/>
+        <District Name='长岭县' Lon='123.98' Lat='44.28'/>
+        <District Name='乾安县' Lon='124.02' Lat='45.02'/>
+        <District Name='扶余县' Lon='126.02' Lat='44.98'/>
+    </City>
+    <City Name='白城市' >
+        <District Name='白城市' Lon='122.83' Lat='45.62'/>
+        <District Name='洮北区' Lon='122.85' Lat='45.62'/>
+        <District Name='镇赉县' Lon='123.2' Lat='45.85'/>
+        <District Name='通榆县' Lon='123.08' Lat='44.82'/>
+        <District Name='洮南市' Lon='122.78' Lat='45.33'/>
+        <District Name='大安市' Lon='124.28' Lat='45.5'/>
+    </City>
+    <City Name='延边朝鲜族自治州' >
+        <District Name='延边朝鲜族自治州' Lon='129.5' Lat='42.88'/>
+        <District Name='延吉市' Lon='129.5' Lat='42.88'/>
+        <District Name='图们市' Lon='129.83' Lat='42.97'/>
+        <District Name='敦化市' Lon='128.23' Lat='43.37'/>
+        <District Name='珲春市' Lon='130.37' Lat='42.87'/>
+        <District Name='龙井市' Lon='129.42' Lat='42.77'/>
+        <District Name='和龙市' Lon='129' Lat='42.53'/>
+        <District Name='汪清县' Lon='129.75' Lat='43.32'/>
+        <District Name='安图县' Lon='128.9' Lat='43.12'/>
+    </City>
+</Province>
+<Province Name='黑龙江省' >
+    <City Name='哈尔滨市' >
+        <District Name='哈尔滨市' Lon='126.53' Lat='45.8'/>
+        <District Name='道里区' Lon='126.62' Lat='45.77'/>
+        <District Name='南岗区' Lon='126.68' Lat='45.77'/>
+        <District Name='道外区' Lon='126.65' Lat='45.78'/>
+        <District Name='香坊区' Lon='126.68' Lat='45.72'/>
+        <District Name='平房区' Lon='126.62' Lat='45.62'/>
+        <District Name='松北区' Lon='126.55' Lat='45.8'/>
+        <District Name='呼兰区' Lon='126.58' Lat='45.9'/>
+        <District Name='依兰县' Lon='129.55' Lat='46.32'/>
+        <District Name='方正县' Lon='128.83' Lat='45.83'/>
+        <District Name='宾县' Lon='127.48' Lat='45.75'/>
+        <District Name='巴彦县' Lon='127.4' Lat='46.08'/>
+        <District Name='木兰县' Lon='128.03' Lat='45.95'/>
+        <District Name='通河县' Lon='128.75' Lat='45.97'/>
+        <District Name='延寿县' Lon='128.33' Lat='45.45'/>
+        <District Name='双城市' Lon='126.32' Lat='45.37'/>
+        <District Name='尚志市' Lon='127.95' Lat='45.22'/>
+        <District Name='五常市' Lon='127.15' Lat='44.92'/>
+    </City>
+    <City Name='齐齐哈尔市' >
+        <District Name='齐齐哈尔市' Lon='123.95' Lat='47.33'/>
+        <District Name='龙沙区' Lon='123.95' Lat='47.32'/>
+        <District Name='建华区' Lon='123.95' Lat='47.35'/>
+        <District Name='铁锋区' Lon='123.98' Lat='47.35'/>
+        <District Name='昂昂溪区' Lon='123.8' Lat='47.15'/>
+        <District Name='富拉尔基区' Lon='123.62' Lat='47.2'/>
+        <District Name='龙江县' Lon='123.18' Lat='47.33'/>
+        <District Name='依安县' Lon='125.3' Lat='47.88'/>
+        <District Name='泰来县' Lon='123.42' Lat='46.4'/>
+        <District Name='甘南县' Lon='123.5' Lat='47.92'/>
+        <District Name='富裕县' Lon='124.47' Lat='47.82'/>
+        <District Name='克山县' Lon='125.87' Lat='48.03'/>
+        <District Name='克东县' Lon='126.25' Lat='48.03'/>
+        <District Name='拜泉县' Lon='126.08' Lat='47.6'/>
+        <District Name='讷河市' Lon='124.87' Lat='48.48'/>
+    </City>
+    <City Name='鸡西市' >
+        <District Name='鸡西市' Lon='130.97' Lat='45.3'/>
+        <District Name='鸡冠区' Lon='130.97' Lat='45.3'/>
+        <District Name='恒山区' Lon='130.93' Lat='45.2'/>
+        <District Name='滴道区' Lon='130.78' Lat='45.37'/>
+        <District Name='梨树区' Lon='130.68' Lat='45.08'/>
+        <District Name='城子河区' Lon='131' Lat='45.33'/>
+        <District Name='麻山区' Lon='130.52' Lat='45.2'/>
+        <District Name='鸡东县' Lon='131.13' Lat='45.25'/>
+        <District Name='虎林市' Lon='132.98' Lat='45.77'/>
+        <District Name='密山市' Lon='131.87' Lat='45.55'/>
+    </City>
+    <City Name='鹤岗市' >
+        <District Name='鹤岗市' Lon='130.27' Lat='47.33'/>
+        <District Name='向阳区' Lon='130.28' Lat='47.33'/>
+        <District Name='向阳区' Lon='130.33' Lat='46.8'/>
+        <District Name='工农区' Lon='130.25' Lat='47.32'/>
+        <District Name='南山区' Lon='130.28' Lat='47.3'/>
+        <District Name='兴安区' Lon='130.22' Lat='47.27'/>
+        <District Name='东山区' Lon='130.32' Lat='47.33'/>
+        <District Name='兴山区' Lon='130.3' Lat='47.37'/>
+        <District Name='萝北县' Lon='130.83' Lat='47.58'/>
+        <District Name='绥滨县' Lon='131.85' Lat='47.28'/>
+    </City>
+    <City Name='双鸭山市' >
+        <District Name='双鸭山市' Lon='131.15' Lat='46.63'/>
+        <District Name='尖山区' Lon='131.17' Lat='46.63'/>
+        <District Name='岭东区' Lon='131.13' Lat='46.57'/>
+        <District Name='四方台区' Lon='131.33' Lat='46.58'/>
+        <District Name='宝山区' Lon='131.4' Lat='46.57'/>
+        <District Name='集贤县' Lon='131.13' Lat='46.72'/>
+        <District Name='友谊县' Lon='131.8' Lat='46.78'/>
+        <District Name='宝清县' Lon='132.2' Lat='46.32'/>
+        <District Name='饶河县' Lon='134.02' Lat='46.8'/>
+    </City>
+    <City Name='大庆市' >
+        <District Name='大庆市' Lon='125.03' Lat='46.58'/>
+        <District Name='萨尔图区' Lon='125.02' Lat='46.6'/>
+        <District Name='龙凤区' Lon='125.1' Lat='46.53'/>
+        <District Name='让胡路区' Lon='124.85' Lat='46.65'/>
+        <District Name='红岗区' Lon='124.88' Lat='46.4'/>
+        <District Name='大同区' Lon='124.82' Lat='46.03'/>
+        <District Name='肇州县' Lon='125.27' Lat='45.7'/>
+        <District Name='肇源县' Lon='125.08' Lat='45.52'/>
+        <District Name='林甸县' Lon='124.87' Lat='47.18'/>
+        <District Name='杜尔伯特蒙古族自治县' Lon='124.45' Lat='46.87'/>
+    </City>
+    <City Name='伊春市' >
+        <District Name='伊春市' Lon='128.9' Lat='47.73'/>
+        <District Name='南岔区' Lon='129.28' Lat='47.13'/>
+        <District Name='友好区' Lon='128.82' Lat='47.85'/>
+        <District Name='西林区' Lon='129.28' Lat='47.48'/>
+        <District Name='翠峦区' Lon='128.65' Lat='47.72'/>
+        <District Name='新青区' Lon='129.53' Lat='48.28'/>
+        <District Name='美溪区' Lon='129.13' Lat='47.63'/>
+        <District Name='金山屯区' Lon='129.43' Lat='47.42'/>
+        <District Name='五营区' Lon='129.25' Lat='48.12'/>
+        <District Name='乌马河区' Lon='128.78' Lat='47.72'/>
+        <District Name='汤旺河区' Lon='129.57' Lat='48.45'/>
+        <District Name='带岭区' Lon='129.02' Lat='47.02'/>
+        <District Name='乌伊岭区' Lon='129.42' Lat='48.6'/>
+        <District Name='红星区' Lon='129.38' Lat='48.23'/>
+        <District Name='上甘岭区' Lon='129.02' Lat='47.97'/>
+        <District Name='嘉荫县' Lon='130.38' Lat='48.88'/>
+        <District Name='铁力市' Lon='128.02' Lat='46.98'/>
+    </City>
+    <City Name='佳木斯市' >
+        <District Name='佳木斯市' Lon='130.37' Lat='46.82'/>
+        <District Name='向阳区' Lon='130.28' Lat='47.33'/>
+        <District Name='向阳区' Lon='130.33' Lat='46.8'/>
+        <District Name='前进区' Lon='130.37' Lat='46.82'/>
+        <District Name='东风区' Lon='130.4' Lat='46.82'/>
+        <District Name='郊区' Lon='130.32' Lat='46.8'/>
+        <District Name='桦南县' Lon='130.57' Lat='46.23'/>
+        <District Name='桦川县' Lon='130.72' Lat='47.02'/>
+        <District Name='汤原县' Lon='129.9' Lat='46.73'/>
+        <District Name='抚远县' Lon='134.28' Lat='48.37'/>
+        <District Name='同江市' Lon='132.52' Lat='47.65'/>
+        <District Name='富锦市' Lon='132.03' Lat='47.25'/>
+    </City>
+    <City Name='七台河市' >
+        <District Name='七台河市' Lon='130.95' Lat='45.78'/>
+        <District Name='新兴区' Lon='130.83' Lat='45.8'/>
+        <District Name='桃山区' Lon='130.97' Lat='45.77'/>
+        <District Name='茄子河区' Lon='131.07' Lat='45.77'/>
+        <District Name='勃利县' Lon='130.57' Lat='45.75'/>
+    </City>
+    <City Name='牡丹江市' >
+        <District Name='牡丹江市' Lon='129.6' Lat='44.58'/>
+        <District Name='东安区' Lon='129.62' Lat='44.58'/>
+        <District Name='阳明区' Lon='129.63' Lat='44.6'/>
+        <District Name='爱民区' Lon='129.58' Lat='44.58'/>
+        <District Name='西安区' Lon='129.62' Lat='44.57'/>
+        <District Name='东宁县' Lon='131.12' Lat='44.07'/>
+        <District Name='林口县' Lon='130.27' Lat='45.3'/>
+        <District Name='绥芬河市' Lon='131.15' Lat='44.42'/>
+        <District Name='海林市' Lon='129.38' Lat='44.57'/>
+        <District Name='宁安市' Lon='129.47' Lat='44.35'/>
+        <District Name='穆棱市' Lon='130.52' Lat='44.92'/>
+    </City>
+    <City Name='黑河市' >
+        <District Name='黑河市' Lon='127.48' Lat='50.25'/>
+        <District Name='爱辉区' Lon='127.48' Lat='50.25'/>
+        <District Name='逊克县' Lon='128.47' Lat='49.58'/>
+        <District Name='孙吴县' Lon='127.32' Lat='49.42'/>
+        <District Name='北安市' Lon='126.52' Lat='48.23'/>
+        <District Name='五大连池市' Lon='126.2' Lat='48.52'/>
+    </City>
+    <City Name='绥化市' >
+        <District Name='绥化市' Lon='126.98' Lat='46.63'/>
+        <District Name='北林区' Lon='126.98' Lat='46.63'/>
+        <District Name='望奎县' Lon='126.48' Lat='46.83'/>
+        <District Name='兰西县' Lon='126.28' Lat='46.27'/>
+        <District Name='青冈县' Lon='126.1' Lat='46.68'/>
+        <District Name='庆安县' Lon='127.52' Lat='46.88'/>
+        <District Name='明水县' Lon='125.9' Lat='47.18'/>
+        <District Name='绥棱县' Lon='127.1' Lat='47.25'/>
+        <District Name='安达市' Lon='125.33' Lat='46.4'/>
+        <District Name='肇东市' Lon='125.98' Lat='46.07'/>
+        <District Name='海伦市' Lon='126.97' Lat='47.47'/>
+    </City>
+    <City Name='大兴安岭地区' >
+        <District Name='大兴安岭地区' Lon='124.12' Lat='50.42'/>
+        <District Name='呼玛县' Lon='126.65' Lat='51.73'/>
+        <District Name='塔河县' Lon='124.7' Lat='52.32'/>
+        <District Name='漠河县' Lon='122.53' Lat='52.97'/>
+    </City>
+</Province>
+<Province Name='上海市' >
+    <City Name='上海市' >
+        <District Name='上海市' Lon='121.47' Lat='31.23'/>
+        <District Name='黄浦区' Lon='121.48' Lat='31.23'/>
+        <District Name='卢湾区' Lon='121.47' Lat='31.22'/>
+        <District Name='徐汇区' Lon='121.43' Lat='31.18'/>
+        <District Name='长宁区' Lon='121.42' Lat='31.22'/>
+        <District Name='静安区' Lon='121.45' Lat='31.23'/>
+        <District Name='普陀区' Lon='121.4' Lat='31.25'/>
+        <District Name='闸北区' Lon='121.45' Lat='31.25'/>
+        <District Name='虹口区' Lon='121.5' Lat='31.27'/>
+        <District Name='杨浦区' Lon='121.52' Lat='31.27'/>
+        <District Name='闵行区' Lon='121.38' Lat='31.12'/>
+        <District Name='宝山区' Lon='121.48' Lat='31.4'/>
+        <District Name='嘉定区' Lon='121.27' Lat='31.38'/>
+        <District Name='浦东新区' Lon='121.53' Lat='31.22'/>
+        <District Name='金山区' Lon='121.33' Lat='30.75'/>
+        <District Name='松江区' Lon='121.22' Lat='31.03'/>
+        <District Name='青浦区' Lon='121.12' Lat='31.15'/>
+        <District Name='南汇区' Lon='121.75' Lat='31.05'/>
+        <District Name='奉贤区' Lon='121.47' Lat='30.92'/>
+        <District Name='崇明县' Lon='121.4' Lat='31.62'/>
+    </City>
+</Province>
+<Province Name='江苏省' >
+    <City Name='南京市' >
+        <District Name='南京市' Lon='118.78' Lat='32.07'/>
+        <District Name='玄武区' Lon='118.8' Lat='32.05'/>
+        <District Name='白下区' Lon='118.78' Lat='32.03'/>
+        <District Name='秦淮区' Lon='118.8' Lat='32.02'/>
+        <District Name='建邺区' Lon='118.75' Lat='32.03'/>
+        <District Name='鼓楼区' Lon='117.18' Lat='34.28'/>
+        <District Name='鼓楼区' Lon='118.77' Lat='32.07'/>
+        <District Name='下关区' Lon='118.73' Lat='32.08'/>
+        <District Name='浦口区' Lon='118.62' Lat='32.05'/>
+        <District Name='栖霞区' Lon='118.88' Lat='32.12'/>
+        <District Name='雨花台区' Lon='118.77' Lat='32'/>
+        <District Name='江宁区' Lon='118.85' Lat='31.95'/>
+        <District Name='六合区' Lon='118.83' Lat='32.35'/>
+        <District Name='溧水县' Lon='119.02' Lat='31.65'/>
+        <District Name='高淳县' Lon='118.88' Lat='31.33'/>
+    </City>
+    <City Name='无锡市' >
+        <District Name='无锡市' Lon='120.3' Lat='31.57'/>
+        <District Name='崇安区' Lon='120.3' Lat='31.58'/>
+        <District Name='南长区' Lon='120.3' Lat='31.57'/>
+        <District Name='北塘区' Lon='120.28' Lat='31.58'/>
+        <District Name='锡山区' Lon='120.35' Lat='31.6'/>
+        <District Name='惠山区' Lon='120.28' Lat='31.68'/>
+        <District Name='滨湖区' Lon='120.27' Lat='31.57'/>
+        <District Name='江阴市' Lon='120.27' Lat='31.9'/>
+        <District Name='宜兴市' Lon='119.82' Lat='31.35'/>
+    </City>
+    <City Name='徐州市' >
+        <District Name='徐州市' Lon='117.18' Lat='34.27'/>
+        <District Name='鼓楼区' Lon='117.18' Lat='34.28'/>
+        <District Name='鼓楼区' Lon='118.77' Lat='32.07'/>
+        <District Name='云龙区' Lon='117.22' Lat='34.25'/>
+        <District Name='九里区' Lon='117.13' Lat='34.3'/>
+        <District Name='贾汪区' Lon='117.45' Lat='34.45'/>
+        <District Name='泉山区' Lon='117.18' Lat='34.25'/>
+        <District Name='丰县' Lon='116.6' Lat='34.7'/>
+        <District Name='沛县' Lon='116.93' Lat='34.73'/>
+        <District Name='铜山县' Lon='117.17' Lat='34.18'/>
+        <District Name='睢宁县' Lon='117.95' Lat='33.9'/>
+        <District Name='新沂市' Lon='118.35' Lat='34.38'/>
+        <District Name='邳州市' Lon='117.95' Lat='34.32'/>
+    </City>
+    <City Name='常州市' >
+        <District Name='常州市' Lon='119.95' Lat='31.78'/>
+        <District Name='天宁区' Lon='119.93' Lat='31.75'/>
+        <District Name='钟楼区' Lon='119.93' Lat='31.78'/>
+        <District Name='戚墅堰区' Lon='120.05' Lat='31.73'/>
+        <District Name='新北区' Lon='119.97' Lat='31.83'/>
+        <District Name='武进区' Lon='119.93' Lat='31.72'/>
+        <District Name='溧阳市' Lon='119.48' Lat='31.42'/>
+        <District Name='金坛市' Lon='119.57' Lat='31.75'/>
+    </City>
+    <City Name='苏州市' >
+        <District Name='苏州市' Lon='120.58' Lat='31.3'/>
+        <District Name='沧浪区' Lon='120.63' Lat='31.3'/>
+        <District Name='平江区' Lon='120.63' Lat='31.32'/>
+        <District Name='金阊区' Lon='120.6' Lat='31.32'/>
+        <District Name='虎丘区' Lon='120.57' Lat='31.3'/>
+        <District Name='吴中区' Lon='120.63' Lat='31.27'/>
+        <District Name='相城区' Lon='120.63' Lat='31.37'/>
+        <District Name='常熟市' Lon='120.75' Lat='31.65'/>
+        <District Name='张家港市' Lon='120.55' Lat='31.87'/>
+        <District Name='昆山市' Lon='120.98' Lat='31.38'/>
+        <District Name='吴江市' Lon='120.63' Lat='31.17'/>
+        <District Name='太仓市' Lon='121.1' Lat='31.45'/>
+    </City>
+    <City Name='南通市' >
+        <District Name='南通市' Lon='120.88' Lat='31.98'/>
+        <District Name='崇川区' Lon='120.85' Lat='32'/>
+        <District Name='港闸区' Lon='120.8' Lat='32.03'/>
+        <District Name='海安县' Lon='120.45' Lat='32.55'/>
+        <District Name='如东县' Lon='121.18' Lat='32.32'/>
+        <District Name='启东市' Lon='121.65' Lat='31.82'/>
+        <District Name='如皋市' Lon='120.57' Lat='32.4'/>
+        <District Name='通州市' Lon='121.07' Lat='32.08'/>
+        <District Name='海门市' Lon='121.17' Lat='31.9'/>
+    </City>
+    <City Name='连云港市' >
+        <District Name='连云港市' Lon='119.22' Lat='34.6'/>
+        <District Name='连云区' Lon='119.37' Lat='34.75'/>
+        <District Name='新浦区' Lon='119.17' Lat='34.6'/>
+        <District Name='海州区' Lon='119.12' Lat='34.57'/>
+        <District Name='赣榆县' Lon='119.12' Lat='34.83'/>
+        <District Name='东海县' Lon='118.77' Lat='34.53'/>
+        <District Name='灌云县' Lon='119.25' Lat='34.3'/>
+        <District Name='灌南县' Lon='119.35' Lat='34.08'/>
+    </City>
+    <City Name='淮安市' >
+        <District Name='淮安市' Lon='119.02' Lat='33.62'/>
+        <District Name='清河区' Lon='119.02' Lat='33.6'/>
+        <District Name='楚州区' Lon='119.13' Lat='33.5'/>
+        <District Name='淮阴区' Lon='119.03' Lat='33.63'/>
+        <District Name='清浦区' Lon='119.03' Lat='33.58'/>
+        <District Name='涟水县' Lon='119.27' Lat='33.78'/>
+        <District Name='洪泽县' Lon='118.83' Lat='33.3'/>
+        <District Name='盱眙县' Lon='118.48' Lat='33'/>
+        <District Name='金湖县' Lon='119.02' Lat='33.02'/>
+    </City>
+    <City Name='盐城市' >
+        <District Name='盐城市' Lon='120.15' Lat='33.35'/>
+        <District Name='亭湖区' Lon='120.13' Lat='33.4'/>
+        <District Name='盐都区' Lon='120.15' Lat='33.33'/>
+        <District Name='响水县' Lon='119.57' Lat='34.2'/>
+        <District Name='滨海县' Lon='119.83' Lat='33.98'/>
+        <District Name='阜宁县' Lon='119.8' Lat='33.78'/>
+        <District Name='射阳县' Lon='120.25' Lat='33.78'/>
+        <District Name='建湖县' Lon='119.8' Lat='33.47'/>
+        <District Name='东台市' Lon='120.3' Lat='32.85'/>
+        <District Name='大丰市' Lon='120.47' Lat='33.2'/>
+    </City>
+    <City Name='扬州市' >
+        <District Name='扬州市' Lon='119.4' Lat='32.4'/>
+        <District Name='广陵区' Lon='119.43' Lat='32.38'/>
+        <District Name='邗江区' Lon='119.4' Lat='32.38'/>
+        <District Name='维扬区' Lon='119.4' Lat='32.42'/>
+        <District Name='宝应县' Lon='119.3' Lat='33.23'/>
+        <District Name='仪征市' Lon='119.18' Lat='32.27'/>
+        <District Name='高邮市' Lon='119.43' Lat='32.78'/>
+        <District Name='江都市' Lon='119.55' Lat='32.43'/>
+    </City>
+    <City Name='镇江市' >
+        <District Name='镇江市' Lon='119.45' Lat='32.2'/>
+        <District Name='京口区' Lon='119.47' Lat='32.2'/>
+        <District Name='润州区' Lon='119.4' Lat='32.2'/>
+        <District Name='丹徒区' Lon='119.45' Lat='32.13'/>
+        <District Name='丹阳市' Lon='119.57' Lat='32'/>
+        <District Name='扬中市' Lon='119.82' Lat='32.23'/>
+        <District Name='句容市' Lon='119.17' Lat='31.95'/>
+    </City>
+    <City Name='泰州市' >
+        <District Name='泰州市' Lon='119.92' Lat='32.45'/>
+        <District Name='兴化市' Lon='119.85' Lat='32.92'/>
+        <District Name='靖江市' Lon='120.27' Lat='32.02'/>
+        <District Name='泰兴市' Lon='120.02' Lat='32.17'/>
+        <District Name='姜堰市' Lon='120.15' Lat='32.52'/>
+    </City>
+    <City Name='宿迁市' >
+        <District Name='宿迁市' Lon='118.28' Lat='33.97'/>
+        <District Name='宿城区' Lon='118.25' Lat='33.97'/>
+        <District Name='宿豫区' Lon='118.32' Lat='33.95'/>
+        <District Name='沭阳县' Lon='118.77' Lat='34.13'/>
+        <District Name='泗阳县' Lon='118.68' Lat='33.72'/>
+        <District Name='泗洪县' Lon='118.22' Lat='33.47'/>
+    </City>
+</Province>
+<Province Name='浙江省' >
+    <City Name='杭州市' >
+        <District Name='杭州市' Lon='120.15' Lat='30.28'/>
+        <District Name='上城区' Lon='120.17' Lat='30.25'/>
+        <District Name='下城区' Lon='120.17' Lat='30.28'/>
+        <District Name='江干区' Lon='120.2' Lat='30.27'/>
+        <District Name='拱墅区' Lon='120.13' Lat='30.32'/>
+        <District Name='西湖区' Lon='120.13' Lat='30.27'/>
+        <District Name='滨江区' Lon='120.2' Lat='30.2'/>
+        <District Name='萧山区' Lon='120.27' Lat='30.17'/>
+        <District Name='余杭区' Lon='120.3' Lat='30.42'/>
+        <District Name='桐庐县' Lon='119.67' Lat='29.8'/>
+        <District Name='淳安县' Lon='119.03' Lat='29.6'/>
+        <District Name='建德市' Lon='119.28' Lat='29.48'/>
+        <District Name='富阳市' Lon='119.95' Lat='30.05'/>
+        <District Name='临安市' Lon='119.72' Lat='30.23'/>
+    </City>
+    <City Name='宁波市' >
+        <District Name='宁波市' Lon='121.55' Lat='29.88'/>
+        <District Name='海曙区' Lon='121.55' Lat='29.87'/>
+        <District Name='江东区' Lon='121.57' Lat='29.87'/>
+        <District Name='江北区' Lon='121.55' Lat='29.88'/>
+        <District Name='北仑区' Lon='121.85' Lat='29.93'/>
+        <District Name='镇海区' Lon='121.72' Lat='29.95'/>
+        <District Name='鄞州区' Lon='121.53' Lat='29.83'/>
+        <District Name='象山县' Lon='121.87' Lat='29.48'/>
+        <District Name='宁海县' Lon='121.43' Lat='29.28'/>
+        <District Name='余姚市' Lon='121.15' Lat='30.03'/>
+        <District Name='慈溪市' Lon='121.23' Lat='30.17'/>
+        <District Name='奉化市' Lon='121.4' Lat='29.65'/>
+    </City>
+    <City Name='温州市' >
+        <District Name='温州市' Lon='120.7' Lat='28'/>
+        <District Name='鹿城区' Lon='120.65' Lat='28.02'/>
+        <District Name='龙湾区' Lon='120.82' Lat='27.93'/>
+        <District Name='洞头县' Lon='121.15' Lat='27.83'/>
+        <District Name='永嘉县' Lon='120.68' Lat='28.15'/>
+        <District Name='平阳县' Lon='120.57' Lat='27.67'/>
+        <District Name='苍南县' Lon='120.4' Lat='27.5'/>
+        <District Name='文成县' Lon='120.08' Lat='27.78'/>
+        <District Name='泰顺县' Lon='119.72' Lat='27.57'/>
+        <District Name='瑞安市' Lon='120.63' Lat='27.78'/>
+        <District Name='乐清市' Lon='120.95' Lat='28.13'/>
+    </City>
+    <City Name='嘉兴市' >
+        <District Name='嘉兴市' Lon='120.75' Lat='30.75'/>
+        <District Name='秀洲区' Lon='120.7' Lat='30.77'/>
+        <District Name='嘉善县' Lon='120.92' Lat='30.85'/>
+        <District Name='海盐县' Lon='120.95' Lat='30.53'/>
+        <District Name='海宁市' Lon='120.68' Lat='30.53'/>
+        <District Name='平湖市' Lon='121.02' Lat='30.7'/>
+        <District Name='桐乡市' Lon='120.57' Lat='30.63'/>
+    </City>
+    <City Name='湖州市' >
+        <District Name='湖州市' Lon='120.08' Lat='30.9'/>
+        <District Name='吴兴区' Lon='120.12' Lat='30.87'/>
+        <District Name='南浔区' Lon='120.43' Lat='30.88'/>
+        <District Name='德清县' Lon='119.97' Lat='30.53'/>
+        <District Name='长兴县' Lon='119.9' Lat='31.02'/>
+        <District Name='安吉县' Lon='119.68' Lat='30.63'/>
+    </City>
+    <City Name='绍兴市' >
+        <District Name='绍兴市' Lon='120.57' Lat='30'/>
+        <District Name='越城区' Lon='120.57' Lat='30'/>
+        <District Name='绍兴县' Lon='120.47' Lat='30.08'/>
+        <District Name='新昌县' Lon='120.9' Lat='29.5'/>
+        <District Name='诸暨市' Lon='120.23' Lat='29.72'/>
+        <District Name='上虞市' Lon='120.87' Lat='30.03'/>
+        <District Name='嵊州市' Lon='120.82' Lat='29.58'/>
+    </City>
+    <City Name='金华市' >
+        <District Name='金华市' Lon='119.65' Lat='29.08'/>
+        <District Name='婺城区' Lon='119.65' Lat='29.08'/>
+        <District Name='金东区' Lon='119.7' Lat='29.08'/>
+        <District Name='武义县' Lon='119.82' Lat='28.9'/>
+        <District Name='浦江县' Lon='119.88' Lat='29.45'/>
+        <District Name='磐安县' Lon='120.43' Lat='29.05'/>
+        <District Name='兰溪市' Lon='119.45' Lat='29.22'/>
+        <District Name='义乌市' Lon='120.07' Lat='29.3'/>
+        <District Name='东阳市' Lon='120.23' Lat='29.28'/>
+        <District Name='永康市' Lon='120.03' Lat='28.9'/>
+    </City>
+    <City Name='衢州市' >
+        <District Name='衢州市' Lon='118.87' Lat='28.93'/>
+        <District Name='柯城区' Lon='118.87' Lat='28.93'/>
+        <District Name='衢江区' Lon='118.93' Lat='28.98'/>
+        <District Name='常山县' Lon='118.52' Lat='28.9'/>
+        <District Name='开化县' Lon='118.42' Lat='29.13'/>
+        <District Name='龙游县' Lon='119.17' Lat='29.03'/>
+        <District Name='江山市' Lon='118.62' Lat='28.75'/>
+    </City>
+    <City Name='舟山市' >
+        <District Name='舟山市' Lon='122.2' Lat='30'/>
+        <District Name='定海区' Lon='122.1' Lat='30.02'/>
+        <District Name='普陀区' Lon='122.3' Lat='29.95'/>
+        <District Name='岱山县' Lon='122.2' Lat='30.25'/>
+        <District Name='嵊泗县' Lon='122.45' Lat='30.73'/>
+    </City>
+    <City Name='台州市' >
+        <District Name='台州市' Lon='121.43' Lat='28.68'/>
+        <District Name='椒江区' Lon='121.43' Lat='28.68'/>
+        <District Name='黄岩区' Lon='121.27' Lat='28.65'/>
+        <District Name='路桥区' Lon='121.38' Lat='28.58'/>
+        <District Name='玉环县' Lon='121.23' Lat='28.13'/>
+        <District Name='三门县' Lon='121.38' Lat='29.12'/>
+        <District Name='天台县' Lon='121.03' Lat='29.13'/>
+        <District Name='仙居县' Lon='120.73' Lat='28.87'/>
+        <District Name='温岭市' Lon='121.37' Lat='28.37'/>
+        <District Name='临海市' Lon='121.12' Lat='28.85'/>
+    </City>
+    <City Name='丽水市' >
+        <District Name='丽水市' Lon='119.92' Lat='28.45'/>
+        <District Name='莲都区' Lon='119.92' Lat='28.45'/>
+        <District Name='青田县' Lon='120.28' Lat='28.15'/>
+        <District Name='缙云县' Lon='120.07' Lat='28.65'/>
+        <District Name='遂昌县' Lon='119.27' Lat='28.6'/>
+        <District Name='松阳县' Lon='119.48' Lat='28.45'/>
+        <District Name='云和县' Lon='119.57' Lat='28.12'/>
+        <District Name='庆元县' Lon='119.05' Lat='27.62'/>
+        <District Name='景宁畲族自治县' Lon='119.63' Lat='27.98'/>
+        <District Name='龙泉市' Lon='119.13' Lat='28.08'/>
+    </City>
+</Province>
+<Province Name='安徽省' >
+    <City Name='合肥市' >
+        <District Name='合肥市' Lon='117.25' Lat='31.83'/>
+        <District Name='瑶海区' Lon='117.3' Lat='31.87'/>
+        <District Name='庐阳区' Lon='117.25' Lat='31.88'/>
+        <District Name='蜀山区' Lon='117.27' Lat='31.85'/>
+        <District Name='包河区' Lon='117.3' Lat='31.8'/>
+        <District Name='长丰县' Lon='117.17' Lat='32.48'/>
+        <District Name='肥东县' Lon='117.47' Lat='31.88'/>
+        <District Name='肥西县' Lon='117.17' Lat='31.72'/>
+    </City>
+    <City Name='芜湖市' >
+        <District Name='芜湖市' Lon='118.38' Lat='31.33'/>
+        <District Name='镜湖区' Lon='118.37' Lat='31.35'/>
+        <District Name='鸠江区' Lon='118.38' Lat='31.37'/>
+        <District Name='芜湖县' Lon='118.57' Lat='31.15'/>
+        <District Name='繁昌县' Lon='118.2' Lat='31.08'/>
+        <District Name='南陵县' Lon='118.33' Lat='30.92'/>
+    </City>
+    <City Name='蚌埠市' >
+        <District Name='蚌埠市' Lon='117.38' Lat='32.92'/>
+        <District Name='龙子湖区' Lon='117.38' Lat='32.95'/>
+        <District Name='蚌山区' Lon='117.35' Lat='32.95'/>
+        <District Name='禹会区' Lon='117.33' Lat='32.93'/>
+        <District Name='淮上区' Lon='117.35' Lat='32.97'/>
+        <District Name='怀远县' Lon='117.18' Lat='32.97'/>
+        <District Name='五河县' Lon='117.88' Lat='33.15'/>
+        <District Name='固镇县' Lon='117.32' Lat='33.32'/>
+    </City>
+    <City Name='淮南市' >
+        <District Name='淮南市' Lon='117' Lat='32.63'/>
+        <District Name='大通区' Lon='117.05' Lat='32.63'/>
+        <District Name='田家庵区' Lon='117' Lat='32.67'/>
+        <District Name='谢家集区' Lon='116.85' Lat='32.6'/>
+        <District Name='八公山区' Lon='116.83' Lat='32.63'/>
+        <District Name='潘集区' Lon='116.82' Lat='32.78'/>
+        <District Name='凤台县' Lon='116.72' Lat='32.7'/>
+    </City>
+    <City Name='马鞍山市' >
+        <District Name='马鞍山市' Lon='118.5' Lat='31.7'/>
+        <District Name='金家庄区' Lon='118.48' Lat='31.73'/>
+        <District Name='花山区' Lon='118.5' Lat='31.72'/>
+        <District Name='雨山区' Lon='118.48' Lat='31.68'/>
+        <District Name='当涂县' Lon='118.48' Lat='31.55'/>
+    </City>
+    <City Name='淮北市' >
+        <District Name='淮北市' Lon='116.8' Lat='33.95'/>
+        <District Name='杜集区' Lon='116.82' Lat='34'/>
+        <District Name='相山区' Lon='116.8' Lat='33.95'/>
+        <District Name='烈山区' Lon='116.8' Lat='33.9'/>
+        <District Name='濉溪县' Lon='116.77' Lat='33.92'/>
+    </City>
+    <City Name='铜陵市' >
+        <District Name='铜陵市' Lon='117.82' Lat='30.93'/>
+        <District Name='铜官山区' Lon='117.82' Lat='30.93'/>
+        <District Name='狮子山区' Lon='117.85' Lat='30.95'/>
+        <District Name='郊区' Lon='117.78' Lat='30.92'/>
+        <District Name='铜陵县' Lon='117.78' Lat='30.95'/>
+    </City>
+    <City Name='安庆市' >
+        <District Name='安庆市' Lon='117.05' Lat='30.53'/>
+        <District Name='迎江区' Lon='117.05' Lat='30.5'/>
+        <District Name='大观区' Lon='117.03' Lat='30.52'/>
+        <District Name='郊区' Lon='117.78' Lat='30.92'/>
+        <District Name='怀宁县' Lon='116.83' Lat='30.72'/>
+        <District Name='枞阳县' Lon='117.2' Lat='30.7'/>
+        <District Name='潜山县' Lon='116.57' Lat='30.63'/>
+        <District Name='太湖县' Lon='116.27' Lat='30.43'/>
+        <District Name='宿松县' Lon='116.12' Lat='30.15'/>
+        <District Name='望江县' Lon='116.68' Lat='30.13'/>
+        <District Name='岳西县' Lon='116.35' Lat='30.85'/>
+        <District Name='桐城市' Lon='116.95' Lat='31.05'/>
+    </City>
+    <City Name='黄山市' >
+        <District Name='黄山市' Lon='118.33' Lat='29.72'/>
+        <District Name='屯溪区' Lon='118.33' Lat='29.72'/>
+        <District Name='黄山区' Lon='118.13' Lat='30.3'/>
+        <District Name='徽州区' Lon='118.33' Lat='29.82'/>
+        <District Name='歙县' Lon='118.43' Lat='29.87'/>
+        <District Name='休宁县' Lon='118.18' Lat='29.78'/>
+        <District Name='黟县' Lon='117.93' Lat='29.93'/>
+        <District Name='祁门县' Lon='117.72' Lat='29.87'/>
+    </City>
+    <City Name='滁州市' >
+        <District Name='滁州市' Lon='118.32' Lat='32.3'/>
+        <District Name='琅琊区' Lon='118.3' Lat='32.3'/>
+        <District Name='南谯区' Lon='118.3' Lat='32.32'/>
+        <District Name='来安县' Lon='118.43' Lat='32.45'/>
+        <District Name='全椒县' Lon='118.27' Lat='32.1'/>
+        <District Name='定远县' Lon='117.67' Lat='32.53'/>
+        <District Name='凤阳县' Lon='117.57' Lat='32.87'/>
+        <District Name='天长市' Lon='119' Lat='32.7'/>
+        <District Name='明光市' Lon='117.98' Lat='32.78'/>
+    </City>
+    <City Name='阜阳市' >
+        <District Name='阜阳市' Lon='115.82' Lat='32.9'/>
+        <District Name='颍州区' Lon='115.8' Lat='32.88'/>
+        <District Name='颍东区' Lon='115.85' Lat='32.92'/>
+        <District Name='颍泉区' Lon='115.8' Lat='32.93'/>
+        <District Name='临泉县' Lon='115.25' Lat='33.07'/>
+        <District Name='太和县' Lon='115.62' Lat='33.17'/>
+        <District Name='阜南县' Lon='115.58' Lat='32.63'/>
+        <District Name='颍上县' Lon='116.27' Lat='32.63'/>
+    </City>
+    <City Name='宿州市' >
+        <District Name='宿州市' Lon='116.98' Lat='33.63'/>
+        <District Name='埇桥区' Lon='116.97' Lat='33.63'/>
+        <District Name='砀山县' Lon='116.35' Lat='34.42'/>
+        <District Name='萧县' Lon='116.93' Lat='34.18'/>
+        <District Name='灵璧县' Lon='117.55' Lat='33.55'/>
+        <District Name='泗县' Lon='117.88' Lat='33.48'/>
+    </City>
+    <City Name='巢湖市' >
+        <District Name='巢湖市' Lon='117.87' Lat='31.6'/>
+        <District Name='居巢区' Lon='117.85' Lat='31.6'/>
+        <District Name='庐江县' Lon='117.28' Lat='31.25'/>
+        <District Name='无为县' Lon='117.92' Lat='31.3'/>
+        <District Name='含山县' Lon='118.1' Lat='31.72'/>
+        <District Name='和县' Lon='118.37' Lat='31.72'/>
+    </City>
+    <City Name='六安市' >
+        <District Name='六安市' Lon='116.5' Lat='31.77'/>
+        <District Name='金安区' Lon='116.5' Lat='31.77'/>
+        <District Name='裕安区' Lon='116.48' Lat='31.77'/>
+        <District Name='寿县' Lon='116.78' Lat='32.58'/>
+        <District Name='霍邱县' Lon='116.27' Lat='32.33'/>
+        <District Name='舒城县' Lon='116.93' Lat='31.47'/>
+        <District Name='金寨县' Lon='115.92' Lat='31.72'/>
+        <District Name='霍山县' Lon='116.33' Lat='31.4'/>
+    </City>
+    <City Name='亳州市' >
+        <District Name='亳州市' Lon='115.78' Lat='33.85'/>
+        <District Name='谯城区' Lon='115.77' Lat='33.88'/>
+        <District Name='涡阳县' Lon='116.22' Lat='33.52'/>
+        <District Name='蒙城县' Lon='116.57' Lat='33.27'/>
+        <District Name='利辛县' Lon='116.2' Lat='33.15'/>
+    </City>
+    <City Name='池州市' >
+        <District Name='池州市' Lon='117.48' Lat='30.67'/>
+        <District Name='贵池区' Lon='117.48' Lat='30.65'/>
+        <District Name='东至县' Lon='117.02' Lat='30.1'/>
+        <District Name='石台县' Lon='117.48' Lat='30.22'/>
+        <District Name='青阳县' Lon='117.85' Lat='30.65'/>
+    </City>
+    <City Name='宣城市' >
+        <District Name='宣城市' Lon='118.75' Lat='30.95'/>
+        <District Name='宣州区' Lon='118.75' Lat='30.95'/>
+        <District Name='郎溪县' Lon='119.17' Lat='31.13'/>
+        <District Name='广德县' Lon='119.42' Lat='30.9'/>
+        <District Name='泾县' Lon='118.4' Lat='30.7'/>
+        <District Name='绩溪县' Lon='118.6' Lat='30.07'/>
+        <District Name='旌德县' Lon='118.53' Lat='30.28'/>
+        <District Name='宁国市' Lon='118.98' Lat='30.63'/>
+    </City>
+</Province>
+<Province Name='福建省' >
+    <City Name='福州市' >
+        <District Name='福州市' Lon='119.3' Lat='26.08'/>
+        <District Name='鼓楼区' Lon='119.3' Lat='26.08'/>
+        <District Name='台江区' Lon='119.3' Lat='26.07'/>
+        <District Name='仓山区' Lon='119.32' Lat='26.05'/>
+        <District Name='马尾区' Lon='119.45' Lat='26'/>
+        <District Name='晋安区' Lon='119.32' Lat='26.08'/>
+        <District Name='闽侯县' Lon='119.13' Lat='26.15'/>
+        <District Name='连江县' Lon='119.53' Lat='26.2'/>
+        <District Name='罗源县' Lon='119.55' Lat='26.48'/>
+        <District Name='闽清县' Lon='118.85' Lat='26.22'/>
+        <District Name='永泰县' Lon='118.93' Lat='25.87'/>
+        <District Name='平潭县' Lon='119.78' Lat='25.52'/>
+        <District Name='福清市' Lon='119.38' Lat='25.72'/>
+        <District Name='长乐市' Lon='119.52' Lat='25.97'/>
+    </City>
+    <City Name='厦门市' >
+        <District Name='厦门市' Lon='118.08' Lat='24.48'/>
+        <District Name='思明区' Lon='118.08' Lat='24.45'/>
+        <District Name='海沧区' Lon='117.98' Lat='24.47'/>
+        <District Name='湖里区' Lon='118.08' Lat='24.52'/>
+        <District Name='集美区' Lon='118.1' Lat='24.57'/>
+        <District Name='同安区' Lon='118.15' Lat='24.73'/>
+        <District Name='翔安区' Lon='118.23' Lat='24.62'/>
+    </City>
+    <City Name='莆田市' >
+        <District Name='莆田市' Lon='119' Lat='25.43'/>
+        <District Name='城厢区' Lon='119' Lat='25.43'/>
+        <District Name='涵江区' Lon='119.1' Lat='25.45'/>
+        <District Name='荔城区' Lon='119.02' Lat='25.43'/>
+        <District Name='秀屿区' Lon='119.08' Lat='25.32'/>
+        <District Name='仙游县' Lon='118.68' Lat='25.37'/>
+    </City>
+    <City Name='三明市' >
+        <District Name='三明市' Lon='117.62' Lat='26.27'/>
+        <District Name='梅列区' Lon='117.63' Lat='26.27'/>
+        <District Name='三元区' Lon='117.6' Lat='26.23'/>
+        <District Name='明溪县' Lon='117.2' Lat='26.37'/>
+        <District Name='清流县' Lon='116.82' Lat='26.18'/>
+        <District Name='宁化县' Lon='116.65' Lat='26.27'/>
+        <District Name='大田县' Lon='117.85' Lat='25.7'/>
+        <District Name='尤溪县' Lon='118.18' Lat='26.17'/>
+        <District Name='沙县' Lon='117.78' Lat='26.4'/>
+        <District Name='将乐县' Lon='117.47' Lat='26.73'/>
+        <District Name='泰宁县' Lon='117.17' Lat='26.9'/>
+        <District Name='建宁县' Lon='116.83' Lat='26.83'/>
+        <District Name='永安市' Lon='117.37' Lat='25.98'/>
+    </City>
+    <City Name='泉州市' >
+        <District Name='泉州市' Lon='118.67' Lat='24.88'/>
+        <District Name='鲤城区' Lon='118.6' Lat='24.92'/>
+        <District Name='丰泽区' Lon='118.6' Lat='24.92'/>
+        <District Name='洛江区' Lon='118.67' Lat='24.95'/>
+        <District Name='泉港区' Lon='118.88' Lat='25.12'/>
+        <District Name='惠安县' Lon='118.8' Lat='25.03'/>
+        <District Name='安溪县' Lon='118.18' Lat='25.07'/>
+        <District Name='永春县' Lon='118.3' Lat='25.32'/>
+        <District Name='德化县' Lon='118.23' Lat='25.5'/>
+        <District Name='金门县' Lon='118.32' Lat='24.43'/>
+        <District Name='石狮市' Lon='118.65' Lat='24.73'/>
+        <District Name='晋江市' Lon='118.58' Lat='24.82'/>
+        <District Name='南安市' Lon='118.38' Lat='24.97'/>
+    </City>
+    <City Name='漳州市' >
+        <District Name='漳州市' Lon='117.65' Lat='24.52'/>
+        <District Name='芗城区' Lon='117.65' Lat='24.52'/>
+        <District Name='龙文区' Lon='117.72' Lat='24.52'/>
+        <District Name='云霄县' Lon='117.33' Lat='23.95'/>
+        <District Name='漳浦县' Lon='117.62' Lat='24.13'/>
+        <District Name='诏安县' Lon='117.18' Lat='23.72'/>
+        <District Name='长泰县' Lon='117.75' Lat='24.62'/>
+        <District Name='东山县' Lon='117.43' Lat='23.7'/>
+        <District Name='南靖县' Lon='117.37' Lat='24.52'/>
+        <District Name='平和县' Lon='117.3' Lat='24.37'/>
+        <District Name='华安县' Lon='117.53' Lat='25.02'/>
+        <District Name='龙海市' Lon='117.82' Lat='24.45'/>
+    </City>
+    <City Name='南平市' >
+        <District Name='南平市' Lon='118.17' Lat='26.65'/>
+        <District Name='延平区' Lon='118.17' Lat='26.65'/>
+        <District Name='顺昌县' Lon='117.8' Lat='26.8'/>
+        <District Name='浦城县' Lon='118.53' Lat='27.92'/>
+        <District Name='光泽县' Lon='117.33' Lat='27.55'/>
+        <District Name='松溪县' Lon='118.78' Lat='27.53'/>
+        <District Name='政和县' Lon='118.85' Lat='27.37'/>
+        <District Name='邵武市' Lon='117.48' Lat='27.37'/>
+        <District Name='武夷山市' Lon='118.03' Lat='27.77'/>
+        <District Name='建瓯市' Lon='118.32' Lat='27.03'/>
+        <District Name='建阳市' Lon='118.12' Lat='27.33'/>
+    </City>
+    <City Name='龙岩市' >
+        <District Name='龙岩市' Lon='117.03' Lat='25.1'/>
+        <District Name='新罗区' Lon='117.03' Lat='25.1'/>
+        <District Name='长汀县' Lon='116.35' Lat='25.83'/>
+        <District Name='永定县' Lon='116.73' Lat='24.72'/>
+        <District Name='上杭县' Lon='116.42' Lat='25.05'/>
+        <District Name='武平县' Lon='116.1' Lat='25.1'/>
+        <District Name='连城县' Lon='116.75' Lat='25.72'/>
+        <District Name='漳平市' Lon='117.42' Lat='25.3'/>
+    </City>
+    <City Name='宁德市' >
+        <District Name='宁德市' Lon='119.52' Lat='26.67'/>
+        <District Name='蕉城区' Lon='119.52' Lat='26.67'/>
+        <District Name='霞浦县' Lon='120' Lat='26.88'/>
+        <District Name='古田县' Lon='118.75' Lat='26.58'/>
+        <District Name='屏南县' Lon='118.98' Lat='26.92'/>
+        <District Name='寿宁县' Lon='119.5' Lat='27.47'/>
+        <District Name='周宁县' Lon='119.33' Lat='27.12'/>
+        <District Name='柘荣县' Lon='119.9' Lat='27.23'/>
+        <District Name='福安市' Lon='119.65' Lat='27.08'/>
+        <District Name='福鼎市' Lon='120.22' Lat='27.33'/>
+    </City>
+</Province>
+<Province Name='江西省' >
+    <City Name='南昌市' >
+        <District Name='南昌市' Lon='115.85' Lat='28.68'/>
+        <District Name='东湖区' Lon='115.9' Lat='28.68'/>
+        <District Name='西湖区' Lon='115.87' Lat='28.67'/>
+        <District Name='青云谱区' Lon='115.92' Lat='28.63'/>
+        <District Name='湾里区' Lon='115.73' Lat='28.72'/>
+        <District Name='青山湖区' Lon='115.95' Lat='28.68'/>
+        <District Name='南昌县' Lon='115.93' Lat='28.55'/>
+        <District Name='新建县' Lon='115.82' Lat='28.7'/>
+        <District Name='安义县' Lon='115.55' Lat='28.85'/>
+        <District Name='进贤县' Lon='116.27' Lat='28.37'/>
+    </City>
+    <City Name='景德镇市' >
+        <District Name='景德镇市' Lon='117.17' Lat='29.27'/>
+        <District Name='昌江区' Lon='117.17' Lat='29.27'/>
+        <District Name='珠山区' Lon='117.2' Lat='29.3'/>
+        <District Name='浮梁县' Lon='117.25' Lat='29.37'/>
+        <District Name='乐平市' Lon='117.12' Lat='28.97'/>
+    </City>
+    <City Name='萍乡市' >
+        <District Name='萍乡市' Lon='113.85' Lat='27.63'/>
+        <District Name='安源区' Lon='113.87' Lat='27.65'/>
+        <District Name='湘东区' Lon='113.73' Lat='27.65'/>
+        <District Name='莲花县' Lon='113.95' Lat='27.13'/>
+        <District Name='上栗县' Lon='113.8' Lat='27.88'/>
+        <District Name='芦溪县' Lon='114.03' Lat='27.63'/>
+    </City>
+    <City Name='九江市' >
+        <District Name='九江市' Lon='116' Lat='29.7'/>
+        <District Name='庐山区' Lon='115.98' Lat='29.68'/>
+        <District Name='浔阳区' Lon='115.98' Lat='29.73'/>
+        <District Name='九江县' Lon='115.88' Lat='29.62'/>
+        <District Name='武宁县' Lon='115.1' Lat='29.27'/>
+        <District Name='修水县' Lon='114.57' Lat='29.03'/>
+        <District Name='永修县' Lon='115.8' Lat='29.03'/>
+        <District Name='德安县' Lon='115.77' Lat='29.33'/>
+        <District Name='星子县' Lon='116.03' Lat='29.45'/>
+        <District Name='都昌县' Lon='116.18' Lat='29.27'/>
+        <District Name='湖口县' Lon='116.22' Lat='29.73'/>
+        <District Name='彭泽县' Lon='116.55' Lat='29.9'/>
+        <District Name='瑞昌市' Lon='115.67' Lat='29.68'/>
+    </City>
+    <City Name='新余市' >
+        <District Name='新余市' Lon='114.92' Lat='27.82'/>
+        <District Name='渝水区' Lon='114.93' Lat='27.8'/>
+        <District Name='分宜县' Lon='114.67' Lat='27.82'/>
+    </City>
+    <City Name='鹰潭市' >
+        <District Name='鹰潭市' Lon='117.07' Lat='28.27'/>
+        <District Name='月湖区' Lon='117.05' Lat='28.23'/>
+        <District Name='余江县' Lon='116.82' Lat='28.2'/>
+        <District Name='贵溪市' Lon='117.22' Lat='28.28'/>
+    </City>
+    <City Name='赣州市' >
+        <District Name='赣州市' Lon='114.93' Lat='25.83'/>
+        <District Name='章贡区' Lon='114.93' Lat='25.87'/>
+        <District Name='赣县' Lon='115' Lat='25.87'/>
+        <District Name='信丰县' Lon='114.93' Lat='25.38'/>
+        <District Name='大余县' Lon='114.35' Lat='25.4'/>
+        <District Name='上犹县' Lon='114.53' Lat='25.8'/>
+        <District Name='崇义县' Lon='114.3' Lat='25.7'/>
+        <District Name='安远县' Lon='115.38' Lat='25.13'/>
+        <District Name='龙南县' Lon='114.78' Lat='24.92'/>
+        <District Name='定南县' Lon='115.03' Lat='24.78'/>
+        <District Name='全南县' Lon='114.52' Lat='24.75'/>
+        <District Name='宁都县' Lon='116.02' Lat='26.48'/>
+        <District Name='于都县' Lon='115.42' Lat='25.95'/>
+        <District Name='兴国县' Lon='115.35' Lat='26.33'/>
+        <District Name='会昌县' Lon='115.78' Lat='25.6'/>
+        <District Name='寻乌县' Lon='115.65' Lat='24.95'/>
+        <District Name='石城县' Lon='116.33' Lat='26.33'/>
+        <District Name='瑞金市' Lon='116.03' Lat='25.88'/>
+        <District Name='南康市' Lon='114.75' Lat='25.65'/>
+    </City>
+    <City Name='吉安市' >
+        <District Name='吉安市' Lon='114.98' Lat='27.12'/>
+        <District Name='吉州区' Lon='114.98' Lat='27.12'/>
+        <District Name='青原区' Lon='115' Lat='27.1'/>
+        <District Name='吉安县' Lon='114.9' Lat='27.05'/>
+        <District Name='吉水县' Lon='115.13' Lat='27.22'/>
+        <District Name='峡江县' Lon='115.33' Lat='27.62'/>
+        <District Name='新干县' Lon='115.4' Lat='27.77'/>
+        <District Name='永丰县' Lon='115.43' Lat='27.32'/>
+        <District Name='泰和县' Lon='114.88' Lat='26.8'/>
+        <District Name='遂川县' Lon='114.52' Lat='26.33'/>
+        <District Name='万安县' Lon='114.78' Lat='26.47'/>
+    </City>
+    <City Name='吉安???' >
+        <District Name='安福县' Lon='114.62' Lat='27.38'/>
+    </City>
+    <City Name='吉安市' >
+        <District Name='永新县' Lon='114.23' Lat='26.95'/>
+        <District Name='井冈山市' Lon='114.27' Lat='26.72'/>
+    </City>
+    <City Name='宜春市' >
+        <District Name='宜春市' Lon='114.38' Lat='27.8'/>
+        <District Name='袁州区' Lon='114.38' Lat='27.8'/>
+        <District Name='奉新县' Lon='115.38' Lat='28.7'/>
+        <District Name='万载县' Lon='114.43' Lat='28.12'/>
+        <District Name='上高县' Lon='114.92' Lat='28.23'/>
+        <District Name='宜丰县' Lon='114.78' Lat='28.38'/>
+        <District Name='靖安县' Lon='115.35' Lat='28.87'/>
+        <District Name='铜鼓县' Lon='114.37' Lat='28.53'/>
+        <District Name='丰城市' Lon='115.78' Lat='28.2'/>
+        <District Name='樟树市' Lon='115.53' Lat='28.07'/>
+        <District Name='高安市' Lon='115.37' Lat='28.42'/>
+    </City>
+    <City Name='抚州市' >
+        <District Name='抚州市' Lon='116.35' Lat='28'/>
+        <District Name='临川区' Lon='116.35' Lat='27.98'/>
+        <District Name='南城县' Lon='116.63' Lat='27.55'/>
+        <District Name='黎川县' Lon='116.92' Lat='27.3'/>
+        <District Name='南丰县' Lon='116.53' Lat='27.22'/>
+        <District Name='崇仁县' Lon='116.05' Lat='27.77'/>
+        <District Name='乐安县' Lon='115.83' Lat='27.43'/>
+        <District Name='宜黄县' Lon='116.22' Lat='27.55'/>
+        <District Name='金溪县' Lon='116.77' Lat='27.92'/>
+        <District Name='资溪县' Lon='117.07' Lat='27.7'/>
+        <District Name='东乡县' Lon='116.62' Lat='28.23'/>
+        <District Name='广昌县' Lon='116.32' Lat='26.83'/>
+    </City>
+    <City Name='上饶市' >
+        <District Name='上饶市' Lon='117.97' Lat='28.45'/>
+        <District Name='信州区' Lon='117.95' Lat='28.43'/>
+        <District Name='上饶县' Lon='117.92' Lat='28.43'/>
+        <District Name='广丰县' Lon='118.18' Lat='28.43'/>
+        <District Name='玉山县' Lon='118.25' Lat='28.68'/>
+        <District Name='铅山县' Lon='117.7' Lat='28.32'/>
+        <District Name='横峰县' Lon='117.6' Lat='28.42'/>
+        <District Name='弋阳县' Lon='117.43' Lat='28.4'/>
+        <District Name='余干县' Lon='116.68' Lat='28.7'/>
+        <District Name='鄱阳县' Lon='116.67' Lat='29'/>
+        <District Name='万年县' Lon='117.07' Lat='28.7'/>
+        <District Name='婺源县' Lon='117.85' Lat='29.25'/>
+        <District Name='德兴市' Lon='117.57' Lat='28.95'/>
+    </City>
+</Province>
+<Province Name='山东省' >
+    <City Name='济南市' >
+        <District Name='济南市' Lon='116.98' Lat='36.67'/>
+        <District Name='历下区' Lon='117.08' Lat='36.67'/>
+        <District Name='市中区' Lon='117' Lat='36.65'/>
+        <District Name='市中区' Lon='116.58' Lat='35.4'/>
+        <District Name='市中区' Lon='117.57' Lat='34.87'/>
+        <District Name='槐荫区' Lon='116.93' Lat='36.65'/>
+        <District Name='天桥区' Lon='116.98' Lat='36.68'/>
+        <District Name='历城区' Lon='117.07' Lat='36.68'/>
+        <District Name='长清区' Lon='116.73' Lat='36.55'/>
+        <District Name='平阴县' Lon='116.45' Lat='36.28'/>
+        <District Name='济阳县' Lon='117.22' Lat='36.98'/>
+        <District Name='商河县' Lon='117.15' Lat='37.32'/>
+        <District Name='章丘市' Lon='117.53' Lat='36.72'/>
+    </City>
+    <City Name='青岛市' >
+        <District Name='青岛市' Lon='120.38' Lat='36.07'/>
+        <District Name='市南区' Lon='120.38' Lat='36.07'/>
+        <District Name='市北区' Lon='120.38' Lat='36.08'/>
+        <District Name='四方区' Lon='120.35' Lat='36.1'/>
+        <District Name='黄岛区' Lon='120.18' Lat='35.97'/>
+        <District Name='崂山区' Lon='120.47' Lat='36.1'/>
+        <District Name='李沧区' Lon='120.43' Lat='36.15'/>
+        <District Name='城阳区' Lon='120.37' Lat='36.3'/>
+        <District Name='胶州市' Lon='120.03' Lat='36.27'/>
+        <District Name='即墨市' Lon='120.45' Lat='36.38'/>
+        <District Name='平度市' Lon='119.95' Lat='36.78'/>
+        <District Name='胶南市' Lon='120.03' Lat='35.87'/>
+        <District Name='莱西市' Lon='120.5' Lat='36.87'/>
+    </City>
+    <City Name='淄博市' >
+        <District Name='淄博市' Lon='118.05' Lat='36.82'/>
+        <District Name='张店区' Lon='118.03' Lat='36.82'/>
+        <District Name='博山区' Lon='117.85' Lat='36.5'/>
+        <District Name='临淄区' Lon='118.3' Lat='36.82'/>
+        <District Name='周村区' Lon='117.87' Lat='36.8'/>
+        <District Name='桓台县' Lon='118.08' Lat='36.97'/>
+        <District Name='高青县' Lon='117.82' Lat='37.17'/>
+        <District Name='沂源县' Lon='118.17' Lat='36.18'/>
+    </City>
+    <City Name='枣庄市' >
+        <District Name='枣庄市' Lon='117.32' Lat='34.82'/>
+        <District Name='市中区' Lon='117' Lat='36.65'/>
+        <District Name='市中区' Lon='116.58' Lat='35.4'/>
+        <District Name='市中区' Lon='117.57' Lat='34.87'/>
+        <District Name='薛城区' Lon='117.25' Lat='34.8'/>
+        <District Name='峄城区' Lon='117.58' Lat='34.77'/>
+        <District Name='台儿庄区' Lon='117.73' Lat='34.57'/>
+        <District Name='山亭区' Lon='117.45' Lat='35.08'/>
+        <District Name='滕州市' Lon='117.15' Lat='35.08'/>
+    </City>
+    <City Name='东营市' >
+        <District Name='东营市' Lon='118.67' Lat='37.43'/>
+        <District Name='东营区' Lon='118.5' Lat='37.47'/>
+        <District Name='河口区' Lon='118.53' Lat='37.88'/>
+        <District Name='垦利县' Lon='118.55' Lat='37.58'/>
+        <District Name='利津县' Lon='118.25' Lat='37.48'/>
+        <District Name='广饶县' Lon='118.4' Lat='37.07'/>
+    </City>
+    <City Name='烟台市' >
+        <District Name='烟台市' Lon='121.43' Lat='37.45'/>
+        <District Name='芝罘区' Lon='121.38' Lat='37.53'/>
+        <District Name='福山区' Lon='121.25' Lat='37.5'/>
+        <District Name='牟平区' Lon='121.6' Lat='37.38'/>
+        <District Name='莱山区' Lon='121.43' Lat='37.5'/>
+        <District Name='长岛县' Lon='120.73' Lat='37.92'/>
+        <District Name='龙口市' Lon='120.52' Lat='37.65'/>
+        <District Name='莱阳市' Lon='120.7' Lat='36.98'/>
+        <District Name='莱州市' Lon='119.93' Lat='37.18'/>
+        <District Name='蓬莱市' Lon='120.75' Lat='37.82'/>
+        <District Name='招远市' Lon='120.4' Lat='37.37'/>
+        <District Name='栖霞市' Lon='120.83' Lat='37.3'/>
+        <District Name='海阳市' Lon='121.15' Lat='36.78'/>
+    </City>
+    <City Name='潍坊市' >
+        <District Name='潍坊市' Lon='119.15' Lat='36.7'/>
+        <District Name='潍城区' Lon='119.1' Lat='36.72'/>
+        <District Name='寒亭区' Lon='119.22' Lat='36.77'/>
+        <District Name='坊子区' Lon='119.17' Lat='36.67'/>
+        <District Name='奎文区' Lon='119.12' Lat='36.72'/>
+        <District Name='临朐县' Lon='118.53' Lat='36.52'/>
+        <District Name='昌乐县' Lon='118.82' Lat='36.7'/>
+        <District Name='青州市' Lon='118.47' Lat='36.68'/>
+        <District Name='诸城市' Lon='119.4' Lat='36'/>
+        <District Name='寿光市' Lon='118.73' Lat='36.88'/>
+        <District Name='安丘市' Lon='119.2' Lat='36.43'/>
+        <District Name='高密市' Lon='119.75' Lat='36.38'/>
+        <District Name='昌邑市' Lon='119.4' Lat='36.87'/>
+    </City>
+    <City Name='济宁市' >
+        <District Name='济宁市' Lon='116.58' Lat='35.42'/>
+        <District Name='市中区' Lon='117' Lat='36.65'/>
+        <District Name='市中区' Lon='116.58' Lat='35.4'/>
+        <District Name='市中区' Lon='117.57' Lat='34.87'/>
+        <District Name='任城区' Lon='116.58' Lat='35.42'/>
+        <District Name='微山县' Lon='117.13' Lat='34.82'/>
+        <District Name='鱼台县' Lon='116.65' Lat='35'/>
+        <District Name='金乡县' Lon='116.3' Lat='35.07'/>
+        <District Name='嘉祥县' Lon='116.33' Lat='35.42'/>
+        <District Name='汶上县' Lon='116.48' Lat='35.73'/>
+        <District Name='泗水县' Lon='117.27' Lat='35.67'/>
+        <District Name='梁山县' Lon='116.08' Lat='35.8'/>
+        <District Name='曲阜市' Lon='116.98' Lat='35.58'/>
+        <District Name='兖州市' Lon='116.83' Lat='35.55'/>
+        <District Name='邹城市' Lon='116.97' Lat='35.4'/>
+    </City>
+    <City Name='泰安市' >
+        <District Name='泰安市' Lon='117.08' Lat='36.2'/>
+        <District Name='泰山区' Lon='117.13' Lat='36.18'/>
+        <District Name='岱岳区' Lon='117' Lat='36.18'/>
+        <District Name='宁阳县' Lon='116.8' Lat='35.77'/>
+        <District Name='东平县' Lon='116.47' Lat='35.93'/>
+        <District Name='新泰市' Lon='117.77' Lat='35.92'/>
+        <District Name='肥城市' Lon='116.77' Lat='36.18'/>
+    </City>
+    <City Name='威海市' >
+        <District Name='威海市' Lon='122.12' Lat='37.52'/>
+        <District Name='环翠区' Lon='122.12' Lat='37.5'/>
+        <District Name='文登市' Lon='122.05' Lat='37.2'/>
+        <District Name='荣成市' Lon='122.42' Lat='37.17'/>
+        <District Name='乳山市' Lon='121.53' Lat='36.92'/>
+    </City>
+    <City Name='日照市' >
+        <District Name='日照市' Lon='119.52' Lat='35.42'/>
+        <District Name='东港区' Lon='119.45' Lat='35.42'/>
+        <District Name='岚山区' Lon='119.33' Lat='35.1'/>
+        <District Name='五莲县' Lon='119.2' Lat='35.75'/>
+        <District Name='莒县' Lon='118.83' Lat='35.58'/>
+    </City>
+    <City Name='莱芜市' >
+        <District Name='莱芜市' Lon='117.67' Lat='36.22'/>
+        <District Name='莱城区' Lon='117.65' Lat='36.2'/>
+        <District Name='钢城区' Lon='117.8' Lat='36.07'/>
+    </City>
+    <City Name='临沂市' >
+        <District Name='临沂市' Lon='118.35' Lat='35.05'/>
+        <District Name='兰山区' Lon='118.33' Lat='35.07'/>
+        <District Name='罗庄区' Lon='118.28' Lat='34.98'/>
+        <District Name='河东区' Lon='118.4' Lat='35.08'/>
+        <District Name='沂南县' Lon='118.47' Lat='35.55'/>
+        <District Name='郯城县' Lon='118.35' Lat='34.62'/>
+        <District Name='沂水县' Lon='118.62' Lat='35.78'/>
+        <District Name='苍山县' Lon='118.05' Lat='34.85'/>
+        <District Name='费县' Lon='117.97' Lat='35.27'/>
+        <District Name='平邑县' Lon='117.63' Lat='35.5'/>
+        <District Name='莒南县' Lon='118.83' Lat='35.18'/>
+        <District Name='蒙阴县' Lon='117.93' Lat='35.72'/>
+        <District Name='临沭县' Lon='118.65' Lat='34.92'/>
+    </City>
+    <City Name='德州市' >
+        <District Name='德州市' Lon='116.3' Lat='37.45'/>
+        <District Name='德城区' Lon='116.3' Lat='37.45'/>
+        <District Name='陵县' Lon='116.57' Lat='37.33'/>
+        <District Name='宁津县' Lon='116.78' Lat='37.65'/>
+        <District Name='庆云县' Lon='117.38' Lat='37.78'/>
+        <District Name='临邑县' Lon='116.87' Lat='37.18'/>
+        <District Name='齐河县' Lon='116.75' Lat='36.8'/>
+        <District Name='平原县' Lon='116.43' Lat='37.17'/>
+        <District Name='夏津县' Lon='116' Lat='36.95'/>
+        <District Name='武城县' Lon='116.07' Lat='37.22'/>
+        <District Name='乐陵市' Lon='117.23' Lat='37.73'/>
+        <District Name='禹城市' Lon='116.63' Lat='36.93'/>
+    </City>
+    <City Name='聊城市' >
+        <District Name='聊城市' Lon='115.98' Lat='36.45'/>
+        <District Name='东昌府区' Lon='115.98' Lat='36.45'/>
+        <District Name='阳谷县' Lon='115.78' Lat='36.12'/>
+        <District Name='莘县' Lon='115.67' Lat='36.23'/>
+        <District Name='茌平县' Lon='116.25' Lat='36.58'/>
+        <District Name='东阿县' Lon='116.25' Lat='36.33'/>
+        <District Name='冠县' Lon='115.43' Lat='36.48'/>
+        <District Name='高唐县' Lon='116.23' Lat='36.87'/>
+        <District Name='临清市' Lon='115.7' Lat='36.85'/>
+    </City>
+    <City Name='滨州市' >
+        <District Name='滨州市' Lon='117.97' Lat='37.38'/>
+        <District Name='滨城区' Lon='118' Lat='37.38'/>
+        <District Name='惠民县' Lon='117.5' Lat='37.48'/>
+        <District Name='阳信县' Lon='117.58' Lat='37.63'/>
+        <District Name='无棣县' Lon='117.6' Lat='37.73'/>
+        <District Name='沾化县' Lon='118.13' Lat='37.7'/>
+        <District Name='博兴县' Lon='118.13' Lat='37.15'/>
+        <District Name='邹平县' Lon='117.73' Lat='36.88'/>
+    </City>
+    <City Name='牡丹区' >
+        <District Name='牡丹区' Lon='115.43' Lat='35.25'/>
+        <District Name='曹县' Lon='115.53' Lat='34.83'/>
+        <District Name='单县' Lon='116.08' Lat='34.8'/>
+        <District Name='成武县' Lon='115.88' Lat='34.95'/>
+        <District Name='巨野县' Lon='116.08' Lat='35.4'/>
+        <District Name='郓城县' Lon='115.93' Lat='35.6'/>
+        <District Name='鄄城县' Lon='115.5' Lat='35.57'/>
+        <District Name='定陶县' Lon='115.57' Lat='35.07'/>
+        <District Name='东明县' Lon='115.08' Lat='35.28'/>
+    </City>
+</Province>
+<Province Name='河南省' >
+    <City Name='郑州市' >
+        <District Name='郑州市' Lon='113.62' Lat='34.75'/>
+        <District Name='中原区' Lon='113.6' Lat='34.75'/>
+        <District Name='二七区' Lon='113.65' Lat='34.73'/>
+        <District Name='管城回族区' Lon='113.67' Lat='34.75'/>
+        <District Name='金水区' Lon='113.65' Lat='34.78'/>
+        <District Name='上街区' Lon='113.28' Lat='34.82'/>
+        <District Name='惠济区' Lon='113.6' Lat='34.87'/>
+        <District Name='中牟县' Lon='113.97' Lat='34.72'/>
+        <District Name='巩义市' Lon='112.98' Lat='34.77'/>
+        <District Name='荥阳市' Lon='113.4' Lat='34.78'/>
+        <District Name='新密市' Lon='113.38' Lat='34.53'/>
+        <District Name='新郑市' Lon='113.73' Lat='34.4'/>
+        <District Name='登封市' Lon='113.03' Lat='34.47'/>
+    </City>
+    <City Name='开封市' >
+        <District Name='开封市' Lon='114.3' Lat='34.8'/>
+        <District Name='龙亭区' Lon='114.35' Lat='34.8'/>
+        <District Name='顺河回族区' Lon='114.35' Lat='34.8'/>
+        <District Name='鼓楼区' Lon='114.35' Lat='34.78'/>
+        <District Name='杞县' Lon='114.78' Lat='34.55'/>
+        <District Name='通许县' Lon='114.47' Lat='34.48'/>
+        <District Name='尉氏县' Lon='114.18' Lat='34.42'/>
+        <District Name='开封县' Lon='114.43' Lat='34.77'/>
+        <District Name='兰考县' Lon='114.82' Lat='34.82'/>
+    </City>
+    <City Name='洛阳市' >
+        <District Name='洛阳市' Lon='112.45' Lat='34.62'/>
+        <District Name='老城区' Lon='112.47' Lat='34.68'/>
+        <District Name='西工区' Lon='112.43' Lat='34.67'/>
+        <District Name='涧西区' Lon='112.4' Lat='34.67'/>
+        <District Name='吉利区' Lon='112.58' Lat='34.9'/>
+        <District Name='洛龙区' Lon='112.45' Lat='34.62'/>
+        <District Name='孟津县' Lon='112.43' Lat='34.83'/>
+        <District Name='新安县' Lon='112.15' Lat='34.72'/>
+        <District Name='栾川县' Lon='111.62' Lat='33.78'/>
+        <District Name='嵩县' Lon='112.1' Lat='34.15'/>
+        <District Name='汝阳县' Lon='112.47' Lat='34.15'/>
+        <District Name='宜阳县' Lon='112.17' Lat='34.52'/>
+        <District Name='洛宁县' Lon='111.65' Lat='34.38'/>
+        <District Name='伊川县' Lon='112.42' Lat='34.42'/>
+        <District Name='偃师市' Lon='112.78' Lat='34.73'/>
+    </City>
+    <City Name='平顶山市' >
+        <District Name='平顶山市' Lon='113.18' Lat='33.77'/>
+        <District Name='新华区' Lon='113.3' Lat='33.73'/>
+        <District Name='卫东区' Lon='113.33' Lat='33.73'/>
+        <District Name='石龙区' Lon='112.88' Lat='33.9'/>
+        <District Name='湛河区' Lon='113.28' Lat='33.73'/>
+        <District Name='宝丰县' Lon='113.07' Lat='33.88'/>
+        <District Name='叶县' Lon='113.35' Lat='33.62'/>
+        <District Name='鲁山县' Lon='112.9' Lat='33.73'/>
+        <District Name='郏县' Lon='113.22' Lat='33.97'/>
+        <District Name='舞钢市' Lon='113.52' Lat='33.3'/>
+        <District Name='汝州市' Lon='112.83' Lat='34.17'/>
+    </City>
+    <City Name='安阳市' >
+        <District Name='安阳市' Lon='114.38' Lat='36.1'/>
+        <District Name='文峰区' Lon='114.35' Lat='36.08'/>
+        <District Name='北关区' Lon='114.35' Lat='36.12'/>
+        <District Name='殷都区' Lon='114.3' Lat='36.12'/>
+        <District Name='龙安区' Lon='114.32' Lat='36.1'/>
+        <District Name='安阳县' Lon='114.35' Lat='36.1'/>
+        <District Name='汤阴县' Lon='114.35' Lat='35.92'/>
+        <District Name='滑县' Lon='114.52' Lat='35.58'/>
+        <District Name='内黄县' Lon='114.9' Lat='35.95'/>
+        <District Name='林州市' Lon='113.82' Lat='36.07'/>
+    </City>
+    <City Name='鹤壁市' >
+        <District Name='鹤壁市' Lon='114.28' Lat='35.75'/>
+        <District Name='鹤山区' Lon='114.15' Lat='35.95'/>
+        <District Name='山城区' Lon='114.18' Lat='35.9'/>
+        <District Name='淇滨区' Lon='114.3' Lat='35.73'/>
+        <District Name='浚县' Lon='114.55' Lat='35.67'/>
+        <District Name='淇县' Lon='114.2' Lat='35.6'/>
+    </City>
+    <City Name='新乡市' >
+        <District Name='新乡市' Lon='113.9' Lat='35.3'/>
+        <District Name='红旗区' Lon='113.87' Lat='35.3'/>
+        <District Name='卫滨区' Lon='113.85' Lat='35.3'/>
+        <District Name='凤泉区' Lon='113.92' Lat='35.38'/>
+        <District Name='牧野区' Lon='113.9' Lat='35.32'/>
+        <District Name='新乡县' Lon='113.8' Lat='35.2'/>
+        <District Name='获嘉县' Lon='113.65' Lat='35.27'/>
+        <District Name='原阳县' Lon='113.97' Lat='35.05'/>
+        <District Name='延津县' Lon='114.2' Lat='35.15'/>
+        <District Name='封丘县' Lon='114.42' Lat='35.05'/>
+        <District Name='长垣县' Lon='114.68' Lat='35.2'/>
+        <District Name='卫辉市' Lon='114.07' Lat='35.4'/>
+        <District Name='辉县市' Lon='113.8' Lat='35.47'/>
+    </City>
+    <City Name='焦作市' >
+        <District Name='焦作市' Lon='113.25' Lat='35.22'/>
+        <District Name='解放区' Lon='113.22' Lat='35.25'/>
+        <District Name='中站区' Lon='113.17' Lat='35.23'/>
+        <District Name='马村区' Lon='113.32' Lat='35.27'/>
+        <District Name='山阳区' Lon='113.25' Lat='35.22'/>
+        <District Name='修武县' Lon='113.43' Lat='35.23'/>
+        <District Name='博爱县' Lon='113.07' Lat='35.17'/>
+        <District Name='武陟县' Lon='113.38' Lat='35.1'/>
+        <District Name='温县' Lon='113.08' Lat='34.93'/>
+        <District Name='济源市' Lon='112.58' Lat='35.07'/>
+        <District Name='沁阳市' Lon='112.93' Lat='35.08'/>
+        <District Name='孟州市' Lon='112.78' Lat='34.9'/>
+    </City>
+    <City Name='濮阳市' >
+        <District Name='濮阳市' Lon='115.03' Lat='35.77'/>
+        <District Name='华龙区' Lon='115.07' Lat='35.78'/>
+        <District Name='清丰县' Lon='115.12' Lat='35.9'/>
+        <District Name='南乐县' Lon='115.2' Lat='36.08'/>
+        <District Name='范县' Lon='115.5' Lat='35.87'/>
+        <District Name='台前县' Lon='115.85' Lat='36'/>
+        <District Name='濮阳县' Lon='115.02' Lat='35.7'/>
+    </City>
+    <City Name='许昌市' >
+        <District Name='许昌市' Lon='113.85' Lat='34.03'/>
+        <District Name='魏都区' Lon='113.82' Lat='34.03'/>
+        <District Name='许昌县' Lon='113.83' Lat='34'/>
+        <District Name='鄢陵县' Lon='114.2' Lat='34.1'/>
+        <District Name='襄城县' Lon='113.48' Lat='33.85'/>
+        <District Name='禹州市' Lon='113.47' Lat='34.17'/>
+        <District Name='长葛市' Lon='113.77' Lat='34.22'/>
+    </City>
+    <City Name='漯河市' >
+        <District Name='漯河市' Lon='114.02' Lat='33.58'/>
+        <District Name='郾城区' Lon='114' Lat='33.58'/>
+        <District Name='召陵区' Lon='114.07' Lat='33.57'/>
+        <District Name='舞阳县' Lon='113.6' Lat='33.43'/>
+        <District Name='临颍县' Lon='113.93' Lat='33.82'/>
+    </City>
+    <City Name='三门峡市' >
+        <District Name='三门峡市' Lon='111.2' Lat='34.78'/>
+        <District Name='湖滨区' Lon='111.2' Lat='34.78'/>
+        <District Name='渑池县' Lon='111.75' Lat='34.77'/>
+        <District Name='陕县' Lon='111.08' Lat='34.7'/>
+        <District Name='卢氏县' Lon='111.05' Lat='34.05'/>
+        <District Name='义马市' Lon='111.87' Lat='34.75'/>
+        <District Name='灵宝市' Lon='110.87' Lat='34.52'/>
+    </City>
+    <City Name='南阳市' >
+        <District Name='南阳市' Lon='112.52' Lat='33'/>
+        <District Name='宛城区' Lon='112.55' Lat='33.02'/>
+        <District Name='卧龙区' Lon='112.53' Lat='32.98'/>
+        <District Name='南召县' Lon='112.43' Lat='33.5'/>
+        <District Name='方城县' Lon='113' Lat='33.27'/>
+        <District Name='西峡县' Lon='111.48' Lat='33.28'/>
+        <District Name='镇平县' Lon='112.23' Lat='33.03'/>
+        <District Name='内乡县' Lon='111.85' Lat='33.05'/>
+        <District Name='淅川县' Lon='111.48' Lat='33.13'/>
+        <District Name='社旗县' Lon='112.93' Lat='33.05'/>
+        <District Name='唐河县' Lon='112.83' Lat='32.7'/>
+        <District Name='新野县' Lon='112.35' Lat='32.52'/>
+        <District Name='桐柏县' Lon='113.4' Lat='32.37'/>
+        <District Name='邓州市' Lon='112.08' Lat='32.68'/>
+    </City>
+    <City Name='商丘市' >
+        <District Name='商丘市' Lon='115.65' Lat='34.45'/>
+        <District Name='梁园区' Lon='115.63' Lat='34.45'/>
+        <District Name='睢阳区' Lon='115.63' Lat='34.38'/>
+        <District Name='民权县' Lon='115.13' Lat='34.65'/>
+        <District Name='睢县' Lon='115.07' Lat='34.45'/>
+        <District Name='宁陵县' Lon='115.32' Lat='34.45'/>
+        <District Name='柘城县' Lon='115.3' Lat='34.07'/>
+        <District Name='虞城县' Lon='115.85' Lat='34.4'/>
+        <District Name='夏邑县' Lon='116.13' Lat='34.23'/>
+        <District Name='永城市' Lon='116.43' Lat='33.92'/>
+    </City>
+    <City Name='信阳市' >
+        <District Name='信阳市' Lon='114.07' Lat='32.13'/>
+        <District Name='浉河区' Lon='114.05' Lat='32.12'/>
+        <District Name='平桥区' Lon='114.12' Lat='32.1'/>
+        <District Name='罗山县' Lon='114.53' Lat='32.2'/>
+        <District Name='光山县' Lon='114.9' Lat='32.02'/>
+        <District Name='新县' Lon='114.87' Lat='31.63'/>
+        <District Name='商城县' Lon='115.4' Lat='31.8'/>
+        <District Name='固始县' Lon='115.68' Lat='32.18'/>
+        <District Name='潢川县' Lon='115.03' Lat='32.13'/>
+        <District Name='淮滨县' Lon='115.4' Lat='32.43'/>
+        <District Name='息县' Lon='114.73' Lat='32.35'/>
+    </City>
+    <City Name='周口市' >
+        <District Name='周口市' Lon='114.65' Lat='33.62'/>
+        <District Name='扶沟县' Lon='114.38' Lat='34.07'/>
+        <District Name='西华县' Lon='114.53' Lat='33.8'/>
+        <District Name='商水县' Lon='114.6' Lat='33.53'/>
+        <District Name='沈丘县' Lon='115.07' Lat='33.4'/>
+        <District Name='郸城县' Lon='115.2' Lat='33.65'/>
+        <District Name='淮阳县' Lon='114.88' Lat='33.73'/>
+        <District Name='太康县' Lon='114.85' Lat='34.07'/>
+        <District Name='鹿邑县' Lon='115.48' Lat='33.87'/>
+        <District Name='项城市' Lon='114.9' Lat='33.45'/>
+    </City>
+    <City Name='驻马店市' >
+        <District Name='驻马店市' Lon='114.02' Lat='32.98'/>
+        <District Name='驿城区' Lon='114.05' Lat='32.97'/>
+        <District Name='西平县' Lon='114.02' Lat='33.38'/>
+        <District Name='上蔡县' Lon='114.27' Lat='33.27'/>
+        <District Name='平舆县' Lon='114.63' Lat='32.97'/>
+        <District Name='正阳县' Lon='114.38' Lat='32.6'/>
+        <District Name='确山县' Lon='114.02' Lat='32.8'/>
+        <District Name='泌阳县' Lon='113.32' Lat='32.72'/>
+        <District Name='汝南县' Lon='114.35' Lat='33'/>
+        <District Name='遂平县' Lon='114' Lat='33.15'/>
+        <District Name='新蔡县' Lon='114.98' Lat='32.75'/>
+    </City>
+</Province>
+<Province Name='湖北省' >
+    <City Name='武汉市' >
+        <District Name='武汉市' Lon='114.3' Lat='30.6'/>
+        <District Name='江岸区' Lon='114.3' Lat='30.6'/>
+        <District Name='江汉区' Lon='114.27' Lat='30.6'/>
+        <District Name='硚口区' Lon='114.27' Lat='30.57'/>
+        <District Name='汉阳区' Lon='114.27' Lat='30.55'/>
+        <District Name='武昌区' Lon='114.3' Lat='30.57'/>
+        <District Name='青山区' Lon='114.38' Lat='30.63'/>
+        <District Name='洪山区' Lon='114.33' Lat='30.5'/>
+        <District Name='东西湖区' Lon='114.13' Lat='30.62'/>
+        <District Name='汉南区' Lon='114.08' Lat='30.32'/>
+        <District Name='蔡甸区' Lon='114.03' Lat='30.58'/>
+        <District Name='江夏区' Lon='114.32' Lat='30.35'/>
+        <District Name='黄陂区' Lon='114.37' Lat='30.87'/>
+        <District Name='新洲区' Lon='114.8' Lat='30.85'/>
+    </City>
+    <City Name='黄石市' >
+        <District Name='黄石市' Lon='115.03' Lat='30.2'/>
+        <District Name='黄石港区' Lon='115.07' Lat='30.23'/>
+        <District Name='西塞山区' Lon='115.12' Lat='30.2'/>
+        <District Name='下陆区' Lon='114.97' Lat='30.18'/>
+        <District Name='铁山区' Lon='114.9' Lat='30.2'/>
+        <District Name='阳新县' Lon='115.2' Lat='29.85'/>
+        <District Name='大冶市' Lon='114.97' Lat='30.1'/>
+    </City>
+    <City Name='十堰市' >
+        <District Name='十堰市' Lon='110.78' Lat='32.65'/>
+        <District Name='茅箭区' Lon='110.82' Lat='32.6'/>
+        <District Name='张湾区' Lon='110.78' Lat='32.65'/>
+        <District Name='郧县' Lon='110.82' Lat='32.83'/>
+        <District Name='郧西县' Lon='110.42' Lat='33'/>
+        <District Name='竹山县' Lon='110.23' Lat='32.23'/>
+        <District Name='竹溪县' Lon='109.72' Lat='32.32'/>
+        <District Name='房县' Lon='110.73' Lat='32.07'/>
+        <District Name='丹江口市' Lon='111.52' Lat='32.55'/>
+    </City>
+    <City Name='宜昌市' >
+        <District Name='宜昌市' Lon='111.28' Lat='30.7'/>
+        <District Name='西陵区' Lon='111.27' Lat='30.7'/>
+        <District Name='伍家岗区' Lon='111.35' Lat='30.65'/>
+        <District Name='点军区' Lon='111.27' Lat='30.7'/>
+        <District Name='猇亭区' Lon='111.42' Lat='30.53'/>
+        <District Name='夷陵区' Lon='111.32' Lat='30.77'/>
+        <District Name='远安县' Lon='111.63' Lat='31.07'/>
+        <District Name='兴山县' Lon='110.75' Lat='31.35'/>
+        <District Name='秭归县' Lon='110.98' Lat='30.83'/>
+        <District Name='长阳土家族自治县' Lon='111.18' Lat='30.47'/>
+        <District Name='五峰土家族自治县' Lon='110.67' Lat='30.2'/>
+        <District Name='宜都市' Lon='111.45' Lat='30.4'/>
+        <District Name='当阳市' Lon='111.78' Lat='30.82'/>
+        <District Name='枝江市' Lon='111.77' Lat='30.43'/>
+    </City>
+    <City Name='襄樊市' >
+        <District Name='襄樊市' Lon='112.15' Lat='32.02'/>
+        <District Name='襄城区' Lon='112.15' Lat='32.02'/>
+        <District Name='樊城区' Lon='112.13' Lat='32.03'/>
+        <District Name='襄阳区' Lon='112.2' Lat='32.08'/>
+        <District Name='南漳县' Lon='111.83' Lat='31.78'/>
+        <District Name='谷城县' Lon='111.65' Lat='32.27'/>
+        <District Name='保康县' Lon='111.25' Lat='31.88'/>
+        <District Name='老河口市' Lon='111.67' Lat='32.38'/>
+        <District Name='枣阳市' Lon='112.75' Lat='32.13'/>
+        <District Name='宜城市' Lon='112.25' Lat='31.72'/>
+    </City>
+    <City Name='鄂州市' >
+        <District Name='鄂州市' Lon='114.88' Lat='30.4'/>
+        <District Name='梁子湖区' Lon='114.67' Lat='30.08'/>
+        <District Name='华容区' Lon='114.73' Lat='30.53'/>
+        <District Name='鄂城区' Lon='114.88' Lat='30.4'/>
+    </City>
+    <City Name='荆门市' >
+        <District Name='荆门市' Lon='112.2' Lat='31.03'/>
+        <District Name='东宝区' Lon='112.2' Lat='31.05'/>
+        <District Name='掇刀区' Lon='112.2' Lat='30.98'/>
+        <District Name='京山县' Lon='113.1' Lat='31.02'/>
+        <District Name='沙洋县' Lon='112.58' Lat='30.7'/>
+        <District Name='钟祥市' Lon='112.58' Lat='31.17'/>
+    </City>
+    <City Name='孝感市' >
+        <District Name='孝感市' Lon='113.92' Lat='30.93'/>
+        <District Name='孝南区' Lon='113.92' Lat='30.92'/>
+        <District Name='孝昌县' Lon='113.97' Lat='31.25'/>
+        <District Name='大悟县' Lon='114.12' Lat='31.57'/>
+        <District Name='云梦县' Lon='113.75' Lat='31.02'/>
+        <District Name='应城市' Lon='113.57' Lat='30.95'/>
+        <District Name='安陆市' Lon='113.68' Lat='31.27'/>
+        <District Name='汉川市' Lon='113.83' Lat='30.65'/>
+    </City>
+    <City Name='荆州市' >
+        <District Name='荆州市' Lon='112.23' Lat='30.33'/>
+        <District Name='沙市区' Lon='112.25' Lat='30.32'/>
+        <District Name='荆州区' Lon='112.18' Lat='30.35'/>
+        <District Name='公安县' Lon='112.23' Lat='30.07'/>
+        <District Name='监利县' Lon='112.88' Lat='29.82'/>
+        <District Name='江陵县' Lon='112.42' Lat='30.03'/>
+        <District Name='石首市' Lon='112.4' Lat='29.73'/>
+        <District Name='洪湖市' Lon='113.45' Lat='29.8'/>
+        <District Name='松滋市' Lon='111.77' Lat='30.18'/>
+    </City>
+    <City Name='黄冈市' >
+        <District Name='黄冈市' Lon='114.87' Lat='30.45'/>
+        <District Name='黄州区' Lon='114.88' Lat='30.43'/>
+        <District Name='团风县' Lon='114.87' Lat='30.63'/>
+        <District Name='红安县' Lon='114.62' Lat='31.28'/>
+        <District Name='罗田县' Lon='115.4' Lat='30.78'/>
+        <District Name='英山县' Lon='115.67' Lat='30.75'/>
+        <District Name='浠水县' Lon='115.27' Lat='30.45'/>
+        <District Name='蕲春县' Lon='115.43' Lat='30.23'/>
+        <District Name='黄梅县' Lon='115.93' Lat='30.08'/>
+        <District Name='麻城市' Lon='115.03' Lat='31.18'/>
+        <District Name='武穴市' Lon='115.55' Lat='29.85'/>
+    </City>
+    <City Name='咸宁市' >
+        <District Name='咸宁市' Lon='114.32' Lat='29.85'/>
+        <District Name='咸安区' Lon='114.3' Lat='29.87'/>
+        <District Name='嘉鱼县' Lon='113.9' Lat='29.98'/>
+        <District Name='通城县' Lon='113.82' Lat='29.25'/>
+        <District Name='崇阳县' Lon='114.03' Lat='29.55'/>
+        <District Name='通山县' Lon='114.52' Lat='29.6'/>
+        <District Name='赤壁市' Lon='113.88' Lat='29.72'/>
+    </City>
+    <City Name='随州市' >
+        <District Name='随州市' Lon='113.37' Lat='31.72'/>
+        <District Name='曾都区' Lon='113.37' Lat='31.72'/>
+        <District Name='广水市' Lon='113.82' Lat='31.62'/>
+    </City>
+    <City Name='恩施土家族苗族自治州' >
+        <District Name='恩施土家族苗族自治州' Lon='109.47' Lat='30.3'/>
+        <District Name='恩施市' Lon='109.47' Lat='30.3'/>
+        <District Name='利川市' Lon='108.93' Lat='30.3'/>
+        <District Name='建始县' Lon='109.73' Lat='30.6'/>
+        <District Name='巴东县' Lon='110.33' Lat='31.05'/>
+        <District Name='宣恩县' Lon='109.48' Lat='29.98'/>
+        <District Name='咸丰县' Lon='109.15' Lat='29.68'/>
+        <District Name='来凤县' Lon='109.4' Lat='29.52'/>
+        <District Name='鹤峰县' Lon='110.03' Lat='29.9'/>
+    </City>
+    <City Name='仙桃市' >
+        <District Name='仙桃市' Lon='113.45' Lat='30.37'/>
+        <District Name='潜江市' Lon='112.88' Lat='30.42'/>
+        <District Name='天门市' Lon='113.17' Lat='30.67'/>
+        <District Name='神农架林区' Lon='110.67' Lat='31.75'/>
+    </City>
+</Province>
+<Province Name='湖南省' >
+    <City Name='长沙市' >
+        <District Name='长沙市' Lon='112.93' Lat='28.23'/>
+        <District Name='芙蓉区' Lon='113.03' Lat='28.18'/>
+        <District Name='天心区' Lon='112.98' Lat='28.12'/>
+        <District Name='岳麓区' Lon='112.93' Lat='28.23'/>
+        <District Name='开福区' Lon='112.98' Lat='28.25'/>
+        <District Name='雨花区' Lon='113.03' Lat='28.13'/>
+        <District Name='长沙县' Lon='113.07' Lat='28.25'/>
+        <District Name='望城县' Lon='112.82' Lat='28.37'/>
+        <District Name='宁乡县' Lon='112.55' Lat='28.25'/>
+        <District Name='浏阳市' Lon='113.63' Lat='28.15'/>
+    </City>
+    <City Name='株洲市' >
+        <District Name='株洲市' Lon='113.13' Lat='27.83'/>
+        <District Name='荷塘区' Lon='113.17' Lat='27.87'/>
+        <District Name='芦淞区' Lon='113.15' Lat='27.83'/>
+        <District Name='石峰区' Lon='113.1' Lat='27.87'/>
+        <District Name='天元区' Lon='113.12' Lat='27.83'/>
+        <District Name='株洲县' Lon='113.13' Lat='27.72'/>
+        <District Name='攸县' Lon='113.33' Lat='27'/>
+        <District Name='茶陵县' Lon='113.53' Lat='26.8'/>
+        <District Name='炎陵县' Lon='113.77' Lat='26.48'/>
+        <District Name='醴陵市' Lon='113.48' Lat='27.67'/>
+    </City>
+    <City Name='湘潭市' >
+        <District Name='湘潭市' Lon='112.93' Lat='27.83'/>
+        <District Name='雨湖区' Lon='112.9' Lat='27.87'/>
+        <District Name='岳塘区' Lon='112.95' Lat='27.87'/>
+        <District Name='湘潭县' Lon='112.95' Lat='27.78'/>
+        <District Name='湘乡市' Lon='112.53' Lat='27.73'/>
+        <District Name='韶山市' Lon='112.52' Lat='27.93'/>
+    </City>
+    <City Name='衡阳市' >
+        <District Name='衡阳市' Lon='112.57' Lat='26.9'/>
+        <District Name='珠晖区' Lon='112.62' Lat='26.9'/>
+        <District Name='雁峰区' Lon='112.6' Lat='26.88'/>
+        <District Name='石鼓区' Lon='112.6' Lat='26.9'/>
+        <District Name='蒸湘区' Lon='112.6' Lat='26.9'/>
+        <District Name='南岳区' Lon='112.73' Lat='27.25'/>
+        <District Name='衡阳县' Lon='112.37' Lat='26.97'/>
+        <District Name='衡南县' Lon='112.67' Lat='26.73'/>
+        <District Name='衡山县' Lon='112.87' Lat='27.23'/>
+        <District Name='衡东县' Lon='112.95' Lat='27.08'/>
+        <District Name='祁东县' Lon='112.12' Lat='26.78'/>
+        <District Name='耒阳市' Lon='112.85' Lat='26.42'/>
+        <District Name='常宁市' Lon='112.38' Lat='26.42'/>
+    </City>
+    <City Name='邵阳市' >
+        <District Name='邵阳市' Lon='111.47' Lat='27.25'/>
+        <District Name='双清区' Lon='111.47' Lat='27.23'/>
+        <District Name='大祥区' Lon='111.45' Lat='27.23'/>
+        <District Name='北塔区' Lon='111.45' Lat='27.25'/>
+        <District Name='邵东县' Lon='111.75' Lat='27.25'/>
+        <District Name='新邵县' Lon='111.45' Lat='27.32'/>
+        <District Name='邵阳县' Lon='111.27' Lat='27'/>
+        <District Name='隆回县' Lon='111.03' Lat='27.12'/>
+        <District Name='洞口县' Lon='110.57' Lat='27.05'/>
+        <District Name='绥宁县' Lon='110.15' Lat='26.58'/>
+        <District Name='新宁县' Lon='110.85' Lat='26.43'/>
+        <District Name='城步苗族自治县' Lon='110.32' Lat='26.37'/>
+        <District Name='武冈市' Lon='110.63' Lat='26.73'/>
+    </City>
+    <City Name='岳阳市' >
+        <District Name='岳阳市' Lon='113.12' Lat='29.37'/>
+        <District Name='岳阳楼区' Lon='113.1' Lat='29.37'/>
+        <District Name='云溪区' Lon='113.3' Lat='29.47'/>
+        <District Name='君山区' Lon='113' Lat='29.43'/>
+        <District Name='岳阳县' Lon='113.12' Lat='29.15'/>
+        <District Name='华容县' Lon='112.57' Lat='29.52'/>
+        <District Name='湘阴县' Lon='112.88' Lat='28.68'/>
+        <District Name='平江县' Lon='113.58' Lat='28.72'/>
+        <District Name='汨罗市' Lon='113.08' Lat='28.8'/>
+        <District Name='临湘市' Lon='113.47' Lat='29.48'/>
+    </City>
+    <City Name='常德市' >
+        <District Name='常德市' Lon='111.68' Lat='29.05'/>
+        <District Name='武陵区' Lon='111.68' Lat='29.03'/>
+        <District Name='鼎城区' Lon='111.68' Lat='29.02'/>
+        <District Name='安乡县' Lon='112.17' Lat='29.42'/>
+        <District Name='汉寿县' Lon='111.97' Lat='28.9'/>
+        <District Name='澧县' Lon='111.75' Lat='29.63'/>
+        <District Name='临澧县' Lon='111.65' Lat='29.45'/>
+        <District Name='桃源县' Lon='111.48' Lat='28.9'/>
+        <District Name='石门县' Lon='111.38' Lat='29.58'/>
+        <District Name='津市市' Lon='111.88' Lat='29.62'/>
+    </City>
+    <City Name='张家界市' >
+        <District Name='张家界市' Lon='110.47' Lat='29.13'/>
+        <District Name='永定区' Lon='110.48' Lat='29.13'/>
+        <District Name='武陵源区' Lon='110.53' Lat='29.35'/>
+        <District Name='慈利县' Lon='111.12' Lat='29.42'/>
+        <District Name='桑植县' Lon='110.15' Lat='29.4'/>
+    </City>
+    <City Name='益阳市' >
+        <District Name='益阳市' Lon='112.32' Lat='28.6'/>
+        <District Name='资阳区' Lon='112.32' Lat='28.6'/>
+        <District Name='赫山区' Lon='112.37' Lat='28.6'/>
+        <District Name='南县' Lon='112.4' Lat='29.38'/>
+        <District Name='桃江县' Lon='112.12' Lat='28.53'/>
+        <District Name='安化县' Lon='111.22' Lat='28.38'/>
+        <District Name='沅江市' Lon='112.38' Lat='28.85'/>
+    </City>
+    <City Name='郴州市' >
+        <District Name='郴州市' Lon='113.02' Lat='25.78'/>
+        <District Name='北湖区' Lon='113.02' Lat='25.8'/>
+        <District Name='苏仙区' Lon='113.03' Lat='25.8'/>
+        <District Name='桂阳县' Lon='112.73' Lat='25.73'/>
+        <District Name='宜章县' Lon='112.95' Lat='25.4'/>
+        <District Name='永兴县' Lon='113.1' Lat='26.13'/>
+        <District Name='嘉禾县' Lon='112.37' Lat='25.58'/>
+        <District Name='临武县' Lon='112.55' Lat='25.28'/>
+        <District Name='汝城县' Lon='113.68' Lat='25.55'/>
+        <District Name='桂东县' Lon='113.93' Lat='26.08'/>
+        <District Name='安仁县' Lon='113.27' Lat='26.7'/>
+        <District Name='资兴市' Lon='113.23' Lat='25.98'/>
+    </City>
+    <City Name='永州市' >
+        <District Name='永州市' Lon='111.62' Lat='26.43'/>
+        <District Name='冷水滩区' Lon='111.6' Lat='26.43'/>
+        <District Name='祁阳县' Lon='111.85' Lat='26.58'/>
+        <District Name='东安县' Lon='111.28' Lat='26.4'/>
+        <District Name='双牌县' Lon='111.65' Lat='25.97'/>
+        <District Name='道县' Lon='111.58' Lat='25.53'/>
+        <District Name='江永县' Lon='111.33' Lat='25.28'/>
+        <District Name='宁远县' Lon='111.93' Lat='25.6'/>
+        <District Name='蓝山县' Lon='112.18' Lat='25.37'/>
+        <District Name='新田县' Lon='112.22' Lat='25.92'/>
+        <District Name='江华瑶族自治县' Lon='111.58' Lat='25.18'/>
+    </City>
+    <City Name='怀化市' >
+        <District Name='怀化市' Lon='110' Lat='27.57'/>
+        <District Name='鹤城区' Lon='109.95' Lat='27.55'/>
+        <District Name='中方县' Lon='109.93' Lat='27.4'/>
+        <District Name='沅陵县' Lon='110.38' Lat='28.47'/>
+        <District Name='辰溪县' Lon='110.18' Lat='28'/>
+        <District Name='溆浦县' Lon='110.58' Lat='27.92'/>
+        <District Name='会同县' Lon='109.72' Lat='26.87'/>
+        <District Name='麻阳苗族自治县' Lon='109.8' Lat='27.87'/>
+        <District Name='新晃侗族自治县' Lon='109.17' Lat='27.37'/>
+        <District Name='芷江侗族自治县' Lon='109.68' Lat='27.45'/>
+        <District Name='靖州苗族侗族自治县' Lon='109.68' Lat='26.58'/>
+        <District Name='通道侗族自治县' Lon='109.78' Lat='26.17'/>
+        <District Name='洪江市' Lon='109.82' Lat='27.2'/>
+    </City>
+    <City Name='娄底市' >
+        <District Name='娄底市' Lon='112' Lat='27.73'/>
+        <District Name='娄星区' Lon='112' Lat='27.73'/>
+        <District Name='双峰县' Lon='112.2' Lat='27.45'/>
+        <District Name='新化县' Lon='111.3' Lat='27.75'/>
+        <District Name='冷水江市' Lon='111.43' Lat='27.68'/>
+        <District Name='涟源市' Lon='111.67' Lat='27.7'/>
+    </City>
+    <City Name='湘西土家族苗族自治州' >
+        <District Name='湘西土家族苗族自治州' Lon='109.73' Lat='28.32'/>
+        <District Name='吉首市' Lon='109.73' Lat='28.32'/>
+        <District Name='泸溪县' Lon='110.22' Lat='28.22'/>
+        <District Name='凤凰县' Lon='109.6' Lat='27.95'/>
+        <District Name='花垣县' Lon='109.48' Lat='28.58'/>
+        <District Name='保靖县' Lon='109.65' Lat='28.72'/>
+        <District Name='古丈县' Lon='109.95' Lat='28.62'/>
+        <District Name='永顺县' Lon='109.85' Lat='29'/>
+        <District Name='龙山县' Lon='109.43' Lat='29.47'/>
+    </City>
+</Province>
+<Province Name='广东省' >
+    <City Name='广州市' >
+        <District Name='广州市' Lon='113.27' Lat='23.13'/>
+        <District Name='荔湾区' Lon='113.23' Lat='23.13'/>
+        <District Name='越秀区' Lon='113.27' Lat='23.13'/>
+        <District Name='海珠区' Lon='113.25' Lat='23.1'/>
+        <District Name='天河区' Lon='113.35' Lat='23.12'/>
+        <District Name='白云区' Lon='113.27' Lat='23.17'/>
+        <District Name='黄埔区' Lon='113.45' Lat='23.1'/>
+        <District Name='番禺区' Lon='113.35' Lat='22.95'/>
+        <District Name='花都区' Lon='113.22' Lat='23.4'/>
+        <District Name='增城市' Lon='113.83' Lat='23.3'/>
+        <District Name='从化市' Lon='113.58' Lat='23.55'/>
+    </City>
+    <City Name='韶关市' >
+        <District Name='韶关市' Lon='113.6' Lat='24.82'/>
+        <District Name='武江区' Lon='113.57' Lat='24.8'/>
+        <District Name='浈江区' Lon='113.6' Lat='24.8'/>
+        <District Name='曲江区' Lon='113.6' Lat='24.68'/>
+        <District Name='始兴县' Lon='114.07' Lat='24.95'/>
+        <District Name='仁化县' Lon='113.75' Lat='25.08'/>
+        <District Name='翁源县' Lon='114.13' Lat='24.35'/>
+        <District Name='乳源瑶族自治县' Lon='113.27' Lat='24.78'/>
+        <District Name='新丰县' Lon='114.2' Lat='24.07'/>
+        <District Name='乐昌市' Lon='113.35' Lat='25.13'/>
+        <District Name='南雄市' Lon='114.3' Lat='25.12'/>
+    </City>
+    <City Name='深圳市' >
+        <District Name='深圳市' Lon='114.05' Lat='22.55'/>
+        <District Name='罗湖区' Lon='114.12' Lat='22.55'/>
+        <District Name='福田区' Lon='114.05' Lat='22.53'/>
+        <District Name='南山区' Lon='113.92' Lat='22.52'/>
+        <District Name='宝安区' Lon='113.9' Lat='22.57'/>
+        <District Name='龙岗区' Lon='114.27' Lat='22.73'/>
+        <District Name='盐田区' Lon='114.22' Lat='22.55'/>
+    </City>
+    <City Name='珠海市' >
+        <District Name='珠海市' Lon='113.57' Lat='22.27'/>
+        <District Name='香洲区' Lon='113.55' Lat='22.27'/>
+        <District Name='斗门区' Lon='113.28' Lat='22.22'/>
+        <District Name='金湾区' Lon='113.4' Lat='22.07'/>
+    </City>
+    <City Name='汕头市' >
+        <District Name='汕头市' Lon='116.68' Lat='23.35'/>
+        <District Name='龙湖区' Lon='116.72' Lat='23.37'/>
+        <District Name='金平区' Lon='116.7' Lat='23.37'/>
+        <District Name='潮阳区' Lon='116.6' Lat='23.27'/>
+        <District Name='潮南区' Lon='116.43' Lat='23.25'/>
+        <District Name='澄海区' Lon='116.77' Lat='23.48'/>
+        <District Name='南澳县' Lon='117.02' Lat='23.42'/>
+    </City>
+    <City Name='佛山市' >
+        <District Name='佛山市' Lon='113.12' Lat='23.02'/>
+        <District Name='南海区' Lon='113.15' Lat='23.03'/>
+        <District Name='顺德区' Lon='113.3' Lat='22.8'/>
+        <District Name='三水区' Lon='112.87' Lat='23.17'/>
+        <District Name='高明区' Lon='112.88' Lat='22.9'/>
+    </City>
+    <City Name='江门市' >
+        <District Name='江门市' Lon='113.08' Lat='22.58'/>
+        <District Name='新会区' Lon='113.03' Lat='22.47'/>
+        <District Name='台山市' Lon='112.78' Lat='22.25'/>
+        <District Name='开平市' Lon='112.67' Lat='22.38'/>
+        <District Name='鹤山市' Lon='112.97' Lat='22.77'/>
+        <District Name='恩平市' Lon='112.3' Lat='22.18'/>
+    </City>
+    <City Name='湛江市' >
+        <District Name='湛江市' Lon='110.35' Lat='21.27'/>
+        <District Name='赤坎区' Lon='110.37' Lat='21.27'/>
+        <District Name='霞山区' Lon='110.4' Lat='21.2'/>
+        <District Name='坡头区' Lon='110.47' Lat='21.23'/>
+        <District Name='麻章区' Lon='110.32' Lat='21.27'/>
+        <District Name='遂溪县' Lon='110.25' Lat='21.38'/>
+        <District Name='徐闻县' Lon='110.17' Lat='20.33'/>
+        <District Name='廉江市' Lon='110.27' Lat='21.62'/>
+        <District Name='雷州市' Lon='110.08' Lat='20.92'/>
+        <District Name='吴川市' Lon='110.77' Lat='21.43'/>
+    </City>
+    <City Name='茂名市' >
+        <District Name='茂名市' Lon='110.92' Lat='21.67'/>
+        <District Name='茂南区' Lon='110.92' Lat='21.63'/>
+        <District Name='茂港区' Lon='111.02' Lat='21.47'/>
+        <District Name='电白县' Lon='111' Lat='21.5'/>
+        <District Name='高州市' Lon='110.85' Lat='21.92'/>
+        <District Name='化州市' Lon='110.63' Lat='21.67'/>
+        <District Name='信宜市' Lon='110.95' Lat='22.35'/>
+    </City>
+    <City Name='肇庆市' >
+        <District Name='肇庆市' Lon='112.47' Lat='23.05'/>
+        <District Name='端州区' Lon='112.48' Lat='23.05'/>
+        <District Name='鼎湖区' Lon='112.57' Lat='23.17'/>
+        <District Name='广宁县' Lon='112.43' Lat='23.63'/>
+        <District Name='怀集县' Lon='112.18' Lat='23.92'/>
+        <District Name='封开县' Lon='111.5' Lat='23.43'/>
+        <District Name='德庆县' Lon='111.77' Lat='23.15'/>
+        <District Name='高要市' Lon='112.45' Lat='23.03'/>
+        <District Name='四会市' Lon='112.68' Lat='23.33'/>
+    </City>
+    <City Name='惠州市' >
+        <District Name='惠州市' Lon='114.42' Lat='23.12'/>
+        <District Name='惠城区' Lon='114.4' Lat='23.08'/>
+        <District Name='惠阳区' Lon='114.47' Lat='22.8'/>
+        <District Name='博罗县' Lon='114.28' Lat='23.18'/>
+        <District Name='惠东县' Lon='114.72' Lat='22.98'/>
+        <District Name='龙门县' Lon='114.25' Lat='23.73'/>
+    </City>
+    <City Name='梅州市' >
+        <District Name='梅州市' Lon='116.12' Lat='24.28'/>
+        <District Name='梅江区' Lon='116.12' Lat='24.32'/>
+        <District Name='梅县' Lon='116.05' Lat='24.28'/>
+        <District Name='大埔县' Lon='116.7' Lat='24.35'/>
+        <District Name='丰顺县' Lon='116.18' Lat='23.77'/>
+        <District Name='五华县' Lon='115.77' Lat='23.93'/>
+        <District Name='平远县' Lon='115.88' Lat='24.57'/>
+        <District Name='蕉岭县' Lon='116.17' Lat='24.67'/>
+        <District Name='兴宁市' Lon='115.73' Lat='24.15'/>
+    </City>
+    <City Name='汕尾市' >
+        <District Name='汕尾市' Lon='115.37' Lat='22.78'/>
+        <District Name='海丰县' Lon='115.33' Lat='22.97'/>
+        <District Name='陆河县' Lon='115.65' Lat='23.3'/>
+        <District Name='陆丰市' Lon='115.65' Lat='22.95'/>
+    </City>
+    <City Name='河源市' >
+        <District Name='河源市' Lon='114.7' Lat='23.73'/>
+        <District Name='源城区' Lon='114.7' Lat='23.73'/>
+        <District Name='紫金县' Lon='115.18' Lat='23.63'/>
+        <District Name='龙川县' Lon='115.25' Lat='24.1'/>
+        <District Name='连平县' Lon='114.48' Lat='24.37'/>
+        <District Name='和平县' Lon='114.93' Lat='24.45'/>
+        <District Name='东源县' Lon='114.77' Lat='23.82'/>
+    </City>
+    <City Name='阳江市' >
+        <District Name='阳江市' Lon='111.98' Lat='21.87'/>
+        <District Name='江城区' Lon='111.95' Lat='21.87'/>
+        <District Name='阳西县' Lon='111.62' Lat='21.75'/>
+        <District Name='阳东县' Lon='112.02' Lat='21.88'/>
+        <District Name='阳春市' Lon='111.78' Lat='22.18'/>
+    </City>
+    <City Name='清远市' >
+        <District Name='清远市' Lon='113.03' Lat='23.7'/>
+        <District Name='清城区' Lon='113.02' Lat='23.7'/>
+        <District Name='佛冈县' Lon='113.53' Lat='23.88'/>
+        <District Name='阳山县' Lon='112.63' Lat='24.48'/>
+        <District Name='连山壮族瑶族自治县' Lon='112.08' Lat='24.57'/>
+        <District Name='连南瑶族自治县' Lon='112.28' Lat='24.72'/>
+        <District Name='清新县' Lon='112.98' Lat='23.73'/>
+        <District Name='英德市' Lon='113.4' Lat='24.18'/>
+        <District Name='连州市' Lon='112.38' Lat='24.78'/>
+    </City>
+    <City Name='东莞市' >
+        <District Name='东莞市' Lon='113.75' Lat='23.05'/>
+    </City>
+    <City Name='中山市' >
+        <District Name='中山市' Lon='113.38' Lat='22.52'/>
+    </City>
+    <City Name='潮州市' >
+        <District Name='潮州市' Lon='116.62' Lat='23.67'/>
+        <District Name='湘桥区' Lon='116.63' Lat='23.68'/>
+        <District Name='潮安县' Lon='116.68' Lat='23.45'/>
+        <District Name='饶平县' Lon='117' Lat='23.67'/>
+    </City>
+    <City Name='揭阳市' >
+        <District Name='揭阳市' Lon='116.37' Lat='23.55'/>
+        <District Name='揭东县' Lon='116.42' Lat='23.57'/>
+        <District Name='揭西县' Lon='115.83' Lat='23.43'/>
+        <District Name='惠来县' Lon='116.28' Lat='23.03'/>
+        <District Name='普宁市' Lon='116.18' Lat='23.3'/>
+    </City>
+    <City Name='云浮市' >
+        <District Name='云浮市' Lon='112.03' Lat='22.92'/>
+        <District Name='云城区' Lon='112.03' Lat='22.93'/>
+        <District Name='新兴县' Lon='112.23' Lat='22.7'/>
+        <District Name='郁南县' Lon='111.53' Lat='23.23'/>
+        <District Name='云安县' Lon='112' Lat='23.08'/>
+        <District Name='罗定市' Lon='111.57' Lat='22.77'/>
+    </City>
+</Province>
+<Province Name='广西壮族自治区' >
+    <City Name='南宁市' >
+        <District Name='南宁市' Lon='108.37' Lat='22.82'/>
+        <District Name='兴宁区' Lon='108.38' Lat='22.87'/>
+        <District Name='江南区' Lon='108.28' Lat='22.78'/>
+        <District Name='西乡塘区' Lon='108.3' Lat='22.83'/>
+        <District Name='良庆区' Lon='108.32' Lat='22.77'/>
+        <District Name='邕宁区' Lon='108.48' Lat='22.75'/>
+        <District Name='武鸣县' Lon='108.27' Lat='23.17'/>
+        <District Name='隆安县' Lon='107.68' Lat='23.18'/>
+        <District Name='马山县' Lon='108.17' Lat='23.72'/>
+        <District Name='上林县' Lon='108.6' Lat='23.43'/>
+        <District Name='宾阳县' Lon='108.8' Lat='23.22'/>
+        <District Name='横县' Lon='109.27' Lat='22.68'/>
+    </City>
+    <City Name='柳州市' >
+        <District Name='柳州市' Lon='109.42' Lat='24.33'/>
+        <District Name='柳南区' Lon='109.38' Lat='24.35'/>
+        <District Name='柳江县' Lon='109.33' Lat='24.27'/>
+        <District Name='柳城县' Lon='109.23' Lat='24.65'/>
+        <District Name='鹿寨县' Lon='109.73' Lat='24.48'/>
+        <District Name='融安县' Lon='109.4' Lat='25.23'/>
+        <District Name='融水苗族自治县' Lon='109.25' Lat='25.07'/>
+        <District Name='三江侗族自治县' Lon='109.6' Lat='25.78'/>
+    </City>
+    <City Name='桂林市' >
+        <District Name='桂林市' Lon='110.28' Lat='25.28'/>
+        <District Name='阳朔县' Lon='110.48' Lat='24.78'/>
+        <District Name='临桂县' Lon='110.2' Lat='25.23'/>
+        <District Name='灵川县' Lon='110.32' Lat='25.42'/>
+        <District Name='全州县' Lon='111.07' Lat='25.93'/>
+        <District Name='兴安县' Lon='110.67' Lat='25.62'/>
+        <District Name='永福县' Lon='109.98' Lat='24.98'/>
+        <District Name='灌阳县' Lon='111.15' Lat='25.48'/>
+        <District Name='龙胜各族自治县' Lon='110' Lat='25.8'/>
+        <District Name='资源县' Lon='110.63' Lat='26.03'/>
+        <District Name='平乐县' Lon='110.63' Lat='24.63'/>
+        <District Name='恭城瑶族自治县' Lon='110.83' Lat='24.83'/>
+    </City>
+    <City Name='梧州市' >
+        <District Name='梧州市' Lon='111.27' Lat='23.48'/>
+        <District Name='苍梧县' Lon='111.23' Lat='23.42'/>
+        <District Name='藤县' Lon='110.92' Lat='23.38'/>
+        <District Name='蒙山县' Lon='110.52' Lat='24.2'/>
+        <District Name='岑溪市' Lon='110.98' Lat='22.92'/>
+    </City>
+    <City Name='北海市' >
+        <District Name='北海市' Lon='109.12' Lat='21.48'/>
+        <District Name='铁山港区' Lon='109.43' Lat='21.53'/>
+        <District Name='合浦县' Lon='109.2' Lat='21.67'/>
+    </City>
+    <City Name='防城港市' >
+        <District Name='防城港市' Lon='108.35' Lat='21.7'/>
+        <District Name='港口区' Lon='108.37' Lat='21.65'/>
+        <District Name='防城区' Lon='108.35' Lat='21.77'/>
+        <District Name='上思县' Lon='107.98' Lat='22.15'/>
+        <District Name='东兴市' Lon='107.97' Lat='21.53'/>
+    </City>
+    <City Name='钦州市' >
+        <District Name='钦州市' Lon='108.62' Lat='21.95'/>
+        <District Name='钦北区' Lon='108.63' Lat='21.98'/>
+        <District Name='灵山县' Lon='109.3' Lat='22.43'/>
+        <District Name='浦北县' Lon='109.55' Lat='22.27'/>
+    </City>
+    <City Name='贵港市' >
+        <District Name='贵港市' Lon='109.6' Lat='23.1'/>
+        <District Name='覃塘区' Lon='109.42' Lat='23.13'/>
+        <District Name='平南县' Lon='110.38' Lat='23.55'/>
+        <District Name='桂平市' Lon='110.08' Lat='23.4'/>
+    </City>
+    <City Name='玉林市' >
+        <District Name='玉林市' Lon='110.17' Lat='22.63'/>
+        <District Name='容县' Lon='110.55' Lat='22.87'/>
+        <District Name='陆川县' Lon='110.27' Lat='22.33'/>
+        <District Name='博白县' Lon='109.97' Lat='22.28'/>
+        <District Name='兴业县' Lon='109.87' Lat='22.75'/>
+        <District Name='北流市' Lon='110.35' Lat='22.72'/>
+    </City>
+    <City Name='百色市' >
+        <District Name='百色市' Lon='106.62' Lat='23.9'/>
+        <District Name='田阳县' Lon='106.92' Lat='23.73'/>
+        <District Name='田东县' Lon='107.12' Lat='23.6'/>
+        <District Name='平果县' Lon='107.58' Lat='23.32'/>
+        <District Name='德保县' Lon='106.62' Lat='23.33'/>
+        <District Name='靖西县' Lon='106.42' Lat='23.13'/>
+        <District Name='那坡县' Lon='105.83' Lat='23.42'/>
+        <District Name='凌云县' Lon='106.57' Lat='24.35'/>
+        <District Name='乐业县' Lon='106.55' Lat='24.78'/>
+        <District Name='田林县' Lon='106.23' Lat='24.3'/>
+        <District Name='西林县' Lon='105.1' Lat='24.5'/>
+        <District Name='隆林各族自治县' Lon='105.33' Lat='24.77'/>
+    </City>
+    <City Name='贺州市' >
+        <District Name='贺州市' Lon='111.55' Lat='24.42'/>
+        <District Name='昭平县' Lon='110.8' Lat='24.17'/>
+        <District Name='钟山县' Lon='111.3' Lat='24.53'/>
+        <District Name='富川瑶族自治县' Lon='111.27' Lat='24.83'/>
+    </City>
+    <City Name='河池市' >
+        <District Name='河池市' Lon='108.07' Lat='24.7'/>
+        <District Name='金城江区' Lon='108.05' Lat='24.7'/>
+        <District Name='南丹县' Lon='107.53' Lat='24.98'/>
+        <District Name='天峨县' Lon='107.17' Lat='25'/>
+        <District Name='凤山县' Lon='107.05' Lat='24.55'/>
+        <District Name='东兰县' Lon='107.37' Lat='24.52'/>
+        <District Name='罗城仫佬族自治县' Lon='108.9' Lat='24.78'/>
+        <District Name='环江毛南族自治县' Lon='108.25' Lat='24.83'/>
+        <District Name='巴马瑶族自治县' Lon='107.25' Lat='24.15'/>
+        <District Name='都安瑶族自治县' Lon='108.1' Lat='23.93'/>
+        <District Name='大化瑶族自治县' Lon='107.98' Lat='23.73'/>
+        <District Name='宜州市' Lon='108.67' Lat='24.5'/>
+    </City>
+    <City Name='来宾市' >
+        <District Name='来宾市' Lon='109.23' Lat='23.73'/>
+        <District Name='忻城县' Lon='108.67' Lat='24.07'/>
+        <District Name='象州县' Lon='109.68' Lat='23.97'/>
+        <District Name='武宣县' Lon='109.67' Lat='23.6'/>
+        <District Name='金秀瑶族自治县' Lon='110.18' Lat='24.13'/>
+        <District Name='合山市' Lon='108.87' Lat='23.82'/>
+    </City>
+    <City Name='崇左市' >
+        <District Name='崇左市' Lon='107.37' Lat='22.4'/>
+        <District Name='扶绥县' Lon='107.9' Lat='22.63'/>
+        <District Name='宁明县' Lon='107.07' Lat='22.13'/>
+        <District Name='龙州县' Lon='106.85' Lat='22.35'/>
+        <District Name='大新县' Lon='107.2' Lat='22.83'/>
+        <District Name='天等县' Lon='107.13' Lat='23.08'/>
+        <District Name='凭祥市' Lon='106.75' Lat='22.12'/>
+    </City>
+</Province>
+<Province Name='海南省' >
+    <City Name='海口市' >
+        <District Name='海口市' Lon='110.32' Lat='20.03'/>
+        <District Name='秀英区' Lon='110.28' Lat='20.02'/>
+        <District Name='龙华区' Lon='110.3' Lat='20.03'/>
+        <District Name='琼山区' Lon='110.35' Lat='20'/>
+        <District Name='美兰区' Lon='110.37' Lat='20.03'/>
+    </City>
+    <City Name='三亚市' >
+        <District Name='三亚市' Lon='109.5' Lat='18.25'/>
+    </City>
+    <City Name='五指山市' >
+        <District Name='五指山市' Lon='109.52' Lat='18.78'/>
+        <District Name='琼海市' Lon='110.47' Lat='19.25'/>
+        <District Name='儋州市' Lon='109.57' Lat='19.52'/>
+        <District Name='文昌市' Lon='110.8' Lat='19.55'/>
+        <District Name='万宁市' Lon='110.4' Lat='18.8'/>
+        <District Name='东方市' Lon='108.63' Lat='19.1'/>
+        <District Name='定安县' Lon='110.32' Lat='19.7'/>
+        <District Name='屯昌县' Lon='110.1' Lat='19.37'/>
+        <District Name='澄迈县' Lon='110' Lat='19.73'/>
+        <District Name='临高县' Lon='109.68' Lat='19.92'/>
+        <District Name='白沙黎族自治县' Lon='109.45' Lat='19.23'/>
+        <District Name='昌江黎族自治县' Lon='109.05' Lat='19.25'/>
+        <District Name='乐东黎族自治县' Lon='109.17' Lat='18.75'/>
+        <District Name='陵水黎族自治县' Lon='110.03' Lat='18.5'/>
+        <District Name='保亭黎族苗族自治县' Lon='109.7' Lat='18.63'/>
+        <District Name='琼中黎族苗族自治县' Lon='109.83' Lat='19.03'/>
+    </City>
+</Province>
+<Province Name='重庆市' >
+    <City Name='重庆市' >
+        <District Name='重庆市' Lon='106.55' Lat='29.57'/>
+        <District Name='万州区' Lon='108.4' Lat='30.82'/>
+        <District Name='涪陵区' Lon='107.4' Lat='29.72'/>
+        <District Name='渝中区' Lon='106.57' Lat='29.55'/>
+        <District Name='大渡口区' Lon='106.48' Lat='29.48'/>
+        <District Name='江北区' Lon='106.57' Lat='29.6'/>
+        <District Name='沙坪坝区' Lon='106.45' Lat='29.53'/>
+        <District Name='九龙坡区' Lon='106.5' Lat='29.5'/>
+        <District Name='南岸区' Lon='106.57' Lat='29.52'/>
+        <District Name='北碚区' Lon='106.4' Lat='29.8'/>
+        <District Name='万盛区' Lon='106.92' Lat='28.97'/>
+        <District Name='双桥区' Lon='105.78' Lat='29.48'/>
+        <District Name='渝北区' Lon='106.63' Lat='29.72'/>
+        <District Name='巴南区' Lon='106.52' Lat='29.38'/>
+        <District Name='黔江区' Lon='108.77' Lat='29.53'/>
+        <District Name='长寿区' Lon='107.08' Lat='29.87'/>
+        <District Name='綦江县' Lon='106.65' Lat='29.03'/>
+        <District Name='潼南县' Lon='105.83' Lat='30.18'/>
+        <District Name='铜梁县' Lon='106.05' Lat='29.85'/>
+        <District Name='大足县' Lon='105.72' Lat='29.7'/>
+        <District Name='荣昌县' Lon='105.58' Lat='29.4'/>
+        <District Name='璧山县' Lon='106.22' Lat='29.6'/>
+        <District Name='梁平县' Lon='107.8' Lat='30.68'/>
+        <District Name='城口县' Lon='108.67' Lat='31.95'/>
+        <District Name='丰都县' Lon='107.73' Lat='29.87'/>
+        <District Name='垫江县' Lon='107.35' Lat='30.33'/>
+        <District Name='武隆县' Lon='107.75' Lat='29.33'/>
+        <District Name='忠县' Lon='108.02' Lat='30.3'/>
+        <District Name='开县' Lon='108.42' Lat='31.18'/>
+        <District Name='云阳县' Lon='108.67' Lat='30.95'/>
+        <District Name='奉节县' Lon='109.47' Lat='31.02'/>
+        <District Name='巫山县' Lon='109.88' Lat='31.08'/>
+        <District Name='巫溪县' Lon='109.63' Lat='31.4'/>
+        <District Name='石柱土家族自治县' Lon='108.12' Lat='30'/>
+        <District Name='秀山土家族苗族自治县' Lon='108.98' Lat='28.45'/>
+        <District Name='酉阳土家族苗族自治县' Lon='108.77' Lat='28.85'/>
+        <District Name='彭水苗族土家族自治县' Lon='108.17' Lat='29.3'/>
+    </City>
+</Province>
+<Province Name='四川省' >
+    <City Name='成都市' >
+        <District Name='成都市' Lon='104.07' Lat='30.67'/>
+        <District Name='锦江区' Lon='104.08' Lat='30.67'/>
+        <District Name='青羊区' Lon='104.05' Lat='30.68'/>
+        <District Name='金牛区' Lon='104.05' Lat='30.7'/>
+        <District Name='武侯区' Lon='104.05' Lat='30.65'/>
+        <District Name='成华区' Lon='104.1' Lat='30.67'/>
+        <District Name='龙泉驿区' Lon='104.27' Lat='30.57'/>
+        <District Name='青白江区' Lon='104.23' Lat='30.88'/>
+        <District Name='新都区' Lon='104.15' Lat='30.83'/>
+        <District Name='温江区' Lon='103.83' Lat='30.7'/>
+        <District Name='金堂县' Lon='104.43' Lat='30.85'/>
+        <District Name='双流县' Lon='103.92' Lat='30.58'/>
+        <District Name='郫县' Lon='103.88' Lat='30.82'/>
+        <District Name='大邑县' Lon='103.52' Lat='30.58'/>
+        <District Name='蒲江县' Lon='103.5' Lat='30.2'/>
+        <District Name='新津县' Lon='103.82' Lat='30.42'/>
+        <District Name='都江堰市' Lon='103.62' Lat='31'/>
+        <District Name='彭州市' Lon='103.93' Lat='30.98'/>
+        <District Name='邛崃市' Lon='103.47' Lat='30.42'/>
+        <District Name='崇州市' Lon='103.67' Lat='30.63'/>
+    </City>
+    <City Name='自贡市' >
+        <District Name='自贡市' Lon='104.78' Lat='29.35'/>
+        <District Name='自流井区' Lon='104.77' Lat='29.35'/>
+        <District Name='贡井区' Lon='104.72' Lat='29.35'/>
+        <District Name='大安区' Lon='104.77' Lat='29.37'/>
+        <District Name='沿滩区' Lon='104.87' Lat='29.27'/>
+        <District Name='荣县' Lon='104.42' Lat='29.47'/>
+        <District Name='富顺县' Lon='104.98' Lat='29.18'/>
+    </City>
+    <City Name='攀枝花市' >
+        <District Name='攀枝花市' Lon='101.72' Lat='26.58'/>
+        <District Name='东区' Lon='101.7' Lat='26.55'/>
+        <District Name='西区' Lon='101.6' Lat='26.6'/>
+        <District Name='仁和区' Lon='101.73' Lat='26.5'/>
+        <District Name='米易县' Lon='102.12' Lat='26.88'/>
+        <District Name='盐边县' Lon='101.85' Lat='26.7'/>
+    </City>
+    <City Name='泸州市' >
+        <District Name='泸州市' Lon='105.43' Lat='28.87'/>
+        <District Name='江阳区' Lon='105.45' Lat='28.88'/>
+        <District Name='纳溪区' Lon='105.37' Lat='28.77'/>
+        <District Name='龙马潭区' Lon='105.43' Lat='28.9'/>
+        <District Name='泸县' Lon='105.38' Lat='29.15'/>
+        <District Name='合江县' Lon='105.83' Lat='28.82'/>
+        <District Name='叙永县' Lon='105.43' Lat='28.17'/>
+        <District Name='古蔺县' Lon='105.82' Lat='28.05'/>
+    </City>
+    <City Name='德阳市' >
+        <District Name='德阳市' Lon='104.38' Lat='31.13'/>
+        <District Name='旌阳区' Lon='104.38' Lat='31.13'/>
+        <District Name='中江县' Lon='104.68' Lat='31.03'/>
+        <District Name='罗江县' Lon='104.5' Lat='31.32'/>
+        <District Name='广汉市' Lon='104.28' Lat='30.98'/>
+        <District Name='什邡市' Lon='104.17' Lat='31.13'/>
+        <District Name='绵竹市' Lon='104.2' Lat='31.35'/>
+    </City>
+    <City Name='绵阳市' >
+        <District Name='绵阳市' Lon='104.73' Lat='31.47'/>
+        <District Name='涪城区' Lon='104.73' Lat='31.47'/>
+        <District Name='游仙区' Lon='104.75' Lat='31.47'/>
+        <District Name='三台县' Lon='105.08' Lat='31.1'/>
+        <District Name='盐亭县' Lon='105.38' Lat='31.22'/>
+        <District Name='安县' Lon='104.57' Lat='31.53'/>
+        <District Name='梓潼县' Lon='105.17' Lat='31.63'/>
+        <District Name='北川羌族自治县' Lon='104.45' Lat='31.82'/>
+        <District Name='平武县' Lon='104.53' Lat='32.42'/>
+        <District Name='江油市' Lon='104.75' Lat='31.78'/>
+    </City>
+    <City Name='广元市' >
+        <District Name='广元市' Lon='105.83' Lat='32.43'/>
+        <District Name='市中区' Lon='105.05' Lat='29.58'/>
+        <District Name='市中区' Lon='103.77' Lat='29.57'/>
+        <District Name='元坝区' Lon='105.97' Lat='32.32'/>
+        <District Name='朝天区' Lon='105.88' Lat='32.65'/>
+        <District Name='旺苍县' Lon='106.28' Lat='32.23'/>
+        <District Name='青川县' Lon='105.23' Lat='32.58'/>
+        <District Name='剑阁县' Lon='105.52' Lat='32.28'/>
+        <District Name='苍溪县' Lon='105.93' Lat='31.73'/>
+    </City>
+    <City Name='遂宁市' >
+        <District Name='遂宁市' Lon='105.57' Lat='30.52'/>
+        <District Name='船山区' Lon='105.57' Lat='30.52'/>
+        <District Name='安居区' Lon='105.45' Lat='30.35'/>
+        <District Name='蓬溪县' Lon='105.72' Lat='30.78'/>
+        <District Name='射洪县' Lon='105.38' Lat='30.87'/>
+        <District Name='大英县' Lon='105.25' Lat='30.58'/>
+    </City>
+    <City Name='内江市' >
+        <District Name='内江市' Lon='105.05' Lat='29.58'/>
+        <District Name='市中区' Lon='105.05' Lat='29.58'/>
+        <District Name='市中区' Lon='103.77' Lat='29.57'/>
+        <District Name='东兴区' Lon='105.07' Lat='29.6'/>
+        <District Name='威远县' Lon='104.67' Lat='29.53'/>
+        <District Name='资中县' Lon='104.85' Lat='29.78'/>
+        <District Name='隆??县' Lon='105.28' Lat='29.35'/>
+    </City>
+    <City Name='乐山市' >
+        <District Name='乐山市' Lon='103.77' Lat='29.57'/>
+        <District Name='市中区' Lon='105.05' Lat='29.58'/>
+        <District Name='市中区' Lon='103.77' Lat='29.57'/>
+        <District Name='沙湾区' Lon='103.55' Lat='29.42'/>
+        <District Name='五通桥区' Lon='103.82' Lat='29.4'/>
+        <District Name='金口河区' Lon='103.08' Lat='29.25'/>
+        <District Name='犍为县' Lon='103.95' Lat='29.22'/>
+        <District Name='井研县' Lon='104.07' Lat='29.65'/>
+        <District Name='夹江县' Lon='103.57' Lat='29.73'/>
+        <District Name='沐川县' Lon='103.9' Lat='28.97'/>
+        <District Name='峨边彝族自治县' Lon='103.27' Lat='29.23'/>
+        <District Name='马边彝族自治县' Lon='103.55' Lat='28.83'/>
+        <District Name='峨眉山市' Lon='103.48' Lat='29.6'/>
+    </City>
+    <City Name='南充市' >
+        <District Name='南充市' Lon='106.08' Lat='30.78'/>
+        <District Name='顺庆区' Lon='106.08' Lat='30.78'/>
+        <District Name='高坪区' Lon='106.1' Lat='30.77'/>
+        <District Name='嘉陵区' Lon='106.05' Lat='30.77'/>
+        <District Name='南部县' Lon='106.07' Lat='31.35'/>
+        <District Name='营山县' Lon='106.57' Lat='31.08'/>
+        <District Name='蓬安县' Lon='106.42' Lat='31.03'/>
+        <District Name='仪陇县' Lon='106.28' Lat='31.27'/>
+        <District Name='西充县' Lon='105.88' Lat='31'/>
+        <District Name='阆中市' Lon='106' Lat='31.55'/>
+    </City>
+    <City Name='眉山市' >
+        <District Name='眉山市' Lon='103.83' Lat='30.05'/>
+        <District Name='东坡区' Lon='103.83' Lat='30.05'/>
+        <District Name='仁寿县' Lon='104.15' Lat='30'/>
+        <District Name='彭山县' Lon='103.87' Lat='30.2'/>
+        <District Name='洪雅县' Lon='103.37' Lat='29.92'/>
+        <District Name='丹棱县' Lon='103.52' Lat='30.02'/>
+        <District Name='青神县' Lon='103.85' Lat='29.83'/>
+    </City>
+    <City Name='宜宾市' >
+        <District Name='宜宾市' Lon='104.62' Lat='28.77'/>
+        <District Name='翠屏区' Lon='104.62' Lat='28.77'/>
+        <District Name='宜宾县' Lon='104.55' Lat='28.7'/>
+        <District Name='南溪县' Lon='104.98' Lat='28.85'/>
+        <District Name='江安县' Lon='105.07' Lat='28.73'/>
+        <District Name='长宁县' Lon='104.92' Lat='28.58'/>
+        <District Name='高县' Lon='104.52' Lat='28.43'/>
+        <District Name='珙县' Lon='104.72' Lat='28.45'/>
+        <District Name='筠连县' Lon='104.52' Lat='28.17'/>
+        <District Name='兴文县' Lon='105.23' Lat='28.3'/>
+        <District Name='屏山县' Lon='104.33' Lat='28.83'/>
+    </City>
+    <City Name='广安市' >
+        <District Name='广安市' Lon='106.63' Lat='30.47'/>
+        <District Name='岳池县' Lon='106.43' Lat='30.55'/>
+        <District Name='武胜县' Lon='106.28' Lat='30.35'/>
+        <District Name='邻水县' Lon='106.93' Lat='30.33'/>
+        <District Name='华蓥市' Lon='106.77' Lat='30.38'/>
+    </City>
+    <City Name='达州市' >
+        <District Name='达州市' Lon='107.5' Lat='31.22'/>
+        <District Name='通川区' Lon='107.48' Lat='31.22'/>
+        <District Name='达县' Lon='107.5' Lat='31.2'/>
+        <District Name='宣汉县' Lon='107.72' Lat='31.35'/>
+        <District Name='开江县' Lon='107.87' Lat='31.08'/>
+        <District Name='大竹县' Lon='107.2' Lat='30.73'/>
+        <District Name='渠县' Lon='106.97' Lat='30.83'/>
+        <District Name='万源市' Lon='108.03' Lat='32.07'/>
+    </City>
+    <City Name='雅安市' >
+        <District Name='雅安市' Lon='103' Lat='29.98'/>
+        <District Name='雨城区' Lon='103' Lat='29.98'/>
+        <District Name='名山县' Lon='103.12' Lat='30.08'/>
+        <District Name='荥经县' Lon='102.85' Lat='29.8'/>
+        <District Name='汉源县' Lon='102.65' Lat='29.35'/>
+        <District Name='石棉县' Lon='102.37' Lat='29.23'/>
+        <District Name='天全县' Lon='102.75' Lat='30.07'/>
+        <District Name='芦山县' Lon='102.92' Lat='30.15'/>
+        <District Name='宝兴县' Lon='102.82' Lat='30.37'/>
+    </City>
+    <City Name='巴中市' >
+        <District Name='巴中市' Lon='106.77' Lat='31.85'/>
+        <District Name='巴州区' Lon='106.77' Lat='31.85'/>
+        <District Name='通江县' Lon='107.23' Lat='31.92'/>
+        <District Name='南江县' Lon='106.83' Lat='32.35'/>
+        <District Name='平昌县' Lon='107.1' Lat='31.57'/>
+    </City>
+    <City Name='资阳市' >
+        <District Name='资阳市' Lon='104.65' Lat='30.12'/>
+        <District Name='雁江区' Lon='104.65' Lat='30.12'/>
+        <District Name='安岳县' Lon='105.33' Lat='30.1'/>
+        <District Name='乐至县' Lon='105.02' Lat='30.28'/>
+        <District Name='简阳市' Lon='104.55' Lat='30.4'/>
+    </City>
+    <City Name='阿坝藏族羌族自治州' >
+        <District Name='阿坝藏族羌族自治州' Lon='102.22' Lat='31.9'/>
+        <District Name='汶川县' Lon='103.58' Lat='31.48'/>
+        <District Name='理县' Lon='103.17' Lat='31.43'/>
+        <District Name='茂县' Lon='103.85' Lat='31.68'/>
+        <District Name='松潘县' Lon='103.6' Lat='32.63'/>
+        <District Name='九寨沟县' Lon='104.23' Lat='33.27'/>
+        <District Name='金川县' Lon='102.07' Lat='31.48'/>
+        <District Name='小金县' Lon='102.37' Lat='31'/>
+        <District Name='黑水县' Lon='102.98' Lat='32.07'/>
+        <District Name='马尔康县' Lon='102.22' Lat='31.9'/>
+        <District Name='壤塘县' Lon='100.98' Lat='32.27'/>
+        <District Name='阿坝县' Lon='101.7' Lat='32.9'/>
+        <District Name='若尔盖县' Lon='102.95' Lat='33.58'/>
+        <District Name='红原县' Lon='102.55' Lat='32.8'/>
+    </City>
+    <City Name='甘孜藏族自治州' >
+        <District Name='甘孜藏族自治州' Lon='101.97' Lat='30.05'/>
+        <District Name='康定县' Lon='101.97' Lat='30.05'/>
+        <District Name='泸定县' Lon='102.23' Lat='29.92'/>
+        <District Name='丹巴县' Lon='101.88' Lat='30.88'/>
+        <District Name='九龙县' Lon='101.5' Lat='29'/>
+        <District Name='雅江县' Lon='101.02' Lat='30.03'/>
+        <District Name='道孚县' Lon='101.12' Lat='30.98'/>
+        <District Name='炉霍县' Lon='100.68' Lat='31.4'/>
+        <District Name='甘孜县' Lon='99.98' Lat='31.62'/>
+        <District Name='新龙县' Lon='100.32' Lat='30.95'/>
+        <District Name='德格县' Lon='98.58' Lat='31.82'/>
+        <District Name='白玉县' Lon='98.83' Lat='31.22'/>
+        <District Name='石渠县' Lon='98.1' Lat='32.98'/>
+        <District Name='色达县' Lon='100.33' Lat='32.27'/>
+        <District Name='理塘县' Lon='100.27' Lat='30'/>
+        <District Name='巴塘县' Lon='99.1' Lat='30'/>
+        <District Name='乡城县' Lon='99.8' Lat='28.93'/>
+        <District Name='稻城县' Lon='100.3' Lat='29.03'/>
+        <District Name='得荣县' Lon='99.28' Lat='28.72'/>
+    </City>
+    <City Name='凉山彝族自治州' >
+        <District Name='凉山彝族自治州' Lon='102.27' Lat='27.9'/>
+        <District Name='西昌市' Lon='102.27' Lat='27.9'/>
+        <District Name='木里藏族自治县' Lon='101.28' Lat='27.93'/>
+        <District Name='盐源县' Lon='101.5' Lat='27.43'/>
+        <District Name='德昌县' Lon='102.18' Lat='27.4'/>
+        <District Name='会理县' Lon='102.25' Lat='26.67'/>
+        <District Name='会东县' Lon='102.58' Lat='26.63'/>
+        <District Name='宁南县' Lon='102.77' Lat='27.07'/>
+        <District Name='普格县' Lon='102.53' Lat='27.38'/>
+        <District Name='布拖县' Lon='102.82' Lat='27.72'/>
+        <District Name='金阳县' Lon='103.25' Lat='27.7'/>
+        <District Name='昭觉县' Lon='102.85' Lat='28.02'/>
+        <District Name='喜德县' Lon='102.42' Lat='28.32'/>
+        <District Name='冕宁县' Lon='102.17' Lat='28.55'/>
+        <District Name='越西县' Lon='102.52' Lat='28.65'/>
+        <District Name='甘洛县' Lon='102.77' Lat='28.97'/>
+        <District Name='美姑县' Lon='103.13' Lat='28.33'/>
+        <District Name='雷波县' Lon='103.57' Lat='28.27'/>
+    </City>
+</Province>
+<Province Name='贵州省' >
+    <City Name='贵阳市' >
+        <District Name='贵阳市' Lon='106.63' Lat='26.65'/>
+        <District Name='南明区' Lon='106.72' Lat='26.57'/>
+        <District Name='云岩区' Lon='106.72' Lat='26.62'/>
+        <District Name='乌当区' Lon='106.75' Lat='26.63'/>
+        <District Name='白云区' Lon='106.65' Lat='26.68'/>
+        <District Name='小河区' Lon='106.7' Lat='26.53'/>
+        <District Name='开阳县' Lon='106.97' Lat='27.07'/>
+        <District Name='息烽县' Lon='106.73' Lat='27.1'/>
+        <District Name='修文县' Lon='106.58' Lat='26.83'/>
+        <District Name='清镇市' Lon='106.47' Lat='26.55'/>
+    </City>
+    <City Name='六盘水市' >
+        <District Name='六盘水市' Lon='104.83' Lat='26.6'/>
+        <District Name='钟山区' Lon='104.83' Lat='26.6'/>
+        <District Name='六枝特区' Lon='105.48' Lat='26.22'/>
+        <District Name='水城县' Lon='104.95' Lat='26.55'/>
+        <District Name='盘县' Lon='104.47' Lat='25.72'/>
+    </City>
+    <City Name='遵义市' >
+        <District Name='遵义市' Lon='106.92' Lat='27.73'/>
+        <District Name='红花岗区' Lon='106.92' Lat='27.65'/>
+        <District Name='汇川区' Lon='106.92' Lat='27.73'/>
+        <District Name='遵义县' Lon='106.83' Lat='27.53'/>
+        <District Name='桐梓县' Lon='106.82' Lat='28.13'/>
+        <District Name='绥阳县' Lon='107.18' Lat='27.95'/>
+        <District Name='正安县' Lon='107.43' Lat='28.55'/>
+        <District Name='道真仡佬族苗族自治县' Lon='107.6' Lat='28.88'/>
+        <District Name='务川仡佬族苗族自治县' Lon='107.88' Lat='28.53'/>
+        <District Name='凤冈县' Lon='107.72' Lat='27.97'/>
+        <District Name='湄潭县' Lon='107.48' Lat='27.77'/>
+        <District Name='余庆县' Lon='107.88' Lat='27.22'/>
+        <District Name='习水县' Lon='106.22' Lat='28.32'/>
+        <District Name='赤水市' Lon='105.7' Lat='28.58'/>
+        <District Name='仁怀市' Lon='106.42' Lat='27.82'/>
+    </City>
+    <City Name='安顺市' >
+        <District Name='安顺市' Lon='105.95' Lat='26.25'/>
+        <District Name='西秀区' Lon='105.92' Lat='26.25'/>
+        <District Name='平坝县' Lon='106.25' Lat='26.42'/>
+        <District Name='普定县' Lon='105.75' Lat='26.32'/>
+        <District Name='镇宁布依族苗族自治县' Lon='105.77' Lat='26.07'/>
+        <District Name='关岭布依族苗族自治县' Lon='105.62' Lat='25.95'/>
+        <District Name='紫云苗族布依族自治县' Lon='106.08' Lat='25.75'/>
+    </City>
+    <City Name='铜仁地区' >
+        <District Name='铜仁地区' Lon='109.18' Lat='27.72'/>
+        <District Name='铜仁市' Lon='109.18' Lat='27.72'/>
+        <District Name='江口县' Lon='108.85' Lat='27.7'/>
+        <District Name='玉屏侗族自治县' Lon='108.92' Lat='27.23'/>
+        <District Name='石阡县' Lon='108.23' Lat='27.52'/>
+        <District Name='思南县' Lon='108.25' Lat='27.93'/>
+        <District Name='印江土家族苗族自治县' Lon='108.4' Lat='28'/>
+        <District Name='德江县' Lon='108.12' Lat='28.27'/>
+        <District Name='沿河土家族自治县' Lon='108.5' Lat='28.57'/>
+        <District Name='松桃苗族自治县' Lon='109.2' Lat='28.17'/>
+        <District Name='万山特区' Lon='109.2' Lat='27.52'/>
+    </City>
+    <City Name='兴义市' >
+        <District Name='兴义市' Lon='104.9' Lat='25.08'/>
+        <District Name='兴仁县' Lon='105.18' Lat='25.43'/>
+        <District Name='普安县' Lon='104.95' Lat='25.78'/>
+        <District Name='晴隆县' Lon='105.22' Lat='25.83'/>
+        <District Name='贞丰县' Lon='105.65' Lat='25.38'/>
+        <District Name='望谟县' Lon='106.1' Lat='25.17'/>
+        <District Name='册亨县' Lon='105.82' Lat='24.98'/>
+        <District Name='安龙县' Lon='105.47' Lat='25.12'/>
+    </City>
+    <City Name='毕节地区' >
+        <District Name='毕节地区' Lon='105.28' Lat='27.3'/>
+        <District Name='毕节市' Lon='105.28' Lat='27.3'/>
+        <District Name='大方县' Lon='105.6' Lat='27.15'/>
+        <District Name='黔西县' Lon='106.03' Lat='27.03'/>
+        <District Name='金沙县' Lon='106.22' Lat='27.47'/>
+        <District Name='织金县' Lon='105.77' Lat='26.67'/>
+        <District Name='纳雍县' Lon='105.38' Lat='26.78'/>
+        <District Name='赫章县' Lon='104.72' Lat='27.13'/>
+    </City>
+    <City Name='黔东南苗族侗族自治州' >
+        <District Name='黔东南苗族侗族自治州' Lon='107.97' Lat='26.58'/>
+        <District Name='凯里市' Lon='107.97' Lat='26.58'/>
+        <District Name='黄平县' Lon='107.9' Lat='26.9'/>
+        <District Name='施秉县' Lon='108.12' Lat='27.03'/>
+        <District Name='三穗县' Lon='108.68' Lat='26.97'/>
+        <District Name='镇远县' Lon='108.42' Lat='27.05'/>
+        <District Name='岑巩县' Lon='108.82' Lat='27.18'/>
+        <District Name='天柱县' Lon='109.2' Lat='26.92'/>
+        <District Name='锦屏县' Lon='109.2' Lat='26.68'/>
+        <District Name='剑河县' Lon='108.45' Lat='26.73'/>
+        <District Name='台江县' Lon='108.32' Lat='26.67'/>
+        <District Name='黎平县' Lon='109.13' Lat='26.23'/>
+        <District Name='榕江县' Lon='108.52' Lat='25.93'/>
+        <District Name='从江县' Lon='108.9' Lat='25.75'/>
+        <District Name='雷山县' Lon='108.07' Lat='26.38'/>
+        <District Name='麻江县' Lon='107.58' Lat='26.5'/>
+        <District Name='丹寨县' Lon='107.8' Lat='26.2'/>
+    </City>
+    <City Name='黔南布依族苗族自治州' >
+        <District Name='黔南布依族苗族自治州' Lon='107.52' Lat='26.27'/>
+        <District Name='都匀市' Lon='107.52' Lat='26.27'/>
+        <District Name='福泉市' Lon='107.5' Lat='26.7'/>
+        <District Name='荔波县' Lon='107.88' Lat='25.42'/>
+        <District Name='贵定县' Lon='107.23' Lat='26.58'/>
+        <District Name='瓮安县' Lon='107.47' Lat='27.07'/>
+        <District Name='独山县' Lon='107.53' Lat='25.83'/>
+        <District Name='平塘县' Lon='107.32' Lat='25.83'/>
+        <District Name='罗甸县' Lon='106.75' Lat='25.43'/>
+        <District Name='长顺县' Lon='106.45' Lat='26.03'/>
+        <District Name='龙里县' Lon='106.97' Lat='26.45'/>
+        <District Name='惠水县' Lon='106.65' Lat='26.13'/>
+        <District Name='三都水族自治县' Lon='107.87' Lat='25.98'/>
+    </City>
+</Province>
+<Province Name='云南省' >
+    <City Name='昆明市' >
+        <District Name='昆明市' Lon='102.72' Lat='25.05'/>
+        <District Name='五华区' Lon='102.7' Lat='25.05'/>
+        <District Name='盘龙区' Lon='102.72' Lat='25.03'/>
+        <District Name='官渡区' Lon='102.75' Lat='25.02'/>
+        <District Name='西山区' Lon='102.67' Lat='25.03'/>
+        <District Name='东川区' Lon='103.18' Lat='26.08'/>
+        <District Name='呈贡县' Lon='102.8' Lat='24.88'/>
+        <District Name='晋宁县' Lon='102.6' Lat='24.67'/>
+        <District Name='富民县' Lon='102.5' Lat='25.22'/>
+        <District Name='宜良县' Lon='103.15' Lat='24.92'/>
+        <District Name='石林彝族自治县' Lon='103.27' Lat='24.77'/>
+        <District Name='嵩明县' Lon='103.03' Lat='25.35'/>
+        <District Name='禄劝彝族苗族自治县' Lon='102.47' Lat='25.55'/>
+        <District Name='寻甸回族彝族自治县' Lon='103.25' Lat='25.57'/>
+        <District Name='安宁市' Lon='102.48' Lat='24.92'/>
+    </City>
+    <City Name='曲靖市' >
+        <District Name='曲靖市' Lon='103.8' Lat='25.5'/>
+        <District Name='麒麟区' Lon='103.8' Lat='25.5'/>
+        <District Name='马龙县' Lon='103.58' Lat='25.43'/>
+        <District Name='陆良县' Lon='103.67' Lat='25.03'/>
+        <District Name='师宗县' Lon='103.98' Lat='24.83'/>
+        <District Name='罗平县' Lon='104.3' Lat='24.88'/>
+        <District Name='富源县' Lon='104.25' Lat='25.67'/>
+        <District Name='会泽县' Lon='103.3' Lat='26.42'/>
+        <District Name='沾益县' Lon='103.82' Lat='25.62'/>
+        <District Name='宣威市' Lon='104.1' Lat='26.22'/>
+    </City>
+    <City Name='玉溪市' >
+        <District Name='玉溪市' Lon='102.55' Lat='24.35'/>
+        <District Name='江川县' Lon='102.75' Lat='24.28'/>
+        <District Name='澄江县' Lon='102.92' Lat='24.67'/>
+        <District Name='通海县' Lon='102.75' Lat='24.12'/>
+        <District Name='华宁县' Lon='102.93' Lat='24.2'/>
+        <District Name='易门县' Lon='102.17' Lat='24.67'/>
+        <District Name='峨山彝族自治县' Lon='102.4' Lat='24.18'/>
+        <District Name='新平彝族傣族自治县' Lon='101.98' Lat='24.07'/>
+    </City>
+    <City Name='保山市' >
+        <District Name='保山市' Lon='99.17' Lat='25.12'/>
+        <District Name='隆阳区' Lon='99.17' Lat='25.12'/>
+        <District Name='施甸县' Lon='99.18' Lat='24.73'/>
+        <District Name='腾冲县' Lon='98.5' Lat='25.03'/>
+        <District Name='龙陵县' Lon='98.68' Lat='24.58'/>
+        <District Name='昌宁县' Lon='99.6' Lat='24.83'/>
+    </City>
+    <City Name='昭通市' >
+        <District Name='昭通市' Lon='103.72' Lat='27.33'/>
+        <District Name='昭阳区' Lon='103.72' Lat='27.33'/>
+        <District Name='鲁甸县' Lon='103.55' Lat='27.2'/>
+        <District Name='巧家县' Lon='102.92' Lat='26.92'/>
+        <District Name='盐津县' Lon='104.23' Lat='28.12'/>
+        <District Name='大关县' Lon='103.88' Lat='27.75'/>
+        <District Name='永善县' Lon='103.63' Lat='28.23'/>
+        <District Name='绥江县' Lon='103.95' Lat='28.6'/>
+        <District Name='镇雄县' Lon='104.87' Lat='27.45'/>
+        <District Name='彝良县' Lon='104.05' Lat='27.63'/>
+        <District Name='威信县' Lon='105.05' Lat='27.85'/>
+        <District Name='水富县' Lon='104.4' Lat='28.63'/>
+    </City>
+    <City Name='丽江市' >
+        <District Name='丽江市' Lon='100.23' Lat='26.88'/>
+        <District Name='古城区' Lon='100.23' Lat='26.88'/>
+        <District Name='玉龙纳西族自治县' Lon='100.23' Lat='26.82'/>
+        <District Name='永胜县' Lon='100.75' Lat='26.68'/>
+        <District Name='华坪县' Lon='101.27' Lat='26.63'/>
+        <District Name='宁蒗彝族自治县' Lon='100.85' Lat='27.28'/>
+    </City>
+    <City Name='墨江哈尼族自治县' >
+        <District Name='墨江哈尼族自治县' Lon='101.68' Lat='23.43'/>
+        <District Name='景东彝族自治县' Lon='100.83' Lat='24.45'/>
+        <District Name='景谷傣族彝族自治县' Lon='100.7' Lat='23.5'/>
+        <District Name='江城哈尼族彝族自治县' Lon='101.85' Lat='22.58'/>
+        <District Name='澜沧拉祜族自治县' Lon='99.93' Lat='22.55'/>
+        <District Name='西盟佤族自治县' Lon='99.62' Lat='22.63'/>
+    </City>
+    <City Name='临沧市' >
+        <District Name='临沧市' Lon='100.08' Lat='23.88'/>
+        <District Name='临翔区' Lon='100.08' Lat='23.88'/>
+        <District Name='凤庆县' Lon='99.92' Lat='24.6'/>
+        <District Name='云县' Lon='100.13' Lat='24.45'/>
+        <District Name='永德县' Lon='99.25' Lat='24.03'/>
+        <District Name='镇康县' Lon='98.83' Lat='23.78'/>
+        <District Name='耿马傣族佤族自治县' Lon='99.4' Lat='23.55'/>
+        <District Name='沧源佤族自治县' Lon='99.25' Lat='23.15'/>
+    </City>
+    <City Name='楚雄彝族自治州' >
+        <District Name='楚雄彝族自治州' Lon='101.55' Lat='25.03'/>
+        <District Name='楚雄市' Lon='101.55' Lat='25.03'/>
+        <District Name='双柏县' Lon='101.63' Lat='24.7'/>
+        <District Name='牟定县' Lon='101.53' Lat='25.32'/>
+        <District Name='南华县' Lon='101.27' Lat='25.2'/>
+        <District Name='姚安县' Lon='101.23' Lat='25.5'/>
+        <District Name='大姚县' Lon='101.32' Lat='25.73'/>
+        <District Name='永仁县' Lon='101.67' Lat='26.07'/>
+        <District Name='元谋县' Lon='101.88' Lat='25.7'/>
+        <District Name='武定县' Lon='102.4' Lat='25.53'/>
+        <District Name='禄丰县' Lon='102.08' Lat='25.15'/>
+    </City>
+    <City Name='红河哈尼族彝族自治州' >
+        <District Name='红河哈尼族彝族自治州' Lon='103.4' Lat='23.37'/>
+        <District Name='个旧市' Lon='103.15' Lat='23.37'/>
+        <District Name='开远市' Lon='103.27' Lat='23.72'/>
+        <District Name='蒙自县' Lon='103.4' Lat='23.37'/>
+        <District Name='屏边苗族自治县' Lon='103.68' Lat='22.98'/>
+        <District Name='建水县' Lon='102.83' Lat='23.62'/>
+        <District Name='石屏县' Lon='102.5' Lat='23.72'/>
+        <District Name='弥勒县' Lon='103.43' Lat='24.4'/>
+        <District Name='泸西县' Lon='103.77' Lat='24.53'/>
+        <District Name='元阳县' Lon='102.83' Lat='23.23'/>
+        <District Name='红河县' Lon='102.42' Lat='23.37'/>
+        <District Name='绿春县' Lon='102.4' Lat='23'/>
+        <District Name='河口瑶族自治县' Lon='103.97' Lat='22.52'/>
+    </City>
+    <City Name='文山壮族苗族自治州' >
+        <District Name='文山壮族苗族自治州' Lon='104.25' Lat='23.37'/>
+        <District Name='文山县' Lon='104.25' Lat='23.37'/>
+        <District Name='砚山县' Lon='104.33' Lat='23.62'/>
+        <District Name='西畴县' Lon='104.67' Lat='23.45'/>
+        <District Name='麻栗坡县' Lon='104.7' Lat='23.12'/>
+        <District Name='马关县' Lon='104.4' Lat='23.02'/>
+        <District Name='丘北县' Lon='104.18' Lat='24.05'/>
+        <District Name='广南县' Lon='105.07' Lat='24.05'/>
+        <District Name='富宁县' Lon='105.62' Lat='23.63'/>
+    </City>
+    <City Name='西双版纳傣族自治州' >
+        <District Name='西双版纳傣族自治州' Lon='100.8' Lat='22.02'/>
+        <District Name='景洪市' Lon='100.8' Lat='22.02'/>
+        <District Name='勐海县' Lon='100.45' Lat='21.97'/>
+        <District Name='勐腊县' Lon='101.57' Lat='21.48'/>
+    </City>
+    <City Name='大理白族自治州' >
+        <District Name='大理白族自治州' Lon='100.23' Lat='25.6'/>
+        <District Name='大理市' Lon='100.23' Lat='25.6'/>
+        <District Name='漾濞彝族自治县' Lon='99.95' Lat='25.67'/>
+        <District Name='祥云县' Lon='100.55' Lat='25.48'/>
+        <District Name='宾川县' Lon='100.58' Lat='25.83'/>
+        <District Name='弥渡县' Lon='100.48' Lat='25.35'/>
+        <District Name='南涧彝族自治县' Lon='100.52' Lat='25.05'/>
+        <District Name='巍山彝族回族自治县' Lon='100.3' Lat='25.23'/>
+        <District Name='永平县' Lon='99.53' Lat='25.47'/>
+        <District Name='云龙县' Lon='99.37' Lat='25.88'/>
+        <District Name='洱源县' Lon='99.95' Lat='26.12'/>
+        <District Name='剑川县' Lon='99.9' Lat='26.53'/>
+        <District Name='鹤庆县' Lon='100.18' Lat='26.57'/>
+    </City>
+    <City Name='德宏傣族景颇族自治州' >
+        <District Name='德宏傣族景颇族自治州' Lon='98.58' Lat='24.43'/>
+        <District Name='瑞丽市' Lon='97.85' Lat='24.02'/>
+        <District Name='潞西市' Lon='98.58' Lat='24.43'/>
+        <District Name='梁河县' Lon='98.3' Lat='24.82'/>
+        <District Name='盈江县' Lon='97.93' Lat='24.72'/>
+        <District Name='陇川县' Lon='97.8' Lat='24.2'/>
+    </City>
+    <City Name='怒江傈僳族自治州' >
+        <District Name='怒江傈僳族自治州' Lon='98.85' Lat='25.85'/>
+        <District Name='泸水县' Lon='98.85' Lat='25.85'/>
+        <District Name='福贡县' Lon='98.87' Lat='26.9'/>
+        <District Name='贡山独龙族怒族自治县' Lon='98.67' Lat='27.73'/>
+        <District Name='兰坪白族普米族自治县' Lon='99.42' Lat='26.45'/>
+    </City>
+    <City Name='迪庆藏族自治州' >
+        <District Name='迪庆藏族自治州' Lon='99.7' Lat='27.83'/>
+        <District Name='香格里拉县' Lon='99.7' Lat='27.83'/>
+        <District Name='德钦县' Lon='98.92' Lat='28.48'/>
+        <District Name='维西傈僳族自治县' Lon='99.28' Lat='27.18'/>
+    </City>
+</Province>
+<Province Name='西藏自治区' >
+    <City Name='拉萨市' >
+        <District Name='拉萨市' Lon='91.13' Lat='29.65'/>
+        <District Name='城关区' Lon='91.13' Lat='29.65'/>
+        <District Name='林周县' Lon='91.25' Lat='29.9'/>
+        <District Name='当雄县' Lon='91.1' Lat='30.48'/>
+        <District Name='尼木县' Lon='90.15' Lat='29.45'/>
+        <District Name='曲水县' Lon='90.73' Lat='29.37'/>
+        <District Name='堆龙德庆县' Lon='91' Lat='29.65'/>
+        <District Name='达孜县' Lon='91.35' Lat='29.68'/>
+        <District Name='墨竹工卡县' Lon='91.73' Lat='29.83'/>
+    </City>
+    <City Name='昌都地区' >
+        <District Name='昌都地区' Lon='97.18' Lat='31.13'/>
+        <District Name='昌都县' Lon='97.18' Lat='31.13'/>
+        <District Name='江达县' Lon='98.22' Lat='31.5'/>
+        <District Name='贡觉县' Lon='98.27' Lat='30.87'/>
+        <District Name='类乌齐县' Lon='96.6' Lat='31.22'/>
+        <District Name='丁青县' Lon='95.6' Lat='31.42'/>
+        <District Name='察雅县' Lon='97.57' Lat='30.65'/>
+        <District Name='八宿县' Lon='96.92' Lat='30.05'/>
+        <District Name='左贡县' Lon='97.85' Lat='29.67'/>
+        <District Name='芒康县' Lon='98.6' Lat='29.68'/>
+        <District Name='洛隆县' Lon='95.83' Lat='30.75'/>
+        <District Name='边坝县' Lon='94.7' Lat='30.93'/>
+    </City>
+    <City Name='山南地区' >
+        <District Name='山南地区' Lon='91.77' Lat='29.23'/>
+        <District Name='乃东县' Lon='91.77' Lat='29.23'/>
+        <District Name='扎囊县' Lon='91.33' Lat='29.25'/>
+        <District Name='贡嘎县' Lon='90.98' Lat='29.3'/>
+        <District Name='桑日县' Lon='92.02' Lat='29.27'/>
+        <District Name='琼结县' Lon='91.68' Lat='29.03'/>
+        <District Name='曲松县' Lon='92.2' Lat='29.07'/>
+        <District Name='措美县' Lon='91.43' Lat='28.43'/>
+        <District Name='洛扎县' Lon='90.87' Lat='28.38'/>
+        <District Name='加查县' Lon='92.58' Lat='29.15'/>
+        <District Name='隆子县' Lon='92.47' Lat='28.42'/>
+        <District Name='错那县' Lon='91.95' Lat='28'/>
+        <District Name='浪卡子县' Lon='90.4' Lat='28.97'/>
+    </City>
+    <City Name='日喀则地区' >
+        <District Name='日喀则地区' Lon='88.88' Lat='29.27'/>
+        <District Name='日喀则市' Lon='88.88' Lat='29.27'/>
+        <District Name='南木林县' Lon='89.1' Lat='29.68'/>
+        <District Name='江孜县' Lon='89.6' Lat='28.92'/>
+        <District Name='定日县' Lon='87.12' Lat='28.67'/>
+        <District Name='萨迦县' Lon='88.02' Lat='28.9'/>
+        <District Name='拉孜县' Lon='87.63' Lat='29.08'/>
+        <District Name='昂仁县' Lon='87.23' Lat='29.3'/>
+        <District Name='谢通门县' Lon='88.27' Lat='29.43'/>
+        <District Name='白朗县' Lon='89.27' Lat='29.12'/>
+        <District Name='仁布县' Lon='89.83' Lat='29.23'/>
+        <District Name='康马县' Lon='89.68' Lat='28.57'/>
+        <District Name='定结县' Lon='87.77' Lat='28.37'/>
+        <District Name='仲巴县' Lon='84.03' Lat='29.77'/>
+        <District Name='亚东县' Lon='88.9' Lat='27.48'/>
+        <District Name='吉隆县' Lon='85.3' Lat='28.85'/>
+        <District Name='聂拉木县' Lon='85.98' Lat='28.17'/>
+        <District Name='萨嘎县' Lon='85.23' Lat='29.33'/>
+        <District Name='岗巴县' Lon='88.52' Lat='28.28'/>
+    </City>
+    <City Name='那曲地区' >
+        <District Name='那曲地区' Lon='92.07' Lat='31.48'/>
+        <District Name='那曲县' Lon='92.07' Lat='31.48'/>
+        <District Name='嘉黎县' Lon='93.25' Lat='30.65'/>
+        <District Name='比如县' Lon='93.68' Lat='31.48'/>
+        <District Name='聂荣县' Lon='92.3' Lat='32.12'/>
+        <District Name='安多县' Lon='91.68' Lat='32.27'/>
+        <District Name='申扎县' Lon='88.7' Lat='30.93'/>
+        <District Name='索县' Lon='93.78' Lat='31.88'/>
+        <District Name='班戈县' Lon='90.02' Lat='31.37'/>
+        <District Name='巴青县' Lon='94.03' Lat='31.93'/>
+        <District Name='尼玛县' Lon='87.23' Lat='31.78'/>
+    </City>
+    <City Name='阿里地区' >
+        <District Name='阿里地区' Lon='80.1' Lat='32.5'/>
+        <District Name='普兰县' Lon='81.17' Lat='30.3'/>
+        <District Name='札达县' Lon='79.8' Lat='31.48'/>
+        <District Name='噶尔县' Lon='80.1' Lat='32.5'/>
+        <District Name='日土县' Lon='79.72' Lat='33.38'/>
+        <District Name='革吉县' Lon='81.12' Lat='32.4'/>
+        <District Name='改则县' Lon='84.07' Lat='32.3'/>
+        <District Name='措勤县' Lon='85.17' Lat='31.02'/>
+    </City>
+    <City Name='林芝地区' >
+        <District Name='林芝地区' Lon='94.37' Lat='29.68'/>
+        <District Name='林芝县' Lon='94.37' Lat='29.68'/>
+        <District Name='工布江达县' Lon='93.25' Lat='29.88'/>
+        <District Name='米林县' Lon='94.22' Lat='29.22'/>
+        <District Name='墨脱县' Lon='95.33' Lat='29.33'/>
+        <District Name='波密县' Lon='95.77' Lat='29.87'/>
+        <District Name='察隅县' Lon='97.47' Lat='28.67'/>
+        <District Name='朗县' Lon='93.07' Lat='29.05'/>
+    </City>
+</Province>
+<Province Name='陕西省' >
+    <City Name='西安市' >
+        <District Name='西安市' Lon='108.93' Lat='34.27'/>
+        <District Name='新城区' Lon='108.95' Lat='34.27'/>
+        <District Name='碑林区' Lon='108.93' Lat='34.23'/>
+        <District Name='莲湖区' Lon='108.93' Lat='34.27'/>
+        <District Name='灞桥区' Lon='109.07' Lat='34.27'/>
+        <District Name='未央区' Lon='108.93' Lat='34.28'/>
+        <District Name='雁塔区' Lon='108.95' Lat='34.22'/>
+        <District Name='阎良区' Lon='109.23' Lat='34.65'/>
+        <District Name='临潼区' Lon='109.22' Lat='34.37'/>
+        <District Name='长安区' Lon='108.93' Lat='34.17'/>
+        <District Name='蓝田县' Lon='109.32' Lat='34.15'/>
+        <District Name='周至县' Lon='108.2' Lat='34.17'/>
+        <District Name='户县' Lon='108.6' Lat='34.1'/>
+        <District Name='高陵县' Lon='109.08' Lat='34.53'/>
+    </City>
+    <City Name='铜川市' >
+        <District Name='铜川市' Lon='108.93' Lat='34.9'/>
+        <District Name='王益区' Lon='109.07' Lat='35.07'/>
+        <District Name='印台区' Lon='109.1' Lat='35.1'/>
+        <District Name='耀州区' Lon='108.98' Lat='34.92'/>
+        <District Name='宜君县' Lon='109.12' Lat='35.4'/>
+    </City>
+    <City Name='宝鸡市' >
+        <District Name='宝鸡市' Lon='107.13' Lat='34.37'/>
+        <District Name='渭滨区' Lon='107.15' Lat='34.37'/>
+        <District Name='金台区' Lon='107.13' Lat='34.38'/>
+        <District Name='陈仓区' Lon='107.37' Lat='34.37'/>
+        <District Name='凤翔县' Lon='107.38' Lat='34.52'/>
+        <District Name='岐山县' Lon='107.62' Lat='34.45'/>
+        <District Name='扶风县' Lon='107.87' Lat='34.37'/>
+        <District Name='眉县' Lon='107.75' Lat='34.28'/>
+        <District Name='陇县' Lon='106.85' Lat='34.9'/>
+        <District Name='千阳县' Lon='107.13' Lat='34.65'/>
+        <District Name='麟游县' Lon='107.78' Lat='34.68'/>
+        <District Name='凤县' Lon='106.52' Lat='33.92'/>
+        <District Name='太白县' Lon='107.32' Lat='34.07'/>
+    </City>
+    <City Name='咸阳市' >
+        <District Name='咸阳市' Lon='108.7' Lat='34.33'/>
+        <District Name='秦都区' Lon='108.72' Lat='34.35'/>
+        <District Name='杨凌区' Lon='108.07' Lat='34.28'/>
+        <District Name='渭城区' Lon='108.73' Lat='34.33'/>
+        <District Name='三原县' Lon='108.93' Lat='34.62'/>
+        <District Name='泾阳县' Lon='108.83' Lat='34.53'/>
+        <District Name='乾县' Lon='108.23' Lat='34.53'/>
+        <District Name='礼泉县' Lon='108.42' Lat='34.48'/>
+        <District Name='永寿县' Lon='108.13' Lat='34.7'/>
+        <District Name='彬县' Lon='108.08' Lat='35.03'/>
+        <District Name='长武县' Lon='107.78' Lat='35.2'/>
+        <District Name='旬邑县' Lon='108.33' Lat='35.12'/>
+        <District Name='淳化县' Lon='108.58' Lat='34.78'/>
+        <District Name='武功县' Lon='108.2' Lat='34.27'/>
+        <District Name='兴平市' Lon='108.48' Lat='34.3'/>
+    </City>
+    <City Name='渭南市' >
+        <District Name='渭南市' Lon='109.5' Lat='34.5'/>
+        <District Name='临渭区' Lon='109.48' Lat='34.5'/>
+        <District Name='华县' Lon='109.77' Lat='34.52'/>
+        <District Name='潼关县' Lon='110.23' Lat='34.55'/>
+        <District Name='大荔县' Lon='109.93' Lat='34.8'/>
+        <District Name='合阳县' Lon='110.15' Lat='35.23'/>
+        <District Name='澄城县' Lon='109.93' Lat='35.18'/>
+        <District Name='蒲城县' Lon='109.58' Lat='34.95'/>
+        <District Name='白水县' Lon='109.58' Lat='35.18'/>
+        <District Name='富平县' Lon='109.18' Lat='34.75'/>
+        <District Name='韩城市' Lon='110.43' Lat='35.48'/>
+        <District Name='华阴市' Lon='110.08' Lat='34.57'/>
+    </City>
+    <City Name='延安市' >
+        <District Name='延安市' Lon='109.48' Lat='36.6'/>
+        <District Name='宝塔区' Lon='109.48' Lat='36.6'/>
+        <District Name='延长县' Lon='110' Lat='36.58'/>
+        <District Name='延川县' Lon='110.18' Lat='36.88'/>
+        <District Name='子长县' Lon='109.67' Lat='37.13'/>
+        <District Name='安塞县' Lon='109.32' Lat='36.87'/>
+        <District Name='志丹县' Lon='108.77' Lat='36.82'/>
+        <District Name='甘泉县' Lon='109.35' Lat='36.28'/>
+        <District Name='富县' Lon='109.37' Lat='35.98'/>
+        <District Name='洛川县' Lon='109.43' Lat='35.77'/>
+        <District Name='宜川县' Lon='110.17' Lat='36.05'/>
+        <District Name='黄龙县' Lon='109.83' Lat='35.58'/>
+        <District Name='黄陵县' Lon='109.25' Lat='35.58'/>
+    </City>
+    <City Name='汉中市' >
+        <District Name='汉中市' Lon='107.02' Lat='33.07'/>
+        <District Name='汉台区' Lon='107.03' Lat='33.07'/>
+        <District Name='南郑县' Lon='106.93' Lat='33'/>
+        <District Name='城固县' Lon='107.33' Lat='33.15'/>
+        <District Name='洋县' Lon='107.55' Lat='33.22'/>
+        <District Name='西乡县' Lon='107.77' Lat='32.98'/>
+        <District Name='勉县' Lon='106.67' Lat='33.15'/>
+        <District Name='宁强县' Lon='106.25' Lat='32.83'/>
+        <District Name='略阳县' Lon='106.15' Lat='33.33'/>
+        <District Name='镇巴县' Lon='107.9' Lat='32.53'/>
+        <District Name='留坝县' Lon='106.92' Lat='33.62'/>
+        <District Name='佛坪县' Lon='107.98' Lat='33.53'/>
+    </City>
+    <City Name='榆林市' >
+        <District Name='榆林市' Lon='109.73' Lat='38.28'/>
+        <District Name='榆阳区' Lon='109.75' Lat='38.28'/>
+        <District Name='神木县' Lon='110.5' Lat='38.83'/>
+        <District Name='府谷县' Lon='111.07' Lat='39.03'/>
+        <District Name='横山县' Lon='109.28' Lat='37.95'/>
+        <District Name='靖边县' Lon='108.8' Lat='37.6'/>
+        <District Name='定边县' Lon='107.6' Lat='37.58'/>
+        <District Name='绥德县' Lon='110.25' Lat='37.5'/>
+        <District Name='米脂县' Lon='110.18' Lat='37.75'/>
+        <District Name='佳县' Lon='110.48' Lat='38.02'/>
+        <District Name='吴堡县' Lon='110.73' Lat='37.45'/>
+        <District Name='清涧县' Lon='110.12' Lat='37.08'/>
+        <District Name='子洲县' Lon='110.03' Lat='37.62'/>
+    </City>
+    <City Name='安康市' >
+        <District Name='安康市' Lon='109.02' Lat='32.68'/>
+        <District Name='汉滨区' Lon='109.02' Lat='32.68'/>
+        <District Name='汉阴县' Lon='108.5' Lat='32.9'/>
+        <District Name='石泉县' Lon='108.25' Lat='33.05'/>
+        <District Name='宁陕县' Lon='108.32' Lat='33.32'/>
+        <District Name='紫阳县' Lon='108.53' Lat='32.52'/>
+        <District Name='岚皋县' Lon='108.9' Lat='32.32'/>
+        <District Name='平利县' Lon='109.35' Lat='32.4'/>
+        <District Name='镇坪县' Lon='109.52' Lat='31.88'/>
+        <District Name='旬阳县' Lon='109.38' Lat='32.83'/>
+        <District Name='白河县' Lon='110.1' Lat='32.82'/>
+    </City>
+    <City Name='商洛市' >
+        <District Name='商洛市' Lon='109.93' Lat='33.87'/>
+        <District Name='商州区' Lon='109.93' Lat='33.87'/>
+        <District Name='洛南县' Lon='110.13' Lat='34.08'/>
+        <District Name='丹凤县' Lon='110.33' Lat='33.7'/>
+        <District Name='商南县' Lon='110.88' Lat='33.53'/>
+        <District Name='山阳县' Lon='109.88' Lat='33.53'/>
+        <District Name='镇安县' Lon='109.15' Lat='33.43'/>
+        <District Name='柞水县' Lon='109.1' Lat='33.68'/>
+    </City>
+</Province>
+<Province Name='甘肃省' >
+    <City Name='兰州市' >
+        <District Name='兰州市' Lon='103.82' Lat='36.07'/>
+        <District Name='城关区' Lon='103.83' Lat='36.05'/>
+        <District Name='西固区' Lon='103.62' Lat='36.1'/>
+        <District Name='红古区' Lon='102.87' Lat='36.33'/>
+        <District Name='永登县' Lon='103.27' Lat='36.73'/>
+        <District Name='皋兰县' Lon='103.95' Lat='36.33'/>
+        <District Name='榆中县' Lon='104.12' Lat='35.85'/>
+    </City>
+    <City Name='嘉峪关市' >
+        <District Name='嘉峪关市' Lon='98.27' Lat='39.8'/>
+    </City>
+    <City Name='金昌市' >
+        <District Name='金昌市' Lon='102.18' Lat='38.5'/>
+        <District Name='金川区' Lon='102.18' Lat='38.5'/>
+        <District Name='永昌县' Lon='101.97' Lat='38.25'/>
+    </City>
+    <City Name='白银市' >
+        <District Name='白银市' Lon='104.18' Lat='36.55'/>
+        <District Name='白银区' Lon='104.18' Lat='36.55'/>
+        <District Name='平川区' Lon='104.83' Lat='36.73'/>
+        <District Name='靖远县' Lon='104.68' Lat='36.57'/>
+        <District Name='会宁县' Lon='105.05' Lat='35.7'/>
+        <District Name='景泰县' Lon='104.07' Lat='37.15'/>
+    </City>
+    <City Name='天水市' >
+        <District Name='天水市' Lon='105.72' Lat='34.58'/>
+        <District Name='清水县' Lon='106.13' Lat='34.75'/>
+        <District Name='秦安县' Lon='105.67' Lat='34.87'/>
+        <District Name='甘谷县' Lon='105.33' Lat='34.73'/>
+        <District Name='武山县' Lon='104.88' Lat='34.72'/>
+        <District Name='张家川回族自治县' Lon='106.22' Lat='35'/>
+    </City>
+    <City Name='武威市' >
+        <District Name='武威市' Lon='102.63' Lat='37.93'/>
+        <District Name='凉州区' Lon='102.63' Lat='37.93'/>
+        <District Name='民勤县' Lon='103.08' Lat='38.62'/>
+        <District Name='古浪县' Lon='102.88' Lat='37.47'/>
+        <District Name='天祝藏族自治县' Lon='103.13' Lat='36.98'/>
+    </City>
+    <City Name='张掖市' >
+        <District Name='张掖市' Lon='100.45' Lat='38.93'/>
+        <District Name='甘州区' Lon='100.45' Lat='38.93'/>
+        <District Name='肃南裕固族自治县' Lon='99.62' Lat='38.83'/>
+        <District Name='民乐县' Lon='100.82' Lat='38.43'/>
+        <District Name='临泽县' Lon='100.17' Lat='39.13'/>
+        <District Name='高台县' Lon='99.82' Lat='39.38'/>
+        <District Name='山丹县' Lon='101.08' Lat='38.78'/>
+    </City>
+    <City Name='平凉市' >
+        <District Name='平凉市' Lon='106.67' Lat='35.55'/>
+        <District Name='崆峒区' Lon='106.67' Lat='35.55'/>
+        <District Name='泾川县' Lon='107.37' Lat='35.33'/>
+        <District Name='灵台县' Lon='107.62' Lat='35.07'/>
+        <District Name='崇信县' Lon='107.03' Lat='35.3'/>
+        <District Name='华亭县' Lon='106.65' Lat='35.22'/>
+        <District Name='庄浪县' Lon='106.05' Lat='35.2'/>
+        <District Name='静宁县' Lon='105.72' Lat='35.52'/>
+    </City>
+    <City Name='酒泉市' >
+        <District Name='酒泉市' Lon='98.52' Lat='39.75'/>
+        <District Name='肃州区' Lon='98.52' Lat='39.75'/>
+        <District Name='金塔县' Lon='98.9' Lat='39.98'/>
+        <District Name='肃北蒙古族自治县' Lon='94.88' Lat='39.52'/>
+        <District Name='阿克塞哈萨克族自治县' Lon='94.33' Lat='39.63'/>
+        <District Name='玉门市' Lon='97.05' Lat='40.28'/>
+        <District Name='敦煌市' Lon='94.67' Lat='40.13'/>
+    </City>
+    <City Name='庆阳市' >
+        <District Name='庆阳市' Lon='107.63' Lat='35.73'/>
+        <District Name='西峰区' Lon='107.63' Lat='35.73'/>
+        <District Name='庆城县' Lon='107.88' Lat='36'/>
+        <District Name='环县' Lon='107.3' Lat='36.58'/>
+        <District Name='华池县' Lon='107.98' Lat='36.47'/>
+        <District Name='合水县' Lon='108.02' Lat='35.82'/>
+        <District Name='正宁县' Lon='108.37' Lat='35.5'/>
+        <District Name='宁县' Lon='107.92' Lat='35.5'/>
+        <District Name='镇原县' Lon='107.2' Lat='35.68'/>
+    </City>
+    <City Name='定西市' >
+        <District Name='定西市' Lon='104.62' Lat='35.58'/>
+        <District Name='安定区' Lon='104.62' Lat='35.58'/>
+        <District Name='通渭县' Lon='105.25' Lat='35.2'/>
+        <District Name='陇西县' Lon='104.63' Lat='35'/>
+        <District Name='渭源县' Lon='104.22' Lat='35.13'/>
+        <District Name='临洮县' Lon='103.87' Lat='35.38'/>
+        <District Name='漳县' Lon='104.47' Lat='34.85'/>
+        <District Name='岷县' Lon='104.03' Lat='34.43'/>
+    </City>
+    <City Name='陇南市' >
+        <District Name='陇南市' Lon='104.92' Lat='33.4'/>
+        <District Name='武都区' Lon='104.92' Lat='33.4'/>
+        <District Name='成县' Lon='105.72' Lat='33.73'/>
+        <District Name='文县' Lon='104.68' Lat='32.95'/>
+        <District Name='宕昌县' Lon='104.38' Lat='34.05'/>
+        <District Name='康县' Lon='105.6' Lat='33.33'/>
+        <District Name='西和县' Lon='105.3' Lat='34.02'/>
+        <District Name='礼县' Lon='105.17' Lat='34.18'/>
+        <District Name='徽县' Lon='106.08' Lat='33.77'/>
+        <District Name='两当县' Lon='106.3' Lat='33.92'/>
+    </City>
+    <City Name='临夏回族自治州' >
+        <District Name='临夏回族自治州' Lon='103.22' Lat='35.6'/>
+        <District Name='临夏市' Lon='103.22' Lat='35.6'/>
+        <District Name='临夏县' Lon='103' Lat='35.5'/>
+        <District Name='康乐县' Lon='103.72' Lat='35.37'/>
+        <District Name='永靖县' Lon='103.32' Lat='35.93'/>
+        <District Name='广河县' Lon='103.58' Lat='35.48'/>
+        <District Name='和政县' Lon='103.35' Lat='35.43'/>
+        <District Name='东乡族自治县' Lon='103.4' Lat='35.67'/>
+    </City>
+    <City Name='甘南藏族自治州' >
+        <District Name='甘南藏族自治州' Lon='102.92' Lat='34.98'/>
+        <District Name='合作市' Lon='102.92' Lat='34.98'/>
+        <District Name='临潭县' Lon='103.35' Lat='34.7'/>
+        <District Name='卓尼县' Lon='103.5' Lat='34.58'/>
+        <District Name='舟曲县' Lon='104.37' Lat='33.78'/>
+        <District Name='迭部县' Lon='103.22' Lat='34.05'/>
+        <District Name='玛曲县' Lon='102.07' Lat='34'/>
+        <District Name='碌曲县' Lon='102.48' Lat='34.58'/>
+        <District Name='夏河县' Lon='102.52' Lat='35.2'/>
+    </City>
+</Province>
+<Province Name='青海省' >
+    <City Name='西宁市' >
+        <District Name='西宁市' Lon='101.78' Lat='36.62'/>
+        <District Name='城东区' Lon='101.8' Lat='36.62'/>
+        <District Name='城中区' Lon='101.78' Lat='36.62'/>
+        <District Name='城西区' Lon='101.77' Lat='36.62'/>
+        <District Name='城北区' Lon='101.77' Lat='36.67'/>
+        <District Name='大通回族土族自治县' Lon='101.68' Lat='36.93'/>
+        <District Name='湟中县' Lon='101.57' Lat='36.5'/>
+        <District Name='湟源县' Lon='101.27' Lat='36.68'/>
+    </City>
+    <City Name='海东地区' >
+        <District Name='海东地区' Lon='102.12' Lat='36.5'/>
+        <District Name='平安县' Lon='102.12' Lat='36.5'/>
+        <District Name='民和回族土族自治县' Lon='102.8' Lat='36.33'/>
+        <District Name='乐都县' Lon='102.4' Lat='36.48'/>
+        <District Name='互助土族自治县' Lon='101.95' Lat='36.83'/>
+        <District Name='化隆回族自治县' Lon='102.27' Lat='36.1'/>
+        <District Name='循化撒拉族自治县' Lon='102.48' Lat='35.85'/>
+    </City>
+    <City Name='海北藏族自治州' >
+        <District Name='海北藏族自治州' Lon='100.9' Lat='36.97'/>
+        <District Name='门源回族自治县' Lon='101.62' Lat='37.38'/>
+        <District Name='祁连县' Lon='100.25' Lat='38.18'/>
+        <District Name='海晏县' Lon='100.98' Lat='36.9'/>
+        <District Name='刚察县' Lon='100.13' Lat='37.33'/>
+    </City>
+    <City Name='黄南藏族自治州' >
+        <District Name='黄南藏族自治州' Lon='102.02' Lat='35.52'/>
+        <District Name='同仁县' Lon='102.02' Lat='35.52'/>
+        <District Name='尖扎县' Lon='102.03' Lat='35.93'/>
+        <District Name='泽库县' Lon='101.47' Lat='35.03'/>
+        <District Name='河南蒙古族自治县' Lon='101.6' Lat='34.73'/>
+    </City>
+    <City Name='海南藏族自治州' >
+        <District Name='海南藏族自治州' Lon='100.62' Lat='36.28'/>
+        <District Name='共和县' Lon='100.62' Lat='36.28'/>
+        <District Name='同德县' Lon='100.57' Lat='35.25'/>
+        <District Name='贵德县' Lon='101.43' Lat='36.05'/>
+        <District Name='兴海县' Lon='99.98' Lat='35.58'/>
+        <District Name='贵南县' Lon='100.75' Lat='35.58'/>
+    </City>
+    <City Name='果洛藏族自治州' >
+        <District Name='果洛藏族自治州' Lon='100.23' Lat='34.48'/>
+        <District Name='玛沁县' Lon='100.23' Lat='34.48'/>
+        <District Name='班玛县' Lon='100.73' Lat='32.93'/>
+        <District Name='甘德县' Lon='99.9' Lat='33.97'/>
+        <District Name='达日县' Lon='99.65' Lat='33.75'/>
+        <District Name='久治县' Lon='101.48' Lat='33.43'/>
+        <District Name='玛多县' Lon='98.18' Lat='34.92'/>
+    </City>
+    <City Name='玉树藏族自治州' >
+        <District Name='玉树藏族自治州' Lon='97.02' Lat='33'/>
+        <District Name='玉树县' Lon='97.02' Lat='33'/>
+        <District Name='杂多县' Lon='95.3' Lat='32.9'/>
+        <District Name='称多县' Lon='97.1' Lat='33.37'/>
+        <District Name='治多县' Lon='95.62' Lat='33.85'/>
+        <District Name='囊谦县' Lon='96.48' Lat='32.2'/>
+        <District Name='曲麻莱县' Lon='95.8' Lat='34.13'/>
+    </City>
+    <City Name='海西蒙古族藏族自治州' >
+        <District Name='海西蒙古族藏族自治州' Lon='97.37' Lat='37.37'/>
+        <District Name='格尔木市' Lon='94.9' Lat='36.42'/>
+        <District Name='德令哈市' Lon='97.37' Lat='37.37'/>
+        <District Name='乌兰县' Lon='98.48' Lat='36.93'/>
+        <District Name='都兰县' Lon='98.08' Lat='36.3'/>
+        <District Name='天峻县' Lon='99.02' Lat='37.3'/>
+    </City>
+</Province>
+<Province Name='宁夏回族自治区' >
+    <City Name='银川市' >
+        <District Name='银川市' Lon='106.28' Lat='38.47'/>
+        <District Name='兴庆区' Lon='106.28' Lat='38.48'/>
+        <District Name='西夏区' Lon='106.18' Lat='38.48'/>
+        <District Name='金凤区' Lon='106.25' Lat='38.47'/>
+        <District Name='永宁县' Lon='106.25' Lat='38.28'/>
+        <District Name='贺兰县' Lon='106.35' Lat='38.55'/>
+        <District Name='灵武市' Lon='106.33' Lat='38.1'/>
+    </City>
+    <City Name='石嘴山市' >
+        <District Name='石嘴山市' Lon='106.38' Lat='39.02'/>
+        <District Name='大武口区' Lon='106.38' Lat='39.02'/>
+        <District Name='惠农区' Lon='106.78' Lat='39.25'/>
+        <District Name='平罗县' Lon='106.53' Lat='38.9'/>
+    </City>
+    <City Name='吴忠市' >
+        <District Name='吴忠市' Lon='106.2' Lat='37.98'/>
+        <District Name='利通区' Lon='106.2' Lat='37.98'/>
+        <District Name='盐池县' Lon='107.4' Lat='37.78'/>
+        <District Name='同心县' Lon='105.92' Lat='36.98'/>
+        <District Name='青铜峡市' Lon='106.07' Lat='38.02'/>
+    </City>
+    <City Name='固原市' >
+        <District Name='固原市' Lon='106.28' Lat='36'/>
+        <District Name='原州区' Lon='106.28' Lat='36'/>
+        <District Name='西吉县' Lon='105.73' Lat='35.97'/>
+        <District Name='隆德县' Lon='106.12' Lat='35.62'/>
+        <District Name='泾源县' Lon='106.33' Lat='35.48'/>
+        <District Name='彭阳县' Lon='106.63' Lat='35.85'/>
+    </City>
+    <City Name='中卫市' >
+        <District Name='中卫市' Lon='105.18' Lat='37.52'/>
+        <District Name='沙坡头区' Lon='105.18' Lat='37.52'/>
+        <District Name='中宁县' Lon='105.67' Lat='37.48'/>
+        <District Name='海原县' Lon='105.65' Lat='36.57'/>
+    </City>
+</Province>
+<Province Name='新疆维吾尔' >
+    <City Name='乌鲁木齐市' >
+        <District Name='乌鲁木齐市' Lon='87.62' Lat='43.82'/>
+        <District Name='天山区' Lon='87.65' Lat='43.78'/>
+        <District Name='沙依巴克区' Lon='87.6' Lat='43.78'/>
+        <District Name='新市区' Lon='87.6' Lat='43.85'/>
+        <District Name='水磨沟区' Lon='87.63' Lat='43.83'/>
+        <District Name='头屯河区' Lon='87.42' Lat='43.87'/>
+        <District Name='达坂城区' Lon='88.3' Lat='43.35'/>
+        <District Name='东山区' Lon='87.68' Lat='43.95'/>
+        <District Name='乌鲁木齐县' Lon='87.6' Lat='43.8'/>
+    </City>
+    <City Name='克拉玛依市' >
+        <District Name='克拉玛依市' Lon='84.87' Lat='45.6'/>
+        <District Name='独山子区' Lon='84.85' Lat='44.32'/>
+        <District Name='克拉玛依区' Lon='84.87' Lat='45.6'/>
+        <District Name='白碱滩区' Lon='85.13' Lat='45.7'/>
+        <District Name='乌尔禾区' Lon='85.68' Lat='46.08'/>
+    </City>
+    <City Name='吐鲁番地区' >
+        <District Name='吐鲁番地区' Lon='89.17' Lat='42.95'/>
+        <District Name='吐鲁番市' Lon='89.17' Lat='42.95'/>
+        <District Name='鄯善县' Lon='90.22' Lat='42.87'/>
+        <District Name='托克逊县' Lon='88.65' Lat='42.78'/>
+    </City>
+    <City Name='哈密地区' >
+        <District Name='哈密地区' Lon='93.52' Lat='42.83'/>
+        <District Name='哈密市' Lon='93.52' Lat='42.83'/>
+        <District Name='伊吾县' Lon='94.7' Lat='43.25'/>
+    </City>
+    <City Name='昌吉回族自治州' >
+        <District Name='昌吉回族自治州' Lon='87.3' Lat='44.02'/>
+        <District Name='昌吉市' Lon='87.3' Lat='44.02'/>
+        <District Name='阜康市' Lon='87.98' Lat='44.15'/>
+        <District Name='米泉市' Lon='87.65' Lat='43.97'/>
+        <District Name='呼图壁县' Lon='86.9' Lat='44.18'/>
+        <District Name='玛纳斯县' Lon='86.22' Lat='44.3'/>
+        <District Name='奇台县' Lon='89.58' Lat='44.02'/>
+        <District Name='吉木萨尔县' Lon='89.18' Lat='44'/>
+        <District Name='木垒哈萨克自治县' Lon='90.28' Lat='43.83'/>
+    </City>
+    <City Name='博尔塔拉蒙古自治州' >
+        <District Name='博尔塔拉蒙古自治州' Lon='82.07' Lat='44.9'/>
+        <District Name='博乐市' Lon='82.07' Lat='44.9'/>
+        <District Name='精河县' Lon='82.88' Lat='44.6'/>
+        <District Name='温泉县' Lon='81.03' Lat='44.97'/>
+    </City>
+    <City Name='巴音郭楞蒙古自治州' >
+        <District Name='巴音郭楞蒙古自治州' Lon='86.15' Lat='41.77'/>
+        <District Name='库尔勒市' Lon='86.15' Lat='41.77'/>
+        <District Name='轮台县' Lon='84.27' Lat='41.78'/>
+        <District Name='尉犁县' Lon='86.25' Lat='41.33'/>
+        <District Name='若羌县' Lon='88.17' Lat='39.02'/>
+        <District Name='且末县' Lon='85.53' Lat='38.13'/>
+        <District Name='焉耆回族自治县' Lon='86.57' Lat='42.07'/>
+        <District Name='和静县' Lon='86.4' Lat='42.32'/>
+        <District Name='和硕县' Lon='86.87' Lat='42.27'/>
+        <District Name='博湖县' Lon='86.63' Lat='41.98'/>
+    </City>
+    <City Name='阿克苏地区' >
+        <District Name='阿克苏地区' Lon='80.27' Lat='41.17'/>
+        <District Name='阿克苏市' Lon='80.27' Lat='41.17'/>
+        <District Name='温宿县' Lon='80.23' Lat='41.28'/>
+        <District Name='库车县' Lon='82.97' Lat='41.72'/>
+        <District Name='沙雅县' Lon='82.78' Lat='41.22'/>
+        <District Name='新和县' Lon='82.6' Lat='41.55'/>
+        <District Name='拜城县' Lon='81.87' Lat='41.8'/>
+        <District Name='乌什县' Lon='79.23' Lat='41.22'/>
+        <District Name='阿瓦提县' Lon='80.38' Lat='40.63'/>
+        <District Name='柯坪县' Lon='79.05' Lat='40.5'/>
+    </City>
+    <City Name='阿图什市' >
+        <District Name='阿图什市' Lon='76.17' Lat='39.72'/>
+        <District Name='阿克陶县' Lon='75.95' Lat='39.15'/>
+        <District Name='阿合奇县' Lon='78.45' Lat='40.93'/>
+        <District Name='乌恰县' Lon='75.25' Lat='39.72'/>
+    </City>
+    <City Name='喀什地区' >
+        <District Name='喀什地区' Lon='75.98' Lat='39.47'/>
+        <District Name='喀什市' Lon='75.98' Lat='39.47'/>
+        <District Name='疏附县' Lon='75.85' Lat='39.38'/>
+        <District Name='疏勒县' Lon='76.05' Lat='39.4'/>
+        <District Name='英吉沙县' Lon='76.17' Lat='38.93'/>
+        <District Name='泽普县' Lon='77.27' Lat='38.18'/>
+        <District Name='莎车县' Lon='77.23' Lat='38.42'/>
+        <District Name='叶城县' Lon='77.42' Lat='37.88'/>
+        <District Name='麦盖提县' Lon='77.65' Lat='38.9'/>
+        <District Name='岳普湖县' Lon='76.77' Lat='39.23'/>
+        <District Name='伽师县' Lon='76.73' Lat='39.5'/>
+        <District Name='巴楚县' Lon='78.55' Lat='39.78'/>
+    </City>
+    <City Name='和田地区' >
+        <District Name='和田地区' Lon='79.92' Lat='37.12'/>
+        <District Name='和田市' Lon='79.92' Lat='37.12'/>
+        <District Name='和田县' Lon='79.93' Lat='37.1'/>
+        <District Name='墨玉县' Lon='79.73' Lat='37.27'/>
+        <District Name='皮山县' Lon='78.28' Lat='37.62'/>
+        <District Name='洛浦县' Lon='80.18' Lat='37.07'/>
+        <District Name='策勒县' Lon='80.8' Lat='37'/>
+        <District Name='于田县' Lon='81.67' Lat='36.85'/>
+        <District Name='民丰县' Lon='82.68' Lat='37.07'/>
+    </City>
+    <City Name='伊犁哈萨克自治州' >
+        <District Name='伊犁哈萨克自治州' Lon='81.32' Lat='43.92'/>
+        <District Name='伊宁市' Lon='81.32' Lat='43.92'/>
+        <District Name='奎屯市' Lon='84.9' Lat='44.42'/>
+        <District Name='伊宁县' Lon='81.52' Lat='43.98'/>
+        <District Name='察布查尔锡伯自治县' Lon='81.15' Lat='43.83'/>
+        <District Name='霍城县' Lon='80.88' Lat='44.05'/>
+        <District Name='巩留县' Lon='82.23' Lat='43.48'/>
+        <District Name='新源县' Lon='83.25' Lat='43.43'/>
+        <District Name='昭苏县' Lon='81.13' Lat='43.15'/>
+        <District Name='特克斯县' Lon='81.83' Lat='43.22'/>
+        <District Name='尼勒克县' Lon='82.5' Lat='43.78'/>
+    </City>
+    <City Name='塔城地区' >
+        <District Name='塔城地区' Lon='82.98' Lat='46.75'/>
+        <District Name='塔城市' Lon='82.98' Lat='46.75'/>
+        <District Name='乌苏市' Lon='84.68' Lat='44.43'/>
+        <District Name='额敏县' Lon='83.63' Lat='46.53'/>
+        <District Name='沙湾县' Lon='85.62' Lat='44.33'/>
+        <District Name='托里县' Lon='83.6' Lat='45.93'/>
+        <District Name='裕民县' Lon='82.98' Lat='46.2'/>
+        <District Name='和布克赛尔蒙古自治县' Lon='85.72' Lat='46.8'/>
+    </City>
+    <City Name='阿勒泰地区' >
+        <District Name='阿勒泰地区' Lon='88.13' Lat='47.85'/>
+        <District Name='阿勒泰市' Lon='88.13' Lat='47.85'/>
+        <District Name='布尔津县' Lon='86.85' Lat='47.7'/>
+        <District Name='富蕴县' Lon='89.52' Lat='47'/>
+        <District Name='福海县' Lon='87.5' Lat='47.12'/>
+        <District Name='哈巴河县' Lon='86.42' Lat='48.07'/>
+        <District Name='青河县' Lon='90.38' Lat='46.67'/>
+        <District Name='吉木乃县' Lon='85.88' Lat='47.43'/>
+    </City>
+    <City Name='石河子市' >
+        <District Name='石河子市' Lon='86.03' Lat='44.3'/>
+        <District Name='阿拉尔市' Lon='81.28' Lat='40.55'/>
+        <District Name='图木舒克市' Lon='79.13' Lat='39.85'/>
+        <District Name='五家渠市' Lon='87.53' Lat='44.17'/>
+    </City>
+</Province>
+<Province Name='港澳台' >
+    <City Name='港澳台' >
+        <District Name='香港' Lon='114.08' Lat='22.2'/>
+        <District Name='澳门' Lon='113.33' Lat='22.13'/>
+        <District Name='台北市' Lon='121.5' Lat='25.03'/>
+        <District Name='高雄市' Lon='120.28' Lat='22.62'/>
+        <District Name='基隆市' Lon='121.73' Lat='25.13'/>
+        <District Name='台中市' Lon='120.67' Lat='24.15'/>
+        <District Name='台南市' Lon='120.2' Lat='23'/>
+        <District Name='新竹市' Lon='120.95' Lat='24.82'/>
+        <District Name='嘉义市' Lon='120.43' Lat='23.48'/>
+        <District Name='台北县' Lon='121.47' Lat='25.02'/>
+        <District Name='宜兰县' Lon='121.75' Lat='24.77'/>
+        <District Name='桃园县' Lon='121.3' Lat='24.97'/>
+        <District Name='苗栗县' Lon='120.8' Lat='24.53'/>
+        <District Name='台中县' Lon='120.72' Lat='24.25'/>
+        <District Name='彰化县' Lon='120.53' Lat='24.08'/>
+        <District Name='南投县' Lon='120.67' Lat='23.92'/>
+        <District Name='云林县' Lon='120.53' Lat='23.72'/>
+        <District Name='台南县' Lon='120.32' Lat='23.32'/>
+        <District Name='高雄县' Lon='120.37' Lat='22.63'/>
+        <District Name='屏东县' Lon='120.48' Lat='22.67'/>
+        <District Name='台东县' Lon='121.15' Lat='22.75'/>
+        <District Name='花莲县' Lon='121.6' Lat='23.98'/>
+        <District Name='澎湖县' Lon='119.58' Lat='23.58'/>
+    </City>
+</Province>
+</China>
