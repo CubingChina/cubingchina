@@ -39,6 +39,9 @@ class AdminController extends Controller {
 			array(
 				'allow',
 				'users'=>array('@'),
+				'roles'=>array(
+					'role'=>User::ROLE_CHECKED,
+				),
 			),
 			array(
 				'deny',

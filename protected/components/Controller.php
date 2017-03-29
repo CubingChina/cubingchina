@@ -293,9 +293,9 @@ class Controller extends CController {
 						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
 					),
 					array(
-						'label'=>Yii::t('common', 'Apply Competition'),
+						'label'=>Yii::t('common', 'Apply for Competition'),
 						'url'=>array('/board/competition/apply'),
-						'visible'=>!Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+						'visible'=>!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && Yii::app()->user->checkRole(User::ROLE_CHECKED),
 					),
 					array(
 						'label'=>Yii::t('common', 'Logout'),
