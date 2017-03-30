@@ -1795,6 +1795,11 @@ class Competition extends ActiveRecord {
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition('status', [
+			self::STATUS_HIDE,
+			self::STATUS_SHOW,
+		]);
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
 			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true),
@@ -1803,8 +1808,8 @@ class Competition extends ActiveRecord {
 			array('name_zh', 'length', 'max'=>50),
 			array('name', 'length', 'max'=>128),
 			array('name', 'checkName', 'skipOnError'=>true),
-			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept'),
-			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept'),
+			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
+			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
