@@ -10,6 +10,10 @@
           'label'=>Yii::t('common', 'Profile'),
           'active'=>in_array($this->action->id, array('profile', 'edit')),
         ),
+        array(
+          'url'=>array('/user/preferredEvents'),
+          'label'=>Yii::t('common', 'Preferred Events'),
+        ),
         // array(
         //   'url'=>array('/user/password'),
         //   'label'=>Yii::t('common', 'Change Password'),

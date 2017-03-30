@@ -215,6 +215,7 @@ class CompetitionController extends Controller {
 		$model->unsetAttributes();
 		$model->competition = $competition;
 		$model->competition_id = $competition->id;
+		$model->events = array_values(PreferredEvent::getUserEvents($user));
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}

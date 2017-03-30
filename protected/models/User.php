@@ -43,6 +43,7 @@ class User extends ActiveRecord {
 	const STATUS_DELETED = 2;
 
 	private $_hasCerts;
+	private $_preferredEvents;
 
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
@@ -215,6 +216,17 @@ class User extends ActiveRecord {
 
 	public function hasPermission($permission) {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
+	}
+
+	public function getPreferredEvents() {
+		if ($this->_preferredEvents == null) {
+			$this->_preferredEvents = PreferredEvent::getUserEvents($this);
+		}
+		return $this->_preferredEvents;
+	}
+
+	public function setPreferredEvents($events) {
+		$this->_preferredEvents = $events;
 	}
 
 	public function getHasCerts() {
@@ -395,6 +407,7 @@ class User extends ActiveRecord {
 			array('birthday, mobile', 'length', 'max'=>20),
 			array('reg_time', 'length', 'max'=>11),
 			array('reg_ip', 'length', 'max'=>15),
+			['preferredEvents', 'safe'],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, identity, reg_time, reg_ip, status', 'safe', 'on'=>'search'),
@@ -440,6 +453,7 @@ class User extends ActiveRecord {
 			'reg_time' => Yii::t('User', 'Reg Time'),
 			'reg_ip' => Yii::t('User', 'Reg Ip'),
 			'status' => Yii::t('User', 'Status'),
+			'preferredEvents' => Yii::t('common', 'Preferred Events'),
 		);
 	}
 
