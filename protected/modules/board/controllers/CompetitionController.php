@@ -57,6 +57,9 @@ class CompetitionController extends AdminController {
 			Yii::app()->user->setFlash('danger', '该比赛尚未填写申请资料！');
 			$this->redirect($this->getReferrer());
 		}
+		if ($model->isAccepted()) {
+			$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
+		}
 		if (isset($_POST['Competition']) && $this->user->isAdministrator()) {
 			$status = $model->status;
 			$model->attributes = $_POST['Competition'];

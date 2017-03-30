@@ -97,14 +97,20 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getUnacceptedCount($user) {
-		return self::model()->with(array(
-			'organizer'=>array(
+		$with = [
+			'organizer'=>[
 				'together'=>true,
 				'condition'=>'organizer.organizer_id=' . $user->id,
-			),
-		))->countByAttributes(array(
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
 			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED]
-		));
+		]) + $model->countByAttributes([
+			'status'=>[self::STATUS_HIDE, self::STATUS_SHOW, self::STATUS_REJECTED],
+		], [
+			'condition'=>'create_time between ' . strtotime('today first day of this month') . ' and ' . strtotime('today first day of next month'),
+		]);
 	}
 
 	public static function getUpcomingRegistrableCompetitions($limit = 5) {
