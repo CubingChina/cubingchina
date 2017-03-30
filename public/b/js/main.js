@@ -49,6 +49,45 @@ $(function() {
       }
     });
     return false;
+  }).on('click', '.confirm', function() {
+    var that = $(this);
+    var options = that.data();
+    if (!confirm('请确保比赛信息和申请资料均已详实填写，确认后将不可更改！')) {
+      return false;
+    }
+    $.ajax({
+      url: options.url,
+      type: 'post',
+      dataType: 'json',
+      data: {
+        id: options.id,
+      },
+      timeout: 10000,
+      success: function(data) {
+        if (data.status !==  0) {
+          alert(data.msg);
+          return
+        }
+        alert('比赛已提交,请等待管理员/代表审核!');
+        location.href = location.href;
+      },
+      error: function(xhr, textStatus, error) {
+        var msg = [];
+        switch (textStatus) {
+          case 'timeout':
+            msg.push('连接超时，请检查网络');
+            break;
+          default:
+            msg.push(error);
+            msg.push(xhr.responseText);
+        }
+        if (options.name) {
+          msg.push('涉及数据：' + options.name);
+        }
+        alert(msg.join('\n'));
+      }
+    });
+    return false;
   });
   function adjustTableContainer() {
     var tableContainer = $('.table-responsive');

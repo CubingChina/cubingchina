@@ -1,6 +1,34 @@
 <?php
+
 class CompetitionController extends AdminController {
+
+	public function accessRules() {
+		return array(
+			array(
+				'allow',
+				'actions'=>array('index', 'application', 'apply', 'edit', 'editApplication', 'view', 'confirm'),
+				'users'=>array('@'),
+				'roles'=>array(
+					'role'=>User::ROLE_CHECKED,
+				),
+			),
+			array(
+				'allow',
+				'roles'=>array(
+					'role'=>User::ROLE_ADMINISTRATOR,
+				),
+			),
+			array(
+				'deny',
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	public function actionIndex() {
+		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
+			$this->redirect(['/board/competition/application']);
+		}
 		$model = new Competition();
 		$model->unsetAttributes();
 		$model->attributes = $this->aRequest('Competition');
@@ -9,32 +37,85 @@ class CompetitionController extends AdminController {
 		));
 	}
 
-	public function actionAdd() {
-		if (!$this->user->isAdministrator()) {
-			Yii::app()->user->setFlash('danger', '如需创建比赛，请与管理员联系 admin@cubingchina.com');
-			$this->redirect(array('/board/competition/index'));
+	public function actionApplication() {
+		$model = new Competition('application');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('Competition');
+		$this->render('index', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionView() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if (!$model->checkPermission($this->user)) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->application === null) {
+			Yii::app()->user->setFlash('danger', '该比赛尚未填写申请资料！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->isAccepted()) {
+			$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
+		}
+		if (isset($_POST['Competition']) && $this->user->isAdministrator()) {
+			$status = $model->status;
+			$model->attributes = $_POST['Competition'];
+			$model->formatDate();
+			if ($model->isAccepted()) {
+				$model->scenario = 'accept';
+			}
+			if ($model->save()) {
+				$model->application->attributes = $_POST['CompetitionApplication'] ?? [];
+				$model->application->save();
+				switch ($model->isAccepted()) {
+					case true:
+						Yii::app()->mailer->sendCompetitionAcceptNotice($model);
+						Yii::app()->user->setFlash('success', '通过比赛成功');
+						$this->redirect(['/board/competition/index']);
+						break;
+					case false:
+						Yii::app()->mailer->sendCompetitionRejectNotice($model);
+						Yii::app()->user->setFlash('success', '拒绝/驳回比赛成功');
+						$this->redirect(['/board/competition/application']);
+						break;
+				}
+			}
+			$model->status = $status;
+			$model->handleDate();
+		}
+		$model->formatEvents();
+		$this->render('view', [
+			'competition'=>$model,
+			'nearbyCompetitions'=>$model->getNearbyCompetitions(),
+		]);
+	}
+
+	public function actionApply() {
+		$user = $this->user;
+		if (!$user->isAdministrator() && (Competition::getUnacceptedCount($user) + Competition::getCurrentMonthCount($user)) >= 1) {
+			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
+			$this->redirect(array('/board/competition/application'));
 		}
 		$model = new Competition();
 		$model->date = $model->end_date = $model->reg_start = $model->reg_end = '';
 		$model->province_id = $model->city_id = '';
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
+			$model->status = Competition::STATUS_UNCONFIRMED;
+			if (!$user->isAdministrator()) {
+				$model->organizers = [$user->id];
+			}
 			if ($model->save()) {
-				if ($this->user->isOrganizer()) {
-					Yii::app()->mailer->sendAddCompetitionNotice($model);
-				}
 				Yii::app()->user->setFlash('success', '新加比赛成功');
-				$this->redirect(array('/board/competition/index'));
+				$this->redirect(array('/board/competition/application'));
 			}
 			$model->formatSchedule();
-		}
-		if ($this->user->isOrganizer()) {
-			$organizer = new CompetitionOrganizer();
-			$organizer->organizer_id = $this->user->id;
-			$organizer->user = $this->user;
-			$model->organizer = array(
-				$organizer,
-			);
 		}
 		$model->formatEvents();
 		$model->formatDate();
@@ -47,8 +128,12 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if (!$model->checkPermission($this->user)) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->isConfirmed() && !$this->user->isAdministrator()) {
+			Yii::app()->user->setFlash('danger', '申请已确认，不能编辑！');
 			$this->redirect($this->getReferrer());
 		}
 		$cannotEditAttr = array(
@@ -96,6 +181,34 @@ class CompetitionController extends AdminController {
 		$this->render('edit', $this->getCompetitionData($model));
 	}
 
+	public function actionEditApplication() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if (!$this->user->isAdministrator() && !isset($model->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->application == null) {
+			$model->application = new CompetitionApplication();
+			$model->application->competition_id = $model->id;
+			$model->application->create_time = time();
+		}
+		if (isset($_POST['CompetitionApplication'])) {
+			$model->application->attributes = $_POST['CompetitionApplication'];
+			if ($model->application->save()) {
+				Yii::app()->user->setFlash('success', '更新申请资料成功');
+				$this->redirect($this->getReferrer());
+			}
+		}
+		$this->render('editApplication', [
+			'competition'=>$model,
+			'model'=>$model->application,
+		]);
+	}
+
 	private function getCompetitionData($model) {
 		$wcaDelegates = array();
 		foreach (User::getDelegates(User::IDENTITY_WCA_DELEGATE) as $delegate) {
@@ -131,8 +244,8 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		if ($this->user->isOrganizer() && $attribute == 'status') {
-			throw new CHttpException(401, 'Unauthorized');
+		if (!$this->user->isAdministrator() && $attribute == 'status') {
+			throw new CHttpException(401, '未授权');
 		}
 		$model->formatEvents();
 		$model->formatDate();
@@ -141,5 +254,31 @@ class CompetitionController extends AdminController {
 		$this->ajaxOk(array(
 			'value'=>$model->$attribute,
 		));
+	}
+
+	public function actionConfirm() {
+		$id = $this->iRequest('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		if (!$model->checkPermission($this->user)) {
+			throw new CHttpException(401, '未授权');
+		}
+		if ($model->application === null) {
+			throw new CHttpException(403, '该比赛尚未填写申请资料！');
+		}
+		if ($model->isAccepted()) {
+			throw new CHttpException(401, '未授权的操作');
+		}
+		$model->formatEvents();
+		$model->formatDate();
+		$model->status = Competition::STATUS_CONFIRMED;
+		if ($model->save()) {
+			Yii::app()->mailer->sendCompetitionConfirmNotice($model);
+			$this->ajaxOk([]);
+		} else {
+			throw new CHttpException(500, json_encode($model->errors));
+		}
 	}
 }

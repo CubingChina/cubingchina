@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Apply for Competition' => '申請比賽',
   'Fee' => '',
   'Days' => '天',
   'Hours' => '小時',

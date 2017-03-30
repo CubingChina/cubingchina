@@ -241,6 +241,9 @@ class Controller extends CController {
 	}
 
 	public function setNavibar($navibar) {
+		$isGuest = Yii::app()->user->isGuest;
+		$user = $this->user;
+		$applied = !$isGuest && Competition::getAppliedCount($user) > 0;
 		$navibar = array_merge($navibar, array(
 			array(
 				'label'=>'<i class="fa fa-user"></i> <i class="fa fa-angle-down"></i>',
@@ -268,36 +271,41 @@ class Controller extends CController {
 					array(
 						'label'=>Yii::t('common', 'Competition History'),
 						'url'=>array('/user/competitionHistory'),
-						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+						'visible'=>!$isGuest && $user->wcaid != '',
 					),
 					array(
 						'label'=>Yii::t('common', 'My Homepage'),
-						'url'=>Yii::app()->user->isGuest ? '' : array('/results/p', 'id'=>$this->user->wcaid),
-						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+						'url'=>$isGuest ? '' : array('/results/p', 'id'=>$user->wcaid),
+						'visible'=>!$isGuest && $user->wcaid != '',
 					),
 					array(
 						'label'=>Yii::t('common', 'My Annual Summary', [
 							'{year}'=>2016,
 						]),
-						'url'=>Yii::app()->user->isGuest ? '' : array('/summary/person', 'id'=>$this->user->wcaid, 'year'=>2016),
-						'visible'=>!Yii::app()->user->isGuest && $this->user->wcaid != '',
+						'url'=>$isGuest ? '' : array('/summary/person', 'id'=>$user->wcaid, 'year'=>2016),
+						'visible'=>!$isGuest && $user->wcaid != '',
 					),
 					array(
 						'label'=>Yii::t('common', 'My Certificates'),
-						'url'=>Yii::app()->user->isGuest ? '' : array('/user/cert'),
-						'visible'=>!Yii::app()->user->isGuest && $this->user->hasCerts,
+						'url'=>$isGuest ? '' : array('/user/cert'),
+						'visible'=>!$isGuest && $user->hasCerts,
 					),
 					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
-						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || $applied,
+					),
+					array(
+						'label'=>Yii::t('common', 'Apply for Competition'),
+						'url'=>array('/board/competition/apply'),
+						'visible'=>!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && Yii::app()->user->checkRole(User::ROLE_CHECKED) && !$applied,
 					),
 					array(
 						'label'=>Yii::t('common', 'Logout'),
 						'url'=>array('/site/logout'),
 					),
 				),
-				'visible'=>!Yii::app()->user->isGuest,
+				'visible'=>!$isGuest,
 			),
 			array(
 				'label'=>Yii::t('common', 'Login'),
@@ -305,7 +313,7 @@ class Controller extends CController {
 				'itemOptions'=>array(
 					'class'=>'nav-item visible-xs',
 				),
-				'visible'=>Yii::app()->user->isGuest,
+				'visible'=>$isGuest,
 			),
 			array(
 				'label'=>Yii::t('common', 'Register'),
@@ -313,7 +321,7 @@ class Controller extends CController {
 				'itemOptions'=>array(
 					'class'=>'nav-item visible-xs',
 				),
-				'visible'=>Yii::app()->user->isGuest,
+				'visible'=>$isGuest,
 			),
 			array(
 				'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),

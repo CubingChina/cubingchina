@@ -9,64 +9,73 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
-          <?php $this->widget('GridView', array(
+          <?php $columns = [
+            [
+              'header'=>'操作',
+              'type'=>'raw',
+              'value'=>'$data->operationButton',
+            ],
+            [
+              'name'=>'date',
+              'type'=>'raw',
+              'value'=>'$data->getDisplayDate()',
+              'filter'=>false,
+            ],
+            [
+              'name'=>'type',
+              'type'=>'raw',
+              'value'=>'$data->getTypeText()',
+              'filter'=>Competition::getTypes()
+            ],
+            'name_zh',
+            [
+              'header'=>'运营费',
+              'type'=>'raw',
+              'value'=>'$data->operationFeeButton',
+              'sortable'=>false,
+              'filter'=>false,
+            ],
+            [
+              'name'=>'province_id',
+              'type'=>'raw',
+              'value'=>'$data->getLocationInfo("province")',
+              'sortable'=>false,
+              'filter'=>false,
+            ],
+            [
+              'name'=>'city_id',
+              'type'=>'raw',
+              'value'=>'$data->getLocationInfo("city")',
+              'sortable'=>false,
+              'filter'=>false,
+            ],
+            [
+              'name'=>'venue',
+              'type'=>'raw',
+              'value'=>'$data->getLocationInfo("venue")',
+              'sortable'=>false,
+              'filter'=>false,
+            ],
+            [
+              'name'=>'status',
+              'type'=>'raw',
+              'value'=>'$data->getStatusText()',
+              'filter'=>Competition::getAllStatus($this->action->id),
+            ],
+          ];
+          if ($model->scenario === 'application') {
+            array_splice($columns, 4, 1, [
+              [
+                'header'=>'申请人',
+                'value'=>'$data->organizer[0]->user->name_zh ?: $data->organizer[0]->user->name',
+              ],
+            ]);
+          }
+          $this->widget('GridView', [
             'dataProvider'=>$model->search(true),
             'filter'=>$model,
-            'columns'=>array(
-              array(
-                'header'=>'操作',
-                'type'=>'raw',
-                'value'=>'$data->operationButton',
-              ),
-              array(
-                'name'=>'date',
-                'type'=>'raw',
-                'value'=>'$data->getDisplayDate()',
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'type',
-                'type'=>'raw',
-                'value'=>'$data->getTypeText()',
-                'filter'=>Competition::getTypes(),
-              ),
-              'name_zh',
-              array(
-                'header'=>'运营费',
-                'type'=>'raw',
-                'value'=>'$data->operationFeeButton',
-                'sortable'=>false,
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'province_id',
-                'type'=>'raw',
-                'value'=>'$data->getLocationInfo("province")',
-                'sortable'=>false,
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'city_id',
-                'type'=>'raw',
-                'value'=>'$data->getLocationInfo("city")',
-                'sortable'=>false,
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'venue',
-                'type'=>'raw',
-                'value'=>'$data->getLocationInfo("venue")',
-                'sortable'=>false,
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'status',
-                'type'=>'raw',
-                'value'=>'$data->getStatusText()',
-                'filter'=>Competition::getAllStatus(),
-              ),
-            ),
-          )); ?>
+            'columns'=>$columns,
+          ]); ?>
         </div>
       </div>
     </div>
