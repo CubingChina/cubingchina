@@ -96,6 +96,20 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public static function getAppliedCount($user) {
+		$with = [
+			'organizer'=>[
+				'together'=>true,
+				'condition'=>'organizer.organizer_id=' . $user->id,
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
+			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED],
+		]);
+
+	}
+
 	public static function getUnacceptedCount($user) {
 		$with = [
 			'organizer'=>[

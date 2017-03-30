@@ -26,6 +26,9 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionIndex() {
+		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
+			$this->redirect(['/board/competition/application']);
+		}
 		$model = new Competition();
 		$model->unsetAttributes();
 		$model->attributes = $this->aRequest('Competition');
