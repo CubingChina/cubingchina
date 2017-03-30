@@ -33,7 +33,7 @@
 Yii::app()->clientScript->registerScript('faq',
 <<<EOT
   if (location.hash) {
-    var faq = $('[href=#' + location.hash.replace(/^#/, '') + ']');
+    var faq = $('[href="#' + location.hash.replace(/^#/, '') + '"]');
     if (faq) {
       faq.click();
       $('html, body').animate({
