@@ -651,3 +651,11 @@ Yii::app()->clientScript->registerScript('competition',
   });
 EOT
 );
+if (!$model->isAccepted()) {
+  $date = strtotime('+14 days') * 1000;
+  Yii::app()->clientScript->registerScript('competition-date',
+<<<EOT
+  $('#Competition_date').datetimepicker('setStartDate', new Date({$date}));
+EOT
+);
+}
