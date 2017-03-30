@@ -31,11 +31,15 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 比赛管理',
               'url'=>array('/board/competition/index'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
             ),
             array(
-              'label'=>'<i class="fa fa-angle-double-right"></i> 新增比赛',
-              'url'=>array('/board/competition/add'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+              'label'=>'<i class="fa fa-angle-double-right"></i> 申请比赛',
+              'url'=>array('/board/competition/apply'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 申请列表',
+              'url'=>array('/board/competition/application'),
             ),
           ),
         ),
@@ -43,6 +47,7 @@
           'label'=>'<i class="fa fa-group"></i> 报名 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'registration',
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -67,6 +72,7 @@
           'label'=>'<i class="fa fa-group"></i> 用户 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'user',
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',

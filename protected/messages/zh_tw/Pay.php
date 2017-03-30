@@ -18,15 +18,15 @@
  */
 return array (
   'ID' => '',
-  'Order Name' => '訂單名',
-  'Paid Time' => '支付時間',
   'Sub Type' => '',
   'Now Pay Account' => '現在支付賬號',
   'Amount' => '金額',
   'Channel' => '渠道',
   'Create Time' => '創建時間',
   'Device Type' => '設備類型',
+  'Order Name' => '訂單名',
   'Order No' => '訂單號',
+  'Paid Time' => '支付時間',
   'Pay Account' => '支付賬號',
   'Pay Channel' => '支付渠道',
   'Status' => '狀態',

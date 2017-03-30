@@ -33,6 +33,9 @@ class Competition extends ActiveRecord {
 	const STATUS_HIDE = 0;
 	const STATUS_SHOW = 1;
 	const STATUS_DELETE = 2;
+	const STATUS_UNCONFIRMED = 3;
+	const STATUS_CONFIRMED = 4;
+	const STATUS_REJECTED = 5;
 
 	const NOT_CHECK_PERSON = 0;
 	const CHECK_PERSON = 1;
@@ -63,6 +66,7 @@ class Competition extends ActiveRecord {
 	public $year;
 	public $province;
 	public $event;
+	public $distance;
 
 	public static function formatTime($second) {
 		$second = intval($second);
@@ -93,15 +97,46 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public static function getUnpublicCount() {
-		return self::model()->with(array(
-			'organizer'=>array(
+	public static function getAppliedCount($user) {
+		$with = [
+			'organizer'=>[
 				'together'=>true,
-				'condition'=>'organizer.organizer_id=' . Yii::app()->user->id,
-			),
-		))->countByAttributes(array(
-			'status'=>self::STATUS_HIDE,
-		));
+				'condition'=>'organizer.organizer_id=' . $user->id,
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
+			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED],
+		]);
+
+	}
+
+	public static function getUnacceptedCount($user) {
+		$with = [
+			'organizer'=>[
+				'together'=>true,
+				'condition'=>'organizer.organizer_id=' . $user->id,
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
+			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED]
+		]);
+	}
+
+	public static function getCurrentMonthCount($user) {
+		$with = [
+			'organizer'=>[
+				'together'=>true,
+				'condition'=>'organizer.organizer_id=' . $user->id,
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
+			'status'=>[self::STATUS_HIDE, self::STATUS_SHOW, self::STATUS_REJECTED],
+		], [
+			'condition'=>'create_time between ' . strtotime('today first day of this month') . ' and ' . strtotime('today first day of next month'),
+		]);
 	}
 
 	public static function getUpcomingRegistrableCompetitions($limit = 5) {
@@ -184,6 +219,7 @@ class Competition extends ActiveRecord {
 	public static function getCompetitionByName($name) {
 		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
+			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE],
 		));
 	}
 
@@ -245,12 +281,29 @@ class Competition extends ActiveRecord {
 		return $years;
 	}
 
-	public static function getAllStatus() {
-		return array(
-			self::STATUS_HIDE=>'隐藏',
-			self::STATUS_SHOW=>'公示',
-			// self::STATUS_DELETE=>'删除',
-		);
+	public static function getAllStatus($actionId = 'index') {
+		switch ($actionId) {
+			case 'application':
+				return [
+					self::STATUS_UNCONFIRMED=>'未确认',
+					self::STATUS_CONFIRMED=>'已确认',
+					self::STATUS_REJECTED=>'已拒绝',
+				];
+			case 'index':
+			default:
+				return [
+					self::STATUS_HIDE=>'待公示',
+					self::STATUS_SHOW=>'已公示',
+				];
+			case 'all':
+				return [
+					self::STATUS_UNCONFIRMED=>'未确认',
+					self::STATUS_CONFIRMED=>'已确认',
+					self::STATUS_REJECTED=>'已拒绝',
+					self::STATUS_HIDE=>'待公示',
+					self::STATUS_SHOW=>'已公示',
+				];
+		}
 	}
 
 	public static function getCheckPersons() {
@@ -258,6 +311,10 @@ class Competition extends ActiveRecord {
 			self::CHECK_PERSON=>'否',
 			self::NOT_CHECK_PERSON=>'是',
 		);
+	}
+
+	public function isWCACompetition() {
+		return $this->type == self::TYPE_WCA;
 	}
 
 	public function isOnlinePay() {
@@ -329,6 +386,51 @@ class Competition extends ActiveRecord {
 			}
 		}
 		return true;
+	}
+
+	public function isAccepted() {
+		return !$this->isNewRecord &&
+			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
+	}
+
+	public function isRejected() {
+		return $this->status == self::STATUS_REJECTED;
+	}
+
+	public function isConfirmed() {
+		return $this->status == self::STATUS_CONFIRMED;
+	}
+
+	public function getNearbyCompetitions($days = 26, $distance = 200, $isWCA = true) {
+		if (!$this->isWCACompetition() && $isWCA) {
+			return [];
+		}
+		if ($this->isMultiLocation()) {
+			return [];
+		}
+		$criteria = new CDbCriteria();
+		$criteria->compare('date', '>=' . ($this->date - $days * 86400));
+		$criteria->compare('date', '<=' . ($this->date + $days * 86400));
+		$criteria->addInCondition('status', [
+			self::STATUS_HIDE,
+			self::STATUS_SHOW,
+			self::STATUS_CONFIRMED,
+		]);
+		if ($isWCA) {
+			$criteria->compare('type', self::TYPE_WCA);
+		}
+		$criteria->compare('id', '<>' . $this->id);
+		$competitions = self::model()->findAll($criteria);
+		$city1 = $this->location[0]->city;
+		$competitions = array_filter($competitions, function($competition) use ($distance, $city1) {
+			if ($competition->isMultiLocation()) {
+				return false;
+			}
+			$city2 = $competition->location[0]->city;
+			$competition->distance = Region::getDistance($city1->latitude, $city1->longitude, $city2->latitude, $city2->longitude) / 1000;
+			return $competition->distance <= $distance;
+		});
+		return array_values($competitions);
 	}
 
 	public function getLogo() {
@@ -452,7 +554,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getStatusText() {
-		$status = self::getAllStatus();
+		$status = self::getAllStatus('all');
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
 	}
 
@@ -1019,47 +1121,49 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getOperationButton() {
-		$buttons = array();
-		$buttons[] = CHtml::link('预览', $this->getUrl('detail'), array('class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank'));
-		$buttons[] = CHtml::link('编辑', array('/board/competition/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
-			switch ($this->status) {
-				case self::STATUS_HIDE:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-green btn-square toggle',
+		$buttons = [];
+		$isAdministrator = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
+		switch ($this->status) {
+			case self::STATUS_HIDE:
+			case self::STATUS_SHOW:
+				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank']);
+				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
+				if ($isAdministrator) {
+					$buttons[] = CHtml::tag('button', [
+						'class'=>'btn btn-xs btn-square toggle btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
 						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+						'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
 						'data-attribute'=>'status',
 						'data-value'=>$this->status,
 						'data-text'=>'["公示","隐藏"]',
 						'data-name'=>$this->name_zh,
-					), '公示');
-					break;
-				case self::STATUS_SHOW:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-red btn-square toggle',
-						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>'["公示","隐藏"]',
-						'data-name'=>$this->name_zh,
-					), '隐藏');
-					break;
-			}
+					], $this->status == self::STATUS_HIDE ? '公示' : '隐藏');
+				}
+				break;
+			case self::STATUS_UNCONFIRMED:
+			case self::STATUS_CONFIRMED:
+			case self::STATUS_REJECTED:
+				if ($this->application !== null) {
+					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
+				}
+				if ($this->status == self::STATUS_UNCONFIRMED) {
+					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
+					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
+				}
+				break;
 		}
 		if ($this->status == self::STATUS_SHOW) {
-			$buttons[] = CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>array('competition_id'=>$this->id)), array('class'=>'btn btn-xs btn-purple btn-square'));
+			$buttons[] = CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-xs btn-purple btn-square']);
 			if (!$this->canRegister()) {
-				$buttons[] = CHtml::tag('button', array(
+				$buttons[] = CHtml::tag('button', [
 					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
 					'data-id'=>$this->id,
-					'data-url'=>CHtml::normalizeUrl(array('/board/competition/toggle')),
+					'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
 					'data-attribute'=>'live',
 					'data-value'=>$this->live,
 					'data-text'=>'["开启直播","关闭直播"]',
 					'data-name'=>$this->name_zh,
-				), $this->live ? '关闭直播' : '开启直播');
+				], $this->live ? '关闭直播' : '开启直播');
 			}
 		}
 		return implode(' ', $buttons);
@@ -1093,6 +1197,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleEvents() {
+		$this->formatEvents();
 		$temp = $this->events;
 		foreach ($temp as $key=>$value) {
 			if (!is_array($value) || !isset($value['round']) || $value['round'] == 0) {
@@ -1402,6 +1507,19 @@ class Competition extends ActiveRecord {
 		);
 	}
 
+	public function checkPermission($user) {
+		if ($user->isAdministrator()) {
+			return true;
+		}
+		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
+			return true;
+		}
+		if (isset($this->organizers[$user->id])) {
+			return true;
+		}
+		return false;
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		$this->handleEvents();
@@ -1435,7 +1553,7 @@ class Competition extends ActiveRecord {
 			if ($oldValues != $newValues) {
 				$modelName = 'Competition' . ucfirst($attribute);
 				foreach ($oldValues as $value) {
-					if (!in_array($value, $newValues) && $isAdmin) {
+					if (!in_array($value, $newValues)) {
 						$modelName::model()->deleteAllByAttributes(array(
 							'competition_id'=>$this->id,
 							$attributeId=>$value,
@@ -1490,6 +1608,8 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
+			$location->longitude = floatval($location->longitude);
+			$location->latitude = floatval($location->latitude);
 			$location->save(false);
 		}
 		if ($this->isOld()) {
@@ -1725,6 +1845,11 @@ class Competition extends ActiveRecord {
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition('status', [
+			self::STATUS_HIDE,
+			self::STATUS_SHOW,
+		]);
 		$rules = array(
 			array('name, name_zh, date, reg_end', 'required'),
 			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true),
@@ -1733,8 +1858,8 @@ class Competition extends ActiveRecord {
 			array('name_zh', 'length', 'max'=>50),
 			array('name', 'length', 'max'=>128),
 			array('name', 'checkName', 'skipOnError'=>true),
-			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true),
-			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true),
+			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
+			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
@@ -1764,15 +1889,16 @@ class Competition extends ActiveRecord {
 	public function relations() {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
-			'organizer'=>array(self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'),
-			'delegate'=>array(self::HAS_MANY, 'CompetitionDelegate', 'competition_id'),
-			'location'=>array(self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'),
-			'old'=>array(self::BELONGS_TO, 'OldCompetition', 'old_competition_id'),
-			'schedule'=>array(self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'),
-			'operationFee'=>array(self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'),
-			'liveResults'=>array(self::HAS_MANY, 'LiveResult', 'competition_id'),
-		);
+		return [
+			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
+			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
+			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
+			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
+			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
+			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
+			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
+			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
+		];
 	}
 
 	/**
@@ -1853,10 +1979,7 @@ class Competition extends ActiveRecord {
 		if ($this->status !== '' && $this->status !== null) {
 			$criteria->compare('t.status', $this->status);
 		} else {
-			$criteria->compare('t.status', array(
-				Competition::STATUS_SHOW,
-				Competition::STATUS_HIDE,
-			));
+			$criteria->compare('t.status', array_keys(self::getAllStatus($this->scenario)));
 		}
 
 		if (!$admin) {
@@ -1880,14 +2003,36 @@ class Competition extends ActiveRecord {
 			}
 		}
 
-		if ($admin && Yii::app()->controller->user->isOrganizer()) {
-			$criteria->with = array(
-				'organizer'=>array(
-					'together'=>true,
-				),
-				'location', 'location.province', 'location.city'
-			);
-			$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+		if ($admin) {
+			$user = Yii::app()->controller->user;
+			switch (true) {
+				case $user->isAdministrator():
+					break;
+				case $user->isDelegate():
+					$criteria->with = array(
+						'organizer'=>array(
+							'together'=>true,
+						),
+						'delegate'=>array(
+							'together'=>true,
+						),
+						'location', 'location.province', 'location.city'
+					);
+					$criteria->addCondition('organizer.organizer_id=:user_id OR delegate.delegate_id=:user_id');
+					$criteria->params[':user_id'] = $user->id;
+					break;
+				case $user->isOrganizer():
+				default:
+					$criteria->with = array(
+						'organizer'=>array(
+							'together'=>true,
+						),
+						'location', 'location.province', 'location.city'
+					);
+					$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
+					break;
+			}
+
 		}
 
 		return new CActiveDataProvider($this, array(

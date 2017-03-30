@@ -11,7 +11,27 @@
  */
 class Region extends ActiveRecord {
 
+	const EARTH_RADIUS = 6378.137;
+
 	public static $HKMCTW = array(2, 3, 4);
+
+	public static function getDistance($lat1, $lng1, $lat2, $lng2) {
+		$lat1 = self::toRad($lat1);
+		$lat2 = self::toRad($lat2);
+		$a = $lat1 - $lat2;
+		$b = self::toRad($lng1) - self::toRad($lng2);
+		$s = 2 * asin(sqrt(
+			pow(sin($a / 2), 2) +
+			cos($lat1) * cos($lat2) * pow(sin($b / 2), 2)
+		));
+		$s = $s * self::EARTH_RADIUS;
+		$s = round($s * 10000) / 10;
+		return $s;
+	}
+
+	public static function toRad($d) {
+		return $d * pi() / 180;
+	}
 
 	public static function getIconName($country, $iso2) {
 		return CHtml::image('https://i.cubingchina.com/flag/' . strtolower($iso2) . '.png', $country, array('class'=>'flag-icon')) . Yii::t('Region', $country);
