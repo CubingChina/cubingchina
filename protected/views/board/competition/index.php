@@ -64,7 +64,12 @@
             ],
           ];
           if ($model->scenario === 'application') {
-            unset($columns[4]);
+            array_splice($columns, 4, 1, [
+              [
+                'header'=>'申请人',
+                'value'=>'$data->organizer[0]->user->name_zh ?: $data->organizer[0]->user->name',
+              ],
+            ]);
           }
           $this->widget('GridView', [
             'dataProvider'=>$model->search(true),
