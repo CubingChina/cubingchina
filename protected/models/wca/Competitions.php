@@ -36,7 +36,7 @@ class Competitions extends ActiveRecord {
 			'_Europe'=>'^Euro[[:digit:]]\{4\}$',
 		),
 		'country'=>array(
-			'China'=>'^ChinaChampionship[[:digit:]]\{4\}$',
+			'China'=>'^ChinaChampionship[[:digit:]]\{4\}|AsianChampionship2016$',
 			'Australia'=>'^AustralianNationals[[:digit:]]\{4\}$',
 			'Austria'=>'^AustrianOpen[[:digit:]]\{4\}$',
 			'Brazil'=>'^Bra[sz]il(ia)?Open[[:digit:]]\{4\}$',
@@ -55,7 +55,7 @@ class Competitions extends ActiveRecord {
 			'Ireland'=>'^Irish(Open|Championship)[[:digit:]]\{4\}$',
 			'Israel'=>'^Israel(Open|Championship)?[[:digit:]]\{4\}$',
 			'Italy'=>'^ItalianChampionship[[:digit:]]\{4\}$',
-			'Japan'=>'^Japan(Open)?[[:digit:]]\{4\}$',
+			'Japan'=>'^Japan(Open)?[[:digit:]]\{4\}|AsianChampionship2014$',
 			'Korea'=>'^KoreanChampionship[[:digit:]]\{4\}$',
 			'Latvia'=>'^LatvianOpen[[:digit:]]\{4\}$',
 			'Netherlands'=>'^DutchNationals[[:digit:]]\{4\}$',
@@ -72,7 +72,7 @@ class Competitions extends ActiveRecord {
 			'Thailand'=>'^Thailand(Championship)?[[:digit:]]\{4\}$',
 			'Ukraine'=>'^UkrainianNationals[[:digit:]]\{4\}$',
 			'United Kingdom'=>'^UK(Open|Championship)[[:digit:]]\{4\}$',
-			'USA'=>'^US(Open|Nationals)?[[:digit:]]\{4\}$',
+			'USA'=>'^US(Open|Nationals)?[[:digit:]]\{4\}|WC2013$',
 			'Venezuela'=>'^VenezuelaNationals[[:digit:]]\{4\}$',
 		),
 		'region'=>array(
