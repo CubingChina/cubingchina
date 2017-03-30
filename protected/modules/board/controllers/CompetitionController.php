@@ -265,6 +265,9 @@ class CompetitionController extends AdminController {
 		if ($model->application === null) {
 			throw new CHttpException(403, '该比赛尚未填写申请资料！');
 		}
+		if ($model->isAccepted()) {
+			throw new CHttpException(401, '未授权的操作');
+		}
 		$model->formatEvents();
 		$model->formatDate();
 		$model->status = Competition::STATUS_CONFIRMED;

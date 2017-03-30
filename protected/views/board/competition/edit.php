@@ -30,6 +30,10 @@
             <p class="text-danger">
               <b>友情提示</b>：比赛信息可以多次编辑，请注意保存。
             </p>
+            <p class="lead">第一次申请请仔细阅读<?php echo CHtml::link('申请流程', ['/faq/index',
+              'category_id'=>2,
+              '#'=>'faq-9',
+            ], ['target'=>'_blank']); ?> ！</p>
           </div>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
@@ -48,6 +52,9 @@
                 <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:admin@cubingchina.com"><i class="fa fa-envelope"></i>管理员</a></div>
               </div>
               <?php endif; ?>
+              <div class="col-lg-12">
+                <div class="text-danger">请参阅<?php echo CHtml::link('粗饼网比赛名称规范试行版', '/static/naming conventions.pdf', ['target'=>'_blank']); ?>填写比赛名称。</div>
+              </div>
               <?php echo Html::formGroup(
                 $model, 'name_zh', array(
                   'class'=>'col-lg-6',
