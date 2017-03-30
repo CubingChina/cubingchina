@@ -106,7 +106,18 @@ class Competition extends ActiveRecord {
 		$model = self::model()->with($with);
 		return $model->countByAttributes([
 			'status'=>[self::STATUS_CONFIRMED, self::STATUS_UNCONFIRMED]
-		]) + $model->countByAttributes([
+		]);
+	}
+
+	public static function getCurrentMonthCount($user) {
+		$with = [
+			'organizer'=>[
+				'together'=>true,
+				'condition'=>'organizer.organizer_id=' . $user->id,
+			],
+		];
+		$model = self::model()->with($with);
+		return $model->countByAttributes([
 			'status'=>[self::STATUS_HIDE, self::STATUS_SHOW, self::STATUS_REJECTED],
 		], [
 			'condition'=>'create_time between ' . strtotime('today first day of this month') . ' and ' . strtotime('today first day of next month'),

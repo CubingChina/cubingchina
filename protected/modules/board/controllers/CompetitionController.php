@@ -95,7 +95,7 @@ class CompetitionController extends AdminController {
 
 	public function actionApply() {
 		$user = $this->user;
-		if (!$user->isAdministrator() && Competition::getUnacceptedCount($user) >= 1) {
+		if (!$user->isAdministrator() && (Competition::getUnacceptedCount($user) + Competition::getCurrentMonthCount($user)) >= 1) {
 			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
 			$this->redirect(array('/board/competition/application'));
 		}
