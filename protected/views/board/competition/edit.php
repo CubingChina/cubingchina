@@ -272,6 +272,7 @@
                 )),
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
+              <div class="clearfix"></div>
               <?php
               if ($model->isOld()) {
                 echo Html::formGroup(
