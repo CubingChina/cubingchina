@@ -12,6 +12,6 @@ indent_size = 2
 indent_style = tab
 indent_size = 4
 
-[*.js,*.css,*.json,**/views/**]
+[**/views/**]
 indent_style = space
 indent_size = 2
