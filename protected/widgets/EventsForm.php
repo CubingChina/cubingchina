@@ -31,19 +31,22 @@ class EventsForm extends Widget {
 				));
 				echo CHtml::openTag('label');
 				$text = Events::getFullEventNameWithIcon($event);
-				$fee = 0;
-				$originFee = $competition->events[$event]['fee'];
-				if ($competition instanceof Competition && isset($competition->events[$event]) && $originFee > 0) {
-					$fee = $competition->getEventFee($event);
-					$text .= Html::fontAwesome('rmb', 'b') . $fee;
-				}
-				echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), in_array("$event", $model->$name), array(
+				$options = [
 					'id'=>'Registration_events_' . $event,
 					'class'=>'registration-events',
 					'value'=>$event,
-					'data-fee'=>$fee,
-					'data-origin-fee'=>$originFee,
-				));
+				];
+				if ($competition != null) {
+					$fee = 0;
+					$originFee = $competition->events[$event]['fee'];
+					if ($competition instanceof Competition && isset($competition->events[$event]) && $originFee > 0) {
+						$fee = $competition->getEventFee($event);
+						$text .= Html::fontAwesome('rmb', 'b') . $fee;
+					}
+					$options['data-fee'] = $fee;
+					$options['data-origin-fee'] = $originFee;
+				}
+				echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), in_array("$event", $model->$name), $options);
 				echo $text;
 				echo CHtml::closeTag('label');
 				echo CHtml::closeTag('div');
@@ -51,7 +54,7 @@ class EventsForm extends Widget {
 			}
 			echo CHtml::error($model, 'events', array('class'=>'text-danger'));
 			echo CHtml::closeTag('div');
-			if ($competition->isMultiLocation()) {
+			if ($competition && $competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
 				$locations = array();
 				foreach ($competition->sortedLocations as $location) {

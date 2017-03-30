@@ -66,6 +66,21 @@ class UserController extends Controller {
 		));
 	}
 
+	public function actionPreferredEvents() {
+		$user = $this->getUser();
+		if (isset($_POST['User'])) {
+			$user->attributes = $_POST['User'];
+			PreferredEvent::updateUserEvents($user);
+			if (PreferredEvent::updateUserEvents($user)) {
+				Yii::app()->user->setFlash('success', Yii::t('common', 'Your preferred events have been updated successfully.'));
+				$this->redirect(array('/user/preferredEvents'));
+			}
+		}
+		$this->render('preferredEvents', array(
+			'user'=>$user,
+		));
+	}
+
 	public function actionUpload() {
 		$params = Yii::app()->params;
 		$file = CUploadedFile::getInstanceByName('avatar');
