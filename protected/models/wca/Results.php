@@ -34,16 +34,12 @@ class Results extends ActiveRecord {
 
 	public static function buildChampionshipPodiums($type, $regionId) {
 		//special china championship
-		$chineseRegioins = array('China', 'Hong Kong', 'Macau', 'Taiwan');
-		$events = Events::getNormalEvents();
-		//for the past events
-		$events['magic'] = 'Rubik\'s Magic';
-		$events['mmagic'] = 'Master Magic';
-		$events['333mbo'] = 'Multi Blindfolede Old';
+		$chineseRegions = array('China', 'Hong Kong', 'Macau', 'Taiwan');
+		$events = Events::getNormalEvents() + Events::getDeprecatedEvents();
 		$podiums = array();
 		//continent championship podiums
 		$patterns = Competitions::getChampionshipPattern($type);
-		if (in_array($regionId, $chineseRegioins) && $type == 'country') {
+		if (in_array($regionId, $chineseRegions) && $type == 'country') {
 			$regionId = 'China';
 		}
 		if (!isset($patterns[$regionId])) {
@@ -55,7 +51,7 @@ class Results extends ActiveRecord {
 			'order'=>'year DESC',
 		));
 		if ($regionId === 'China') {
-			$regionId = $chineseRegioins;
+			$regionId = $chineseRegions;
 		}
 		foreach ($competitions as $competition) {
 			foreach ($events as $eventId=>$eventName) {
@@ -306,7 +302,7 @@ class Results extends ActiveRecord {
 		->select(array(
 			'r.*',
 			'r.best AS average',
-			'(CASE 
+			'(CASE
 				WHEN r.worldRank=1 THEN "WR"
 				WHEN r.continentRank=1 THEN continent.recordName
 				ELSE "NR"
@@ -429,9 +425,9 @@ class Results extends ActiveRecord {
 		}
 		return $time;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param int $time 要被格式化的时间
 	 * @param boolean $multi 是否是多盲
 	 */
