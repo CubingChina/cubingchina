@@ -183,7 +183,7 @@
               </dl>
             </div>
             <div role="tabpanel" class="tab-pane" id="admin">
-              <?php if ($nearbyCompetitions !== [] && $this->user->isAdministrator()): ?>
+              <?php if ($nearbyCompetitions !== [] && ($this->user->isAdministrator() || $this->user->isWCADelegate())): ?>
               <p class="text-danger">请注意！该比赛与下列比赛（及申请）直线距离低于200KM，日期小于26天！</p>
               <?php $this->widget('GridView', [
                 'dataProvider'=>new CArrayDataProvider($nearbyCompetitions),
@@ -235,7 +235,7 @@
                 'data-value'=>$competition->status,
                 'data-name'=>$competition->name_zh,
               ], '确认无误，提交！') ;?>
-              <?php elseif ($this->user->isAdministrator()): ?>
+              <?php elseif ($this->user->isAdministrator() || $this->user->isWCADelegate()): ?>
               <?php $form = $this->beginWidget('ActiveForm', array(
                 'htmlOptions'=>array(
                   'class'=>'clearfix row',
