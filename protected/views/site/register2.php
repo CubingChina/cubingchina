@@ -196,9 +196,14 @@ Yii::app()->clientScript->registerScript('register2',
   }
   var nameDom = $('#RegisterForm_name'),
     localNameDom = $('#RegisterForm_local_name'),
-    finalNameDom = $('#final-name');
+    finalNameDom = $('#final-name'),
+    nameHelpDom = $('#name-help'),
+    enablePinyin;
   nameDom.on('change keyup', showFinalName);
-  localNameDom.on('change keyup', showFinalName).trigger('change');
+  localNameDom.on('change keyup', showFinalName).on('change keyup', generatePinyin).trigger('change');
+  nameHelpDom.on('change', 'input', function() {
+    nameDom.val($(this).val());
+  })
   String.prototype.ucfirst = function() {
     return this.charAt(0).toUpperCase() + this.substr(1);
   }
@@ -220,110 +225,108 @@ Yii::app()->clientScript->registerScript('register2',
     }
   }
   function setPinyin(enable) {
-    var nameHelpDom = $('#name-help');
+    enablePinyin = enable
     if (!enable) {;
       nameDom.prop('readonly', false);
-      localNameDom.off('change keyup', generatePinyin);
       $('#name').insertBefore($('#local_name'))
       nameHelpDom.addClass('hide');
     } else {
       $('#name').insertAfter($('#local_name'));
       if (!nameDom.prop('readonly')) {
         nameDom.prop('readonly', true);
-        localNameDom.on('change keyup', generatePinyin).trigger('change');
       }
     }
-    nameHelpDom.on('change', 'input', function() {
-      nameDom.val($(this).val());
-    })
-    function generatePinyin(event) {
-      var localName = localNameDom.val();
-      if (event.type === 'change' && !localName.match(/^[\\u4e00-\\u9fc0]+$/)) {
-        //todo alert
-        localNameDom.val(localName = localName.replace(/[^\\u4e00-\\u9fc0]+/g, ''));
+  }
+  function generatePinyin(event) {
+    if (!enablePinyin) {
+      return
+    }
+    var localName = localNameDom.val();
+    if (event.type === 'change' && !localName.match(/^[\\u4e00-\\u9fc0]+$/)) {
+      //todo alert
+      localNameDom.val(localName = localName.replace(/[^\\u4e00-\\u9fc0]+/g, ''));
+    }
+    var pinyin = pinyinUtil.toPinyin(localName);
+    $.each(surnamePinyin, function(surname, py) {
+      if (localName.substr(0, 1) === surname) {
+        pinyin[0] = [py[0]];
+        return false;
       }
-      var pinyin = pinyinUtil.toPinyin(localName);
-      $.each(surnamePinyin, function(surname, py) {
-        if (localName.substr(0, 1) === surname) {
-          pinyin[0] = [py[0]];
-          return false;
-        }
-      });
-      var enNames = [];
-      if (localName.match(compoundSurname)) {
-        if (localName.match(/^(万俟|尉迟)/)) {
-          enNames = enNames.concat(getEnNames(
-            getNames(2, pinyin.length),
-            [surnamePinyin[localName.substr(0, 2)][0].ucfirst() + surnamePinyin[localName.substr(0, 2)][1]]
-          ));
-        } else {
-          enNames = enNames.concat(getEnNames(
-            getNames(2, pinyin.length),
-            getNames(0, 1)
-          ));
-        }
-      }
-      enNames = enNames.concat(getEnNames(
-        getNames(1, pinyin.length),
-        pinyin[0]
-      ));
-      // enNames = enNames.concat(getEnNames(getNames(0, pinyin.length), []));
-      if (enNames.length > 0) {
-        nameHelpDom.removeClass('hide').find('label').remove();
-        for (var i = 0; i < enNames.length; i++) {
-          $('<label />').attr({
-            'for': 'english_name_' + i,
-            'class': 'col-md-2 col-sm-4 col-xs-6',
-          }).append(
-            $('<input type="radio" name="english_name" />').val(enNames[i]).attr({
-              id: 'english_name_' + i,
-            }),
-            enNames[i]
-          ).appendTo(nameHelpDom);
-        }
-        if (nameHelpDom.find('input[value="' + nameDom.val() + '"]').length > 0) {
-          nameHelpDom.find('input[value="' + nameDom.val() + '"]').prop('checked', true);
-        } else {
-          nameHelpDom.find('input:first').trigger('change').prop('checked', true);
-        }
+    });
+    var enNames = [];
+    if (localName.match(compoundSurname)) {
+      if (localName.match(/^(万俟|尉迟)/)) {
+        enNames = enNames.concat(getEnNames(
+          getNames(2, pinyin.length),
+          [surnamePinyin[localName.substr(0, 2)][0].ucfirst() + surnamePinyin[localName.substr(0, 2)][1]]
+        ));
       } else {
-        nameHelpDom.addClass('hide');
+        enNames = enNames.concat(getEnNames(
+          getNames(2, pinyin.length),
+          getNames(0, 1)
+        ));
       }
-      function getNames(level, max) {
-        if (level === pinyin.length || level > max) {
-          return [];
-        }
-        var a = pinyin[level];
-        var b = getNames(level + 1, max);
-        if (b.length == 0) {
-          return a;
-        }
-        var names = [];
-        for (var i = 0; i < a.length; i++) {
-          for (var j = 0; j < b.length; j++) {
-            names.push(a[i] + b[j]);
-          }
-        }
-        return names;
+    }
+    enNames = enNames.concat(getEnNames(
+      getNames(1, pinyin.length),
+      pinyin[0]
+    ));
+    // enNames = enNames.concat(getEnNames(getNames(0, pinyin.length), []));
+    if (enNames.length > 0) {
+      nameHelpDom.removeClass('hide').find('label').remove();
+      for (var i = 0; i < enNames.length; i++) {
+        $('<label />').attr({
+          'for': 'english_name_' + i,
+          'class': 'col-md-2 col-sm-4 col-xs-6',
+        }).append(
+          $('<input type="radio" name="english_name" />').val(enNames[i]).attr({
+            id: 'english_name_' + i,
+          }),
+          enNames[i]
+        ).appendTo(nameHelpDom);
       }
-      function getEnNames(names, surnames) {
-        var enNames = [];
-        if (names.length == 0) {
-          return [].map.call(surnames || [], function(surname) {
-            return surname.ucfirst();
-          });
-        }
-        for (var i = 0; i < names.length; i++) {
-          if (surnames.length === 0) {
-            enNames.push(names[i].ucfirst());
-            continue;
-          }
-          for (var j = 0; j < surnames.length; j++) {
-            enNames.push(names[i].ucfirst() + ' ' + surnames[j].ucfirst());
-          }
-        }
-        return enNames;
+      if (nameHelpDom.find('input[value="' + nameDom.val() + '"]').length > 0) {
+        nameHelpDom.find('input[value="' + nameDom.val() + '"]').prop('checked', true);
+      } else {
+        nameHelpDom.find('input:first').trigger('change').prop('checked', true);
       }
+    } else {
+      nameHelpDom.addClass('hide');
+    }
+    function getNames(level, max) {
+      if (level === pinyin.length || level > max) {
+        return [];
+      }
+      var a = pinyin[level];
+      var b = getNames(level + 1, max);
+      if (b.length == 0) {
+        return a;
+      }
+      var names = [];
+      for (var i = 0; i < a.length; i++) {
+        for (var j = 0; j < b.length; j++) {
+          names.push(a[i] + b[j]);
+        }
+      }
+      return names;
+    }
+    function getEnNames(names, surnames) {
+      var enNames = [];
+      if (names.length == 0) {
+        return [].map.call(surnames || [], function(surname) {
+          return surname.ucfirst();
+        });
+      }
+      for (var i = 0; i < names.length; i++) {
+        if (surnames.length === 0) {
+          enNames.push(names[i].ucfirst());
+          continue;
+        }
+        for (var j = 0; j < surnames.length; j++) {
+          enNames.push(names[i].ucfirst() + ' ' + surnames[j].ucfirst());
+        }
+      }
+      return enNames;
     }
   }
 EOT
