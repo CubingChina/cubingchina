@@ -19,28 +19,31 @@
             success: function (res) {
               var result = res.resultStr;
               var code = result.split('code=').reverse()[0];
-              that.loading = true;
-              $.ajax({
-                data: {
-                  code: code
-                },
-                dataType: 'json',
-                type: 'post',
-                success: function(res) {
-                  if (res.status == 0) {
-                    that.registration = res.data;
-                  }
-                },
-                complete: function() {
-                  that.loading = false;
-                }
-              })
-              console.log(code);
+              that.fetchInfo(code);
             }
           });
         });
       },
-      do: function(action) {
+      fetchInfo: function(code) {
+        var that = this;
+        that.loading = true;
+        $.ajax({
+          data: {
+            code: code
+          },
+          dataType: 'json',
+          type: 'post',
+          success: function(res) {
+            if (res.status == 0) {
+              that.registration = res.data;
+            }
+          },
+          complete: function() {
+            that.loading = false;
+          }
+        })
+      },
+      doAction: function(action) {
         var that = this;
         that.loading = true;
         $.ajax({
