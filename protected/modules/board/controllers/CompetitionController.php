@@ -63,7 +63,7 @@ class CompetitionController extends AdminController {
 		if ($model->isAccepted()) {
 			$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
 		}
-		if (isset($_POST['Competition']) && $this->user->isAdministrator()) {
+		if (isset($_POST['Competition']) && ($this->user->isAdministrator() || $this->user->isWCADelegate())) {
 			$status = $model->status;
 			$model->attributes = $_POST['Competition'];
 			$model->formatDate();
@@ -75,6 +75,11 @@ class CompetitionController extends AdminController {
 				$model->application->save();
 				switch ($model->isAccepted()) {
 					case true:
+						$user = $model->organizer[0]->user;
+						if ($user->role < User::ROLE_ORGANIZER) {
+							$user->role = User::ROLE_ORGANIZER;
+							$user->save();
+						}
 						Yii::app()->mailer->sendCompetitionAcceptNotice($model);
 						Yii::app()->user->setFlash('success', '通过比赛成功');
 						$this->redirect(['/board/competition/index']);
