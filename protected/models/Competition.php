@@ -1553,7 +1553,7 @@ class Competition extends ActiveRecord {
 			if ($oldValues != $newValues) {
 				$modelName = 'Competition' . ucfirst($attribute);
 				foreach ($oldValues as $value) {
-					if (!in_array($value, $newValues)) {
+					if (!in_array($value, $newValues) && (!$this->isAccepted() || $isAdmin)) {
 						$modelName::model()->deleteAllByAttributes(array(
 							'competition_id'=>$this->id,
 							$attributeId=>$value,
