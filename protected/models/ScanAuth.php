@@ -1,4 +1,5 @@
 <?php
+use Ramsey\Uuid\Uuid;
 
 /**
  * This is the model class for table "scan_auth".
@@ -9,6 +10,28 @@
  * @property string $code
  */
 class ScanAuth extends ActiveRecord {
+
+	public static function getCompetitionAuth($competition) {
+		return self::model()->findByAttributes([
+			'competition_id'=>$competition->id,
+		]);
+	}
+
+	public static function generateCompetitionAuth($competition) {
+		$auth = new ScanAuth();
+		$auth->competition_id = $competition->id;
+		$auth->code = substr(Uuid::uuid4(), 0, 20);
+		$auth->save();
+		return $auth;
+	}
+
+	public function getQRCodeUrl() {
+		return CHtml::normalizeUrl(array(
+			'/qrCode/signinAdmin',
+			'code'=>$this->code,
+		));
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -39,6 +62,7 @@ class ScanAuth extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
 		);
 	}
 
