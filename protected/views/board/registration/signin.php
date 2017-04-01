@@ -18,6 +18,10 @@
       <?php echo CHtml::link('发邮件给选手', array('/board/registration/sendNotice', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-blue')); ?>
       <?php echo CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]), array('class'=>'btn btn-square btn-large btn-red')); ?>
       <?php endif; ?>
+      <div class="well">
+        <p>请使用微信扫描如下二维码进入签到页面，<b class="text-danger">切勿外传</b>！</p>
+        <p><?php echo CHtml::image($scanAuth->getQRCodeUrl()); ?></p>
+      </div>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
         'dataProvider'=>$model->search($columns, false, true),

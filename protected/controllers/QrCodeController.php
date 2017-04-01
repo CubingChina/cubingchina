@@ -45,8 +45,29 @@ class QrCodeController extends Controller {
 		$this->send($qrCode, 'signin');
 	}
 
+	public function actionSigninAdmin() {
+		$code = $this->sGet('code');
+		$auth = ScanAuth::model()->findByAttributes(['code'=>$code]);
+		if ($auth === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		$qrCode = new QrCode();
+		$qrCode->setText($this->createUrl(
+			'/competition/scan',
+			[
+				'name'=>$auth->competition->alias,
+				'scan_code'=>$code,
+			]
+		))
+		->setSize(300)
+		->setPadding(10)
+		->setErrorCorrection('high')
+		->setLabelFontSize(16);
+		$this->send($qrCode, 'signin');
+	}
+
 	private function send($qrCode, $name) {
-		header('Content-type: image/jpeg'); 
+		header('Content-type: image/jpeg');
 		header("Content-Disposition: attachment; filename='{$name}.jpg'");
 		$qrCode->render();
 	}
