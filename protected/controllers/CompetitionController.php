@@ -85,10 +85,11 @@ class CompetitionController extends Controller {
 	public function actionScan() {
 		$competition = $this->getCompetition();
 		$session = Yii::app()->session;
-		if (isset($_POST['scan_code'])) {
+		$scanCode = $this->sRequest('scan_code');
+		if ($scanCode) {
 			$scanAuth = ScanAuth::model()->findByAttributes([
 				'competition_id'=>$competition->id,
-				'code'=>$_POST['scan_code'],
+				'code'=>$scanCode,
 			]);
 			if ($scanAuth !== null) {
 				$session->add('scan_code', $scanAuth->code);
@@ -154,7 +155,7 @@ class CompetitionController extends Controller {
 			]);
 		}
 		$min = DEV ? '' : '.min';
-		$version = Yii::app()->params->jsVer;
+		$version = '201704010032';
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');

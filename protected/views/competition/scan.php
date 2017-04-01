@@ -3,6 +3,7 @@
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
   </div>
   <div class="text-center" v-if="loading">
+    Loading...<br>
     <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
   </div>
   <dl class="dl-horizontal" v-if="registration.id">
@@ -10,8 +11,8 @@
     <dd>{{registration.number}}</dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
     <dd>{{registration.user.name}}</dd>
-    <dt><?php echo Yii::t('common', 'Passport'); ?></dt>
-    <dd>{{registration.passport}}</dd>
+    <dt v-if="registration.passport"><?php echo Yii::t('common', 'Passport'); ?></dt>
+    <dd v-if="registration.passport">{{registration.passport}}</dd>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
     <dd>{{registration.fee}}
       (<span v-if="registration.paid">
@@ -23,13 +24,13 @@
     </dd>
     <dt v-if="!registration.paid"></dt>
     <dd v-if="!registration.paid">
-      <button class="btn btn-info" type="button" @click="do('pay')">
+      <button class="btn btn-info" type="button" @click="doAction('pay')">
         <?php echo Yii::t('common', 'Pay'); ?>
       </button>
     </dd>
     <dt v-if="!registration.signed_in"></dt>
     <dd v-if="!registration.signed_in">
-      <button class="btn btn-success" type="button" @click="do('signin')">
+      <button class="btn btn-success" type="button" @click="doAction('signin')">
         <?php echo Yii::t('common', 'Sign in'); ?>
       </button>
     </dd>

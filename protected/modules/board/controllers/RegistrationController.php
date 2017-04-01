@@ -31,10 +31,27 @@ class RegistrationController extends AdminController {
 		}
 		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
-			$this->redirect(array('/board/registration/index'));
 		}
 		$this->render('index', array(
 			'model'=>$model,
+		));
+	}
+
+	public function actionSignin() {
+		$model = new Registration();
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('Registration');
+		if ($model->competition === null || !$model->competition->show_qrcode) {
+			$this->redirect(array('/board/registration/index'));
+		}
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$scanAuth = ScanAuth::getCompetitionAuth($model->competition) ?: ScanAuth::generateCompetitionAuth($model->competition);
+		$this->render('signin', array(
+			'model'=>$model,
+			'scanAuth'=>$scanAuth,
 		));
 	}
 
