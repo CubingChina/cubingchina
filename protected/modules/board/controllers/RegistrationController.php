@@ -38,6 +38,22 @@ class RegistrationController extends AdminController {
 		));
 	}
 
+	public function actionSignin() {
+		$model = new Registration();
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('Registration');
+		if ($model->competition_id === null) {
+			$model->competition_id = 0;
+		}
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$this->render('signin', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionExport() {
 		$id = $this->iGet('id');
 		$model = Competition::model()->findByPk($id);
