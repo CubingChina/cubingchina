@@ -93,6 +93,7 @@ class CompetitionController extends Controller {
 			]);
 			if ($scanAuth !== null) {
 				$session->add('scan_code', $scanAuth->code);
+				$this->redirect($scanAuth->competition->getUrl('scan'));
 			}
 		}
 		if ($session->get('scan_code') === null) {
@@ -159,7 +160,7 @@ class CompetitionController extends Controller {
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/scan' . $min . '.js?ver=' . $version);
+		$clientScript->registerScriptFile('/f/js/scan.js?ver=' . $version);
 
 		$application = $this->getWechatApplication();
 		$js = $application->js;
