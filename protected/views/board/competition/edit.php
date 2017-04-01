@@ -580,10 +580,10 @@ Yii::app()->clientScript->registerScript('competition',
     var type = $(this).val();
     if (type === 'WCA') {
       $('#wca_delegates').show();
-      $('#cca_delegates').hide();
+      $('#cca_delegates').hide().find('input').prop('checked', false);
     } else {
       $('#cca_delegates').show();
-      $('#wca_delegates').hide();
+      $('#wca_delegates').hide().find('input').prop('checked', false);
     }
   }).on('keydown', '.token-input', function(e) {
     if (e.which == 13) {

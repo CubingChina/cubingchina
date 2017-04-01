@@ -160,6 +160,7 @@ class CompetitionController extends AdminController {
 			'reg_start',
 			'reg_end',
 			'delegates',
+			'organizers',
 			'locations',
 			'events',
 		);

@@ -176,7 +176,7 @@ class Mailer extends CApplicationComponent {
 		));
 		//用bcc方式发送会被ban掉。。
 		foreach ($users as $user) {
-			$this->add($user, $subject, $message, Yii::app()->user->email);
+			$this->add($user, $subject, $message, Yii::app()->controller->user->email);
 		}
 		return true;
 	}
