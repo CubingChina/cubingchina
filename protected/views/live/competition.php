@@ -391,7 +391,7 @@
 </template>
 
 <template id="input-panel-template">
-  <div data-spy="affix" data-offset-top="550" style="top:20px">
+  <div data-spy="affix" data-offset-top="550" style="top:20px;z-index:999">
     <div class="panel panel-theme input-panel">
       <div class="panel-heading">
         <h3 class="panel-title"><?php echo Yii::t('live', 'Input Panel'); ?></h3>
