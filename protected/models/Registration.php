@@ -515,45 +515,30 @@ class Registration extends ActiveRecord {
 
 	public function getSigninOperationButton() {
 		$buttons = array();
-		$buttons[] = CHtml::link('签到', array('/board/registration/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		$canApprove = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) || !$this->competition->isWCACompetition() || $this->user->country_id > 1;
-		if ($canApprove) {
-			switch ($this->status) {
-				case self::STATUS_WAITING:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-green btn-square toggle',
-						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>'["通过","取消"]',
-						'data-name'=>$this->user->getCompetitionName(),
-					), '通过');
-					break;
-				case self::STATUS_ACCEPTED:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-red btn-square toggle',
-						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>'["通过","取消"]',
-						'data-name'=>$this->user->getCompetitionName(),
-					), '取消');
-					break;
-			}
+		switch ($this->signed_in) {
+			case self::NO:
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-green btn-square toggle',
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+					'data-attribute'=>'signed_in',
+					'data-value'=>$this->signed_in,
+					'data-text'=>'["签到","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
+				), '签到');
+				break;
+			case self::YES:
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-red btn-square toggle',
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+					'data-attribute'=>'signed_in',
+					'data-value'=>$this->signed_in,
+					'data-text'=>'["签到","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
+				), '取消');
+				break;
 		}
-		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
-			'class'=>'tips' . ($canApprove ? ' toggle' : ''),
-			'data-toggle'=>'tooltip',
-			'data-placement'=>'top',
-			'title'=>'是否支付报名费',
-			'data-id'=>$this->id,
-			'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
-			'data-attribute'=>'paid',
-			'data-value'=>$this->paid,
-			'data-name'=>$this->user->getCompetitionName(),
-		));
 		return implode(' ', $buttons);
 	}
 
