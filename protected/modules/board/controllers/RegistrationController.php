@@ -900,10 +900,19 @@ class RegistrationController extends AdminController {
 		if ($this->user->role != User::ROLE_ADMINISTRATOR && $attribute == 'status' && !$competition->canRegister()) {
 			throw new CHttpException(401, '报名已截止，如需变更请联系代表或管理员');
 		}
-		if ($this->user->role != User::ROLE_ADMINISTRATOR && $competition->isWCACompetition() && $model->user->country_id == 1) {
+		if ($this->user->role != User::ROLE_ADMINISTRATOR && $attribute == 'status' && $competition->isWCACompetition() && $model->user->country_id == 1) {
 			throw new CHttpException(401, '大陆选手请通过粗饼在线支付完成报名，如特殊情况请联系管理员');
 		}
 		$model->$attribute = 1 - $model->$attribute;
+		if ($attribute == 'signed_in') {
+			if ($model->signed_in) {
+				$model->signed_date = time();
+				$auth = ScanAuth::getCompetitionAuth($competition);
+				$model->signed_scan_code = $auth->code;
+			} else {
+				$model->signed_date = 0;
+			}
+		}
 		if ($attribute == 'status' && $model->isAccepted()) {
 			$model->total_fee = $model->getTotalFee(true);
 			$model->accept();

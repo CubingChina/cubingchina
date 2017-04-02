@@ -5,7 +5,9 @@
 <ol>
 <?php foreach ($competition->sortedLocations as $location): ?>
   <li>
-  <?php echo $location->getFullAddress(); ?><br>
+  <?php echo $location->getFullAddress(false); ?><br>
+  <?php echo $location->venue_zh; ?><br>
+  <?php echo $location->venue; ?><br>
   <?php if ($competition->multi_countries): ?>
   <dl class="dl-horizontal location-delegate">
     <dt><?php echo Yii::t('Competition', 'Delegate'); ?></dt>
@@ -26,7 +28,9 @@
 <?php endforeach; ?>
 </ol>
 <?php else: ?>
-<?php echo $competition->location[0]->getFullAddress(); ?>
+<?php echo $competition->location[0]->getFullAddress(false); ?><br>
+<?php echo $competition->location[0]->venue_zh; ?><br>
+<?php echo $competition->location[0]->venue; ?>
 <?php if ($showMap): ?>
 <?php $this->widget('LocationMap', [
   'competition'=>$competition,
