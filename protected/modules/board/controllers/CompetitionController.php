@@ -14,6 +14,14 @@ class CompetitionController extends AdminController {
 			),
 			array(
 				'allow',
+				'actions'=>array('toggle'),
+				'users'=>array('@'),
+				'roles'=>array(
+					'role'=>User::ROLE_ORGANIZER,
+				),
+			),
+			array(
+				'allow',
 				'roles'=>array(
 					'role'=>User::ROLE_ADMINISTRATOR,
 				),
