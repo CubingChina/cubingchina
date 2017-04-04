@@ -161,9 +161,9 @@ Yii::app()->clientScript->registerScript('register2',
         return false;
       }
       if (confirmation && /^\d{10,}@qq\.com$/.test(email)) {
-        var i = 3;
+        var i = 1;
         while (i-- > 0) {
-          if (!confirm('请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！\\n请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！\\n请确认QQ邮箱已经开通！！\\n有QQ号不等于开通QQ邮箱！！')) {
+          if (!confirm('请确认您的QQ邮箱已经开通，并且可以正常的收到邮件！！\\nQQ邮箱需要在注册QQ号之后手动开通。')) {
             e.preventDefault();
             return false;
           }

@@ -216,7 +216,7 @@ return array (
   'Please <b>DO NOT</b> repeat registration!' => '<span class="large">請勿重復注冊！</span>',
   'Please choose a payment channel.' => '請選擇一個支付渠道：',
   'Please choose the correct English name below' => '請在下面選擇正確的英文名',
-  'Please confirm your email:\\n{email}' => '請確認你的電子郵件：\\n{email}',
+  'Please confirm your email:\\n{email}' => '請確認你的電子地址正確並且可以正常收到郵件：\\n{email}',
   'Please contact the adminstrator via {email} for changing the other personal information.' => '修改其他個人信息請聯系管理員{email}。',
   'Please enter authentication code.' => '請輸入授權碼。',
   'Please enter your WCA ID below. You can find your WCA ID {here}.' => '請在下面輸入您的WCA ID。您可以在{here}查詢您的WCA ID。',
