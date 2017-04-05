@@ -79,9 +79,9 @@
     userResults: [],
     messages: []
   };
-  var lastFetchRoundsTime = Date.now();
+  var lastFetchRoundTypesTime = Date.now();
   var events = {};
-  var eventRounds = {};
+  var eventRoundTypes = {};
   var allUsers = {};
   var current = {};
   var mutations = {
@@ -90,12 +90,12 @@
     },
     UPDATE_ROUNDS: function(state, rounds) {
       rounds.forEach(function(round) {
-        $.extend(eventRounds[round.e][round.i], round);
+        $.extend(eventRoundTypes[round.e][round.i], round);
       });
-      lastFetchRoundsTime = Date.now();
+      lastFetchRoundTypesTime = Date.now();
     },
     UPDATE_ROUND: function(state, round) {
-      $.extend(eventRounds[round.e][round.i], round);
+      $.extend(eventRoundTypes[round.e][round.i], round);
     },
     NEW_RESULT: function(state, result) {
       if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
@@ -185,9 +185,9 @@
   $.extend(options, storedOptions);
   state.events.forEach(function(event) {
     events[event.i] = event;
-    eventRounds[event.i] = {};
+    eventRoundTypes[event.i] = {};
     event.rs.forEach(function(round) {
-      eventRounds[event.i][round.i] = round;
+      eventRoundTypes[event.i][round.i] = round;
       if (!current.e && round.s == 2) {
         current.e = event.i;
         current.r = round.i;
@@ -547,7 +547,7 @@
               r: this.eventRound.r,
               filter: this.filter
             });
-            if (Date.now() - lastFetchRoundsTime > 300000) {
+            if (Date.now() - lastFetchRoundTypesTime > 300000) {
               ws.send({
                 type: 'result',
                 action: 'rounds',
@@ -642,7 +642,7 @@
                 if (!result || !result.i || !this.$parent.isCurrentRoundOpen) {
                   return true;
                 }
-                var round = eventRounds[state.params.e][state.params.r];
+                var round = eventRoundTypes[state.params.e][state.params.r];
                 if (round.co > 0) {
                   var num = round.f == 'a' ? 2 : 1;
                   var passed = false;
@@ -1049,7 +1049,7 @@
     return events[result.e];
   }
   function getRound(result) {
-    return eventRounds[result.e][result.r];
+    return eventRoundTypes[result.e][result.r];
   }
   function getUser(number) {
     return allUsers[number] || {};
@@ -1181,7 +1181,7 @@
       var difference = 99 - Math.floor(result / 1e7);
       var missed = result % 100;
       time = (difference + missed) + '/' + (difference + missed * 2) + ' ' + formatSecond(Math.floor(result / 100) % 1e5, true);
-    } else { 
+    } else {
       var msecond = result % 100;
       var second = Math.floor(result / 100);
       if (msecond < 10) {

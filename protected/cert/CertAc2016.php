@@ -111,14 +111,14 @@ class CertAc2016 extends ResultCert {
 	}
 
 	public function getRoundName($round) {
-		$name = Rounds::getFullRoundName($round);
+		$name = RoundTypes::getFullRoundName($round);
 		return strtr($name, $this->getRoundTranslations()) . '<br>' . $name;
 	}
 
 	public function getRoundTranslations() {
 		static $translations;
 		if ($translations === null) {
-			$translations = include Yii::getPathOfAlias('application.messages.zh_cn') . '/Rounds.php';
+			$translations = include Yii::getPathOfAlias('application.messages.zh_cn') . '/RoundTypes.php';
 		}
 		return $translations;
 	}

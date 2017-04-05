@@ -76,7 +76,7 @@
           array(
             'name'=>Yii::t('common', 'Round'),
             'type'=>'raw',
-            'value'=>'Yii::t("Rounds", $data->round->cellName)',
+            'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
             'headerHtmlOptions'=>array('class'=>'round'),
           ),
           array(

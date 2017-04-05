@@ -9,16 +9,16 @@
  * @property string $name
  * @property string $cellName
  */
-class Rounds extends ActiveRecord {
-	private static $_allRounds;
+class RoundTypes extends ActiveRecord {
+	private static $_allRoundTypes;
 	public static function getFullRoundName($round) {
-		if (self::$_allRounds === null) {
-			self::$_allRounds = CHtml::listData(self::model()->cache(86400 * 7)->findAll(), 'id', 'cellName');
+		if (self::$_allRoundTypes === null) {
+			self::$_allRoundTypes = CHtml::listData(self::model()->cache(86400 * 7)->findAll(), 'id', 'cellName');
 		}
-		return isset(self::$_allRounds[$round]) ? self::$_allRounds[$round] : $round;
+		return isset(self::$_allRoundTypes[$round]) ? self::$_allRoundTypes[$round] : $round;
 	}
 
-	public static function getAllRounds() {
+	public static function getAllRoundTypes() {
 		$rounds = self::model()->cache(86400 * 7)->findAll(array(
 			'condition'=>'rank<900',
 			'order'=>'rank',
@@ -31,7 +31,7 @@ class Rounds extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Rounds';
+		return 'RoundTypes';
 	}
 
 	/**
@@ -66,10 +66,10 @@ class Rounds extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Rounds', 'ID'),
-			'rank' => Yii::t('Rounds', 'Rank'),
-			'name' => Yii::t('Rounds', 'Name'),
-			'cellName' => Yii::t('Rounds', 'Cell Name'),
+			'id' => Yii::t('RoundTypes', 'ID'),
+			'rank' => Yii::t('RoundTypes', 'Rank'),
+			'name' => Yii::t('RoundTypes', 'Name'),
+			'cellName' => Yii::t('RoundTypes', 'Cell Name'),
 		);
 	}
 
@@ -111,7 +111,7 @@ class Rounds extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Rounds the static model class
+	 * @return RoundTypes the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

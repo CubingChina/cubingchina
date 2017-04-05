@@ -7,7 +7,7 @@
  * @property string $scrambleId
  * @property string $competitionId
  * @property string $eventId
- * @property string $roundId
+ * @property string $roundTypeId
  * @property string $groupId
  * @property integer $isExtra
  * @property integer $scrambleNum
@@ -98,17 +98,17 @@ class Scrambles extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competitionId, eventId, roundId, groupId, isExtra, scrambleNum, scramble', 'required'),
+			array('competitionId, eventId, roundTypeId, groupId, isExtra, scrambleNum, scramble', 'required'),
 			array('isExtra, scrambleNum', 'numerical', 'integerOnly'=>true),
 			array('scrambleId', 'length', 'max'=>10),
 			array('competitionId', 'length', 'max'=>32),
 			array('eventId', 'length', 'max'=>6),
-			array('roundId', 'length', 'max'=>1),
+			array('roundTypeId', 'length', 'max'=>1),
 			array('groupId', 'length', 'max'=>3),
 			array('scramble', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('scrambleId, competitionId, eventId, roundId, groupId, isExtra, scrambleNum, scramble', 'safe', 'on'=>'search'),
+			array('scrambleId, competitionId, eventId, roundTypeId, groupId, isExtra, scrambleNum, scramble', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -120,7 +120,7 @@ class Scrambles extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
-			'round'=>array(self::BELONGS_TO, 'Rounds', 'roundId'),
+			'round'=>array(self::BELONGS_TO, 'RoundTypes', 'roundTypeId'),
 			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
 		);
 	}
@@ -133,7 +133,7 @@ class Scrambles extends ActiveRecord {
 			'scrambleId' => Yii::t('Scrambles', 'Scramble'),
 			'competitionId' => Yii::t('Scrambles', 'Competition'),
 			'eventId' => Yii::t('Scrambles', 'Event'),
-			'roundId' => Yii::t('Scrambles', 'Round'),
+			'roundTypeId' => Yii::t('Scrambles', 'Round'),
 			'groupId' => Yii::t('Scrambles', 'Group'),
 			'isExtra' => Yii::t('Scrambles', 'Is Extra'),
 			'scrambleNum' => Yii::t('Scrambles', 'Scramble Num'),
@@ -161,7 +161,7 @@ class Scrambles extends ActiveRecord {
 		$criteria->compare('scrambleId', $this->scrambleId, true);
 		$criteria->compare('competitionId', $this->competitionId, true);
 		$criteria->compare('eventId', $this->eventId, true);
-		$criteria->compare('roundId', $this->roundId, true);
+		$criteria->compare('roundTypeId', $this->roundTypeId, true);
 		$criteria->compare('groupId', $this->groupId, true);
 		$criteria->compare('isExtra', $this->isExtra);
 		$criteria->compare('scrambleNum', $this->scrambleNum);

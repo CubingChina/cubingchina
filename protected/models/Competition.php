@@ -889,7 +889,7 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('Rounds', Rounds::getFullRoundName($schedule->round)),
+				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
@@ -983,7 +983,7 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('Rounds', Rounds::getFullRoundName($schedule->round)),
+				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
@@ -1444,15 +1444,15 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public function getEventsRounds() {
-		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
+	public function getEventsRoundTypes() {
+		$eventRoundTypes = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
 		), array(
 			'order'=>'id ASC',
 		));
 		$events = array();
 		$ranks = [];
-		foreach ($eventRounds as $eventRound) {
+		foreach ($eventRoundTypes as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
 					'i'=>$eventRound->event,
@@ -1461,7 +1461,7 @@ class Competition extends ActiveRecord {
 				);
 			}
 			$attributes = $eventRound->getBroadcastAttributes();
-			$attributes['name'] = Yii::t('Rounds', Rounds::getFullRoundName($eventRound->round));
+			$attributes['name'] = Yii::t('RoundTypes', RoundTypes::getFullRoundName($eventRound->round));
 			$attributes['allStatus'] = $eventRound->allStatus;
 			if (!isset($ranks[$eventRound->round])) {
 				$ranks[$eventRound->round] = $eventRound->wcaRound->rank;
@@ -1782,7 +1782,7 @@ class Competition extends ActiveRecord {
 		$schedules = $this->schedules;
 		if (!empty($schedules['start_time'])) {
 			$onlyScheculeEvents = Events::getOnlyScheduleEvents();
-			$combinedRounds = array('c', 'd', 'e', 'g');
+			$combinedRoundTypes = array('c', 'd', 'e', 'g');
 			foreach ($schedules['start_time'] as $key=>$startTime) {
 				$errorKey = 'schedules.' . $key;
 				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
@@ -1810,7 +1810,7 @@ class Competition extends ActiveRecord {
 						$this->addError($errorKey, '请设置赛制！');
 						return false;
 					}
-					if (in_array($round, $combinedRounds)) {
+					if (in_array($round, $combinedRoundTypes)) {
 						if ($format != '2/a' && $format != '1/m') {
 							$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
 							return false;

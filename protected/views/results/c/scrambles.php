@@ -9,13 +9,13 @@ $this->widget('GroupGridView', array(
   'groupKey'=>'eventId',
   'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(
     Events::getFullEventNameWithIcon($data->eventId),
-    Yii::t("Rounds", $data->round->cellName),
+    Yii::t("RoundTypes", $data->round->cellName),
     CHtml::tag("a", ["id"=>$data->eventId], ""),
   ))',
   'repeatHeader'=>true,
   'rowHtmlOptionsExpression'=>'array(
     "data-event"=>$data->eventId,
-    "data-round"=>$data->roundId,
+    "data-round"=>$data->roundTypeId,
   )',
   'columns'=>array(
     array(

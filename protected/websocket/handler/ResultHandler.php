@@ -194,7 +194,7 @@ class ResultHandler extends MsgHandler {
 
 	}
 
-	public function actionRounds() {
+	public function actionRoundTypes() {
 		$this->success('round.all', array_map(function($round) {
 			return $round->getBroadcastAttributes();
 		}, LiveEventRound::model()->findAllByAttributes(array(
