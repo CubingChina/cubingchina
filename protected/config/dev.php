@@ -1,5 +1,5 @@
 <?php
-unset($config['components']['errorHandler']);
+unset($config['components']['errorHandler']['errorAction']);
 $config['modules']['gii'] = array(
 	'class'=>'system.gii.GiiModule',
 	'password'=>'123',
