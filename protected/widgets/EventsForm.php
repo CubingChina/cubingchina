@@ -110,7 +110,7 @@ class EventsForm extends Widget {
 					'class'=>'input-group',
 				));
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][round]", $numberOptions);
-				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'Rounds'));
+				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'RoundTypes'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 				//fee

@@ -235,7 +235,7 @@ class RegistrationController extends AdminController {
 				$sheet = clone $sheet;
 				$sheet->setTitle("{$event}-{$round}");
 				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . Rounds::getFullRoundName($round));
+				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . RoundTypes::getFullRoundName($round));
 				if ($round == 1 || $count == 1) {
 					$row = 5;
 					foreach ($registrations as $registration) {
@@ -421,7 +421,7 @@ class RegistrationController extends AdminController {
 				$sheet = clone $sheet;
 				$sheet->setTitle("{$event}-{$round['round']->id}");
 				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . Rounds::getFullRoundName($round['round']->id));
+				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . RoundTypes::getFullRoundName($round['round']->id));
 				usort($round['results'], $compare);
 				$row = 5;
 				$num = Formats::getFormatNum($round['format']);

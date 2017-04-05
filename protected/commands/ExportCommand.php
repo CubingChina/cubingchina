@@ -8,7 +8,7 @@ class ExportCommand extends CConsoleCommand {
 		$this->translations = array_merge(
 			include $path . 'Schedule.php',
 			include $path . 'common.php',
-			include $path . 'Rounds.php',
+			include $path . 'RoundTypes.php',
 			include $path . 'event.php'
 		);
 		$competition = Competition::model()->findByPk(440);
@@ -94,7 +94,7 @@ class ExportCommand extends CConsoleCommand {
 				$temp,
 			]));
 			$table .= CHtml::tag('td', [], $schedule->group);
-			$temp = Rounds::getFullRoundName($schedule->round);
+			$temp = RoundTypes::getFullRoundName($schedule->round);
 			$table .= CHtml::tag('td', [], implode('<br>', [
 				strtr($temp, $this->translations),
 				$temp,

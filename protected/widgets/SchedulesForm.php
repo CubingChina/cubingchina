@@ -49,12 +49,12 @@ class SchedulesForm extends Widget {
 		foreach ($formats as $key=>$value) {
 			$formats[$key] = Yii::t('common', $value);
 		}
-		$rounds = Rounds::getAllRounds();
+		$rounds = RoundTypes::getAllRoundTypes();
 		unset($rounds['0']);
 		unset($rounds['h']);
 		unset($rounds['b']);
 		foreach ($rounds as $key=>$value) {
-			$rounds[$key] = Yii::t('Rounds', $value);
+			$rounds[$key] = Yii::t('RoundTypes', $value);
 		}
 		$stages = Schedule::getStages();
 		echo CHtml::openTag('tbody');
@@ -127,7 +127,7 @@ class SchedulesForm extends Widget {
 		Yii::app()->clientScript->registerScript('SchedulesForm',
 <<<EOT
   var onlyScheculeEvents = {$onlyScheculeEvents};
-  var combinedRounds = ['c', 'd', 'e', 'g'];
+  var combinedRoundTypes = ['c', 'd', 'e', 'g'];
   var length = $('#schedules table tbody tr').length;
   $(document).on('focus', '#schedules table tbody tr:last-child', function() {
     var last = $(this).clone().insertAfter(this);
@@ -153,7 +153,7 @@ class SchedulesForm extends Widget {
     var format = that.parent().next().find('option');
     var cutoff = that.parent().next().next().find('input');
     format.prop('disabled', false);
-    if (combinedRounds.indexOf(round) > -1) {
+    if (combinedRoundTypes.indexOf(round) > -1) {
       cutoff.prop('disabled', false);
       format.filter(':not([value="2/a"]):not([value="1/m"])').prop('disabled', true);
     } else {
