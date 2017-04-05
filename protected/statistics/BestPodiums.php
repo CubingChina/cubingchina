@@ -25,7 +25,7 @@ class BestPodiums extends Statistics {
 		$command->select(array(
 			'r.competitionId',
 			'r.eventId',
-			'r.roundId',
+			'r.roundTypeId',
 			self::getSelectSum($eventId, $type),
 			'c.cellName',
 			'c.cityName',
@@ -38,7 +38,7 @@ class BestPodiums extends Statistics {
 		->where('r.eventId=:eventId', array(
 			':eventId'=>$eventId,
 		))
-		->andWhere('r.roundId IN ("c", "f")')
+		->andWhere('r.roundTypeId IN ("c", "f")')
 		->andWhere('r.pos IN (1,2,3)')
 		->andWhere('c.countryId="China"')
 		->andWhere("r.{$type} > 0");
@@ -176,10 +176,10 @@ class BestPodiums extends Statistics {
 		->select("personId, personName, {$type} AS average, pos")
 		->from('Results r')
 		->leftJoin('Competitions c', 'r.competitionId=c.id')
-		->where('competitionId=:competitionId AND eventId=:eventId AND roundId=:roundId AND pos IN (1,2,3)', array(
+		->where('competitionId=:competitionId AND eventId=:eventId AND roundTypeId=:roundTypeId AND pos IN (1,2,3)', array(
 			':competitionId'=>$row['competitionId'],
 			':eventId'=>$row['eventId'],
-			':roundId'=>$row['roundId'],
+			':roundTypeId'=>$row['roundTypeId'],
 		))
 		->queryAll();
 		$keys = array(

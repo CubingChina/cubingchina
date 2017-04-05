@@ -11,7 +11,7 @@ class MedalCollection extends Statistics {
 			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
 		))
 		->from('Results')
-		->where('personCountryId="China" AND roundId IN ("c", "f") AND best>0');
+		->where('personCountryId="China" AND roundTypeId IN ("c", "f") AND best>0');
 		if (!empty($statistic['eventIds'])) {
 			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
 		}
@@ -55,7 +55,7 @@ class MedalCollection extends Statistics {
 			->andWhere('pos IN (1,2,3)')
 			->queryScalar();
 			$statistic['rank'] = ($page - 1) * self::$limit;
-			$statistic['rankKey'] = 'rank'; 
+			$statistic['rankKey'] = 'rank';
 			if ($page > 1 && $rows !== array() && $recursive) {
 				$stat = self::build($statistic, $page - 1, false);
 				foreach (array_reverse($stat['rows']) as $row) {

@@ -1,4 +1,4 @@
-<?php $events = $competition->getEventsRounds(); ?>
+<?php $events = $competition->getEventsRoundTypes(); ?>
 <?php $params = $competition->getLastActiveEventRound($events); ?>
 <?php echo CHtml::tag('div', array(
   'id'=>'live-container',

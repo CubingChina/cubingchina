@@ -158,7 +158,7 @@ class NewsController extends AdminController {
 		}
 		$results = Results::model()->findAllByAttributes(array(
 			'competitionId'=>$competition->wca_competition_id,
-			'roundId'=>array(
+			'roundTypeId'=>array(
 				'c',
 				'f',
 			),

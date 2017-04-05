@@ -135,7 +135,7 @@ class LiveEventRound extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
-			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
+			'wcaRound'=>array(self::BELONGS_TO, 'RoundTypes', 'round'),
 		);
 	}
 

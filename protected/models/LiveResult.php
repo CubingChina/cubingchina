@@ -309,7 +309,7 @@ class LiveResult extends ActiveRecord {
 				'round'=>'round',
 			)),
 			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
-			'wcaRound'=>array(self::BELONGS_TO, 'Rounds', 'round'),
+			'wcaRound'=>array(self::BELONGS_TO, 'RoundTypes', 'round'),
 		);
 	}
 

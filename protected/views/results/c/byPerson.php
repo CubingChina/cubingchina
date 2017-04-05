@@ -14,7 +14,7 @@ $this->widget('GroupRankGridView', array(
   'repeatHeader'=>true,
   'rowHtmlOptionsExpression'=>'array(
     "data-event"=>$data->eventId,
-    "data-round"=>$data->roundId,
+    "data-round"=>$data->roundTypeId,
     "data-person"=>$data->personId,
     "data-best"=>$data->best,
     "data-pos"=>$data->pos,
@@ -34,7 +34,7 @@ $this->widget('GroupRankGridView', array(
     array(
       'name'=>Yii::t('Results', 'Round'),
       'type'=>'raw',
-      'value'=>'Yii::t("Rounds", $data->round->cellName)',
+      'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
       'headerHtmlOptions'=>array('class'=>'place'),
     ),
     array(

@@ -425,13 +425,13 @@ class ResultsController extends Controller {
 			$id1 = $persons[0]['person']->id;
 			$id2 = $persons[1]['person']->id;
 			foreach ($persons[0]['results']['byEvent'] as $result) {
-				$person1Results[$result->competitionId][$result->eventId][$result->roundId] = $result->pos;
+				$person1Results[$result->competitionId][$result->eventId][$result->roundTypeId] = $result->pos;
 			}
 			foreach ($persons[1]['results']['byEvent'] as $result) {
 				$eventId = $result->eventId;
-				$roundId = $result->roundId;
-				if (isset($person1Results[$result->competitionId][$eventId][$roundId])) {
-					$pos = $person1Results[$result->competitionId][$eventId][$roundId];
+				$roundTypeId = $result->roundTypeId;
+				if (isset($person1Results[$result->competitionId][$eventId][$roundTypeId])) {
+					$pos = $person1Results[$result->competitionId][$eventId][$roundTypeId];
 					if (!isset($rivalries[$eventId][$id1]['overAll'])) {
 						$rivalries[$eventId][$id1]['overAll'] = array(
 							'wins'=>0,
@@ -467,7 +467,7 @@ class ResultsController extends Controller {
 					if ($key1 !== '') {
 						$rivalries[$eventId][$id1]['overAll'][$key1]++;
 						$rivalries[$eventId][$id2]['overAll'][$key2]++;
-						if (in_array($roundId, array('c', 'f'))) {
+						if (in_array($roundTypeId, array('c', 'f'))) {
 							$rivalries[$eventId][$id1]['final'][$key1]++;
 							$rivalries[$eventId][$id2]['final'][$key2]++;
 						}
@@ -489,6 +489,7 @@ class ResultsController extends Controller {
 	private function getBestData($persons, $expression, $type = 'min', $canBeZero = false) {
 		$temp = array();
 		foreach ($persons as $person) {
+			var_dump($expression, $person['results']["sumOfRanks"]);
 			$value = $this->evaluateExpression($expression, $person);
 			if ($value > 0 || $canBeZero) {
 				$temp[] = $this->evaluateExpression($expression, $person);

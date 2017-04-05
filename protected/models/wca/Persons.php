@@ -154,9 +154,9 @@ class Persons extends ActiveRecord {
 		$command = $db->createCommand();
 		$command->select(array(
 			'eventId',
-			'sum(CASE WHEN pos=1 AND roundId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
-			'sum(CASE WHEN pos=2 AND roundId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
-			'sum(CASE WHEN pos=3 AND roundId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
+			'sum(CASE WHEN pos=1 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
+			'sum(CASE WHEN pos=2 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
+			'sum(CASE WHEN pos=3 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
 			'sum(CASE WHEN value1>0 THEN 1 ELSE 0 END)
 			+sum(CASE WHEN value2>0 THEN 1 ELSE 0 END)
 			+sum(CASE WHEN value3>0 THEN 1 ELSE 0 END)
@@ -273,7 +273,7 @@ class Persons extends ActiveRecord {
 			'event',
 		))->findAllByAttributes(array(
 			'personId'=>$id,
-			'roundId'=>array('c', 'f'),
+			'roundTypeId'=>array('c', 'f'),
 			'pos'=>array(1, 2, 3),
 		), array(
 			'condition'=>'competitionId LIKE "WC%"',

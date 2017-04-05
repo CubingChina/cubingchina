@@ -7,7 +7,7 @@
  * @property string $id
  * @property string $competitionId
  * @property string $eventId
- * @property string $roundId
+ * @property string $roundTypeId
  * @property integer $pos
  * @property integer $best
  * @property integer $average
@@ -58,7 +58,7 @@ class Results extends ActiveRecord {
 				$attributes = array(
 					'competitionId'=>$competition->id,
 					'eventId'=>"$eventId",
-					'roundId'=>array('c', 'f'),
+					'roundTypeId'=>array('c', 'f'),
 				);
 				$with = array();
 				if ($type === 'continent') {
@@ -259,7 +259,7 @@ class Results extends ActiveRecord {
 		))
 		->from('Results rs')
 		->leftJoin('Competitions c', 'rs.competitionId=c.id')
-		->leftJoin('Rounds round', 'rs.roundId=round.id')
+		->leftJoin('RoundTypes round', 'rs.roundTypeId=round.id')
 		->leftJoin('Countries country', 'rs.personCountryId=country.id')
 		->where('rs.eventId=:eventId', array(
 			':eventId'=>$event,
@@ -503,14 +503,14 @@ class Results extends ActiveRecord {
 			array('pos, best, average, value1, value2, value3, value4, value5', 'numerical', 'integerOnly'=>true),
 			array('competitionId', 'length', 'max'=>32),
 			array('eventId', 'length', 'max'=>6),
-			array('roundId, formatId', 'length', 'max'=>1),
+			array('roundTypeId, formatId', 'length', 'max'=>1),
 			array('personName', 'length', 'max'=>80),
 			array('personId', 'length', 'max'=>10),
 			array('countryCountryId', 'length', 'max'=>50),
 			array('regionalSingleRecord, regionalAverageRecord', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competitionId, eventId, roundId, pos, best, average, personName, personId, countryCountryId, formatId, value1, value2, value3, value4, value5, regionalSingleRecord, regionalAverageRecord', 'safe', 'on'=>'search'),
+			array('id, competitionId, eventId, roundTypeId, pos, best, average, personName, personId, countryCountryId, formatId, value1, value2, value3, value4, value5, regionalSingleRecord, regionalAverageRecord', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -524,7 +524,7 @@ class Results extends ActiveRecord {
 			'person'=>array(self::BELONGS_TO, 'Persons', 'personId'),
 			'personCountry'=>array(self::BELONGS_TO, 'Countries', 'personCountryId'),
 			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
-			'round'=>array(self::BELONGS_TO, 'Rounds', 'roundId'),
+			'round'=>array(self::BELONGS_TO, 'RoundTypes', 'roundTypeId'),
 			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
 			'format'=>array(self::BELONGS_TO, 'Formats', 'formatId'),
 		);
@@ -538,7 +538,7 @@ class Results extends ActiveRecord {
 			'id' => Yii::t('Results', 'ID'),
 			'competitionId' => Yii::t('Results', 'Competition'),
 			'eventId' => Yii::t('Results', 'Event'),
-			'roundId' => Yii::t('Results', 'Round'),
+			'roundTypeId' => Yii::t('Results', 'Round'),
 			'pos' => Yii::t('Results', 'Pos'),
 			'best' => Yii::t('Results', 'Best'),
 			'average' => Yii::t('Results', 'Average'),
@@ -576,7 +576,7 @@ class Results extends ActiveRecord {
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('competitionId',$this->competitionId,true);
 		$criteria->compare('eventId',$this->eventId,true);
-		$criteria->compare('roundId',$this->roundId,true);
+		$criteria->compare('roundTypeId',$this->roundTypeId,true);
 		$criteria->compare('pos',$this->pos);
 		$criteria->compare('best',$this->best);
 		$criteria->compare('average',$this->average);

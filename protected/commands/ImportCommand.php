@@ -536,7 +536,7 @@ class ImportCommand extends CConsoleCommand {
 				$resultEvents = Results::model()->findAllByAttributes(array(
 					'competitionId'=>$competition->wca_competition_id,
 				), array(
-					'group'=>'eventId,roundId',
+					'group'=>'eventId,roundTypeId',
 				));
 				if ($resultEvents !== array()) {
 					foreach ($resultEvents as $value) {

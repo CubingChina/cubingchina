@@ -153,7 +153,7 @@ class Summary {
 				}
 			}
 			if ($result->best > 0) {
-				if ($result->pos <= 3 && in_array($result->roundId, ['c', 'f'])) {
+				if ($result->pos <= 3 && in_array($result->roundTypeId, ['c', 'f'])) {
 					$medals[$medalKeys[$result->pos - 1]]++;
 					if (!isset($medalList[$result->eventId])) {
 						$medalList[$result->eventId] = $medalsTemplate;

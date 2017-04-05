@@ -18,10 +18,10 @@ ALTER TABLE `Results` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `Results` ADD INDEX ( `personCountryId` );
 ALTER TABLE `Results` ADD INDEX ( `regionalSingleRecord` );
 ALTER TABLE `Results` ADD INDEX ( `regionalAverageRecord` );
-ALTER TABLE `Results` ADD INDEX `event_round_pos` ( `eventId` , `roundId` , `pos` );
+ALTER TABLE `Results` ADD INDEX `event_round_pos` ( `eventId` , `roundTypeId` , `pos` );
 ALTER TABLE `Results` ADD INDEX `event_best_person` ( `eventId` , `best` , `personId` , `personCountryId` );
 ALTER TABLE `Results` ADD INDEX `event_avg_person` ( `eventId` , `average` , `personId` , `personCountryId` );
-ALTER TABLE `Rounds` ADD PRIMARY KEY ( `id` );
+ALTER TABLE `RoundTypes` ADD PRIMARY KEY ( `id` );
 ALTER TABLE `RanksSingle` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 ALTER TABLE `RanksSingle` ADD INDEX USING BTREE( `personId` );
 ALTER TABLE `RanksSingle` ADD INDEX ( `eventId` );
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `RanksSum` (
   KEY `personId` (`personId`),
   KEY `type` (`type`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
--- Sum or countryRank
+-- Sum of countryRank
 -- Single
 INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `countryRank`)
 (
@@ -152,7 +152,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
 	WHERE `p`.`subid`=1 AND `e`.`rank`<900
 	GROUP BY `p`.`id`
 );
--- Sum or countryRank
+-- Sum of countryRank
 -- Average
 INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `countryRank`)
 (
@@ -177,7 +177,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
 );
 
 
--- Sum or continentRank
+-- Sum of continentRank
 -- Single
 UPDATE `RanksSum` `sor` INNER JOIN
 (
@@ -200,7 +200,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 	GROUP BY `p`.`id`
 ) `t` ON `sor`.`personId`=`t`.`personId`
 SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='single';
--- Sum or continentRank
+-- Sum of continentRank
 -- Average
 UPDATE `RanksSum` `sor` INNER JOIN
 (
@@ -225,7 +225,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 SET `sor`.`continentRank`=`t`.`continentRank` WHERE `sor`.`type`='average';
 
 
--- Sum or worldRank
+-- Sum of worldRank
 -- Single
 UPDATE `RanksSum` `sor` INNER JOIN
 (
@@ -244,7 +244,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 	GROUP BY `p`.`id`
 ) `t` ON `sor`.`personId`=`t`.`personId`
 SET `sor`.`worldRank`=`t`.`worldRank` WHERE `sor`.`type`='single';
--- Sum or worldRank
+-- Sum of worldRank
 -- Average
 UPDATE `RanksSum` `sor` INNER JOIN
 (

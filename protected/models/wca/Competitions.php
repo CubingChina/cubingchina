@@ -131,7 +131,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 			'pos'=>1,
-			'roundId'=>array('c', 'f'),
+			'roundTypeId'=>array('c', 'f'),
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
@@ -148,7 +148,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 			'pos'=>array(1, 2, 3),
-			'roundId'=>array('c', 'f'),
+			'roundTypeId'=>array('c', 'f'),
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
