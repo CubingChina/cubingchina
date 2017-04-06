@@ -11,9 +11,14 @@
  * @property integer $penalty
  */
 class RanksPenalty extends ActiveRecord {
+	private static $_panalties = [];
+
 	public static function getPenlties($type, $countryId) {
 		if (Region::isContinent($countryId)) {
 			$countryId = '_' . $countryId;
+		}
+		if (isset(self::$_panalties[$type][$countryId])) {
+			return self::$_panalties[$type][$countryId];
 		}
 		$ranksPenalties = self::model()->findAllByAttributes(array(
 			'type'=>$type,
@@ -30,7 +35,7 @@ class RanksPenalty extends ActiveRecord {
 				$penalties[$eventId] = 1;
 			}
 		}
-		return $penalties;
+		return self::$_panalties[$type][$countryId] = $penalties;
 	}
 
 	/**

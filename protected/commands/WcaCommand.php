@@ -1,6 +1,8 @@
 <?php
 
 class WcaCommand extends CConsoleCommand {
+	private $_panalties = [];
+
 	public function actionUpdate() {
 		$this->log('start update');
 		$competitions = Competition::model()->findAllByAttributes(array(
@@ -34,6 +36,52 @@ class WcaCommand extends CConsoleCommand {
 		Yii::app()->cache->flush();
 		$data = Statistics::getData(true);
 		$this->log('set results_statistics_data:', $data ? 1 : 0);
+	}
+
+	public function actionBuildRanksSum() {
+		Yii::getLogger()->autoDump = true;
+		Yii::getLogger()->autoFlush = 1;
+		$events = Events::getNormalEvents();
+		$persons = Persons::model()->with('country')->findAllByAttributes(['subid'=>1]);
+		RanksSum::model()->getDbConnection()->createCommand()->truncateTable('RanksSum');
+		foreach (['single', 'average'] as $type) {
+			$className = 'Ranks' . ucfirst($type);
+			foreach ($persons as $person) {
+				$ranks = $className::model()->findAllByAttributes([
+					'personId'=>$person->id,
+				]);
+				$sum = $this->getPenlties($type, $person->country);
+				foreach ($ranks as $rank) {
+					$sum['worldRank'][$rank->eventId] = $rank->worldRank;
+					if ($rank->continentRank > 0) {
+						$sum['continentRank'][$rank->eventId] = $rank->continentRank;
+					}
+					if ($rank->countryRank > 0) {
+						$sum['countryRank'][$rank->eventId] = $rank->countryRank;
+					}
+				}
+				$ranksSum = new RanksSum();
+				$ranksSum->personId = $person->id;
+				$ranksSum->countryId = $person->countryId;
+				$ranksSum->continentId = $person->country->continentId;
+				$ranksSum->type = $type;
+				foreach ($sum as $key=>$value) {
+					$ranksSum->$key = array_sum($value);
+				}
+				$ranksSum->save();
+			}
+		}
+	}
+
+	private function getPenlties($type, $country) {
+		if (isset($this->_panalties[$type][$country->id])) {
+			return $this->_panalties[$type][$country->id];
+		}
+		return $this->_panalties[$type][$country->id] = [
+			'worldRank'=>RanksPenalty::getPenlties($type, 'World'),
+			'continentRank'=>RanksPenalty::getPenlties($type, $country->continentId),
+			'countryRank'=>RanksPenalty::getPenlties($type, $country->id),
+		];
 	}
 
 	private function log() {

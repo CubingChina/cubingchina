@@ -12,7 +12,7 @@ mysql_user='cubingchina'
 mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
-wget $wca_home/results/misc/export.html || exit 
+wget $wca_home/results/misc/export.html || exit
 zipname=`grep -o '\(WCA_export[0-9]\+_[0-9]\{8\}\.sql\.zip\)' export.html | tail -1`
 _log "zipname: $zipname"
 #check version and date
@@ -51,8 +51,10 @@ lftp -c "pget -n 20 '$wca_home/results/misc/$zipname' -o $zipname"
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"
-sed -ri 's/latin1/utf8/g' WCA_export.sql
-sed -ri 's/utf8_unicode_ci/utf8_general_ci/g' WCA_export.sql
+sed -ri 's/DEFAULT CHARSET=utf8mb4/DEFAULT CHARSET=utf8 COLLATE utf8_general_ci/g' WCA_export.sql
+sed -ri 's/CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci/CHARACTER SET utf8 COLLATE utf8_general_ci/g' WCA_export.sql
+_log "check for database"
+mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db"
 _log "import data"
 mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql
 _log "import additional"
