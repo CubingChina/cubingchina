@@ -489,7 +489,6 @@ class ResultsController extends Controller {
 	private function getBestData($persons, $expression, $type = 'min', $canBeZero = false) {
 		$temp = array();
 		foreach ($persons as $person) {
-			var_dump($expression, $person['results']["sumOfRanks"]);
 			$value = $this->evaluateExpression($expression, $person);
 			if ($value > 0 || $canBeZero) {
 				$temp[] = $this->evaluateExpression($expression, $person);
