@@ -107,7 +107,8 @@ class MultiLocations extends Widget {
 				CHtml::textField(CHtml::activeName($model, 'locations[venue_zh][]'), $location['venue_zh'], array(
 					'class'=>'form-control',
 				)),
-				CHtml::error($model, 'locations.venue_zh.' . $key, array('class'=>'text-danger'))
+				CHtml::error($model, 'locations.venue_zh.' . $key, array('class'=>'text-danger help-block')),
+				'<div class="text-danger">请填写具体地址，略去省市</div>'
 			);
 			echo Html::formGroup(
 				$model, 'locations[venue][]', array(
@@ -117,7 +118,8 @@ class MultiLocations extends Widget {
 				CHtml::textField(CHtml::activeName($model, 'locations[venue][]'), $location['venue'], array(
 					'class'=>'form-control',
 				)),
-				CHtml::error($model, 'locations.venue.' . $key, array('class'=>'text-danger'))
+				CHtml::error($model, 'locations.venue.' . $key, array('class'=>'text-danger help-block')),
+				'<div class="text-danger">请填写具体地址，略去省市；<br>请注意英文地址从小到大书写；<br>请使用半角逗号，并在标点之后添加空格；<br>请注意字母大小写规则；<br>请参考已公示比赛书写。</div>'
 			);
 			echo '<div class="text-danger col-lg-12">填写经纬度将会自动生成地图。<br>
 			<a href="http://www.gpsspg.com/maps.htm" target="_blank">点击这里查询坐标</a>，国内请填写<b>Google地球</b>坐标。

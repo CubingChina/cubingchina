@@ -1740,11 +1740,32 @@ class Competition extends ActiveRecord {
 					$error = true;
 				}
 			}
-			if (trim($locations['venue'][$key]) == '') {
+			$locations['venue'][$key] = trim($locations['venue'][$key]);
+			if ($locations['venue'][$key] == '') {
 				$this->addError('locations.venue.' . $index, '英文地址不能为空');
 				$error = true;
 			}
-			if (trim($locations['venue_zh'][$key]) == '') {
+			// check capitalization, comma and space
+			if (strpos($locations['venue'][$key], '，') !== false) {
+				$this->addError('locations.venue.' . $index, '英文地址请使用半角逗号');
+				$error = true;
+			}
+			$venues = explode(',', $locations['venue'][$key]);
+			foreach ($venues as $k=>$venue) {
+				if (!preg_match('{[0-9A-Z]}', $venue{0})) {
+					$this->addError('locations.venue.' . $index, '首字母请大写');
+					$error = true;
+					break;
+				}
+				if ($k > 0 && $venue{0} !== ' ') {
+					$this->addError('locations.venue.' . $index, '逗号之后请添加空格');
+					$error = true;
+					break;
+				}
+			}
+
+			$locations['venue_zh'][$key] = trim($locations['venue_zh'][$key]);
+			if ($locations['venue_zh'][$key] == '') {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 				$error = true;
 			}
