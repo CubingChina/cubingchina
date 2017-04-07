@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `RanksPenalty` (
   `penalty` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `type` (`type`,`countryId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 -- Single countryRanks penalty
 INSERT INTO `RanksPenalty` (`eventId`, `countryId`, `type`, `penalty`)
 (
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `RanksSum` (
   PRIMARY KEY (`id`),
   KEY `personId` (`personId`),
   KEY `type` (`type`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 -- Sum of countryRank
 -- Single
 INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `countryRank`)
@@ -164,7 +164,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
 		SUM(
 			CASE WHEN
 				`r`.`countryRank`=0 OR `r`.`countryRank` IS NULL
-			THEN (CASE WHEN `rp`.`penalty` IS NULL AND `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE `rp`.`penalty` END)
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
 			ELSE `r`.`countryRank`
 		END) AS `countryRank`
 	FROM `Persons` `p`
@@ -211,7 +211,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
 		SUM(
 			CASE WHEN
 				`r`.`continentRank`=0 OR `r`.`continentRank` IS NULL
-			THEN (CASE WHEN `rp`.`penalty` IS NULL AND `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE `rp`.`penalty` END)
+			THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
 			ELSE `r`.`continentRank`
 		END) AS `continentRank`
 	FROM `Persons` `p`
