@@ -223,6 +223,9 @@ class CompetitionController extends Controller {
 		}
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
+			if (!isset($_POST['Registration']['events'])) {
+				$model->events = null;
+			}
 			$model->user_id = $this->user->id;
 			$model->total_fee = $model->getTotalFee(true);
 			$model->ip = Yii::app()->request->getUserHostAddress();
