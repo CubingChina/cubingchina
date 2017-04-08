@@ -1752,7 +1752,7 @@ class Competition extends ActiveRecord {
 			}
 			$venues = explode(',', $locations['venue'][$key]);
 			foreach ($venues as $k=>$venue) {
-				if (!preg_match('{[0-9A-Z]}', $venue{0})) {
+				if (!preg_match('{^[0-9A-Z]}', trim($venue))) {
 					$this->addError('locations.venue.' . $index, '首字母请大写');
 					$error = true;
 					break;
