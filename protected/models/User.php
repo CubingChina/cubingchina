@@ -517,14 +517,28 @@ class User extends ActiveRecord {
 	}
 
 	public function searchRepeat() {
-		$command = Yii::app()->db->createCommand()
-		->select('a.*')
-		->from('user a')
-		->leftJoin('user b', 'a.name_zh=b.name_zh and a.birthday=b.birthday')
-		->where('a.name_zh!="" and a.id!=b.id and a.status=0 and b.status=0')
-		->order('a.name_zh');
+		$repeatedUsers = $this->findAllByAttributes([
+			'status'=>self::STATUS_NORMAL,
+		], [
+			'select'=>'GROUP_CONCAT(id) AS id',
+			'condition'=>'name_zh != ""',
+			'group'=>'name_zh, birthday',
+			'having'=>'count(DISTINCT id) > 1',
+		]);
 
-		return new NonSortArrayDataProvider($this->findAllBySql($command->getText()), array(
+		foreach ($repeatedUsers as $user) {
+			foreach (explode(',', $user->id) as $id) {
+				$ids[] = $id;
+			}
+		}
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('id', $ids);
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'name_zh',
+			),
 			'pagination'=>array(
 				'pageSize'=>50,
 			),
