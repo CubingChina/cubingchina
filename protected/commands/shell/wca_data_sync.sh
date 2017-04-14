@@ -56,7 +56,7 @@ sed -ri 's/CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci/CHARACTER SET utf8 C
 _log "remove drop table, disable create table"
 sed -ri 's/DROP TABLE .+;//g' WCA_export.sql
 sed -ri 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' WCA_export.sql
-_log "remove add columns for insert"
+_log "add columns for insert"
 sed -ri 's/INSERT INTO `Results`/INSERT INTO `Results` (`competitionId`,`eventId`,`roundTypeId`,`pos`,`best`,`average`,`personName`,`personId`,`personCountryId`,`formatId`,`value1`,`value2`,`value3`,`value4`,`value5`,`regionalSingleRecord`,`regionalAverageRecord`)/g' WCA_export.sql
 sed -ri 's/INSERT INTO `RanksSingle`/INSERT INTO `RanksSingle` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 sed -ri 's/INSERT INTO `RanksAverage`/INSERT INTO `RanksAverage` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql

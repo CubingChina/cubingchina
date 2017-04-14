@@ -6,18 +6,8 @@ class MostSolves extends Statistics {
 		$limit = self::$limit;
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
-			'sum(CASE WHEN value1>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value2>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value3>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value4>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value5>0 THEN 1 ELSE 0 END)
-			AS solve',
-			'sum(CASE WHEN value1>-2 AND value1!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value2>-2 AND value2!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value3>-2 AND value3!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value4>-2 AND value4!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value5>-2 AND value5!=0 THEN 1 ELSE 0 END)
-			AS attempt',
+			'sum(solve) AS solve',
+			'sum(attempt) AS attempt',
 			'competitionId',
 			'personId',
 			'personName',
@@ -111,7 +101,7 @@ class MostSolves extends Statistics {
 				}
 				$statistic['count'] = $cmd->select('count(DISTINCT personId) AS count')->queryScalar();
 				$statistic['rank'] = ($page - 1) * $limit;
-				$statistic['rankKey'] = 'rank'; 
+				$statistic['rankKey'] = 'rank';
 				if ($page > 1 && $rows !== array() && $recursive) {
 					$stat = self::build($statistic, $page - 1, false);
 					foreach (array_reverse($stat['rows']) as $row) {
