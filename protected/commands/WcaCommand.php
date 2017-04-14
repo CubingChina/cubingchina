@@ -19,7 +19,7 @@ class WcaCommand extends CConsoleCommand {
 					ON `c`.`wca_competition_id`=`rs`.`competitionId`
 					AND `rs`.`personName`=CASE WHEN `u`.`name_zh`='' THEN `u`.`name` ELSE CONCAT(`u`.`name`, ' (', `u`.`name_zh`, ')') END
 				SET `u`.`wcaid`=`rs`.`personId`
-				WHERE `u`.`wcaid`='' and `r`.`competition_id`=%id%";
+				WHERE `u`.`wcaid`='' AND `rs`.`personId` IS NOT NULL AND `r`.`competition_id`=%id%";
 		$db = Yii::app()->db;
 		$num = [];
 		foreach ($competitions as $competition) {

@@ -157,18 +157,8 @@ class Persons extends ActiveRecord {
 			'sum(CASE WHEN pos=1 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
 			'sum(CASE WHEN pos=2 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
 			'sum(CASE WHEN pos=3 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
-			'sum(CASE WHEN value1>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value2>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value3>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value4>0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value5>0 THEN 1 ELSE 0 END)
-			AS solve',
-			'sum(CASE WHEN value1>-2 AND value1!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value2>-2 AND value2!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value3>-2 AND value3!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value4>-2 AND value4!=0 THEN 1 ELSE 0 END)
-			+sum(CASE WHEN value5>-2 AND value5!=0 THEN 1 ELSE 0 END)
-			AS attempt',
+			'sum(solve) AS solve',
+			'sum(attempt) AS attempt',
 		))
 		->from('Results')
 		->where('personId=:personId', array(

@@ -2,7 +2,7 @@ dir=`dirname "$0"`
 wca_home='https://www.worldcubeassociation.org'
 
 _log () {
-	echo "[`date +'%Y-%m-%d %H:%M:%S'`] $1"
+  echo "[`date +'%Y-%m-%d %H:%M:%S'`] $1"
 }
 
 cd $dir
@@ -20,19 +20,19 @@ version=`echo $zipname | grep -o '\(WCA_export[0-9]\+\)' | grep -o '[0-9]\+' | t
 date=`echo $zipname | grep -o '\([0-9]\{8\}\)' | tail -1`
 if [ -f last ]
 then
-	last_version=`sed -n '1,1p' last`
-	last_date=`sed -n '2,1p' last`
-	if [ "$last_version" = "" ]
-	then
-		last_version=0
-	fi
-	if [ "$last_date" = "" ]
-	then
-		last_date=0
-	fi
+  last_version=`sed -n '1,1p' last`
+  last_date=`sed -n '2,1p' last`
+  if [ "$last_version" = "" ]
+  then
+    last_version=0
+  fi
+  if [ "$last_date" = "" ]
+  then
+    last_date=0
+  fi
 else
-	last_version=0
-	last_date=0
+  last_version=0
+  last_date=0
 fi
 _log "last_version: $last_version"
 _log "version: $version"
@@ -40,8 +40,8 @@ _log "last_date: $last_date"
 _log "date: $date"
 if [ "$last_version" -ge "$version" ] && [ "$last_date" -ge "$date" ]
 then
-	rm -f export.html*
-	exit
+  rm -f export.html*
+  exit
 fi
 >last
 echo $version >> last
@@ -53,8 +53,17 @@ unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"
 sed -ri 's/DEFAULT CHARSET=utf8mb4/DEFAULT CHARSET=utf8 COLLATE utf8_general_ci/g' WCA_export.sql
 sed -ri 's/CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci/CHARACTER SET utf8 COLLATE utf8_general_ci/g' WCA_export.sql
+_log "remove drop table, disable create table"
+sed -ri 's/DROP TABLE .+;//g' WCA_export.sql
+sed -ri 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' WCA_export.sql
+_log "add columns for insert"
+sed -ri 's/INSERT INTO `Results`/INSERT INTO `Results` (`competitionId`,`eventId`,`roundTypeId`,`pos`,`best`,`average`,`personName`,`personId`,`personCountryId`,`formatId`,`value1`,`value2`,`value3`,`value4`,`value5`,`regionalSingleRecord`,`regionalAverageRecord`)/g' WCA_export.sql
+sed -ri 's/INSERT INTO `RanksSingle`/INSERT INTO `RanksSingle` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
+sed -ri 's/INSERT INTO `RanksAverage`/INSERT INTO `RanksAverage` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 _log "check for database"
-mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db"
+mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8"
+_log "import structure"
+mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql
 _log "import data"
 mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql
 _log "import additional"

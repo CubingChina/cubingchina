@@ -288,6 +288,7 @@ class CompetitionController extends AdminController {
 		$model->formatEvents();
 		$model->formatDate();
 		$model->status = Competition::STATUS_CONFIRMED;
+		$model->confirm_time = time();
 		if ($model->save()) {
 			Yii::app()->mailer->sendCompetitionConfirmNotice($model);
 			$this->ajaxOk([]);

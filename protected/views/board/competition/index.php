@@ -70,6 +70,16 @@
                 'value'=>'$data->organizer[0]->user->name_zh ?: $data->organizer[0]->user->name',
               ],
             ]);
+            $columns[] = [
+              'name'=>'create_time',
+              'header'=>'创建时间',
+              'value'=>'date("Y-m-d H:i:s", $data->create_time)',
+            ];
+            $columns[] = [
+              'name'=>'confirm_time',
+              'header'=>'确认时间',
+              'value'=>'$data->isConfirmed() || $data->isRejected() ? date("Y-m-d H:i:s", $data->confirm_time) : "-"',
+            ];
           }
           $this->widget('GridView', [
             'dataProvider'=>$model->search(true),
