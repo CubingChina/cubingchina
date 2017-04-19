@@ -17,9 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competitors who never broke a record in the event, ranked by the results of preferred format.' => '从未打破过纪录的选手，以官方排名标准按成绩高低排序。',
-  'Competitors who never won a champion in the event, ranked by the results of preferred format.' => '从未获得过冠军的选手，以官方排名标准按成绩高低排序。',
-  'Competitors who were never on the podium in the event, ranked by the results of preferred format.' => '从未登上领奖台的选手，以官方排名标准按成绩高低排序。',
+  'Finish Date' => '达成日期',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中国各项平均成绩前100占席',
@@ -62,6 +60,9 @@ return array (
   'Bronze' => '铜',
   'CR' => '洲际排名',
   'Chinese Top 100 Results' => '中国前百成绩',
+  'Competitors who never broke a record in the event, ranked by the results of preferred format.' => '从未打破过纪录的选手，以官方排名标准按成绩高低排序。',
+  'Competitors who never won a champion in the event, ranked by the results of preferred format.' => '从未获得过冠军的选手，以官方排名标准按成绩高低排序。',
+  'Competitors who were never on the podium in the event, ranked by the results of preferred format.' => '从未登上领奖台的选手，以官方排名标准按成绩高低排序。',
   'Generated on {time}.' => '生成于{time}。',
   'Global personal rankings in each official event are listed, based on the the official WCA rankings.' => '本页面列出了各地选手在所有WCA项目的个人排名，所有的排名成绩源自WCA赛事的官方排名。',
   'Global personal rankings in each official event are listed, based on the {url}.' => '本页面列出了各地选手在所有WCA项目的个人排名，所有的排名成绩源自{url}。',

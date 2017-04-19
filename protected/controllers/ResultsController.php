@@ -937,6 +937,33 @@ class ResultsController extends Controller {
 		));
 	}
 
+	private function statAllEventsAchiever() {
+		$page = 1;
+		$region = $this->sGet('region', 'China');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		$statistic = array(
+			'class'=>'AllEventsAchiever',
+			'region'=>$region,
+		);
+		$this->title = Yii::t('statistics', 'All Events Achiever');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page, 500);
+		extract($data);
+		$this->render('stat/allEventsAchiever', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'region'=>$region,
+		));
+	}
+
 	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');

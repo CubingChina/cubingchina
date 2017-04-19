@@ -65,7 +65,7 @@ class Statistics {
 		'Best "medal collection" of all events'=>[
 			'type'=>'all',
 			'class'=>'MedalCollection',
-			'width'=>'6',
+			'width'=>6,
 			'more'=>[
 				'/results/statistics',
 				'name'=>'medal-collection',
@@ -74,14 +74,14 @@ class Statistics {
 		'Best "medal collection" in each event'=>[
 			'type'=>'each',
 			'class'=>'MedalCollection',
-			'width'=>'6',
+			'width'=>6,
 		],
 		'Best "uncrowned kings" in each event'=>[
 			'type'=>'all',
 			'class'=>'BestMisser',
 			'exclude'=>'pos',
 			'pos'=>[1],
-			'width'=>'6',
+			'width'=>6,
 			'more'=>[
 				'/results/statistics',
 				'name'=>'uncrowned-kings',
@@ -92,7 +92,7 @@ class Statistics {
 			'class'=>'BestMisser',
 			'exclude'=>'pos',
 			'pos'=>[1, 2, 3],
-			'width'=>'6',
+			'width'=>6,
 			'more'=>[
 				'/results/statistics',
 				'name'=>'podium-missers',
@@ -102,10 +102,18 @@ class Statistics {
 			'type'=>'all',
 			'class'=>'BestMisser',
 			'exclude'=>'record',
-			'width'=>'6',
+			'width'=>6,
 			'more'=>[
 				'/results/statistics',
 				'name'=>'record-missers',
+			],
+		],
+		'All Events Achiever'=>[
+			'class'=>'AllEventsAchiever',
+			'width'=>6,
+			'more'=>[
+				'/results/statistics',
+				'name'=>'all-events-achiever',
 			],
 		],
 		'Appearances in top 100 Chinese single results of'=>[
