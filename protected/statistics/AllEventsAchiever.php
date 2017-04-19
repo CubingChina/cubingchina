@@ -24,15 +24,15 @@ class AllEventsAchiever extends Statistics {
 			->from('Results rs')
 			->leftJoin('Competitions c', 'rs.competitionId=c.id')
 			->where('rs.personId=:personId');
-		foreach ($persons as $key=>$person) {
-			$params = [':personId'=>$person['personId']];
-			$startDate = (clone $cmd)->select('MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.month, "-", c.day))) AS time')->queryScalar($params);
-			$cmd->select([
+		$cmd1 = (clone $cmd)->select([
 				'rs.eventId',
 				'MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.endMonth, "-", c.endDay))) AS time',
 			])->group('rs.eventId');
-			$singleDates = (clone $cmd)->andWhere('rs.best>0')->queryAll(true, $params);
-			$averageDates = (clone $cmd)->andWhere('rs.average>0')->queryAll(true, $params);
+		foreach ($persons as $key=>$person) {
+			$params = [':personId'=>$person['personId']];
+			$startDate = (clone $cmd)->select('MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.month, "-", c.day))) AS time')->queryScalar($params);
+			$singleDates = (clone $cmd1)->andWhere('rs.best>0')->queryAll(true, $params);
+			$averageDates = (clone $cmd1)->andWhere('rs.average>0')->queryAll(true, $params);
 			$finishDate = max(
 				max(CHtml::listData($singleDates, 'eventId', 'time')),
 				max(CHtml::listData($averageDates, 'eventId', 'time'))
