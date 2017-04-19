@@ -18,10 +18,8 @@
       )); ?>
     </div>
     <div class="clearfix"></div>
+    <?php $i = 0; ?>
     <?php foreach ($statistics as $name=>$statistic): ?>
-    <?php if ($statistic['class'] === 'col-md-12'): ?>
-    <div class="clearfix"></div>
-    <?php endif; ?>
     <div class="<?php echo $statistic['class']; ?>" id= "<?php echo $statistic['id']; ?>">
     <?php if (isset($statistic['columns'])): ?>
       <h3>
@@ -63,6 +61,12 @@
       <?php endforeach; ?>
     <?php endif; ?>
     </div>
+    <?php if ($statistic['class'] === 'col-md-12'): ?>
+    <?php $i = 0; ?>
+    <div class="clearfix"></div>
+    <?php elseif (++$i % 2 == 0): ?>
+    <div class="clearfix hidden-sm"></div>
+    <?php endif; ?>
     <?php endforeach; ?>
   </div>
 </div>

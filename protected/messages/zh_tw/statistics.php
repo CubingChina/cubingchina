@@ -17,6 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Competitors who never broke a record in the event, ranked by the results of preferred format.' => '從未打破過紀錄的選手，以官方排名標准按成績高低排序。',
+  'Competitors who never won a champion in the event, ranked by the results of preferred format.' => '從未獲得過冠軍的選手，以官方排名標准按成績高低排序。',
+  'Competitors who were never on the podium in the event, ranked by the results of preferred format.' => '從未登上領獎台的選手，以官方排名標准按成績高低排序。',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中國各項平均成績前100占席',
@@ -24,6 +27,9 @@ return array (
   'Based on {url}, we generate several WCA statistics about Chinese competitions and competitors, which are up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自{url}。',
   'Best "medal collection" in each event' => '官方賽事分項目累計獎牌榜',
   'Best "medal collection" of all events' => '官方賽事全項目累計獎牌榜',
+  'Best "podium missers" in each event' => '官方賽事分項目“獎牌遺珠”',
+  'Best "record missers" in each event' => '官方賽事分項目“紀錄之憾”',
+  'Best "uncrowned kings" in each event' => '官方賽事分項目“無冕之王”',
   'Best podiums in Chinese competitions' => '中國賽事領獎台成績榜',
   'Competitions' => '比賽次數',
   'Days' => '天數',
@@ -36,6 +42,8 @@ return array (
   'Most solves in one competition' => '中國賽事總復原次數排行榜',
   'Oldest standing of current Chinese records in all events' => '中國紀錄現保持時間排行榜',
   'Persons' => '人數',
+  'Podium Missers' => '獎牌遺珠',
+  'Record Missers' => '紀錄之憾',
   'Records set by Chinese competitors' => '中國選手創紀錄數量排行榜',
   'Records set in Chinese competitions' => '中國賽事創紀錄數量排行榜',
   'Second' => '亞軍',
@@ -46,6 +54,7 @@ return array (
   'Sum of country average ranks' => '各地全項目平均綜合排行榜',
   'Sum of country single ranks' => '各地全項目單次綜合排行榜',
   'Third' => '季軍',
+  'Uncrowned Kings' => '無冕之王',
   'official WCA competition results' => 'WCA賽事的官方成績',
   'Attempts' => '嘗試',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本頁面列出了一系列與官方賽事及中國選手相關的趣味統計，所有的統計數據基本實時更新，源自WCA賽事的官方成績。',

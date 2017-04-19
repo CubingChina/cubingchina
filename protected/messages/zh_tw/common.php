@@ -17,12 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Edit preferred events' => '編輯首選項目',
   'Fee' => '',
   'Name in Local Characters' => '',
-  'Preferred Events' => '首選項目',
   'WCA ID' => '',
-  'Your preferred events have been updated successfully.' => '您的首選項目已成功更新。',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
@@ -140,6 +137,7 @@ return array (
   'Download Participation Certificate' => '下載參賽證明',
   'Download Result Certificate' => '下載成績證書',
   'Edit' => '編輯',
+  'Edit preferred events' => '編輯首選項目',
   'Edit profile.' => '編輯資料',
   'Email' => '郵箱',
   'Enter WCA ID' => '輸入WCA ID',
@@ -225,6 +223,7 @@ return array (
   'Please re-check your date of birth and ensure the consistency of ID cards.' => '請檢查您所填寫的出生日期，確保與身份證件上的一致。',
   'Please update your browser' => '請升級你的瀏覽器！',
   'Podiums' => '領獎台',
+  'Preferred Events' => '首選項目',
   'Previous step' => '上一步',
   'Profile' => '我的資料',
   'Province' => '省份',
@@ -293,6 +292,7 @@ return array (
   'Your account is now activated.' => '您的帳號已激活。',
   'Your account was suspended. Please contact the {administrator} if you have any question.' => '您的帳號已被暫停使用。如有疑問請聯系{administrator}。',
   'Your name will be displayed as ' => '你的名字將會顯示成：',
+  'Your preferred events have been updated successfully.' => '您的首選項目已成功更新。',
   'Your profile has been updated successfully.' => '您的個人資料已成功更新。',
   'activate' => '激活',
   'administrator' => '管理員',
