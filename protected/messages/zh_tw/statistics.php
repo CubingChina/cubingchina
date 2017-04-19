@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Finish Date' => '達成日期',
+  'All Events Achiever' => '官方全項目大滿貫選手榜',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中國各項平均成績前100占席',
@@ -31,6 +31,7 @@ return array (
   'Best podiums in Chinese competitions' => '中國賽事領獎台成績榜',
   'Competitions' => '比賽次數',
   'Days' => '天數',
+  'Finish Date' => '達成日期',
   'First' => '冠軍',
   'Most competitions by one person' => '中國選手的比賽次數排行榜',
   'Most personal solves' => '個人累積總復原次數排行榜',
