@@ -35,6 +35,7 @@ return array (
   'Value5' => '',
   'Current' => '当前纪录',
   'History' => '历史纪录',
+  'Personal Record' => '官方成绩',
   'CR' => '洲际纪录',
   'Career' => '参赛经历',
   'Closest Cubers' => '最亲密魔友',

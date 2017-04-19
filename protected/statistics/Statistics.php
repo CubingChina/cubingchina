@@ -9,166 +9,206 @@ class Statistics {
 
 	private static $_competitions = array();
 
-	public static $lists = array(
-		'Sum of all single ranks'=>array(
+	public static $lists = [
+		'Sum of all single ranks'=>[
 			'type'=>'single',
 			'region'=>'China',
 			'class'=>'SumOfRanks',
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'sum-of-ranks',
 				'type'=>'single',
-			),
-		),
-		'Sum of all average ranks'=>array(
+			],
+		],
+		'Sum of all average ranks'=>[
 			'type'=>'average',
 			'class'=>'SumOfRanks',
 			'region'=>'China',
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'sum-of-ranks',
 				'type'=>'average'
-			),
-		),
-		'Sum of 2x2 to 5x5 single ranks'=>array(
+			],
+		],
+		'Sum of 2x2 to 5x5 single ranks'=>[
 			'type'=>'single',
 			'region'=>'China',
 			'class'=>'SumOfRanks',
-			'eventIds'=>array('222', '333', '444', '555'),
+			'eventIds'=>['222', '333', '444', '555'],
 			'width'=>6,
-		),
-		'Sum of 2x2 to 5x5 average ranks'=>array(
+		],
+		'Sum of 2x2 to 5x5 average ranks'=>[
 			'type'=>'average',
 			'region'=>'China',
 			'class'=>'SumOfRanks',
-			'eventIds'=>array('222', '333', '444', '555'),
+			'eventIds'=>['222', '333', '444', '555'],
 			'width'=>6,
-		),
-		'Sum of country single ranks'=>array(
+		],
+		'Sum of country single ranks'=>[
 			'type'=>'single',
 			'class'=>'SumOfCountryRanks',
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'sum-of-country-ranks',
 				'type'=>'single',
-			),
-		),
-		'Sum of country average ranks'=>array(
+			],
+		],
+		'Sum of country average ranks'=>[
 			'type'=>'average',
 			'class'=>'SumOfCountryRanks',
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'sum-of-country-ranks',
 				'type'=>'average'
-			),
-		),
-		'Best "medal collection" of all events'=>array(
+			],
+		],
+		'Best "medal collection" of all events'=>[
 			'type'=>'all',
 			'class'=>'MedalCollection',
-			'width'=>'6',
-			'more'=>array(
+			'width'=>6,
+			'more'=>[
 				'/results/statistics',
 				'name'=>'medal-collection',
-			),
-		),
-		'Best "medal collection" in each event'=>array(
+			],
+		],
+		'Best "medal collection" in each event'=>[
 			'type'=>'each',
 			'class'=>'MedalCollection',
-			'width'=>'6',
-		),
-		'Appearances in top 100 Chinese single results of'=>array(
+			'width'=>6,
+		],
+		'Best "uncrowned kings" in each event'=>[
+			'type'=>'all',
+			'class'=>'BestMisser',
+			'exclude'=>'pos',
+			'pos'=>[1],
+			'width'=>6,
+			'more'=>[
+				'/results/statistics',
+				'name'=>'uncrowned-kings',
+			],
+		],
+		'Best "podium missers" in each event'=>[
+			'type'=>'all',
+			'class'=>'BestMisser',
+			'exclude'=>'pos',
+			'pos'=>[1, 2, 3],
+			'width'=>6,
+			'more'=>[
+				'/results/statistics',
+				'name'=>'podium-missers',
+			],
+		],
+		'Best "record missers" in each event'=>[
+			'type'=>'all',
+			'class'=>'BestMisser',
+			'exclude'=>'record',
+			'width'=>6,
+			'more'=>[
+				'/results/statistics',
+				'name'=>'record-missers',
+			],
+		],
+		'All Events Achiever'=>[
+			'class'=>'AllEventsAchiever',
+			'width'=>6,
+			'more'=>[
+				'/results/statistics',
+				'name'=>'all-events-achiever',
+			],
+		],
+		'Appearances in top 100 Chinese single results of'=>[
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'single',
 			'class'=>'Top100',
 			'event'=>'333',
 			'width'=>6,
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'top-100',
 				'event'=>'333',
 				'type'=>'single',
-			),
-		),
-		'Appearances in top 100 Chinese average results of'=>array(
+			],
+		],
+		'Appearances in top 100 Chinese average results of'=>[
 			'count'=>true,
 			'region'=>'China',
 			'type'=>'average',
 			'class'=>'Top100',
 			'event'=>'333',
 			'width'=>6,
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'top-100',
 				'event'=>'333',
 				'type'=>'average',
-			),
-		),
-		'Best podiums in Chinese competitions'=>array(
+			],
+		],
+		'Best podiums in Chinese competitions'=>[
 			'class'=>'BestPodiums',
 			'eventId'=>'333',
 			'type'=>'all',
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'best-podiums',
-			),
-		),
-		'Records set by Chinese competitors'=>array(
+			],
+		],
+		'Records set by Chinese competitors'=>[
 			'class'=>'RecordsSet',
 			'group'=>'personId',
 			'width'=>6,
-		),
-		'Records set in Chinese competitions'=>array(
+		],
+		'Records set in Chinese competitions'=>[
 			'class'=>'RecordsSet',
 			'group'=>'competitionId',
 			'width'=>6,
-		),
-		'Oldest standing of current Chinese records in all events'=>array(
+		],
+		'Oldest standing of current Chinese records in all events'=>[
 			'class'=>'OldestStandingRecords',
-		),
-		'Most competitions by one person'=>array(
+		],
+		'Most competitions by one person'=>[
 			'class'=>'MostNumber',
 			'group'=>'personId',
 			'width'=>6,
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'most-competitions',
-			),
-		),
-		'Most persons in one competition'=>array(
+			],
+		],
+		'Most persons in one competition'=>[
 			'class'=>'MostNumber',
 			'group'=>'competitionId',
 			'width'=>6,
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'most-persons',
-			),
-		),
-		'Most personal solves in one competition'=>array(
+			],
+		],
+		'Most personal solves in one competition'=>[
 			'class'=>'MostSolves',
 			'type'=>'person',
 			'width'=>6,
-		),
-		'Most solves in one competition'=>array(
+		],
+		'Most solves in one competition'=>[
 			'class'=>'MostSolves',
 			'type'=>'competition',
 			'width'=>6,
-		),
-		'Most personal solves'=>array(
+		],
+		'Most personal solves'=>[
 			'class'=>'MostSolves',
 			'type'=>'all',
 			'width'=>6,
-			'more'=>array(
+			'more'=>[
 				'/results/statistics',
 				'name'=>'most-solves',
-			),
-		),
-		'Most personal solves in each year'=>array(
+			],
+		],
+		'Most personal solves in each year'=>[
 			'class'=>'MostSolves',
 			'type'=>'year',
 			'width'=>6,
-		),
-	);
+		],
+	];
 
 	public static function getData($removeCache = false) {
 		$cache = Yii::app()->cache;
