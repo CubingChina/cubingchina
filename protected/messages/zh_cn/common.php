@@ -17,12 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Edit preferred events' => '编辑首选项目',
   'Fee' => '',
   'Name in Local Characters' => '',
-  'Preferred Events' => '首选项目',
   'WCA ID' => '',
-  'Your preferred events have been updated successfully.' => '您的首选项目已成功更新。',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
@@ -140,6 +137,7 @@ return array (
   'Download Participation Certificate' => '下载参赛证明',
   'Download Result Certificate' => '下载成绩证书',
   'Edit' => '编辑',
+  'Edit preferred events' => '编辑首选项目',
   'Edit profile.' => '编辑资料',
   'Email' => '邮箱',
   'Enter WCA ID' => '输入WCA ID',
@@ -225,6 +223,7 @@ return array (
   'Please re-check your date of birth and ensure the consistency of ID cards.' => '请检查您所填写的出生日期，确保与身份证件上的一致。',
   'Please update your browser' => '请升级你的浏览器！',
   'Podiums' => '领奖台',
+  'Preferred Events' => '首选项目',
   'Previous step' => '上一步',
   'Profile' => '我的资料',
   'Province' => '省份',
@@ -293,6 +292,7 @@ return array (
   'Your account is now activated.' => '您的帐号已激活。',
   'Your account was suspended. Please contact the {administrator} if you have any question.' => '您的帐号已被暂停使用。如有疑问请联系{administrator}。',
   'Your name will be displayed as ' => '你的名字将会显示成：',
+  'Your preferred events have been updated successfully.' => '您的首选项目已成功更新。',
   'Your profile has been updated successfully.' => '您的个人资料已成功更新。',
   'activate' => '激活',
   'administrator' => '管理员',

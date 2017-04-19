@@ -634,7 +634,7 @@ class ResultsController extends Controller {
 		$this->description = Yii::t('statistics', 'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.');
 		if ($class !== '') {
 			if (method_exists($this, $method = 'stat' . $class)) {
-				$this->$method();
+				$this->$method(implode(' ', $names));
 				Yii::app()->end();
 			} else {
 				throw new CHttpException(404);
@@ -858,6 +858,120 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'event'=>$eventId,
+		));
+	}
+
+	private function statUncrownedKings($name) {
+		$statistic = [
+			'exclude'=>'pos',
+			'pos'=>[1],
+		];
+		$this->statBestMissers($name, $statistic);
+	}
+
+	private function statPodiumMissers($name) {
+		$statistic = [
+			'exclude'=>'pos',
+			'pos'=>[1, 2, 3],
+		];
+		$this->statBestMissers($name, $statistic);
+	}
+
+	private function statRecordMissers($name) {
+		$type = $this->sGet('type', 'single');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
+		$statistic = [
+			'exclude'=>'record',
+			'rankType'=>$type,
+		];
+		$this->statBestMissers($name, $statistic);
+	}
+
+	private function statBestMissers($name, $statistic) {
+		$page = $this->iGet('page', 1);
+		$eventId = $this->sGet('event');
+		$region = $this->sGet('region', 'China');
+		$gender = $this->sGet('gender', 'all');
+		$type = $this->sGet('type', 'single');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!in_array($eventId, array_keys(Events::getNormalEvents()))) {
+			$eventId = '333';
+		}
+		$statistic = array_merge($statistic, [
+			'class'=>'BestMisser',
+			'type'=>'single',
+			'eventId'=>$eventId,
+			'region'=>$region,
+			'gender'=>$gender,
+		]);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', $name);
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page, 200);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$descriptions = [
+			'Uncrowned Kings'=>Yii::t('statistics', 'Competitors who never won a champion in the event, ranked by the results of preferred format.'),
+			'Podium Missers'=>Yii::t('statistics', 'Competitors who were never on the podium in the event, ranked by the results of preferred format.'),
+			'Record Missers'=>Yii::t('statistics', 'Competitors who never broke a single/average record in the event, ranked by single/average.'),
+		];
+		$this->render('stat/bestMissers', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'event'=>$eventId,
+			'gender'=>$gender,
+			'region'=>$region,
+			'type'=>$type,
+			'name'=>$name,
+			'description'=>$descriptions[$name],
+			'hasType'=>isset($statistic['rankType']),
+		));
+	}
+
+	private function statAllEventsAchiever() {
+		$page = 1;
+		$region = $this->sGet('region', 'China');
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		$statistic = array(
+			'class'=>'AllEventsAchiever',
+			'region'=>$region,
+		);
+		$this->title = Yii::t('statistics', 'All Events Achiever');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page, 500);
+		extract($data);
+		$this->render('stat/allEventsAchiever', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'region'=>$region,
 		));
 	}
 
