@@ -26,7 +26,18 @@
         'class'=>'form-control',
       )); ?>
     </div>
+    <?php if ($hasType): ?>
+    <?php foreach (Results::getRankingTypes() as $_type): ?>
+    <?php echo CHtml::tag('button', array(
+      'type'=>'submit',
+      'name'=>'type',
+      'value'=>$_type,
+      'class'=>'btn btn-' . ($type == $_type ? 'warning' : 'theme'),
+    ), Yii::t('common', ucfirst($_type))); ?>
+    <?php endforeach; ?>
+    <?php else: ?>
     <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
+    <?php endif; ?>
   <?php $this->endWidget(); ?>
   <?php
   $this->widget('RankGridView', array(

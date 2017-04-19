@@ -34,8 +34,12 @@ class BestMisser extends Statistics {
 				$cmd1->andWhere('rs.roundTypeId IN ("c", "f")')->andWhere('rs.pos IN (' . implode(',', $statistic['pos']) . ')')->andWhere("rs.best > 0");
 				break;
 			case 'record':
-				$cmd1->andWhere('regionalSingleRecord != "" OR regionalAverageRecord != ""');
+				$recordType = ucfirst($rankType);
+				$cmd1->andWhere("regional{$recordType}Record != ''");
 				break;
+		}
+		if ($rankType == 'single') {
+			$rankType = 'best';
 		}
 		$podiumPersonIdSql = $cmd1->selectDistinct('rs.personId')->getText();
 		$cmd2->select([
@@ -91,7 +95,7 @@ class BestMisser extends Statistics {
 
 	private static function getDefaultRankType($eventId) {
 		if (in_array("$eventId", ['333bf', '444bf', '555bf', '333mbf'])) {
-			return 'best';
+			return 'single';
 		}
 		return 'average';
 	}

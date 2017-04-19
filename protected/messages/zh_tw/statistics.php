@@ -60,7 +60,7 @@ return array (
   'Bronze' => '銅',
   'CR' => '洲際排名',
   'Chinese Top 100 Results' => '中國前百成績',
-  'Competitors who never broke a record in the event, ranked by the results of preferred format.' => '從未打破過紀錄的選手，以官方排名標准按成績高低排序。',
+  'Competitors who never broke a single/average record in the event, ranked by single/average.' => '從未打破過單次/平均紀錄的選手，分官方單次/平均排序。',
   'Competitors who never won a champion in the event, ranked by the results of preferred format.' => '從未獲得過冠軍的選手，以官方排名標准按成績高低排序。',
   'Competitors who were never on the podium in the event, ranked by the results of preferred format.' => '從未登上領獎台的選手，以官方排名標准按成績高低排序。',
   'Generated on {time}.' => '生成於{time}。',

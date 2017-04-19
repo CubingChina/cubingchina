@@ -878,8 +878,13 @@ class ResultsController extends Controller {
 	}
 
 	private function statRecordMissers($name) {
+		$type = $this->sGet('type', 'single');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
 		$statistic = [
 			'exclude'=>'record',
+			'rankType'=>$type,
 		];
 		$this->statBestMissers($name, $statistic);
 	}
@@ -889,6 +894,10 @@ class ResultsController extends Controller {
 		$eventId = $this->sGet('event');
 		$region = $this->sGet('region', 'China');
 		$gender = $this->sGet('gender', 'all');
+		$type = $this->sGet('type', 'single');
+		if (!in_array($type, Results::getRankingTypes())) {
+			$type = 'single';
+		}
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
 		}
@@ -923,7 +932,7 @@ class ResultsController extends Controller {
 		$descriptions = [
 			'Uncrowned Kings'=>Yii::t('statistics', 'Competitors who never won a champion in the event, ranked by the results of preferred format.'),
 			'Podium Missers'=>Yii::t('statistics', 'Competitors who were never on the podium in the event, ranked by the results of preferred format.'),
-			'Record Missers'=>Yii::t('statistics', 'Competitors who never broke a record in the event, ranked by the results of preferred format.'),
+			'Record Missers'=>Yii::t('statistics', 'Competitors who never broke a single/average record in the event, ranked by single/average.'),
 		];
 		$this->render('stat/bestMissers', array(
 			'statistic'=>$statistic,
@@ -932,8 +941,10 @@ class ResultsController extends Controller {
 			'event'=>$eventId,
 			'gender'=>$gender,
 			'region'=>$region,
+			'type'=>$type,
 			'name'=>$name,
 			'description'=>$descriptions[$name],
+			'hasType'=>isset($statistic['rankType']),
 		));
 	}
 
