@@ -101,11 +101,15 @@ class Events extends ActiveRecord {
 		return ucfirst($event);
 	}
 
-	public static function getFullEventName($event) {
+	public static function getEventName($event) {
 		if (self::$_allEvents === null) {
 			self::$_allEvents = self::getScheduleEvents() + self::getDeprecatedEvents();
 		}
-		return isset(self::$_allEvents[$event]) ? Yii::t('event', self::$_allEvents[$event]) : $event;
+		return isset(self::$_allEvents[$event]) ? self::$_allEvents[$event] : $event;
+	}
+
+	public static function getFullEventName($event) {
+		return Yii::t('event', self::getEventName($event));
 	}
 
 	public static function getFullEventNameWithIcon($event) {

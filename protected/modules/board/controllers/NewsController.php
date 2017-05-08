@@ -171,7 +171,7 @@ class NewsController extends AdminController {
 			return $data;
 		}
 		$event = new stdClass();
-		$event->name = Events::getFullEventName($eventId);
+		$event->name = Events::getEventName($eventId);
 		$event->name_zh = Yii::t('event', $event->name);
 		$data['event'] = $event;
 		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
@@ -329,7 +329,7 @@ class NewsController extends AdminController {
 		);
 		foreach ($records as $type=>$recs) {
 			foreach ($recs as $result) {
-				$eventName = Events::getFullEventName($result->eventId);
+				$eventName = Events::getEventName($result->eventId);
 				$temp = $this->makePerson($result, true, $type);
 				$enRec = sprintf('%s %s %s (%s)',
 					$temp->link,
