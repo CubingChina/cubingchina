@@ -143,7 +143,7 @@ class Mailer extends CApplicationComponent {
 		$events = array();
 		$translation = include APP_PATH . '/protected/messages/zh_cn/event.php';
 		foreach ($registration->events as $event) {
-			$enName = Events::getFullEventName($event);
+			$enName = Events::getEventName($event);
 			$cnName = isset($translation[$enName]) ? $translation[$enName] : $enName;
 			$events['en'][] = $enName;
 			$events['cn'][] = $cnName;
