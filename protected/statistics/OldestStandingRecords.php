@@ -25,14 +25,8 @@ class OldestStandingRecords extends Statistics {
 			$rows[$type] = array();
 			foreach ($cmd->queryAll() as $row) {
 				$row['type'] = $type;
-				if (isset($rows[$type][$row['eventId']])) {
-					$temp = $rows[$type][$row['eventId']];
-					if ($temp['year'] > $row['year'] || $temp['month'] > $row['month'] || $temp['day'] > $row['day']) {
-						continue;
-					}
-				}
 				$row = self::getCompetition($row);
-				$rows[$type][$row['eventId']] = $row;
+				$rows[$type][] = $row;
 			}
 		}
 		$rows = array_merge(array_values($rows['single']), array_values($rows['average']));
