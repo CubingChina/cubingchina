@@ -216,25 +216,18 @@ Yii::app()->clientScript->registerScript('register2',
   }
   function toggleCountry() {
     var countryId = $('#RegisterForm_country_id').val();
-    if (countryId == 1) {
-      setPinyin(true);
-      $('#province, #city, label[for="RegisterForm_mobile"] span, label[for="RegisterForm_local_name"] span, label[for="RegisterForm_province_id"] span, label[for="RegisterForm_city_id"] span').removeClass('hide');
-    } else {
-      setPinyin(false);
-      $('#province, #city, label[for="RegisterForm_mobile"] span, label[for="RegisterForm_local_name"] span, label[for="RegisterForm_province_id"] span, label[for="RegisterForm_city_id"] span').addClass('hide');
-    }
+    setPinyin(countryId == 1);
+    $('#province, #city, label[for="RegisterForm_mobile"] span, label[for="RegisterForm_local_name"] span, label[for="RegisterForm_province_id"] span, label[for="RegisterForm_city_id"] span')[countryId == 1 ? 'removeClass' : 'addClass']('hide');
   }
   function setPinyin(enable) {
     enablePinyin = enable
+    nameDom.prop('readonly', enable);
     if (!enable) {;
-      nameDom.prop('readonly', false);
       $('#name').insertBefore($('#local_name'))
       nameHelpDom.addClass('hide');
     } else {
       $('#name').insertAfter($('#local_name'));
-      if (!nameDom.prop('readonly')) {
-        nameDom.prop('readonly', true);
-      }
+      localNameDom.trigger('change');
     }
   }
   function generatePinyin(event) {
