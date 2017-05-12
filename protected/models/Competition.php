@@ -401,6 +401,10 @@ class Competition extends ActiveRecord {
 		return $this->status == self::STATUS_CONFIRMED;
 	}
 
+	public function isUnconfirmed() {
+		return $this->status == self::STATUS_UNCONFIRMED;
+	}
+
 	public function getNearbyCompetitions($days = 26, $distance = 200, $isWCA = true) {
 		if (!$this->isWCACompetition() && $isWCA) {
 			return [];
