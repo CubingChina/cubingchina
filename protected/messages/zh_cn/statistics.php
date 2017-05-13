@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'All Events Achiever' => '官方全项目大满贯选手榜',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中国各项平均成绩前100占席',
@@ -55,6 +54,7 @@ return array (
   'Third' => '季军',
   'Uncrowned Kings' => '无冕之王',
   'official WCA competition results' => 'WCA赛事的官方成绩',
+  'All Events Achiever' => '官方全项目大满贯选手榜',
   'Attempts' => '尝试',
   'Based on the official WCA competition results, we generated several WCA statistics about Chinese competitions and competitors, which were regularly up-to-date.' => '本页面列出了一系列与官方赛事及中国选手相关的趣味统计，所有的统计数据基本实时更新，源自WCA赛事的官方成绩。',
   'Best Podiums' => '领奖台成绩榜',

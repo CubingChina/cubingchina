@@ -8,7 +8,7 @@
     'itemsCssClass'=>'table table-condensed table-hover table-boxed',
     'rowCssClassExpression'=>'$data->getSortClass()',
     'groupKey'=>'event',
-    'groupHeader'=>'Events::getFullEventNameWithIcon($data->event)',
+    'groupHeader'=>'Events::getFullEventNameWithIcon($data->event) . $data->subEventTitle',
     'columns'=>[
       [
         'name'=>Yii::t('Results', 'Place'),

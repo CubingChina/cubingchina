@@ -34,6 +34,7 @@ class LiveResult extends ActiveRecord {
 	public static $liveRecords = array();
 
 	public $pos;
+	public $subEventTitle;
 
 	private $_beatedRecords = array();
 
