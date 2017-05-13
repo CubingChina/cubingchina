@@ -33,6 +33,15 @@ class LiveController extends CompetitionController {
 		));
 	}
 
+	public function actionPodiums() {
+		$competition = $this->getCompetition();
+		$podiums = $competition->getLivePodiums();
+		$this->render('podiums', [
+			'podiums'=>$podiums,
+			'competition'=>$competition,
+		]);
+	}
+
 	public function actionStatistics() {
 		$competition = $this->getCompetition();
 		$type = $this->sGet('type');

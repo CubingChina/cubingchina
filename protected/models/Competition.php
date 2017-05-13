@@ -648,8 +648,8 @@ class Competition extends ActiveRecord {
 		return CHtml::link($logo . $name, $cert->getUrl());
 	}
 
-	public function getUrl($type = 'detail', $params = array()) {
-		$controller = $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
+	public function getUrl($type = 'detail', $params = array(), $controller = null) {
+		$controller = $controller ?? $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
 		$url = array(
 			"/$controller/$type",
 			'name'=>$this->getUrlName(),
@@ -1509,6 +1509,74 @@ class Competition extends ActiveRecord {
 			'r'=>$event['rs'][0]['i'],
 			'filter'=>'all',
 		);
+	}
+
+	public function getLivePodiums() {
+		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
+			'competition_id'=>$this->id,
+		), array(
+			'order'=>'id ASC',
+		));
+		$podiums = [];
+		foreach ($eventRounds as $eventRound) {
+			if (!in_array($eventRound->round, ['c', 'f'])) {
+				continue;
+			}
+			switch ($eventRound->format) {
+				case '1':
+				case '2':
+				case '3':
+					$order = 'best ASC';
+					$format = 'b';
+					break;
+				case 'a':
+				case 'm':
+				default:
+					$format = 'a';
+					$order = 'average > 0 DESC, average ASC, best ASC';
+					break;
+			}
+			$results = LiveResult::model()->findAllByAttributes([
+				'competition_id'=>$this->id,
+				'event'=>$eventRound->event,
+				'round'=>$eventRound->round,
+			], [
+				'condition'=>'best > 0',
+				'order'=>$order,
+				'limit'=>20, //20 is enough, considering the fmc
+			]);
+			$count = 0;
+			$lastBest = 0;
+			$lastAverage = 0;
+			foreach ($results as $i=>$result) {
+				if ($format == 'a') {
+					if ($result->average != $lastAverage) {
+						$lastAverage = $result->average;
+						$result->pos = $i + 1;
+						$count = $i;
+					} elseif ($result->best != $lastBest) {
+						$lastBest = $result->best;
+						$result->pos = $i + 1;
+						$count = $i;
+					} else {
+						$result->pos = $count + 1;
+					}
+				} else {
+					if ($result->best != $lastBest) {
+						$lastBest = $result->best;
+						$result->pos = $i + 1;
+						$count = $i;
+					} else {
+						$result->pos = $count + 1;
+					}
+				}
+				if ($result->pos > 3) {
+					break;
+				}
+				$podiums[$eventRound->event][] = $result;
+			}
+		}
+		return $podiums;
 	}
 
 	public function checkPermission($user) {

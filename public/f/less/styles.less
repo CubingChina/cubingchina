@@ -444,12 +444,13 @@ table {
   span.record-nr {
     background-color: #47a447;
   }
-}
-body.results {
-  table {
-    .region {
+  tbody tr {
+    td.region {
       padding-right: 20px;
     }
+  }
+  tr.sort-by-best td.result-best, tr.sort-by-average td.result-average {
+    font-weight: bold;
   }
 }
 .results-person {
