@@ -1,7 +1,7 @@
 <div class="col-lg-12">
   <?php
   $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $podiums), [
+    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $podiums ?: [[]]), [
       'pagination'=>false,
       'sort'=>false,
     ]),

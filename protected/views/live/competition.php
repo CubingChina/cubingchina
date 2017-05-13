@@ -52,7 +52,7 @@
         <i class="fa fa-gear"></i>
       </button>
       <?php echo CHtml::link(Yii::t('statistics', 'Sum of Ranks'), $competition->getUrl('statistics', ['type'=>'sum-of-ranks']), ['class'=>'btn btn-theme bth-md']); ?>
-      <?php echo CHtml::link(Yii::t('common', 'Podiums'), $competition->getUrl('podiums', [], 'live'), ['class'=>'btn btn-success bth-md']); ?>
+      <?php echo CHtml::link(Yii::t('common', 'Podiums'), $competition->getUrl('podiums', [], 'live'), ['class'=>'btn btn-danger bth-md']); ?>
       <div class="online-number">
         <?php echo Yii::t('live', 'Online: '); ?>{{onlineNumber}}
       </div>
