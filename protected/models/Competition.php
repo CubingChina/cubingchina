@@ -648,8 +648,8 @@ class Competition extends ActiveRecord {
 		return CHtml::link($logo . $name, $cert->getUrl());
 	}
 
-	public function getUrl($type = 'detail', $params = array()) {
-		$controller = $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
+	public function getUrl($type = 'detail', $params = array(), $controller = null) {
+		$controller = $controller ?? $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
 		$url = array(
 			"/$controller/$type",
 			'name'=>$this->getUrlName(),
@@ -1509,6 +1509,121 @@ class Competition extends ActiveRecord {
 			'r'=>$event['rs'][0]['i'],
 			'filter'=>'all',
 		);
+	}
+
+	public function getLivePodiums() {
+		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
+			'competition_id'=>$this->id,
+		), array(
+			'order'=>'id ASC',
+		));
+		$podiums = [];
+		foreach ($eventRounds as $eventRound) {
+			if (!in_array($eventRound->round, ['c', 'f'])) {
+				continue;
+			}
+			switch ($eventRound->format) {
+				case '1':
+				case '2':
+				case '3':
+					$order = 'best ASC';
+					$format = 'b';
+					break;
+				case 'a':
+				case 'm':
+				default:
+					$format = 'a';
+					$order = 'average > 0 DESC, average ASC, best ASC';
+					break;
+			}
+			$results = LiveResult::model()->findAllByAttributes([
+				'competition_id'=>$this->id,
+				'event'=>$eventRound->event,
+				'round'=>$eventRound->round,
+			], [
+				'condition'=>'best > 0',
+				'order'=>$order,
+				'limit'=>20, //20 is enough, considering the fmc
+			]);
+			$count = 0;
+			$lastBest = 0;
+			$lastAverage = 0;
+			foreach ($results as $i=>$result) {
+				if ($format == 'a') {
+					if ($result->average != $lastAverage) {
+						$lastAverage = $result->average;
+						$result->pos = $i + 1;
+						$count = $i;
+					} elseif ($result->best != $lastBest) {
+						$lastBest = $result->best;
+						$result->pos = $i + 1;
+						$count = $i;
+					} else {
+						$result->pos = $count + 1;
+					}
+				} else {
+					if ($result->best != $lastBest) {
+						$lastBest = $result->best;
+						$result->pos = $i + 1;
+						$count = $i;
+					} else {
+						$result->pos = $count + 1;
+					}
+				}
+				if ($result->pos > 3) {
+					break;
+				}
+				$podiums[$eventRound->event][] = $result;
+			}
+		}
+		// females, children and new comers
+		$results = LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$this->id,
+			'event'=>'333',
+			'round'=>'1',
+		], [
+			'condition'=>'best > 0',
+			'order'=>'average > 0 DESC, average ASC, best ASC',
+		]);
+		$temp = [];
+		$birthday = $this->date - (365 * 12 + 3) * 86400;
+		foreach ($results as $result) {
+			if ($result->user->gender == User::GENDER_FEMALE) {
+				$temp[Yii::t('live', 'Females')][] = clone $result;
+			}
+			if ($result->user->birthday >= $birthday) {
+				$temp[Yii::t('live', 'Children')][] = clone $result;
+			}
+			if ($result->user->wcaid === '') {
+				$temp[Yii::t('live', 'New Comers')][] = clone $result;
+			}
+		}
+		foreach ($temp as $group=>$results) {
+			$count = 0;
+			$lastBest = 0;
+			$lastAverage = 0;
+			foreach ($results as $i=>$result) {
+				if ($result->average != $lastAverage) {
+					$lastAverage = $result->average;
+					$result->pos = $i + 1;
+					$count = $i;
+				} elseif ($result->best != $lastBest) {
+					$lastBest = $result->best;
+					$result->pos = $i + 1;
+					$count = $i;
+				} else {
+					$result->pos = $count + 1;
+				}
+				if ($result->pos > 3) {
+					break;
+				}
+				$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
+					'{round}'=>Yii::t('RoundTypes', 'First'),
+				]);
+				$podiums[$eventRound->event][] = $result;
+			}
+		}
+		return $podiums;
 	}
 
 	public function checkPermission($user) {

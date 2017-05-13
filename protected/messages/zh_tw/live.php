@@ -17,13 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Export score card' => '導出成績條',
+  ' ({round})' => '（{round}）',
   'Open' => '',
   'Children' => '少兒組',
   'Close this round' => '結束本輪',
   'Disable User Chatting' => '開啟全員禁言',
   'Enable Data Entry' => '開啟成績輸入板',
   'Export' => '導出',
+  'Export score card' => '導出成績條',
   'Females' => '女子組',
   'Finished' => '已結束',
   'Input Panel' => '輸入板',

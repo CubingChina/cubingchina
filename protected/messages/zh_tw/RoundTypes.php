@@ -28,8 +28,8 @@ return array (
   'Combined Third' => '組合制半決賽',
   'Combined qualification' => '組合制資格賽',
   'Final' => '決賽',
-  'First' => '初賽',
   'Qualification' => '資格賽',
   'Second' => '復賽',
   'Semi Final' => '半決賽',
+  'First' => '初賽',
 );
