@@ -34,6 +34,7 @@ class LiveResult extends ActiveRecord {
 	public static $liveRecords = array();
 
 	public $pos;
+	public $subEventTitle;
 
 	private $_beatedRecords = array();
 
@@ -268,6 +269,33 @@ class LiveResult extends ActiveRecord {
 
 	public function getBeatedRecords($type) {
 		return isset($this->_beatedRecords[$type]) ? $this->_beatedRecords[$type] : array();
+	}
+
+	public function getDetail() {
+		$data = $this->attributes;
+		$data['eventId'] = $data['event'];
+		return Results::getDisplayDetail($data);
+	}
+
+	public function getRecord($type) {
+		$attribute = 'regional_' . $type . '_record';
+		if ($this->$attribute) {
+			$record = strtolower($this->$attribute);
+			$record = in_array($record, ['nr', 'wr']) ? $record : 'cr';
+			return CHtml::tag('span', ['class'=>'record record-' . $record], $this->$attribute);
+		}
+	}
+
+	public function getSortClass() {
+		$eventRound = $this->eventRound;
+		switch ($eventRound->format) {
+			case '1':
+			case '2':
+			case '3':
+				return 'sort-by-best';
+			default:
+				return 'sort-by-average';
+		}
 	}
 
 	/**

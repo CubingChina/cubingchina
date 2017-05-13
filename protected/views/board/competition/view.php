@@ -220,7 +220,7 @@
                 ],
               ]); ?>
               <?php endif; ?>
-              <?php if (!$competition->isConfirmed()): ?>
+              <?php if ($competition->isUnconfirmed()): ?>
               <?php if ($competition->application->reason): ?>
               <div class="help-block">
                 上一次被驳回原因如下，请确保已经修改完毕再提交申请：
@@ -235,7 +235,7 @@
                 'data-value'=>$competition->status,
                 'data-name'=>$competition->name_zh,
               ], '确认无误，提交！') ;?>
-              <?php elseif ($this->user->isAdministrator() || $this->user->isWCADelegate()): ?>
+              <?php elseif ($competition->isConfirmed() && ($this->user->isAdministrator() || $this->user->isWCADelegate())): ?>
               <?php $form = $this->beginWidget('ActiveForm', array(
                 'htmlOptions'=>array(
                   'class'=>'clearfix row',
