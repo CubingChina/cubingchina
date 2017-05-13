@@ -24,14 +24,14 @@
       [
         'name'=>Yii::t('common', 'Best'),
         'type'=>'raw',
-        'value'=>'Results::formatTime($data->best, $data->event)',
+        'value'=>'$data->getRecord("single") . Results::formatTime($data->best, $data->event)',
         'headerHtmlOptions'=>['class'=>'result'],
         'htmlOptions'=>['class'=>'result result-best'],
       ],
       [
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
-        'value'=>'Results::formatTime($data->average, $data->event)',
+        'value'=>'$data->getRecord("average") . Results::formatTime($data->average, $data->event)',
         'headerHtmlOptions'=>['class'=>'result'],
         'htmlOptions'=>['class'=>'result result-average'],
       ],

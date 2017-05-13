@@ -276,6 +276,15 @@ class LiveResult extends ActiveRecord {
 		return Results::getDisplayDetail($data);
 	}
 
+	public function getRecord($type) {
+		$attribute = 'regional_' . $type . '_record';
+		if ($this->$attribute) {
+			$record = strtolower($this->$attribute);
+			$record = in_array($record, ['nr', 'wr']) ? $record : 'cr';
+			return CHtml::tag('span', ['class'=>'record record-' . $record], $this->$attribute);
+		}
+	}
+
 	public function getSortClass() {
 		$eventRound = $this->eventRound;
 		switch ($eventRound->format) {
