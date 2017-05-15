@@ -68,6 +68,8 @@ return array (
   'Second Stage All' => '第二阶段包括所有项目',
   'Second Stage Date' => '第二阶段时间',
   'Second Stage Ratio' => '第二阶段倍率',
+  'Third Stage Date' => '第三阶段时间',
+  'Third Stage Ratio' => '第三阶段倍率',
   'Status' => '状态',
   'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此处为比赛主办预计赛程，可能会依据比赛现场情况进行调整，请在比赛日注意现场通知以免耽误您的参赛。',
   'The limited number of competitor has been reached.' => '报名人数已达到上限。',

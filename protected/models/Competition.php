@@ -2072,6 +2072,8 @@ class Competition extends ActiveRecord {
 			'second_stage_date' => Yii::t('Competition', 'Second Stage Date'),
 			'second_stage_ratio' => Yii::t('Competition', 'Second Stage Ratio'),
 			'second_stage_all' => Yii::t('Competition', 'Second Stage All'),
+			'third_stage_date' => Yii::t('Competition', 'Third Stage Date'),
+			'third_stage_ratio' => Yii::t('Competition', 'Third Stage Ratio'),
 			'regulations' => Yii::t('Competition', 'Regulations'),
 			'regulations_zh' => Yii::t('Competition', 'Regulations'),
 			'information' => Yii::t('Competition', 'Information'),
