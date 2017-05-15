@@ -20,7 +20,7 @@
  * @property string $venue
  * @property string $venueAddress
  * @property string $venueDetails
- * @property string $website
+ * @property string $external_website
  * @property string $cellName
  * @property integer $latitude
  * @property integer $longitude
@@ -314,7 +314,7 @@ class Competitions extends ActiveRecord {
 			array('information', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, cityName, countryId, information, year, month, day, endMonth, endDay, eventSpecs, wcaDelegate, organiser, venue, venueAddress, venueDetails, website, cellName, latitude, longitude', 'safe', 'on'=>'search'),
+			array('id, name, cityName, countryId, information, year, month, day, endMonth, endDay, eventSpecs, wcaDelegate, organiser, venue, venueAddress, venueDetails, external_website, cellName, latitude, longitude', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -351,7 +351,7 @@ class Competitions extends ActiveRecord {
 			'venue' => Yii::t('Competitions', 'Venue'),
 			'venueAddress' => Yii::t('Competitions', 'Venue Address'),
 			'venueDetails' => Yii::t('Competitions', 'Venue Details'),
-			'website' => Yii::t('Competitions', 'Website'),
+			'external_website' => Yii::t('Competitions', 'Website'),
 			'cellName' => Yii::t('Competitions', 'Cell Name'),
 			'latitude' => Yii::t('Competitions', 'Latitude'),
 			'longitude' => Yii::t('Competitions', 'Longitude'),

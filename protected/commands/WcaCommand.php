@@ -8,7 +8,7 @@ class WcaCommand extends CConsoleCommand {
 		$competitions = Competition::model()->findAllByAttributes(array(
 			'type'=>Competition::TYPE_WCA,
 		), array(
-			'condition'=>'date < unix_timestamp() AND date > unix_timestamp() - 86400 * 20',
+			'condition'=>'date < unix_timestamp() + 86400 * 365 AND date > unix_timestamp() - 86400 * 20',
 			'order'=>'date ASC',
 		));
 		$wcaDb = intval(file_get_contents(dirname(__DIR__) . '/config/wcaDb'));
@@ -24,18 +24,33 @@ class WcaCommand extends CConsoleCommand {
 		$num = [];
 		foreach ($competitions as $competition) {
 			$num[$competition->id] = $db->createCommand(str_replace('%id%', $competition->id, $sql))->execute();
-		}
-		$this->log('updated wcaid:', array_sum($num));
-		foreach (Competitions::$championshipPatterns as $type=>$patterns) {
-			foreach ($patterns as $regionId=>$pattern) {
-				Yii::app()->cache->getData('Results::buildChampionshipPodiums', array($type, $regionId));
+			if ($competition->wca_competition_id == '') {
+				$wcaCompetition = Competitions::model()->findByAttributes([
+					'year'=>intval(date('Y', $competition->date)),
+					'month'=>intval(date('m', $competition->date)),
+					'day'=>intval(date('d', $competition->date)),
+				], [
+					'condition'=>"external_website LIKE '%{$competition->alias}%'",
+				]);
+				if ($wcaCompetition !== null) {
+					$competition->wca_competition_id = $wcaCompetition->id;
+					$competition->formatEvents();
+					$competition->formatDate();
+					$competition->save();
+				}
 			}
 		}
-		$this->log('podiums built');
-		Yii::import('application.statistics.*');
-		Yii::app()->cache->flush();
-		$data = Statistics::getData(true);
-		$this->log('set results_statistics_data:', $data ? 1 : 0);
+		$this->log('updated wcaid:', array_sum($num));
+		// foreach (Competitions::$championshipPatterns as $type=>$patterns) {
+		// 	foreach ($patterns as $regionId=>$pattern) {
+		// 		Yii::app()->cache->getData('Results::buildChampionshipPodiums', array($type, $regionId));
+		// 	}
+		// }
+		// $this->log('podiums built');
+		// Yii::import('application.statistics.*');
+		// Yii::app()->cache->flush();
+		// $data = Statistics::getData(true);
+		// $this->log('set results_statistics_data:', $data ? 1 : 0);
 	}
 
 	public function actionBuildRanksSum() {
