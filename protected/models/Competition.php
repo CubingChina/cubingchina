@@ -1812,6 +1812,18 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkWcaCompetitionId() {
+		if ($this->type == self::TYPE_OTHER && $this->wca_competition_id == '') {
+			$this->addError('wca_competition_id', '非WCA比赛请勿填写WCA比赛ID');
+		}
+		if ($this->type == self::TYPE_WCA && $this->wca_competition_id != '') {
+			$wcaCompetition = Competitions::model()->findByPk($this->wca_competition_id);
+			if ($wcaCompetition == null) {
+				$this->addError('wca_competition_id', '请填写WCA官网已公示比赛的ID');
+			}
+		}
+	}
+
 	public function checkLocations() {
 		$locations = $this->locations;
 		if (isset($locations[0]['province_id'])) {
@@ -1997,35 +2009,36 @@ class Competition extends ActiveRecord {
 			self::STATUS_HIDE,
 			self::STATUS_SHOW,
 		]);
-		$rules = array(
-			array('name, name_zh, date, reg_end', 'required'),
-			array('entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true),
-			array('type', 'length', 'max'=>10),
-			array('wca_competition_id', 'length', 'max'=>32),
-			array('name_zh', 'length', 'max'=>50),
-			array('name', 'length', 'max'=>128),
-			array('name', 'checkName', 'skipOnError'=>true),
-			array('name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
-			array('name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria),
-			array('type', 'checkType', 'skipOnError'=>true),
-			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
-			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
-			array('second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true),
-			array('second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true),
-			array('third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true),
-			array('third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true),
-			array('locations', 'checkLocations', 'skipOnError'=>true),
-			array('schedules', 'checkSchedules'),
-			array('end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'),
-			array('province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'),
-		);
+		$rules = [
+			['name, name_zh, date, reg_end', 'required'],
+			['entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
+			['type', 'length', 'max'=>10],
+			['wca_competition_id', 'length', 'max'=>32],
+			['name_zh', 'length', 'max'=>50],
+			['name', 'length', 'max'=>128],
+			['name', 'checkName', 'skipOnError'=>true],
+			['name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
+			['name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
+			['type', 'checkType', 'skipOnError'=>true],
+			['wca_competition_id', 'checkWcaCompetitionId'],
+			['reg_start', 'checkRegistrationStart', 'skipOnError'=>true],
+			['reg_end', 'checkRegistrationEnd', 'skipOnError'=>true],
+			['second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true],
+			['second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true],
+			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
+			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
+			['locations', 'checkLocations', 'skipOnError'=>true],
+			['schedules', 'checkSchedules'],
+			['end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
+		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
-			$rules[] = array('tba', 'safe');
+			$rules[] = ['tba', 'safe'];
 		}
 		if (!$this->isOld()) {
-			$rules[] = array('organizers', 'required');
+			$rules[] = ['organizers', 'required'];
 		} else {
-			$rules[] = array('oldOrganizer, oldOrganizerZh', 'required');
+			$rules[] = ['oldOrganizer, oldOrganizerZh', 'required'];
 		}
 		return $rules;
 	}
