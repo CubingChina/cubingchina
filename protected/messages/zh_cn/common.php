@@ -18,7 +18,7 @@
  */
 return array (
   'Fee' => '',
-  'Name in Local Characters' => '',
+  'Name in Local Characters' => '中文名',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

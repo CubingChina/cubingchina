@@ -98,6 +98,7 @@
                 )),
                 $form->error($model, 'type', array('class'=>'text-danger'))
               );?>
+              <?php if ($this->user->isAdministrator() || $this->user->isDelegate()): ?>
               <?php echo Html::formGroup(
                 $model, 'wca_competition_id', array(
                   'class'=>'col-md-4',
@@ -108,6 +109,7 @@
                 Html::activeTextField($model, 'wca_competition_id'),
                 $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
               );?>
+              <?php endif; ?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'entry_fee', array(
