@@ -298,7 +298,6 @@ class CompetitionController extends Controller {
 		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
 		// 	throw new CHttpException(404, 'Error');
 		// }
-		$competition->formatEvents();
 		$this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
 		$name = $competition->getAttributeValue('name');

@@ -101,8 +101,7 @@
                         <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
                         <?php endif; ?>
                       </tr>
-                      <?php foreach ($competition->events as $key=>$value): ?>
-                      <?php if ($value['round'] > 0): ?>
+                      <?php foreach ($competition->associatedEvents as $key=>$value): ?>
                       <tr>
                         <td><?php echo Events::getFullEventName($key); ?></td>
                         <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $value['fee']; ?></td>
@@ -113,7 +112,6 @@
                         <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_THIRD); ?></td>
                         <?php endif; ?>
                       </tr>
-                      <?php endif; ?>
                       <?php endforeach; ?>
                     </tbody>
                   </table>

@@ -1,40 +1,43 @@
 <?php
 
 /**
- * This is the model class for table "competition_application".
+ * This is the model class for table "competition_event".
  *
- * The followings are the available columns in table 'competition_application':
+ * The followings are the available columns in table 'competition_event':
  * @property string $id
  * @property string $competition_id
- * @property string $schedule
- * @property string $organized_competition
- * @property string $self_introduction
- * @property string $team_introduction
- * @property string $venue_detail
- * @property string $budget
- * @property string $sponsor
- * @property string $other
- * @property string $reason
+ * @property string $event
+ * @property integer $round
+ * @property integer $fee
+ * @property integer $fee_second
+ * @property integer $fee_third
+ * @property integer $qualifying_best
+ * @property integer $qualifying_average
  * @property string $create_time
  * @property string $update_time
  */
-class CompetitionApplication extends ActiveRecord {
+class CompetitionEvent extends ActiveRecord {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'competition_application';
+		return 'competition_event';
 	}
 
 	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
 		return [
-			['competition_id, create_time', 'required'],
-			['competition_id, create_time, update_time', 'length', 'max'=>11],
-			['schedule, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, reason', 'safe'],
-			['id, competition_id, organized_competition, self_introduction, team_introduction, venue_detail, budget, sponsor, other, create_time, update_time', 'safe', 'on'=>'search'],
+			array('competition_id', 'required'),
+			array('round, fee, fee_second, fee_third, qualifying_best, qualifying_average', 'numerical', 'integerOnly'=>true),
+			array('competition_id, create_time, update_time', 'length', 'max'=>11),
+			array('event', 'length', 'max'=>6),
+			// The following rule is used by search().
+			// @todo Please remove those attributes that should not be searched.
+			array('id, competition_id, event, round, fee, fee_second, fee_third, qualifying_best, qualifying_average, create_time, update_time', 'safe', 'on'=>'search'),
 		];
 	}
 
@@ -46,6 +49,7 @@ class CompetitionApplication extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return [
 			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
+			'wcaEvent'=>[self::BELONGS_TO, 'Events', 'event'],
 		];
 	}
 
@@ -54,19 +58,17 @@ class CompetitionApplication extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return [
-			'id' => 'ID',
-			'competition_id' => 'Competition',
-			'schedule' => 'Schedule',
-			'organized_competition' => 'Organized Competition',
-			'self_introduction' => 'Self Introduction',
-			'team_introduction' => 'Team Introduction',
-			'venue_detail' => 'Venue Detail',
-			'budget' => 'Budget',
-			'sponsor' => 'Sponsor',
-			'other' => 'Other',
-			'reason' => 'Reason',
-			'create_time' => 'Create Time',
-			'update_time' => 'Update Time',
+			'id'=>'ID',
+			'competition_id'=>'Competition',
+			'event'=>'Event',
+			'round'=>'Round',
+			'fee'=>'Fee',
+			'fee_second'=>'Fee Second',
+			'fee_third'=>'Fee Third',
+			'qualifying_best'=>'Qualifying Best',
+			'qualifying_average'=>'Qualifying Average',
+			'create_time'=>'Create Time',
+			'update_time'=>'Update Time',
 		];
 	}
 
@@ -89,14 +91,13 @@ class CompetitionApplication extends ActiveRecord {
 
 		$criteria->compare('id', $this->id,true);
 		$criteria->compare('competition_id', $this->competition_id,true);
-		$criteria->compare('schedule', $this->schedule,true);
-		$criteria->compare('organized_competition', $this->organized_competition,true);
-		$criteria->compare('self_introduction', $this->self_introduction,true);
-		$criteria->compare('team_introduction', $this->team_introduction,true);
-		$criteria->compare('venue_detail', $this->venue_detail,true);
-		$criteria->compare('budget', $this->budget,true);
-		$criteria->compare('sponsor', $this->sponsor,true);
-		$criteria->compare('other', $this->other,true);
+		$criteria->compare('event', $this->event,true);
+		$criteria->compare('round', $this->round);
+		$criteria->compare('fee', $this->fee);
+		$criteria->compare('fee_second', $this->fee_second);
+		$criteria->compare('fee_third', $this->fee_third);
+		$criteria->compare('qualifying_best', $this->qualifying_best);
+		$criteria->compare('qualifying_average', $this->qualifying_average);
 		$criteria->compare('create_time', $this->create_time,true);
 		$criteria->compare('update_time', $this->update_time,true);
 
@@ -109,7 +110,7 @@ class CompetitionApplication extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return CompetitionApplication the static model class
+	 * @return CompetitionEvent the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

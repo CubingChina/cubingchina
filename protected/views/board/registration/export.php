@@ -20,8 +20,7 @@
             ),
             'enableClientValidation'=>true,
           )); ?>
-          <?php foreach ($competition->events as $event=>$data): ?>
-          <?php if ($data['round'] <= 0) continue; ?>
+          <?php foreach ($competition->associatedEvents as $event=>$data): ?>
           <div class="form-group">
             <?php echo $form->labelEx($model, 'name_zh', array(
               'class'=>'col-lg-2 control-label',

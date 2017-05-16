@@ -246,7 +246,6 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRegistrationEvents() {
-		$this->competition->formatEvents();
 		$competitionEvents = $this->competition->getRegistrationEvents();
 		$events = array();
 		foreach ($this->events as $event) {
@@ -273,12 +272,11 @@ class Registration extends ActiveRecord {
 			return $this->total_fee;
 		}
 		$competition = $this->competition;
-		$competition->formatEvents();
-		$competitionEvents = $competition->events;
+		$competitionEvents = $competition->associatedEvents;
 		$fees = array();
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
 		foreach ($this->events as $event) {
-			if (isset($competitionEvents[$event]) && $competitionEvents[$event]['round'] > 0) {
+			if (isset($competitionEvents[$event])) {
 				$fees[] = $competition->getEventFee($event);
 			}
 		}
@@ -327,7 +325,6 @@ class Registration extends ActiveRecord {
 		if ($this->competition === null) {
 			$columns = array();
 		} else {
-			$this->competition->formatEvents();
 			$columns = $this->competition->getEventsColumns(true);
 		}
 		$modelName = get_class($model);
@@ -360,7 +357,6 @@ class Registration extends ActiveRecord {
 		if ($this->competition === null) {
 			$columns = array();
 		} else {
-			$this->competition->formatEvents();
 			$columns = array_slice($this->competition->getEventsColumns(true), 1);
 			array_splice($columns, 4, 0, array(
 				array(

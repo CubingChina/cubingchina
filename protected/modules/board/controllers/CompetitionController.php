@@ -102,7 +102,6 @@ class CompetitionController extends AdminController {
 			$model->status = $status;
 			$model->handleDate();
 		}
-		$model->formatEvents();
 		$this->render('view', [
 			'competition'=>$model,
 			'nearbyCompetitions'=>$model->getNearbyCompetitions(),
@@ -130,7 +129,6 @@ class CompetitionController extends AdminController {
 			}
 			$model->formatSchedule();
 		}
-		$model->formatEvents();
 		$model->formatDate();
 		$this->render('edit', $this->getCompetitionData($model));
 	}
@@ -170,7 +168,6 @@ class CompetitionController extends AdminController {
 			'delegates',
 			'organizers',
 			'locations',
-			'events',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
@@ -181,7 +178,6 @@ class CompetitionController extends AdminController {
 				foreach ($cannotEditAttr as $attr) {
 					$model->$attr = $$attr;
 				}
-				$model->formatEvents();
 				$model->formatDate();
 			}
 			if ($model->save()) {
@@ -190,9 +186,33 @@ class CompetitionController extends AdminController {
 			}
 			$model->formatSchedule();
 		}
-		$model->formatEvents();
 		$model->formatDate();
 		$this->render('edit', $this->getCompetitionData($model));
+	}
+
+	public function actionEvent() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if (!$model->checkPermission($this->user)) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if ($model->isPublic() && !$this->user->isAdministrator()) {
+			Yii::app()->user->setFlash('danger', '比赛已公示，编辑项目请联系管理员！');
+			$this->redirect($this->getReferrer());
+		}
+		if (isset($_POST['Competition']['associatedEvents'])) {
+			if ($model->updateEvents($_POST['Competition']['associatedEvents'])) {
+				Yii::app()->user->setFlash('success', '更新比赛项目成功');
+				$this->redirect($this->getReferrer());
+			}
+		}
+		$this->render('event', [
+			'model'=>$model,
+		]);
 	}
 
 	public function actionEditApplication() {
@@ -235,13 +255,9 @@ class CompetitionController extends AdminController {
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$checkPersons = Competition::getCheckPersons();
-		$normalEvents = Events::getNormalEvents();
-		$otherEvents = Events::getOtherEvents();
 		$cities = Region::getAllCities();
 		return array(
 			'model'=>$model,
-			'normalEvents'=>$normalEvents,
-			'otherEvents'=>$otherEvents,
 			'cities'=>$cities,
 			'wcaDelegates'=>$wcaDelegates,
 			'ccaDelegates'=>$ccaDelegates,
@@ -261,7 +277,6 @@ class CompetitionController extends AdminController {
 		if (!$this->user->isAdministrator() && $attribute == 'status') {
 			throw new CHttpException(401, '未授权');
 		}
-		$model->formatEvents();
 		$model->formatDate();
 		$model->$attribute = 1 - $model->$attribute;
 		$model->save();
@@ -285,7 +300,6 @@ class CompetitionController extends AdminController {
 		if ($model->isAccepted()) {
 			throw new CHttpException(401, '未授权的操作');
 		}
-		$model->formatEvents();
 		$model->formatDate();
 		$model->status = Competition::STATUS_CONFIRMED;
 		$model->confirm_time = time();
