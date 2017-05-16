@@ -398,7 +398,7 @@ class Results extends ActiveRecord {
 			return '';
 		}
 		if ($eventId === '333fm') {
-			if ($result > 80) {
+			if ($result > 1000) {
 				$time = sprintf('%.2f', $result / 100);
 			} else {
 				$time = $result;
