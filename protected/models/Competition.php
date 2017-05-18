@@ -469,6 +469,25 @@ class Competition extends ActiveRecord {
 		return $this->_events = $events;
 	}
 
+	public function getUserUnmetEvents($user) {
+		if ($user->wcaid == '') {
+			return [];
+		}
+		$ranks = RanksSingle::model()->with('average')->findAllByAttributes([
+			'personId'=>$user->wcaid,
+		]);
+		foreach ($ranks as $rank) {
+			$temp[$rank->eventId] = $rank;
+		}
+		$unmetEvents = [];
+		foreach ($this->allEvents as $event) {
+			if (!$event->check($temp[$event->event] ?? null)) {
+				$unmetEvents[$event->event] = $event->getQualifyTime();
+			}
+		}
+		return $unmetEvents;
+	}
+
 	public function getSortedLocations() {
 		$locations = $this->location;
 		if (!$this->multi_countries) {

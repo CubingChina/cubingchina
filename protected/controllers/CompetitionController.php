@@ -252,9 +252,14 @@ class CompetitionController extends Controller {
 			}
 		}
 		$model->formatEvents();
+		$unmetEvents = [];
+		if ($competition->has_qualifying_time) {
+			$unmetEvents = $competition->getUserUnmetEvents($this->user);
+		}
 		$this->render('registration', array(
 			'competition'=>$competition,
 			'model'=>$model,
+			'unmetEvents'=>$unmetEvents,
 		));
 	}
 

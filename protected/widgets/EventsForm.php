@@ -39,7 +39,7 @@ class EventsForm extends Widget {
 				if ($competition != null) {
 					$fee = 0;
 					$originFee = $competition->associatedEvents[$event]['fee'];
-					if ($competition instanceof Competition && isset($competition->events[$event]) && $originFee > 0) {
+					if ($competition instanceof Competition && isset($competition->associatedEvents[$event]) && $originFee > 0) {
 						$fee = $competition->getEventFee($event);
 						$text .= Html::fontAwesome('rmb', 'b') . $fee;
 					}

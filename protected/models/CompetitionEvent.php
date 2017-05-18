@@ -56,6 +56,43 @@ class CompetitionEvent extends ActiveRecord {
 		}
 	}
 
+
+	public function check($rank) {
+		if ($this->qualifying_best > 0) {
+			if ($rank === null) {
+				return false;
+			}
+			if ($this->qualifying_best == 9999) {
+				return true;
+			}
+			switch ($this->event) {
+				case '333fm':
+					$ret = $this->qualifying_best > $rank->best;
+					break;
+				case '333mbf':
+					$score = 99 - substr($rank->best, 0, 2);
+					$ret = $this->qualifying_best < $score;
+					break;
+				default:
+					$ret = $this->qualifying_best * 100 > $rank->best;
+					break;
+			}
+			if ($ret == true) {
+				return true;
+			}
+		}
+		if ($this->qualifying_average > 0) {
+			if ($rank === null || $rank->average === null) {
+				return false;
+			}
+			if ($this->qualifying_average == 9999) {
+				return true;
+			}
+			return $this->qualifying_average * 100 > $rank->average->best;
+		}
+		return $ret ?? true;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
