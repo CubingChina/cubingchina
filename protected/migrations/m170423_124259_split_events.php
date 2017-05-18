@@ -19,6 +19,7 @@ class m170423_124259_split_events extends CDbMigration {
 		$this->createIndex('event', 'competition_event', 'event');
 		$this->createIndex('competition_event', 'competition_event', ['competition_id', 'event'], true);
 		$this->addColumn('competition', 'has_qualifying_time', "TINYINT(1) UNSIGNED DEFAULT '0' AFTER `disable_chat`");
+		$this->addColumn('competition', 'qualifying_end_time', "INT(11) UNSIGNED DEFAULT '0' AFTER `has_qualifying_time`");
 		$competitions = Competition::model()->findAll();
 		foreach ($competitions as $competition) {
 			$competition->events = json_decode($competition->events, true);
@@ -40,6 +41,7 @@ class m170423_124259_split_events extends CDbMigration {
 	public function down() {
 		$this->dropTable('competition_event');
 		$this->dropColumn('competition', 'has_qualifying_time');
+		$this->dropColumn('competition', 'qualifying_end_time');
 		$this->addColumn('competition', 'events', "TEXT NOT NULL AFTER `reg_end`");
 		return true;
 	}

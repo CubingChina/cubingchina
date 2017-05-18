@@ -17,6 +17,45 @@
  * @property string $update_time
  */
 class CompetitionEvent extends ActiveRecord {
+
+	public function getQualifyTime() {
+		$times = [];
+		if ($this->qualifying_best > 0) {
+			$times[] = $this->formatTime($this->qualifying_best, 'single');
+		}
+		if ($this->qualifying_average > 0) {
+			$times[] = $this->formatTime($this->qualifying_average, 'average');
+		}
+		if ($times === []) {
+			return Yii::t('common', 'None');
+		} else {
+			return implode(Yii::t('common', ' OR '), $times);
+		}
+	}
+
+	private function formatTime($time, $type) {
+		if ($time == 9999) {
+			return Yii::t('Competition', 'At least one result');
+		}
+		switch ($this->event) {
+			case '333fm':
+				return Yii::t('Competition', '{type} < {moves} moves', [
+					'{type}'=>Yii::t('common', ucfirst($type)),
+					'{moves}'=>$type == 'single' ? intval($time) : number_format($time, 2),
+				]);
+			case '333mbf':
+				return Yii::t('Competition', '{type} > {points} point(s)', [
+					'{type}'=>Yii::t('common', ucfirst($type)),
+					'{points}'=>intval($time),
+				]);
+			default:
+				return Yii::t('Competition', '{type} < {time}', [
+					'{type}'=>Yii::t('common', ucfirst($type)),
+					'{time}'=>Results::formatTime($time * 100, $this->event),
+				]);
+		}
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

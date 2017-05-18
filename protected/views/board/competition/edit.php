@@ -279,6 +279,18 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'qualifying_end_time', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'qualifying_end_time'),
+                Html::activeTextField($model, 'qualifying_end_time', array(
+                  'class'=>'datetime-picker',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+                )),
+                $form->error($model, 'qualifying_end_time', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
               <?php
               if ($model->isOld()) {
                 echo Html::formGroup(

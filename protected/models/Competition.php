@@ -1318,7 +1318,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
+		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -1340,7 +1340,7 @@ class Competition extends ActiveRecord {
 				$this->$attribute = '';
 			}
 		}
-		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
+		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -1626,6 +1626,15 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkQualifyingEndTime() {
+		if ($this->reg_end > $this->qualifying_end_time) {
+			$this->addError('qualifying_end_time', '资格线截止时间必须晚于报名结束时间');
+		}
+		if ($this->qualifying_end_time > $this->date - 5 * 86400) {
+			$this->addError('qualifying_end_time', '资格线截止时间必须早于比赛开始前至少五天');
+		}
+	}
+
 	public function checkSecondStageDate() {
 		if (($this->second_stage_date >= $this->reg_end && $this->reg_end > 0)
 			|| ($this->second_stage_date <= $this->reg_start && $this->second_stage_date > 0)
@@ -1881,6 +1890,7 @@ class Competition extends ActiveRecord {
 			array('type', 'checkType', 'skipOnError'=>true),
 			array('reg_start', 'checkRegistrationStart', 'skipOnError'=>true),
 			array('reg_end', 'checkRegistrationEnd', 'skipOnError'=>true),
+			array('qualifying_end_time', 'checkQualifyingEndTime', 'skipOnError'=>true),
 			array('second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true),
 			array('second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true),
 			array('third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true),
@@ -1915,7 +1925,7 @@ class Competition extends ActiveRecord {
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
 			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
-			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id'],
+			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
 		];
 	}
@@ -1934,6 +1944,7 @@ class Competition extends ActiveRecord {
 			'end_date' => Yii::t('Competition', 'End Date'),
 			'reg_start' => Yii::t('Competition', 'Registration Starting Time'),
 			'reg_end' => Yii::t('Competition', 'Registration Ending Time'),
+			'qualifying_end_time' => Yii::t('Competition', 'Qualifying Ending Time'),
 			'province_id' => Yii::t('Competition', 'Province'),
 			'city_id' => Yii::t('Competition', 'City'),
 			'venue' => Yii::t('Competition', 'Venue'),
