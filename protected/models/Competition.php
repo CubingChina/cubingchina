@@ -1813,7 +1813,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkWcaCompetitionId() {
-		if ($this->type == self::TYPE_OTHER && $this->wca_competition_id == '') {
+		if ($this->type == self::TYPE_OTHER && $this->wca_competition_id != '') {
 			$this->addError('wca_competition_id', '非WCA比赛请勿填写WCA比赛ID');
 		}
 		if ($this->type == self::TYPE_WCA && $this->wca_competition_id != '') {
