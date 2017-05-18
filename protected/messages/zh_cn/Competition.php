@@ -19,7 +19,7 @@
 return array (
   'At least one result' => '有官方有效成绩',
   'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.' => '选手需要在{date}之前达到本次比赛项目的<b>资格线</b>。',
-  'Events and Qualifying Times' => '项目及资格线',
+  'Events and Qualifying Times' => '项目与资格线',
   'ID' => '',
   'Online Pay' => '',
   'Qualifying Ending Time' => '资格线截止时间',
