@@ -37,9 +37,6 @@ $config = array(
 			'options'=>array(
 				'lock_mode'=>Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE,
 			),
-			'cookieParams'=>DEV ? array() : array(
-				'domain'=>'.cubingchina.com',
-			),
 			'sessionName'=>'CUBINGCHINA_SID',
 			'timeout'=>86400 * 7,
 		),
