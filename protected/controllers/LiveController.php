@@ -68,10 +68,7 @@ class LiveController extends CompetitionController {
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
-		$events = $competition->events;
-		$events = array_filter($events, function($event) {
-			return $event['round'] > 0;
-		});
+		$events = $competition->associatedEvents;
 		if (array_intersect($eventIds, array_keys($events)) === array()) {
 			$eventIds = array_keys($events);
 		}

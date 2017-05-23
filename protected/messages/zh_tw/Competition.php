@@ -17,8 +17,16 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'At least one result' => '有官方有效成績',
+  'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.' => '選手需要在{date}之前達到本次比賽項目的<b>資格線</b>。',
+  'Events and Qualifying Times' => '項目與資格線',
   'ID' => '',
   'Online Pay' => '',
+  'Qualifying Ending Time' => '資格線截止時間',
+  'Qualifying Time' => '資格線',
+  '{type} < {moves} moves' => '{type} < {moves}步',
+  '{type} < {time}' => '{type} < {time}',
+  '{type} > {points} point(s)' => '{type} > {points}分',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',

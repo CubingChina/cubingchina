@@ -37,7 +37,6 @@
           </div>
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
-            <li role="presentation"><a href="#event" role="tab" data-toggle="tab">项目</a></li>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
@@ -282,6 +281,18 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'qualifying_end_time', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'qualifying_end_time'),
+                Html::activeTextField($model, 'qualifying_end_time', array(
+                  'class'=>'datetime-picker',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+                )),
+                $form->error($model, 'qualifying_end_time', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
               <?php
               if ($model->isOld()) {
                 echo Html::formGroup(
@@ -370,63 +381,6 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="event">
-              <?php echo Html::formGroup(
-                $model, 'events',array(
-                  'class'=>'col-lg-12',
-                ),
-                $form->labelEx($model, 'events', array(
-                  'label'=>'项目',
-                )),
-                CHtml::tag('button ', array(
-                  'class'=>'btn btn-xs btn-primary',
-                  'type'=>'button',
-                  'data-toggle'=>'collapse',
-                  'data-target'=>'#fee-desc',
-                ) , Html::fontAwesome('info-circle', 'a') . '费用设置说明'),
-                '<div class="collapse" id="fee-desc">
-                  <div class="well">
-                    各项目均可设置最多三个阶段的报名费，通常只需要填写第一阶段，当且仅当上述分阶段报名费时间设置时，此处的项目费用会生效，并且会覆盖上方的倍率。
-                    <br>
-                    意即如设置了分阶段报名费，那么该项目在第二或第三阶段的报名费下面设置的<b>优先权高于</b>上面设置的倍率。如果项目单独设置第二或第三阶段费用，则按此处下面设置，否则按上方倍率设置。
-                    <br>
-                    举例说明，设置第二阶段倍率为1.5，设置三阶第一阶段报名费为10，第二阶段为12，设置四阶第一阶段报名费为20，第二阶段留空，那么到达第二阶段时，三阶报名费为12，四阶为20×1.5=30。
-                    <br>
-                    <span class="text-danger">注意：第一阶段不写或写0表示报名费为0，第二或第三阶段表示不单独设置此项。</span>
-                  </div>
-                </div>',
-                '<div class="row"><div class="col-lg-12"><strong>常规项目</strong></div></div>',
-                $this->widget('EventsForm', array(
-                  'model'=>$model,
-                  'name'=>'events',
-                  'events'=>$normalEvents,
-                  'type'=>'range',
-                  'numberOptions'=>array(
-                    'min'=>0,
-                    'max'=>4,
-                  ),
-                  'feeOptions'=>array(
-                    'min'=>0,
-                  ),
-                ), true),
-                '<div class="row"><div class="col-lg-12"><strong>其它项目</strong></div></div>',
-                $this->widget('EventsForm', array(
-                  'model'=>$model,
-                  'name'=>'events',
-                  'events'=>$otherEvents,
-                  'type'=>'range',
-                  'numberOptions'=>array(
-                    'min'=>0,
-                    'max'=>4,
-                  ),
-                  'feeOptions'=>array(
-                    'min'=>0,
-                  ),
-                ), true),
-                $form->error($model, 'events', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
             </div>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">

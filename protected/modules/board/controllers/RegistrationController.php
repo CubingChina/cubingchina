@@ -523,11 +523,7 @@ class RegistrationController extends AdminController {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
 		if ($split === 'event') {
-			$competition->formatEvents();
-			foreach ($competition->events as $event=>$value) {
-				if ($value['round'] <= 0) {
-					continue;
-				}
+			foreach ($competition->associatedEvents as $event=>$value) {
 				if ($event === '333fm') {
 					continue;
 				}
@@ -764,7 +760,6 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
-		$competition->formatEvents();
 		$registration = new Registration();
 		$registration->unsetAttributes();
 		$registration->competition_id = $id;
@@ -792,7 +787,6 @@ class RegistrationController extends AdminController {
 		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
 			throw new CHttpException(403, '权限不足');
 		}
-		$competition->formatEvents();
 		$registration = new Registration();
 		$registration->unsetAttributes();
 		$registration->competition_id = $id;
@@ -827,7 +821,6 @@ class RegistrationController extends AdminController {
 			}
 		}
 		$model->formatEvents();
-		$model->competition->formatEvents();
 		$this->render('edit', array(
 			'model'=>$model,
 		));

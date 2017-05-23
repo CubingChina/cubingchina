@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  ' OR ' => '或',
   'Fee' => '',
   'Name in Local Characters' => '中文名',
   'WCA ID' => '',
