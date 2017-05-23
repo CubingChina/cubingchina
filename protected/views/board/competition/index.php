@@ -83,6 +83,7 @@
           }
           $this->widget('GridView', [
             'dataProvider'=>$model->search(true),
+            'afterAjaxUpdate'=>'js:function(){$(".tips").tooltip()}',
             'filter'=>$model,
             'columns'=>$columns,
           ]); ?>
