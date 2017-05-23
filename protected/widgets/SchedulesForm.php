@@ -3,8 +3,8 @@
 class SchedulesForm extends Widget {
 	public $model;
 	public $name = 'events';
-	public $htmlOptions = array();
-	public $tableOptions = array();
+	public $htmlOptions = [];
+	public $tableOptions = [];
 	public function run() {
 		$htmlOptions = $this->htmlOptions;
 		$tableOptions = $this->tableOptions;
@@ -25,17 +25,17 @@ class SchedulesForm extends Widget {
 		echo CHtml::openTag('table', $tableOptions);
 		echo CHtml::openTag('thead');
 		echo CHtml::openTag('tr');
-		echo CHtml::tag('th', array(), '第几天');
-		echo CHtml::tag('th', array(), '赛区');
-		echo CHtml::tag('th', array(), '开始时间');
-		echo CHtml::tag('th', array(), '结束时间');
-		echo CHtml::tag('th', array(), '项目');
-		echo CHtml::tag('th', array(), '分组');
-		echo CHtml::tag('th', array(), '轮次');
-		echo CHtml::tag('th', array(), '赛制');
-		echo CHtml::tag('th', array(), '及格线(秒)');
-		echo CHtml::tag('th', array(), '还原时限(秒)');
-		echo CHtml::tag('th', array(), '人数');
+		echo CHtml::tag('th', [], '第几天');
+		echo CHtml::tag('th', [], '赛区');
+		echo CHtml::tag('th', [], '开始时间');
+		echo CHtml::tag('th', [], '结束时间');
+		echo CHtml::tag('th', [], '项目');
+		echo CHtml::tag('th', [], '分组');
+		echo CHtml::tag('th', [], '轮次');
+		echo CHtml::tag('th', [], '赛制');
+		echo CHtml::tag('th', [], '及格线(秒)');
+		echo CHtml::tag('th', [], '还原时限(秒)<br>打勾表示累计');
+		echo CHtml::tag('th', [], '人数');
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('thead');
 
@@ -62,60 +62,60 @@ class SchedulesForm extends Widget {
 		foreach ($schedules as $key=>$value) {
 			extract($value);
 			echo CHtml::openTag('tr');
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[day][$key]", array(
+			echo CHtml::tag('td', [], CHtml::activeNumberField($model, "{$name}[day][$key]", [
 				'value'=>$day ?: 1,
 				'min'=>1,
 				'max'=>4,
-			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][$key]"), $stage, $stages));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[start_time][$key]", array(
+			]));
+			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][$key]"), $stage, $stages));
+			echo CHtml::tag('td', [], CHtml::activeTextField($model, "{$name}[start_time][$key]", [
 				'value'=>$start_time ? date('H:i', $start_time) : '',
 				'class'=>'datetime-picker',
 				'data-date-format'=>'hh:ii',
 				'data-max-view'=>'1',
 				'data-start-view'=>'1',
-			)));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[end_time][$key]", array(
+			]));
+			echo CHtml::tag('td', [], CHtml::activeTextField($model, "{$name}[end_time][$key]", [
 				'value'=>$end_time ? date('H:i', $end_time) : '',
 				'class'=>'datetime-picker',
 				'data-date-format'=>'hh:ii',
 				'data-max-view'=>'1',
 				'data-start-view'=>'1',
-			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][$key]"), $event, $events, array(
+			]));
+			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[event][$key]"), $event, $events, [
 				'prompt'=>'',
 				'class'=>'schedule-event',
-			)));
-			echo CHtml::tag('td', array(), CHtml::activeTextField($model, "{$name}[group][$key]", array(
+			]));
+			echo CHtml::tag('td', [], CHtml::activeTextField($model, "{$name}[group][$key]", [
 				'value'=>$group,
-			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][$key]"), $round, $rounds, array(
+			]));
+			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][$key]"), $round, $rounds, [
 				'prompt'=>'',
 				'class'=>'schedule-round',
-			)));
-			echo CHtml::tag('td', array(), CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][$key]"), $format, $formats, array('prompt'=>'')));
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[cut_off][$key]", array(
+			]));
+			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][$key]"), $format, $formats, ['prompt'=>'']));
+			echo CHtml::tag('td', [], CHtml::activeNumberField($model, "{$name}[cut_off][$key]", [
 				'value'=>$cut_off,
 				// 'max'=>3600,
-			)));
+			]));
 			echo CHtml::openTag('td');
-			echo CHtml::activeNumberField($model, "{$name}[time_limit][$key]", array(
+			echo CHtml::activeNumberField($model, "{$name}[time_limit][$key]", [
 				'value'=>$time_limit,
 				// 'max'=>3600,
-			));
-			echo CHtml::activeCheckBox($model, "{$name}[cumulative][$key]", array(
+			]);
+			echo CHtml::activeCheckBox($model, "{$name}[cumulative][$key]", [
 				'checked'=>$cumulative == Schedule::YES,
-			));
+			]);
 			echo CHtml::closeTag('td');
-			echo CHtml::tag('td', array(), CHtml::activeNumberField($model, "{$name}[number][$key]", array(
+			echo CHtml::tag('td', [], CHtml::activeNumberField($model, "{$name}[number][$key]", [
 				'value'=>$number,
-			)));
+			]));
 			if ($model->hasErrors("{$name}.{$key}")) {
-				echo CHtml::tag('tr', array(
+				echo CHtml::tag('tr', [
 					'class'=>'danger',
-				), CHtml::tag('td', array(
+				], CHtml::tag('td', [
 					'colspan'=>11,
-				), $model->getError("{$name}.{$key}")));
+				], $model->getError("{$name}.{$key}")));
 			}
 			echo CHtml::closeTag('tr');
 		}
