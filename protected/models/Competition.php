@@ -58,6 +58,7 @@ class Competition extends ActiveRecord {
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
+	private $_events;
 	private $_schedules;
 	private $_description;
 	private $_timezones;
@@ -369,8 +370,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isScheduleFinished() {
-		$this->formatEvents();
-		$events = $this->events;
+		$events = $this->associatedEvents;
 		foreach ($this->schedule as $schedule) {
 			if (!isset($events[$schedule->event])) {
 				continue;
@@ -378,10 +378,9 @@ class Competition extends ActiveRecord {
 			$events[$schedule->event]['schedule'][$schedule->round] = 1;
 		}
 		foreach ($events as $event) {
-			if ($event['round'] > 0 && (
-				(!isset($event['schedule']['c']) && !isset($event['schedule']['f'])) ||
+			if ((!isset($event['schedule']['c']) && !isset($event['schedule']['f'])) ||
 				$event['round'] > count($event['schedule'])
-			)) {
+			) {
 				return false;
 			}
 		}
@@ -461,6 +460,36 @@ class Competition extends ActiveRecord {
 					return $this->location[0]->getAttributeValue($type);
 			}
 		}
+	}
+
+	public function getAssociatedEvents() {
+		if ($this->_events !== null) {
+			return $this->_events;
+		}
+		$events = [];
+		foreach ($this->allEvents as $event) {
+			$events[$event->event] = $event->attributes;
+		}
+		return $this->_events = $events;
+	}
+
+	public function getUserUnmetEvents($user) {
+		if ($user->wcaid == '') {
+			return [];
+		}
+		$ranks = RanksSingle::model()->with('average')->findAllByAttributes([
+			'personId'=>$user->wcaid,
+		]);
+		foreach ($ranks as $rank) {
+			$temp[$rank->eventId] = $rank;
+		}
+		$unmetEvents = [];
+		foreach ($this->allEvents as $event) {
+			if (!$event->check($temp[$event->event] ?? null)) {
+				$unmetEvents[$event->event] = $event->getQualifyTime();
+			}
+		}
+		return $unmetEvents;
 	}
 
 	public function getSortedLocations() {
@@ -711,7 +740,8 @@ class Competition extends ActiveRecord {
 
 	public function getEventFee($event, $stage = null) {
 		$now = time();
-		$isBasic = !isset($this->events[$event]);
+		$events = $this->associatedEvents;
+		$isBasic = !isset($events[$event]);
 		if ($stage === null) {
 			if ($now < $this->second_stage_date) {
 				$stage = self::STAGE_FIRST;
@@ -727,7 +757,7 @@ class Competition extends ActiveRecord {
 				$stage = self::STAGE_FIRST;
 			}
 		}
-		$basicFee = $isBasic ? $this->entry_fee : $this->events[$event]['fee'];
+		$basicFee = $isBasic ? $this->entry_fee : $events[$event]['fee'];
 		switch ($stage) {
 			case self::STAGE_FIRST:
 				return $basicFee;
@@ -737,8 +767,8 @@ class Competition extends ActiveRecord {
 				if ($isBasic) {
 					return ceil($basicFee * $ratio);
 				}
-				if (isset($this->events[$event]['fee_' . $stage]) && $this->events[$event]['fee_' . $stage] > 0) {
-					return $this->events[$event]['fee_' . $stage];
+				if (isset($events[$event]['fee_' . $stage]) && $events[$event]['fee_' . $stage] > 0) {
+					return $events[$event]['fee_' . $stage];
 				}
 				return $this->second_stage_all ? ceil($basicFee * $ratio) : $basicFee;
 		}
@@ -1127,11 +1157,37 @@ class Competition extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = [];
 		$isAdministrator = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
+		$groupedButtons = [];
+		switch ($this->status) {
+			case self::STATUS_HIDE:
+				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
+				break;
+			case self::STATUS_SHOW:
+				if ($isAdministrator) {
+					$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
+				}
+				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]]));
+				break;
+			case self::STATUS_UNCONFIRMED:
+				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id]));
+				break;
+		}
+		$editButtonGroup = CHtml::tag('div', ['class'=>'btn-group dropup'], implode('', [
+			CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']),
+			CHtml::tag('button', [
+				'type'=>'button',
+				'class'=>'btn btn-blue dropdown-toggle btn-xs',
+				'data-toggle'=>'dropdown',
+			], implode('', [
+				'<span class="caret"></span>',
+			])),
+			CHtml::tag('ul', ['class'=>'dropdown-menu'], implode('', $groupedButtons)),
+		]));
 		switch ($this->status) {
 			case self::STATUS_HIDE:
 			case self::STATUS_SHOW:
 				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank']);
-				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
+				$buttons[] = $editButtonGroup;
 				if ($isAdministrator) {
 					$buttons[] = CHtml::tag('button', [
 						'class'=>'btn btn-xs btn-square toggle btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
@@ -1151,13 +1207,11 @@ class Competition extends ActiveRecord {
 					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
 				}
 				if ($this->status == self::STATUS_UNCONFIRMED) {
-					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']);
-					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-xs btn-purple btn-square']);
+					$buttons[] = $editButtonGroup;
 				}
 				break;
 		}
 		if ($this->status == self::STATUS_SHOW) {
-			$buttons[] = CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-xs btn-purple btn-square']);
 			if (!$this->canRegister()) {
 				$buttons[] = CHtml::tag('button', [
 					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
@@ -1200,58 +1254,11 @@ class Competition extends ActiveRecord {
 		return Events::getFullEventName($event);
 	}
 
-	public function handleEvents() {
-		$this->formatEvents();
-		$temp = $this->events;
-		foreach ($temp as $key=>$value) {
-			if (!is_array($value) || !isset($value['round']) || $value['round'] == 0) {
-				unset($temp[$key]);
-				continue;
-			}
-		}
-		$this->events = json_encode($temp);
-	}
-
-	public function formatEvents() {
-		if (is_array($this->events)) {
-			return;
-		}
-		$temp = json_decode($this->events, true);
-		if ($temp === null) {
-			$temp = array();
-		}
-		$events = Events::getAllEvents();
-		foreach ($events as $key=>$value) {
-			if (!isset($temp[$key])) {
-				$temp[$key] = array(
-					'round'=>0,
-					'fee'=>0,
-					'fee_second'=>'',
-					'fee_third'=>'',
-				);
-				continue;
-			}
-			if (!isset($temp[$key]['round']) || $temp[$key]['round'] == '') {
-				$temp[$key]['round'] = 0;
-			}
-			if (!isset($temp[$key]['fee']) || $temp[$key]['fee'] == '') {
-				$temp[$key]['fee'] = 0;
-			}
-			if (!isset($temp[$key]['fee_second'])) {
-				$temp[$key]['fee_second'] = '';
-			}
-			if (!isset($temp[$key]['fee_third'])) {
-				$temp[$key]['fee_third'] = '';
-			}
-		}
-		$this->events = $temp;
-	}
-
 	public function getRegistrationEvents() {
 		$events = Events::getAllEvents();
 		$registrationEvents = array();
-		foreach ($this->events as $key=>$value) {
-			if ($value['round'] > 0 && isset($events[$key])) {
+		foreach ($this->associatedEvents as $key=>$value) {
+			if (isset($events[$key])) {
 				$registrationEvents[$key] = $events[$key];
 			}
 		}
@@ -1316,27 +1323,25 @@ class Competition extends ActiveRecord {
 				'value'=>'$data->location->getFullAddress(false)',
 			);
 		}
-		foreach ($this->events as $event=>$value) {
-			if ($value['round'] > 0) {
-				$columns[] = array(
-					'name'=>(string)$event,
-					'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
-					'headerHtmlOptions'=>array(
-						'class'=>'header-event',
-					),
-					'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
-						'class'=>'hover',
-					) : array(),
-					'type'=>'raw',
-					'value'=>"\$data->getEventsString('$event')",
-				);
-			}
+		foreach ($this->associatedEvents as $event=>$value) {
+			$columns[] = array(
+				'name'=>(string)$event,
+				'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
+				'headerHtmlOptions'=>array(
+					'class'=>'header-event',
+				),
+				'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
+					'class'=>'hover',
+				) : array(),
+				'type'=>'raw',
+				'value'=>"\$data->getEventsString('$event')",
+			);
 		}
 		return $columns;
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
+		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -1358,7 +1363,7 @@ class Competition extends ActiveRecord {
 				$this->$attribute = '';
 			}
 		}
-		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date') as $attribute) {
+		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -1399,7 +1404,6 @@ class Competition extends ActiveRecord {
 		}
 		LiveResult::model()->deleteAllByAttributes($attributes);
 		LiveEventRound::model()->deleteAllByAttributes($attributes);
-		$this->formatEvents();
 		$schedules = array();
 		$temp = $this->schedule;
 		usort($temp, array($this, 'sortSchedules'));
@@ -1409,10 +1413,7 @@ class Competition extends ActiveRecord {
 		unset($temp);
 		//events and rounds
 		$rounds = array();
-		foreach ($this->events as $event=>$value) {
-			if ($value['round'] == 0) {
-				continue;
-			}
+		foreach ($this->associatedEvents as $event=>$value) {
 			if (isset($schedules[$event])) {
 				$first = current($schedules[$event]);
 				$rounds[$event] = $first->round;
@@ -1648,7 +1649,6 @@ class Competition extends ActiveRecord {
 
 	protected function beforeValidate() {
 		$this->handleDate();
-		$this->handleEvents();
 		return parent::beforeValidate();
 	}
 
@@ -1743,6 +1743,22 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function updateEvents($events) {
+		CompetitionEvent::model()->deleteAllByAttributes(['competition_id'=>$this->id]);
+		foreach ($events as $event=>$attributes) {
+			if ($attributes['round'] > 0) {
+				$competitionEvent = new CompetitionEvent();
+				$competitionEvent->competition_id = $this->id;
+				$competitionEvent->event = "$event";
+				foreach ($attributes as $key=>$value) {
+					$competitionEvent->{$key} = intval($value);
+				}
+				$competitionEvent->save();
+			}
+		}
+		return true;
+	}
+
 	public function checkRegistrationStart() {
 		if ($this->reg_start >= $this->reg_end) {
 			$this->addError('reg_start', '报名起始时间必须早于报名截止时间');
@@ -1752,6 +1768,15 @@ class Competition extends ActiveRecord {
 	public function checkRegistrationEnd() {
 		if ($this->reg_end >= $this->date) {
 			$this->addError('reg_end', '报名截止时间必须早于比赛开始至少一天');
+		}
+	}
+
+	public function checkQualifyingEndTime() {
+		if ($this->reg_end > $this->qualifying_end_time) {
+			$this->addError('qualifying_end_time', '资格线截止时间必须晚于报名结束时间');
+		}
+		if ($this->qualifying_end_time > $this->date - 5 * 86400) {
+			$this->addError('qualifying_end_time', '资格线截止时间必须早于比赛开始前至少五天');
 		}
 	}
 
@@ -2023,6 +2048,7 @@ class Competition extends ActiveRecord {
 			['wca_competition_id', 'checkWcaCompetitionId'],
 			['reg_start', 'checkRegistrationStart', 'skipOnError'=>true],
 			['reg_end', 'checkRegistrationEnd', 'skipOnError'=>true],
+			['qualifying_end_time', 'checkQualifyingEndTime', 'skipOnError'=>true],
 			['second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true],
 			['second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true],
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
@@ -2057,6 +2083,7 @@ class Competition extends ActiveRecord {
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
 			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
+			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
 		];
 	}
@@ -2075,6 +2102,7 @@ class Competition extends ActiveRecord {
 			'end_date' => Yii::t('Competition', 'End Date'),
 			'reg_start' => Yii::t('Competition', 'Registration Starting Time'),
 			'reg_end' => Yii::t('Competition', 'Registration Ending Time'),
+			'qualifying_end_time' => Yii::t('Competition', 'Qualifying Ending Time'),
 			'province_id' => Yii::t('Competition', 'Province'),
 			'city_id' => Yii::t('Competition', 'City'),
 			'venue' => Yii::t('Competition', 'Venue'),
@@ -2120,7 +2148,7 @@ class Competition extends ActiveRecord {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria = new CDbCriteria;
-		$criteria->with = array('location', 'location.province', 'location.city');
+		$criteria->with = ['location', 'location.province', 'location.city'];
 		$criteria->compare('t.id', $this->id, true);
 		$criteria->compare('t.type', $this->type, true);
 		$criteria->compare('t.wca_competition_id', $this->wca_competition_id, true);
@@ -2129,7 +2157,6 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.date', $this->date, true);
 		$criteria->compare('t.end_date', $this->end_date, true);
 		$criteria->compare('t.reg_end', $this->reg_end, true);
-		$criteria->compare('t.events', $this->events, true);
 		$criteria->compare('t.entry_fee', $this->entry_fee);
 		$criteria->compare('t.online_pay', $this->online_pay);
 		$criteria->compare('t.information', $this->information, true);
@@ -2151,17 +2178,13 @@ class Competition extends ActiveRecord {
 				$criteria->compare('t.date', '>=' . strtotime($this->year . '-01-01'));
 				$criteria->compare('t.date', '<=' . strtotime($this->year . '-12-31'));
 			}
-			if ($this->event !== '') {
-				$criteria->compare('t.events', '"' . $this->event . '"', true);
-			}
 			if ($this->province > 0) {
-				unset($criteria->with[0]);
-				$criteria->with = array(
-					'location'=>array(
-						'together'=>true,
-					),
-				);
+				$criteria->with = ['location'=>['together'=>true]];
 				$criteria->compare('location.province_id', $this->province);
+			}
+			if ($this->event !== '') {
+				$criteria->with['allEvents'] = ['together'=>true];
+				$criteria->compare('allEvents.event', $this->event);
 			}
 		}
 
@@ -2194,7 +2217,6 @@ class Competition extends ActiveRecord {
 					$criteria->compare('organizer.organizer_id', Yii::app()->user->id);
 					break;
 			}
-
 		}
 
 		return new CActiveDataProvider($this, array(

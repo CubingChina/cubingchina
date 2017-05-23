@@ -252,9 +252,14 @@ class CompetitionController extends Controller {
 			}
 		}
 		$model->formatEvents();
+		$unmetEvents = [];
+		if ($competition->has_qualifying_time) {
+			$unmetEvents = $competition->getUserUnmetEvents($this->user);
+		}
 		$this->render('registration', array(
 			'competition'=>$competition,
 			'model'=>$model,
+			'unmetEvents'=>$unmetEvents,
 		));
 	}
 
@@ -298,7 +303,6 @@ class CompetitionController extends Controller {
 		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
 		// 	throw new CHttpException(404, 'Error');
 		// }
-		$competition->formatEvents();
 		$this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
 		$name = $competition->getAttributeValue('name');

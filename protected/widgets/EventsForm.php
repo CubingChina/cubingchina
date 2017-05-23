@@ -38,8 +38,8 @@ class EventsForm extends Widget {
 				];
 				if ($competition != null) {
 					$fee = 0;
-					$originFee = $competition->events[$event]['fee'];
-					if ($competition instanceof Competition && isset($competition->events[$event]) && $originFee > 0) {
+					$originFee = $competition->associatedEvents[$event]['fee'];
+					if ($competition instanceof Competition && isset($competition->associatedEvents[$event]) && $originFee > 0) {
 						$fee = $competition->getEventFee($event);
 						$text .= Html::fontAwesome('rmb', 'b') . $fee;
 					}
@@ -104,7 +104,7 @@ class EventsForm extends Widget {
 				echo CHtml::activeLabelEx($model, "{$name}[{$key}][round]", $labelOptions);
 				//round
 				echo CHtml::openTag('div', array(
-					'class'=>'col-md-3 col-sm-8',
+					'class'=>'col-md-2 col-sm-8',
 				));
 				echo CHtml::openTag('div', array(
 					'class'=>'input-group',
@@ -113,16 +113,17 @@ class EventsForm extends Widget {
 				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'Rounds'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
+
 				//fee
 				echo CHtml::openTag('div', array(
-					'class'=>'col-md-7 row',
+					'class'=>'col-md-5 row',
 				));
 				//normal fee
 				echo CHtml::openTag('div', array(
 					'class'=>'col-xs-4',
 				));
 				echo CHtml::openTag('div', array(
-					'class'=>'input-group',
+					'class'=>'input-group row',
 				));
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee]", $feeOptions);
 				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
@@ -133,7 +134,7 @@ class EventsForm extends Widget {
 					'class'=>'col-xs-4',
 				));
 				echo CHtml::openTag('div', array(
-					'class'=>'input-group',
+					'class'=>'input-group row',
 				));
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_second]", $feeOptions);
 				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
@@ -144,13 +145,43 @@ class EventsForm extends Widget {
 					'class'=>'col-xs-4',
 				));
 				echo CHtml::openTag('div', array(
-					'class'=>'input-group',
+					'class'=>'input-group row',
 				));
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_third]", $feeOptions);
 				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
+
+				//qualifying times
+				if ($model->has_qualifying_time) {
+					echo CHtml::openTag('div', array(
+						'class'=>'col-md-3 row',
+					));
+					//normal fee
+					echo CHtml::openTag('div', array(
+						'class'=>'col-xs-6',
+					));
+					echo CHtml::openTag('div', array(
+						'class'=>'input-group row',
+					));
+					echo CHtml::tag('span', array('class'=>'input-group-addon'), '单次');
+					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_best]", $feeOptions);
+					echo CHtml::closeTag('div');
+					echo CHtml::closeTag('div');
+					//second
+					echo CHtml::openTag('div', array(
+						'class'=>'col-xs-6',
+					));
+					echo CHtml::openTag('div', array(
+						'class'=>'input-group row',
+					));
+					echo CHtml::tag('span', array('class'=>'input-group-addon'), '平均');
+					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_average]", $feeOptions);
+					echo CHtml::closeTag('div');
+					echo CHtml::closeTag('div');
+					echo CHtml::closeTag('div');
+				}
 
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');

@@ -2,12 +2,7 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <?php if ($competition->tba == Competition::NO): ?>
   <div class="row schedule-event">
-    <?php
-      foreach ($competition->events as $event=>$value):
-        if ($value['round'] <= 0) {
-          continue;
-        }
-    ?>
+    <?php foreach ($competition->associatedEvents as $event=>$value): ?>
     <div class="col-lg-3 col-md-4 col-xs-6">
       <div class="checkbox">
         <label>

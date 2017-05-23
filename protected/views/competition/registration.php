@@ -112,15 +112,14 @@
     <button type="submit" class="btn btn-theme" id="submit-button"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
 </div>
-<?php if ($competition->show_regulations): ?>
-<div class="modal fade" tabindex="-1" role="dialog" id="regulation-modal">
+<div class="modal fade" tabindex="-1" role="dialog" id="tips-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title"><?php echo Yii::t('common', 'Tips'); ?></h4>
       </div>
       <div class="modal-body">
-        
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" id="cancel-button"><?php echo Yii::t('common', 'Close'); ?></button>
@@ -129,7 +128,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
-<?php endif; ?>
 <?php
 Yii::app()->clientScript->registerScript('registration-disclaimer',
 <<<EOT
@@ -156,6 +154,7 @@ Yii::app()->clientScript->registerScript('registration',
       fee.addClass('hide');
     }
   });
+  $('.registration-events').trigger('change');
 EOT
   );
 }
@@ -197,8 +196,8 @@ if ($competition->show_regulations) {
   ));
   Yii::app()->clientScript->registerScript('registration-regulation',
 <<<EOT
-  var regulations = window.regulations = {$regulationsJson};
-  var modal = $('#regulation-modal');
+  var regulations = {$regulationsJson};
+  var modal = $('#tips-modal');
   var modalBody = modal.find('.modal-body');
   var callback;
   var cancelCallback;
@@ -275,6 +274,17 @@ if ($competition->show_regulations) {
     });
     return ol;
   }
+EOT
+  );
+}
+if ($unmetEvents != []) {
+  $unmetEvents = json_encode($unmetEvents);
+  Yii::app()->clientScript->registerScript('registration-unmet-events',
+<<<EOT
+  var unmetEvents = {$unmetEvents}
+  $.each(unmetEvents, function(event, qualifyingTime) {
+    $('.registration-events[value="' + event + '"]').parent().addClass('bg-danger').data('qualifyingTime', qualifyingTime);
+  })
 EOT
   );
 }
