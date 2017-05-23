@@ -459,6 +459,7 @@ class Persons extends ActiveRecord {
 		$visitedProvinces = [];
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
 			'wca_competition_id'=>$competitionIds,
+			'status'=>Competition::STATUS_SHOW,
 		]);
 		foreach ($chineseCompetitions as $competition) {
 			if (!$competition->isMultiLocation()) {
