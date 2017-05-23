@@ -28,7 +28,7 @@ $(function() {
           that.prop('checked', Boolean(options.value));
         } else {
           options.btns = options.btns || ['green', 'red'];
-          that.text(options.text[index]);
+          that.html(options.text[index]);
           that.removeClass('btn-' + options.btns[1 - index]).addClass('btn-' + options.btns[index]);
         }
       },

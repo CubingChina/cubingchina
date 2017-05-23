@@ -2206,3 +2206,6 @@ table .user-avatar {
     padding: 5px;
     box-shadow: 0 0 5px #ddd;
 }
+table.table tbody tr td {
+  vertical-align: middle;
+}
