@@ -41,16 +41,16 @@ class WcaCommand extends CConsoleCommand {
 			}
 		}
 		$this->log('updated wcaid:', array_sum($num));
-		// foreach (Competitions::$championshipPatterns as $type=>$patterns) {
-		// 	foreach ($patterns as $regionId=>$pattern) {
-		// 		Yii::app()->cache->getData('Results::buildChampionshipPodiums', array($type, $regionId));
-		// 	}
-		// }
-		// $this->log('podiums built');
-		// Yii::import('application.statistics.*');
-		// Yii::app()->cache->flush();
-		// $data = Statistics::getData(true);
-		// $this->log('set results_statistics_data:', $data ? 1 : 0);
+		foreach (Competitions::$championshipPatterns as $type=>$patterns) {
+			foreach ($patterns as $regionId=>$pattern) {
+				Yii::app()->cache->getData('Results::buildChampionshipPodiums', array($type, $regionId));
+			}
+		}
+		$this->log('podiums built');
+		Yii::import('application.statistics.*');
+		Yii::app()->cache->flush();
+		$data = Statistics::getData(true);
+		$this->log('set results_statistics_data:', $data ? 1 : 0);
 	}
 
 	public function actionBuildRanksSum() {
