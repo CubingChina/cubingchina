@@ -40,7 +40,6 @@
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
-            <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab">赛程</a></li>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
             <?php endif; ?>
           </ul>
@@ -438,22 +437,6 @@
                 $form->error($model, 'regulations', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="schedule">
-              <?php echo Html::formGroup(
-                $model, 'schedules', array(
-                  'class'=>'col-lg-12',
-                ),
-                $form->labelEx($model, 'schedules', array(
-                  'label'=>'赛程',
-                )),
-                '<div class="text-danger">时间会自动排序，留空时间即可删除某项，无分组请留空</div>',
-                $this->widget('SchedulesForm', array(
-                  'model'=>$model,
-                  'name'=>'schedules',
-                ), true),
-                $form->error($model, 'schedules', array('class'=>'text-danger'))
-              );?>
             </div>
             <div role="tabpanel" class="tab-pane" id="transportation">
               <?php $this->renderPartial('editorTips'); ?>

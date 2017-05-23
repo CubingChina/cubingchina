@@ -1161,11 +1161,13 @@ class Competition extends ActiveRecord {
 		switch ($this->status) {
 			case self::STATUS_HIDE:
 				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
+				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑赛程', ['/board/competition/schedule', 'id'=>$this->id]));
 				break;
 			case self::STATUS_SHOW:
 				if ($isAdministrator) {
 					$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
 				}
+				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑赛程', ['/board/competition/schedule', 'id'=>$this->id]));
 				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]]));
 				break;
 			case self::STATUS_UNCONFIRMED:
@@ -1696,33 +1698,6 @@ class Competition extends ActiveRecord {
 				}
 			}
 		}
-		//处理赛程
-		$schedules = $this->schedules;
-		if (!empty($schedules['start_time'])) {
-			Schedule::model()->deleteAllByAttributes(array(
-				'competition_id'=>$this->id,
-			));
-			foreach ($schedules['start_time'] as $key=>$startTime) {
-				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
-					continue;
-				}
-				$model = new Schedule();
-				$model->competition_id = $this->id;
-				$model->start_time = strtotime($startTime);
-				$model->end_time = strtotime($schedules['end_time'][$key]);
-				$model->day = isset($schedules['day'][$key]) ? $schedules['day'][$key] : 1;
-				$model->stage = isset($schedules['stage'][$key]) ? $schedules['stage'][$key] : 'main';
-				$model->event = isset($schedules['event'][$key]) ? $schedules['event'][$key] : '';
-				$model->group = isset($schedules['group'][$key]) ? $schedules['group'][$key] : '';
-				$model->round = isset($schedules['round'][$key]) ? $schedules['round'][$key] : '';
-				$model->format = isset($schedules['format'][$key]) ? $schedules['format'][$key] : '';
-				$model->number = isset($schedules['number'][$key]) ? intval($schedules['number'][$key]) : 0;
-				$model->cut_off = isset($schedules['cut_off'][$key]) ? intval($schedules['cut_off'][$key]) : 0;
-				$model->time_limit = isset($schedules['time_limit'][$key]) ? intval($schedules['time_limit'][$key]) : 0;
-				$model->cumulative = isset($schedules['cumulative'][$key]) ? intval($schedules['cumulative'][$key]) : 0;
-				$model->save(false);
-			}
-		}
 		//处理地址
 		$oldLocations = $this->location;
 		foreach ($this->locations as $key=>$value) {
@@ -1754,6 +1729,37 @@ class Competition extends ActiveRecord {
 					$competitionEvent->{$key} = intval($value);
 				}
 				$competitionEvent->save();
+			}
+		}
+		return true;
+	}
+
+	public function updateSchedules() {
+		//处理赛程
+		$schedules = $this->schedules;
+		if (!empty($schedules['start_time'])) {
+			Schedule::model()->deleteAllByAttributes(array(
+				'competition_id'=>$this->id,
+			));
+			foreach ($schedules['start_time'] as $key=>$startTime) {
+				if (empty($startTime) || !isset($schedules['end_time'][$key]) || empty($schedules['end_time'][$key])) {
+					continue;
+				}
+				$model = new Schedule();
+				$model->competition_id = $this->id;
+				$model->start_time = strtotime($startTime);
+				$model->end_time = strtotime($schedules['end_time'][$key]);
+				$model->day = isset($schedules['day'][$key]) ? $schedules['day'][$key] : 1;
+				$model->stage = isset($schedules['stage'][$key]) ? $schedules['stage'][$key] : 'main';
+				$model->event = isset($schedules['event'][$key]) ? $schedules['event'][$key] : '';
+				$model->group = isset($schedules['group'][$key]) ? $schedules['group'][$key] : '';
+				$model->round = isset($schedules['round'][$key]) ? $schedules['round'][$key] : '';
+				$model->format = isset($schedules['format'][$key]) ? $schedules['format'][$key] : '';
+				$model->number = isset($schedules['number'][$key]) ? intval($schedules['number'][$key]) : 0;
+				$model->cut_off = isset($schedules['cut_off'][$key]) ? intval($schedules['cut_off'][$key]) : 0;
+				$model->time_limit = isset($schedules['time_limit'][$key]) ? intval($schedules['time_limit'][$key]) : 0;
+				$model->cumulative = isset($schedules['cumulative'][$key]) ? intval($schedules['cumulative'][$key]) : 0;
+				$model->save(false);
 			}
 		}
 		return true;

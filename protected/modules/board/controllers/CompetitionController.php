@@ -127,7 +127,6 @@ class CompetitionController extends AdminController {
 				Yii::app()->user->setFlash('success', '新加比赛成功');
 				$this->redirect(array('/board/competition/application'));
 			}
-			$model->formatSchedule();
 		}
 		$model->formatDate();
 		$this->render('edit', $this->getCompetitionData($model));
@@ -184,7 +183,6 @@ class CompetitionController extends AdminController {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
 				$this->redirect($this->getReferrer());
 			}
-			$model->formatSchedule();
 		}
 		$model->formatDate();
 		$this->render('edit', $this->getCompetitionData($model));
@@ -211,6 +209,28 @@ class CompetitionController extends AdminController {
 			}
 		}
 		$this->render('event', [
+			'model'=>$model,
+		]);
+	}
+
+	public function actionSchedule() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if (!$model->checkPermission($this->user)) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect($this->getReferrer());
+		}
+		if (isset($_POST['Competition']['schedules'])) {
+			$model->schedules = $_POST['Competition']['schedules'];
+			if ($model->updateSchedules()) {
+				Yii::app()->user->setFlash('success', '更新比赛赛程成功');
+				$this->redirect($this->getReferrer());
+			}
+		}
+		$this->render('schedule', [
 			'model'=>$model,
 		]);
 	}
