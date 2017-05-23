@@ -280,6 +280,7 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php if ($model->has_qualifying_time): ?>
               <?php echo Html::formGroup(
                 $model, 'qualifying_end_time', array(
                   'class'=>'col-lg-3 col-md-6',
@@ -292,6 +293,7 @@
                 $form->error($model, 'qualifying_end_time', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php endif; ?>
               <?php
               if ($model->isOld()) {
                 echo Html::formGroup(
