@@ -34,7 +34,6 @@ class WcaCommand extends CConsoleCommand {
 				]);
 				if ($wcaCompetition !== null) {
 					$competition->wca_competition_id = $wcaCompetition->id;
-					$competition->formatEvents();
 					$competition->formatDate();
 					$competition->save();
 				}
