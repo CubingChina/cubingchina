@@ -6,7 +6,7 @@ class CompetitionController extends AdminController {
 		return array(
 			array(
 				'allow',
-				'actions'=>array('index', 'application', 'apply', 'edit', 'editApplication', 'view', 'confirm'),
+				'actions'=>array('index', 'application', 'event', 'schedule', 'apply', 'edit', 'editApplication', 'view', 'confirm'),
 				'users'=>array('@'),
 				'roles'=>array(
 					'role'=>User::ROLE_CHECKED,
