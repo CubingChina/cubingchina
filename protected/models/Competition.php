@@ -1155,76 +1155,57 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getOperationButton() {
-		$buttons = [];
 		$isAdministrator = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
-		$groupedButtons = [];
 		switch ($this->status) {
 			case self::STATUS_HIDE:
-				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
-				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑赛程', ['/board/competition/schedule', 'id'=>$this->id]));
-				break;
 			case self::STATUS_SHOW:
-				if ($isAdministrator) {
-					$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑项目', ['/board/competition/event', 'id'=>$this->id]));
+				$buttons[] = CHtml::link(Html::fontAwesome('external-link'), $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);
+				$buttons[] = CHtml::link(Html::fontAwesome('edit'), ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
+				if ($this->status == self::STATUS_HIDE || $isAdministrator) {
+					$buttons[] = CHtml::link(Html::fontAwesome('cube'), ['/board/competition/event', 'id'=>$this->id], ['class'=>'btn btn-sm btn-white btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'项目']);
 				}
-				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('编辑赛程', ['/board/competition/schedule', 'id'=>$this->id]));
-				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('报名管理', ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]]));
-				break;
-			case self::STATUS_UNCONFIRMED:
-				$groupedButtons[] = CHtml::tag('li', [], CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id]));
-				break;
-		}
-		$editButtonGroup = CHtml::tag('div', ['class'=>'btn-group dropup'], implode('', [
-			CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-xs btn-blue btn-square']),
-			CHtml::tag('button', [
-				'type'=>'button',
-				'class'=>'btn btn-blue dropdown-toggle btn-xs',
-				'data-toggle'=>'dropdown',
-			], implode('', [
-				'<span class="caret"></span>',
-			])),
-			CHtml::tag('ul', ['class'=>'dropdown-menu'], implode('', $groupedButtons)),
-		]));
-		switch ($this->status) {
-			case self::STATUS_HIDE:
-			case self::STATUS_SHOW:
-				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-xs btn-orange btn-square', 'target'=>'_blank']);
-				$buttons[] = $editButtonGroup;
+				$buttons[] = CHtml::link(Html::fontAwesome('list-alt'), ['/board/competition/schedule', 'id'=>$this->id], ['class'=>'btn btn-sm btn-default btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'赛程']);
+				if ($this->status == self::STATUS_SHOW) {
+					$buttons[] = CHtml::link(Html::fontAwesome('users'), ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-sm btn-purple btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'报名管理']);
+					if (!$this->canRegister()) {
+						$buttons[] = CHtml::tag('button', [
+							'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->live ? 'red' : 'green'),
+							'title'=>'开启/关闭成绩直播',
+							'data-id'=>$this->id,
+							'data-toggle'=>'tooltip',
+							'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
+							'data-attribute'=>'live',
+							'data-value'=>$this->live,
+							'data-text'=>json_encode([Html::fontAwesome('play'), Html::fontAwesome('stop')]),
+							'data-name'=>$this->name_zh,
+						], !$this->live ? Html::fontAwesome('play') : Html::fontAwesome('stop'));
+					}
+				}
 				if ($isAdministrator) {
 					$buttons[] = CHtml::tag('button', [
-						'class'=>'btn btn-xs btn-square toggle btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
+						'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
+						'title'=>'公示/隐藏',
 						'data-id'=>$this->id,
+						'data-toggle'=>'tooltip',
 						'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
 						'data-attribute'=>'status',
 						'data-value'=>$this->status,
-						'data-text'=>'["公示","隐藏"]',
+						'data-text'=>json_encode([Html::fontAwesome('eye'), Html::fontAwesome('eye-slash')]),
 						'data-name'=>$this->name_zh,
-					], $this->status == self::STATUS_HIDE ? '公示' : '隐藏');
+					], $this->status == self::STATUS_HIDE ? Html::fontAwesome('eye') : Html::fontAwesome('eye-slash'));
 				}
 				break;
 			case self::STATUS_UNCONFIRMED:
 			case self::STATUS_CONFIRMED:
 			case self::STATUS_REJECTED:
 				if ($this->application !== null) {
-					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-xs btn-orange btn-square']);
+					$buttons[] = CHtml::link('查看', ['/board/competition/view', 'id'=>$this->id], ['class'=>'btn btn-orange btn-square btn-sm']);
 				}
 				if ($this->status == self::STATUS_UNCONFIRMED) {
-					$buttons[] = $editButtonGroup;
+					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-blue btn-square btn-sm']);
+					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-purple btn-square btn-sm']);
 				}
 				break;
-		}
-		if ($this->status == self::STATUS_SHOW) {
-			if (!$this->canRegister()) {
-				$buttons[] = CHtml::tag('button', [
-					'class'=>'btn btn-xs btn-square toggle btn-' . ($this->live ? 'red' : 'green'),
-					'data-id'=>$this->id,
-					'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-					'data-attribute'=>'live',
-					'data-value'=>$this->live,
-					'data-text'=>'["开启直播","关闭直播"]',
-					'data-name'=>$this->name_zh,
-				], $this->live ? '关闭直播' : '开启直播');
-			}
 		}
 		return implode(' ', $buttons);
 	}
