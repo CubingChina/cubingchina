@@ -1203,6 +1203,7 @@ class Competition extends ActiveRecord {
 				}
 				if ($this->status == self::STATUS_UNCONFIRMED) {
 					$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-blue btn-square btn-sm']);
+					$buttons[] = CHtml::link('项目', ['/board/competition/event', 'id'=>$this->id], ['class'=>'btn btn-sm btn-white btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'项目']);
 					$buttons[] = CHtml::link('申请资料', ['/board/competition/editApplication', 'id'=>$this->id], ['class'=>'btn btn-purple btn-square btn-sm']);
 				}
 				break;
