@@ -47,3 +47,14 @@
     </div>
   </div>
 </div>
+<?php
+Yii::app()->clientScript->registerPackage('datetimepicker');
+Yii::app()->clientScript->registerScript('competition',
+<<<EOT
+  $('.datetime-picker').on('mousedown touchstart', function() {
+    $(this).datetimepicker({
+      autoclose: true
+    });
+  });
+EOT
+);
