@@ -1719,6 +1719,10 @@ class Competition extends ActiveRecord {
 	public function updateSchedules() {
 		//处理赛程
 		$schedules = $this->schedules;
+		if (!$this->checkSchedules()) {
+			$this->formatSchedule();
+			return false;
+		}
 		if (!empty($schedules['start_time'])) {
 			Schedule::model()->deleteAllByAttributes(array(
 				'competition_id'=>$this->id,
@@ -1980,9 +1984,11 @@ class Competition extends ActiveRecord {
 						return false;
 					}
 				} else {
-					if ($format == '') {
-						$this->addError($errorKey, '请设置赛制！');
+					if ($round == '') {
+						$this->addError($errorKey, '请选择轮次！');
 						return false;
+					}
+					if ($format == '') {
 					}
 					if (in_array($round, $combinedRoundTypes)) {
 						if ($format != '2/a' && $format != '1/m') {
@@ -2044,7 +2050,6 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			['schedules', 'checkSchedules'],
 			['end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
 		];
