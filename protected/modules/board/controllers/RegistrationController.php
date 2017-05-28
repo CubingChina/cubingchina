@@ -65,7 +65,6 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
-		$model->formatEvents();
 		if (isset($_POST['event'])) {
 			$this->export($model, $this->aPost('event'), $this->iPost('all'), $this->iPost('xlsx'), $this->iPost('extra'), $this->sPost('order'));
 		}
@@ -87,7 +86,6 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
-		$model->formatEvents();
 		if (Yii::app()->request->getRequestType() === 'POST') {
 			$this->exportLiveData($model, $this->iPost('xlsx'));
 		}
