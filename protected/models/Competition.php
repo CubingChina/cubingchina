@@ -2012,6 +2012,7 @@ class Competition extends ActiveRecord {
 				}
 			}
 		}
+		return true;
 	}
 
 	/**

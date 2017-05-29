@@ -17,8 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Blue Stage' => '藍色賽台',
   'Cumulative' => '',
+  'Green Stage' => '綠色賽台',
   'ID' => '',
+  'Orange Stage' => '橙色賽台',
+  'Red Stage' => '紅色賽台',
+  'Yellow Stage' => '黃色賽台',
   'Number' => '',
   'Classroom' => '教室',
   'Competition' => '比賽',
