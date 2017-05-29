@@ -17,9 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  ' OR ' => '或',
   'Fee' => '',
-  'Name in Local Characters' => '中文名',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -89,6 +87,7 @@ return array (
   ' (3rd attempt)' => '（第三次）',
   ' (paid)' => '（已付）',
   ' ({times}th attempt)' => '（第{times}次）',
+  ' OR ' => '或',
   ' and ' => '和',
   ' seconds' => '秒',
   ' the WCA delegate' => 'WCA',
@@ -191,6 +190,7 @@ return array (
   'My Registration' => '我的报名',
   'My Schedule' => '我的赛程',
   'Name' => '英文名',
+  'Name in Local Characters' => '中文名',
   'Name in Local Characters (for Chinese, Japanese, Korean, etc)' => '中文名',
   'Names (One name per line)' => '名字（一行一个）',
   'No' => '没有',
