@@ -639,12 +639,12 @@ class Registration extends ActiveRecord {
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
-		if ($this->competition_id > 0 && $this->competition->fill_passport) {
-			$rules[] = array('passport_name', 'safe', 'on'=>'register');
-			$rules[] = array('passport_type', 'checkPassportType', 'on'=>'register');
-			$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
-			$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
-		}
+		// if ($this->competition_id > 0 && $this->competition->fill_passport) {
+		// 	$rules[] = array('passport_name', 'safe', 'on'=>'register');
+		// 	$rules[] = array('passport_type', 'checkPassportType', 'on'=>'register');
+		// 	$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
+		// 	$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
+		// }
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
 			$rules[] = array('avatar_type', 'required', 'on'=>'register');

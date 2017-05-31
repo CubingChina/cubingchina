@@ -19,11 +19,12 @@
 return array (
   'ID' => '',
   'No.' => '',
+  'Please fill your ID number {here} before you register.' => '請先點擊{here}填寫你的證件號碼以便報名。',
   'User' => '',
+  '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">備注</b>：組委會收集選手身份證件信息用以選手比賽簽到身份核實和意外保險的購買。<br>組委會不承擔由於選手錯誤填寫證件號碼造成的<b class="text-danger">無法簽到</b>和<b class="text-danger">投保失敗</b>的任何後果。',
   'Date' => '報名時間',
   ' CNY' => '元',
   '<b class="text-danger">Note</b>: A photo is needed to finish your registration.' => '<b class="text-danger">注意</b>：需要提交照片以完成報名。',
-  '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">備注</b>：組委會收集選手身份證件信息用以選手比賽簽到身份核實和意外保險的購買。<br>組委會不承擔由於選手錯誤填寫證件號碼造成的<b class="text-danger">無法簽到</b>和<b class="text-danger">投保失敗</b>的任何後果。',
   'Additional Comments' => '備注',
   'Competition' => '比賽',
   'Events' => '項目',
