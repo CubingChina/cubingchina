@@ -30,10 +30,6 @@ class Registration extends ActiveRecord {
 	const UNPAID = 0;
 	const PAID = 1;
 
-	const PASSPORT_TYPE_ID = 1;
-	const PASSPORT_TYPE_PASSPORT = 2;
-	const PASSPORT_TYPE_OTHER = 3;
-
 	const AVATAR_TYPE_SUBMMITED = 0;
 	const AVATAR_TYPE_NOW = 1;
 
@@ -72,14 +68,6 @@ class Registration extends ActiveRecord {
 			default:
 				return array();
 		}
-	}
-
-	public static function getPassportTypes() {
-		return array(
-			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card (Chinese Citizen)'),
-			self::PASSPORT_TYPE_PASSPORT=>Yii::t('common', 'Passport'),
-			self::PASSPORT_TYPE_OTHER=>Yii::t('common', 'Other'),
-		);
 	}
 
 	public static function getAllStatus() {
@@ -173,47 +161,53 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function checkEntourageName() {
+		if ($this->has_entourage && empty($this->entourage_name)) {
+			$this->addError('entourage_name', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('entourage_name'),
+			)));
+		}
+	}
+
 	public function checkPassportType() {
-		if ($this->passport_type == self::PASSPORT_TYPE_OTHER && empty($this->passport_name)) {
-			$this->addError('passport_name', Yii::t('yii','{attribute} cannot be blank.', array(
-				'{attribute}'=>$this->getAttributeLabel('passport_name'),
+		if (!$this->has_entourage) {
+			return;
+		}
+		if ($this->entourage_passport_type == User::PASSPORT_TYPE_OTHER && empty($this->entourage_passport_name)) {
+			$this->addError('entourage_passport_name', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('entourage_passport_name'),
 			)));
 		}
 	}
 
 	public function checkPassportNumber() {
-		switch ($this->passport_type) {
-			case self::PASSPORT_TYPE_ID:
-				if (!preg_match('|^\d{6}(\d{8})(\d{3})[\dX]$|i', $this->passport_number, $matches)) {
-					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+		if (!$this->has_entourage) {
+			return;
+		}
+		switch ($this->entourage_passport_type) {
+			case User::PASSPORT_TYPE_ID:
+				if (!preg_match('|^\d{6}(\d{8})(\d{3})[\dX]$|i', $this->entourage_passport_number, $matches)) {
+					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
-				if (date('Ymd', $this->user->birthday) != $matches[1]) {
-					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
-					return false;
-				}
-				// if ($matches[2] % 2 != 1 - $this->user->gender) {
-				// 	$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
-				// 	return false;
-				// }
 				$sum = 0;
 				for ($i = 0; $i < 17; $i++) {
-					$sum += $this->passport_number{$i} * $this->coefficients[$i];
+					$sum += $this->entourage_passport_number{$i} * $this->coefficients[$i];
 				}
 				$mod = $sum % 11;
-				if (strtoupper($this->passport_number{17}) != $this->codes[$mod]) {
-					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+				if (strtoupper($this->entourage_passport_number{17}) != $this->codes[$mod]) {
+					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
 				break;
-			case self::PASSPORT_TYPE_PASSPORT:
-				if (!preg_match('|^\w+$|i', $this->passport_number, $matches)) {
-					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
+			case User::PASSPORT_TYPE_PASSPORT:
+				if (!preg_match('|^\w+$|i', $this->entourage_passport_number, $matches)) {
+					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
 				break;
 		}
-		if (!empty($this->repeatPassportNumber) && $this->passport_number != $this->repeatPassportNumber) {
+		if (!empty($this->repeatPassportNumber) && $this->entourage_passport_number != $this->repeatPassportNumber) {
 			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
 		}
 	}
@@ -280,7 +274,8 @@ class Registration extends ActiveRecord {
 				$fees[] = $competition->getEventFee($event);
 			}
 		}
-		return $competition->getEventFee('entry') + array_sum($fees);
+		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
+		return $competition->getEventFee('entry') + $entourageFee + array_sum($fees);
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
@@ -631,20 +626,21 @@ class Registration extends ActiveRecord {
 	public function rules() {
 		$rules = array(
 			array('competition_id, user_id, events, date', 'required'),
-			array('location_id, total_fee, passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
-			array('competition_id, user_id, date, passport_number', 'length', 'max'=>20),
+			array('location_id, total_fee, entourage_passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
+			array('competition_id, user_id, date, entourage_passport_number', 'length', 'max'=>20),
 			array('events', 'length', 'max'=>512),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
-		// if ($this->competition_id > 0 && $this->competition->fill_passport) {
-		// 	$rules[] = array('passport_name', 'safe', 'on'=>'register');
-		// 	$rules[] = array('passport_type', 'checkPassportType', 'on'=>'register');
-		// 	$rules[] = array('passport_number', 'checkPassportNumber', 'on'=>'register');
-		// 	$rules[] = array('passport_type, passport_number, repeatPassportNumber', 'required', 'on'=>'register');
-		// }
+		if ($this->competition_id > 0 && $this->competition->entourage_limit) {
+			$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
+			$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');
+			$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
+			$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
+			$rules[] = array('has_entourage, entourage_name, entourage_passport_type, entourage_passport_number, repeatPassportNumber', 'required', 'on'=>'register');
+		}
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
 			$rules[] = array('avatar_type', 'required', 'on'=>'register');
@@ -686,9 +682,11 @@ class Registration extends ActiveRecord {
 			'comments' => Yii::t('Registration', 'Additional Comments'),
 			'total_fee' => Yii::t('Registration', 'Total Fee'),
 			'ip' => 'IP',
-			'passport_type' => Yii::t('Registration', 'Type of Identity'),
-			'passport_name' => Yii::t('Registration', 'Name of Identity'),
-			'passport_number' => Yii::t('Registration', 'Identity Number'),
+			'has_entourage' => Yii::t('Registration', 'Entourage'),
+			'entourage_name' => Yii::t('Registration', 'Name'),
+			'entourage_passport_type' => Yii::t('Registration', 'Type of Identity'),
+			'entourage_passport_name' => Yii::t('Registration', 'Name of Identity'),
+			'entourage_passport_number' => Yii::t('Registration', 'Identity Number'),
 			'repeatPassportNumber' => Yii::t('Registration', 'Repeat Identity Number'),
 			'date' => Yii::t('Registration', 'Registration Date'),
 			'status' => Yii::t('Registration', 'Status'),
