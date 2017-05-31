@@ -42,6 +42,10 @@ class User extends ActiveRecord {
 	const STATUS_BANNED = 1;
 	const STATUS_DELETED = 2;
 
+	const PASSPORT_TYPE_ID = 1;
+	const PASSPORT_TYPE_PASSPORT = 2;
+	const PASSPORT_TYPE_OTHER = 3;
+
 	private $_hasCerts;
 	private $_preferredEvents;
 
@@ -178,6 +182,14 @@ class User extends ActiveRecord {
 		);
 	}
 
+	public static function getPassportTypes() {
+		return array(
+			self::PASSPORT_TYPE_ID=>Yii::t('common', 'ID Card (Chinese Citizen)'),
+			self::PASSPORT_TYPE_PASSPORT=>Yii::t('common', 'Passport'),
+			self::PASSPORT_TYPE_OTHER=>Yii::t('common', 'Other'),
+		);
+	}
+
 	public static function getHasAvatars() {
 		return array(
 			'>0'=>'有',
@@ -188,6 +200,11 @@ class User extends ActiveRecord {
 	public function getGenderText() {
 		$genders = self::getGenders();
 		return isset($genders[$this->gender]) ? $genders[$this->gender] : Yii::t('common', 'Unknown');
+	}
+
+	public function getPassportTypeText() {
+		$types = self::getPassportTypes();
+		return $types[$this->passport_type] ?? $this->passport_type;
 	}
 
 	public function isUnchecked() {
