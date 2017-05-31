@@ -17,14 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Blue Stage' => '蓝色赛台',
   'Cumulative' => '',
-  'Green Stage' => '绿色赛台',
   'ID' => '',
-  'Orange Stage' => '橙色赛台',
-  'Red Stage' => '红色赛台',
-  'Yellow Stage' => '黄色赛台',
   'Number' => '',
+  'Blue Stage' => '蓝色赛台',
   'Classroom' => '教室',
   'Competition' => '比赛',
   'Competitors' => '人数',
@@ -33,12 +29,16 @@ return array (
   'End Time' => '结束时间',
   'Event' => '项目',
   'Format' => '赛制',
+  'Green Stage' => '绿色赛台',
   'Group' => '分组',
   'Long-time Event Stage' => '长项目区',
   'Main Stage' => '主赛台',
+  'Orange Stage' => '橙色赛台',
+  'Red Stage' => '红色赛台',
   'Round' => '轮次',
   'Side Stage' => '分赛台',
   'Stage' => '赛台',
   'Start Time' => '开始时间',
   'Time Limit' => '还原时限',
+  'Yellow Stage' => '黄色赛台',
 );

@@ -25,47 +25,13 @@
       <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
       <p id="totalFee"></p>
     </div>
-    <?php if ($competition->fill_passport): ?>
+    <?php if ($competition->fill_passport && $this->user->passport_type == User::NO): ?>
     <div class="bg-info important-border">
-      <p>
-        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.'); ?>
-      </p>
-      <?php echo Html::formGroup(
-        $model, 'passport_type', array(),
-        $form->labelEx($model, 'passport_type'),
-        $form->dropDownList($model, 'passport_type', Registration::getPassportTypes(), array(
-          'prompt'=>'',
-          'class'=>'form-control',
-        )),
-        $form->error($model, 'passport_type', array('class'=>'text-danger'))
-      ); ?>
-      <?php echo Html::formGroup(
-        $model, 'passport_name', array(
-          'class'=>'hide',
-        ),
-        $form->labelEx($model, 'passport_name'),
-        Html::activeTextField($model, 'passport_name', array(
-          'class'=>'form-control',
-        )),
-        $form->error($model, 'passport_name', array('class'=>'text-danger'))
-      ); ?>
-      <?php echo Html::formGroup(
-        $model, 'passport_number', array(),
-        $form->labelEx($model, 'passport_number'),
-        Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在粗饼网注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系admin@cubingchina.com。</div>' : '',
-        Html::activeTextField($model, 'passport_number', array(
-          'class'=>'form-control',
-        )),
-        $form->error($model, 'passport_number', array('class'=>'text-danger'))
-      ); ?>
-      <?php echo Html::formGroup(
-        $model, 'repeatPassportNumber', array(),
-        $form->labelEx($model, 'repeatPassportNumber'),
-        Html::activeTextField($model, 'repeatPassportNumber', array(
-          'class'=>'form-control',
-        )),
-        $form->error($model, 'repeatPassportNumber', array('class'=>'text-danger'))
-      ); ?>
+      <b class="text-danger">
+        <?php echo Yii::t('Registration', 'Please fill your ID number {here} before you register.', [
+          '{here}'=>CHtml::link(Yii::t('common', 'here'), ['/user/edit']),
+        ]); ?>
+      </b>
     </div>
     <?php endif; ?>
     <?php if ($competition->require_avatar): ?>
@@ -109,7 +75,12 @@
         ]); ?>
       </label>
     </div>
-    <button type="submit" class="btn btn-theme" id="submit-button"><?php echo Yii::t('common', 'Submit'); ?></button>
+    <?php echo CHtml::tag('button', [
+      'type'=>'submit',
+      'class'=>'btn btn-theme',
+      'id'=>'submit-button',
+      'disabled'=>$competition->fill_passport && $this->user->passport_type == User::NO,
+    ], Yii::t('common', 'Submit')); ?>
   <?php $this->endWidget(); ?>
 </div>
 <div class="modal fade" tabindex="-1" role="dialog" id="tips-modal">
@@ -155,36 +126,6 @@ Yii::app()->clientScript->registerScript('registration',
     }
   });
   $('.registration-events').trigger('change');
-EOT
-  );
-}
-if ($competition->fill_passport) {
-  Yii::app()->clientScript->registerScript('registration-passport',
-<<<EOT
-  $(document).on('change', '#Registration_passport_type', function() {
-    changePassportType(true);
-  }).on('contextmenu', '#Registration_passport_number, #Registration_repeatPassportNumber', function(e) {
-    e.preventDefault();
-    return false;
-  }).on('keydown', '#Registration_passport_number, #Registration_repeatPassportNumber', function(e) {
-    if (e.which == 86 && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      return false;
-    }
-  });
-  $('label[for="Registration_passport_name"]').append('<span class="required">*</span>');
-  changePassportType();
-  function changePassportType(focus) {
-    var type = $('#Registration_passport_type').val();
-    if (type == 3) {
-      $('#Registration_passport_name').parent().removeClass('hide');
-      if (focus) {
-        $('#Registration_passport_name').focus();
-      }
-    } else {
-      $('#Registration_passport_name').parent().addClass('hide');
-    }
-  }
 EOT
   );
 }
