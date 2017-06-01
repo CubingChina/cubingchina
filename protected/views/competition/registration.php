@@ -85,7 +85,7 @@
           Html::activeTextField($model, 'entourage_passport_number', array(
             'class'=>'form-control',
           )),
-          $form->error($model, 'passport_number', array('class'=>'text-danger'))
+          $form->error($model, 'entourage_passport_number', array('class'=>'text-danger'))
         ); ?>
         <?php echo Html::formGroup(
           $model, 'repeatPassportNumber', array(),
