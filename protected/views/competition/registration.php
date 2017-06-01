@@ -34,6 +34,70 @@
       </b>
     </div>
     <?php endif; ?>
+    <?php if ($competition->entourage_limit): ?>
+    <div class="bg-info important-border">
+      <?php echo Html::formGroup(
+        $model, 'has_entourage', array(),
+        $form->labelEx($model, 'has_entourage'),
+        $form->dropDownList($model, 'has_entourage', Registration::getYesOrNo(), array(
+          'prompt'=>'',
+          'class'=>'form-control',
+        )),
+        Yii::t('Registration', 'Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.', [
+          '{fee}'=>$competition->entourage_fee,
+        ])
+      );?>
+      <div class="entourage-info hide">
+        <p>
+          <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.'); ?>
+        </p>
+        <?php echo Html::formGroup(
+          $model, 'entourage_name', array(
+          ),
+          $form->labelEx($model, 'entourage_name'),
+          Html::activeTextField($model, 'entourage_name', array(
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'entourage_name', array('class'=>'text-danger'))
+        ); ?>
+        <?php echo Html::formGroup(
+          $model, 'entourage_passport_type', array(),
+          $form->labelEx($model, 'entourage_passport_type'),
+          $form->dropDownList($model, 'entourage_passport_type', User::getPassportTypes(), array(
+            'prompt'=>'',
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'entourage_passport_type', array('class'=>'text-danger'))
+        ); ?>
+        <?php echo Html::formGroup(
+          $model, 'entourage_passport_name', array(
+            'class'=>'hide',
+          ),
+          $form->labelEx($model, 'entourage_passport_name'),
+          Html::activeTextField($model, 'entourage_passport_name', array(
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'entourage_passport_name', array('class'=>'text-danger'))
+        ); ?>
+        <?php echo Html::formGroup(
+          $model, 'entourage_passport_number', array(),
+          $form->labelEx($model, 'entourage_passport_number'),
+          Html::activeTextField($model, 'entourage_passport_number', array(
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'passport_number', array('class'=>'text-danger'))
+        ); ?>
+        <?php echo Html::formGroup(
+          $model, 'repeatPassportNumber', array(),
+          $form->labelEx($model, 'repeatPassportNumber'),
+          Html::activeTextField($model, 'repeatPassportNumber', array(
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'repeatPassportNumber', array('class'=>'text-danger'))
+        ); ?>
+      </div>
+    </div>
+    <?php endif; ?>
     <?php if ($competition->require_avatar): ?>
     <div class="bg-info important-border">
       <p>
@@ -110,12 +174,22 @@ EOT
 
 if (!$competition->multi_countries) {
   $basicFee = $competition->getEventFee('entry');
+  $entourageFee = $competition->entourage_fee;
 Yii::app()->clientScript->registerScript('registration',
 <<<EOT
   var basicFee = {$basicFee};
+  var entourageFee = {$entourageFee};
   var fee = $('#fee');
-  $(document).on('change', '.registration-events', function() {
+  $(document).on('change', '.registration-events', updateFee)
+  .on('change', '#Registration_has_entourage', function() {
+    $('.entourage-info')[this.value == 1 ? 'removeClass' : 'addClass']('hide');
+    updateFee();
+  });
+  function updateFee() {
     var totalFee = basicFee;
+    if ($('#Registration_has_entourage').val() == 1) {
+      totalFee += entourageFee;
+    }
     $('.registration-events:checked').each(function() {
       totalFee += $(this).data('fee');
     });
@@ -124,8 +198,9 @@ Yii::app()->clientScript->registerScript('registration',
     } else {
       fee.addClass('hide');
     }
-  });
+  }
   $('.registration-events').trigger('change');
+  $('#Registration_has_entourage').trigger('change');
 EOT
   );
 }
