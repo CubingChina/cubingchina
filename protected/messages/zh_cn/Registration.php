@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受参赛选手与一名注册观众进场。您需要为该陪同人员缴纳{fee}元费用，此费用组委会将用来购买安全保险以及制作入场凭证等花销。',
+  'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受参赛选手与一名注册观众进场。您需要为该陪同人员缴纳{fee}元费用，此费用组委会将用来购买安全保险以及制作入场凭证等花销。',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -27,7 +27,7 @@ return array (
   '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">备注</b>：组委会收集的陪同人员身份证件信息用于比赛入场身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法入场</b>和<b class="text-danger">投保失败</b>的任何后果。',
   'Additional Comments' => '备注',
   'Competition' => '比赛',
-  'Entourage' => 'Do you have any guests joining you at the competition?',
+  'Do you have any guests joining you at the competition?' => '是否有陪同人员一同前往观看比赛？',
   'Events' => '项目',
   'Fee' => '报名费',
   'Fee (CNY)' => '报名费(元)',

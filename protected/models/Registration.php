@@ -682,7 +682,7 @@ class Registration extends ActiveRecord {
 			'comments' => Yii::t('Registration', 'Additional Comments'),
 			'total_fee' => Yii::t('Registration', 'Total Fee'),
 			'ip' => 'IP',
-			'has_entourage' => Yii::t('Registration', 'Entourage'),
+			'has_entourage' => Yii::t('Registration', 'Do you have any guests joining you at the competition?'),
 			'entourage_name' => Yii::t('Registration', 'Name'),
 			'entourage_passport_type' => Yii::t('Registration', 'Type of Identity'),
 			'entourage_passport_name' => Yii::t('Registration', 'Name of Identity'),

@@ -43,7 +43,7 @@
           'prompt'=>'',
           'class'=>'form-control',
         )),
-        Yii::t('Registration', 'Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.', [
+        Yii::t('Registration', 'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.', [
           '{fee}'=>$competition->entourage_fee,
         ])
       );?>
