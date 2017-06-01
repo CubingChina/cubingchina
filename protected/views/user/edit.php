@@ -21,6 +21,44 @@ $this->renderPartial('side', $_data_);
     $form->error($model, 'wcaid', array('class'=>'text-danger'))
   );?>
   <?php endif; ?>
+  <?php if ($user->passport_type == User::NO): ?>
+  <?php echo Html::formGroup(
+    $model, 'passport_type', array(),
+    $form->labelEx($model, 'passport_type'),
+    $form->dropDownList($model, 'passport_type', User::getPassportTypes(), array(
+      'prompt'=>'',
+      'class'=>'form-control',
+    )),
+    $form->error($model, 'passport_type', array('class'=>'text-danger'))
+  ); ?>
+  <?php echo Html::formGroup(
+    $model, 'passport_name', array(
+      'class'=>'hide',
+    ),
+    $form->labelEx($model, 'passport_name'),
+    Html::activeTextField($model, 'passport_name', array(
+      'class'=>'form-control',
+    )),
+    $form->error($model, 'passport_name', array('class'=>'text-danger'))
+  ); ?>
+  <?php echo Html::formGroup(
+    $model, 'passport_number', array(),
+    $form->labelEx($model, 'passport_number'),
+    Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在粗饼网注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系admin@cubingchina.com。</div>' : '',
+    Html::activeTextField($model, 'passport_number', array(
+      'class'=>'form-control',
+    )),
+    $form->error($model, 'passport_number', array('class'=>'text-danger'))
+  ); ?>
+  <?php echo Html::formGroup(
+    $model, 'repeatPassportNumber', array(),
+    $form->labelEx($model, 'repeatPassportNumber'),
+    Html::activeTextField($model, 'repeatPassportNumber', array(
+      'class'=>'form-control',
+    )),
+    $form->error($model, 'repeatPassportNumber', array('class'=>'text-danger'))
+  ); ?>
+  <?php endif; ?>
   <?php if ($user->country_id == 1): ?>
   <?php echo Html::formGroup(
     $model, 'province_id', array(
@@ -69,7 +107,30 @@ Yii::app()->clientScript->registerScript('edit',
       $.each(cities, function(id, name) {
         $('<option>').val(id).text(name).appendTo(city);
       });
+    }).on('change', '#EditProfileForm_passport_type', function() {
+      changePassportType(true);
+    }).on('contextmenu', '#EditProfileForm_passport_number, #EditProfileForm_repeatPassportNumber', function(e) {
+      e.preventDefault();
+      return false;
+    }).on('keydown', '#EditProfileForm_passport_number, #EditProfileForm_repeatPassportNumber', function(e) {
+      if (e.which == 86 && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        return false;
+      }
     });
+  $('label[for="EditProfileForm_passport_name"]').append('<span class="required">*</span>');
+  changePassportType();
+  function changePassportType(focus) {
+    var type = $('#EditProfileForm_passport_type').val();
+    if (type == 3) {
+      $('#EditProfileForm_passport_name').parent().removeClass('hide');
+      if (focus) {
+        $('#EditProfileForm_passport_name').focus();
+      }
+    } else {
+      $('#EditProfileForm_passport_name').parent().addClass('hide');
+    }
+  }
   if ($('label[for="EditProfileForm_province_id"]').length > 0) {
     $('label[for="EditProfileForm_mobile"]').append('<span class="required">*</span>');
     $('label[for="EditProfileForm_province_id"]').append('<span class="required">*</span>');

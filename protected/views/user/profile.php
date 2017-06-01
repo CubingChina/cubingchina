@@ -46,6 +46,14 @@
     <dt><?php echo Yii::t('common', 'City'); ?></dt>
     <dd><?php echo $user->getRegionName($user->city); ?></dd>
     <?php endif; ?>
+    <dt><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
+    <dd><?php echo $user->getPassportTypeText(); ?></dd>
+    <?php if ($user->passport_type == User::PASSPORT_TYPE_OTHER): ?>
+    <dt><?php echo Yii::t('Registration', 'Name of Identity'); ?></dt>
+    <dd><?php echo $user->passport_name; ?></dd>
+    <?php endif; ?>
+    <dt><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
+    <dd><?php echo $user->passport_number; ?></dd>
     <dt><?php echo Yii::t('common', 'Role'); ?></dt>
     <dd>
       <?php echo $user->getRoleName(); ?>
