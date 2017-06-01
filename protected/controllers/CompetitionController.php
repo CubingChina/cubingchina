@@ -222,33 +222,37 @@ class CompetitionController extends Controller {
 			$model->location_id = null;
 		}
 		if (isset($_POST['Registration'])) {
-			$model->attributes = $_POST['Registration'];
-			if (!isset($_POST['Registration']['events'])) {
-				$model->events = null;
-			}
-			$model->user_id = $this->user->id;
-			$model->total_fee = $model->getTotalFee(true);
-			$model->ip = Yii::app()->request->getUserHostAddress();
-			$model->date = time();
-			$model->status = Registration::STATUS_WAITING;
-			if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
-				$model->status = Registration::STATUS_ACCEPTED;
-			}
-			// for FMC Asia
-			if ($competition->multi_countries && $model->location->country_id != 1) {
-				$model->status = Registration::STATUS_ACCEPTED;
-			}
-			if ($model->save()) {
-				Yii::app()->mailer->sendRegistrationNotice($model);
-				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
-				$model->formatEvents();
-				$this->render('registrationDone', array(
-					'user'=>$user,
-					'accepted'=>$model->isAccepted(),
-					'competition'=>$competition,
-					'registration'=>$model,
-				));
-				Yii::app()->end();
+			if ($competition->fill_passport && $this->user->passport_type == User::NO) {
+
+			} else {
+				$model->attributes = $_POST['Registration'];
+				if (!isset($_POST['Registration']['events'])) {
+					$model->events = null;
+				}
+				$model->user_id = $this->user->id;
+				$model->total_fee = $model->getTotalFee(true);
+				$model->ip = Yii::app()->request->getUserHostAddress();
+				$model->date = time();
+				$model->status = Registration::STATUS_WAITING;
+				if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
+					$model->status = Registration::STATUS_ACCEPTED;
+				}
+				// for FMC Asia
+				if ($competition->multi_countries && $model->location->country_id != 1) {
+					$model->status = Registration::STATUS_ACCEPTED;
+				}
+				if ($model->save()) {
+					Yii::app()->mailer->sendRegistrationNotice($model);
+					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
+					$model->formatEvents();
+					$this->render('registrationDone', array(
+						'user'=>$user,
+						'accepted'=>$model->isAccepted(),
+						'competition'=>$competition,
+						'registration'=>$model,
+					));
+					Yii::app()->end();
+				}
 			}
 		}
 		$model->formatEvents();
