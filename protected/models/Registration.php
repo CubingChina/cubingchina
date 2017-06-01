@@ -167,6 +167,16 @@ class Registration extends ActiveRecord {
 				'{attribute}'=>$this->getAttributeLabel('entourage_name'),
 			)));
 		}
+		if ($this->has_entourage && empty($this->entourage_passport_type)) {
+			$this->addError('entourage_passport_type', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('entourage_passport_type'),
+			)));
+		}
+		if ($this->has_entourage && empty($this->entourage_passport_number)) {
+			$this->addError('entourage_passport_number', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('entourage_passport_number'),
+			)));
+		}
 	}
 
 	public function checkPassportType() {
@@ -639,7 +649,7 @@ class Registration extends ActiveRecord {
 			$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');
 			$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
 			$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
-			$rules[] = array('has_entourage, entourage_name, entourage_passport_type, entourage_passport_number, repeatPassportNumber', 'required', 'on'=>'register');
+			$rules[] = array('has_entourage', 'required', 'on'=>'register');
 		}
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
