@@ -213,21 +213,29 @@ class CompetitionController extends Controller {
 			));
 			Yii::app()->end();
 		}
+		$unmetEvents = [];
+		if ($competition->has_qualifying_time) {
+			$unmetEvents = $competition->getUserUnmetEvents($this->user);
+		}
 		$model = new Registration('register');
 		$model->unsetAttributes();
 		$model->competition = $competition;
 		$model->competition_id = $competition->id;
 		$model->events = array_values(PreferredEvent::getUserEvents($user));
+		if ($competition->shouldDisableUnmetEvents) {
+			$model->events = array_diff($model->events, array_keys($unmetEvents));
+		}
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}
 		if (isset($_POST['Registration'])) {
-			if ($competition->fill_passport && $this->user->passport_type == User::NO) {
-
-			} else {
+			if (!$competition->fill_passport || $this->user->passport_type != User::NO) {
 				$model->attributes = $_POST['Registration'];
 				if (!isset($_POST['Registration']['events'])) {
 					$model->events = null;
+				}
+				if ($competition->shouldDisableUnmetEvents) {
+					$model->events = array_diff($model->events, array_keys($unmetEvents));
 				}
 				$model->user_id = $this->user->id;
 				$model->total_fee = $model->getTotalFee(true);
@@ -256,10 +264,6 @@ class CompetitionController extends Controller {
 			}
 		}
 		$model->formatEvents();
-		$unmetEvents = [];
-		if ($competition->has_qualifying_time) {
-			$unmetEvents = $competition->getUserUnmetEvents($this->user);
-		}
 		$this->render('registration', array(
 			'competition'=>$competition,
 			'model'=>$model,

@@ -473,6 +473,10 @@ class Competition extends ActiveRecord {
 		return $this->_events = $events;
 	}
 
+	public function getShouldDisableUnmetEvents() {
+		return $this->has_qualifying_time && time() >= $this->qualifying_end_time;
+	}
+
 	public function getUserUnmetEvents($user) {
 		if ($user->wcaid == '') {
 			return [];
@@ -1765,11 +1769,8 @@ class Competition extends ActiveRecord {
 
 	public function checkQualifyingEndTime() {
 		if ($this->has_qualifying_time) {
-			if ($this->reg_end > $this->qualifying_end_time) {
-				$this->addError('qualifying_end_time', '资格线截止时间必须晚于报名结束时间');
-			}
-			if ($this->qualifying_end_time > $this->date - 5 * 86400) {
-				$this->addError('qualifying_end_time', '资格线截止时间必须早于比赛开始前至少五天');
+			if ($this->qualifying_end_time > $this->date - 3 * 86400) {
+				$this->addError('qualifying_end_time', '资格线截止时间必须早于比赛开始前至少三天');
 			}
 		}
 	}

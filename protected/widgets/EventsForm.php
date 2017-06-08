@@ -4,12 +4,14 @@ class EventsForm extends Widget {
 	public $model;
 	public $competition;
 	public $name = 'events';
-	public $events = array();
+	public $events = [];
+	public $unmetEvents = [];
+	public $shouldDisableUnmetEvents = false;
 	public $type = 'checkbox';
-	public $htmlOptions = array();
-	public $labelOptions = array();
-	public $numberOptions = array();
-	public $feeOptions = array();
+	public $htmlOptions = [];
+	public $labelOptions = [];
+	public $numberOptions = [];
+	public $feeOptions = [];
 	public function run() {
 		$events = $this->events;
 		foreach ($events as $key=>$value) {
@@ -26,15 +28,17 @@ class EventsForm extends Widget {
 		if ($this->type == 'checkbox') {
 			echo CHtml::openTag('div', $htmlOptions);
 			foreach ($events as $event=>$value) {
-				echo CHtml::openTag('div', array(
-					'class'=>'checkbox checkbox-inline',
-				));
-				echo CHtml::openTag('label');
+				$disabled = $this->shouldDisableUnmetEvents && isset($this->unmetEvents[$event]);
 				$text = Events::getFullEventNameWithIcon($event);
+				echo CHtml::openTag('div', [
+					'class'=>'checkbox checkbox-inline' . ($disabled ? ' disabled' : ''),
+				]);
+				echo CHtml::openTag('label');
 				$options = [
 					'id'=>'Registration_events_' . $event,
 					'class'=>'registration-events',
 					'value'=>$event,
+					'disabled'=>$disabled,
 				];
 				if ($competition != null) {
 					$fee = 0;
@@ -52,23 +56,23 @@ class EventsForm extends Widget {
 				echo CHtml::closeTag('div');
 				echo '<br>';
 			}
-			echo CHtml::error($model, 'events', array('class'=>'text-danger'));
+			echo CHtml::error($model, 'events', ['class'=>'text-danger']);
 			echo CHtml::closeTag('div');
 			if ($competition && $competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
-				$locations = array();
+				$locations = [];
 				foreach ($competition->sortedLocations as $location) {
 					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
 				}
 				echo CHtml::activeLabelEx($model, 'location_id');
-				echo CHtml::activeDropDownList($model, 'location_id', $locations, array(
+				echo CHtml::activeDropDownList($model, 'location_id', $locations, [
 					'class'=>'form-control',
 					'prompt'=>'',
-				));
-				echo CHtml::error($model, 'location_id', array('class'=>'text-danger'));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::error($model, 'location_id', ['class'=>'text-danger']);
+				echo CHtml::openTag('div', [
 					'class'=>'form-group',
-				));
+				]);
 			}
 		} else {
 			if (!isset($htmlOptions['class'])) {
@@ -93,90 +97,90 @@ class EventsForm extends Widget {
 			}
 			echo CHtml::openTag('div', $htmlOptions);
 			foreach ($events as $key=>$value) {
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-lg-12',
-				));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::openTag('div', [
 					'class'=>'row',
-				));
+				]);
 				//label
 				$labelOptions['label'] = $value . ': ';
 				echo CHtml::activeLabelEx($model, "{$name}[{$key}][round]", $labelOptions);
 				//round
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-md-2 col-sm-8',
-				));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::openTag('div', [
 					'class'=>'input-group',
-				));
+				]);
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][round]", $numberOptions);
-				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'Rounds'));
+				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'Rounds'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 
 				//fee
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-md-5 row',
-				));
+				]);
 				//normal fee
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-xs-4',
-				));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
-				));
+				]);
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee]", $feeOptions);
-				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
+				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 				//second
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-xs-4',
-				));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
-				));
+				]);
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_second]", $feeOptions);
-				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
+				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 				//third
-				echo CHtml::openTag('div', array(
+				echo CHtml::openTag('div', [
 					'class'=>'col-xs-4',
-				));
-				echo CHtml::openTag('div', array(
+				]);
+				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
-				));
+				]);
 				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_third]", $feeOptions);
-				echo CHtml::tag('span', array('class'=>'input-group-addon'), Yii::t('common', 'CNY'));
+				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 
 				//qualifying times
 				if ($model->has_qualifying_time) {
-					echo CHtml::openTag('div', array(
+					echo CHtml::openTag('div', [
 						'class'=>'col-md-3 row',
-					));
+					]);
 					//normal fee
-					echo CHtml::openTag('div', array(
+					echo CHtml::openTag('div', [
 						'class'=>'col-xs-6',
-					));
-					echo CHtml::openTag('div', array(
+					]);
+					echo CHtml::openTag('div', [
 						'class'=>'input-group row',
-					));
-					echo CHtml::tag('span', array('class'=>'input-group-addon'), '单次');
+					]);
+					echo CHtml::tag('span', ['class'=>'input-group-addon'], '单次');
 					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_best]", $feeOptions);
 					echo CHtml::closeTag('div');
 					echo CHtml::closeTag('div');
 					//second
-					echo CHtml::openTag('div', array(
+					echo CHtml::openTag('div', [
 						'class'=>'col-xs-6',
-					));
-					echo CHtml::openTag('div', array(
+					]);
+					echo CHtml::openTag('div', [
 						'class'=>'input-group row',
-					));
-					echo CHtml::tag('span', array('class'=>'input-group-addon'), '平均');
+					]);
+					echo CHtml::tag('span', ['class'=>'input-group-addon'], '平均');
 					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_average]", $feeOptions);
 					echo CHtml::closeTag('div');
 					echo CHtml::closeTag('div');
