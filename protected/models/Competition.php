@@ -2080,7 +2080,7 @@ class Competition extends ActiveRecord {
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
 			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
-			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'id'],
+			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'allEvents.id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
 		];
 	}
