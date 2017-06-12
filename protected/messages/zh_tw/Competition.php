@@ -19,6 +19,8 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Please deeply remember the followings to avoid any inconveniences.' => '請您牢記下述注意事項，以免帶來不便。',
+  'You must meet the qualifying times of following events before <b>{date}</b> or they will be removed.' => '您必須在<b>{date}</b>之前達到下列項目的資格線，否則該項目的參賽資格將被移除。',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',

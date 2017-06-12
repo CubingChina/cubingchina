@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受参赛选手与一名注册观众进场。您需要为该陪同人员缴纳{fee}元费用，此费用组委会将用来购买安全保险以及制作入场凭证等花销。',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -36,6 +35,7 @@ return array (
   'Identity Number' => '证件号码',
   'Name' => '姓名',
   'Name of Identity' => '证件名',
+  'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受参赛选手与一名注册观众进场。您需要为该陪同人员缴纳{fee}元费用，此费用组委会将用来购买安全保险以及制作入场凭证等花销。',
   'Please choose from the options listed below.' => '请选择：',
   'Please fill your ID number {here} before you register.' => '请先点击{here}填写你的证件号码以便报名。',
   'Registration Date' => '报名时间',
