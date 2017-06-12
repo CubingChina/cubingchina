@@ -166,143 +166,28 @@
   </div><!-- /.modal-dialog -->
 </div>
 <?php
-Yii::app()->clientScript->registerScript('registration-disclaimer',
-<<<EOT
-  $(document).on('change', '#disclaimer', function() {
-    $('#submit-button').prop('disabled', !this.checked);
-  });
-EOT
-);
-
-if (!$competition->multi_countries) {
-  $basicFee = $competition->getEventFee('entry');
-  $entourageFee = $competition->entourage_fee;
-Yii::app()->clientScript->registerScript('registration',
-<<<EOT
-  var basicFee = {$basicFee};
-  var entourageFee = {$entourageFee};
-  var fee = $('#fee');
-  $(document).on('change', '.registration-events', updateFee)
-  .on('change', '#Registration_has_entourage', function() {
-    $('.entourage-info')[this.value == 1 ? 'removeClass' : 'addClass']('hide');
-    updateFee();
-  });
-  function updateFee() {
-    var totalFee = basicFee;
-    if ($('#Registration_has_entourage').val() == 1) {
-      totalFee += entourageFee;
-    }
-    $('.registration-events:checked').each(function() {
-      totalFee += $(this).data('fee');
-    });
-    if (totalFee > 0) {
-      fee.removeClass('hide').find('#totalFee').text(totalFee);
-    } else {
-      fee.addClass('hide');
-    }
-  }
-  $('.registration-events').trigger('change');
-  $('#Registration_has_entourage').trigger('change');
-EOT
-  );
-}
-if ($competition->show_regulations) {
-  $regulations = Yii::app()->params->regulations;
-  $regulationsJson = json_encode(array(
+$regulations = Yii::app()->params->regulations;
+$options = json_encode([
+  'multiCountries'=>!!$competition->multi_countries,
+  'showRegulations'=>!!$competition->show_regulations,
+  'regulationDesc'=>Yii::t('Competition', 'Please deeply remember the followings to avoid any inconveniences.'),
+  'basicFee' => $competition->getEventFee('entry'),
+  'entourageFee' => intval($competition->entourage_fee),
+  'regulations'=>[
     'common'=>ActiveRecord::getModelAttributeValue($regulations, 'common'),
     'special'=>ActiveRecord::getModelAttributeValue($regulations, 'special'),
-  ));
-  Yii::app()->clientScript->registerScript('registration-regulation',
-<<<EOT
-  var regulations = {$regulationsJson};
-  var modal = $('#tips-modal');
-  var modalBody = modal.find('.modal-body');
-  var callback;
-  var cancelCallback;
-  $(document).on('change', '.registration-events', function() {
-    var that = this;
-    var event = $(that).val();
-    var msg;
-    if (that.checked) {
-      switch (event) {
-        case '333ft':
-        case 'clock':
-          msg = regulations.special[event];
-          break;
-        case '333bf':
-          msg = regulations.special.bf;
-          break;
-        case '444bf':
-        case '555bf':
-          msg = [regulations.special.bf, regulations.special.lbf, regulations.special.bbf];
-          break;
-        case '333mbf':
-          msg = [regulations.special.bf, regulations.special.lbf];
-          break;
-      }
-      if (msg) {
-        showModal(msg, null, function() {
-          that.checked = false;
-        });
-      }
-    }
-  }).on('click', '#submit-button', function(e) {
-    e.preventDefault();
-    showModal(regulations.common, function() {
-      $('#registration-form').submit();
-    });
-    return false;
-  }).on('click', '#cancel-button', function(e) {
-    if (cancelCallback) {
-      cancelCallback();
-    }
-    modal.modal('hide');
-  }).on('click', '#confirm-button', function(e) {
-    if (callback) {
-      callback();
-    }
-    modal.modal('hide');
-  }).on('hide.bs.modal', '#modal', function(e) {
-    callback = null;
-    cancelCallback = null;
-  });
-  function showModal(msg, cb, cancelCb) {
-    modalBody.html(makeMsg(msg));
-    if (cb) {
-      callback = cb;
-    }
-    if (cancelCb) {
-      cancelCallback = cancelCb;
-    }
-    modal.modal({
-      backdrop: 'static',
-      keyboard: false
-    });
-  }
-  function makeMsg(msg) {
-    if (!$.isArray(msg)) {
-      msg = [msg];
-    }
-    var ol = $('<ol>');
-    $.each(msg, function(i, v) {
-      if (i == msg.length - 1) {
-        v = v.replace(/；$/, '。');
-      }
-      ol.append($('<li>').append(v));
-    });
-    return ol;
-  }
+  ],
+  'unmetEvents'=>$unmetEvents,
+  'qualifyingEnd'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),
+  'unmetEventsMessage'=>Yii::t('Competition', 'You must meet the qualifying times of following events before <b>{date}</b> or they will be removed.', [
+    '{date}'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),
+  ]),
+  'delimiter'=>Yii::t('common', ', '),
+]);
+echo <<<EOT
+<script>
+  window.registrationOptions = {$options};
+</script>
 EOT
-  );
-}
-if ($unmetEvents != []) {
-  $unmetEvents = json_encode($unmetEvents);
-  Yii::app()->clientScript->registerScript('registration-unmet-events',
-<<<EOT
-  var unmetEvents = {$unmetEvents}
-  $.each(unmetEvents, function(event, qualifyingTime) {
-    $('.registration-events[value="' + event + '"]').parent().addClass('bg-danger').data('qualifyingTime', qualifyingTime);
-  })
-EOT
-  );
-}
+;
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20170612');

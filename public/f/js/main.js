@@ -8,8 +8,12 @@ import ProgressBar from 'progressbar.js'
 import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
 import 'bootstrap-hover-dropdown'
+import utils from '../utils'
 
 window.jQuery = window.$ = jQuery
+window.CubingChina = {
+  utils
+}
 
 $(function() {
   $('input, textarea').placeholder();
