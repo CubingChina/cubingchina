@@ -249,6 +249,10 @@ class CompetitionController extends Controller {
 				if ($competition->multi_countries && $model->location->country_id != 1) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
+				// for oversea users
+				if ($this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
+					$model->status = Registration::STATUS_ACCEPTED;
+				}
 				if ($model->save()) {
 					Yii::app()->mailer->sendRegistrationNotice($model);
 					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);

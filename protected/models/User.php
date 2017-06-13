@@ -235,6 +235,13 @@ class User extends ActiveRecord {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
 	}
 
+	public function hasSuccessfulRegistration() {
+		return Registration::model()->countByAttributes([
+			'user_id'=>$this->id,
+			'status'=>Registration::STATUS_ACCEPTED,
+		]) > 0;
+	}
+
 	public function getPreferredEvents() {
 		if ($this->_preferredEvents == null) {
 			$this->_preferredEvents = PreferredEvent::getUserEvents($this);
