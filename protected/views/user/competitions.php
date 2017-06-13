@@ -53,6 +53,11 @@
         'value'=>'date("Y-m-d H:i", $data->date)',
       ),
       array(
+        'name'=>'accept_time',
+        'type'=>'raw',
+        'value'=>'$data->accept_time > 0 ? date("Y-m-d H:i", $data->accept_time) : "-"',
+      ),
+      array(
         'name'=>'status',
         'type'=>'raw',
         'value'=>'$data->getStatusText()',

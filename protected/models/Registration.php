@@ -459,7 +459,7 @@ class Registration extends ActiveRecord {
 			),
 			array(
 				'name'=>'accept_time',
-				'header'=>Yii::t('Registration', 'Registration Acception Time'),
+				'header'=>Yii::t('Registration', 'Acception Time'),
 				'type'=>'raw',
 				'value'=>'$data->accept_time > 0 ? date("Y-m-d H:i:s", $data->accept_time) : "-"',
 			),
@@ -711,7 +711,8 @@ class Registration extends ActiveRecord {
 			'entourage_passport_name' => Yii::t('Registration', 'Name of Identity'),
 			'entourage_passport_number' => Yii::t('Registration', 'Identity Number'),
 			'repeatPassportNumber' => Yii::t('Registration', 'Repeat Identity Number'),
-			'date' => Yii::t('Registration', 'Registration Date'),
+			'date' => Yii::t('Registration', 'Registration Time'),
+			'accept_time' => Yii::t('Registration', 'Acception Time'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee'),
 		);
