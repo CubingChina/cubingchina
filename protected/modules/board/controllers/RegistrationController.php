@@ -904,6 +904,7 @@ class RegistrationController extends AdminController {
 				$model->signed_date = 0;
 			}
 		}
+		//前面改过status了，所以此处是isAccepted
 		if ($attribute == 'status' && $model->isAccepted()) {
 			$model->total_fee = $model->getTotalFee(true);
 			$model->accept();
