@@ -1990,6 +1990,8 @@ class Competition extends ActiveRecord {
 						return false;
 					}
 					if ($format == '') {
+						$this->addError($errorKey, '请选择赛制！');
+						return false;
 					}
 					if (in_array($round, $combinedRoundTypes)) {
 						if ($format != '2/a' && $format != '1/m') {
