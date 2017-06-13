@@ -100,7 +100,7 @@ class Registration extends ActiveRecord {
 			),
 			'user.country',
 		))->findAllByAttributes($attributes, array(
-			'order'=>'t.date, t.id',
+			'order'=>'t.accept_time>0 DESC, t.accept_time, t.id',
 		));
 		//计算序号
 		$number = 1;
@@ -116,7 +116,11 @@ class Registration extends ActiveRecord {
 						$temp = strcmp($rA->user->getCompetitionName(), $rB->user->getCompetitionName());
 					case 'date':
 					default:
-						$temp = $rA->date - $rB->date;
+						if ($rA->number === null) {
+							$temp = $rA->id - $rB->id;
+						} else {
+							$temp = $rA->accept_time - $rB->accept_time;
+						}
 				}
 				if ($temp == 0) {
 					$temp = $rA->id - $rB->id;
@@ -155,6 +159,9 @@ class Registration extends ActiveRecord {
 	public function accept() {
 		$this->formatEvents();
 		$this->status = Registration::STATUS_ACCEPTED;
+		if ($this->accept_time == 0) {
+			$this->accept_time = time();
+		}
 		$this->save();
 		if ($this->competition->show_qrcode) {
 			Yii::app()->mailer->sendRegistrationAcception($this);
@@ -446,9 +453,15 @@ class Registration extends ActiveRecord {
 			),
 			array(
 				'name'=>'date',
-				'header'=>Yii::t('Registration', 'Registration Date'),
+				'header'=>Yii::t('Registration', 'Registration Time'),
 				'type'=>'raw',
 				'value'=>'date("Y-m-d H:i:s", $data->date)',
+			),
+			array(
+				'name'=>'accept_time',
+				'header'=>Yii::t('Registration', 'Registration Acception Time'),
+				'type'=>'raw',
+				'value'=>'$data->accept_time > 0 ? date("Y-m-d H:i:s", $data->accept_time) : "-"',
 			),
 		), $ipColumn);
 		return $columns;
@@ -792,7 +805,7 @@ class Registration extends ActiveRecord {
 		$cache = Yii::app()->cache;
 		if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
 			$criteria = new CDbCriteria;
-			$criteria->order = 't.date';
+			$criteria->order = 't.accept_time>0 DESC, t.accept_time, t.id';
 			$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
 			$criteria->compare('t.id', $this->id,true);
