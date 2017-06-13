@@ -102,7 +102,7 @@ return array (
   'Alipay has been blocked by wechat.' => '微信屏蔽了支付宝。',
   'All' => '所有',
   'An activation mail was sent to your email address, please follow the description to activate your account.' => '激活邮件已经发送到您的邮箱，请根据邮箱里的指示进行激活操作。',
-  'Apply for Competition' => '申请比赛',
+  'Apply for Competition' => '申请公示比赛',
   'Average' => '平均',
   'Battle' => '较量',
   'Best' => '最好',

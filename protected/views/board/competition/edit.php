@@ -30,6 +30,9 @@
             <p class="text-danger">
               <b>友情提示</b>：比赛信息可以多次编辑，请注意保存。
             </p>
+            <?php if ($model->isNewRecord): ?>
+            <p class="lead">此处是赛事主办比赛申请页面，不是选手报名页面，请注意！<br>如需报名参加比赛，请移步<?php echo CHtml::link('赛事页面', ['/competition/index']); ?>。</p>
+            <?php endif; ?>
             <p class="lead">第一次申请请仔细阅读<?php echo CHtml::link('申请流程', ['/faq/index',
               'category_id'=>2,
               '#'=>'faq-9',
