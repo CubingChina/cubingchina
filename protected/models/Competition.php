@@ -761,7 +761,7 @@ class Competition extends ActiveRecord {
 				$stage = self::STAGE_FIRST;
 			}
 		}
-		$basicFee = $isBasic ? $this->entry_fee : $events[$event]['fee'];
+		$basicFee = intval($isBasic ? $this->entry_fee : $events[$event]['fee']);
 		switch ($stage) {
 			case self::STAGE_FIRST:
 				return $basicFee;
@@ -772,7 +772,7 @@ class Competition extends ActiveRecord {
 					return ceil($basicFee * $ratio);
 				}
 				if (isset($events[$event]['fee_' . $stage]) && $events[$event]['fee_' . $stage] > 0) {
-					return $events[$event]['fee_' . $stage];
+					return intval($events[$event]['fee_' . $stage]);
 				}
 				return $this->second_stage_all ? ceil($basicFee * $ratio) : $basicFee;
 		}
@@ -1990,6 +1990,8 @@ class Competition extends ActiveRecord {
 						return false;
 					}
 					if ($format == '') {
+						$this->addError($errorKey, '请选择赛制！');
+						return false;
 					}
 					if (in_array($round, $combinedRoundTypes)) {
 						if ($format != '2/a' && $format != '1/m') {

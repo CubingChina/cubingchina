@@ -19,6 +19,8 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Please deeply remember the followings to avoid any inconveniences.' => '请您牢记下述注意事项，以免带来不便。',
+  'You must meet the qualifying times of following events before <b>{date}</b> or they will be removed.' => '您必须在<b>{date}</b>之前达到下列项目的资格线，否则该项目的参赛资格将被移除。',
   ' round' => '轮',
   ' rounds' => '轮',
   'Competition List' => '比赛列表',
