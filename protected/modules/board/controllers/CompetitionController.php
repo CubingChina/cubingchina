@@ -167,6 +167,7 @@ class CompetitionController extends AdminController {
 			'delegates',
 			'organizers',
 			'locations',
+			'qualifying_end_time',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
