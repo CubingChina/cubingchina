@@ -40,8 +40,8 @@ class ActiveRecord extends CActiveRecord {
 
 	public static function getYesOrNo() {
 		return array(
-			self::YES=>'是',
-			self::NO=>'否',
+			self::YES=>Yii::t('common', 'Yes'),
+			self::NO=>Yii::t('common', 'No'),
 		);
 	}
 
