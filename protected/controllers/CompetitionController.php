@@ -257,6 +257,9 @@ class CompetitionController extends Controller {
 					Yii::app()->mailer->sendRegistrationNotice($model);
 					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 					$model->formatEvents();
+					if ($model->isAccepted()) {
+						$model->accept();
+					}
 					$this->render('registrationDone', array(
 						'user'=>$user,
 						'accepted'=>$model->isAccepted(),
