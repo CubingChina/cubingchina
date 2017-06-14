@@ -566,9 +566,9 @@ class Registration extends ActiveRecord {
 				'competition_id'=>$this->competition_id,
 				'status'=>self::STATUS_ACCEPTED,
 			), array(
-				'condition'=>'date<:date OR (date=:date AND id<=:id)',
+				'condition'=>'accept_time<:accept_time OR (accept_time=:accept_time AND id<=:id)',
 				'params'=>array(
-					':date'=>$this->date,
+					':accept_time'=>$this->accept_time,
 					':id'=>$this->id,
 				),
 			));
