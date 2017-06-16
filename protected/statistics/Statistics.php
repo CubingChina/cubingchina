@@ -272,7 +272,9 @@ class Statistics {
 		$cacheKey = 'results_competition_data_' . $row['competitionId'];
 		$cache = Yii::app()->cache;
 		if (self::$_competitions === array()) {
-			$competitions = Competition::model()->with('location', 'location.province', 'location.city')->cache(self::CACHE_EXPIRE)->findAll(array(
+			$competitions = Competition::model()->with('location', 'location.province', 'location.city')->cache(self::CACHE_EXPIRE)->findAllByAttributes([
+				'status'=>Competition::STATUS_SHOW
+			], array(
 				'condition'=>'wca_competition_id!=""',
 				'select'=>'t.name, t.name_zh, t.wca_competition_id',
 			));
