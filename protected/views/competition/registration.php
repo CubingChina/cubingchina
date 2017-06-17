@@ -28,7 +28,7 @@
       <p id="totalFee"></p>
     </div>
     <?php if ($competition->fill_passport && $this->user->passport_type == User::NO): ?>
-    <div class="bg-info important-border">
+    <div class="bg-danger important-border">
       <b class="text-danger">
         <?php echo Yii::t('Registration', 'Please fill your ID number {here} before you register.', [
           '{here}'=>CHtml::link(Yii::t('common', 'here'), ['/user/edit']),
@@ -37,7 +37,7 @@
     </div>
     <?php endif; ?>
     <?php if ($competition->entourage_limit): ?>
-    <div class="bg-info important-border">
+    <div class="bg-info important-border<?php if ($model->hasErrors('has_entourage')) echo ' bg-danger'; ?>">
       <?php echo Html::formGroup(
         $model, 'has_entourage', array(),
         $form->labelEx($model, 'has_entourage'),
