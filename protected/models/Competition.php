@@ -1583,13 +1583,13 @@ class Competition extends ActiveRecord {
 			$temp = [];
 			$birthday = $this->date - (365 * 12 + 3) * 86400;
 			foreach ($results as $result) {
-				if ($result->user->gender == User::GENDER_FEMALE) {
+				if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
 					$temp[Yii::t('live', 'Females')][] = clone $result;
 				}
-				if ($result->user->birthday >= $birthday) {
+				if ($result->user->birthday >= $birthday && $this->podiums_children) {
 					$temp[Yii::t('live', 'Children')][] = clone $result;
 				}
-				if ($result->user->wcaid === '') {
+				if ($result->user->wcaid === '' && $this->podiums_new_comers) {
 					$temp[Yii::t('live', 'New Comers')][] = clone $result;
 				}
 			}
