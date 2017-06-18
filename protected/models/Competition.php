@@ -478,9 +478,6 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getUserUnmetEvents($user) {
-		if ($user->wcaid == '') {
-			return [];
-		}
 		$ranks = RanksSingle::model()->with('average')->findAllByAttributes([
 			'personId'=>$user->wcaid,
 		]);
