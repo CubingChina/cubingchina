@@ -204,6 +204,21 @@ class RegistrationController extends AdminController {
 				$sheet->setCellValue($col . $row, $user->email);
 				$col++;
 				$sheet->setCellValue($col . $row, $registration->comments);
+				if ($competition->fill_passport) {
+					$col++;
+					$sheet->setCellValue($col . $row, $user->getPassportTypeText());
+					$col++;
+					$sheet->setCellValue($col . $row, $user->passport_number);
+				}
+				if ($competition->entourage_limit) {
+					$col++;
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->entourage_name);
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->entourage_passport_number);
+				}
 			}
 			if (!$registration->isAccepted()) {
 				$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(
