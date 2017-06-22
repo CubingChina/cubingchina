@@ -199,7 +199,7 @@ class RegistrationController extends AdminController {
 				}
 				$sheet->setCellValue($col . $row, $fee);
 				$col++;
-				$sheet->setCellValue($col . $row, $user->mobile);
+				$sheet->setCellValueExplicit($col . $row, $user->mobile, PHPExcel_Cell_DataType::TYPE_STRING);
 				$col++;
 				$sheet->setCellValue($col . $row, $user->email);
 				$col++;
@@ -208,7 +208,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValue($col . $row, $user->getPassportTypeText());
 					$col++;
-					$sheet->setCellValue($col . $row, $user->passport_number);
+					$sheet->setCellValueExplicit($col . $row, $user->passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
 				}
 				if ($competition->entourage_limit) {
 					$col++;
@@ -217,7 +217,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
 					$col++;
-					$sheet->setCellValue($col . $row, $registration->entourage_passport_number);
+					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
 				}
 			}
 			if (!$registration->isAccepted()) {
