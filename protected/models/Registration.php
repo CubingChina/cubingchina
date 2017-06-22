@@ -148,6 +148,15 @@ class Registration extends ActiveRecord {
 		return isset($status[$this->signed_in]) ? $status[$this->signed_in] : $this->signed_in;
 	}
 
+	public function getPassportTypeText() {
+		$types = User::getPassportTypes();
+		$text = $types[$this->entourage_passport_type] ?? '';
+		if ($this->entourage_passport_type == User::PASSPORT_TYPE_OTHER) {
+			$text .= "($this->entourage_passport_name)";
+		}
+		return $text;
+	}
+
 	public function isAccepted() {
 		return $this->status == self::STATUS_ACCEPTED;
 	}
@@ -464,6 +473,39 @@ class Registration extends ActiveRecord {
 				'value'=>'$data->accept_time > 0 ? date("Y-m-d H:i:s", $data->accept_time) : "-"',
 			),
 		), $ipColumn);
+		if ($this->competition->fill_passport) {
+			$columns = array_merge($columns, [
+				[
+					'name'=>'passport_type',
+					'header'=>Yii::t('Registration', 'Type of Identity'),
+					'type'=>'raw',
+					'value'=>'$data->user->getPassportTypeText()',
+				],
+				[
+					'name'=>'passport_number',
+					'header'=>Yii::t('Registration', 'Identity Number'),
+					'type'=>'raw',
+					'value'=>'$data->user->passport_number',
+				],
+			]);
+		}
+		if ($this->competition->entourage_limit) {
+			$columns = array_merge($columns, [
+				[
+					'name'=>'entourage_name',
+					'header'=>'陪同人',
+				],
+				[
+					'name'=>'entourage_passport_type',
+					'header'=>'陪同证件类型',
+					'value'=>'$data->getPassportTypeText()',
+				],
+				[
+					'name'=>'entourage_passport_number',
+					'header'=>'陪同证件号',
+				],
+			]);
+		}
 		return $columns;
 	}
 

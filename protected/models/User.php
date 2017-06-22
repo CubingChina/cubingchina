@@ -204,7 +204,11 @@ class User extends ActiveRecord {
 
 	public function getPassportTypeText() {
 		$types = self::getPassportTypes();
-		return $types[$this->passport_type] ?? $this->passport_type;
+		$text = $types[$this->passport_type] ?? $this->passport_type;
+		if ($this->passport_type == self::PASSPORT_TYPE_OTHER) {
+			$text .= "($this->passport_name)";
+		}
+		return $text;
 	}
 
 	public function isUnchecked() {
