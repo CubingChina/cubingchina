@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Guest Name' => '陪同人员姓名',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -24,6 +25,7 @@ return array (
   ' CNY' => '元',
   '<b class="text-danger">Note</b>: A photo is needed to finish your registration.' => '<b class="text-danger">注意</b>：需要提交照片以完成报名。',
   '<b class="text-danger">Note</b>: ID number is collected for registration confirmation and purchase of event insurance by the organizers. Please confirm your information is correct in order to avoid unnecessary inconveniences.' => '<b class="text-danger">备注</b>：组委会收集的陪同人员身份证件信息用于比赛入场身份核实和意外保险的购买。<br>组委会不承担由于选手错误填写证件号码造成的<b class="text-danger">无法入场</b>和<b class="text-danger">投保失败</b>的任何后果。',
+  'Acception Time' => '通过时间',
   'Additional Comments' => '备注',
   'Competition' => '比赛',
   'Do you have any guests joining you at the competition?' => '是否有陪同人员一同前往观看比赛？',
@@ -39,7 +41,6 @@ return array (
   'Please choose from the options listed below.' => '请选择：',
   'Please fill your ID number {here} before you register.' => '请先点击{here}填写你的证件号码以便报名。',
   'Registration Time' => '报名时间',
-  'Acception Time' => '通过时间',
   'Repeat Identity Number' => '重复证件号码',
   'Status' => '状态',
   'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.' => '下方二维码将用于比赛签到及相关事宜，您可以随时在您的报名信息中查看。请在签到时将<b class="text-danger">二维码及相关证件</b>出示给工作人员进行签到。',

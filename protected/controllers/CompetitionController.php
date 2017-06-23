@@ -97,10 +97,14 @@ class CompetitionController extends Controller {
 			}
 		}
 		if ($session->get('scan_code') === null) {
-			$this->render('scanAuth', [
-				'competition'=>$competition,
-			]);
-			Yii::app()->end();
+			if ($competition->checkPermission($this->user)) {
+				$session->add('scan_code', 'user_' . $this->user->id);
+			} else {
+				$this->render('scanAuth', [
+					'competition'=>$competition,
+				]);
+				Yii::app()->end();
+			}
 		}
 		$code = $this->sPost('code');
 		if ($code != '') {
@@ -113,7 +117,7 @@ class CompetitionController extends Controller {
 			$this->ajaxOK([
 				'id'=>$registration->id,
 				'number'=>$registration->getUserNumber(),
-				'passport'=>$registration->passport_number,
+				'passport'=>$registration->user->passport_number,
 				'user'=>[
 					'name'=>$registration->user->getCompetitionName(),
 				],
@@ -121,6 +125,10 @@ class CompetitionController extends Controller {
 				'paid'=>!!$registration->paid,
 				'signed_in'=>!!$registration->signed_in,
 				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
+				'has_entourage'=>!!$registration->has_entourage,
+				'entourage_name'=>$registration->entourage_name,
+				'entourage_passport_type_text'=>$registration->getPassportTypeText(),
+				'entourage_passport_number'=>$registration->entourage_passport_number,
 			]);
 		}
 		if (isset($_POST['id'])) {
@@ -145,7 +153,7 @@ class CompetitionController extends Controller {
 			$this->ajaxOK([
 				'id'=>$registration->id,
 				'number'=>$registration->getUserNumber(),
-				'passport'=>$registration->passport_number,
+				'passport'=>$registration->user->passport_number,
 				'user'=>[
 					'name'=>$registration->user->getCompetitionName(),
 				],

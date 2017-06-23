@@ -1,17 +1,28 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" v-cloak>
-  <div class="text-center">
+  <div class="text-center" v-if="mode == 'wx'">
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
   </div>
   <div class="text-center" v-if="loading">
     Loading...<br>
     <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
   </div>
+  <div class="pc-scan"
+    v-if="mode = 'pc'"
+  >
+    <div class="scanning-wrapper" :class="{'scanning': scanning}"></div>
+    <input type="text" class="form-control"
+      v-model="url"
+      v-el:url-input
+      @change="check"
+      @blur="startScan"
+    >
+  </div>
   <dl class="dl-horizontal" v-if="registration.id">
     <dt>No.</dt>
     <dd>{{registration.number}}</dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
     <dd>{{registration.user.name}}</dd>
-    <dt v-if="registration.passport"><?php echo Yii::t('common', 'Passport'); ?></dt>
+    <dt v-if="registration.passport"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
     <dd v-if="registration.passport">{{registration.passport}}</dd>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
     <dd>{{registration.fee}}
@@ -22,6 +33,19 @@
         <?php echo Yii::t('common', 'Unpaid'); ?>
       </span>)
     </dd>
+    <dt v-if="registration.signed_in"><?php echo Yii::t('common', 'Signed in Date'); ?></dt>
+    <dd v-if="registration.signed_in">{{registration.signed_date}}
+    </dd>
+  </dl>
+  <dl class="dl-horizontal" v-if="registration.has_entourage">
+    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Guest Name'); ?></dt>
+    <dd v-if="registration.has_entourage">{{registration.entourage_name}}</dd>
+    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
+    <dd v-if="registration.has_entourage">{{registration.entourage_passport_type_text}}</dd>
+    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
+    <dd v-if="registration.has_entourage">{{registration.entourage_passport_number}}</dd>
+  </dl>
+  <dl class="dl-horizontal" v-if="registration.id">
     <dt v-if="!registration.paid"></dt>
     <dd v-if="!registration.paid">
       <button class="btn btn-info" type="button" @click="doAction('pay')">
@@ -33,9 +57,6 @@
       <button class="btn btn-success" type="button" @click="doAction('signin')">
         <?php echo Yii::t('common', 'Sign in'); ?>
       </button>
-    </dd>
-    <dt v-if="registration.signed_in"><?php echo Yii::t('common', 'Signed in Date'); ?></dt>
-    <dd v-if="registration.signed_in">{{registration.signed_date}}
     </dd>
   </dl>
 </div>

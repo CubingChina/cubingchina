@@ -1,14 +1,30 @@
 (function(global) {
-  Vue.config.debug = true;
   var vm = window.vm = new Vue({
     data: {
+      mode: 'pc',
       loading: true,
+      scanning: false,
+      url: '',
       registration: {}
     },
     el: '#scan-container',
     watch: {
     },
     methods: {
+      check: function() {
+        this.fetchInfo(this.url);
+        this.url = '';
+      },
+      startScan: function() {
+        this.scanning = true;
+        this.focus();
+      },
+      endScan: function() {
+        this.scanning = false;
+      },
+      focus: function() {
+        this.$els.urlInput.focus();
+      },
       scan: function() {
         var that = this;
         that.registration = {};
@@ -18,13 +34,16 @@
             scanType: ["qrCode"],
             success: function (res) {
               var result = res.resultStr;
-              var code = result.split('code=').reverse()[0];
-              that.fetchInfo(code);
+              that.fetchInfo(result);
             }
           });
         });
       },
-      fetchInfo: function(code) {
+      fetchInfo: function(url) {
+        var code = url.split('code=').reverse()[0];
+        if (!code) {
+          return;
+        }
         var that = this;
         that.loading = true;
         $.ajax({
@@ -69,5 +88,11 @@
   });
   wx.ready(function() {
     vm.loading = false;
+    vm.mode = 'wx';
   })
+  if (/MicroMessenger/i.test(navigator.userAgent) === false) {
+    vm.loading = false;
+    vm.mode = 'pc';
+    vm.focus();
+  }
 })(this);
