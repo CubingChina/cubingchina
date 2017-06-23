@@ -473,7 +473,7 @@ class Registration extends ActiveRecord {
 				'value'=>'$data->accept_time > 0 ? date("Y-m-d H:i:s", $data->accept_time) : "-"',
 			),
 		), $ipColumn);
-		if ($this->competition->fill_passport) {
+		if ($this->competition && $this->competition->fill_passport) {
 			$columns = array_merge($columns, [
 				[
 					'name'=>'passport_type',
@@ -489,7 +489,7 @@ class Registration extends ActiveRecord {
 				],
 			]);
 		}
-		if ($this->competition->entourage_limit) {
+		if ($this->competition && $this->competition->entourage_limit) {
 			$columns = array_merge($columns, [
 				[
 					'name'=>'entourage_name',
