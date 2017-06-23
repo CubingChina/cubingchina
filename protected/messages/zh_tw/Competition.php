@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Signin List' => '簽到列表',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',

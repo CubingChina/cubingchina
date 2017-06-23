@@ -17,10 +17,10 @@
       },
       startScan: function() {
         this.scanning = true;
-        this.focus();
       },
       endScan: function() {
         this.scanning = false;
+        this.focus();
       },
       focus: function() {
         this.$els.urlInput.focus();

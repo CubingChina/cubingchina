@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Guest Name' => '陪同人員姓名',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -32,6 +31,7 @@ return array (
   'Events' => '項目',
   'Fee' => '報名費',
   'Fee (CNY)' => '報名費(元)',
+  'Guest Name' => '陪同人員姓名',
   'I have submitted my photo to ACA before and I do not need to change my photo.' => '我曾經給ACA提交過照片，不需更換',
   'I have submitted my photo to ACA before and now I want to change it. / I have not submitted my photo before.' => '我曾經給ACA提交過照片，現在想更換/我沒有給ACA提交過照片',
   'Identity Number' => '證件號碼',
