@@ -341,12 +341,12 @@ class Pay extends ActiveRecord {
 			switch ($this->channel) {
 				case self::CHANNEL_NOWPAY:
 					if ($this->device_type == self::DEVICE_TYPE_PC) {
-						return number_format(max($this->amount * 0.0002, 0.08), 2, '.', '');
+						return number_format(max($this->paid_amount * 0.0002, 0.08), 2, '.', '');
 					} else {
-						return number_format(max($this->amount * 0.0006, 0.08), 2, '.', '');
+						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->amount * 0.00012, 2, '.', '');
+					return number_format($this->paid_amount * 0.00012, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -358,12 +358,12 @@ class Pay extends ActiveRecord {
 			switch ($this->channel) {
 				case self::CHANNEL_NOWPAY:
 					if ($this->device_type == self::DEVICE_TYPE_PC) {
-						return number_format(max($this->amount * 0.0002, 0.08), 2, '.', '');
+						return number_format(max($this->paid_amount * 0.0002, 0.08), 2, '.', '');
 					} else {
-						return number_format(max($this->amount * 0.0006, 0.08), 2, '.', '');
+						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->amount * 0.00006, 2, '.', '');
+					return number_format($this->paid_amount * 0.00006, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -401,10 +401,10 @@ class Pay extends ActiveRecord {
 		$this->compareTime($criteria);
 		$criteria->select = 'SUM(ROUND((CASE
 			WHEN status=0 OR status=5 THEN 0
-			WHEN channel="nowPay" AND device_type="02" THEN amount*0.02
-			WHEN channel="nowPay" THEN amount*0.06
-			ELSE amount*0.006 END) / 100, 2)) AS amount';
-		return $this->find($criteria)->amount;
+			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
+			WHEN channel="nowPay" THEN paid_amount*0.06
+			ELSE paid_amount*0.006 END) / 100, 2)) AS paid_amount';
+		return $this->find($criteria)->paid_amount;
 	}
 
 	protected function beforeValidate() {
