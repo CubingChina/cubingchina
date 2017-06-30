@@ -14,11 +14,6 @@ class PayController extends Controller {
 		$channel = $this->sGet('channel');
 		unset($_GET['channel']);
 		switch ($channel) {
-			case 'nowPay':
-				$paramsStr = file_get_contents('php://input');
-				parse_str($paramsStr, $params);
-				$orderId = isset($params['mhtOrderNo']) ? $params['mhtOrderNo'] : '';
-				break;
 			default:
 				$orderId = $this->sPost('out_trade_no');
 				$params = $_POST;
@@ -31,20 +26,13 @@ class PayController extends Controller {
 		}
 		Yii::log(json_encode($params), 'pay', 'notify');
 		$result = $model->validateNotify($channel, $params);
-		if ($result) {
-			echo Pay::notifyReturn($channel, true);
-		} else {
-			echo Pay::notifyReturn($channel, false);
-		}
+		echo Pay::notifyReturn($channel, $result);
 	}
 
 	public function actionFrontNotify() {
 		$channel = $this->sGet('channel');
 		unset($_GET['channel']);
 		switch ($channel) {
-			case 'nowPay':
-				$orderId = $this->sGet('mhtOrderNo');
-				break;
 			default:
 				$orderId = $this->sGet('out_trade_no');
 				break;
@@ -71,6 +59,7 @@ class PayController extends Controller {
 	}
 
 	public function actionParams() {
+		$this->setIsAjaxRequest(true);
 		$id = $this->iGet('id');
 		$isMobile = $this->iRequest('is_mobile');
 		$channel = $this->sRequest('channel');
