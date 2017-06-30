@@ -288,10 +288,9 @@ $config = array(
 		),
 		'payments'=>array(
 			'balipay'=>array(
-				'gateway'=>'https://mapi.alipay.com/gateway.do',
-				'partner'=>'2088221302462792',
-				'seller_id'=>'2088221302462792',
-				'key'=>Env::get('PAYMENT_BALIPAY'),
+				'gateway'=>'https://openapi.alipay.com/gateway.do',
+				'app_id'=>'2016062701556602',
+				'private_key_path'=>Env::get('PAYMENT_BALIPAY_PRIVATE_KEY'),
 				'img'=>'/f/images/pay/alipay.png',
 			),
 		),

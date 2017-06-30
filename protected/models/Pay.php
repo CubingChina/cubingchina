@@ -38,26 +38,15 @@ class Pay extends ActiveRecord {
 	const DEVICE_TYPE_PC = '02';
 	const DEVICE_TYPE_MOBILE = '06';
 
-	//现在支付参数
-	const NOWPAY_FUNCODE_PAY = 'WP001';
-	const NOWPAY_FUNCODE_NOTIFY = 'N001';
-	const NOWPAY_FUNCODE_FRONT_NOTIFY = 'N002';
-	const NOWPAY_TRADE_SUCCESS = 'A001';
-	const NOWPAY_ORDER_TYPE = '01';
-	const NOWPAY_ORDER_TIME_OUT = 3600;
-	const NOWPAY_CURRENCY_TYPE = '156';
-
 	//支付宝
-	const ALIPAY_TRADE_STATUS_WAIT_PAY = 'WAIT_BUYER_PAY';
-	const ALIPAY_TRADE_STATUS_WAIT_SEND = 'WAIT_SELLER_SEND_GOODS';
-	const ALIPAY_TRADE_STATUS_WAIT_CONFIRM = 'WAIT_BUYER_CONFIRM_GOODS';
 	const ALIPAY_TRADE_STATUS_FINISHED = 'TRADE_FINISHED';
 	const ALIPAY_TRADE_STATUS_CLOSED = 'TRADE_CLOSED';
 	const ALIPAY_TRADE_SUCCESS = 'TRADE_SUCCESS';
 	const ALIPAY_SUCCESS = 'T';
 
-	const CHARSET = 'UTF-8';
+	const CHARSET = 'utf-8';
 	const SIGN_TYPE = 'MD5';
+	const SIGN_TYPE_RSA2 = 'RSA2';
 
 	private static $_criteria;
 
@@ -86,21 +75,26 @@ class Pay extends ActiveRecord {
 		return $params;
 	}
 
-	public static function buildAlipaySignature(&$params, $securityKey, $excludeAttributes = array()) {
-		$temp = array_filter($params);
+	public static function buildAlipaySignature($commonParams, $bizParams, $privateKeyPath, $excludeAttributes = array()) {
+		$bizParams['biz_content'] = json_encode($bizParams);
+		$temp = array_filter(array_merge($commonParams, $bizParams));
 		foreach ($excludeAttributes as $attribute) {
 			unset($temp[$attribute]);
 		}
+		$temp['sign_type'] = self::SIGN_TYPE_RSA2;
 		ksort($temp);
 		$str = array();
 		foreach ($temp as $key=>$value) {
 			$str[] = "$key=$value";
 		}
-		$str = implode('&', $str);
-		$str .= $securityKey;
-		$params['sign'] = md5($str);
-		$params['sign_type'] = self::SIGN_TYPE;
-		return $params;
+		$data = implode('&', $str);
+		$privateKey = file_get_contents($privateKeyPath);
+		$res = openssl_get_privatekey($privateKey);
+		openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256);
+		openssl_free_key($res);
+		$sign = base64_encode($sign);
+		$temp['sign'] = $sign;
+		return $temp;
 	}
 
 	public static function getPayByOrderId($orderId) {
@@ -135,106 +129,38 @@ class Pay extends ActiveRecord {
 
 	public function validateNotify($channel, $params) {
 		switch ($channel) {
-			case self::CHANNEL_NOWPAY:
-				return $this->validateNowPayNotify($params);
 			default:
-				return $this->validateAlipayNotify($params, $channel);
+				return $this->validateAlipayNotify($channel, $params);
 		}
 	}
 
-	public function validateAlipayNotify($params, $channel) {
+	public function validateAlipayNotify($channel, $params) {
 		$app = Yii::app();
 		$alipay = $app->params->payments[$channel];
 		$sign = isset($params['sign']) ? $params['sign'] : '';
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
-		self::buildAlipaySignature($params, $alipay['key'], array(
+		self::buildAlipaySignature([], $params, $alipay['private_key_path'], array(
 			'sign',
 			'sign_type',
 		));
 		$result = $sign === $params['sign'];
-		$paidAmount = isset($params['total_fee']) ? $params['total_fee'] * 100 : 0;
+		$paidAmount = isset($params['total_amount']) ? $params['total_amount'] * 100 : 0;
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
 			$this->channel = $channel;
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
-				case self::ALIPAY_TRADE_STATUS_WAIT_SEND:
-					$status = self::STATUS_WAIT_SEND;
-					if ($this->send()) {
-						$status = self::STATUS_WAIT_CONFIRM;
-					}
-					break;
-				case self::ALIPAY_TRADE_STATUS_WAIT_CONFIRM:
-					$status = self::STATUS_WAIT_CONFIRM;
-					break;
 				case self::ALIPAY_TRADE_SUCCESS:
 				case self::ALIPAY_TRADE_STATUS_FINISHED:
 					$status = self::STATUS_PAID;
-					break;
-				case self::ALIPAY_TRADE_STATUS_WAIT_PAY:
-					$status = self::STATUS_WAIT_PAY;
 					break;
 				default:
 					return $result;
 			}
 			$this->updateStatus($status, $paidAmount);
-		}
-		return $result;
-	}
-
-	public function send() {
-		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
-		$params = array(
-			'service'=>'send_goods_confirm_by_platform',
-			'partner'=>$alipay['partner'],
-			'trade_no'=>$this->trade_no,
-			'logistics_name'=>$app->name,
-			// 'invoice_no'=>'',
-			'transport_type'=>'EXPRESS',
-			'_input_charset'=>strtolower(self::CHARSET),
-		);
-		self::buildAlipaySignature($params, $alipay['key']);
-		$content = file_get_contents($alipay['gateway'] . '?' . http_build_query($params));
-		return strpos($content, '<is_success>T</is_success>') !== false;
-	}
-
-	public function validateNowPayNotify($params) {
-		$app = Yii::app();
-		$appId = isset($params['appId']) ? $params['appId'] : '';
-		$signature = isset($params['signature']) ? $params['signature'] : '';
-		$funcode = isset($params['funcode']) ? $params['funcode'] : '';
-		$deviceType = isset($params['deviceType']) ? $params['deviceType'] : '';
-		$tradeStatus = isset($params['tradeStatus']) ? $params['tradeStatus'] : '';
-		$payChannelType = isset($params['payChannelType']) ? $params['payChannelType'] : '';
-		$nowPayAccNo = isset($params['nowPayAccNo']) ? $params['nowPayAccNo'] : '';
-		foreach ($app->params->nowPay['types'] as $type) {
-			if ($type['appId'] === $appId) {
-				$nowPay = $type;
-				break;
-			}
-		}
-		if (!isset($nowPay)) {
-			return false;
-		}
-		self::buildNowPaySignature($params, $nowPay['securityKey'], array(
-			'signature',
-			'signType',
-		));
-		$result = $signature === $params['mhtSignature'] && $tradeStatus === self::NOWPAY_TRADE_SUCCESS;
-		if ($result) {
-			switch ($funcode) {
-				case self::NOWPAY_FUNCODE_NOTIFY:
-					$this->device_type = $deviceType;
-					$this->pay_channel = $payChannelType;
-					$this->pay_account = $nowPayAccNo;
-					break;
-			}
-			$this->channel = self::CHANNEL_NOWPAY;
-			$this->updateStatus();
 		}
 		return $result;
 	}
@@ -264,13 +190,8 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function generateParams($isMobile, $channel) {
-		switch ($channel) {
-			case self::CHANNEL_NOWPAY:
-				return $this->generateNowPayParams($isMobile);
-			default:
-				return $this->generateAlipayParams($isMobile);
-		}
+	public function generateParams($isMobile) {
+		return $this->generateAlipayParams($isMobile);
 	}
 
 	public function generateAlipayParams($isMobile) {
@@ -279,33 +200,24 @@ class Pay extends ActiveRecord {
 		$baseUrl = $app->request->getBaseUrl(true);
 		$language = $app->language;
 		$app->language = 'zh_cn';
-		$params = array(
-			'service'=>$isMobile ? 'alipay.wap.create.direct.pay.by.user' : 'create_direct_pay_by_user',
-			'partner'=>trim($alipay['partner']),
-			'seller_id'=>trim($alipay['seller_id']),
-			'payment_type'=>1,
-			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
+		$commonParams = [
+			'app_id'=>trim($alipay['app_id']),
+			'method'=>$isMobile ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay',
+			'timestamp'=>date('Y-m-d H:i:s'),
+			'version'=>'1.0',
+			'charset'=>self::CHARSET,
 			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_BALIPAY)),
+			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
+		];
+		$bizParams = array(
 			'out_trade_no'=>$this->order_no,
+			'product_code'=>'FAST_INSTANT_TRADE_PAY',
+			'total_amount'=>number_format($this->amount / 100, 2, '.', ''),
 			'subject'=>'粗饼-' . $this->order_name,
-			'total_fee'=>number_format($this->amount / 100, 2, '.', ''),
-			'quantity'=>1,
-			// 'it_b_pay'=>'15m',
-			// 'logistics_fee'=>'0.00',
-			// 'logistics_type'=>'EXPRESS',
-			// 'logistics_payment'=>'SELLER_PAY',
-			'body'=>sprintf("ID: %s, Name: %s", $this->user_id, $this->user->getCompetitionName()),
-			'show_url'=>$this->getUrl(),
-			// 'receive_name'=>$this->user->getCompetitionName(),
-			// 'receive_address'=>$this->user->getRegionName($this->user->country) . $this->user->getRegionName($this->user->province) . $this->user->getRegionName($this->user->city),
-			// 'receive_zip'=>$receive_zip,
-			// 'receive_phone'=>$receive_phone,
-			// 'receive_mobile'=>$this->user->mobile,
-			'_input_charset'=>strtolower(self::CHARSET),
 		);
-		self::buildAlipaySignature($params, $alipay['key']);
+		$params = self::buildAlipaySignature($commonParams, $bizParams, $alipay['private_key_path']);
 		return array(
-			'action'=>$alipay['gateway'] . '?_input_charset=utf-8',
+			'action'=>$alipay['gateway'],
 			'method'=>'post',
 			'params'=>$params,
 		);
@@ -319,43 +231,6 @@ class Pay extends ActiveRecord {
 			default:
 				return $baseUrl;
 		}
-	}
-
-	public function generateNowPayParams($isMobile) {
-		$app = Yii::app();
-		if ($isMobile) {
-			$nowPay = $app->params->nowPay['types']['mobile'];
-		} else {
-			$nowPay = $app->params->nowPay['types']['pc'];
-		}
-		$baseUrl = $app->request->getBaseUrl(true);
-		$params = array(
-			'funcode'=>self::NOWPAY_FUNCODE_PAY,
-			'appId'=>$nowPay['appId'],
-			'mhtOrderNo'=>$this->order_no,
-			'mhtOrderName'=>$this->order_name,
-			'mhtOrderType'=>self::NOWPAY_ORDER_TYPE,
-			'mhtCurrencyType'=>self::NOWPAY_CURRENCY_TYPE,
-			'mhtOrderAmt'=>$this->amount,
-			'mhtOrderDetail'=>$this->user->getCompetitionName(),
-			'mhtOrderTimeOut'=>self::NOWPAY_ORDER_TIME_OUT,
-			'mhtOrderStartTime'=>date('YmdHis'),
-			'notifyUrl'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_NOWPAY)),
-			'frontNotifyUrl'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_NOWPAY)),
-			'mhtCharset'=>self::CHARSET,
-			'deviceType'=>$nowPay['deviceType'],
-			// 'mhtReserved'=>'',
-			'consumerId'=>$this->user_id,
-		);
-		self::buildNowPaySignature($params, $nowPay['securityKey'], array(
-			'funcode',
-			'deviceType',
-		));
-		return array(
-			'action'=>$app->params->nowPay['baseUrl'],
-			'method'=>'get',
-			'params'=>$params,
-		);
 	}
 
 	public function isPaid() {
