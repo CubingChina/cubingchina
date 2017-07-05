@@ -26,7 +26,10 @@ class PayController extends Controller {
 		}
 		$result = $model->validateNotify($channel, $params);
 		//fuck alipay
-		Yii::log(serialize([
+		if (isset($params['subject'])) {
+			$params['subject'] = iconv('GBK', 'UTF-8', $params['subject']);
+		}
+		Yii::log(json_encode([
 			'params'=>$params,
 			'result'=>$result,
 		]), 'pay', 'notify');
@@ -46,7 +49,7 @@ class PayController extends Controller {
 			throw new CHttpException(404, 'Not Found');
 		}
 		$result = $model->validateNotify($channel, $_GET);
-		Yii::log(serialize([
+		Yii::log(json_encode([
 			'params'=>$_GET,
 			'result'=>$result,
 		]), 'pay', 'notify.front');

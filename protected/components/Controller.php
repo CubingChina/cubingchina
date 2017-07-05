@@ -454,7 +454,11 @@ class Controller extends CController {
 				'session'=>$_SESSION,
 				'server'=>$_SERVER,
 			);
-			Yii::log(json_encode($params) ?: serialize($params), 'test', $this->id . '.' . $action->id);
+			//hack for alipay notify
+			if ($this->id === 'pay' && $this->action->id === 'notify' && isset($_POST['subject'])) {
+				$params['post']['subject'] = iconv('GBK', 'UTF-8', $params['post']['subject']);
+			}
+			Yii::log(json_encode($params), 'test', $this->id . '.' . $action->id);
 		}
 		if ($this->module === null && $this->action->id !== 'error' && $this->id !== 'pay' && $this->action->id !== 'scan' && $this->id !== 'git') {
 			$app = Yii::app();
