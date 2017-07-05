@@ -45,11 +45,11 @@ class PayController extends Controller {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not Found');
 		}
+		$result = $model->validateNotify($channel, $_GET);
 		Yii::log(serialize([
 			'params'=>$_GET,
 			'result'=>$result,
 		]), 'pay', 'notify.front');
-		$result = $model->validateNotify($channel, $_GET);
 		if ($result) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
