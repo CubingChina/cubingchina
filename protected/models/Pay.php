@@ -59,44 +59,6 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public static function buildNowPaySignature(&$params, $securityKey, $excludeAttributes = array()) {
-		$temp = array_filter($params);
-		foreach ($excludeAttributes as $attribute) {
-			unset($temp[$attribute]);
-		}
-		ksort($temp);
-		$str = '';
-		foreach ($temp as $key=>$value) {
-			$str .= "$key=$value&";
-		}
-		$str .= md5($securityKey);
-		$params['mhtSignature'] = md5($str);
-		$params['mhtSignType'] = self::SIGN_TYPE;
-		return $params;
-	}
-
-	public static function buildAlipaySignature($commonParams, $bizParams, $privateKeyPath, $excludeAttributes = array()) {
-		$bizParams['biz_content'] = json_encode($bizParams);
-		$temp = array_filter(array_merge($commonParams, $bizParams));
-		foreach ($excludeAttributes as $attribute) {
-			unset($temp[$attribute]);
-		}
-		$temp['sign_type'] = self::SIGN_TYPE_RSA2;
-		ksort($temp);
-		$str = array();
-		foreach ($temp as $key=>$value) {
-			$str[] = "$key=$value";
-		}
-		$data = implode('&', $str);
-		$privateKey = file_get_contents($privateKeyPath);
-		$res = openssl_get_privatekey($privateKey);
-		openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256);
-		openssl_free_key($res);
-		$sign = base64_encode($sign);
-		$temp['sign'] = $sign;
-		return $temp;
-	}
-
 	public static function getPayByOrderId($orderId) {
 		return self::model()->findByAttributes(array(
 			'order_no'=>$orderId,
@@ -137,16 +99,11 @@ class Pay extends ActiveRecord {
 	public function validateAlipayNotify($channel, $params) {
 		$app = Yii::app();
 		$alipay = $app->params->payments[$channel];
-		$sign = isset($params['sign']) ? $params['sign'] : '';
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
-		self::buildAlipaySignature([], $params, $alipay['private_key_path'], array(
-			'sign',
-			'sign_type',
-		));
-		$result = $sign === $params['sign'];
 		$paidAmount = isset($params['total_amount']) ? $params['total_amount'] * 100 : 0;
+		$result = $this->validateAlipaySign($params, $alipay['alipay_public_key_path']);
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
@@ -163,6 +120,25 @@ class Pay extends ActiveRecord {
 			$this->updateStatus($status, $paidAmount);
 		}
 		return $result;
+	}
+
+	public function validateAlipaySign($params, $publicKeyPath, $excludeAttributes = ['sign', 'sign_type']) {
+		$sign = $params['sign'] ?? '';
+		$temp = $params;
+		foreach ($excludeAttributes as $attribute) {
+			unset($temp[$attribute]);
+		}
+		ksort($temp);
+		$str = array();
+		foreach ($temp as $key=>$value) {
+			$str[] = "$key=$value";
+		}
+		$data = implode('&', $str);
+		$publicKeyContent = file_get_contents($publicKeyPath);
+		$res = openssl_get_publickey($publicKeyContent);
+		$result = openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
+		openssl_free_key($res);
+		return !!$result;
 	}
 
 	public function updateStatus($status = self::STATUS_PAID, $paidAmount = 0) {
@@ -215,12 +191,34 @@ class Pay extends ActiveRecord {
 			'total_amount'=>number_format($this->amount / 100, 2, '.', ''),
 			'subject'=>'粗饼-' . $this->order_name,
 		);
-		$params = self::buildAlipaySignature($commonParams, $bizParams, $alipay['private_key_path']);
+		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
 		return array(
 			'action'=>$alipay['gateway'],
 			'method'=>'post',
 			'params'=>$params,
 		);
+	}
+
+	public function generateAlipaySign($commonParams, $bizParams, $privateKeyPath, $excludeAttributes = array()) {
+		$bizParams['biz_content'] = json_encode($bizParams);
+		$temp = array_filter(array_merge($commonParams, $bizParams));
+		foreach ($excludeAttributes as $attribute) {
+			unset($temp[$attribute]);
+		}
+		$temp['sign_type'] = self::SIGN_TYPE_RSA2;
+		ksort($temp);
+		$str = array();
+		foreach ($temp as $key=>$value) {
+			$str[] = "$key=$value";
+		}
+		$data = implode('&', $str);
+		$privateKey = file_get_contents($privateKeyPath);
+		$res = openssl_get_privatekey($privateKey);
+		openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256);
+		openssl_free_key($res);
+		$sign = base64_encode($sign);
+		$temp['sign'] = $sign;
+		return $temp;
 	}
 
 	public function getUrl() {
