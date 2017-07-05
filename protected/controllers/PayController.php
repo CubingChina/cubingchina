@@ -24,8 +24,12 @@ class PayController extends Controller {
 			echo Pay::notifyReturn($channel, false);
 			exit;
 		}
-		Yii::log(json_encode($params), 'pay', 'notify');
 		$result = $model->validateNotify($channel, $params);
+		//fuck alipay
+		Yii::log(serialize([
+			'params'=>$params,
+			'result'=>$result,
+		]), 'pay', 'notify');
 		echo Pay::notifyReturn($channel, $result);
 	}
 
@@ -41,7 +45,10 @@ class PayController extends Controller {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not Found');
 		}
-		Yii::log(json_encode($_GET), 'pay', 'notify.front');
+		Yii::log(serialize([
+			'params'=>$_GET,
+			'result'=>$result,
+		]), 'pay', 'notify.front');
 		$result = $model->validateNotify($channel, $_GET);
 		if ($result) {
 			switch ($model->type) {
