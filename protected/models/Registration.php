@@ -164,7 +164,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function isAccepted() {
-		return $this->status == self::STATUS_ACCEPTED;
+		return $this->status == self::STATUS_ACCEPTED && !$this->isCancelled();
 	}
 
 	public function isCancelled() {
@@ -183,6 +183,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function accept() {
+		if ($this->isCancelled()) {
+			return false;
+		}
 		$this->formatEvents();
 		$this->status = Registration::STATUS_ACCEPTED;
 		if ($this->accept_time == 0) {
