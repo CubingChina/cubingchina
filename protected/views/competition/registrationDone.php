@@ -105,10 +105,10 @@
             ),
           )); ?>
           <p><?php echo Yii::t('Registration', 'You can cancel your registration before {time}.', [
-            '{time}'=>date('Y-m-d H:i:s', $competition->reg_end),
+            '{time}'=>date('Y-m-d H:i:s', $competition->cancellation_end_time),
           ]); ?></p>
-          <?php echo Html::countdown($competition->reg_end, [
-            'data-total-days'=>$competition->reg_start > 0 ? floor(($competition->reg_end - $competition->reg_start) / 86400) : 30,
+          <?php echo Html::countdown($competition->cancellation_end_time, [
+            'data-total-days'=>$competition->reg_start > 0 ? floor(($competition->cancellation_end_time - $competition->reg_start) / 86400) : 30,
           ]); ?>
           <input type="hidden" name="cancel" value="1">
           <?php if ($registration->getPaidFee() > 0): ?>

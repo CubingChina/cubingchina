@@ -175,7 +175,7 @@ class Registration extends ActiveRecord {
 
 	public function isCancellable() {
 		$competition = $this->competition;
-		return time() < $competition->reg_end && $this->isAccepted();
+		return time() < $competition->cancellation_end_time && $this->isAccepted();
 	}
 
 	public function isPaid() {
