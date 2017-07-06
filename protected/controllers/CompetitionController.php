@@ -203,7 +203,7 @@ class CompetitionController extends Controller {
 			}
 			if ($competition->isRegistrationFull()) {
 				if (time() < $competition->cancellation_end_time) {
-					$flashes['info'] = Yii::t('Competition', 'The registration will be restarted after {time}.', [
+					$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
 						'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
 					]);
 				} else {
@@ -211,12 +211,12 @@ class CompetitionController extends Controller {
 				}
 			}
 			if ($competition->has_been_full && !$competition->isRegistrationFull() &&  time() < $competition->cancellation_end_time) {
-				$flashes['info'] = Yii::t('Competition', 'The registration will be restarted after {time}.', [
+				$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
 					'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
 				]);
 			}
 			if ($competition->isRegistrationPaused() && !$competition->isRegistrationFull()) {
-				$flashes['info'] = Yii::t('Competition', 'The registration will be restarted after {time}.', [
+				$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
 					'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
 				]);
 			}

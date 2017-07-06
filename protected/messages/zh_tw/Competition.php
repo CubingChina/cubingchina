@@ -83,7 +83,7 @@ return array (
   'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此處為比賽主辦預計賽程，可能會依據比賽現場情況進行調整，請在比賽日注意現場通知以免耽誤您的參賽。',
   'The registration has been closed.' => '比賽報名已截止。',
   'The registration is not open yet.' => '比賽報名尚未開放。',
-  'The registration will be restarted after {time}.' => '報名將於{time}之後重新開放。',
+  'The registration has been paused and it will be restarted after {time}.' => '比賽報名已暫停，補報名將於{time}之後重新開放。',
   'The schedule is to be determined.' => '賽程正在緊張激烈地安排當中。',
   'Third Stage Date' => '第三階段時間',
   'Third Stage Ratio' => '第三階段倍率',
