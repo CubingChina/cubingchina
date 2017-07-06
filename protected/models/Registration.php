@@ -35,6 +35,9 @@ class Registration extends ActiveRecord {
 
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
+	const STATUS_CANCELLED = 2;
+	const STATUS_CANCELLED_TIME_END = 3;
+	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
 
 	public static function getDailyRegistration() {
 		$data = Yii::app()->db->createCommand()
@@ -74,6 +77,9 @@ class Registration extends ActiveRecord {
 		return array(
 			self::STATUS_WAITING=>Yii::t('common', 'Pending'),
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
+			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
+			self::STATUS_CANCELLED_TIME_END=>Yii::t('common', 'Cancelled'),
+			self::STATUS_CANCELLED_QUALIFYING_TIME=>Yii::t('common', 'Cancelled'),
 		);
 	}
 
@@ -161,6 +167,17 @@ class Registration extends ActiveRecord {
 		return $this->status == self::STATUS_ACCEPTED;
 	}
 
+	public function isCancelled() {
+		return $this->status == self::STATUS_CANCELLED
+			|| $this->status == self::STATUS_CANCELLED_TIME_END
+			|| $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+	}
+
+	public function isCancellable() {
+		$competition = $this->competition;
+		return time() < $competition->reg_end && $this->isAccepted();
+	}
+
 	public function isPaid() {
 		return $this->paid == self::PAID;
 	}
@@ -175,6 +192,17 @@ class Registration extends ActiveRecord {
 		if ($this->competition->show_qrcode) {
 			Yii::app()->mailer->sendRegistrationAcception($this);
 		}
+	}
+
+	public function cancel() {
+		$this->formatEvents();
+		$this->status = Registration::STATUS_CANCELLED;
+		$this->cancel_time = time();
+		if ($this->save()) {
+			Yii::app()->mailer->sendRegistrationCancellation($this);
+			return true;
+		}
+		return false;
 	}
 
 	public function checkEntourageName() {
@@ -570,6 +598,11 @@ class Registration extends ActiveRecord {
 			'data-value'=>$this->paid,
 			'data-name'=>$this->user->getCompetitionName(),
 		));
+		if ($this->status == self::STATUS_ACCEPTED) {
+			$buttons[] = CHtml::link('退赛', ['/board/registration/cancel', 'id'=>$this->id], [
+				'class'=>'btn btn-xs btn-orange btn-square',
+			]);
+		}
 		return implode(' ', $buttons);
 	}
 
@@ -620,6 +653,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayable() {
+		if ($this->isCancelled()) {
+			return false;
+		}
 		$totalFee = $this->getTotalFee();
 		if ($this->competition->isOnlinePay() && $totalFee > 0) {
 			if ($this->pay === null) {
