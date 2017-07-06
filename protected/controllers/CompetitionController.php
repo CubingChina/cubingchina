@@ -200,6 +200,12 @@ class CompetitionController extends Controller {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration has been closed.'));
 			$this->redirect($competition->getUrl('competitors'));
 		}
+		if ($competition->isRegistrationPaused() && !$showRegistration) {
+			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration will be restarted after {time}.', [
+				'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
+			]));
+			$this->redirect($competition->getUrl('competitors'));
+		}
 		if ($competition->isRegistrationFull() && !$showRegistration) {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The limited number of competitor has been reached.'));
 			$this->redirect($competition->getUrl('competitors'));
