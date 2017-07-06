@@ -339,11 +339,15 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationStarted() {
-		return time() > $this->reg_start;
+		return time() >= $this->reg_start;
 	}
 
 	public function isRegistrationEnded() {
 		return time() > $this->reg_end;
+	}
+
+	public function isRegistrationPaused() {
+		return $this->cancellation_end_time > 0 && time() > $this->cancellation_end_time && time() < $this->reg_reopen_time;
 	}
 
 	public function isRegistrationFull() {
@@ -1338,7 +1342,11 @@ class Competition extends ActiveRecord {
 	}
 
 	public function handleDate() {
-		foreach (array('date', 'end_date', 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
+		foreach ([
+			'date', 'end_date', 'reg_start', 'reg_end',
+			'second_stage_date', 'third_stage_date', 'qualifying_end_time',
+			'cancellation_end_time', 'reg_reopen_time',
+		] as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -1360,7 +1368,10 @@ class Competition extends ActiveRecord {
 				$this->$attribute = '';
 			}
 		}
-		foreach (array('reg_start', 'reg_end', 'second_stage_date', 'third_stage_date', 'qualifying_end_time') as $attribute) {
+		foreach ([
+			'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date',
+			'qualifying_end_time', 'cancellation_end_time', 'reg_reopen_time',
+		] as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -1776,6 +1787,28 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkCancellationEnd() {
+		if (!$this->isPublic()) {
+			if ($this->cancellation_end_time >= $this->reg_end - 86400) {
+				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
+			}
+			if ($this->cancellation_end_time <= $this->reg_start + 86400 * 7) {
+				$this->addError('cancellation_end_time', '补报截止时间必须晚于报名开始时间至少一周');
+			}
+		}
+	}
+
+	public function checkRegistrationReopen() {
+		if (!$this->isPublic()) {
+			if ($this->reg_reopen_time >= $this->reg_end - 43200) {
+				$this->addError('reg_reopen_time', '报名截止时间必须早于比赛开始至少半天');
+			}
+			if ($this->reg_reopen_time <= $this->cancellation_end_time + 43200) {
+				$this->addError('reg_reopen_time', '报名截止时间必须晚于比赛开始至少半天');
+			}
+		}
+	}
+
 	public function checkQualifyingEndTime() {
 		if ($this->has_qualifying_time) {
 			if ($this->qualifying_end_time > $this->date - 3 * 86400) {
@@ -2057,13 +2090,15 @@ class Competition extends ActiveRecord {
 			['wca_competition_id', 'checkWcaCompetitionId'],
 			['reg_start', 'checkRegistrationStart', 'skipOnError'=>true],
 			['reg_end', 'checkRegistrationEnd', 'skipOnError'=>true],
+			['cancellation_end_time', 'checkCancellationEnd', 'skipOnError'=>true],
+			['reg_reopen_time', 'checkRegistrationReopen', 'skipOnError'=>true],
 			['qualifying_end_time', 'checkQualifyingEndTime', 'skipOnError'=>true],
 			['second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true],
 			['second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true],
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {

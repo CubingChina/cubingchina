@@ -141,7 +141,6 @@
             </table>
         </div>
       </div>
-
       <?php endif; ?>
     </dd>
     <?php endif; ?>
@@ -156,6 +155,18 @@
       <?php if (time() < $competition->reg_start): ?>
       <?php echo Html::countdown($competition->reg_start); ?>
       <?php endif; ?>
+    </dd>
+    <?php endif; ?>
+    <?php if ($competition->cancellation_end_time > 0 && $competition->tba == Competition::NO): ?>
+    <dt><?php echo Yii::t('Competition', 'Registration Cancellation Deadline'); ?></dt>
+    <dd><?php echo date('Y-m-d H:i:s', $competition->cancellation_end_time); ?></dd>
+    <dt><?php echo Yii::t('Competition', 'Registration Restarting Time'); ?></dt>
+    <dd>
+      <?php echo date('Y-m-d H:i:s', $competition->reg_reopen_time); ?>
+      <div class="text-info"><?php echo Yii::t('Competition', 'You can not register between {start} and {end}.', [
+        '{start}'=>date('Y-m-d H:i:s', $competition->cancellation_end_time),
+        '{end}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
+      ]); ?></div>
     </dd>
     <?php endif; ?>
     <?php if ($competition->tba == Competition::NO): ?>
