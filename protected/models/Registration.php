@@ -36,6 +36,8 @@ class Registration extends ActiveRecord {
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
 	const STATUS_CANCELLED = 2;
+	const STATUS_CANCELLED_TIME_END = 3;
+	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
 
 	public static function getDailyRegistration() {
 		$data = Yii::app()->db->createCommand()
@@ -76,6 +78,8 @@ class Registration extends ActiveRecord {
 			self::STATUS_WAITING=>Yii::t('common', 'Pending'),
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
 			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
+			self::STATUS_CANCELLED_TIME_END=>Yii::t('common', 'Cancelled'),
+			self::STATUS_CANCELLED_QUALIFYING_TIME=>Yii::t('common', 'Cancelled'),
 		);
 	}
 
@@ -164,7 +168,14 @@ class Registration extends ActiveRecord {
 	}
 
 	public function isCancelled() {
-		return $this->status == self::STATUS_CANCELLED;
+		return $this->status == self::STATUS_CANCELLED
+			|| $this->status == self::STATUS_CANCELLED_TIME_END
+			|| $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+	}
+
+	public function isCancellable() {
+		$competition = $this->competition;
+		return time() < $competition->reg_end && $this->isAccepted();
 	}
 
 	public function isPaid() {

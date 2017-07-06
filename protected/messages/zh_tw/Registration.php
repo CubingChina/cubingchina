@@ -17,11 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Cancellation Time' => '退賽時間',
   'ID' => '',
   'No.' => '',
   'User' => '',
-  'Your registration has been cancelled.' => '',
+  'You can cancel your registration before {time}.' => '你可以在{time}之前申請退賽。',
   'Date' => '報名時間',
   ' CNY' => '元',
   '<b class="text-danger">Note</b>: A photo is needed to finish your registration.' => '<b class="text-danger">注意</b>：需要提交照片以完成報名。',
@@ -29,6 +28,7 @@ return array (
   '<b>Warning:</b> Once you cancel your registration, you will <b>NOT</b> be a competitor and you cannot register for this competition any longer.' => '<b>警告：</b>一旦退賽，你將失去本次比賽的參賽資格，並<b>無法</b>再次報名該比賽。',
   'Acception Time' => '通過時間',
   'Additional Comments' => '備注',
+  'Cancellation Time' => '退賽時間',
   'Competition' => '比賽',
   'Do you have any guests joining you at the competition?' => '是否有陪同人員一同前往觀看比賽？',
   'Events' => '項目',
@@ -52,6 +52,6 @@ return array (
   'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.' => '下方二維碼將用於比賽簽到及相關事宜，您可以隨時在您的報名信息中查看。請在簽到時將<b class="text-danger">二維碼及相關證件</b>出示給工作人員進行簽到。',
   'Total Fee' => '報名費',
   'Type of Identity' => '證件類型',
-  'You registration has been cancelled.' => '你已成功退賽。',
+  'Your registration has been cancelled.' => '你已成功退賽。',
   'You succeeded in registering for ' => '您已成功報名',
 );
