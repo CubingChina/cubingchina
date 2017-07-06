@@ -1,5 +1,6 @@
 <?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
+  <?php if (!$registration->isCancelled()): ?>
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
     <?php if ($accepted): ?>
@@ -13,15 +14,60 @@
     <?php else: ?>
     <?php echo Yii::t('Competition', 'It will be verified by the organisation team soon. Please wait with patience.'); ?>
     <?php endif; ?>
-    <?php if (Yii::app()->language === 'zh_cn'): ?>
-    <?php echo '点击上面的分享按钮告诉你的小伙伴吧～'; ?>
-    <?php endif; ?>
   </div>
-  <?php if ($accepted && $competition->show_qrcode): ?>
+  <?php endif; ?>
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
     <div class="panel panel-info">
+      <div class="panel-heading"><?php echo Yii::t('Registration', 'Registration Detail'); ?></div>
       <div class="panel-body">
+        <?php if ($accepted): ?>
         <p><?php echo Yii::t('Registration', 'You succeeded in registering for '), $competition->getAttributeValue('name'), Yii::t('common', '.'); ?></p>
+        <hr>
+        <?php elseif ($registration->isCancelled()): ?>
+        <p><?php echo Yii::t('Registration', 'You registration has been cancelled.'); ?></p>
+        <hr>
+        <?php endif; ?>
+        <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
+        <p><?php echo $registration->getRegistrationEvents(); ?></p>
+        <h4><?php echo Yii::t('common', 'Total Fee:'); ?></h4>
+        <p><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></p>
+        <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
+        <p><?php echo date('Y-m-d H:i:s', $registration->date); ?></p>
+        <?php if ($accepted): ?>
+        <h4><?php echo Yii::t('Registration', 'Acception Time'); ?></h4>
+        <p><?php echo date('Y-m-d H:i:s', $registration->accept_time); ?></p>
+        <?php endif; ?>
+        <?php if ($registration->isCancelled()): ?>
+        <h4><?php echo Yii::t('Registration', 'Cancellation Time'); ?></h4>
+        <p><?php echo date('Y-m-d H:i:s', $registration->cancel_time); ?></p>
+        <?php endif; ?>
+        <hr>
+        <?php if ($registration->payable): ?>
+        <?php if (count(Yii::app()->params->payments) > 1): ?>
+        <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
+        <?php endif; ?>
+        <div class="pay-channels clearfix">
+          <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
+          <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
+            <img src="<?php echo $payment['img']; ?>">
+          </div>
+          <?php endforeach; ?>
+        </div>
+        <p class="hide lead text-danger" id="redirect-tips">
+          <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
+          <?php echo Yii::t('common', 'Please open with browser!'); ?>
+        </p>
+        <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
+        <div class="text-center">
+          <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
+        </div>
+        <div class="hide text-center" id="pay-tips">
+          <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
+          <br>
+          <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($accepted && $competition->show_qrcode): ?>
         <p><?php echo Yii::t('Registration', 'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.'); ?></p>
         <p class="text-center">
           <?php echo CHtml::image($registration->qrCodeUrl); ?>
@@ -31,45 +77,42 @@
             'target'=>'_blank',
           )); ?>
         </p>
+        <?php endif; ?>
       </div>
     </div>
   </div>
-  <?php endif; ?>
-  <?php if ($registration->payable): ?>
+  <div class="clearfix"></div>
+  <?php if ($accepted): ?>
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
-    <h4>
-      <?php echo Yii::t('common', 'Total Fee:'); ?>&nbsp; <b class="text-danger"><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></b>
-    </h4>
-    <?php if (count(Yii::app()->params->payments) > 1): ?>
-    <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
-    <?php endif; ?>
-    <div class="pay-channels clearfix">
-      <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
-      <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
-        <img src="<?php echo $payment['img']; ?>">
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <a data-toggle="collapse" href="#cancellation"><?php echo Yii::t('Registration', 'Registration Cancellation'); ?></a>
       </div>
-      <?php endforeach; ?>
-    </div>
-    <p class="hide lead text-danger" id="redirect-tips">
-      <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
-      <?php echo Yii::t('common', 'Please open with browser!'); ?>
-    </p>
-    <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
-    <div class="text-center">
-      <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
-    </div>
-    <div class="hide text-center" id="pay-tips">
-      <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
-      <br>
-      <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
+      <div class="panel-body collapse" id="cancellation">
+        <h4 class="text-danger"><?php echo Yii::t('Registration', '<b>Warning:</b> Once you cancel your registration, you will <b>NOT</b> be a competitor and you cannot register for this competition any longer.'); ?></h4>
+        <?php $form = $this->beginWidget('ActiveForm', array(
+          'id'=>'cancel-form',
+          'htmlOptions'=>array(
+          ),
+        )); ?>
+        <input type="hidden" name="cancel" value="1">
+        <?php echo CHtml::tag('button', [
+          'id'=>'cancel',
+          'type'=>'button',
+          'class'=>'btn btn-danger',
+          'data-action'=>CHtml::normalizeUrl($competition->getUrl('registration')),
+        ], Yii::t('common', 'Submit')); ?>
+        <?php $this->endWidget(); ?>
+      </div>
     </div>
   </div>
   <?php endif; ?>
 </div>
 <?php
-if ($registration->payable) {
-  Yii::app()->clientScript->registerScript('pay',
+$cancellationMessage = json_encode(Yii::t('Registration', 'Please double-confirm your cancellation.'));
+Yii::app()->clientScript->registerScript('pay',
 <<<EOT
+  var cancellationMessage = {$cancellationMessage};
   if (navigator.userAgent.match(/MicroMessenger/i)) {
     $('#redirect-tips').removeClass('hide').nextAll().hide();
     $('#pay').prop('disabled', true);
@@ -101,6 +144,14 @@ if ($registration->payable) {
       }
     });
   });
+  $('#cancel').on('click', function() {
+    var that = $(this);
+    CubingChina.utils.confirm(cancellationMessage, {
+      type: 'type-warning'
+    }).then(function() {
+      $('#cancel-form').submit();
+    })
+  });
   function submitForm(data) {
     var form = $('<form>').attr({
       action: data.action,
@@ -113,5 +164,4 @@ if ($registration->payable) {
     form.submit();
   }
 EOT
-  );
-}
+);

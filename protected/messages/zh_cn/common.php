@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Cancelled' => '已取消',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -113,6 +112,7 @@ return array (
   'By Event' => '按项目',
   'CCA Delegate' => 'CCA主裁判',
   'CNY' => '元',
+  'Cancelled' => '已取消',
   'Certificate' => '证书',
   'Change Password' => '修改密码',
   'Chatting has been disabled by administrator.' => '管理员已开启全员禁言',

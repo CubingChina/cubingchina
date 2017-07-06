@@ -211,8 +211,12 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		if ($registration !== null) {
+			if (isset($_POST['cancel']) && $registration->isAccepted()) {
+				if ($registration->cancel()) {
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
+				}
+			}
 			$registration->formatEvents();
-			$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'accepted'=>$registration->isAccepted(),

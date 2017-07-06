@@ -163,6 +163,10 @@ class Registration extends ActiveRecord {
 		return $this->status == self::STATUS_ACCEPTED;
 	}
 
+	public function isCancelled() {
+		return $this->status == self::STATUS_CANCELLED;
+	}
+
 	public function isPaid() {
 		return $this->paid == self::PAID;
 	}
@@ -638,6 +642,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayable() {
+		if ($this->isCancelled()) {
+			return false;
+		}
 		$totalFee = $this->getTotalFee();
 		if ($this->competition->isOnlinePay() && $totalFee > 0) {
 			if ($this->pay === null) {

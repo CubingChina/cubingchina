@@ -6,6 +6,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
     <p><strong>亲爱的<?php echo $user->name_zh ?: $user->name; ?>：</strong></p>
     <p>
       您报名的<b><?php echo $competition->name_zh; ?></b>已成功退赛。<br>
+      <br>
       如有疑问，请联系下列比赛主办方，勿回复本邮件。<br>
       <?php foreach ($competition->organizer as $organizer): ?>
       <?php echo $organizer->user->name_zh; ?>：
@@ -16,9 +17,10 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
 <tr>
 </tr>
   <td style="<?php echo $style; ?>">
-    <p><strong>Dear <?php echo $user->name; ?>：</strong></p>
+    <p><strong>Dear <?php echo $user->name; ?>,</strong></p>
     <p>
       Your registration for <b><?php echo $competition->name; ?></b> has been cancelled.<br>
+      <br>
       If you have any questions, please contact the organizer. Do not reply to this Email<br>
       <?php foreach ($competition->organizer as $organizer): ?>
       <?php echo $organizer->user->name; ?>:
