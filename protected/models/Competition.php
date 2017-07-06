@@ -67,6 +67,7 @@ class Competition extends ActiveRecord {
 	private $_description;
 	private $_timezones;
 	private $_registrationFull;
+	private $_remainedNumber;
 
 	public $year;
 	public $province;
@@ -366,6 +367,20 @@ class Competition extends ActiveRecord {
 
 	public function canRegister() {
 		return !$this->isRegistrationEnded() && !$this->isRegistrationFull();
+	}
+
+	public function getRemainedNumber() {
+		if ($this->_remainedNumber == null) {
+			$this->_remainedNumber = $this->person_num - Registration::model()->with(array(
+				'user'=>array(
+					'condition'=>'user.status=' . User::STATUS_NORMAL,
+				),
+			))->countByAttributes(array(
+				'competition_id'=>$this->id,
+				'status'=>Registration::STATUS_ACCEPTED,
+			));
+		}
+		return max($this->_remainedNumber, 0);
 	}
 
 	public function isInProgress() {
@@ -1361,6 +1376,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function formatDate() {
+		if (!ctype_digit($this->date)) {
+			return;
+		}
 		foreach (array('date', 'end_date') as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d', $this->$attribute);
