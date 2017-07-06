@@ -254,6 +254,14 @@ class Competition extends ActiveRecord {
 		);
 	}
 
+	public static function getRefundTypes() {
+		return array(
+			self::REFUND_TYPE_NONE=>'不退',
+			self::REFUND_TYPE_50_PERCENT=>'50%',
+			self::REFUND_TYPE_100_PERCENT=>'100%',
+		);
+	}
+
 	public static function getLocalTypes() {
 		return array(
 			self::LOCAL_TYPE_NONE=>'无',
@@ -2055,7 +2063,7 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			['end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
