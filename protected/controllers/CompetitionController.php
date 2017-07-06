@@ -211,7 +211,7 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		if ($registration !== null) {
-			if (isset($_POST['cancel']) && $registration->isAccepted()) {
+			if (isset($_POST['cancel']) && $registration->isCancellable()) {
 				if ($registration->cancel()) {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
 				}
