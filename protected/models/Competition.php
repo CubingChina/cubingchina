@@ -55,6 +55,10 @@ class Competition extends ActiveRecord {
 	const REQUIRE_AVATAR_NONE = 0;
 	const REQUIRE_AVATAR_ACA = 1;
 
+	const REFUND_TYPE_NONE = 'none';
+	const REFUND_TYPE_50_PERCENT = '50';
+	const REFUND_TYPE_100_PERCENT = '100';
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;

@@ -199,6 +199,9 @@ class Registration extends ActiveRecord {
 		$this->status = Registration::STATUS_CANCELLED;
 		$this->cancel_time = time();
 		if ($this->save()) {
+			if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
+				$this->pay->refund($this->getRefundFee());
+			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
 			return true;
 		}
@@ -330,6 +333,34 @@ class Registration extends ActiveRecord {
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
 		return $competition->getEventFee('entry') + $entourageFee + array_sum($fees);
+	}
+
+	public function getPaidFee() {
+		if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
+			return number_format($this->pay->paid_amount / 100, 2, '.', '');
+		}
+		return 0;
+	}
+
+	public function getOtherFee() {
+		if ($this->isPaid()) {
+			$this->getTotalFee() - $this->getPaidFee();
+		}
+		return 0;
+	}
+
+	public function getRefundFee() {
+		if ($this->getPaidFee() == 0) {
+			return 0;
+		}
+		switch ($this->competition->refund_type) {
+			case Competition::REFUND_TYPE_50_PERCENT:
+			case Competition::REFUND_TYPE_100_PERCENT:
+				$percent = intval($this->competition->refund_type);
+				return $this->pay->paid_amount * $percent / 100;
+			default:
+				return 0;
+		}
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
@@ -589,6 +620,7 @@ class Registration extends ActiveRecord {
 		}
 		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
 			'class'=>'tips' . ($canApprove ? ' toggle' : ''),
+			'disabled'=>!$canApprove,
 			'data-toggle'=>'tooltip',
 			'data-placement'=>'top',
 			'title'=>'是否支付报名费',

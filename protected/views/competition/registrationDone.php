@@ -28,10 +28,17 @@
           <p><?php echo Yii::t('Registration', 'Your registration has been cancelled.'); ?></p>
           <hr>
           <?php endif; ?>
+          <h4><?php echo Yii::t('Registration', 'Name'); ?></h4>
+          <p><?php echo $registration->user->getCompetitionName(); ?></p>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
           <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></p>
+          <?php if ($registration->getPaidFee() > 0): ?>
+          <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
+          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
+          <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->date); ?></p>
           <?php if ($registration->isAccepted()): ?>
@@ -104,6 +111,13 @@
             'data-total-days'=>$competition->reg_start > 0 ? floor(($competition->reg_end - $competition->reg_start) / 86400) : 30,
           ]); ?>
           <input type="hidden" name="cancel" value="1">
+          <?php if ($registration->getPaidFee() > 0): ?>
+          <h4><?php echo Yii::t('Registration', 'Paid Fee via Cubing China') ;?></h4>
+          <p><i class="fa fa-rmb"></i><?php echo $registration->getPaidFee(); ?></p>
+          <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
+          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
+          <?php endif; ?>
           <?php echo CHtml::tag('button', [
             'id'=>'cancel',
             'type'=>'button',
