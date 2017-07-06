@@ -29,7 +29,7 @@
         <?php endif; ?>
         <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
         <p><?php echo $registration->getRegistrationEvents(); ?></p>
-        <h4><?php echo Yii::t('common', 'Total Fee:'); ?></h4>
+        <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
         <p><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></p>
         <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
         <p><?php echo date('Y-m-d H:i:s', $registration->date); ?></p>

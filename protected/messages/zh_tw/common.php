@@ -276,6 +276,7 @@ return array (
   'To be announced' => '待定',
   'Tools' => '工具',
   'Total Fee:' => '總計報名費：',
+  'Total Fee' => '總計報名費',
   'Unknown' => '未知',
   'Unpaid' => '未付',
   'Upcoming Competitions' => '近期賽事',
