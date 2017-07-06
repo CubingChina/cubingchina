@@ -19,7 +19,6 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
-  'Signin List' => '簽到列表',
   ' round' => '輪',
   ' rounds' => '輪',
   'Competition List' => '比賽列表',
@@ -75,6 +74,7 @@ return array (
   'Second Stage All' => '第二階段包括所有項目',
   'Second Stage Date' => '第二階段時間',
   'Second Stage Ratio' => '第二階段倍率',
+  'Signin List' => '簽到列表',
   'Status' => '狀態',
   'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此處為比賽主辦預計賽程，可能會依據比賽現場情況進行調整，請在比賽日注意現場通知以免耽誤您的參賽。',
   'The limited number of competitor has been reached.' => '報名人數已達到上限。',

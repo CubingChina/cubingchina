@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Cancelled' => '已取消',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',

@@ -35,6 +35,7 @@ class Registration extends ActiveRecord {
 
 	const STATUS_WAITING = 0;
 	const STATUS_ACCEPTED = 1;
+	const STATUS_CANCELLED = 2;
 
 	public static function getDailyRegistration() {
 		$data = Yii::app()->db->createCommand()
@@ -74,6 +75,7 @@ class Registration extends ActiveRecord {
 		return array(
 			self::STATUS_WAITING=>Yii::t('common', 'Pending'),
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
+			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
 		);
 	}
 
@@ -175,6 +177,17 @@ class Registration extends ActiveRecord {
 		if ($this->competition->show_qrcode) {
 			Yii::app()->mailer->sendRegistrationAcception($this);
 		}
+	}
+
+	public function cancel() {
+		$this->formatEvents();
+		$this->status = Registration::STATUS_CANCELLED;
+		$this->cancel_time = time();
+		if ($this->save()) {
+			Yii::app()->mailer->sendRegistrationCancellation($this);
+			return true;
+		}
+		return false;
 	}
 
 	public function checkEntourageName() {
@@ -570,6 +583,11 @@ class Registration extends ActiveRecord {
 			'data-value'=>$this->paid,
 			'data-name'=>$this->user->getCompetitionName(),
 		));
+		if ($this->status == self::STATUS_ACCEPTED) {
+			$buttons[] = CHtml::link('退赛', ['/board/registration/cancel', 'id'=>$this->id], [
+				'class'=>'btn btn-xs btn-orange btn-square',
+			]);
+		}
 		return implode(' ', $buttons);
 	}
 
