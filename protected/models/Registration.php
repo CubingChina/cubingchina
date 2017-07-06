@@ -633,7 +633,7 @@ class Registration extends ActiveRecord {
 			'data-value'=>$this->paid,
 			'data-name'=>$this->user->getCompetitionName(),
 		));
-		if ($this->status == self::STATUS_ACCEPTED) {
+		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) && $this->status == self::STATUS_ACCEPTED) {
 			$buttons[] = CHtml::link('退赛', ['/board/registration/cancel', 'id'=>$this->id], [
 				'class'=>'btn btn-xs btn-orange btn-square',
 			]);
