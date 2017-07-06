@@ -169,6 +169,8 @@ class CompetitionController extends AdminController {
 			'locations',
 			'qualifying_end_time',
 			'refund_type',
+			'cancellation_end_time',
+			'reg_reopen_time',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
