@@ -192,6 +192,11 @@ class Registration extends ActiveRecord {
 			$this->accept_time = time();
 		}
 		$this->save();
+		if ($this->competition->isRegistrationFull() && !$this->competition->has_been_full) {
+			$this->competition->has_been_full = Competition::YES;
+			$this->competition->formatDate();
+			$this->competition->save();
+		}
 		if ($this->competition->show_qrcode) {
 			Yii::app()->mailer->sendRegistrationAcception($this);
 		}
