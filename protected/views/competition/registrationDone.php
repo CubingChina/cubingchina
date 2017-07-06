@@ -34,7 +34,7 @@
           <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></p>
-          <?php if ($registration->getPaidFee() > 0): ?>
+          <?php if ($registration->isCancelled() && $registration->getRefundFee() > 0): ?>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
           <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
