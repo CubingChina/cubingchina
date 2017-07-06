@@ -19,8 +19,10 @@
 return array (
   'ID' => '',
   'No.' => '',
+  'Paid Fee via Cubing China' => '已付報名費',
+  'Returned Fee to Registrant' => '退回報名費',
+  'The refund will be made via the payment method which you have used at the registration.' => '您所退回的費用將通過付款時選擇的支付方式退回。',
   'User' => '',
-  'You can cancel your registration before {time}.' => '你可以在{time}之前申請退賽。',
   'Date' => '報名時間',
   ' CNY' => '元',
   '<b class="text-danger">Note</b>: A photo is needed to finish your registration.' => '<b class="text-danger">注意</b>：需要提交照片以完成報名。',
@@ -52,6 +54,7 @@ return array (
   'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.' => '下方二維碼將用於比賽簽到及相關事宜，您可以隨時在您的報名信息中查看。請在簽到時將<b class="text-danger">二維碼及相關證件</b>出示給工作人員進行簽到。',
   'Total Fee' => '報名費',
   'Type of Identity' => '證件類型',
-  'Your registration has been cancelled.' => '你已成功退賽。',
+  'You can cancel your registration before {time}.' => '你可以在{time}之前申請退賽。',
   'You succeeded in registering for ' => '您已成功報名',
+  'Your registration has been cancelled.' => '你已成功退賽。',
 );

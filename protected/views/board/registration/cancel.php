@@ -59,10 +59,28 @@
             $model, 'totalFee', array(),
             $form->labelEx($model, 'totalFee', [
               'class'=>'col-sm-2 control-label',
-              'label'=>'报名费',
+              'label'=>'总计报名费',
             ]),
             CHtml::tag('div', ['class'=>'col-sm-10'], CHtml::tag('p', ['class'=>'form-control-static'], $model->getTotalFee()))
           );?>
+          <?php if ($model->getPaidFee() > 0): ?>
+          <?php echo Html::formGroup(
+            $model, 'paidFee', array(),
+            $form->labelEx($model, 'paidFee', [
+              'class'=>'col-sm-2 control-label',
+              'label'=>'已付报名费',
+            ]),
+            CHtml::tag('div', ['class'=>'col-sm-10'], CHtml::tag('p', ['class'=>'form-control-static'], $model->getPaidFee()))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'refundFee', array(),
+            $form->labelEx($model, 'refundFee', [
+              'class'=>'col-sm-2 control-label',
+              'label'=>'退回报名费',
+            ]),
+            CHtml::tag('div', ['class'=>'col-sm-10'], CHtml::tag('p', ['class'=>'form-control-static'], $model->getRefundFee() / 100))
+          );?>
+          <?php endif; ?>
           <?php echo Html::formGroup(
             $model, 'date', array(),
             $form->labelEx($model, 'date', [
