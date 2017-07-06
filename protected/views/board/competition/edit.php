@@ -283,6 +283,21 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php if ($model->isAccepted()): ?>
+              <?php echo Html::formGroup(
+                $model, 'refund_type', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'refund_type', array(
+                  'label'=>'退赛退费比例',
+                )),
+                $form->dropDownList($model, 'refund_type', Competition::getRefundTypes(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'refund_type', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
+              <?php endif; ?>
               <?php if ($model->has_qualifying_time): ?>
               <?php echo Html::formGroup(
                 $model, 'qualifying_end_time', array(
