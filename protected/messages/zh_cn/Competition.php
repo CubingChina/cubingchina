@@ -82,7 +82,7 @@ return array (
   'Status' => '状态',
   'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此处为比赛主办预计赛程，可能会依据比赛现场情况进行调整，请在比赛日注意现场通知以免耽误您的参赛。',
   'The registration has been closed.' => '比赛报名已截止。',
-  'The registration has been paused and it will be restarted after {time}.' => '比赛报名已暂停，补报名将于{time}之后重新开放。',
+  'The registration has been paused and it will be restarted after {time}.' => '比赛报名已暂停，补报名将于{time}之后开放。',
   'The registration is not open yet.' => '比赛报名尚未开放。',
   'The schedule is to be determined.' => '赛程正在紧张激烈地安排当中。',
   'Third Stage Date' => '第三阶段时间',
