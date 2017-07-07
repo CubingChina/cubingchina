@@ -1802,7 +1802,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkCancellationEnd() {
-		if (!$this->isPublic()) {
+		if ($this->cancellation_end_time > 0) {
 			if ($this->cancellation_end_time >= $this->reg_end - 86400) {
 				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
 			}
@@ -1813,7 +1813,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkRegistrationReopen() {
-		if (!$this->isPublic()) {
+		if ($this->reg_reopen_time > 0) {
 			if ($this->reg_reopen_time >= $this->reg_end - 43200) {
 				$this->addError('reg_reopen_time', '报名截止时间必须早于比赛开始至少半天');
 			}
