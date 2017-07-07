@@ -138,9 +138,25 @@
 </div>
 <?php
 $cancellationMessage = json_encode(Yii::t('Registration', 'Please double-confirm your cancellation.'));
-Yii::app()->clientScript->registerScript('pay',
+if ($registration->isCancellable()) {
+  Yii::app()->clientScript->registerScript('cancel',
 <<<EOT
   var cancellationMessage = {$cancellationMessage};
+  $('#cancel').on('click', function() {
+    var that = $(this);
+    CubingChina.utils.confirm(cancellationMessage, {
+      type: 'type-warning'
+    }).then(function() {
+      $('#cancel-form').submit();
+    })
+  });
+EOT
+  );
+}
+
+if ($registration->payable) {
+  Yii::app()->clientScript->registerScript('pay',
+<<<EOT
   if (navigator.userAgent.match(/MicroMessenger/i)) {
     $('#redirect-tips').removeClass('hide').nextAll().hide();
     $('#pay').prop('disabled', true);
@@ -172,14 +188,6 @@ Yii::app()->clientScript->registerScript('pay',
       }
     });
   });
-  $('#cancel').on('click', function() {
-    var that = $(this);
-    CubingChina.utils.confirm(cancellationMessage, {
-      type: 'type-warning'
-    }).then(function() {
-      $('#cancel-form').submit();
-    })
-  });
   function submitForm(data) {
     var form = $('<form>').attr({
       action: data.action,
@@ -192,4 +200,5 @@ Yii::app()->clientScript->registerScript('pay',
     form.submit();
   }
 EOT
-);
+  );
+}
