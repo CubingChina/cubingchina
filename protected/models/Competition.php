@@ -66,7 +66,6 @@ class Competition extends ActiveRecord {
 	private $_schedules;
 	private $_description;
 	private $_timezones;
-	private $_registrationFull;
 	private $_remainedNumber;
 
 	public $year;
@@ -352,10 +351,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationFull() {
-		if ($this->_registrationFull !== null) {
-			return $this->_registrationFull;
-		}
-		return $this->_registrationFull = $this->person_num > 0 && Registration::model()->with(array(
+		return $this->person_num > 0 && Registration::model()->with(array(
 			'user'=>array(
 				'condition'=>'user.status=' . User::STATUS_NORMAL,
 			),

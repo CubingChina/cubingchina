@@ -195,7 +195,7 @@ class CompetitionController extends Controller {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
 			$this->redirect($competition->getUrl('detail'));
 		}
-		$showRegistration = $registration !== null && $registration->isAccepted();
+		$showRegistration = $registration !== null && !$registration->isPending();
 		if (!$showRegistration) {
 			$flashes = [];
 			if ($competition->isRegistrationEnded()) {
@@ -281,7 +281,7 @@ class CompetitionController extends Controller {
 				$model->total_fee = $model->getTotalFee(true);
 				$model->ip = Yii::app()->request->getUserHostAddress();
 				$model->date = time();
-				$model->status = Registration::STATUS_WAITING;
+				$model->status = Registration::STATUS_PENDING;
 				if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}

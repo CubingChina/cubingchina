@@ -1,6 +1,6 @@
 <?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
-  <?php if (!$registration->isCancelled()): ?>
+  <?php if ($registration->isPending() || $registration->isAccepted()): ?>
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
     <?php if ($registration->isAccepted()): ?>
@@ -48,6 +48,12 @@
           <?php if ($registration->isCancelled()): ?>
           <h4><?php echo Yii::t('Registration', 'Cancellation Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->cancel_time); ?></p>
+          <?php endif; ?>
+          <?php if ($registration->isWaiting()): ?>
+          <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
+          <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list. There are {count} people on the list ahead of you.', [
+            '{count}'=>$registration->getWaitingNumber(),
+          ]); ?></p>
           <?php endif; ?>
           <hr>
           <?php if ($registration->payable): ?>
