@@ -68,8 +68,15 @@
               ),
               'order_name',
               array(
-                'name'=>'amount',
-                'value'=>'number_format($data->amount / 100, 2)',
+                'name'=>'paid_amount',
+                'header'=>'支付金额',
+                'value'=>'number_format($data->paid_amount / 100, 2)',
+                'footer'=>$paid,
+              ),
+              array(
+                'name'=>'refund_amount',
+                'header'=>'退款金额',
+                'value'=>'number_format($data->refund_amount / 100, 2)',
                 'footer'=>$paid,
               ),
               array(
@@ -79,10 +86,10 @@
                 'header'=>'手续费',
               ),
               array(
-                'footer'=>$paid - $fee,
+                'footer'=>floatval($paid) - floatval($fee),
                 'filter'=>false,
                 'header'=>'实收',
-                'value'=>'number_format($data->amount / 100 - $data->billFee, 2)',
+                'value'=>'number_format(($data->paid_amount - $data->refund_amount) / 100 - $data->billFee, 2)',
               ),
               'order_no',
               'trade_no',
