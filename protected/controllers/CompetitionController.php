@@ -195,7 +195,7 @@ class CompetitionController extends Controller {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
 			$this->redirect($competition->getUrl('detail'));
 		}
-		$showRegistration = $registration !== null && $registration->isAccepted();
+		$showRegistration = $registration !== null && !$registration->isPending();
 		if (!$showRegistration) {
 			$flashes = [];
 			if ($competition->isRegistrationEnded()) {

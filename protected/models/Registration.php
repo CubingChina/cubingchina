@@ -165,6 +165,10 @@ class Registration extends ActiveRecord {
 		return $text;
 	}
 
+	public function isPending() {
+		return $this->status == self::STATUS_PENDING;
+	}
+
 	public function isAccepted() {
 		return $this->status == self::STATUS_ACCEPTED;
 	}
@@ -177,7 +181,11 @@ class Registration extends ActiveRecord {
 
 	public function isCancellable() {
 		$competition = $this->competition;
-		return time() < $competition->cancellation_end_time && $this->isAccepted();
+		return time() < $competition->cancellation_end_time && $this->isAccepted() || $this->isWaiting();
+	}
+
+	public function isWaiting() {
+		return $this->status == self::STATUS_WAITING;
 	}
 
 	public function isPaid() {
@@ -382,6 +390,10 @@ class Registration extends ActiveRecord {
 	public function getRefundFee() {
 		if ($this->getPaidFee() == 0) {
 			return 0;
+		}
+		//候补列表的直接全额退款
+		if ($this->isWaiting()) {
+			return $this->pay->paid_amount;
 		}
 		switch ($this->competition->refund_type) {
 			case Competition::REFUND_TYPE_50_PERCENT:
@@ -709,6 +721,23 @@ class Registration extends ActiveRecord {
 				'status'=>self::STATUS_ACCEPTED,
 			), array(
 				'condition'=>'accept_time<:accept_time OR (accept_time=:accept_time AND id<=:id)',
+				'params'=>array(
+					':accept_time'=>$this->accept_time,
+					':id'=>$this->id,
+				),
+			));
+		} else {
+			return '-';
+		}
+	}
+
+	public function getWaitingNumber() {
+		if ($this->isWaiting()) {
+			return self::model()->countByAttributes(array(
+				'competition_id'=>$this->competition_id,
+				'status'=>self::STATUS_WAITING,
+			), array(
+				'condition'=>'accept_time<:accept_time OR (accept_time=:accept_time AND id<:id)',
 				'params'=>array(
 					':accept_time'=>$this->accept_time,
 					':id'=>$this->id,

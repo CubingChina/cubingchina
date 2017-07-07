@@ -19,7 +19,6 @@
 return array (
   'Fee' => '',
   'WCA ID' => '',
-  'Waiting' => '候補中',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
@@ -286,6 +285,7 @@ return array (
   'Verify Code' => '驗證碼',
   'WCA Competition' => 'WCA賽事',
   'WCA Delegate' => 'WCA代表',
+  'Waiting' => '候補中',
   'Welcome to Cubing China!' => '感謝注冊粗餅·中國。',
   'Wrong WCA ID' => '錯誤的WCA ID',
   'Year' => '年份',
