@@ -33,11 +33,12 @@ class Registration extends ActiveRecord {
 	const AVATAR_TYPE_SUBMMITED = 0;
 	const AVATAR_TYPE_NOW = 1;
 
-	const STATUS_WAITING = 0;
+	const STATUS_PENDING = 0;
 	const STATUS_ACCEPTED = 1;
 	const STATUS_CANCELLED = 2;
 	const STATUS_CANCELLED_TIME_END = 3;
 	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
+	const STATUS_WAITING = 5;
 
 	public static function getDailyRegistration() {
 		$data = Yii::app()->db->createCommand()
@@ -75,11 +76,12 @@ class Registration extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_WAITING=>Yii::t('common', 'Pending'),
+			self::STATUS_PENDING=>Yii::t('common', 'Pending'),
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
 			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
 			self::STATUS_CANCELLED_TIME_END=>Yii::t('common', 'Cancelled'),
 			self::STATUS_CANCELLED_QUALIFYING_TIME=>Yii::t('common', 'Cancelled'),
+			self::STATUS_WAITING=>Yii::t('common', 'Waiting'),
 		);
 	}
 
@@ -164,7 +166,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function isAccepted() {
-		return $this->status == self::STATUS_ACCEPTED && !$this->isCancelled();
+		return $this->status == self::STATUS_ACCEPTED;
 	}
 
 	public function isCancelled() {
@@ -182,7 +184,7 @@ class Registration extends ActiveRecord {
 		return $this->paid == self::PAID;
 	}
 
-	public function accept() {
+	public function accept($forceAccept = false) {
 		if ($this->isCancelled()) {
 			return false;
 		}
@@ -191,14 +193,31 @@ class Registration extends ActiveRecord {
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
-		$this->save();
-		if ($this->competition->isRegistrationFull() && !$this->competition->has_been_full) {
-			$this->competition->has_been_full = Competition::YES;
-			$this->competition->formatDate();
-			$this->competition->save();
+		if ($this->competition->isRegistrationFull()) {
+			if (!$forceAccept) {
+				$this->status = self::STATUS_WAITING;
+			}
+			if (!$this->competition->has_been_full) {
+				$this->competition->has_been_full = Competition::YES;
+				$this->competition->formatDate();
+				$this->competition->save();
+			}
 		}
-		if ($this->competition->show_qrcode) {
+		$this->save();
+		if ($this->isAccepted() && $this->competition->show_qrcode) {
 			Yii::app()->mailer->sendRegistrationAcception($this);
+		}
+	}
+
+	public function acceptNext() {
+		$nextRegistration = self::model()->findByAttributes([
+			'competition_id'=>$this->competition_id,
+			'status'=>self::STATUS_WAITING,
+		], [
+			'order'=>'accept_time ASC',
+		]);
+		if ($nextRegistration) {
+			$nextRegistration->accept();
 		}
 	}
 
@@ -211,6 +230,9 @@ class Registration extends ActiveRecord {
 				$this->pay->refund($this->getRefundFee());
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
+			if (!$this->competition->isRegistrationFull()) {
+				$this->acceptNext();
+			}
 			return true;
 		}
 		return false;
@@ -602,7 +624,7 @@ class Registration extends ActiveRecord {
 		$canApprove = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) || !$this->competition->isWCACompetition() || $this->user->country_id > 1;
 		if ($canApprove) {
 			switch ($this->status) {
-				case self::STATUS_WAITING:
+				case self::STATUS_PENDING:
 					$buttons[] = CHtml::tag('button', array(
 						'class'=>'btn btn-xs btn-green btn-square toggle',
 						'data-id'=>$this->id,
@@ -623,6 +645,11 @@ class Registration extends ActiveRecord {
 						'data-text'=>'["通过","取消"]',
 						'data-name'=>$this->user->getCompetitionName(),
 					), '取消');
+					break;
+				case self::STATUS_WAITING:
+					$buttons[] = CHtml::tag('button', [
+						'class'=>'btn btn-xs btn-purple btn-square',
+					], '候选');
 					break;
 			}
 		}

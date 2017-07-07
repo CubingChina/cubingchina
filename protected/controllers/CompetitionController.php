@@ -281,7 +281,7 @@ class CompetitionController extends Controller {
 				$model->total_fee = $model->getTotalFee(true);
 				$model->ip = Yii::app()->request->getUserHostAddress();
 				$model->date = time();
-				$model->status = Registration::STATUS_WAITING;
+				$model->status = Registration::STATUS_PENDING;
 				if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}

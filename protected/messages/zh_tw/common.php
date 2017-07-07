@@ -19,6 +19,7 @@
 return array (
   'Fee' => '',
   'WCA ID' => '',
+  'Waiting' => '候補中',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
