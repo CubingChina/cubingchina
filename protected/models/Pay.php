@@ -345,11 +345,14 @@ class Pay extends ActiveRecord {
 		$criteria = clone self::$_criteria;
 		$criteria->select = 'SUM(paid_amount) AS paid_amount';
 		$paidAmount = $this->find($criteria)->paid_amount;
+		$criteria = clone self::$_criteria;
+		$criteria->select = 'SUM(refund_amount) AS refund_amount';
+		$refundAmount = $this->find($criteria)->refund_amount;
 		$criteria->select = 'SUM(ROUND((CASE
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.012 END) / 100, 2)) AS paid_amount';
 		$fee = $this->find($criteria)->paid_amount;
 		$columns = array(
 			array(
@@ -370,6 +373,11 @@ class Pay extends ActiveRecord {
 				'header'=>'支付金额',
 				'value'=>'number_format($data->paid_amount / 100, 2)',
 				'footer'=>number_format($paidAmount / 100, 2),
+			),
+			array(
+				'header'=>'退款金额',
+				'value'=>'number_format($data->refund_amount / 100, 2)',
+				'footer'=>number_format($refundAmount / 100, 2),
 			),
 			array(
 				'name'=>'fee',
@@ -433,7 +441,7 @@ class Pay extends ActiveRecord {
 						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->paid_amount * 0.00012, 2, '.', '');
+					return number_format(($this->paid_amount - $this->refund_amount) * 0.00012, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -450,7 +458,7 @@ class Pay extends ActiveRecord {
 						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->paid_amount * 0.00006, 2, '.', '');
+					return number_format(($this->paid_amount - $this->refund_amount) * 0.00006, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -478,7 +486,7 @@ class Pay extends ActiveRecord {
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.012 END) / 100, 2)) AS paid_amount';
 		return $this->find($criteria)->paid_amount;
 	}
 
@@ -490,7 +498,7 @@ class Pay extends ActiveRecord {
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.006 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.006 END) / 100, 2)) AS paid_amount';
 		return $this->find($criteria)->paid_amount;
 	}
 
