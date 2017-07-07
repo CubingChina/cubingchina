@@ -82,7 +82,7 @@ class PayController extends Controller {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
 					$competition = $model->competition;
-					$params['url'] = $competition->getUrl('registration');
+					$params['url'] = CHtml::normalizeUrl($competition->getUrl('registration'));
 					break;
 			}
 		} else {

@@ -839,54 +839,30 @@ class RegistrationController extends AdminController {
 		));
 	}
 
-	public function actionShow() {
+	public function actionCancel() {
 		$id = $this->iGet('id');
 		$model = Registration::model()->findByPk($id);
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		if (!$model->isAccepted()) {
+			Yii::app()->user->setFlash('danger', '未通过审核选手不能退赛');
+			$this->redirect(['/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]]);
+		}
+		if (isset($_POST['cancel'])) {
+			if ($model->cancel()) {
+				Yii::app()->user->setFlash('success', '选手退赛成功');
+				$this->redirect(['/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]]);
+			}
 		}
 		$model->formatEvents();
-		$model->status = Registration::STATUS_ACCEPTED;
-		$model->save();
-		Yii::app()->user->setFlash('success', '通过报名成功');
-		$this->redirect(Yii::app()->request->urlReferrer);
-	}
-
-	public function actionHide() {
-		$id = $this->iGet('id');
-		$model = Registration::model()->findByPk($id);
-		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}
-		$model->status = Registration::STATUS_WAITING;
-		$model->save();
-		Yii::app()->user->setFlash('success', '取消报名成功');
-		$this->redirect(Yii::app()->request->urlReferrer);
-	}
-
-	public function actionPaid() {
-		$id = $this->iGet('id');
-		$model = Registration::model()->findByPk($id);
-		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}
-		$model->formatEvents();
-		$model->paid = Registration::PAID;
-		$model->save();
-		Yii::app()->user->setFlash('success', $model->user->name . '已付！');
-		$this->redirect(Yii::app()->request->urlReferrer);
-	}
-
-	public function actionUnpaid() {
-		$id = $this->iGet('id');
-		$model = Registration::model()->findByPk($id);
-		if ($model === null) {
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}
-		$model->paid = Registration::UNPAID;
-		$model->save();
-		Yii::app()->user->setFlash('success', $model->user->name . '未付！');
-		$this->redirect(Yii::app()->request->urlReferrer);
+		$this->render('cancel', array(
+			'model'=>$model,
+		));
 	}
 
 	public function actionToggle() {
@@ -908,6 +884,9 @@ class RegistrationController extends AdminController {
 		}
 		if ($this->user->role != User::ROLE_ADMINISTRATOR && $attribute == 'status' && $competition->isWCACompetition() && $model->user->country_id == 1) {
 			throw new CHttpException(401, '大陆选手请通过粗饼在线支付完成报名，如特殊情况请联系管理员');
+		}
+		if ($model->isCancelled()) {
+			throw new CHttpException(401, '已退赛选手不做任何变更');
 		}
 		$model->$attribute = 1 - $model->$attribute;
 		if ($attribute == 'signed_in') {

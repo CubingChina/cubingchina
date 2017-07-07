@@ -283,6 +283,49 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php if ($model->isAccepted()): ?>
+              <?php echo Html::formGroup(
+                $model, 'refund_type', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'refund_type', array(
+                  'label'=>'退赛退费比例',
+                )),
+                $form->dropDownList($model, 'refund_type', Competition::getRefundTypes(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'refund_type', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
+                $model, 'cancellation_end_time', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'cancellation_end_time', [
+                  'label'=>'退赛截止时间',
+                ]),
+                Html::activeTextField($model, 'cancellation_end_time', array(
+                  'class'=>'datetime-picker',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+                  'placeholder'=>'请务必早于比赛结束时间至少一天',
+                )),
+                $form->error($model, 'cancellation_end_time', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix hidden-lg"></div>
+              <?php echo Html::formGroup(
+                $model, 'reg_reopen_time', array(
+                  'class'=>'col-lg-3 col-md-6',
+                ),
+                $form->labelEx($model, 'reg_reopen_time', [
+                  'label'=>'补报开始时间',
+                ]),
+                Html::activeTextField($model, 'reg_reopen_time', array(
+                  'class'=>'datetime-picker',
+                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+                  'placeholder'=>'请务必早于比赛结束时间至少半天',
+                )),
+                $form->error($model, 'reg_reopen_time', array('class'=>'text-danger'))
+              );?>
+              <?php endif; ?>
               <?php if ($model->has_qualifying_time): ?>
               <?php echo Html::formGroup(
                 $model, 'qualifying_end_time', array(
@@ -297,6 +340,7 @@
               );?>
               <div class="clearfix"></div>
               <?php endif; ?>
+              <div class="clearfix"></div>
               <?php
               if ($model->isOld()) {
                 echo Html::formGroup(
@@ -539,25 +583,31 @@ Yii::app()->clientScript->registerScript('competition',
     date.setDate(date.getDate() - 1);
     date.setHours(23);
     date.setMinutes(59);
-    $('#Competition_reg_start').datetimepicker('setEndDate', date);
+    $('#Competition_reg_start, #Competition_qualifying_end_time').datetimepicker('setEndDate', date);
     $('#Competition_reg_end').datetimepicker('setEndDate', date);
   }).on('changeDate', '#Competition_reg_start', function() {
     var date = $(this).datetimepicker('getDate');
-    $('#Competition_second_stage_date').datetimepicker('setStartDate', new Date(+date + 1000));
+    $('#Competition_second_stage_date, #Competition_qualifying_end_time, #Competition_cancellation_end_time').datetimepicker('setStartDate', new Date(+date + 86400000 * 7));
     $('#Competition_third_stage_date').datetimepicker('setStartDate', new Date(+date + 1000));
   }).on('changeDate', '#Competition_reg_end', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_second_stage_date').datetimepicker('setEndDate', new Date(+date - 1000));
+    $('#Competition_cancellation_end_time').datetimepicker('setEndDate', new Date(+date - 86400000));
+    $('#Competition_reg_reopen_time').datetimepicker('setEndDate', new Date(+date - 43200000));
   }).on('changeDate', '#Competition_second_stage_date', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_third_stage_date').datetimepicker('setStartDate', new Date(+date + 1000));
   }).on('changeDate', '#Competition_third_stage_date', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_second_stage_date').datetimepicker('setEndDate', new Date(+date - 1000));
+  }).on('changeDate', '#Competition_cancellation_end_time', function() {
+    var date = $(this).datetimepicker('getDate');
+    $('#Competition_reg_reopen_time').datetimepicker('setStartDate', new Date(+date + 43200000));
   });
   $('#Competition_date').trigger('changeDate');
   $('#Competition_reg_start').trigger('changeDate');
   $('#Competition_reg_end').trigger('changeDate');
+  $('#Competition_cancellation_end_time').trigger('changeDate');
   $('#Competition_type').trigger('change');
   var organizers = {$organizerNames};
   var engine = new Bloodhound({

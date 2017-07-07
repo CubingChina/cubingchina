@@ -1,4 +1,6 @@
 <?php
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7;
 
 /**
  * This is the model class for table 'pay'.
@@ -89,25 +91,108 @@ class Pay extends ActiveRecord {
 		);
 	}
 
+	public function refund($amount) {
+		if ($this->refund_time > 0 || $amount <= 0) {
+			return false;
+		}
+		if ($amount >= $this->paid_amount) {
+			$amount = $this->paid_amount;
+		}
+		$app = Yii::app();
+		$alipay = $app->params->payments['balipay'];
+		$baseUrl = $app->request->getBaseUrl(true);
+		$language = $app->language;
+		$app->language = 'zh_cn';
+		$commonParams = [
+			'app_id'=>trim($alipay['app_id']),
+			'method'=>'alipay.trade.refund',
+			'timestamp'=>date('Y-m-d H:i:s'),
+			'version'=>'1.0',
+			'charset'=>self::CHARSET,
+		];
+		$bizParams = array(
+			'out_trade_no'=>$this->order_no,
+			'refund_amount'=>number_format($amount / 100, 2, '.', ''),
+			// 'refund_reason'=>'退赛-' . $this->order_name,
+			//暂时没有多次退款的case，统一使用-1
+			'out_request_no'=>$this->order_no . '-1',
+		);
+		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
+		Yii::log(json_encode([
+			'amount'=>$amount,
+			'params'=>$params,
+		]), 'pay', 'refund.params');
+		$response = $this->request($alipay['gateway'], $params);
+		if ($response === false) {
+			return false;
+		}
+		$sign = $response['sign'];
+		$params = $response['alipay_trade_refund_response'];
+		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
+				'sign',
+				'code',
+				'msg',
+			])) {
+			$this->refund_amount = $params['refund_fee'] * 100;
+			$this->refund_time = strtotime($params['gmt_refund_pay']);
+			$this->save();
+			return true;
+		}
+		return false;
+	}
+
+	public function request($gateway, $params) {
+		$client = new Client();
+		try {
+			$response = $client->post($gateway, [
+				'form_params'=>$params,
+			]);
+			if ($response->getStatusCode() != 200) {
+				return false;
+			}
+			$body = $response->getBody();
+			Yii::log($body, 'pay', 'response');
+			$body = json_decode($body, true);
+			if (!isset($body['alipay_trade_refund_response'])) {
+				return false;
+			}
+			return $body;
+		} catch (Exception $e) {
+			$log = [
+				'code'=>$e->getCode(),
+				'message'=>$e->getMessage(),
+			];
+			if (method_exists($e, 'getRequest')) {
+				$log['request'] = Psr7\str($e->getRequest());
+				if ($e->hasResponse()) {
+					$log['response'] = Psr7\str($e->getResponse());
+				}
+			}
+			Yii::log(json_encode($log), 'pay', 'request');
+			return false;
+		}
+
+	}
+
 	public function validateNotify($channel, $params) {
 		switch ($channel) {
 			default:
-				return $this->validateAlipayNotify($channel, $params);
+				return $this->validateAlipayNotify($params);
 		}
 	}
 
-	public function validateAlipayNotify($channel, $params) {
+	public function validateAlipayNotify($params) {
 		$app = Yii::app();
-		$alipay = $app->params->payments[$channel];
+		$alipay = $app->params->payments['balipay'];
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
 		$paidAmount = isset($params['total_amount']) ? $params['total_amount'] * 100 : 0;
-		$result = $this->validateAlipaySign($params, $alipay['alipay_public_key_path']);
+		$result = $this->validateAlipaySign($params, $params['sign'], $alipay['alipay_public_key_path']);
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
-			$this->channel = $channel;
+			$this->channel = 'balipay';
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
 				case self::ALIPAY_TRADE_SUCCESS:
@@ -122,18 +207,21 @@ class Pay extends ActiveRecord {
 		return $result;
 	}
 
-	public function validateAlipaySign($params, $publicKeyPath, $excludeAttributes = ['sign', 'sign_type']) {
-		$sign = $params['sign'] ?? '';
-		$temp = $params;
-		foreach ($excludeAttributes as $attribute) {
-			unset($temp[$attribute]);
+	public function validateAlipaySign($params, $sign, $publicKeyPath, $excludeAttributes = ['sign', 'sign_type']) {
+		if (is_array($params)) {
+			$temp = $params;
+			foreach ($excludeAttributes as $attribute) {
+				unset($temp[$attribute]);
+			}
+			ksort($temp);
+			$str = array();
+			foreach ($temp as $key=>$value) {
+				$str[] = "$key=$value";
+			}
+			$data = implode('&', $str);
+		} else {
+			$data = $params;
 		}
-		ksort($temp);
-		$str = array();
-		foreach ($temp as $key=>$value) {
-			$str[] = "$key=$value";
-		}
-		$data = implode('&', $str);
 		$publicKeyContent = file_get_contents($publicKeyPath);
 		$res = openssl_get_publickey($publicKeyContent);
 		$result = openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
@@ -235,6 +323,7 @@ class Pay extends ActiveRecord {
 		return $this->status == self::STATUS_PAID;
 	}
 
+
 	public function amountMismatch() {
 		return $this->isPaid() && $this->amount != $this->paid_amount;
 	}
@@ -256,11 +345,14 @@ class Pay extends ActiveRecord {
 		$criteria = clone self::$_criteria;
 		$criteria->select = 'SUM(paid_amount) AS paid_amount';
 		$paidAmount = $this->find($criteria)->paid_amount;
+		$criteria = clone self::$_criteria;
+		$criteria->select = 'SUM(refund_amount) AS refund_amount';
+		$refundAmount = $this->find($criteria)->refund_amount;
 		$criteria->select = 'SUM(ROUND((CASE
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.012 END) / 100, 2)) AS paid_amount';
 		$fee = $this->find($criteria)->paid_amount;
 		$columns = array(
 			array(
@@ -281,6 +373,11 @@ class Pay extends ActiveRecord {
 				'header'=>'支付金额',
 				'value'=>'number_format($data->paid_amount / 100, 2)',
 				'footer'=>number_format($paidAmount / 100, 2),
+			),
+			array(
+				'header'=>'退款金额',
+				'value'=>'number_format($data->refund_amount / 100, 2)',
+				'footer'=>number_format($refundAmount / 100, 2),
 			),
 			array(
 				'name'=>'fee',
@@ -344,7 +441,7 @@ class Pay extends ActiveRecord {
 						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->paid_amount * 0.00012, 2, '.', '');
+					return number_format(($this->paid_amount - $this->refund_amount) * 0.00012, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -361,7 +458,7 @@ class Pay extends ActiveRecord {
 						return number_format(max($this->paid_amount * 0.0006, 0.08), 2, '.', '');
 					}
 				default:
-					return number_format($this->paid_amount * 0.00006, 2, '.', '');
+					return number_format(($this->paid_amount - $this->refund_amount) * 0.00006, 2, '.', '');
 			}
 		} else {
 			return '0.00';
@@ -389,7 +486,7 @@ class Pay extends ActiveRecord {
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.012 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.012 END) / 100, 2)) AS paid_amount';
 		return $this->find($criteria)->paid_amount;
 	}
 
@@ -401,7 +498,7 @@ class Pay extends ActiveRecord {
 			WHEN status=0 OR status=5 THEN 0
 			WHEN channel="nowPay" AND device_type="02" THEN paid_amount*0.02
 			WHEN channel="nowPay" THEN paid_amount*0.06
-			ELSE paid_amount*0.006 END) / 100, 2)) AS paid_amount';
+			ELSE (paid_amount - refund_amount)*0.006 END) / 100, 2)) AS paid_amount';
 		return $this->find($criteria)->paid_amount;
 	}
 

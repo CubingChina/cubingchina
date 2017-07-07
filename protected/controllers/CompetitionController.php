@@ -193,16 +193,45 @@ class CompetitionController extends Controller {
 		$registration = Registration::getUserRegistration($competition->id, $user->id);
 		if (!$competition->isPublic() || !$competition->isRegistrationStarted() || $competition->tba) {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
-			$this->redirect($competition->getUrl('competitors'));
+			$this->redirect($competition->getUrl('detail'));
 		}
-		$showRegistration = $registration !== null && $registration->isAccepted();
-		if ($competition->isRegistrationEnded() && !$showRegistration) {
-			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration has been closed.'));
-			$this->redirect($competition->getUrl('competitors'));
-		}
-		if ($competition->isRegistrationFull() && !$showRegistration) {
-			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The limited number of competitor has been reached.'));
-			$this->redirect($competition->getUrl('competitors'));
+		$showRegistration = $registration !== null && !$registration->isPending();
+		if (!$showRegistration) {
+			$flashes = [];
+			if ($competition->isRegistrationEnded()) {
+				$flashes['info'] = Yii::t('Competition', 'The registration has been closed.');
+			}
+			if ($competition->isRegistrationFull()) {
+				if (time() < $competition->cancellation_end_time) {
+					$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
+						'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
+					]);
+				} else {
+					$flashes['info'] = Yii::t('Competition', 'The registration has been closed.');
+				}
+			}
+			if ($competition->has_been_full && !$competition->isRegistrationFull() &&  time() < $competition->cancellation_end_time) {
+				$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
+					'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
+				]);
+			}
+			if ($competition->isRegistrationPaused() && !$competition->isRegistrationFull()) {
+				$flashes['info'] = Yii::t('Competition', 'The registration has been paused and it will be restarted after {time}.', [
+					'{time}'=>date('Y-m-d H:i:s', $competition->reg_reopen_time),
+				]);
+			}
+			if (!empty($flashes)) {
+				foreach ($flashes as $type=>$message) {
+					Yii::app()->user->setFlash($type, $message);
+				}
+			}
+			Yii::app()->user->setFlash('warning', Yii::t('Competition', 'Remaining place{s} for registration: {num}.', [
+				'{s}'=>$competition->getRemainedNumber() > 1 ? 's' : '',
+				'{num}'=>$competition->getRemainedNumber(),
+			]));
+			if (!empty($flashes)) {
+				$this->redirect($competition->getUrl('competitors'));
+			}
 		}
 		if ($user->isUnchecked()) {
 			$this->render('registration403', array(
@@ -211,11 +240,14 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		if ($registration !== null) {
+			if (isset($_POST['cancel']) && $registration->isCancellable()) {
+				if ($registration->cancel()) {
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
+				}
+			}
 			$registration->formatEvents();
-			$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 			$this->render('registrationDone', array(
 				'user'=>$user,
-				'accepted'=>$registration->isAccepted(),
 				'competition'=>$competition,
 				'registration'=>$registration,
 			));
@@ -249,7 +281,7 @@ class CompetitionController extends Controller {
 				$model->total_fee = $model->getTotalFee(true);
 				$model->ip = Yii::app()->request->getUserHostAddress();
 				$model->date = time();
-				$model->status = Registration::STATUS_WAITING;
+				$model->status = Registration::STATUS_PENDING;
 				if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}

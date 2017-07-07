@@ -11,3 +11,10 @@ $config['modules']['gii'] = array(
 	),
 );
 $config['components']['urlManager']['rules'] = array_slice($config['components']['urlManager']['rules'], 2, null, true);
+$config['params']['payments']['balipay'] = [
+	'gateway'=>'https://openapi.alipaydev.com/gateway.do',
+	'app_id'=>'2016080500173765',
+	'private_key_path'=>'/data/security/cubingchina.test.private.pem',
+	'alipay_public_key_path'=>'/data/security/alipay.test.public.pem',
+	'img'=>'/f/images/pay/alipay.png',
+];
