@@ -1804,10 +1804,10 @@ class Competition extends ActiveRecord {
 	public function checkCancellationEnd() {
 		//之前的比赛ID到669
 		if ($this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
-			if ($this->cancellation_end_time >= $this->reg_end - 86400) {
+			if ($this->cancellation_end_time > $this->reg_end - 86400) {
 				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
 			}
-			if ($this->cancellation_end_time <= $this->reg_start + 86400 * 7) {
+			if ($this->cancellation_end_time < $this->reg_start + 86400 * 7) {
 				$this->addError('cancellation_end_time', '补报截止时间必须晚于报名开始时间至少一周');
 			}
 		}
@@ -1820,11 +1820,11 @@ class Competition extends ActiveRecord {
 	public function checkRegistrationReopen() {
 		//之前的比赛ID到669
 		if ($this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
-			if ($this->reg_reopen_time >= $this->reg_end - 43200) {
+			if ($this->reg_reopen_time > $this->reg_end - 43200) {
 				$this->addError('reg_reopen_time', '报名重开时间必须早于比赛开始至少半天');
 			}
-			if ($this->reg_reopen_time <= $this->cancellation_end_time + 43200) {
-				$this->addError('reg_reopen_time', '报名重开时间必须晚于比赛开始至少半天');
+			if ($this->reg_reopen_time < $this->cancellation_end_time + 43200) {
+				$this->addError('reg_reopen_time', '报名重开时间必须晚于退赛截止时间至少半天');
 			}
 		}
 	}

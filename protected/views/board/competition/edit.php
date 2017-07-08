@@ -306,7 +306,7 @@
                 Html::activeTextField($model, 'cancellation_end_time', array(
                   'class'=>'datetime-picker',
                   'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                  'placeholder'=>'请务必早于比赛结束时间至少一天',
+                  'placeholder'=>'请务必早于报名结束时间至少一天',
                 )),
                 $form->error($model, 'cancellation_end_time', array('class'=>'text-danger'))
               );?>
@@ -321,7 +321,7 @@
                 Html::activeTextField($model, 'reg_reopen_time', array(
                   'class'=>'datetime-picker',
                   'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                  'placeholder'=>'请务必早于比赛结束时间至少半天',
+                  'placeholder'=>'请务必早于报名结束时间至少半天',
                 )),
                 $form->error($model, 'reg_reopen_time', array('class'=>'text-danger'))
               );?>
