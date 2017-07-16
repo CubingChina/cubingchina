@@ -175,8 +175,11 @@ class Registration extends ActiveRecord {
 
 	public function isCancelled() {
 		return $this->status == self::STATUS_CANCELLED
-			|| $this->status == self::STATUS_CANCELLED_TIME_END
-			|| $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+			|| $this->status == self::STATUS_CANCELLED_TIME_END;
+	}
+
+	public function isDisqualified() {
+		return $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
 	}
 
 	public function isCancellable() {
