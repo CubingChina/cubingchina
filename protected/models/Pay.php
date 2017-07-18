@@ -248,6 +248,7 @@ class Pay extends ActiveRecord {
 				if ($registration !== null && !$registration->isAccepted()) {
 					$registration->paid = Registration::PAID;
 					$registration->total_fee = $registration->getTotalFee(true);
+					$registration->guest_paid = $registration->has_entourage;
 					$registration->accept();
 				}
 				break;

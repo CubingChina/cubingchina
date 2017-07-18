@@ -837,7 +837,7 @@ class Registration extends ActiveRecord {
 			$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
 			$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
 			$rules[] = array('has_entourage', 'required', 'on'=>'register');
-			$rules[] = ['repeatPassportNumber', 'safe', 'on'=>'register'];
+			$rules[] = ['repeatPassportNumber, guest_paid', 'safe', 'on'=>'register'];
 		}
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');

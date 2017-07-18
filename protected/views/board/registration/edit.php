@@ -132,6 +132,16 @@
                 )),
                 $form->error($model, 'repeatPassportNumber', array('class'=>'text-danger'))
               ); ?>
+              <?php echo Html::formGroup(
+                $model, 'guest_paid', array(),
+                $form->labelEx($model, 'guest_paid', [
+                  'label'=>'是否支付',
+                ]),
+                $form->dropDownList($model, 'guest_paid', Registration::getYesOrNo(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'guest_paid', array('class'=>'text-danger'))
+              ); ?>
             </div>
             <?php endif; ?>
             <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>

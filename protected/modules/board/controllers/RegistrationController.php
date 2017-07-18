@@ -218,6 +218,8 @@ class RegistrationController extends AdminController {
 					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
 					$col++;
 					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
+					$col++;
+					$sheet->setCellValueExplicit($col . $row, $registration->guest_paid == Registration::YES ? '已支付' : '未支付');
 				}
 			}
 			if (!$registration->isAccepted()) {
