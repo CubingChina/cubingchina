@@ -229,9 +229,9 @@ class Registration extends ActiveRecord {
 		}
 	}
 
-	public function cancel() {
+	public function cancel($status = Registration::STATUS_CANCELLED) {
 		$this->formatEvents();
-		$this->status = Registration::STATUS_CANCELLED;
+		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
 			if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
@@ -392,8 +392,12 @@ class Registration extends ActiveRecord {
 			return 0;
 		}
 		//候补列表的直接全额退款
-		if ($this->isWaiting()) {
+		if ($this->isWaiting() || $this->status == self::STATUS_CANCELLED_TIME_END) {
 			return $this->pay->paid_amount;
+		}
+		//被资格线清掉的，就是0
+		if ($this->status == self::STATUS_CANCELLED_QUALIFYING_TIME) {
+			return 0;
 		}
 		switch ($this->competition->refund_type) {
 			case Competition::REFUND_TYPE_50_PERCENT:
