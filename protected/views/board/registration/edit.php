@@ -76,6 +76,64 @@
               $form->error($model, 'avatar_type', array('class'=>'text-danger'))
             ); ?>
             <?php endif; ?>
+            <?php if ($model->competition->entourage_limit): ?>
+            <?php echo Html::formGroup(
+              $model, 'has_entourage', array(),
+              $form->labelEx($model, 'has_entourage', array(
+              )),
+              $form->dropDownList($model, 'has_entourage', Registration::getYesOrNo(), array(
+                'prompt'=>'',
+                'class'=>'form-control',
+              )),
+              $form->error($model, 'has_entourage', array('class'=>'text-danger'))
+            ); ?>
+            <div class="entourage-info hide">
+              <?php echo Html::formGroup(
+                $model, 'entourage_name', array(
+                ),
+                $form->labelEx($model, 'entourage_name'),
+                Html::activeTextField($model, 'entourage_name', array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'entourage_name', array('class'=>'text-danger'))
+              ); ?>
+              <?php echo Html::formGroup(
+                $model, 'entourage_passport_type', array(),
+                $form->labelEx($model, 'entourage_passport_type'),
+                $form->dropDownList($model, 'entourage_passport_type', User::getPassportTypes(), array(
+                  'prompt'=>'',
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'entourage_passport_type', array('class'=>'text-danger'))
+              ); ?>
+              <?php echo Html::formGroup(
+                $model, 'entourage_passport_name', array(
+                  'class'=>'hide',
+                ),
+                $form->labelEx($model, 'entourage_passport_name'),
+                Html::activeTextField($model, 'entourage_passport_name', array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'entourage_passport_name', array('class'=>'text-danger'))
+              ); ?>
+              <?php echo Html::formGroup(
+                $model, 'entourage_passport_number', array(),
+                $form->labelEx($model, 'entourage_passport_number'),
+                Html::activeTextField($model, 'entourage_passport_number', array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'entourage_passport_number', array('class'=>'text-danger'))
+              ); ?>
+              <?php echo Html::formGroup(
+                $model, 'repeatPassportNumber', array(),
+                $form->labelEx($model, 'repeatPassportNumber'),
+                Html::activeTextField($model, 'repeatPassportNumber', array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'repeatPassportNumber', array('class'=>'text-danger'))
+              ); ?>
+            </div>
+            <?php endif; ?>
             <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
           <?php $this->endWidget(); ?>
         </div>
@@ -94,6 +152,9 @@ Yii::app()->clientScript->registerScript('registration',
     } else {
       totalFee.val(+totalFee.val() - fee);
     }
+  }).on('change', '#Registration_has_entourage', function() {
+    $('.entourage-info')[this.value == 1 ? 'removeClass' : 'addClass']('hide');
   });
+  $('#Registration_has_entourage').trigger('change');
 EOT
 );

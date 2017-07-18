@@ -820,6 +820,7 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
+		$model->setScenario('register');
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->avatar_type = isset($_POST['Registration']['avatar_type']) ? $_POST['Registration']['avatar_type'] : 0;
