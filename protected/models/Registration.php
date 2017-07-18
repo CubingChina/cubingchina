@@ -302,7 +302,7 @@ class Registration extends ActiveRecord {
 				}
 				break;
 		}
-		if (!empty($this->repeatPassportNumber) && $this->entourage_passport_number != $this->repeatPassportNumber) {
+		if (!empty($this->entourage_passport_number) && $this->entourage_passport_number != $this->repeatPassportNumber) {
 			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
 		}
 	}
@@ -837,6 +837,7 @@ class Registration extends ActiveRecord {
 			$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
 			$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
 			$rules[] = array('has_entourage', 'required', 'on'=>'register');
+			$rules[] = ['repeatPassportNumber, guest_paid', 'safe', 'on'=>'register'];
 		}
 		if ($this->competition_id > 0 && $this->competition->require_avatar) {
 			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');

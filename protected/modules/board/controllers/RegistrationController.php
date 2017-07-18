@@ -210,7 +210,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValueExplicit($col . $row, $user->passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
 				}
-				if ($competition->entourage_limit) {
+				if ($competition->entourage_limit && $registration->has_entourage) {
 					$col++;
 					$col++;
 					$sheet->setCellValue($col . $row, $registration->entourage_name);
@@ -218,6 +218,8 @@ class RegistrationController extends AdminController {
 					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
 					$col++;
 					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
+					$col++;
+					$sheet->setCellValueExplicit($col . $row, $registration->guest_paid == Registration::YES ? '已支付' : '未支付');
 				}
 			}
 			if (!$registration->isAccepted()) {
@@ -820,6 +822,7 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
+		$model->setScenario('register');
 		if (isset($_POST['Registration'])) {
 			$model->attributes = $_POST['Registration'];
 			$model->avatar_type = isset($_POST['Registration']['avatar_type']) ? $_POST['Registration']['avatar_type'] : 0;
