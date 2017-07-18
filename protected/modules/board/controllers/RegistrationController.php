@@ -210,7 +210,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValueExplicit($col . $row, $user->passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
 				}
-				if ($competition->entourage_limit) {
+				if ($competition->entourage_limit && $registration->has_entourage) {
 					$col++;
 					$col++;
 					$sheet->setCellValue($col . $row, $registration->entourage_name);
