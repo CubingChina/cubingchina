@@ -175,6 +175,20 @@ class Mailer extends CApplicationComponent {
 		return $this->add($registration->user->email, $subject, $message, $cc[0], $cc);
 	}
 
+	public function sendRegistrationDisqualified($registration) {
+		$subject = "【{$registration->competition->name_zh}】报名取消通知 Registration Disqualified";
+		$message = $this->render('registrationDisqualified', array(
+			'registration'=>$registration,
+			'competition'=>$registration->competition,
+			'user'=>$registration->user,
+		));
+		$cc = array();
+		foreach ($registration->competition->organizer as $organizer) {
+			$cc[] = $organizer->user->email;
+		}
+		return $this->add($registration->user->email, $subject, $message, $cc[0], $cc);
+	}
+
 	public function sendCompetitionNotice($competition, $users, $title, $content, $englishContent = '') {
 		$subject = "【{$competition->name_zh}】$title";
 		$organizers = array();
