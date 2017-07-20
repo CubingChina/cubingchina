@@ -254,6 +254,7 @@ class Registration extends ActiveRecord {
 		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
 		$this->cancel_time = time();
 		if ($this->save()) {
+			Yii::app()->mailer->sendRegistrationDisqualified($this);
 			return true;
 		}
 		return false;
