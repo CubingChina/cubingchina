@@ -5,7 +5,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
   <td style="<?php echo $style; ?>">
     <p><strong>亲爱的<?php echo $user->name_zh ?: $user->name; ?>：</strong></p>
     <p>
-      您报名的<b><?php echo $competition->name_zh; ?></b>因未达到资格线而被取消。<br>
+      您在<b><?php echo $competition->name_zh; ?></b>的报名因未达到资格线而被取消。<br>
       <br>
       如有疑问，请联系下列比赛主办方，勿回复本邮件。<br>
       <?php foreach ($competition->organizer as $organizer): ?>
