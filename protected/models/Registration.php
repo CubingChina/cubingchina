@@ -175,8 +175,11 @@ class Registration extends ActiveRecord {
 
 	public function isCancelled() {
 		return $this->status == self::STATUS_CANCELLED
-			|| $this->status == self::STATUS_CANCELLED_TIME_END
-			|| $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+			|| $this->status == self::STATUS_CANCELLED_TIME_END;
+	}
+
+	public function isDisqualified() {
+		return $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
 	}
 
 	public function isCancellable() {
@@ -244,6 +247,54 @@ class Registration extends ActiveRecord {
 			return true;
 		}
 		return false;
+	}
+
+	public function disqualify() {
+		$this->formatEvents();
+		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
+		$this->cancel_time = time();
+		if ($this->save()) {
+			Yii::app()->mailer->sendRegistrationDisqualified($this);
+			return true;
+		}
+		return false;
+	}
+
+	public function getUnmetEvents() {
+		$competition = $this->competition;
+		$user = $this->user;
+		$results = Results::model()->with('competition')->findAllByAttributes([
+			'personId'=>$user->wcaid,
+		], [
+			'condition'=>'competition.year<:year
+				OR (competition.year=:year AND competition.endMonth<:month)
+				OR (competition.year=:year AND competition.endMonth=:month AND competition.endDay<=:day)',
+			'select'=>[
+				'eventId',
+				'min(CASE WHEN best>0 THEN best ELSE 99999999 END) AS best',
+				'min(CASE WHEN average>0 THEN average ELSE 99999999 END) AS average',
+			],
+			'group'=>'eventId',
+			'params'=>[
+				':year'=>intval(date('Y', $competition->qualifying_end_time)),
+				':month'=>intval(date('n', $competition->qualifying_end_time)),
+				':day'=>intval(date('j', $competition->qualifying_end_time)),
+			],
+		]);
+		foreach ($results as $result) {
+			$rank = new RanksSingle();
+			$rank->best = $result->best;
+			$rank->average = new RanksAverage();
+			$rank->average->best = $result->average;
+			$temp[$result->eventId] = $rank;
+		}
+		$unmetEvents = [];
+		foreach ($competition->allEvents as $event) {
+			if (!$event->check($temp[$event->event] ?? null)) {
+				$unmetEvents[] = $event->event;
+			}
+		}
+		return $unmetEvents;
 	}
 
 	public function checkEntourageName() {

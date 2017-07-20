@@ -27,6 +27,9 @@
           <?php elseif ($registration->isCancelled()): ?>
           <p><?php echo Yii::t('Registration', 'Your registration has been cancelled.'); ?></p>
           <hr>
+          <?php elseif ($registration->isDisqualified()): ?>
+          <p><?php echo Yii::t('Registration', 'Your registration has been disqualified.'); ?></p>
+          <hr>
           <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Name'); ?></h4>
           <p><?php echo $registration->user->getCompetitionName(); ?></p>
