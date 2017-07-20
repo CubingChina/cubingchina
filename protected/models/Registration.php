@@ -282,6 +282,9 @@ class Registration extends ActiveRecord {
 			],
 		]);
 		foreach ($results as $result) {
+			if ($result->best == 99999999) {
+				continue;
+			}
 			$rank = new RanksSingle();
 			$rank->best = $result->best;
 			$rank->average = new RanksAverage();
