@@ -885,7 +885,7 @@ class Competition extends ActiveRecord {
 
 	public function getUserSchedules($user) {
 		$listableSchedules = array();
-		$schedules = HeatScheduleUser::model()->findAllByAttributes([
+		$schedules = UserSchedule::model()->findAllByAttributes([
 			'user_id'=>$user->id,
 			'competition_id'=>$this->id,
 		]);

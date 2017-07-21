@@ -271,8 +271,8 @@ class Registration extends ActiveRecord {
 				OR (competition.year=:year AND competition.endMonth=:month AND competition.endDay<=:day)',
 			'select'=>[
 				'eventId',
-				'min(CASE WHEN best>0 THEN best ELSE 99999999 END) AS best',
-				'min(CASE WHEN average>0 THEN average ELSE 99999999 END) AS average',
+				'min(CASE WHEN best>0 THEN best ELSE 9999999999 END) AS best',
+				'min(CASE WHEN average>0 THEN average ELSE 9999999999 END) AS average',
 			],
 			'group'=>'eventId',
 			'params'=>[
@@ -282,7 +282,7 @@ class Registration extends ActiveRecord {
 			],
 		]);
 		foreach ($results as $result) {
-			if ($result->best == 99999999) {
+			if ($result->best == 9999999999) {
 				continue;
 			}
 			$rank = new RanksSingle();
