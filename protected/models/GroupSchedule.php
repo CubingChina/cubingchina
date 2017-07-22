@@ -1,11 +1,11 @@
 <?php
 
-class HeatSchedule extends Schedule {
+class GroupSchedule extends Schedule {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'heat_schedule';
+		return 'group_schedule';
 	}
 
 	public static function model($className = __CLASS__) {
