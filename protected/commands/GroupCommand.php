@@ -188,6 +188,131 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionSolveConflict($id, $solve = 0) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null && $this->confirm($competition->name_zh)) {
+			$registrations = Registration::getRegistrations($competition);
+			$conflicts = [];
+			foreach ($registrations as $registration) {
+				$userSchedules = UserSchedule::model()->findAllByAttributes([
+					'user_id'=>$registration->user_id,
+					'competition_id'=>$competition->id,
+				]);
+				$count = count($userSchedules);
+				for ($i = 0; $i < $count; $i++) {
+					$scheduleA = $userSchedules[$i]->schedule;
+					if (in_array($scheduleA->event, $this->_specialEvents)) {
+						// continue;
+					}
+					for ($j = 0; $j < $count; $j++) {
+						if ($i == $j) {
+							continue;
+						}
+						$scheduleB = $userSchedules[$j]->schedule;
+						if (in_array($scheduleB->event, ["333fm", "444bf", "555bf", "333mbf"])) {
+							// continue;
+						}
+						if (in_array($scheduleA->event, ["444bf", "555bf", "333mbf"])) {
+							// continue;
+						}
+						if ($scheduleA->day != $scheduleB->day) {
+							continue;
+						}
+						if ($this->isConflict($scheduleA, $scheduleB)) {
+							//@todo to be completed
+							$conflict = sprintf('No.%d %d %s: [%s - %s]', $registration->number, $registration->user_id, $registration->user->getCompetitionName(), $scheduleA->event, $scheduleB->event);
+							$conflicts[$scheduleA->event] = ($conflicts[$scheduleA->event] ?? 0) + 1;
+							$conflicts[$scheduleB->event] = ($conflicts[$scheduleB->event] ?? 0) + 1;
+							echo $conflict, PHP_EOL;
+							if ($solve) {
+								$attributes = [
+									'competition_id'=>$competition->id,
+									'day'=>$scheduleA->day,
+									'event'=>$scheduleB->event,
+								];
+								$groupSchedules = GroupSchedule::model()->findAllByAttributes($attributes);
+								foreach ($groupSchedules as $schedule) {
+									if (!$this->isConflict($scheduleA, $schedule)) {
+										echo sprintf("Move %s to group %s.\n", $scheduleB->event, $schedule->group);
+										$userSchedules[$j]->group_id = $schedule->id;
+										$userSchedules[$j]->save();
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				// break;
+			}
+			asort($conflicts);
+			var_dump($conflicts, array_sum($conflicts) / 2);
+		}
+	}
+
+	public function actionMoveGroup($id, $event, $from, $to, $num) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null && $this->confirm(sprintf('%s %s: %s - %s', $competition->name_zh, $event, $from, $to))) {
+			$groupScheduleA = GroupSchedule::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+				'event'=>$event,
+				'group'=>$from,
+			]);
+			if ($groupScheduleA == null) {
+				return;
+			}
+			$groupScheduleB = GroupSchedule::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+				'event'=>$event,
+				'group'=>$to,
+			]);
+			if ($groupScheduleB == null) {
+				return;
+			}
+			$userSchedules = UserSchedule::model()->findAllByAttributes([
+				'group_id'=>$groupScheduleA->id,
+			]);
+			$count = 0;
+			foreach ($userSchedules as $userSchedule) {
+				//fetch all
+				$schedules = UserSchedule::model()->findAllByAttributes([
+					'competition_id'=>$competition->id,
+					'user_id'=>$userSchedule->user_id,
+				], [
+					'condition'=>'id != ' . $userSchedule->id,
+				]);
+				$conflict = false;
+				foreach ($schedules as $schedule) {
+					if ($this->isConflict($groupScheduleB, $schedule->schedule)) {
+						$conflict = true;
+						break;
+					}
+				}
+				if (!$conflict) {
+					$userSchedule->group_id = $groupScheduleB->id;
+					$userSchedule->save();
+					$count++;
+				}
+				if ($count == $num) {
+					break;
+				}
+			}
+			echo $count, " moved\n";
+		}
+	}
+
+	private function isConflict($scheduleA, $scheduleB) {
+		if ($scheduleA->end_time == $scheduleB->start_time) {
+			return false;
+		}
+		if ($scheduleA->start_time == $scheduleB->end_time) {
+			return false;
+		}
+		return $scheduleA->start_time >= $scheduleB->start_time && $scheduleA->start_time <= $scheduleB->end_time
+			|| $scheduleA->end_time >= $scheduleB->start_time && $scheduleA->end_time <= $scheduleB->end_time
+			|| $scheduleA->end_time >= $scheduleB->end_time && $scheduleA->start_time <= $scheduleB->start_time;
+	}
+
 	private function makeRoundMessage($schedule, $competitors, $proposedGroup) {
 		return sprintf("[%s - %s] Competitors: %d Time: %d (%d - %d):",
 			$schedule->wcaEvent->name, $schedule->wcaRound->name, $competitors[$schedule->event] ?? '?',
