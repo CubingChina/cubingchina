@@ -80,11 +80,111 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
-	public function actionUser($id) {
+	public function actionAutoUser($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
+			$scheduleExists = UserSchedule::model()->countByAttributes([
+				'competition_id'=>$competition->id,
+			]) > 0;
+			if ($scheduleExists && !$this->confirm('regenerate?')) {
+				return;
+			}
+			if ($scheduleExists) {
+				UserSchedule::model()->deleteAllByAttributes([
+					'competition_id'=>$competition->id,
+				]);
+			}
 			$registrations = Registration::getRegistrations($competition);
-
+			$eventRegistrations = [];
+			foreach ($registrations as $registration) {
+				foreach ($registration->events as $event) {
+					$eventRegistrations[$event][$registration->user_id] = $registration;
+				}
+			}
+			$groupSchedules = GroupSchedule::model()->findAllByAttributes([
+				'competition_id'=>$competition->id,
+			], [
+				'order'=>'id ASC',
+			]);
+			$temp = [];
+			foreach ($groupSchedules as $heatSchedule) {
+				$temp[$heatSchedule->event][] = $heatSchedule;
+			}
+			$groupSchedules = $temp;
+			foreach ($eventRegistrations as $event=>$registrations) {
+				if (in_array("$event", $this->_specialEvents)) {
+					foreach ($registrations as $registration) {
+						foreach ($groupSchedules[$event] as $schedule) {
+							$userSchedule = new UserSchedule();
+							$userSchedule->schedule = $schedule;
+							$userSchedule->group_id = $schedule->id;
+							$userSchedule->competition_id = $schedule->competition_id;
+							$userSchedule->user_id = $registration->user_id;
+							$userSchedule->save();
+						}
+					}
+					continue;
+				}
+				//cache wca id
+				$wcaidRegistrations = [];
+				foreach ($registrations as $registration) {
+					if ($registration->user->wcaid) {
+						$wcaidRegistrations[$registration->user->wcaid] = $registration;
+					}
+				}
+				switch ($event) {
+					case '333bf':
+					case '444bf':
+					case '555bf':
+					case '333mbf':
+						$modelName = 'RanksSingle';
+						break;
+					default:
+						$modelName = 'RanksAverage';
+						break;
+				}
+				//fetch result
+				$results = $modelName::model()->findAllByAttributes(array(
+					'eventId'=>$event,
+					'personId'=>array_keys($wcaidRegistrations),
+				));
+				foreach ($results as $result) {
+					$wcaidRegistrations[$result->personId]->best = $result->best;
+				}
+				//sort by best desc
+				uasort($registrations, function($rA, $rB) {
+					if ($rA->best > 0 && $rB->best > 0) {
+						$temp = $rA->best - $rB->best;
+					} elseif ($rA->best > 0) {
+						$temp = -1;
+					} elseif ($rB->best > 0) {
+						$temp = 1;
+					} else {
+						$temp = 0;
+					}
+					return -$temp;
+				});
+				$count = count($registrations);
+				$i = 0;
+				$groupCount = 0;
+				$groupKey = 0;
+				$groupNum = $count / count($groupSchedules[$event]);
+				foreach ($registrations as $registration) {
+					$schedule = $groupSchedules[$event][$groupKey];
+					$userSchedule = new UserSchedule();
+					$userSchedule->schedule = $schedule;
+					$userSchedule->group_id = $schedule->id;
+					$userSchedule->competition_id = $schedule->competition_id;
+					$userSchedule->user_id = $registration->user_id;
+					$userSchedule->save();
+					$i++;
+					$groupCount++;
+					if ($groupCount > $groupNum) {
+						$groupCount = 0;
+						$groupKey++;
+					}
+				}
+			}
 		}
 	}
 
