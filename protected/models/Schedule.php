@@ -27,8 +27,8 @@ class Schedule extends ActiveRecord {
 			'long'=>Yii::t('Schedule', 'Long-time Event Stage'),
 			'room'=>Yii::t('Schedule', 'Classroom'),
 			'red'=>Yii::t('Schedule', 'Red Stage'),
-			'green'=>Yii::t('Schedule', 'Green Stage'),
 			'blue'=>Yii::t('Schedule', 'Blue Stage'),
+			'green'=>Yii::t('Schedule', 'Green Stage'),
 			'yellow'=>Yii::t('Schedule', 'Yellow Stage'),
 			'orange'=>Yii::t('Schedule', 'Orange Stage'),
 		);
