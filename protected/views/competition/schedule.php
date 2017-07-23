@@ -90,6 +90,19 @@
     </div>
     <?php if ($userSchedules != []): ?>
     <div class="tab-pane active" id="user">
+      <?php foreach ($userSchedules as $day=>$schedules): ?>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo date('Y-m-d', $competition->date + ($day - 1) * 86400); ?></h3>
+        </div>
+        <div class="panel-body">
+          <?php $this->widget('ConciseSchedule', array(
+            'competition'=>$competition,
+            'schedules'=>$schedules,
+          )); ?>
+        </div>
+      </div>
+      <?php endforeach; ?>
       <?php foreach ($userSchedules as $day=>$stages): ?>
       <div class="panel panel-info">
         <div class="panel-heading">

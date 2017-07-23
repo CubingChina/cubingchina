@@ -330,7 +330,11 @@ class CompetitionController extends Controller {
 		$userSchedules = [];
 		if (!Yii::app()->user->isGuest) {
 			$user = $this->getUser();
-			$registration = Registration::getUserRegistration($competition->id, $user->id);
+			$userId = $user->id;
+			if ($competition->checkPermission($user)) {
+				$userId = $this->iGet('user_id', $userId);
+			}
+			$registration = Registration::getUserRegistration($competition->id, $userId);
 			if ($registration !== null) {
 				$userSchedules = $competition->getUserSchedules($registration->user);
 			}
