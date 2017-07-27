@@ -27,7 +27,7 @@ class LiveController extends CompetitionController {
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20170304');
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20170727');
 		$this->render('competition', array(
 			'competition'=>$competition,
 		));
