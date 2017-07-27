@@ -1266,7 +1266,7 @@
       temp = resA.b - resB.b;
     }
     if (!onlyResult && temp == 0) {
-      temp = getUser(resA.n).name < getUser(resB.n).name ? -1 : 1;
+      temp = resA.n - resB.n;
     }
     return temp;
   }
