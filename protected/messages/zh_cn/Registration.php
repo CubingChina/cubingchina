@@ -20,7 +20,6 @@ return array (
   'ID' => '',
   'No.' => '',
   'User' => '',
-  'Your registration has been disqualified.' => '你的报名因未达到资格线而被取消。',
   'Date' => '报名时间',
   ' CNY' => '元',
   '<b class="text-danger">Note</b>: A photo is needed to finish your registration.' => '<b class="text-danger">注意</b>：需要提交照片以完成报名。',
@@ -58,5 +57,6 @@ return array (
   'You can cancel your registration before {time}.' => '你可以在{time}之前申请退赛。',
   'You succeeded in registering for ' => '您已成功报名',
   'Your registration has been cancelled.' => '你已成功退赛。',
+  'Your registration has been disqualified.' => '你的报名因未达到资格线而被取消。',
   'Your registration is on the waiting list. There are {count} people on the list ahead of you.' => '你当前在候补列表中，前面有{count}个在等待。',
 );

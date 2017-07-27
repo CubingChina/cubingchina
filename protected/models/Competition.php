@@ -1543,6 +1543,7 @@ class Competition extends ActiveRecord {
 			'order'=>'id ASC',
 		));
 		$podiums = [];
+		$greaterChinaPodiums = [];
 		foreach ($eventRounds as $eventRound) {
 			switch ($eventRound->format) {
 				case '1':
@@ -1565,7 +1566,6 @@ class Competition extends ActiveRecord {
 			], [
 				'condition'=>'best > 0',
 				'order'=>$order,
-				'limit'=>20, //20 is enough, considering the fmc
 			]);
 			$count = 0;
 			$lastBest = 0;
@@ -1592,11 +1592,37 @@ class Competition extends ActiveRecord {
 						$result->pos = $count + 1;
 					}
 				}
+				if ($result->pos <= 3) {
+					$podiums[$eventRound->event][] = clone $result;
+				}
+				if ($this->podiums_greater_china && $result->user->isGreaterChinese()) {
+					$greaterChinaPodiums[$eventRound->event][] = clone $result;
+				}
+			}
+		}
+		foreach ($greaterChinaPodiums as $event=>$results) {
+			$count = 0;
+			$lastBest = 0;
+			$lastAverage = 0;
+			$temp = [];
+			foreach ($results as $i=>$result) {
+				if ($result->average != $lastAverage) {
+					$lastAverage = $result->average;
+					$result->pos = $i + 1;
+					$count = $i;
+				} elseif ($result->best != $lastBest) {
+					$lastBest = $result->best;
+					$result->pos = $i + 1;
+					$count = $i;
+				} else {
+					$result->pos = $count + 1;
+				}
 				if ($result->pos > 3) {
 					break;
 				}
-				$podiums[$eventRound->event][] = $result;
+				$temp[] = $result;
 			}
+			$greaterChinaPodiums[$event] = $temp;
 		}
 		// females, children and new comers
 		$eventRound = LiveEventRound::model()->findByAttributes([
@@ -1614,17 +1640,48 @@ class Competition extends ActiveRecord {
 				'condition'=>'best > 0',
 				'order'=>'average > 0 DESC, average ASC, best ASC',
 			]);
-			$temp = [];
-			$birthday = $this->date - (365 * 12 + 3) * 86400;
+			$temp = [
+				Yii::t('live', 'U8')=>[],
+				Yii::t('live', 'U10')=>[],
+				Yii::t('live', 'U12')=>[],
+				Yii::t('live', 'Children')=>[],
+				Yii::t('live', 'Females')=>[],
+				Yii::t('live', 'New Comers')=>[],
+			];
+			$u12 = strtotime((date('Y', $this->date) - 12) . date('-m-d', $this->date));
+			$u10 = strtotime((date('Y', $this->date) - 10) . date('-m-d', $this->date));
+			$u8 = strtotime((date('Y', $this->date) - 8) . date('-m-d', $this->date));
 			foreach ($results as $result) {
+				//ignore non greater chinese user
+				if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
+					continue;
+				}
+				$birthday = $result->user->birthday;
 				if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
 					$temp[Yii::t('live', 'Females')][] = clone $result;
 				}
-				if ($result->user->birthday >= $birthday && $this->podiums_children) {
+				if ($birthday > $u12 && $this->podiums_children) {
 					$temp[Yii::t('live', 'Children')][] = clone $result;
 				}
 				if ($result->user->wcaid === '' && $this->podiums_new_comers) {
 					$temp[Yii::t('live', 'New Comers')][] = clone $result;
+				}
+				switch (true) {
+					case $birthday > $u8:
+						if ($this->podiums_u8) {
+							$temp[Yii::t('live', 'U8')][] = clone $result;
+						}
+						break;
+					case $birthday > $u10:
+						if ($this->podiums_u10) {
+							$temp[Yii::t('live', 'U10')][] = clone $result;
+						}
+						break;
+					case $birthday > $u12:
+						if ($this->podiums_u12) {
+							$temp[Yii::t('live', 'U12')][] = clone $result;
+						}
+						break;
 				}
 			}
 			foreach ($temp as $group=>$results) {
@@ -1649,11 +1706,18 @@ class Competition extends ActiveRecord {
 					$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
 						'{round}'=>Yii::t('RoundTypes', 'First'),
 					]);
-					$podiums[$eventRound->event][] = $result;
+					if ($this->podiums_greater_china) {
+						$greaterChinaPodiums['unofficial'][] = $result;
+					} else {
+						$podiums['unofficial'][] = $result;
+					}
 				}
 			}
 		}
-		return $podiums;
+		return [
+			'podiums'=>$podiums,
+			'greaterChinaPodiums'=>$greaterChinaPodiums,
+		];
 	}
 
 	public function checkPermission($user) {

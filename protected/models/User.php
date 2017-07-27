@@ -235,6 +235,10 @@ class User extends ActiveRecord {
 		return $this->status != self::STATUS_NORMAL;
 	}
 
+	public function isGreaterChinese() {
+		return $this->country_id <= 4;
+	}
+
 	public function hasPermission($permission) {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
 	}
