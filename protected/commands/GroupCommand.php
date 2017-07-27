@@ -21,6 +21,54 @@ class GroupCommand extends CConsoleCommand {
 	];
 	private $_specialEvents = ['333fm', '333mbf'];
 
+	public function actionExportList($id, $path = null) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null && $this->confirm($competition->name_zh)) {
+			if ($path == null) {
+				$path = Yii::app()->basePath . '/' . $competition->name . ' groups.xlsx';
+			}
+			$registrations = Registration::getRegistrations($competition);
+			$associatedEvents = $competition->getAssociatedEvents();
+			$excel = new PHPExcel();
+			$excel->getProperties()
+				->setCreator(Yii::app()->params->author)
+				->setLastModifiedBy(Yii::app()->params->author)
+				->setTitle($competition->wca_competition_id ?: $competition->name)
+				->setSubject($competition->name);
+			$excel->removeSheetByIndex(0);
+			foreach ($associatedEvents as $event=>$value) {
+				$sheet = $excel->createSheet();
+				$sheet->setTitle(Events::getFullEventName($event));
+				$sheet->setCellValue('A1', 'No.')
+					->setCellValue('B1', 'Name')
+					->setCellValue('C1', 'Group');
+				$row = 2;
+				foreach ($registrations as $registration) {
+					if (!in_array("$event", $registration->events)) {
+						continue;
+					}
+					$userSchedule = UserSchedule::model()->with('schedule')->findByAttributes([
+						'user_id'=>$registration->user_id,
+						'competition_id'=>$competition->id,
+					], [
+						'condition'=>'event=:event',
+						'params'=>[
+							':event'=>"$event",
+						],
+					]);
+					if ($userSchedule != null) {
+						$sheet->setCellValue('A' . $row, $registration->number)
+							->setCellValue('B' . $row, $registration->user->getCompetitionName())
+							->setCellValue('C' . $row, $userSchedule->schedule->group);
+						$row++;
+					}
+				}
+			}
+			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+			$writer->save($path);
+		}
+	}
+
 	public function actionSchedule($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
