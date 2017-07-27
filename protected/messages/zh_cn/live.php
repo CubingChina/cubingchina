@@ -17,8 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  ' ({round})' => '（{round}）',
   'Open' => '',
+  'U10' => '',
+  'U12' => '',
+  'U8' => '',
+  ' ({round})' => '（{round}）',
   'Children' => '少儿组',
   'Close this round' => '结束本轮',
   'Disable User Chatting' => '开启全员禁言',
