@@ -526,6 +526,7 @@ class RegistrationController extends AdminController {
 		], [
 			'order'=>'number'
 		]);
+		$competition->name_zh .= '-' . Events::getFullEventName($event) . '-' . RoundTypes::getFullRoundName($round);
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $round);
 	}
 
@@ -583,7 +584,11 @@ class RegistrationController extends AdminController {
 					$j = floor($i / self::CARD_PER_PAGE);
 					$k = $i % self::CARD_PER_PAGE;
 					$n = intval($k * $pagePerStack + $j);
+					if ($count % 3 == 1 && $k == 2) {
+						$n--;
+					}
 				}
+				echo '<br>';
 				$scoreCard = $scoreCards[$n];
 				$this->fillScoreCard($pdf, $competition, $scoreCard, $roundName);
 				$i++;
