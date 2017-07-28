@@ -1141,7 +1141,7 @@
       }
       var minute = match[1] ? parseInt(match[1]) : 0;
       var second = parseInt(match[2]);
-      second = Math.min(minute * 60 + second, Math.min(6, tried) * 600);
+      second = Math.min(minute * 60 + second, Math.min(6, tried) * 600 + solved * 2);
       return (99 - difference) * 1e7 + second * 100 + missed;
     } else {
       var match = result.match(/(?:(\d+)?:)?(\d{1,2})\.(\d{1,2})/);
