@@ -436,7 +436,7 @@ class RegistrationController extends AdminController {
 				$sheet = clone $sheet;
 				$sheet->setTitle("{$event}-{$round['round']->id}");
 				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . RoundTypes::getFullRoundName($round['round']->id));
+				$sheet->setCellValue('A1', Events::getEventName($event) . ' - ' . RoundTypes::getFullRoundName($round['round']->id));
 				usort($round['results'], $compare);
 				$row = 5;
 				$num = Formats::getFormatNum($round['format']);
