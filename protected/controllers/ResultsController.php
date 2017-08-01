@@ -610,6 +610,9 @@ class ResultsController extends Controller {
 			$competition->c = $c;
 		}
 		$data = Yii::app()->cache->getData(array('Competitions', 'getResults'), $id);
+		if (empty($data['records']) && $type !== 'records') {
+			unset($types['records']);
+		}
 		if (empty($data['scrambles']) && $type !== 'scrambles') {
 			unset($types['scrambles']);
 		}
