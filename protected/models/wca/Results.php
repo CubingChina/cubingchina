@@ -473,7 +473,7 @@ class Results extends ActiveRecord {
 			$temp = sprintf('regional%sRecord', $attribute === 'best' ? 'Single' : 'Average');
 			$record = $this->$temp;
 			$class = $record == 'WR' || $record == 'NR' ? strtolower($record) : 'cr';
-			$time .= CHtml::tag('span', ['class'=>'record record-' . $class], $record);
+			$time = CHtml::tag('span', ['class'=>'record record-' . $class], $record) . ' ' . $time;
 		}
 		return $time;
 	}

@@ -1,77 +1,65 @@
 <?php
 $this->renderPartial('c/dropdownEvents', $_data_);
-$this->widget('GroupGridView', array(
-  'dataProvider'=>new CArrayDataProvider($all, array(
+$this->widget('GroupGridView', [
+  'dataProvider'=>new CArrayDataProvider($all, [
     'pagination'=>false,
     'sort'=>false,
-  )),
+  ]),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
   'groupKey'=>'eventId',
-  'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(
+  'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", [
     Events::getFullEventNameWithIcon($data->eventId),
     Yii::t("RoundTypes", $data->round->cellName),
     Yii::t("common", $data->format->name),
     CHtml::tag("a", ["id"=>$data->eventId], ""),
-  ))',
+  ])',
   'repeatHeader'=>true,
-  'rowHtmlOptionsExpression'=>'array(
+  'rowHtmlOptionsExpression'=>'[
     "data-event"=>$data->eventId,
     "data-round"=>$data->roundTypeId,
     "data-person"=>$data->personId,
     "data-best"=>$data->best,
     "data-pos"=>$data->pos,
-  )',
-  'columns'=>array(
-    array(
+  ]',
+  'columns'=>[
+    [
       'name'=>Yii::t('Results', 'Place'),
       'type'=>'raw',
       'value'=>'$data->pos',
-      'headerHtmlOptions'=>array('class'=>'place'),
-    ),
-    array(
+      'headerHtmlOptions'=>['class'=>'place'],
+    ],
+    [
       'name'=>Yii::t('Results', 'Person'),
       'type'=>'raw',
       'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
-    ),
-    array(
+    ],
+    [
       'name'=>Yii::t('common', 'Best'),
       'type'=>'raw',
-      'value'=>'$data->getTime("best")',
-      'headerHtmlOptions'=>array('class'=>'result'),
-      'htmlOptions'=>array('class'=>'result'),
-    ),
-    array(
-      'name'=>'',
-      'type'=>'raw',
-      'value'=>'$data->regionalSingleRecord',
-      'headerHtmlOptions'=>array('class'=>'record'),
-    ),
-    array(
+      'value'=>'$data->getTime("best", false, true)',
+      'headerHtmlOptions'=>['class'=>'result'],
+      'htmlOptions'=>['class'=>'result'],
+    ],
+    [
       'name'=>Yii::t('common', 'Average'),
       'type'=>'raw',
-      'value'=>'$data->getTime("average")',
-      'headerHtmlOptions'=>array('class'=>'result'),
-      'htmlOptions'=>array('class'=>'result'),
-    ),
-    array(
-      'name'=>'',
-      'type'=>'raw',
-      'value'=>'$data->regionalAverageRecord',
-      'headerHtmlOptions'=>array('class'=>'record'),
-    ),
-    array(
+      'value'=>'$data->getTime("average", false, true)',
+      'headerHtmlOptions'=>['class'=>'result'],
+      'htmlOptions'=>['class'=>'result'],
+    ],
+    [
       'name'=>Yii::t('common', 'Region'),
       'value'=>'Region::getIconName($data->person->country->name, $data->person->country->iso2)',
       'type'=>'raw',
-      'htmlOptions'=>array('class'=>'region'),
-    ),
-    array(
+      'htmlOptions'=>['class'=>'region'],
+    ],
+    [
       'name'=>Yii::t('common', 'Detail'),
       'type'=>'raw',
       'value'=>'$data->detail',
-    ),
-  ),
-)); ?>
+    ],
+  ],
+]); ?>
 <?php
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
