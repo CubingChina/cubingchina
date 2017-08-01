@@ -289,7 +289,7 @@ $config = array(
 		),
 		'payments'=>array(
 			'balipay'=>array(
-				'gateway'=>'https://openapi.alipay.com/gateway.do',
+				'gateway'=>'https://openapi.alipay.com/gateway.do?charset=UTF-8',
 				'app_id'=>'2016062701556602',
 				'private_key_path'=>Env::get('PAYMENT_BALIPAY_PRIVATE_KEY'),
 				'alipay_public_key_path'=>Env::get('PAYMENT_BALIPAY_PUBLIC_KEY'),

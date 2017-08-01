@@ -46,7 +46,7 @@ class Pay extends ActiveRecord {
 	const ALIPAY_TRADE_SUCCESS = 'TRADE_SUCCESS';
 	const ALIPAY_SUCCESS = 'T';
 
-	const CHARSET = 'utf-8';
+	const CHARSET = 'UTF-8';
 	const SIGN_TYPE = 'MD5';
 	const SIGN_TYPE_RSA2 = 'RSA2';
 
@@ -289,8 +289,9 @@ class Pay extends ActiveRecord {
 	}
 
 	public function generateAlipaySign($commonParams, $bizParams, $privateKeyPath, $excludeAttributes = array()) {
-		$bizParams['biz_content'] = json_encode($bizParams);
-		$temp = array_filter(array_merge($commonParams, $bizParams));
+		ksort($bizParams);
+		$commonParams['biz_content'] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
+		$temp = array_filter($commonParams);
 		foreach ($excludeAttributes as $attribute) {
 			unset($temp[$attribute]);
 		}
