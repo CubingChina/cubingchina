@@ -228,12 +228,12 @@
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'$data->getTime("best")',
+        'value'=>'$data->getTime("best", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
-        'value'=>'$data->getTime("average")',
+        'value'=>'$data->getTime("average", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Detail'),
@@ -269,12 +269,12 @@
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'$data->getTime("best")',
+        'value'=>'$data->getTime("best", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
-        'value'=>'$data->getTime("average")',
+        'value'=>'$data->getTime("average", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Detail'),
@@ -310,12 +310,12 @@
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'$data->getTime("best")',
+        'value'=>'$data->getTime("best", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
-        'value'=>'$data->getTime("average")',
+        'value'=>'$data->getTime("average", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Detail'),
@@ -351,12 +351,12 @@
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'$data->getTime("best")',
+        'value'=>'$data->getTime("best", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Average'),
         'type'=>'raw',
-        'value'=>'$data->getTime("average")',
+        'value'=>'$data->getTime("average", false, true)',
       ),
       array(
         'name'=>Yii::t('common', 'Detail'),
@@ -483,28 +483,16 @@
               array(
                 'name'=>Yii::t('common', 'Best'),
                 'type'=>'raw',
-                'value'=>'$data->getTime("best")',
+                'value'=>'$data->getTime("best", true, true)',
                 'headerHtmlOptions'=>array('class'=>'result'),
                 'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'type'=>'raw',
-                'value'=>'$data->regionalSingleRecord',
-                'headerHtmlOptions'=>array('class'=>'record'),
               ),
               array(
                 'name'=>Yii::t('common', 'Average'),
                 'type'=>'raw',
-                'value'=>'$data->getTime("average")',
+                'value'=>'$data->getTime("average", true, true)',
                 'headerHtmlOptions'=>array('class'=>'result'),
                 'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'type'=>'raw',
-                'value'=>'$data->regionalAverageRecord',
-                'headerHtmlOptions'=>array('class'=>'record'),
               ),
               array(
                 'name'=>Yii::t('common', 'Detail'),
@@ -553,28 +541,16 @@
               array(
                 'name'=>Yii::t('common', 'Best'),
                 'type'=>'raw',
-                'value'=>'$data->getTime("best")',
+                'value'=>'$data->getTime("best", true, true)',
                 'headerHtmlOptions'=>array('class'=>'result'),
                 'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'type'=>'raw',
-                'value'=>'$data->regionalSingleRecord',
-                'headerHtmlOptions'=>array('class'=>'record'),
               ),
               array(
                 'name'=>Yii::t('common', 'Average'),
                 'type'=>'raw',
-                'value'=>'$data->getTime("average")',
+                'value'=>'$data->getTime("average", true, true)',
                 'headerHtmlOptions'=>array('class'=>'result'),
                 'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>'',
-                'type'=>'raw',
-                'value'=>'$data->regionalAverageRecord',
-                'headerHtmlOptions'=>array('class'=>'record'),
               ),
               array(
                 'name'=>Yii::t('common', 'Detail'),
@@ -608,12 +584,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord == "WR" ? $data->getTime("best") : ""',
+            'value'=>'$data->regionalSingleRecord == "WR" ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord == "WR" ? $data->getTime("average"): ""',
+            'value'=>'$data->regionalAverageRecord == "WR" ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -655,12 +631,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'!in_array($data->regionalSingleRecord, array("WR", "NR", "")) ? $data->getTime("best") : ""',
+            'value'=>'!in_array($data->regionalSingleRecord, array("WR", "NR", "")) ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'!in_array($data->regionalAverageRecord, array("WR", "NR", "")) ? $data->getTime("average"): ""',
+            'value'=>'!in_array($data->regionalAverageRecord, array("WR", "NR", "")) ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -702,12 +678,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord == "NR" ? $data->getTime("best") : ""',
+            'value'=>'$data->regionalSingleRecord == "NR" ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord == "NR" ? $data->getTime("average"): ""',
+            'value'=>'$data->regionalAverageRecord == "NR" ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
