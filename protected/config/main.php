@@ -77,6 +77,7 @@ $config = array(
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',
+				'results/competition/<id:\w+\d{4}>/<type:\w+>'=>'results/c',
 				'results/competition/<id:\w+\d{4}>'=>'results/c',
 				'summary/<year:\d{4}>/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'summary/person',
 				'summary/<year:\d{4}>'=>'summary/index',
