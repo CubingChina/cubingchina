@@ -1,6 +1,6 @@
 <?php
 $this->widget('GroupGridView', [
-  'dataProvider'=>new CArrayDataProvider($top3, [
+  'dataProvider'=>new CArrayDataProvider($records, [
     'pagination'=>false,
     'sort'=>false,
   ]),
@@ -14,12 +14,6 @@ $this->widget('GroupGridView', [
   ])',
   'columns'=>[
     [
-      'name'=>Yii::t('Results', 'Place'),
-      'type'=>'raw',
-      'value'=>'$data->pos',
-      'headerHtmlOptions'=>['class'=>'place'],
-    ],
-    [
       'name'=>Yii::t('Results', 'Person'),
       'type'=>'raw',
       'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
@@ -27,14 +21,14 @@ $this->widget('GroupGridView', [
     [
       'name'=>Yii::t('common', 'Best'),
       'type'=>'raw',
-      'value'=>'$data->getTime("best", false, true)',
+      'value'=>'$data->regionalSingleRecord != "" ? $data->getTime("best", false, true) : ""',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],
     [
       'name'=>Yii::t('common', 'Average'),
       'type'=>'raw',
-      'value'=>'$data->getTime("average", false, true)',
+      'value'=>'$data->regionalAverageRecord != "" ? $data->getTime("average", false, true) : ""',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],

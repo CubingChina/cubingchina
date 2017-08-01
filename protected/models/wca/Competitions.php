@@ -102,6 +102,7 @@ class Competitions extends ActiveRecord {
 			'top3'=>Yii::t('Competitions', 'Top 3'),
 			'all'=>Yii::t('Competitions', 'All Results'),
 			'byPerson'=>Yii::t('Competitions', 'By Person'),
+			'records'=>Yii::t('common', 'Records'),
 			'scrambles'=>Yii::t('Competitions', 'Scrambles'),
 		);
 	}
@@ -133,6 +134,7 @@ class Competitions extends ActiveRecord {
 			'pos'=>1,
 			'roundTypeId'=>array('c', 'f'),
 		), array(
+			'condition'=>'best > 0',
 			'order'=>'event.rank, round.rank, t.pos'
 		));
 		$events = array();
@@ -150,6 +152,7 @@ class Competitions extends ActiveRecord {
 			'pos'=>array(1, 2, 3),
 			'roundTypeId'=>array('c', 'f'),
 		), array(
+			'condition'=>'best > 0',
 			'order'=>'event.rank, round.rank, t.pos'
 		));
 		$all = Results::model()->with(array(
@@ -174,6 +177,9 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'personName, personId, event.rank, round.rank DESC'
 		));
+		$records = array_filter($all, function($result) {
+			return $result->regionalSingleRecord != '' || $result->regionalAverageRecord != '';
+		});
 		$scrambles = Scrambles::model()->with(array(
 			'round',
 			'event',
@@ -187,6 +193,7 @@ class Competitions extends ActiveRecord {
 			'top3'=>$top3,
 			'all'=>$all,
 			'byPerson'=>$byPerson,
+			'records'=>array_values($records),
 			'scrambles'=>$scrambles,
 			'events'=>$events,
 		);
