@@ -9,11 +9,12 @@ Installation
 ### Environments
 
  1. [Nginx][]/[Apache][]
- 2. [PHP][] *5.3+*
-   - [QQWry][] extension
+ 2. [PHP][] *5.5+*
+    * [Redis Extension][]
  3. [MySQL][] *5.1+*
  4. [Yii Framework][] *1.1.14+*
  5. [Composer][]
+ 6. [Redis][]
 
 ### Steps
  1. Clone this repo to `/path/to/cubingchina`.
@@ -31,8 +32,9 @@ Installation
  [Nginx]: http://nginx.org
  [Apache]: http://www.apache.org
  [PHP]: http://php.net
- [QQWry]: http://pecl.php.net/package/qqwry
+ [Redis Extension]: https://github.com/phpredis/phpredis
  [MySQL]: http://www.mysql.com
  [Yii Framework]: http://www.yiiframework.com
  [Composer]: https://getcomposer.org
- 
+ [Redis]: https://redis.io/
+
