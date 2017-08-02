@@ -3,11 +3,12 @@
 
 ##环境##
 1. [Nginx][1]/[Apache][2]
-2. [PHP][3] 5.3+
-    * [qqwry扩展][4]
+2. [PHP][3] 5.5+
+    * [Redis扩展][4]
 3. [MySql][5] 5.1+
 4. [Yii Framework][6] 1.1.14+
 5. [Composer][7]
+6. [Redis][8]
 
 ##步骤##
 1. clone本项目至cubingchina目录
@@ -24,7 +25,8 @@
   [1]: http://nginx.org/
   [2]: http://www.apache.org/
   [3]: http://php.net/
-  [4]: http://pecl.php.net/package/qqwry
+  [4]: https://github.com/phpredis/phpredis
   [5]: http://www.mysql.com/
   [6]: http://www.yiiframework.com/
   [7]: https://getcomposer.org/
+  [8]: https://redis.io/
