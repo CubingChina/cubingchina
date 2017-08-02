@@ -25,10 +25,6 @@ class PayController extends Controller {
 			exit;
 		}
 		$result = $model->validateNotify($channel, $params);
-		//fuck alipay
-		if (isset($params['subject'])) {
-			$params['subject'] = iconv('GBK', 'UTF-8', $params['subject']);
-		}
 		Yii::log(json_encode([
 			'params'=>$params,
 			'result'=>$result,
