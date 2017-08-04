@@ -1720,6 +1720,102 @@ class Competition extends ActiveRecord {
 		];
 	}
 
+	public function getComputedRecords($event, $type = 'best') {
+		$results = LiveResult::model()->findAllByAttributes([
+			'competition_id'=>$this->id,
+			'event'=>$event,
+		], [
+			'condition'=>"{$type} > 0",
+			'order'=>"{$type} ASC",
+		]);
+		usort($results, function($resultA, $resultB) use ($type) {
+			$temp = $this->getRoundDate($resultA->event, $resultA->round)
+				- $this->getRoundDate($resultB->event, $resultB->round);
+			if ($temp == 0) {
+				$temp = $resultA->$type - $resultB->$type;
+			}
+			return $temp;
+		});
+		//get region winners
+		$regionWinners = [];
+		foreach ($results as $result) {
+			$user = $result->user;
+			$countryId = $user->country_id;
+			$date = $this->getRoundDate($event, $result->round);
+			if (!isset($regionWinners[$date][$countryId])) {
+				// ignore worse time on next day
+				foreach ($regionWinners as $dateWinners) {
+					if (isset($dateWinners[$countryId]) && $dateWinners[$countryId][0]->$type < $result->$type) {
+						continue 2;
+					}
+				}
+				$regionWinners[$date][$countryId][] = $result;
+			} else {
+				$winner = $regionWinners[$date][$countryId][0];
+				if ($winner->$type === $result->$type) {
+					$regionWinners[$date][$countryId][] = $result;
+				}
+			}
+		}
+		$WR = Results::getRecord('World', $event, $type, $date);
+		$regionRecords = [];
+		$records = [];
+		foreach ($regionWinners as $date=>$dateWinners) {
+			foreach ($dateWinners as $countryId=>$results) {
+				$result = $results[0];
+				$value = $result->$type;
+				$user = $result->user;
+				$NR = Results::getRecord($user->country->name, $event, $type, $date);
+				if ($NR == null || $value <= $NR[$type]) {
+					$crName = $user->country->wcaCountry->continent->recordName;
+					$$crName = Results::getRecord($user->country->wcaCountry->continent->name, $event, $type, $date);
+					// check WR CR NR
+					$recordSet = false;
+					foreach (['WR', $crName, 'NR'=>$user->country->name] as $recordName=>$region) {
+						if (is_numeric($recordName)) {
+							$recordName = $region;
+						}
+						if ($recordSet) {
+							// set smaller regional record
+							$regionRecords[$region] = $value;
+							continue;
+						}
+						// check if value sub former record
+						if ($value <= $$recordName[$type]) {
+							// if two persons broke a same bigger record
+							// the worse one should get a smaller record
+							// example: A got a sub WR result 5.00, B got another sub WR result 5.01
+							// A should be WR. if A and B were in the same continent, then B should be NR
+							// if not, B should be CR
+							if (!isset($regionRecords[$region]) || $regionRecords[$region] == $value) {
+								$record = $recordName;
+								$regionRecords[$region] = $value;
+								$recordSet = true;
+							}
+						}
+					}
+					$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
+					foreach ($results as $result) {
+						$result->$attribute = $record;
+						var_dump(sprintf('%s %s: %s %s', RoundTypes::getFullRoundName($result->round), $result->user->getCompetitionName(), Results::formatTime($result->$type, $result->event), $record));
+						$records[] = $result;
+					}
+				}
+			}
+		}
+		return $records;
+	}
+
+	public function getRoundDate($event, $round) {
+		static $dates;
+		if ($dates === null) {
+			foreach ($this->schedule as $schedule) {
+				$dates[$schedule->event][$schedule->round] = $this->date + ($schedule->day - 1) * 86400;
+			}
+		}
+		return isset($dates[$event][$round]) ? $dates[$event][$round] : $this->date;
+	}
+
 	public function checkPermission($user) {
 		if ($user->isAdministrator()) {
 			return true;

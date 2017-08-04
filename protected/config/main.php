@@ -17,6 +17,7 @@ $config = array(
 		'application.models.wca.*',
 		'application.forms.*',
 		'application.widgets.*',
+		'application.statistics.*',
 		'application.extensions.debugtb.*',
 		'application.extensions.mail.*',
 	),

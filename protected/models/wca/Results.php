@@ -215,7 +215,27 @@ class Results extends ActiveRecord {
 		return $data;
 	}
 
-	public static function getRecords($type = 'current', $region = 'China', $event = '333') {
+	public static function getRecord($region = 'China', $event = '333', $type = 'single', $date = null) {
+		if ($type == 'best') {
+			$type = 'single';
+		}
+		$records = self::getRecords('history', $region, $event, false);
+		if (!isset($records[$type])) {
+			return null;
+		}
+		if ($date === null) {
+			return current($records[$type]);
+		}
+		foreach ($records[$type] as $index=>$record) {
+			// check the date
+			if (strtotime(implode('-', [$record['year'], $record['month'], $record['day']])) < $date) {
+				return $record;
+			}
+		}
+		return current($records[$type]);
+	}
+
+	public static function getRecords($type = 'current', $region = 'China', $event = '333', $merge = true) {
 		$cache = Yii::app()->cache;
 		$cacheKey = "results_records_{$type}_{$region}_{$event}";
 		$expire = 86400 * 7;
@@ -227,6 +247,9 @@ class Results extends ActiveRecord {
 				default:
 					$data = self::getCurrentRecords($region);
 					break;
+			}
+			if ($merge) {
+				$data = call_user_func('array_merge', $data);
 			}
 			$cache->set($cacheKey, $data, $expire);
 		}
@@ -293,7 +316,7 @@ class Results extends ActiveRecord {
 				$rows[$type][] = $row;
 			}
 		}
-		return call_user_func_array('array_merge', $rows);
+		return $rows;
 
 	}
 
@@ -361,7 +384,7 @@ class Results extends ActiveRecord {
 				$rows[$row['eventId']][] = $row;
 			}
 		}
-		return call_user_func_array('array_merge', $rows);
+		return $rows;
 	}
 
 	public static function getMBFPoints($result) {
