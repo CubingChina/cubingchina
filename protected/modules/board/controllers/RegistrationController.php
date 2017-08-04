@@ -588,7 +588,6 @@ class RegistrationController extends AdminController {
 						$n--;
 					}
 				}
-				echo '<br>';
 				$scoreCard = $scoreCards[$n];
 				$this->fillScoreCard($pdf, $competition, $scoreCard, $roundName);
 				$i++;
