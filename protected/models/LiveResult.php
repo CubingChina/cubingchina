@@ -155,6 +155,16 @@ class LiveResult extends ActiveRecord {
 	// 	return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
 	// }
 
+	public function isProbablyRecord($date) {
+		foreach (['best', 'average'] as $type) {
+			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			if ($this->$type <= $NR[$type]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function getDetail() {
 		$data = $this->attributes;
 		$data['eventId'] = $data['event'];
