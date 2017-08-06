@@ -1720,7 +1720,7 @@ class Competition extends ActiveRecord {
 		];
 	}
 
-	public function getComputedRecords($event, $type = 'best') {
+	public function computedRecords($event, $type = 'best') {
 		$results = LiveResult::model()->findAllByAttributes([
 			'competition_id'=>$this->id,
 			'event'=>$event,
@@ -1737,30 +1737,30 @@ class Competition extends ActiveRecord {
 			return $temp;
 		});
 		//get region winners
+		$dateRegionWinners = [];
 		$regionWinners = [];
 		foreach ($results as $result) {
 			$user = $result->user;
 			$countryId = $user->country_id;
 			$date = $this->getRoundDate($event, $result->round);
-			if (!isset($regionWinners[$date][$countryId])) {
-				// ignore worse time on next day
-				foreach ($regionWinners as $dateWinners) {
-					if (isset($dateWinners[$countryId]) && $dateWinners[$countryId][0]->$type < $result->$type) {
-						continue 2;
-					}
+			if (!isset($dateRegionWinners[$date][$countryId])) {
+				if (isset($regionWinners[$countryId]) && $regionWinners[$countryId]->$type < $result->$type) {
+					continue;
 				}
-				$regionWinners[$date][$countryId][] = $result;
+				$regionWinners[$countryId] = $result;
+				$dateRegionWinners[$date][$countryId][] = $result;
 			} else {
-				$winner = $regionWinners[$date][$countryId][0];
+				$winner = $dateRegionWinners[$date][$countryId][0];
 				if ($winner->$type === $result->$type) {
-					$regionWinners[$date][$countryId][] = $result;
+					$dateRegionWinners[$date][$countryId][] = $result;
 				}
 			}
 		}
 		$WR = Results::getRecord('World', $event, $type, $date);
 		$regionRecords = [];
 		$records = [];
-		foreach ($regionWinners as $date=>$dateWinners) {
+		$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
+		foreach ($dateRegionWinners as $date=>$dateWinners) {
 			foreach ($dateWinners as $countryId=>$results) {
 				$result = $results[0];
 				$value = $result->$type;
@@ -1787,23 +1787,43 @@ class Competition extends ActiveRecord {
 							// example: A got a sub WR result 5.00, B got another sub WR result 5.01
 							// A should be WR. if A and B were in the same continent, then B should be NR
 							// if not, B should be CR
-							if (!isset($regionRecords[$region]) || $regionRecords[$region] == $value) {
+							if (!isset($regionRecords[$region]) || $value <= $regionRecords[$region]) {
 								$record = $recordName;
 								$regionRecords[$region] = $value;
 								$recordSet = true;
 							}
 						}
 					}
-					$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
 					foreach ($results as $result) {
 						$result->$attribute = $record;
-						var_dump(sprintf('%s %s: %s %s', RoundTypes::getFullRoundName($result->round), $result->user->getCompetitionName(), Results::formatTime($result->$type, $result->event), $record));
-						$records[] = $result;
+						$records[$result->id] = $result;
 					}
 				}
 			}
 		}
-		return $records;
+		$oldRecords = LiveResult::model()->findAllByAttributes([
+			'competition_id'=>$this->id,
+			'event'=>$event,
+		], [
+			'condition'=>"{$attribute} != ''",
+		]);
+		$temp = [];
+		foreach ($oldRecords as $result) {
+			if (!isset($records[$result->id])) {
+				$temp[] = $result;
+				$result->$attribute = '';
+				$result->save();
+			} elseif ($records[$result->id]->$attribute == $result->$attribute) {
+				unset($records[$result->id]);
+			}
+		}
+		foreach ($records as $result) {
+			$result->save();
+		}
+		return [
+			'updated'=>$records,
+			'removed'=>$temp,
+		];
 	}
 
 	public function getRoundDate($event, $round) {
