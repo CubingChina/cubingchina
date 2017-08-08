@@ -94,7 +94,7 @@ $config = array(
 		'cache'=>array(
 			'class'=>'CustomCache',
 			// 'hashKey'=>false,
-			'hostname'=>'localhost',
+			'hostname'=>'127.0.0.1',
 			'port'=>6379,
 			'database'=>1,
 		),

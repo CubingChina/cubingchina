@@ -45,14 +45,9 @@ class WebSocketCommand extends CConsoleCommand {
 	}
 
 	public function actionRecordComputer() {
-		$cache = Yii::app()->cache;
 		$loop = new StreamSelectLoop();
-		$publisher = new Predis\Async\Client([
-			'host'=>$cache->hostname,
-			'port'=>$cache->port,
-		], $loop);
-		$loop->addPeriodicTimer(0.2, function() use ($cache, $publisher) {
-			$redis = $cache->redis;
+		$loop->addPeriodicTimer(0.2, function() {
+			$redis = Yii::app()->cache->redis;
 			$data = [];
 			while (($message = $redis->lPop('record.compute')) !== false) {
 				$message = json_decode($message);
@@ -74,7 +69,7 @@ class WebSocketCommand extends CConsoleCommand {
 					}
 				}
 				if ($results != []) {
-					$publisher->publish('record.computed', json_encode([
+					$redis->publish('record.computed', json_encode([
 						'competitionId'=>$competition->id,
 						'results'=>$results,
 					]));

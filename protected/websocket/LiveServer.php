@@ -70,10 +70,8 @@ class LiveServer implements MessageComponentInterface {
 	}
 
 	public function addToQueue($channel, $message) {
-		var_dump($channel, $message);
 		$message = json_encode($message);
 		$ret = Yii::app()->cache->redis->rPush($channel, $message);
-		var_dump($ret);
 	}
 
 	public function broadcast($msg, $competition = null, $exclude = null) {
