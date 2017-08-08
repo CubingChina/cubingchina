@@ -24,6 +24,10 @@ class CustomCache extends CCache {
 		$this->_cache = $chainCache;
 	}
 
+	public function getRedis() {
+		return $this->_redis;
+	}
+
 	public function getValue($key) {
 		return $this->_cache->fetch($key);
 	}

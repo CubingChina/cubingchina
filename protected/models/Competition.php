@@ -1737,22 +1737,22 @@ class Competition extends ActiveRecord {
 			return $temp;
 		});
 		//get region winners
-		$dateRegionWinners = [];
-		$regionWinners = [];
+		$dateRegionalWinners = [];
+		$regionalWinners = [];
 		foreach ($results as $result) {
 			$user = $result->user;
 			$countryId = $user->country_id;
 			$date = $this->getRoundDate($event, $result->round);
-			if (!isset($dateRegionWinners[$date][$countryId])) {
-				if (isset($regionWinners[$countryId]) && $regionWinners[$countryId]->$type < $result->$type) {
+			if (!isset($dateRegionalWinners[$date][$countryId])) {
+				if (isset($regionalWinners[$countryId]) && $regionalWinners[$countryId]->$type < $result->$type) {
 					continue;
 				}
-				$regionWinners[$countryId] = $result;
-				$dateRegionWinners[$date][$countryId][] = $result;
+				$regionalWinners[$countryId] = $result;
+				$dateRegionalWinners[$date][$countryId][] = $result;
 			} else {
-				$winner = $dateRegionWinners[$date][$countryId][0];
+				$winner = $dateRegionalWinners[$date][$countryId][0];
 				if ($winner->$type === $result->$type) {
-					$dateRegionWinners[$date][$countryId][] = $result;
+					$dateRegionalWinners[$date][$countryId][] = $result;
 				}
 			}
 		}
@@ -1760,7 +1760,7 @@ class Competition extends ActiveRecord {
 		$regionRecords = [];
 		$records = [];
 		$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
-		foreach ($dateRegionWinners as $date=>$dateWinners) {
+		foreach ($dateRegionalWinners as $date=>$dateWinners) {
 			foreach ($dateWinners as $countryId=>$results) {
 				$result = $results[0];
 				$value = $result->$type;
