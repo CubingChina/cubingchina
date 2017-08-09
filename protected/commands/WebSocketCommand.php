@@ -53,6 +53,9 @@ class WebSocketCommand extends CConsoleCommand {
 				$message = json_decode($message);
 				$data[$message->competitionId][] = $message->event;
 			}
+			if (DEV) {
+				Yii::log(json_encode($data), 'debug', 'record.compute');
+			}
 			foreach ($data as $competitionId=>$events) {
 				$competition = Competition::model()->findByPk($competitionId);
 				if ($competition == null) {
@@ -61,7 +64,7 @@ class WebSocketCommand extends CConsoleCommand {
 				$results = [];
 				foreach ($events as $event) {
 					foreach (['best', 'average'] as $type) {
-						foreach ($competition->computedRecords($event, $type) as $records) {
+						foreach ($competition->computeRecords($event, $type) as $records) {
 							foreach ($records as $record) {
 								$results[] = $record->getShowAttributes();
 							}

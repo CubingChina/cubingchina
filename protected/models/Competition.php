@@ -1720,7 +1720,7 @@ class Competition extends ActiveRecord {
 		];
 	}
 
-	public function computedRecords($event, $type = 'best') {
+	public function computeRecords($event, $type = 'best') {
 		$results = LiveResult::model()->findAllByAttributes([
 			'competition_id'=>$this->id,
 			'event'=>$event,
@@ -1757,6 +1757,9 @@ class Competition extends ActiveRecord {
 			}
 		}
 		$WR = Results::getRecord('World', $event, $type, $date);
+		if (DEV) {
+			Yii::log(json_encode($WR), 'debug', 'WR');
+		}
 		$regionRecords = [];
 		$records = [];
 		$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');

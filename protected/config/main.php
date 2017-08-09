@@ -154,6 +154,12 @@ $config = array(
 				),
 				array(
 					'class'=>'CFileLogRoute',
+					'levels'=>'debug',
+					'logFile'=>'application.debug.log',
+					'maxFileSize'=>102400,
+				),
+				array(
+					'class'=>'CFileLogRoute',
 					'levels'=>'git',
 					'logFile'=>'application.git.log',
 					'maxFileSize'=>102400,
