@@ -1756,22 +1756,26 @@ class Competition extends ActiveRecord {
 				}
 			}
 		}
-		$WR = Results::getRecord('World', $event, $type, $date);
+		$WR = Results::getRecord('World', $event, $type, $this->date);
 		if (DEV) {
-			Yii::log(json_encode($WR), 'debug', 'WR');
+			Yii::log(json_encode($WR), 'debug', 'WR' . date('Y-m-d', $this->date));
 		}
 		$regionRecords = [];
 		$records = [];
 		$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
-		foreach ($dateRegionalWinners as $date=>$dateWinners) {
+		foreach ($dateRegionalWinners as $dateWinners) {
 			foreach ($dateWinners as $countryId=>$results) {
 				$result = $results[0];
 				$value = $result->$type;
 				$user = $result->user;
-				$NR = Results::getRecord($user->country->name, $event, $type, $date);
+				$NR = Results::getRecord($user->country->name, $event, $type, $this->date);
+				if (DEV) {
+					Yii::log(json_encode($NR), 'debug', 'NR' . date('Y-m-d', $this->date));
+				}
 				if ($NR == null || $value <= $NR[$type]) {
-					$crName = $user->country->wcaCountry->continent->recordName;
-					$$crName = Results::getRecord($user->country->wcaCountry->continent->name, $event, $type, $date);
+					$continent = $user->country->wcaCountry->continent;
+					$crName = $continent->recordName;
+					$$crName = Results::getRecord($continent->name, $event, $type, $this->date);
 					// check WR CR NR
 					$recordSet = false;
 					foreach (['WR', $crName, 'NR'=>$user->country->name] as $recordName=>$region) {

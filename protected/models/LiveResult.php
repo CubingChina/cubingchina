@@ -156,11 +156,9 @@ class LiveResult extends ActiveRecord {
 	// }
 
 	public function isProbablyRecord() {
-		$date = $this->competition->getRoundDate($this->event, $this->round);
+		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
 			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
-			var_dump($NR);
-			Yii::log(json_encode($NR), 'debug', 'NR');
 			if ($this->$type <= $NR[$type]) {
 				return true;
 			}
@@ -169,10 +167,9 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function isNotProbablyRecord() {
-		$date = $this->competition->getRoundDate($this->event, $this->round);
+		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
 			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
-			Yii::log(json_encode($NR), 'debug', 'NR');
 			if ($this->$type > $NR[$type]) {
 				return true;
 			}
