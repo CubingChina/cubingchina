@@ -155,14 +155,37 @@ class LiveResult extends ActiveRecord {
 	// 	return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
 	// }
 
-	public function isProbablyRecord($date) {
+	public function isProbablyRecord() {
+		$date = $this->competition->getRoundDate($this->event, $this->round);
 		foreach (['best', 'average'] as $type) {
 			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			var_dump($NR);
+			Yii::log(json_encode($NR), 'debug', 'NR');
 			if ($this->$type <= $NR[$type]) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public function isNotProbablyRecord() {
+		$date = $this->competition->getRoundDate($this->event, $this->round);
+		foreach (['best', 'average'] as $type) {
+			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			Yii::log(json_encode($NR), 'debug', 'NR');
+			if ($this->$type > $NR[$type]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function shouldComputeRecord() {
+		return $this->isProbablyRecord() || $this->isRecord() && $this->isNotProbablyRecord();
+	}
+
+	public function isRecord() {
+		return $this->regional_single_record != '' || $this->regional_average_record != '';
 	}
 
 	public function getDetail() {
@@ -225,6 +248,7 @@ class LiveResult extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'eventRound'=>array(self::BELONGS_TO, 'LiveEventRound', array(
 				'competition_id'=>'competition_id',

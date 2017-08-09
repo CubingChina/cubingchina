@@ -96,7 +96,8 @@ class ResultHandler extends MsgHandler {
 			$eventRound->save();
 			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes(), $competition);
 		}
-		if ($result->isProbablyRecord($competition->getRoundDate($result->event, $result->round))) {
+		$result->competition = $competition;
+		if ($result->shouldComputeRecord()) {
 			$this->addToQueue('record.compute', [
 				'competitionId'=>$competition->id,
 				'event'=>$result->event,
