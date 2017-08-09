@@ -159,6 +159,9 @@ class LiveResult extends ActiveRecord {
 		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
 			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			// if (DEV) {
+				Yii::log(json_encode($NR), 'debug', 'NR.' . date('Y-m-d', $date));
+			// }
 			if ($this->$type <= $NR[$type]) {
 				return true;
 			}
@@ -170,6 +173,9 @@ class LiveResult extends ActiveRecord {
 		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
 			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			if (DEV) {
+				Yii::log(json_encode($NR), 'debug', 'NR.' . date('Y-m-d', $date));
+			}
 			if ($this->$type > $NR[$type]) {
 				return true;
 			}

@@ -53,7 +53,7 @@ class WebSocketCommand extends CConsoleCommand {
 				$message = json_decode($message);
 				$data[$message->competitionId][] = $message->event;
 			}
-			if (DEV) {
+			if (DEV && $data != []) {
 				Yii::log(json_encode($data), 'debug', 'record.compute');
 			}
 			foreach ($data as $competitionId=>$events) {
@@ -79,6 +79,8 @@ class WebSocketCommand extends CConsoleCommand {
 				}
 			}
 		});
+		Yii::getLogger()->autoDump = true;
+		Yii::getLogger()->autoFlush = 1;
 		$loop->run();
 	}
 }
