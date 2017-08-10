@@ -856,8 +856,8 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
-		if (!$model->isAccepted()) {
-			Yii::app()->user->setFlash('danger', '未通过审核选手不能退赛');
+		if (!$model->isCancellable()) {
+			Yii::app()->user->setFlash('danger', '该选手不能退赛');
 			$this->redirect(['/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]]);
 		}
 		if (isset($_POST['cancel'])) {
