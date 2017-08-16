@@ -124,7 +124,7 @@ class EditProfileForm extends CFormModel {
 				}
 				break;
 		}
-		if (!empty($this->passport_number) && $this->passport_number != $this->repeatPassportNumber) {
+		if ($user->passport_type == User::NO && !empty($this->passport_number) && $this->passport_number != $this->repeatPassportNumber) {
 			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
 		}
 	}
