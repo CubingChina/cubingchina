@@ -38,25 +38,27 @@
           <div class="clearfix"></div>
           <div class="col-lg-12">
             <button class="btn btn-sm btn-primary btn-square">提交</button>
-            <button class="btn btn-sm btn-red btn-square" name="export" value="1">导出</button>
           </div>
           <?php $this->endWidget(); ?>
           <?php $dataProvider = $model->searchBill(); ?>
           <?php $paid = $model->getTotal(Pay::STATUS_PAID, true); ?>
+          <?php $refund = $model->getTotal(Pay::STATUS_PAID, false, 'refund_amount', false); ?>
           <?php $fee = $model->getBillTotalFee(); ?>
           <?php $total = number_format($paid - $fee, 2, '.', ''); ?>
           <?php $length = strlen($paid); ?>
           <?php $paid = str_pad($paid, $length, ' ', STR_PAD_LEFT); ?>
+          <?php $refund = str_pad($refund, $length, ' ', STR_PAD_LEFT); ?>
           <?php $fee = str_pad($fee, $length, ' ', STR_PAD_LEFT); ?>
           <?php $total = str_pad($total, $length, ' ', STR_PAD_LEFT); ?>
           <?php $this->widget('GridView', array(
             'dataProvider'=>$dataProvider,
             'template'=>'{summary}{items}{pager}',
             'summaryText'=>"<pre>总计：
-已付款：<span class=\"text-success\">+{$paid}</span>
-手续费：<span class=\"text-danger\">-{$fee}</span>
+　已付款：<span class=\"text-success\">+{$paid}</span>
+　手续费：<span class=\"text-danger\">-{$fee}</span>
 ------------------------
-　合计： {$total}
+　　合计： {$total}
+累计退款：<span class=\"text-info\"> {$refund}</span>
 </pre>",
             // 'filter'=>$model,
             'columns'=>array(
