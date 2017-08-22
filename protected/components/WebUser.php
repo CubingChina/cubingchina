@@ -8,7 +8,7 @@ class WebUser extends CWebUser {
 		parent::init();
 	}
 
-	public function checkAccess($operation, $params = array()) {
+	public function checkAccess($operation, $params = array(), $allowCaching = true) {
 		$method = 'check' . ucfirst($operation);
 		if (!method_exists($this, $method)) {
 			return false;
