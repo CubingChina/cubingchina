@@ -16,7 +16,7 @@
   <link href="/b/icons/font-awesome/css/font-awesome.min.css?v=20170523" rel="stylesheet">
 
   <!-- THEME STYLES - Include these on every page. -->
-  <link href="/b/css/style.css?v=20170523" rel="stylesheet">
+  <link href="/b/css/style.css?v=20170822" rel="stylesheet">
   <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
   <!--[if lt IE 9]>
