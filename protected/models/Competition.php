@@ -1788,7 +1788,10 @@ class Competition extends ActiveRecord {
 							continue;
 						}
 						// check if value sub former record
-						if ($value <= $$recordName[$type]) {
+						if ($$recordName !== null && $value <= $$recordName[$type]
+							//we should be careful if no record were fetched
+							|| $$recordName === null && $recordName == 'NR'
+						) {
 							// if two persons broke a same bigger record
 							// the worse one should get a smaller record
 							// example: A got a sub WR result 5.00, B got another sub WR result 5.01
