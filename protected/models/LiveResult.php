@@ -178,6 +178,9 @@ class LiveResult extends ActiveRecord {
 	}
 
 	public function shouldComputeRecord() {
+		if (!$this->competition->isWCACompetition()) {
+			return false;
+		}
 		return $this->isProbablyRecord() || $this->isRecord() && $this->isNotProbablyRecord();
 	}
 
