@@ -2209,3 +2209,7 @@ table .user-avatar {
 table.table tbody tr td {
   vertical-align: middle;
 }
+
+body img {
+  max-width: 100%;
+}

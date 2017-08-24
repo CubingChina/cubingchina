@@ -1,12 +1,25 @@
 <?php
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use Ratchet\Wamp\WampServerInterface;
 
 class LiveServer implements MessageComponentInterface {
+	protected $subscriber;
 	protected $clients = array();
+
+	protected $channelCallbacks = [
+		'record.computed'=>'onRecordComputed',
+	];
 
 	private $_onlineNumbers = array();
 	private $_maxOnlineNumbers = array();
+
+	public function initSubscriber($subscriber) {
+		$this->subscriber = $subscriber;
+		foreach ($this->channelCallbacks as $channel=>$method) {
+			$this->subscribe($channel, [$this, $method]);
+		}
+	}
 
 	public function onOpen(ConnectionInterface $conn) {
 		$client = new LiveClient($this, $conn);
@@ -29,6 +42,36 @@ class LiveServer implements MessageComponentInterface {
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		Yii::log($e->getMessage(), 'ws', 'error');
 		$conn->close();
+	}
+
+	public function subscribe($channel, $callback) {
+		$this->subscriber->subscribe($channel, function($message) use ($channel, $callback) {
+			if (!is_array($message)) {
+				return;
+			}
+			$_channel = $message[1] ?? '';
+			$message = $message[2] ?? '';
+			if ($_channel != $channel) {
+				return;
+			}
+			$message = json_decode($message);
+			if (!$message) {
+				return;
+			}
+			call_user_func($callback, $message);
+		});
+	}
+
+	public function onRecordComputed($message) {
+		$competition = Competition::model()->findByPk($message->competitionId);
+		foreach ($message->results as $result) {
+			$this->broadcastSuccess('result.update', $result, $competition);
+		}
+	}
+
+	public function addToQueue($channel, $message) {
+		$message = json_encode($message);
+		$ret = Yii::app()->cache->redis->rPush($channel, $message);
 	}
 
 	public function broadcast($msg, $competition = null, $exclude = null) {

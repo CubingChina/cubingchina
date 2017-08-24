@@ -58,7 +58,7 @@ class Scrambles extends ActiveRecord {
 				$scramble = array_map(function($scramble) {
 					return implode(' / ', $scramble);
 				}, $scramble);
-				$scramble = implode('<br>', $scramble);
+				$scramble = implode(' /<br>', $scramble);
 				break;
 			case 'clock':
 				$scramble = explode(' ', $scramble);

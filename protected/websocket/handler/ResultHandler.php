@@ -61,6 +61,7 @@ class ResultHandler extends MsgHandler {
 
 	public function actionUpdate() {
 		$data = $this->msg->result;
+		$competition = $this->competition;
 		if (!isset($data->id)) {
 			return;
 		}
@@ -87,21 +88,20 @@ class ResultHandler extends MsgHandler {
 			$result->update_time = time();
 		}
 		$result->operator_id = $this->user->id;
-		// $result->calculateRecord('single');
-		// $result->calculateRecord('average');
 		$result->save();
-		// foreach ($result->getBeatedRecords('single') as $res) {
-		// 	$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
-		// }
-		// foreach ($result->getBeatedRecords('average') as $res) {
-		// 	$this->broadcastSuccess('result.update', $res->getShowAttributes(), $this->competition);
-		// }
-		$this->broadcastSuccess('result.update', $result->getShowAttributes(), $this->competition);
+		$this->broadcastSuccess('result.update', $result->getShowAttributes(), $competition);
 		$eventRound = $result->eventRound;
 		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {
 			$eventRound->status = LiveEventRound::STATUS_LIVE;
 			$eventRound->save();
-			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes(), $this->competition);
+			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes(), $competition);
+		}
+		$result->competition = $competition;
+		if ($result->shouldComputeRecord()) {
+			$this->addToQueue('record.compute', [
+				'competitionId'=>$competition->id,
+				'event'=>$result->event,
+			]);
 		}
 	}
 

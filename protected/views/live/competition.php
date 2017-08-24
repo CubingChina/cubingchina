@@ -432,34 +432,6 @@
             :value.sync="result.v[i]"
             :index="i"
           ></result-input>
-          <div class="input-group" v-if="result.b > 0">
-            <span class="input-group-addon"><?php echo Yii::t('common', 'Single'); ?></span>
-            <select v-model="result.sr" class="form-control">
-              <option value=""></option>
-              <option value="NR">NR</option>
-              <option value="AsR">AsR</option>
-              <option value="WR">WR</option>
-              <option value="NaR">NaR</option>
-              <option value="SaR">SaR</option>
-              <option value="OcR">OcR</option>
-              <option value="ER">ER</option>
-              <option value="AfR">AfR</option>
-            </select>
-          </div>
-          <div class="input-group" v-if="result.a > 0">
-            <span class="input-group-addon"><?php echo Yii::t('common', 'Average'); ?></span>
-            <select v-model="result.ar" class="form-control">
-              <option value=""></option>
-              <option value="NR">NR</option>
-              <option value="AsR">AsR</option>
-              <option value="WR">WR</option>
-              <option value="NaR">NaR</option>
-              <option value="SaR">SaR</option>
-              <option value="OcR">OcR</option>
-              <option value="ER">ER</option>
-              <option value="AfR">AfR</option>
-            </select>
-          </div>
         </div>
         <button type="button"
           id="save"

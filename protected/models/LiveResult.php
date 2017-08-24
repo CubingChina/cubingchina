@@ -36,8 +36,6 @@ class LiveResult extends ActiveRecord {
 	public $pos;
 	public $subEventTitle;
 
-	private $_beatedRecords = array();
-
 	public static function formatTime($result, $eventId) {
 		if ($result == -1) {
 			return 'DNF';
@@ -62,53 +60,6 @@ class LiveResult extends ActiveRecord {
 			$time = $second . '.' . $msecond;
 		}
 		return $time;
-	}
-
-	public static function getRecords($region) {
-		if (isset(self::$records[$region])) {
-			return self::$records[$region];
-		}
-		$command = Yii::app()->wcaDb->createCommand()
-		->select(array(
-			'r.eventId',
-			'r.best',
-		))
-		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
-		->leftJoin('Countries country', 'p.countryId=country.id')
-		->leftJoin('Continents continent', 'country.continentId=continent.id');
-		switch ($region) {
-			case 'World':
-				$command->where('r.worldRank=1');
-				break;
-			case 'Africa':
-			case 'Asia':
-			case 'Oceania':
-			case 'Europe':
-			case 'North America':
-			case 'South America':
-				$command->where('r.continentRank=1 AND country.continentId=:region', array(
-					':region'=>'_' . $region,
-				));
-				break;
-			default:
-				$command->where('r.countryRank=1 AND rs.personCountryId=:region', array(
-					':region'=>$region,
-				));
-				break;
-		}
-		$records = array(
-			'333'=>array(),
-		);
-		foreach (Results::getRankingTypes() as $type) {
-			$cmd = clone $command;
-			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
-			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
-			->leftJoin('Competitions c', 'rs.competitionId=c.id');
-			foreach ($cmd->queryAll() as $row) {
-				$records[$row['eventId']][$type] = $row['best'];
-			}
-		}
-		return self::$records[$region] = $records;
 	}
 
 	public function getShowAttributes($calcPos = false) {
@@ -204,71 +155,37 @@ class LiveResult extends ActiveRecord {
 	// 	return $this->user_type == self::USER_TYPE_LIVE ? $this->liveUser : $this->realUser;
 	// }
 
-	public function calculateRecord($type) {
-		//@todo it's too complicated
-		return;
-		$user = $this->user;
-		$country = $user->country;
-		$wcaCountry = Countries::model()->findByAttributes(array(
-			'name'=>$country->name
-		));
-		$attribute = $type == 'single' ? 'best' : 'average';
-		$recordAttribute = "regional_{$type}_record";
-		$value = $this->$attribute;
-		$this->$recordAttribute = '';
-		if ($value <= 0) {
-			return;
-		}
-		//WR
-		$records = self::getRecords('World');
-		if ($value <= $records[$this->event][$type]) {
-			if (isset(self::$liveRecords['WR'][$this->event][$type])) {
-				$broken = false;
-				foreach (self::$liveRecords['WR'][$this->event][$type] as $record) {
-					if ($value < $record->$attribute) {
-						//check round
-						if ($this->wcaRound->rank <= $record->wcaRound->rank
-							//check date
-							|| date('Y-m-d', $this->create_time) == date('Y-m-d', $record->create_time)
-						) {
-							//assign
-							$this->$recordAttribute = 'WR';
-							self::$liveRecords['WR'][$this->event][$type] = array($this);
-							$this->_beatedRecords[$type][] = $record;
-						} else {
-
-						}
-						//assign
-						$this->$recordAttribute = 'WR';
-						self::$liveRecords['WR'][$this->event][$type] = array($this);
-						$this->_beatedRecords[$type][] = $record;
-						$broken = true;
-					} elseif ($value == $record->$attribute) {
-						$this->$recordAttribute = 'WR';
-					}
-				}
-			} else {
-				$this->$recordAttribute = 'WR';
-				self::$liveRecords['WR'][$this->event][$type][] = $this;
+	public function isProbablyRecord() {
+		$date = $this->competition->date;
+		foreach (['best', 'average'] as $type) {
+			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			if ($this->$type <= $NR[$type]) {
+				return true;
 			}
-			return;
 		}
-		//CR
-		$records = self::getRecords($wcaCountry->continent->name);
-		if ($value <= $records[$this->event][$type]) {
-			$this->$recordAttribute = $wcaCountry->continent->recordName;
-			return;
-		}
-		//NR
-		$records = self::getRecords($country->name);
-		if ($value <= $records[$this->event][$type]) {
-			$this->$recordAttribute = 'NR';
-			return;
-		}
+		return false;
 	}
 
-	public function getBeatedRecords($type) {
-		return isset($this->_beatedRecords[$type]) ? $this->_beatedRecords[$type] : array();
+	public function isNotProbablyRecord() {
+		$date = $this->competition->date;
+		foreach (['best', 'average'] as $type) {
+			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			if ($this->$type > $NR[$type]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function shouldComputeRecord() {
+		if (!$this->competition->isWCACompetition()) {
+			return false;
+		}
+		return $this->isProbablyRecord() || $this->isRecord() && $this->isNotProbablyRecord();
+	}
+
+	public function isRecord() {
+		return $this->regional_single_record != '' || $this->regional_average_record != '';
 	}
 
 	public function getDetail() {
@@ -331,6 +248,7 @@ class LiveResult extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
 			'eventRound'=>array(self::BELONGS_TO, 'LiveEventRound', array(
 				'competition_id'=>'competition_id',
