@@ -9,6 +9,7 @@
 		"phpoffice/phpexcel": "^1.8",
 		"ramsey/uuid": "^3.5",
 		"suin/php-rss-writer": "^1.5",
-		"zhuzhichao/ip-location-zh": "^2.2"
+		"zhuzhichao/ip-location-zh": "^2.2",
+		"predis/predis-async": "v0.3.x-dev"
 	}
 }
