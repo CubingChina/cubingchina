@@ -248,10 +248,10 @@ class Results extends ActiveRecord {
 					$data = self::getCurrentRecords($region);
 					break;
 			}
-			if ($merge) {
-				$data = call_user_func('array_merge', $data);
-			}
 			$cache->set($cacheKey, $data, $expire);
+		}
+		if ($merge) {
+			$data = call_user_func_array('array_merge', $data);
 		}
 		return $data;
 	}
