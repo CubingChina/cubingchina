@@ -27,6 +27,7 @@
       <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
       <p id="totalFee"></p>
     </div>
+    <hr>
     <?php if ($competition->fill_passport && $this->user->passport_type == User::NO): ?>
     <div class="bg-danger important-border">
       <b class="text-danger">
@@ -124,6 +125,54 @@
       ); ?>
     </div>
     <?php endif; ?>
+    <?php if ($competition->t_shirt): ?>
+    <div class="bg-info important-border">
+      <p>
+        <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: Please choose your T-shirt size according the below sizes.'); ?>
+      </p>
+      <?php echo Html::formGroup(
+        $model, 't_shirt_size', array(),
+        $form->labelEx($model, 't_shirt_size', array(
+          'label'=>Yii::t('Registration', 'Please choose from the options listed below.'),
+        )),
+        $form->dropDownList($model, 't_shirt_size', Registration::getTShirtSizes(), array(
+          'prompt'=>'',
+          'class'=>'form-control',
+        )),
+        $form->error($model, 't_shirt_size', array('class'=>'text-danger'))
+      ); ?>
+      <p>
+        <a href="/f/images/t-shirt-size.jpg" target="_blank">
+          <img src="/f/images/t-shirt-size.jpg" alt="">
+        </a>
+      </p>
+    </div>
+    <?php endif; ?>
+    <?php if ($competition->staff): ?>
+    <div class="bg-info important-border<?php if ($model->hasErrors('staff_type')) echo ' bg-danger'; ?>">
+      <?php echo Html::formGroup(
+        $model, 'staff_type', array(),
+        $form->labelEx($model, 'staff_type'),
+        $form->dropDownList($model, 'staff_type', Registration::getStaffTypes(), array(
+          'prompt'=>'',
+          'class'=>'form-control',
+        ))
+      );?>
+      <div class="staff-info hide">
+        <p>
+          <?php echo Yii::t('Registration', '<b class="text-danger">Note</b>: Please introduce yourself about your ability in competitions. Don\'t forget to mark the type if you choose other.'); ?>
+        </p>
+        <?php echo Html::formGroup(
+          $model, 'staff_statement', array(),
+          $form->labelEx($model, 'staff_statement'),
+          $form->textArea($model, 'staff_statement', array(
+            'class'=>'form-control',
+          )),
+          $form->error($model, 'staff_statement', array('class'=>'text-danger'))
+        ); ?>
+      </div>
+    </div>
+    <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'comments', array(),
       $form->labelEx($model, 'comments'),
@@ -190,4 +239,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20170612');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20170827');
