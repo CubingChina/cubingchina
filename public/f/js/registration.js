@@ -10,6 +10,9 @@ $(function() {
   }).on('change', '#Registration_has_entourage', function() {
     $('.entourage-info')[this.value == 1 ? 'removeClass' : 'addClass']('hide');
     updateFee();
+  }).on('change', '#Registration_staff_type', function() {
+    $('.staff-info')[this.value > 0 ? 'removeClass' : 'addClass']('hide');
+    updateFee();
   }).on('click', '#submit-button', function(e) {
     var checkedEvents = $('.registration-events:checked');
     var userUnmetEvents = [];
@@ -91,6 +94,7 @@ $(function() {
   }
   $('.registration-events').trigger('change');
   $('#Registration_has_entourage').trigger('change');
+  $('#Registration_staff_type').trigger('change');
 
   $.each(options.unmetEvents, function(event, qualifyingTime) {
     $('.registration-events[value="' + event + '"]').parent().addClass('bg-danger').data('qualifyingTime', qualifyingTime);
