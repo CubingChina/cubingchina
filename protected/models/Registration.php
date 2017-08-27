@@ -937,7 +937,7 @@ class Registration extends ActiveRecord {
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
-		if ($this->competition !== null) {
+		if ($this->competition_id > 0) {
 			$competition = $this->competition;
 			if ($competition->entourage_limit) {
 				$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
