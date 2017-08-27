@@ -40,6 +40,21 @@ class Registration extends ActiveRecord {
 	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
 	const STATUS_WAITING = 5;
 
+	const T_SHIRT_SIZE_NONE = 0;
+	const T_SHIRT_SIZE_XS = 1;
+	const T_SHIRT_SIZE_S = 2;
+	const T_SHIRT_SIZE_M = 3;
+	const T_SHIRT_SIZE_L = 4;
+	const T_SHIRT_SIZE_XL = 5;
+	const T_SHIRT_SIZE_XXL = 6;
+	const T_SHIRT_SIZE_XXXL = 7;
+
+	const STAFF_TYPE_NONE = 0;
+	const STAFF_TYPE_JUDGE = 1;
+	const STAFF_TYPE_SCRAMBLER = 2;
+	const STAFF_TYPE_SCORE_TAKER = 3;
+	const STAFF_TYPE_OTHER = 4;
+
 	public static function getDailyRegistration() {
 		$data = Yii::app()->db->createCommand()
 			->select('FROM_UNIXTIME(MIN(r.date), "%Y-%m-%d") as day, COUNT(1) AS registration')
@@ -72,6 +87,29 @@ class Registration extends ActiveRecord {
 			default:
 				return array();
 		}
+	}
+
+	public static function getTShirtSizes() {
+		return [
+			// self::T_SHIRT_SIZE_NONE=>'NONE',
+			// self::T_SHIRT_SIZE_XS=>'XS',
+			self::T_SHIRT_SIZE_S=>'S',
+			self::T_SHIRT_SIZE_M=>'M',
+			self::T_SHIRT_SIZE_L=>'L',
+			self::T_SHIRT_SIZE_XL=>'XL',
+			self::T_SHIRT_SIZE_XXL=>'XXL',
+			self::T_SHIRT_SIZE_XXXL=>'XXXL',
+		];
+	}
+
+	public static function getStaffTypes() {
+		return [
+			self::STAFF_TYPE_NONE=>Yii::t('common', 'I want to focus on competition.'),
+			self::STAFF_TYPE_JUDGE=>Yii::t('common', 'Judge'),
+			self::STAFF_TYPE_SCRAMBLER=>Yii::t('common', 'Scrambler'),
+			self::STAFF_TYPE_SCORE_TAKER=>Yii::t('common', 'Score Taker'),
+			self::STAFF_TYPE_OTHER=>Yii::t('common', 'Other'),
+		];
 	}
 
 	public static function getAllStatus() {
@@ -375,6 +413,14 @@ class Registration extends ActiveRecord {
 					}
 				}
 				break;
+		}
+	}
+
+	public function checkStaffStatement() {
+		if ($this->staff_type != self::STAFF_TYPE_NONE && empty($this->staff_statement)) {
+			$this->addError('staff_statement', Yii::t('yii','{attribute} cannot be blank.', array(
+				'{attribute}'=>$this->getAttributeLabel('staff_statement'),
+			)));
 		}
 	}
 
@@ -891,20 +937,30 @@ class Registration extends ActiveRecord {
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, user_id, events, total_fee, comments, date, status', 'safe', 'on'=>'search'),
 		);
-		if ($this->competition_id > 0 && $this->competition->entourage_limit) {
-			$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
-			$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');
-			$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
-			$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
-			$rules[] = array('has_entourage', 'required', 'on'=>'register');
-			$rules[] = ['repeatPassportNumber, guest_paid', 'safe', 'on'=>'register'];
-		}
-		if ($this->competition_id > 0 && $this->competition->require_avatar) {
-			$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
-			$rules[] = array('avatar_type', 'required', 'on'=>'register');
-		}
-		if ($this->competition_id > 0 && $this->competition->isMultiLocation()) {
-			$rules[] = array('location_id', 'required', 'on'=>'register');
+		if ($this->competition !== null) {
+			$competition = $this->competition;
+			if ($competition->entourage_limit) {
+				$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
+				$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');
+				$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
+				$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
+				$rules[] = array('has_entourage', 'required', 'on'=>'register');
+				$rules[] = ['repeatPassportNumber, guest_paid', 'safe', 'on'=>'register'];
+			}
+			if ($competition->require_avatar) {
+				$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
+				$rules[] = array('avatar_type', 'required', 'on'=>'register');
+			}
+			if ($competition->isMultiLocation()) {
+				$rules[] = array('location_id', 'required', 'on'=>'register');
+			}
+			if ($competition->t_shirt) {
+				$rules[] = ['t_shirt_size', 'required', 'on'=>'register'];
+			}
+			if ($competition->staff) {
+				$rules[] = ['staff_type', 'required', 'on'=>'register'];
+				$rules[] = ['staff_statement', 'checkStaffStatement', 'on'=>'register'];
+			}
 		}
 		return $rules;
 	}
@@ -950,6 +1006,9 @@ class Registration extends ActiveRecord {
 			'accept_time' => Yii::t('Registration', 'Acception Time'),
 			'status' => Yii::t('Registration', 'Status'),
 			'fee' => Yii::t('Registration', 'Fee'),
+			't_shirt_size' => Yii::t('Registration', 'T-shirt Size'),
+			'staff_type' => Yii::t('Registration', 'Staff Type'),
+			'staff_statement' => Yii::t('Registration', 'Self Introduction'),
 		);
 	}
 
