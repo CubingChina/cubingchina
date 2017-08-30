@@ -112,7 +112,7 @@ class Persons extends ActiveRecord {
 	}
 
 	public static function getWCALinkByNameNId($name, $id) {
-		return CHtml::link($name, 'https://www.worldcubeassociation.org/results/p.php?i=' . $id, array('target'=>'_blank'));
+		return CHtml::link($name, 'https://www.worldcubeassociation.org/persons/' . $id, array('target'=>'_blank'));
 	}
 
 	public static function getWCAIconLinkByNameNId($name, $id) {
