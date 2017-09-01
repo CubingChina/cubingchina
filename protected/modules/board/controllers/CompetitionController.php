@@ -171,6 +171,18 @@ class CompetitionController extends AdminController {
 			'refund_type',
 			'cancellation_end_time',
 			'reg_reopen_time',
+			'fill_passport',
+			'show_regulations',
+			'show_qrcode',
+			't_shirt',
+			'staff',
+			'podiums_children',
+			'podiums_females',
+			'podiums_new_comers',
+			'podiums_greater_china',
+			'podiums_u8',
+			'podiums_u10',
+			'podiums_u12',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {

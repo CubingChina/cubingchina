@@ -230,6 +230,15 @@ $config = array(
 						'js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js',
 					),
 				),
+				'switch'=>array(
+					'baseUrl'=>'b',
+					'css'=>array(
+						'css/plugins/bootstrap-switch/bootstrap-switch.min.css',
+					),
+					'js'=>array(
+						'js/plugins/bootstrap-switch/bootstrap-switch.min.js',
+					),
+				),
 				'morris'=>array(
 					'baseUrl'=>'b',
 					'css'=>array(
