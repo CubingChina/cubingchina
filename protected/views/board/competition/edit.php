@@ -131,9 +131,7 @@
                   'data-toggle'=>'tooltip',
                   'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
                 )),
-                $form->dropDownList($model, 'check_person', $checkPersons, array(
-                  'class'=>'form-control',
-                )),
+                Html::activeSwitch($model, 'check_person'),
                 $form->error($model, 'check_person', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
@@ -145,9 +143,7 @@
                   'data-toggle'=>'tooltip',
                   'title'=>'在线支付极大程度方便主办方的审核工作，手续费率大约是1.5%，详情请联系管理员',
                 )),
-                $form->dropDownList($model, 'online_pay', Competition::getOnlinePays(), array(
-                  'class'=>'form-control',
-                )),
+                Html::activeSwitch($model, 'online_pay'),
                 $form->error($model, 'online_pay', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
@@ -183,9 +179,7 @@
                 $form->labelEx($model, 'second_stage_all', array(
                   'label'=>'包含所有项目',
                 )),
-                $form->dropDownList($model, 'second_stage_all', Competition::getYesOrNo(), array(
-                  'class'=>'form-control',
-                )),
+                Html::activeSwitch($model, 'second_stage_all'),
                 $form->error($model, 'second_stage_all', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
@@ -429,6 +423,23 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
+              <div class="clearfix"></div>
+              <hr>
+              <div class="col-lg-12">
+                <h5>其他选项</h5>
+              </div>
+              <?php foreach (Competition::getOptions() as $key=>$value):?>
+              <?php echo Html::formGroup(
+                $model, $key, array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, $key, array(
+                  'label'=>$value['label'],
+                )),
+                Html::activeSwitch($model, $key),
+                $form->error($model, $key, array('class'=>'text-danger'))
+              );?>
+              <?php endforeach; ?>
             </div>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">

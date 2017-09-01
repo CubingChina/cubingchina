@@ -119,6 +119,18 @@ EOT
 		return self::activeInputField($type, $model, $attribute, $htmlOptions);
 	}
 
+	public static function activeSwitch($model, $name, $htmlOptions = []) {
+		$htmlOptions['data-switch'] = '';
+		$clientScript = Yii::app()->clientScript;
+		$clientScript->registerPackage('switch');
+		$options = json_encode([
+			'onText'=>Yii::t('common', 'Yes'),
+			'offText'=>Yii::t('common', 'No'),
+		]);
+		$clientScript->registerScript('switch', '$("[data-switch]").bootstrapSwitch(' . $options . ')');
+		return self::tag('div', ['class'=>''],self::activeCheckBox($model, $name, $htmlOptions));
+	}
+
 	public static function fontAwesome($name, $position = '') {
 		$icon = '<i class="fa fa-' . $name . '"></i>';
 		switch ($position) {
