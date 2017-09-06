@@ -211,6 +211,24 @@ class User extends ActiveRecord {
 		return $text;
 	}
 
+	public function canChangePassport() {
+		if ($this->passport_type == self::NO) {
+			return true;
+		}
+		$registrations = Registration::model()->with([
+			'competition'=>[
+				'together'=>true,
+				'condition'=>'competition.fill_passport=1 AND competition.date>UNIX_TIMESTAMP()',
+			],
+		])->findAllByAttributes([
+			'user_id'=>$this->id,
+		]);
+		if ($registrations == []) {
+			return true;
+		}
+		return false;
+	}
+
 	public function isUnchecked() {
 		return $this->role == self::ROLE_UNCHECKED;
 	}

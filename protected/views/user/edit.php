@@ -21,7 +21,8 @@ $this->renderPartial('side', $_data_);
     $form->error($model, 'wcaid', array('class'=>'text-danger'))
   );?>
   <?php endif; ?>
-  <?php if ($user->passport_type == User::NO): ?>
+  <?php if ($user->canChangePassport()): ?>
+  <p class="help-text text-danger"><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
   <?php echo Html::formGroup(
     $model, 'passport_type', array(),
     $form->labelEx($model, 'passport_type'),
