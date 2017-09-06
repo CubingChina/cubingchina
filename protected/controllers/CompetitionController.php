@@ -299,6 +299,7 @@ class CompetitionController extends Controller {
 					$model->formatEvents();
 					if ($model->isAccepted()) {
 						$model->accept();
+						$model->formatEvents();
 					}
 					$this->render('registrationDone', array(
 						'user'=>$user,
