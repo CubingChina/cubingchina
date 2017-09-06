@@ -17,6 +17,7 @@
     "babel-loader": "^6.2.10",
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.22.0",
+    "babel-preset-es2017": "^6.24.1",
     "bootstrap": "^3.3.7",
     "bootstrap-hover-dropdown": "^2.2.1",
     "bootstrap3-dialog": "^1.35.4",
