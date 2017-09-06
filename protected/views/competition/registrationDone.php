@@ -62,6 +62,14 @@
             '{count}'=>$registration->getWaitingNumber(),
           ]); ?></p>
           <?php endif; ?>
+          <?php if ($competition->fill_passport): ?>
+          <hr>
+          <p><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
+          <h4><?php echo Yii::t('Registration', 'Type of Identity'); ?></h4>
+          <p><?php echo $registration->user->getPassportTypeText(); ?></p>
+          <h4><?php echo Yii::t('Registration', 'Identity Number'); ?></h4>
+          <p><?php echo $registration->user->passport_number; ?></p>
+          <?php endif; ?>
           <hr>
           <?php if ($registration->payable): ?>
           <?php if (count(Yii::app()->params->payments) > 1): ?>
