@@ -19,7 +19,7 @@ class EditProfileForm extends CFormModel {
 			array('province_id', 'checkRegion'),
 			array('mobile', 'checkMobile'),
 			array('passport_name, repeatPassportNumber', 'safe'),
-			array('passport_type, passport_number', 'required'),
+			array('passport_type, passport_number', 'safe'),
 			array('passport_type', 'checkPassportType'),
 			array('passport_number', 'checkPassportNumber'),
 			array('wcaid, province_id, city_id, mobile', 'safe'),
@@ -123,8 +123,11 @@ class EditProfileForm extends CFormModel {
 					return false;
 				}
 				break;
+			case User::NO:
+				$this->passport_number = '';
+				break;
 		}
-		if ($user->passport_type == User::NO && !empty($this->passport_number) && $this->passport_number != $this->repeatPassportNumber) {
+		if ($user->canChangePassport() && !empty($this->passport_number) && $this->passport_number != $this->repeatPassportNumber) {
 			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
 		}
 	}
@@ -134,7 +137,7 @@ class EditProfileForm extends CFormModel {
 		if ($user->wcaid == '') {
 			$user->wcaid = strtoupper($this->wcaid);
 		}
-		if ($user->passport_type == User::NO) {
+		if ($user->canChangePassport()) {
 			$user->passport_type = $this->passport_type;
 			$user->passport_name = $this->passport_name;
 			$user->passport_number = $this->passport_number;
