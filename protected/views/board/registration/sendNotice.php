@@ -64,6 +64,9 @@
               <button type="button" class="btn btn-blue btn-square select" data-type="reverse">反选</button>
               <button type="button" class="btn btn-orange btn-square select" data-type="accepted">已审核</button>
               <button type="button" class="btn btn-purple btn-square select" data-type="unaccepted">未审核</button>
+              <?php if ($competition->staff): ?>
+              <button type="button" class="btn btn-theme btn-square select" data-type="staff">工作人员</button>
+              <?php endif; ?>
             </div>
             <div class="col-lg-12">
               <?php $columns = $registration->getNoticeColumns($model); ?>
@@ -115,6 +118,13 @@ Yii::app()->clientScript->registerScript('sendNotice',
       case 'unaccepted':
         $('.competitor[data-accepted="' + (+(type === 'accepted')) + '"]').prop('checked', true);
         $('.competitor[data-accepted="' + (+(type !== 'accepted')) + '"]').prop('checked', false);
+        break;
+      case 'staff':
+        $('.competitor').prop('checked', false).each(function() {
+          if ($(this).data('staff') > 0) {
+            this.checked = true;
+          }
+        });
         break;
     }
     updateCount();
