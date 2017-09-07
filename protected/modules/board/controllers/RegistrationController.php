@@ -204,7 +204,20 @@ class RegistrationController extends AdminController {
 				$sheet->setCellValue($col . $row, $user->email);
 				$col++;
 				$sheet->setCellValue($col . $row, $registration->comments);
+				if ($competition->t_shirt) {
+					$col++;
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->getTShirtSizeText());
+				}
+				if ($competition->staff) {
+					$col++;
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->getStaffTypeText());
+					$col++;
+					$sheet->setCellValue($col . $row, $registration->staff_statement);
+				}
 				if ($competition->fill_passport) {
+					$col++;
 					$col++;
 					$sheet->setCellValue($col . $row, $user->getPassportTypeText());
 					$col++;

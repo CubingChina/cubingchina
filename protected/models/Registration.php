@@ -203,6 +203,16 @@ class Registration extends ActiveRecord {
 		return $text;
 	}
 
+	public function getTShirtSizeText() {
+		$sizes = self::getTShirtSizes();
+		return $sizes[$this->t_shirt_size] ?? '';
+	}
+
+	public function getStaffTypeText() {
+		$types = self::getStaffTypes();
+		return $types[$this->staff_type] ?? '';
+	}
+
 	public function isPending() {
 		return $this->status == self::STATUS_PENDING;
 	}
@@ -573,6 +583,7 @@ class Registration extends ActiveRecord {
 					}, \$data->events)) . ' competitor',
 					'value'=>\$data->user->email,
 					'data-accepted'=>intval(\$data->isAccepted()),
+					'data-staff'=>\$data->staff_type,
 				)) . ' ' . \$data->user->email, false, array(
 					'class'=>'checkbox',
 				))",
