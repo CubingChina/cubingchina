@@ -1,5 +1,6 @@
 @page {
 	margin: 6mm;
+  font-family: 'Microsoft Yahei';
 }
 table {
 	font-size: 0.8rem;
@@ -36,10 +37,10 @@ td.bd2 {
 	border-left: 3px solid;
 	border-right: 3px solid;
 }
-td.bd2-1 {
+td.bd2-top {
 	border-top: 3px solid;
 }
-td.bd2-5 {
+td.bd2-bottom {
 	border-bottom: 3px solid;
 }
 td.penalty {
@@ -57,7 +58,26 @@ td.trial-no {
 	padding-bottom: 7px;
 	width: 4%;
 }
+table.has-cutoff td.trial-no {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.attempt-3 td.trial-no {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.attempt-3.has-cutoff td.trial-no {
+  padding-top: 14px;
+  padding-bottom: 13px;
+}
 td.remark {
 	padding-top: 6px;
 	padding-bottom: 6px;
+}
+td.cutoff {
+  border-left: none;
+  line-height: 10px;
+}
+.attempt-3 td.cutoff {
+  line-height: 10px;
 }

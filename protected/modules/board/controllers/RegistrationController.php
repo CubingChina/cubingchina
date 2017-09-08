@@ -540,7 +540,7 @@ class RegistrationController extends AdminController {
 			'order'=>'number'
 		]);
 		$competition->name_zh .= '-' . Events::getFullEventName($event) . '-' . RoundTypes::getFullRoundName($round);
-		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $round);
+		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round));
 	}
 
 	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
@@ -548,7 +548,7 @@ class RegistrationController extends AdminController {
 		$this->exportScoreCard($competition, $registrations, $split, $direction);
 	}
 
-	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $roundName = '1st') {
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null) {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
 		if ($split === 'event') {
@@ -585,6 +585,9 @@ class RegistrationController extends AdminController {
 		$pdf->autoLangToFont = true;
 		// $pdf->simpleTables = true;
 		$stylesheet = file_get_contents(Yii::getPathOfAlias('application.data') . '/scord-card.css');
+		// echo '<style>';
+		// echo $stylesheet;
+		// echo '</style>';
 		$pdf->WriteHTML($stylesheet, 1);
 		foreach (array_chunk($scoreCards, $this->pagePerStack * self::CARD_PER_PAGE) as $scoreCards) {
 			$count = count($scoreCards);
@@ -602,7 +605,7 @@ class RegistrationController extends AdminController {
 					}
 				}
 				$scoreCard = $scoreCards[$n];
-				$this->fillScoreCard($pdf, $competition, $scoreCard, $roundName);
+				$this->fillScoreCard($pdf, $competition, $scoreCard, $round);
 				$i++;
 				if ($i % self::CARD_PER_PAGE == 0 && $i < $count) {
 					$pdf->AddPage();
@@ -612,14 +615,38 @@ class RegistrationController extends AdminController {
 		$pdf->Output($competition->name_zh . '成绩条.pdf', 'D');
 	}
 
-	private function fillScoreCard($pdf, $competition, $scoreCard, $roundName = '1st') {
+	private function fillScoreCard($pdf, $competition, $scoreCard, $round) {
+		if ($round === null) {
+			$round = $competition->getFirstRound($scoreCard['event']);
+		}
+		$format = $round->format ?? 'a';
+		// deal with 1/3, 2/a
+		switch ($format{strlen($format) - 1}) {
+			case '2/a':
+			case 'a':
+				$attempt = 5;
+				break;
+			case '1/m':
+			case 'm':
+				$attempt = 3;
+				break;
+			default:
+				$attempt = intval($format);
+				break;
+		}
 		$registration = $scoreCard['registration'];
 		$user = $registration->user;
 		$event = $scoreCard['event'];
 		$imageDir = Yii::getPathOfAlias('application.data.penalty-images');
 		ob_start();
 		ob_implicit_flush(false);
-		echo CHtml::openTag('table');
+		$class = 'attempt-' . $attempt;
+		if (strpos('/', $format) !== false) {
+			$class .= 'has-cutoff';
+		}
+		echo CHtml::openTag('table', [
+			'class'=>$class,
+		]);
 		echo CHtml::openTag('tbody');
 
 		//competition name and wcaid
@@ -652,7 +679,7 @@ class RegistrationController extends AdminController {
 		], '轮次<br>Round');
 		echo CHtml::tag('td', [
 			'class'=>'bdld',
-		], $roundName);
+		], $round->id ?? '');
 		echo CHtml::tag('td', [
 		], '姓名<br>Name');
 		echo CHtml::openTag('td', [
@@ -747,25 +774,53 @@ class RegistrationController extends AdminController {
 		echo CHtml::closeTag('tr');
 
 		//5 trials
-		for ($i = 0; $i < 5; $i++) {
+		for ($i = 0; $i < $attempt; $i++) {
 			echo CHtml::openTag('tr');
 			echo CHtml::tag('td', [
 				'class'=>'trial-no'
 			], $i + 1);
-			echo CHtml::tag('td', []);
-			echo CHtml::tag('td', []);
+			echo CHtml::tag('td', [], '');
+			echo CHtml::tag('td', [], '');
 			//@todo 4 pics
 			echo CHtml::tag('td', [
 				'colspan'=>4,
 			]);
+			$class = 'bd2';
+			if ($i == 0) {
+				$class .= ' bd2-top';
+			}
+			if ($i == $attempt - 1) {
+				$class .= ' bd2-bottom';
+			}
 			echo CHtml::tag('td', [
-				'class'=>'bd2 bd2-' . ($i + 1)
+				'class'=>$class
 			]);
-			echo CHtml::tag('td', []);
+			echo CHtml::tag('td', [], '');
 			echo CHtml::tag('td', [
 				'class'=>'bdr'
 			]);
 			echo CHtml::closeTag('tr');
+			if ($format == '2/a' && $i == 1 || $format == '1/m' && $i == 0) {
+				//cutoff
+				echo CHtml::openTag('tr');
+				// echo CHtml::tag('td', [
+				// 	'class'=>'cutoff',
+				// 	'colspan'=>7,
+				// ], '');
+				echo CHtml::tag('td', [
+					'colspan'=>10,
+					'class'=>'cutoff',
+				], sprintf('%s <span style="font-family:dejavusans">&#9986;</span> %s %s',
+					str_pad('', 134, '- '),
+					Results::formatTime(($round->cut_off ?? 0) * 100, $scoreCard['event']),
+					str_pad('', 56, '- ')
+				));
+				// echo CHtml::tag('td', [
+				// 	'class'=>'cutoff',
+				// 	'colspan'=>2,
+				// ], '');
+				echo CHtml::closeTag('tr');
+			}
 		}
 
 		//remark
@@ -779,6 +834,7 @@ class RegistrationController extends AdminController {
 		echo CHtml::closeTag('tbody');
 		echo CHtml::closeTag('table');
 		$table = ob_get_clean();
+		// echo $table;
 		$pdf->WriteHTML($table, 2);
 	}
 
