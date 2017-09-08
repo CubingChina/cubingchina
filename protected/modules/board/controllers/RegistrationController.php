@@ -585,9 +585,6 @@ class RegistrationController extends AdminController {
 		$pdf->autoLangToFont = true;
 		// $pdf->simpleTables = true;
 		$stylesheet = file_get_contents(Yii::getPathOfAlias('application.data') . '/scord-card.css');
-		// echo '<style>';
-		// echo $stylesheet;
-		// echo '</style>';
 		$pdf->WriteHTML($stylesheet, 1);
 		foreach (array_chunk($scoreCards, $this->pagePerStack * self::CARD_PER_PAGE) as $scoreCards) {
 			$count = count($scoreCards);
@@ -641,8 +638,8 @@ class RegistrationController extends AdminController {
 		ob_start();
 		ob_implicit_flush(false);
 		$class = 'attempt-' . $attempt;
-		if (strpos('/', $format) !== false) {
-			$class .= 'has-cutoff';
+		if (strpos($format, '/') !== false) {
+			$class .= '-has-cutoff';
 		}
 		echo CHtml::openTag('table', [
 			'class'=>$class,
@@ -834,7 +831,6 @@ class RegistrationController extends AdminController {
 		echo CHtml::closeTag('tbody');
 		echo CHtml::closeTag('table');
 		$table = ob_get_clean();
-		// echo $table;
 		$pdf->WriteHTML($table, 2);
 	}
 

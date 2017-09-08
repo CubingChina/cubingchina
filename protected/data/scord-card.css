@@ -1,83 +1,98 @@
 @page {
-	margin: 6mm;
+  margin: 6mm;
   font-family: 'Microsoft Yahei';
 }
 table {
-	font-size: 0.8rem;
-	width: 100%;
-	border-collapse: collapse;
-	border-spacing: 0;
-	text-align: center;
-	border-bottom: 1px solid;
-	margin-bottom: 20px;
+  font-size: 0.8rem;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  text-align: center;
+  border-bottom: 1px solid;
+  margin-bottom: 20px;
+}
+table.attempt-1 {
+  margin-bottom: 148px;
+}
+table.attempt-2 {
+  margin-bottom: 115px;
 }
 th, td {
-	border-top: 1px solid;
-	border-left: 1px solid;
-	text-align: center;
-	white-space: nowrap;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  text-align: center;
+  white-space: nowrap;
 }
 td.bdr {
-	border-right: 1px solid;
+  border-right: 1px solid;
 }
 td.bdld {
-	border-left: 1px dotted;
+  border-left: 1px dotted;
 }
 td.no-bd {
-	font-size: 1.1rem;
-	font-weight: bold;
-	border: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 td.tal {
-	text-align: left;
+  text-align: left;
 }
 td.bd2 {
-	border-left: 3px solid;
-	border-right: 3px solid;
+  border-left: 3px solid;
+  border-right: 3px solid;
 }
 td.bd2-top {
-	border-top: 3px solid;
+  border-top: 3px solid;
 }
 td.bd2-bottom {
-	border-bottom: 3px solid;
+  border-bottom: 3px solid;
 }
 td.penalty {
-	width: 8%;
+  width: 8%;
 }
 td.time {
-	width: 13.5%;
+  width: 13.5%;
 }
 td.signature {
-	width: 12%;
+  width: 12%;
 }
 td.trial-no {
-	font-size: 1.2rem;
-	padding-top: 7px;
-	padding-bottom: 7px;
-	width: 4%;
+  font-size: 1.2rem;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 4%;
 }
-table.has-cutoff td.trial-no {
+.attempt-5-has-cutoff td.trial-no {
   padding-top: 6px;
   padding-bottom: 6px;
 }
 .attempt-3 td.trial-no {
-  padding-top: 15px;
+  padding-top: 17px;
+  padding-bottom: 16px;
+}
+.attempt-3-has-cutoff td.trial-no {
+  padding-top: 16px;
   padding-bottom: 15px;
 }
-.attempt-3.has-cutoff td.trial-no {
-  padding-top: 14px;
-  padding-bottom: 13px;
-}
 td.remark {
-	padding-top: 6px;
-	padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.attempt-5-has-cutoff td.remark {
+  padding-top: 4px;
+  padding-bottom: 5px;
+}
+.attempt-3 td.remark {
+  padding-top: 8px;
+  padding-bottom: 7px;
+}
+.attempt-3-has-cutoff td.remark {
+  padding-top: 7px;
+  padding-bottom: 6px;
 }
 td.cutoff {
   border-left: none;
-  line-height: 10px;
-}
-.attempt-3 td.cutoff {
   line-height: 10px;
 }
