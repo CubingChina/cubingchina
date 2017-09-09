@@ -785,6 +785,10 @@ class RegistrationController extends AdminController {
 
 		echo CHtml::openTag('tr');
 		if ($event === '333mbf') {
+			echo CHtml::tag('td', [], '复原个数<br>Solved');
+			echo CHtml::tag('td', [], '尝试个数<br>Attempt');
+		}
+		if ($event === '333mbf') {
 			$penalties = [7, 8];
 		} else {
 			$penalties = [5, 6, 7, 8];
@@ -797,10 +801,6 @@ class RegistrationController extends AdminController {
 				'width'=>45
 			]);
 			echo CHtml::closeTag('td');
-		}
-		if ($event === '333mbf') {
-			echo CHtml::tag('td', [], '复原个数<br>Solved');
-			echo CHtml::tag('td', [], '尝试个数<br>Attempt');
 		}
 		echo CHtml::closeTag('tr');
 
@@ -817,10 +817,10 @@ class RegistrationController extends AdminController {
 			if ($event === '333mbf') {
 				echo CHtml::tag('td', [
 					'colspan'=>2,
-				]);
+				], '<b>/</b>');
 				echo CHtml::tag('td', [
 					'colspan'=>2,
-				], '<b>/</b>');
+				]);
 			} else {
 				echo CHtml::tag('td', [
 					'colspan'=>4,
