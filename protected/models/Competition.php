@@ -1887,6 +1887,32 @@ class Competition extends ActiveRecord {
 		return isset($dates[$event][$round]) ? $dates[$event][$round] : $this->date;
 	}
 
+	public function getAllScheduleRounds() {
+		static $rounds;
+		if ($rounds === null) {
+			foreach ($this->schedule as $schedule) {
+				$rounds[$schedule->event][$schedule->round] = $schedule;
+			}
+		}
+		return $rounds;
+	}
+
+	public function getScheduledRound($event, $round) {
+		$rounds = $this->getAllScheduleRounds();
+		return isset($rounds[$event][$round]) ? $rounds[$event][$round] : null;
+	}
+
+	public function getFirstRound($event) {
+		$rounds = $this->getAllScheduleRounds();
+		if (!isset($rounds[$event])) {
+			return null;
+		}
+		foreach ($rounds[$event] as $round) {
+			return $round;
+		}
+		return null;
+	}
+
 	public function checkPermission($user) {
 		if ($user->isAdministrator()) {
 			return true;
