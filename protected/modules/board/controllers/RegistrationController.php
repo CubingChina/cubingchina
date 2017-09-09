@@ -676,7 +676,7 @@ class RegistrationController extends AdminController {
 		], '轮次<br>Round');
 		echo CHtml::tag('td', [
 			'class'=>'bdld',
-		], $round->id ?? '');
+		], $round->round ?? '');
 		echo CHtml::tag('td', [
 		], '姓名<br>Name');
 		echo CHtml::openTag('td', [
