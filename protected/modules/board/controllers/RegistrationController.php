@@ -551,19 +551,53 @@ class RegistrationController extends AdminController {
 	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null) {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
+		if (isset($competition->associatedEvents['333mbf']) && ($round === null || $round->event != '333mbf')) {
+			$mbfRound = $competition->getFirstRound('333mbf');
+			$format = $mbfRound->format ?? '3';
+			// deal with 1/3, 2/a
+			switch ($format{strlen($format) - 1}) {
+				case '2/a':
+				case 'a':
+					$attempt = 5;
+					break;
+				case '1/m':
+				case 'm':
+					$attempt = 3;
+					break;
+				default:
+					$attempt = intval($format);
+					break;
+			}
+		}
 		if ($split === 'event') {
 			foreach ($competition->associatedEvents as $event=>$value) {
 				if ($event === '333fm') {
 					continue;
 				}
-				foreach ($registrations as $registration) {
-					if (!in_array("$event", $registration->events)) {
-						continue;
+				if ($event === '333mbf') {
+					for ($i = 0; $i < $attempt; $i++) {
+						foreach ($registrations as $registration) {
+							if (!in_array("$event", $registration->events)) {
+								continue;
+							}
+							$scoreCards[] = [
+								'registration'=>$registration,
+								'event'=>$event,
+								'start'=>$i,
+								'attempt'=>$i + 1,
+							];
+						}
 					}
-					$scoreCards[] = [
-						'registration'=>$registration,
-						'event'=>$event,
-					];
+				} else {
+					foreach ($registrations as $registration) {
+						if (!in_array("$event", $registration->events)) {
+							continue;
+						}
+						$scoreCards[] = [
+							'registration'=>$registration,
+							'event'=>$event,
+						];
+					}
 				}
 			}
 		} else {
@@ -571,6 +605,21 @@ class RegistrationController extends AdminController {
 				foreach ($registration->events as $event) {
 					if ($event === '333fm') {
 						continue;
+					}
+					if ($event === '333mbf') {
+						for ($i = 0; $i < $attempt; $i++) {
+							$scoreCards[] = [
+								'registration'=>$registration,
+								'event'=>$event,
+								'start'=>$i,
+								'attempt'=>$i + 1,
+							];
+						}
+					} else {
+						$scoreCards[] = [
+							'registration'=>$registration,
+							'event'=>$event,
+						];
 					}
 					$scoreCards[] = [
 						'registration'=>$registration,
@@ -613,6 +662,9 @@ class RegistrationController extends AdminController {
 	}
 
 	private function fillScoreCard($pdf, $competition, $scoreCard, $round) {
+		$registration = $scoreCard['registration'];
+		$user = $registration->user;
+		$event = $scoreCard['event'];
 		if ($round === null) {
 			$round = $competition->getFirstRound($scoreCard['event']);
 		}
@@ -631,9 +683,9 @@ class RegistrationController extends AdminController {
 				$attempt = intval($format);
 				break;
 		}
-		$registration = $scoreCard['registration'];
-		$user = $registration->user;
-		$event = $scoreCard['event'];
+		if ($event === '333mbf') {
+			$attempt = 1;
+		}
 		$imageDir = Yii::getPathOfAlias('application.data.penalty-images');
 		ob_start();
 		ob_implicit_flush(false);
@@ -703,31 +755,20 @@ class RegistrationController extends AdminController {
 			'class'=>'time',
 			'rowspan'=>2,
 		], '显示时间<br>Display Time');
-		//@todo 4 pics
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/1.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/2.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/3.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/4.png', '', [
-			'width'=>45
-		]);
+		if ($event === '333mbf') {
+			$penalties = [2, 3, 5, 6];
+		} else {
+			$penalties = [1, 2, 3, 4];
+		}
+		foreach ($penalties as $penalty) {
+			echo CHtml::openTag('td', [
+				'class'=>'penalty',
+			]);
+			echo CHtml::image($imageDir . "/{$penalty}.png", '', [
+				'width'=>45
+			]);
+			echo CHtml::closeTag('td');
+		}
 		echo CHtml::tag('td', [
 			'class'=>'time',
 			'rowspan'=>2,
@@ -743,47 +784,50 @@ class RegistrationController extends AdminController {
 		echo CHtml::closeTag('tr');
 
 		echo CHtml::openTag('tr');
-		//@todo 4 pics
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/5.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/6.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/7.png', '', [
-			'width'=>45
-		]);
-		echo CHtml::openTag('td', [
-			'class'=>'penalty',
-		]);
-		echo CHtml::image($imageDir . '/8.png', '', [
-			'width'=>45
-		]);
+		if ($event === '333mbf') {
+			$penalties = [7, 8];
+		} else {
+			$penalties = [5, 6, 7, 8];
+		}
+		foreach ($penalties as $penalty) {
+			echo CHtml::openTag('td', [
+				'class'=>'penalty',
+			]);
+			echo CHtml::image($imageDir . "/{$penalty}.png", '', [
+				'width'=>45
+			]);
+			echo CHtml::closeTag('td');
+		}
+		if ($event === '333mbf') {
+			echo CHtml::tag('td', [], '复原个数<br>Solved');
+			echo CHtml::tag('td', [], '尝试个数<br>Attempt');
+		}
 		echo CHtml::closeTag('tr');
 
-		//5 trials
-		for ($i = 0; $i < $attempt; $i++) {
+		//trials
+		$start = $scoreCard['start'] ?? 0;
+		$attempt = $scoreCard['attempt'] ?? $attempt;
+		for ($i = $start; $i < $attempt; $i++) {
 			echo CHtml::openTag('tr');
 			echo CHtml::tag('td', [
 				'class'=>'trial-no'
 			], $i + 1);
 			echo CHtml::tag('td', [], '');
 			echo CHtml::tag('td', [], '');
-			//@todo 4 pics
-			echo CHtml::tag('td', [
-				'colspan'=>4,
-			]);
+			if ($event === '333mbf') {
+				echo CHtml::tag('td', [
+					'colspan'=>2,
+				]);
+				echo CHtml::tag('td', [
+					'colspan'=>2,
+				], '<b>/</b>');
+			} else {
+				echo CHtml::tag('td', [
+					'colspan'=>4,
+				]);
+			}
 			$class = 'bd2';
-			if ($i == 0) {
+			if ($i == $start) {
 				$class .= ' bd2-top';
 			}
 			if ($i == $attempt - 1) {
@@ -809,7 +853,7 @@ class RegistrationController extends AdminController {
 					'class'=>'cutoff',
 				], sprintf('%s <span style="font-family:dejavusans">&#9986;</span> %s %s',
 					str_pad('', 134, '- '),
-					Results::formatTime(($round->cut_off ?? 0) * 100, $scoreCard['event']),
+					Results::formatTime(($round->cut_off ?? 0) * 100, $event),
 					str_pad('', 56, '- ')
 				));
 				// echo CHtml::tag('td', [
