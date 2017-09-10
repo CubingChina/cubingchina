@@ -867,9 +867,22 @@ class RegistrationController extends AdminController {
 		//remark
 		echo CHtml::openTag('tr');
 		echo CHtml::tag('td', [
-			'class'=>'tal bdr remark',
-			'colspan'=>10,
+			'class'=>'tal remark',
+			'colspan'=>7,
 		], '备注 Remark:');
+		$timeLimit = Results::formatTime(($round->time_limit ?? 0) * 100, $event);
+		if ($timeLimit) {
+			$timeLimit = '≤' . $timeLimit;
+			if (isset($round->cumulative) && $round->cumulative) {
+				$timeLimit = '累计' . $timeLimit;
+			}
+		}
+		echo CHtml::tag('td', [
+		], $timeLimit);
+		echo CHtml::tag('td', [
+			'class'=>'bdr',
+			'colspan'=>2,
+		], '');
 		echo CHtml::closeTag('tr');
 
 		echo CHtml::closeTag('tbody');
