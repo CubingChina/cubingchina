@@ -724,11 +724,26 @@ class RegistrationController extends AdminController {
 		]);
 		echo Events::getFullEventName($event) . ' ' . $event;
 		echo CHtml::closeTag('td');
+		$roundId = $round->round ?? '';
+		switch ($roundId) {
+			case 'd':
+				$roundId = 1;
+				break;
+			case 'c':
+				$roundId = 'f';
+				break;
+			case 'e':
+				$roundId = 2;
+				break;
+			case 'g':
+				$roundId = 3;
+				break;
+		}
 		echo CHtml::tag('td', [
 		], '轮次<br>Round');
 		echo CHtml::tag('td', [
 			'class'=>'bdld',
-		], $round->round ?? '');
+		], $roundId);
 		echo CHtml::tag('td', [
 		], '姓名<br>Name');
 		echo CHtml::openTag('td', [
