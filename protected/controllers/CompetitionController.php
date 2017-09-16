@@ -129,6 +129,8 @@ class CompetitionController extends Controller {
 				'entourage_name'=>$registration->entourage_name,
 				'entourage_passport_type_text'=>$registration->getPassportTypeText(),
 				'entourage_passport_number'=>$registration->entourage_passport_number,
+				't_shirt_size'=>$registration->getTShirtSizeText(),
+				'staff_type'=>$registration->getStaffTypeText(),
 			]);
 		}
 		if (isset($_POST['id'])) {
