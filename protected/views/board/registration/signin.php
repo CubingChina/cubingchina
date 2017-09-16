@@ -21,6 +21,7 @@
       <div class="well">
         <p>请使用微信扫描如下二维码进入签到页面，<b class="text-danger">切勿外传</b>！</p>
         <p><?php echo CHtml::image($scanAuth->getQRCodeUrl()); ?></p>
+        <p>扫码枪请<?php echo CHtml::link('点击这里', $model->competition->getUrl('scan'), ['target'=>'_blank']); ?>进行签到。</p>
       </div>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
