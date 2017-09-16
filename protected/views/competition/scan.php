@@ -40,13 +40,21 @@
     <dd v-if="registration.signed_in">{{registration.signed_date}}
     </dd>
   </dl>
+  <dl class="dl-horizontal" v-if="registration.t_shirt_size">
+    <dt><?php echo Yii::t('Registration', 'T-shirt Size'); ?></dt>
+    <dd>{{registration.t_shirt_size}}</dd>
+  </dl>
+  <dl class="dl-horizontal" v-if="registration.staff_type">
+    <dt><?php echo Yii::t('Registration', 'Staff Type'); ?></dt>
+    <dd>{{registration.staff_type}}</dd>
+  </dl>
   <dl class="dl-horizontal" v-if="registration.has_entourage">
-    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Guest Name'); ?></dt>
-    <dd v-if="registration.has_entourage">{{registration.entourage_name}}</dd>
-    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
-    <dd v-if="registration.has_entourage">{{registration.entourage_passport_type_text}}</dd>
-    <dt v-if="registration.has_entourage"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
-    <dd v-if="registration.has_entourage">{{registration.entourage_passport_number}}</dd>
+    <dt><?php echo Yii::t('Registration', 'Guest Name'); ?></dt>
+    <dd>{{registration.entourage_name}}</dd>
+    <dt><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
+    <dd>{{registration.entourage_passport_type_text}}</dd>
+    <dt><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
+    <dd>{{registration.entourage_passport_number}}</dd>
   </dl>
   <dl class="dl-horizontal" v-if="registration.id">
     <dt v-if="!registration.paid"></dt>
