@@ -621,10 +621,6 @@ class RegistrationController extends AdminController {
 							'event'=>$event,
 						];
 					}
-					$scoreCards[] = [
-						'registration'=>$registration,
-						'event'=>$event,
-					];
 				}
 			}
 		}
