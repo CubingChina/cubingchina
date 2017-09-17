@@ -163,6 +163,12 @@ class CompetitionController extends Controller {
 				'paid'=>!!$registration->paid,
 				'signed_in'=>!!$registration->signed_in,
 				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
+				'has_entourage'=>!!$registration->has_entourage,
+				'entourage_name'=>$registration->entourage_name,
+				'entourage_passport_type_text'=>$registration->getPassportTypeText(),
+				'entourage_passport_number'=>$registration->entourage_passport_number,
+				't_shirt_size'=>$registration->getTShirtSizeText(),
+				'staff_type'=>$registration->getStaffTypeText(),
 			]);
 		}
 		$min = DEV ? '' : '.min';
