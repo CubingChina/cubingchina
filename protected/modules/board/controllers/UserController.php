@@ -45,6 +45,68 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionMerge() {
+		if (isset($_POST['users'])) {
+			$user1 = User::model()->findByPk($_POST['users'][0] ?? 0);
+			$user2 = User::model()->findByPk($_POST['users'][1] ?? 0);
+			if ($user1 === null || $user2 === null) {
+				$this->ajaxError(404, 'Unnknown user ID');
+			}
+			if ($user1->getCompetitionName() != $user2->getCompetitionName()) {
+				$this->ajaxError(403, 'Users\' names must be the same');
+			}
+			if ($user1->birthday != $user2->birthday) {
+				$this->ajaxError(403, 'Users\' birthdays must be the same');
+			}
+			if ($user1->gender != $user2->gender) {
+				$this->ajaxError(403, 'Users\' genders must be the same');
+			}
+			if ($user1->id == $user2->id) {
+				$this->ajaxError(403, 'Users\' IDs mustn\'t be the same');
+			}
+			$params = [
+				[
+					'user_id'=>$user1->id,
+				],
+				[
+					'condition'=>'user_id=' . $user2->id,
+				],
+			];
+			foreach (['Registration', 'LiveResult', 'Pay'] as $modelName) {
+				call_user_func_array([$modelName::model(), 'updateAll'], $params);
+			}
+			$this->ajaxOk(null);
+		}
+		$this->render('merge');
+	}
+
+	public function actionSearch() {
+		$query = $this->sRequest('query');
+		$criteria = new CDbCriteria();
+		if (ctype_digit($query)) {
+			$criteria->addSearchCondition('id', $query, false, 'OR', '=');
+		} else {
+			$criteria->addSearchCondition('name', $query, true, 'OR');
+			$criteria->addSearchCondition('name_zh', $query, true, 'OR');
+		}
+		$criteria->addSearchCondition('email', $query, true, 'OR');
+		$criteria->addCondition('status!=2');
+		$criteria->order = 'id';
+		$criteria->limit = 20;
+		$users = User::model()->findAll($criteria);
+		echo CJSON::encode(array_map(function($user) {
+			return [
+				'id'=>$user->id,
+				'name'=>$user->name,
+				'name_zh'=>$user->name_zh,
+				'display_name'=>$user->getCompetitionName(),
+				'birthday'=>$user->birthday,
+				'display_birthday'=>date('Y-m-d', $user->birthday),
+				'gender'=>$user->getGenderText(),
+			];
+		}, $users));
+	}
+
 	public function actionRegistration() {
 		$model = new Registration();
 		$model->unsetAttributes();
