@@ -818,7 +818,7 @@
                     var that = this;
                     var round = getRound(that);
                     that.value = encodeResult(that.formatTime(that.time), that.e, false, that.tried, that.solved);
-                    if (round.tl > 0 && that.e != '333mbf' && that.e != '333fm' && that.value / 100 > round.tl) {
+                    if (round.tl > 0 && that.e != '333mbf' && that.e != '333fm' && that.value / 100 >= round.tl) {
                       that.time = 'DNF';
                     }
                     if (that.e === '333fm' && that.value > 80) {

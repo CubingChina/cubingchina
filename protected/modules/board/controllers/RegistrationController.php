@@ -883,7 +883,7 @@ class RegistrationController extends AdminController {
 		], '备注 Remark:');
 		$timeLimit = Results::formatTime(($round->time_limit ?? 0) * 100, $event);
 		if ($timeLimit) {
-			$timeLimit = '≤' . $timeLimit;
+			$timeLimit = '<' . $timeLimit;
 			if (isset($round->cumulative) && $round->cumulative) {
 				$timeLimit = '累计' . $timeLimit;
 			}
