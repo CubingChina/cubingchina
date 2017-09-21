@@ -98,6 +98,11 @@
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
             array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 合并用户',
+              'url'=>array('/board/user/merge'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+            ),
+            array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
               'url'=>array('/board/user/statistics'),
             ),
