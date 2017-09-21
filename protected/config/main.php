@@ -230,6 +230,23 @@ $config = array(
 						'js/plugins/bootstrap-tokenfield/typeahead.bundle.min.js',
 					),
 				),
+				'tagsinput'=>array(
+					'baseUrl'=>'b',
+					'css'=>array(
+						'css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css',
+						'css/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css',
+					),
+					'js'=>array(
+						'js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js',
+					),
+					'depends'=>array('typeahead'),
+				),
+				'typeahead'=>array(
+					'baseUrl'=>'b',
+					'js'=>array(
+						'js/plugins/bootstrap-typeahead/bootstrap-typeahead.min.js',
+					),
+				),
 				'switch'=>array(
 					'baseUrl'=>'b',
 					'css'=>array(
