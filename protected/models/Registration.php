@@ -284,11 +284,13 @@ class Registration extends ActiveRecord {
 
 	public function cancel($status = Registration::STATUS_CANCELLED) {
 		$this->formatEvents();
+		//calculate refund fee before change status
+		$refundFee = $this->getRefundFee();
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
 			if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
-				$this->pay->refund($this->getRefundFee());
+				$this->pay->refund($refundFee);
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
 			if (!$this->competition->isRegistrationFull()) {
