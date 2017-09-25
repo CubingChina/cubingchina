@@ -2,10 +2,7 @@
   <div class="container">
     <div class="navbar-header" data-toggle="collapse" data-target="#navbar-collapse">
       <button class="navbar-toggle" type="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <?php echo Yii::t('common', 'Menu'); ?>
       </button><!--//nav-toggle-->
     </div><!--//navbar-header-->
     <div class="navbar-collapse collapse" id="navbar-collapse">
