@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Menu' => '菜單',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

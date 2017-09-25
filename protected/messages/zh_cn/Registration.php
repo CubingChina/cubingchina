@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.' => '所有信息<b>仅用于</b>比赛相关的身份确认、保险办理及公安机关报备等。你可以选择在比赛结束后删除或者留在数据库以便后续比赛使用。',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -30,6 +29,7 @@ return array (
   '<b>Warning:</b> Once you cancel your registration, you will <b>NOT</b> be a competitor and you cannot register for this competition any longer.' => '<b>警告：</b>一旦退赛，你将失去本次比赛的参赛资格，并<b>无法</b>再次报名该比赛。',
   'Acception Time' => '通过时间',
   'Additional Comments' => '备注',
+  'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.' => '所有信息<b>仅用于</b>比赛相关的身份确认、保险办理及公安机关报备等。你可以选择在比赛结束后删除或者留在数据库以便后续比赛使用。',
   'Cancellation Time' => '退赛时间',
   'Competition' => '比赛',
   'Do you have any guests joining you at the competition?' => '是否有陪同人员一同前往观看比赛？',
