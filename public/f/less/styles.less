@@ -980,22 +980,18 @@ table.concise-schedule {
 }
 .location-delegate {
   margin-bottom: 0;
-  p {
+  dd, dt, p {
     line-height: inherit;
     margin-bottom: 0;
   }
-  dd {
-    margin-left: 80px;
-  }
-}
-dl.location-delegate {
-  dt {
-    line-height: inherit;
-    margin-bottom: 0;
-  }
-  dd {
-    line-height: inherit;
-    margin-bottom: 0;
+  @media (min-width: 768px) {
+    dd {
+      margin-left: 80px;
+    }
+    dt {
+      text-align: left;
+      width: 70px;
+    }
   }
 }
 [v-cloak] {
