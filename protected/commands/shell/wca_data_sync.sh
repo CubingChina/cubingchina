@@ -51,8 +51,8 @@ lftp -c "pget -n 20 '$wca_home/results/misc/$zipname' -o $zipname"
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"
-sed -ri 's/DEFAULT CHARSET=utf8mb4/DEFAULT CHARSET=utf8 COLLATE utf8_general_ci/g' WCA_export.sql
-sed -ri 's/CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci/CHARACTER SET utf8 COLLATE utf8_general_ci/g' WCA_export.sql
+sed -ri 's/utf8mb4/utf8/g' WCA_export.sql
+sed -ri 's/unicode_ci/general_ci/g' WCA_export.sql
 _log "remove drop table, disable create table"
 sed -ri 's/DROP TABLE .+;//g' WCA_export.sql
 sed -ri 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' WCA_export.sql

@@ -41,9 +41,6 @@ CREATE TABLE IF NOT EXISTS `Countries` (
   `id` varchar(50) NOT NULL DEFAULT '',
   `name` varchar(50) NOT NULL DEFAULT '',
   `continentId` varchar(50) NOT NULL DEFAULT '',
-  `latitude` int(1) NOT NULL DEFAULT '0',
-  `longitude` int(1) NOT NULL DEFAULT '0',
-  `zoom` int(1) NOT NULL DEFAULT '0',
   `iso2` char(2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `continentId` (`continentId`)
