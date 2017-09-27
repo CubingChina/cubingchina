@@ -233,10 +233,12 @@ class CompetitionController extends Controller {
 					Yii::app()->user->setFlash($type, $message);
 				}
 			}
-			Yii::app()->user->setFlash('warning', Yii::t('Competition', 'Remaining place{s} for registration: {num}.', [
-				'{s}'=>$competition->getRemainedNumber() > 1 ? 's' : '',
-				'{num}'=>$competition->getRemainedNumber(),
-			]));
+			if ($competition->person_num > 0) {
+				Yii::app()->user->setFlash('warning', Yii::t('Competition', 'Remaining place{s} for registration: {num}.', [
+					'{s}'=>$competition->getRemainedNumber() > 1 ? 's' : '',
+					'{num}'=>$competition->getRemainedNumber(),
+				]));
+			}
 			if (!empty($flashes)) {
 				$this->redirect($competition->getUrl('competitors'));
 			}
