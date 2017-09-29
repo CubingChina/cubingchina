@@ -1,39 +1,4 @@
-<?php $events = $competition->getEventsRoundTypes(); ?>
-<?php $params = $competition->getLastActiveEventRound($events); ?>
-<?php echo CHtml::tag('div', array(
-  'id'=>'live-container',
-  'data-c'=>$competition->id,
-  'data-events'=>json_encode($events),
-  'data-params'=>json_encode($params),
-  'data-filters'=>json_encode(array(
-    array(
-      'label'=>Yii::t('common', 'All'),
-      'value'=>'all',
-    ),
-    array(
-      'label'=>Yii::t('live', 'Females'),
-      'value'=>'females',
-    ),
-    array(
-      'label'=>Yii::t('live', 'Children'),
-      'value'=>'children',
-    ),
-    array(
-      'label'=>Yii::t('live', 'New Comers'),
-      'value'=>'newcomers',
-    ),
-  )),
-  'data-user'=>json_encode(array(
-    'isGuest'=>Yii::app()->user->isGuest,
-    'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
-    'isDelegate'=>!Yii::app()->user->isGuest && $this->user->isDelegate() && isset($competition->delegates[$this->user->id]),
-    'isAdmin'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
-    'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),
-  )),
-  'v-cloak'=>true,
-), ''); ?>
-
-
+<?php echo CHtml::tag('div', $htmlOptions, ''); ?>
 <?php $form = $this->beginWidget('ActiveForm', array(
   'htmlOptions'=>array(
     'class'=>'hide',
@@ -171,6 +136,11 @@
   <div class="panel panel-info">
     <div class="panel-body">
       <div class="message-container">
+        <ul class="unstyled static-messages">
+          <li v-for="message in staticMessages">
+            <message :message="message"></message>
+          </li>
+        </ul>
         <ul class="unstyled">
           <li v-for="message in messages">
             <message :message="message"></message>
@@ -206,10 +176,15 @@
       {{message.user.name}} {{message.time | formatTime}}
     </div>
     <div class="message-body">
+      <static-message v-if="message.type == 'static'" :message="message"></static-message>
       <normal-message v-if="message.type == 'normal'" :message="message"></normal-message>
       <result-message v-if="message.type == 'result'" :message="message" :result="message.result"></result-message>
     </div>
   </div>
+</template>
+
+<template id="static-message-template">
+  {{{message.content}}}
 </template>
 
 <template id="normal-message-template">

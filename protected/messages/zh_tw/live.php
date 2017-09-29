@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Live stream can be found here: {link}' => '點擊此鏈接觀看視頻直播：{link}',
   'Open' => '',
   'U10' => '',
   'U12' => '',
