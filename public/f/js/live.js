@@ -1014,11 +1014,11 @@
 
   var newMessage = function() {
     var container = $('.message-container');
-    var ul = container.find('ul');
+    var ul = container.find('ul:not(.static-messages)');
     return function(message, scroll) {
       if (container.length == 0) {
         container = $('.message-container');
-        ul = container.find('ul');
+        ul = container.find('ul:not(.static-messages)');
       }
       message.type = message.type || 'normal';
       store.dispatch('NEW_MESSAGE', message);

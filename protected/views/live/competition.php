@@ -136,7 +136,7 @@
   <div class="panel panel-info">
     <div class="panel-body">
       <div class="message-container">
-        <ul class="unstyled static-messages">
+        <ul class="unstyled static-messages sticky">
           <li v-for="message in staticMessages">
             <message :message="message"></message>
           </li>
