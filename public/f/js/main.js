@@ -9,7 +9,7 @@ import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
 import 'bootstrap-hover-dropdown'
 import utils from '../utils'
-import stickybits from 'stickybits'
+import 'stickyfill'
 
 window.jQuery = window.$ = jQuery
 window.CubingChina = {
@@ -19,7 +19,9 @@ window.CubingChina = {
 $(function() {
   $('input, textarea').placeholder();
   $('.wrapper table:not(.table)').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
-  stickybits('.sticky')
+  $('.sticky').each(function() {
+    Stickyfill.add(this)
+  })
   if (!('ontouchstart' in window)) {
     (function() {
       var win = $(window);

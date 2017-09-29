@@ -35,7 +35,6 @@
     "progressbar.js": "^1.0.1",
     "promise": "^7.1.1",
     "rimraf": "^2.5.4",
-    "stickybits": "^1.5.3",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "vue": "^2.1.10",
