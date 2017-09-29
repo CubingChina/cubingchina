@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Menu' => '菜單',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -186,6 +185,7 @@ return array (
   'Lost password?' => '忘記密碼？',
   'Lucky Draw' => '抽獎',
   'Male' => '男',
+  'Menu' => '菜單',
   'Misc' => '雜項',
   'Mobile Number' => '手機號碼',
   'More Info' => '其他',

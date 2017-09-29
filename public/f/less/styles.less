@@ -841,6 +841,21 @@ table.concise-schedule {
 .message-container {
   height: 300px;
   overflow-y: auto;
+  position: relative;
+
+  ul.static-messages {
+    position: sticky;
+    background-color: #6091ba;
+    color: #fff;
+    font-weight: bold;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    a {
+      color: #fff;
+    }
+  }
 
   .chat-message {
     .message-body {

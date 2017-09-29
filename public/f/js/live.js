@@ -77,7 +77,8 @@
     loadingUserResults: false,
     results: [],
     userResults: [],
-    messages: []
+    messages: [],
+    staticMessages: []
   };
   var lastFetchRoundTypesTime = Date.now();
   var events = {};
@@ -170,7 +171,19 @@
       state.onlineNumber = onlineNumber;
     }
   };
-  $.extend(state, liveContainer.data());
+  var data = liveContainer.data();
+  $.extend(state, data);
+  if (data.liveStreamUrl) {
+    state.staticMessages.push({
+      id: +new Date(),
+      type: 'static',
+      user: {
+        name: 'System'
+      },
+      time: Math.floor(+new Date() / 1000),
+      content: '<a href="' + data.liveStreamUrl + '" target="_blank">' + data.liveStreamUrl + '</a>'
+    });
+  }
   var options = {
     enableEntry: true,
     showMessage: true,
@@ -337,6 +350,9 @@
           getters: {
             messages: function(state) {
               return state.messages;
+            },
+            staticMessages: function(state) {
+              return state.staticMessages;
             }
           }
         },
@@ -372,6 +388,10 @@
               }
             },
             components: {
+              'static-message': {
+                props: ['message'],
+                template: '#static-message-template'
+              },
               'normal-message': {
                 props: ['message'],
                 template: '#normal-message-template'
