@@ -2378,6 +2378,7 @@ class Competition extends ActiveRecord {
 			['locations', 'checkLocations', 'skipOnError'=>true],
 			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
+			['live_stream_url', 'url'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = ['tba', 'safe'];

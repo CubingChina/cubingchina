@@ -44,6 +44,7 @@
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
+            <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
             <?php endif; ?>
           </ul>
           <div class="tab-content">
@@ -523,6 +524,19 @@
                   'class'=>'editor form-control'
                 )),
                 $form->error($model, 'travel', array('class'=>'text-danger'))
+              );?>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="other">
+              <?php echo Html::formGroup(
+                $model, 'live_stream_url', array(
+                  'class'=>'col-lg-12',
+                ),
+                $form->labelEx($model, 'live_stream_url', array(
+                  'label'=>'直播链接',
+                )),
+                Html::activeTextField($model, 'live_stream_url'),
+                CHtml::tag('div', ['class'=>'help-text'], '该链接会展示在成绩直播页面'),
+                $form->error($model, 'live_stream_url', array('class'=>'text-danger'))
               );?>
             </div>
             <?php endif; ?>

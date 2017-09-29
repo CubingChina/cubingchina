@@ -27,9 +27,59 @@ class LiveController extends CompetitionController {
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20170921');
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20170929');
+		$events = $competition->getEventsRoundTypes();
+		$params = $competition->getLastActiveEventRound($events);
+		$htmlOptions = [
+			'id'=>'live-container',
+			'data-c'=>$competition->id,
+			'data-events'=>json_encode($events),
+			'data-params'=>json_encode($params),
+			'data-filters'=>json_encode([
+				[
+					'label'=>Yii::t('common', 'All'),
+					'value'=>'all',
+				],
+				[
+					'label'=>Yii::t('live', 'Females'),
+					'value'=>'females',
+				],
+				[
+					'label'=>Yii::t('live', 'Children'),
+					'value'=>'children',
+				],
+				[
+					'label'=>Yii::t('live', 'New Comers'),
+					'value'=>'newcomers',
+				],
+			]),
+			'data-user'=>json_encode([
+				'isGuest'=>Yii::app()->user->isGuest,
+				'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
+				'isDelegate'=>!Yii::app()->user->isGuest && $this->user->isDelegate() && isset($competition->delegates[$this->user->id]),
+				'isAdmin'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+				'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),
+			]),
+			'data-static-messages'=>[],
+			'v-cloak'=>true,
+		];
+		if ($competition->live_stream_url) {
+			$htmlOptions['data-static-messages'][] = [
+				'id'=>'static-live-stream',
+				'type'=>'static',
+				'user'=>[
+					'name'=>'System'
+				],
+				'time'=>time(),
+				'content'=>Yii::t('live', 'Live stream can be found here: {link}', [
+					'{link}'=>CHtml::link($competition->live_stream_url, $competition->live_stream_url, ['target'=>'_blank']),
+				]),
+			];
+		}
+		$htmlOptions['data-static-messages'] = json_encode($htmlOptions['data-static-messages']);
 		$this->render('competition', array(
 			'competition'=>$competition,
+			'htmlOptions'=>$htmlOptions,
 		));
 	}
 
