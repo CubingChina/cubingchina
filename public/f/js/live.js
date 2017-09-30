@@ -1013,12 +1013,12 @@
   router.start(vm, liveContainer.get(0));
 
   var newMessage = function() {
-    var container = $('.message-container');
-    var ul = container.find('ul:not(.static-messages)');
+    var container = $('.message-container:not(.static-message-container)');
+    var ul = container.find('ul');
     return function(message, scroll) {
       if (container.length == 0) {
-        container = $('.message-container');
-        ul = container.find('ul:not(.static-messages)');
+        container = $('.message-container:not(.static-message-container)');
+        ul = container.find('ul');
       }
       message.type = message.type || 'normal';
       store.dispatch('NEW_MESSAGE', message);
