@@ -135,12 +135,14 @@
 <template id="chat-template">
   <div class="panel panel-info">
     <div class="panel-body">
-      <div class="message-container">
-        <ul class="unstyled static-messages sticky">
+      <div class="message-container static-message-container">
+        <ul class="unstyled static-messages">
           <li v-for="message in staticMessages">
             <message :message="message"></message>
           </li>
         </ul>
+      </div>
+      <div class="message-container">
         <ul class="unstyled">
           <li v-for="message in messages">
             <message :message="message"></message>
