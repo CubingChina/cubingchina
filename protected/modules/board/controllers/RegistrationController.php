@@ -539,7 +539,6 @@ class RegistrationController extends AdminController {
 		], [
 			'order'=>'number'
 		]);
-		$competition->name_zh .= '-' . Events::getFullEventName($event) . '-' . RoundTypes::getFullRoundName($round);
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round));
 	}
 
@@ -654,7 +653,11 @@ class RegistrationController extends AdminController {
 				}
 			}
 		}
-		$pdf->Output($competition->name_zh . '成绩条.pdf', 'D');
+		$name = $competition->name_zh;
+		if ($round !== null) {
+			$name .= Events::getFullEventName($round->event) . Yii::t('RoundTypes', RoundTypes::getFullRoundName($round->round));
+		}
+		$pdf->Output($name . '成绩条.pdf', 'D');
 	}
 
 	private function fillScoreCard($pdf, $competition, $scoreCard, $round) {
