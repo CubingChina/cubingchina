@@ -44,6 +44,37 @@ class WebSocketCommand extends CConsoleCommand {
 		$server->run();
 	}
 
+	public function actionAdmin() {
+		$db = Yii::app()->db;
+		$pdo = $db->getPdoInstance();
+		$cache = Yii::app()->cache;
+
+		$loop = new StreamSelectLoop();
+		$liveServer = new LiveServer();
+		$client = new Predis\Async\Client([
+			'host'=>$cache->hostname,
+			'port'=>$cache->port,
+		], $loop);
+		$client->connect([$liveServer, 'initSubscriber']);
+
+		$session = new SessionProvider(
+			$liveServer,
+			new PdoSessionHandler($pdo, array(
+				'lock_mode'=>PdoSessionHandler::LOCK_NONE,
+			)),
+			array(
+				'name'=>'CUBINGCHINA_SID'
+			)
+		);
+		Yii::getLogger()->autoDump = true;
+		Yii::getLogger()->autoFlush = 1;
+		$app = new HttpServer(new WsServer($session));
+		$socket = new Reactor($loop);
+		$socket->listen(DEV ? 8083 : 8082, self::ADDRESS);
+		$server = new IoServer($app, $socket, $loop);
+		$server->run();
+	}
+
 	public function actionRecordComputer() {
 		$loop = new StreamSelectLoop();
 		$loop->addPeriodicTimer(0.2, function() {
