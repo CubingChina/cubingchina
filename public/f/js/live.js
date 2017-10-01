@@ -5,8 +5,15 @@
   }
   Vue.config.debug = true;
 
+  var liveContainer = $('#live-container');
+  var data = liveContainer.data();
+
+  var wsUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws';
+  if (data.user.isOrganizer || data.user.isDelegate || data.user.isAdmin) {
+    wsUrl += '-admin';
+  }
   //websocket
-  var ws = new WS((location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws');
+  var ws = new WS(wsUrl);
   ws.threshold = 55000;
   ws.on('connect', function() {
     ws.send({
@@ -61,7 +68,6 @@
   Vue.use(VueRouter);
   Vue.use(Vuex);
   Vue.filter('decodeResult', decodeResult);
-  var liveContainer = $('#live-container');
   var state = {
     onlineNumber: 0,
     user: {},
@@ -171,7 +177,6 @@
       state.onlineNumber = onlineNumber;
     }
   };
-  var data = liveContainer.data();
   $.extend(state, data);
   if (data.liveStreamUrl) {
     state.staticMessages.push({
