@@ -20,7 +20,6 @@ class ChatHandler extends MsgHandler {
 			return;
 		}
 		if ($this->competition != null) {
-			$this->competition->formatEvents();
 			$this->competition->formatDate();
 			$this->competition->disable_chat = (int)$this->msg->disable_chat;
 			$this->competition->save();
@@ -46,7 +45,7 @@ class ChatHandler extends MsgHandler {
 	}
 
 	public function actionSend() {
-		if (!empty($this->msg->content) && $this->competition != null && $this->user != null) {
+		if (!empty($this->msg->content) && $this->competition != null && $this->user != null && !$this->user->isBanned()) {
 			$message = new LiveMessage();
 			$message->competition_id = $this->competition->id;
 			$message->user_id = $this->user->id;
