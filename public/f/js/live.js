@@ -707,7 +707,7 @@
                 calculateAverage(that.result);
                 store.dispatch('UPDATE_RESULT', that.result);
                 var result = that.result;
-                ws.send({
+                var data = {
                   type: 'result',
                   action: 'update',
                   result: {
@@ -722,11 +722,14 @@
                     regional_single_record: result.sr,
                     regional_average_record: result.ar
                   }
-                });
+                };
                 that.result = {
                   v: []
                 };
                 $('#input-panel-name').focus();
+                Vue.nextTick(function() {
+                  ws.send(data)
+                });
               },
               filterCompetitors: function(result) {
                 var that = this;
