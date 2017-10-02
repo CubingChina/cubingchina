@@ -9,9 +9,6 @@
   var data = liveContainer.data();
 
   var wsUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws';
-  if (data.user.isOrganizer || data.user.isDelegate || data.user.isAdmin) {
-    wsUrl += '-admin';
-  }
   //websocket
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
@@ -45,8 +42,6 @@
   }).on('result.update', function(result) {
     store.dispatch('UPDATE_RESULT', result);
     newMessageOnResult(result, 'update');
-  }).on('result.user', function(results) {
-    store.dispatch('UPDATE_USER_RESULTS', results);
   }).on('result.all', function(results) {
     store.dispatch('UPDATE_RESULTS', results);
   }).on('round.all', function(rounds) {
@@ -552,10 +547,17 @@
             this.$parent.currentUser = user;
             $('#user-results-modal').modal('show');
             store.dispatch('LOADING_USER_RESULTS');
-            ws.send({
-              type: 'result',
-              action: 'user',
-              user: user
+            $.ajax({
+              url: location.pathname + '/userResults',
+              data: {
+                user: user,
+              },
+              dataType: 'json',
+              success: function(result) {
+                if (result.status == 0) {
+                  store.dispatch('UPDATE_USER_RESULTS', result.data);
+                }
+              }
             });
           },
           edit: function(result) {
@@ -705,7 +707,7 @@
                 calculateAverage(that.result);
                 store.dispatch('UPDATE_RESULT', that.result);
                 var result = that.result;
-                ws.send({
+                var data = {
                   type: 'result',
                   action: 'update',
                   result: {
@@ -720,11 +722,14 @@
                     regional_single_record: result.sr,
                     regional_average_record: result.ar
                   }
-                });
+                };
                 that.result = {
                   v: []
                 };
                 $('#input-panel-name').focus();
+                Vue.nextTick(function() {
+                  ws.send(data)
+                });
               },
               filterCompetitors: function(result) {
                 var that = this;
