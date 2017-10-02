@@ -27,7 +27,7 @@ class LiveController extends CompetitionController {
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20171001');
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20171002');
 		$events = $competition->getEventsRoundTypes();
 		$params = $competition->getLastActiveEventRound($events);
 		$htmlOptions = [
@@ -81,6 +81,98 @@ class LiveController extends CompetitionController {
 			'competition'=>$competition,
 			'htmlOptions'=>$htmlOptions,
 		));
+	}
+
+	public function actionUserResults() {
+		$user = $this->aRequest('user');
+		$number = $user['number'] ?? 0;
+		$wcaid = $user['wcaid'] ?? '';
+		$competition = $this->getCompetition();
+		if ($competition === null) {
+			$this->ajaxError(404, 'Unknown ID');
+		}
+
+		$results = LiveResult::model()->findAllByAttributes(array(
+			'competition_id'=>$competition->id,
+			'number'=>$number,
+		));
+		usort($results, function($resA, $resB) {
+			if ($resA->wcaEvent === null) {
+				return 1;
+			}
+			if ($resB->wcaEvent === null) {
+				return -1;
+			}
+			$temp = $resA->wcaEvent->rank - $resB->wcaEvent->rank;
+			if ($temp == 0) {
+				$temp = $resA->wcaRound->rank - $resB->wcaRound->rank;
+			}
+			return $temp;
+		});
+		$temp = array();
+		foreach ($results as $result) {
+			if ($result->best == 0) {
+				continue;
+			}
+			if (!isset($temp[$result->event])) {
+				$temp[$result->event] = array(
+					'event'=>$result->event,
+					'results'=>array(),
+				);
+			}
+			$temp[$result->event]['results'][] = $result->getShowAttributes(true);
+		}
+		$events = array();
+		if ($wcaid != '') {
+			$personResults = Persons::getResults($wcaid);
+			foreach ($personResults['personRanks'] as $rank) {
+				$events[$rank->eventId] = $rank->eventId;
+				if (!isset($temp[$rank->eventId])) {
+					continue;
+				}
+				$best = $rank->best;
+				$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
+				foreach ($temp[$rank->eventId]['results'] as $key=>$result) {
+					if ($result['b'] > 0 && $result['b'] <= $best) {
+						$temp[$rank->eventId]['results'][$key]['nb'] = true;
+						$best = $result['b'];
+					}
+					if ($result['a'] > 0 && $result['a'] <= $average) {
+						$temp[$rank->eventId]['results'][$key]['na'] = true;
+						$average = $result['a'];
+					}
+				}
+			}
+		}
+		foreach ($temp as $event=>$results) {
+			//event didn't attend before
+			if (!isset($events[$event])) {
+				$best = $average = PHP_INT_MAX;
+				foreach ($results['results'] as $key=>$result) {
+					if ($result['b'] > 0 && $result['b'] <= $best) {
+						$results['results'][$key]['nb'] = true;
+						$best = $result['b'];
+					}
+					if ($result['a'] > 0 && $result['a'] <= $average) {
+						$results['results'][$key]['na'] = true;
+						$average = $result['a'];
+					}
+				}
+			}
+			$temp[$event]['results'] = array_reverse($results['results']);
+		}
+		$userResults = array();
+		foreach ($temp as $event=>$results) {
+			$userResults[] = array(
+				't'=>'e',
+				'e'=>$event,
+			);
+			foreach ($results['results'] as $key=>$result) {
+				$result['t'] = 'r';
+				$userResults[] = $result;
+			}
+		}
+		$this->ajaxOk($userResults);
 	}
 
 	public function actionPodiums() {
