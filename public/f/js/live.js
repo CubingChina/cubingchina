@@ -9,6 +9,10 @@
   var data = liveContainer.data();
 
   var wsUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws';
+  var eventMaxStdPercent = {
+    222: 0.45,
+    default: 0.33,
+  };
   //websocket
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
@@ -604,6 +608,7 @@
             props: ['result'],
             data: function() {
               return {
+                hasError: false,
                 lastIndex: null,
                 currentIndex: null,
                 competitor: {
@@ -723,13 +728,44 @@
                     regional_average_record: result.ar
                   }
                 };
-                that.result = {
-                  v: []
-                };
-                $('#input-panel-name').focus();
-                Vue.nextTick(function() {
-                  ws.send(data)
+                if (that.checkResult(result, true)) {
+                  that.result = {
+                    v: []
+                  };
+                  $('#input-panel-name').focus();
+                  Vue.nextTick(function() {
+                    ws.send(data);
+                  });
+                }
+              },
+              checkResult: function(result, alertNotice) {
+                var that = this;
+                that.hasError = false;
+                var values = [];
+                var sum = 0;
+                result.v.forEach(function(value) {
+                  if (value > 0) {
+                    sum += value;
+                    values.push(value);
+                  }
                 });
+                if (values.length <= 3) {
+                  return true;
+                }
+                var average = sum / values.length;
+                var standardDeviation = Math.sqrt(values.map(function(value) {
+                  return Math.pow(value - average, 2);
+                }).reduce(function(sum, value) {
+                  return sum + value;
+                }, 0) / values.length);
+                var maxStdPercent = eventMaxStdPercent[result.e] || eventMaxStdPercent.default
+                if (standardDeviation / average > maxStdPercent) {
+                  that.hasError = true;
+                  if (alertNotice && !confirm('成绩标准差过大，确定是否正确输入了？')) {
+                    return false;
+                  }
+                }
+                return true;
               },
               filterCompetitors: function(result) {
                 var that = this;
@@ -883,6 +919,7 @@
                   blur: function(e) {
                     this.$parent.currentIndex = null;
                     this.$parent.lastIndex = null;
+                    this.$parent.checkResult(this.$parent.result);
                   },
                   keydown: function(e, attr) {
                     var code = e.which;
