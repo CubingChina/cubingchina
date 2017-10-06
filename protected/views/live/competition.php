@@ -374,7 +374,7 @@
       <div class="panel-heading">
         <h3 class="panel-title"><?php echo Yii::t('live', 'Input Panel'); ?></h3>
       </div>
-      <div class="panel-body" :class="{'has-error': hasError}">
+      <div class="panel-body" :class="{'has-error': hasError, 'has-warning': breakRecord}">
         <label for="input-panel-name"><?php echo Yii::t('common', 'Competitor'); ?></label> {{competitor && competitor.name}}
         <div class="input-wrapper">
           <div class="input-group">
