@@ -763,20 +763,19 @@
                     values.push(value);
                   }
                 });
-                if (values.length <= 3) {
-                  return true;
-                }
-                var average = sum / values.length;
-                var standardDeviation = Math.sqrt(values.map(function(value) {
-                  return Math.pow(value - average, 2);
-                }).reduce(function(sum, value) {
-                  return sum + value;
-                }, 0) / values.length);
-                var maxStdPercent = eventMaxStdPercent[result.e] || eventMaxStdPercent.default
-                if (standardDeviation / average > maxStdPercent) {
-                  that.hasError = true;
-                  if (alertNotice && !confirm('成绩标准差过大，确定是否正确输入了？')) {
-                    return false;
+                if (values.length > 3) {
+                  var average = sum / values.length;
+                  var standardDeviation = Math.sqrt(values.map(function(value) {
+                    return Math.pow(value - average, 2);
+                  }).reduce(function(sum, value) {
+                    return sum + value;
+                  }, 0) / values.length);
+                  var maxStdPercent = eventMaxStdPercent[result.e] || eventMaxStdPercent.default
+                  if (standardDeviation / average > maxStdPercent) {
+                    that.hasError = true;
+                    if (alertNotice && !confirm('成绩标准差过大，确定是否正确输入了？')) {
+                      return false;
+                    }
                   }
                 }
                 if (result.a > 0 && result.a <= currentRecords[getUser(result.n).region][result.e].a
