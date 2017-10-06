@@ -2,6 +2,7 @@
 
 class CompetitionHandler extends MsgHandler {
 	public $users = [];
+	public $currentRecords = [];
 
 	public function process() {
 		if (isset($this->msg->competitionId)) {
@@ -22,6 +23,30 @@ class CompetitionHandler extends MsgHandler {
 					}
 				}
 				$this->success('users', $this->users[$competition->id]);
+				if ($this->checkAccess()) {
+					if (!isset($this->currentRecords[$competition->id])) {
+						$this->currentRecords[$competition->id] = [];
+						$registrations = Registration::getRegistrations($competition);
+						$events = $competition->getAssociatedEvents();
+						$currentRecords = [];
+						foreach ($registrations as $registration) {
+							$region = $registration->user->country->name;
+							if (isset($currentRecords[$region])) {
+								continue;
+							}
+							foreach ($events as $event=>$value) {
+								foreach (['best', 'average'] as $type) {
+									$NR = Results::getRecord($region, $event, $type, $competition->date);
+									if ($NR !== null) {
+										$currentRecords[$region][$event][$type{0}] = intval($NR[$type]);
+									}
+								}
+							}
+						}
+						$this->currentRecords[$competition->id] = $currentRecords;
+					}
+					$this->success('record.current', $this->currentRecords[$competition->id]);
+				}
 			}
 		}
 	}
