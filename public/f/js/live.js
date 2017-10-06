@@ -736,7 +736,7 @@
                     regional_average_record: result.ar
                   }
                 };
-                if (that.checkResult(result, true, true)) {
+                if (that.checkResult(true)) {
                   store.dispatch('UPDATE_RESULT', that.result);
                   that.result = {
                     v: []
@@ -745,14 +745,18 @@
                   Vue.nextTick(function() {
                     ws.send(data);
                   });
+                  that.breakRecord = false;
+                  that.hasError = false;
                 }
               },
-              checkResult: function(result, alertNotice) {
+              checkResult: function(alertNotice) {
                 var that = this;
-                that.hasError = false;
-                that.breakRecord = false;
                 var values = [];
                 var sum = 0;
+                var result = that.result;
+                calculateAverage(result);
+                that.hasError = false;
+                that.breakRecord = false;
                 result.v.forEach(function(value) {
                   if (value > 0) {
                     sum += value;
@@ -775,8 +779,8 @@
                     return false;
                   }
                 }
-                if (result.a > 0 && result.a < currentRecords[getUser(result.n).region].a
-                  || result.b > 0 && result.b < currentRecords[getUser(result.n).region].b
+                if (result.a > 0 && result.a <= currentRecords[getUser(result.n).region][result.e].a
+                  || result.b > 0 && result.b <= currentRecords[getUser(result.n).region][result.e].b
                 ) {
                   that.breakRecord = true;
                   if (alertNotice && !confirm('该成绩可能打破纪录，确定是否正确输入了？')) {
@@ -937,7 +941,7 @@
                   blur: function(e) {
                     this.$parent.currentIndex = null;
                     this.$parent.lastIndex = null;
-                    this.$parent.checkResult(this.$parent.result);
+                    this.$parent.checkResult();
                   },
                   keydown: function(e, attr) {
                     var code = e.which;

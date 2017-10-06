@@ -38,7 +38,7 @@ class CompetitionHandler extends MsgHandler {
 								foreach (['best', 'average'] as $type) {
 									$NR = Results::getRecord($region, $event, $type, $competition->date);
 									if ($NR !== null) {
-										$currentRecords[$region][$type{0}] = $NR[$type];
+										$currentRecords[$region][$event][$type{0}] = intval($NR[$type]);
 									}
 								}
 							}
