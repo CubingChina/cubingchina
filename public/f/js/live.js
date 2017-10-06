@@ -9,6 +9,16 @@
   var data = liveContainer.data();
 
   var wsUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws';
+  var eventMaxStdPercent = {
+    333: 0.33,
+    444: 0.22,
+    555: 0.14,
+    '333oh': 0.30,
+    clock: 0.30,
+    minx: 0.18,
+    default: 0.42,
+  };
+  var currentRecords = {};
   //websocket
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
@@ -58,6 +68,8 @@
     }
   }).on('message.disable', function(disableChat) {
     options.disableChat = disableChat;
+  }).on('record.current', function(records) {
+    currentRecords = records;
   });
 
   Vue.use(VueRouter);
@@ -604,6 +616,8 @@
             props: ['result'],
             data: function() {
               return {
+                hasError: false,
+                breakRecord: false,
                 lastIndex: null,
                 currentIndex: null,
                 competitor: {
@@ -705,7 +719,6 @@
               save: function() {
                 var that = this;
                 calculateAverage(that.result);
-                store.dispatch('UPDATE_RESULT', that.result);
                 var result = that.result;
                 var data = {
                   type: 'result',
@@ -723,13 +736,54 @@
                     regional_average_record: result.ar
                   }
                 };
-                that.result = {
-                  v: []
-                };
-                $('#input-panel-name').focus();
-                Vue.nextTick(function() {
-                  ws.send(data)
+                if (that.checkResult(result, true, true)) {
+                  store.dispatch('UPDATE_RESULT', that.result);
+                  that.result = {
+                    v: []
+                  };
+                  $('#input-panel-name').focus();
+                  Vue.nextTick(function() {
+                    ws.send(data);
+                  });
+                }
+              },
+              checkResult: function(result, alertNotice) {
+                var that = this;
+                that.hasError = false;
+                that.breakRecord = false;
+                var values = [];
+                var sum = 0;
+                result.v.forEach(function(value) {
+                  if (value > 0) {
+                    sum += value;
+                    values.push(value);
+                  }
                 });
+                if (values.length <= 3) {
+                  return true;
+                }
+                var average = sum / values.length;
+                var standardDeviation = Math.sqrt(values.map(function(value) {
+                  return Math.pow(value - average, 2);
+                }).reduce(function(sum, value) {
+                  return sum + value;
+                }, 0) / values.length);
+                var maxStdPercent = eventMaxStdPercent[result.e] || eventMaxStdPercent.default
+                if (standardDeviation / average > maxStdPercent) {
+                  that.hasError = true;
+                  if (alertNotice && !confirm('成绩标准差过大，确定是否正确输入了？')) {
+                    return false;
+                  }
+                }
+                if (result.a > 0 && result.a < currentRecords[getUser(result.n).region].a
+                  || result.b > 0 && result.b < currentRecords[getUser(result.n).region].b
+                ) {
+                  that.breakRecord = true;
+                  if (alertNotice && !confirm('该成绩可能打破纪录，确定是否正确输入了？')) {
+                    return false;
+                  }
+                }
+                return true;
               },
               filterCompetitors: function(result) {
                 var that = this;
@@ -883,6 +937,7 @@
                   blur: function(e) {
                     this.$parent.currentIndex = null;
                     this.$parent.lastIndex = null;
+                    this.$parent.checkResult(this.$parent.result);
                   },
                   keydown: function(e, attr) {
                     var code = e.which;
