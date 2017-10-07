@@ -1188,6 +1188,9 @@
     if (f == '1' || f == '2' || (f == '3' && result.e != '333bf')) {
       hasAverage = false;
     }
+    if (zeroCount > 0) {
+      hasAverage = false;
+    }
     if (hasAverage) {
       if (f == 'm' || f == '3') {
         if (result.e === '333fm') {
@@ -1202,7 +1205,7 @@
       }
     } else if (f == 'm' || f == 'a') {
       result.a = zeroCount > 0 ? 0 : -1;
-    } else if (result.event == '333bf' || f == '') {
+    } else if (result.e == '333bf' || f == '') {
       result.a = 0;
     }
   }
