@@ -14,7 +14,9 @@
     this.timer = setInterval(function() {
       //check connection
       if (this.conn.readyState == WebSocket.CLOSING || this.conn.readyState == WebSocket.CLOSED) {
+        this.fire('disconnect');
         this.connect();
+        return;
       }
       if (Date.now() - this.lastActiveTime > this.threshold) {
         this.send('ping');
