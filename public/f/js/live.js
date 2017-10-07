@@ -5,6 +5,7 @@
   }
   Vue.config.debug = true;
 
+  var body = $('body');
   var liveContainer = $('#live-container');
   var data = liveContainer.data();
 
@@ -23,6 +24,7 @@
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
   ws.on('connect', function() {
+    body.removeClass('disconnected');
     ws.send({
       type: 'competition',
       competitionId: state.c
@@ -40,6 +42,8 @@
         action: 'fetch'
       });
     }
+  }).on('disconnect', function() {
+    body.addClass('disconnected');
   }).on('*', function(data, origin) {
     if (origin && origin.onlineNumber) {
       store.dispatch('UPDATE_ONLINE_NUMBER', origin.onlineNumber);

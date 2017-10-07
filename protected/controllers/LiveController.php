@@ -21,13 +21,13 @@ class LiveController extends CompetitionController {
 		$competition->initLiveData();
 		$min = DEV ? '' : '.min';
 		$clientScript = Yii::app()->clientScript;
-		$clientScript->registerScriptFile('/f/js/websocket' . $min . '.js');
+		$clientScript->registerScriptFile('/f/js/websocket' . $min . '.js?ver=20171007');
 		$clientScript->registerScriptFile('/f/js/store.min.js');
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20171007');
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20171007.1');
 		$events = $competition->getEventsRoundTypes();
 		$params = $competition->getLastActiveEventRound($events);
 		$htmlOptions = [
