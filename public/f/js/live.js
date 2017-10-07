@@ -722,8 +722,13 @@
               },
               save: function() {
                 var that = this;
-                calculateAverage(that.result);
                 var result = that.result;
+                result.v.forEach(function(value, index) {
+                  if (that.isDisabled(index)) {
+                    result.v[index] = 0;
+                  }
+                });
+                calculateAverage(that.result);
                 var data = {
                   type: 'result',
                   action: 'update',
