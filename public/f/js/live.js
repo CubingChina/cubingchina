@@ -1333,7 +1333,7 @@
   }
   function calculatePos(results, result) {
     for (var i = 0, len = results.length; i < len; i++) {
-      if (!results[i - 1] || compare(results[i - 1], results[i], true) < 0) {
+      if (i == 0 || compare(results[i - 1], results[i], true) < 0) {
         results[i].p = i + 1;
       } else {
         results[i].p = results[i - 1].p;
@@ -1341,8 +1341,31 @@
       if (results[i].b == 0) {
         results[i].p = '-';
       }
+      results[i].isRepeated = false;
+      if (i > 0 && isRepeated(results[i - 1], results[i])) {
+        results[i - 1].isRepeated = true;
+        results[i].isRepeated = true;
+      }
       results[i].isNew = results[i] === result;
     }
+  }
+  function isRepeated(resA, resB) {
+    if (resA.e === '333fm') {
+      return false;
+    }
+    var repeatCount = 0;
+    var round = getRound(resA);
+    var f = round.f;
+    var num = f == 'a' || f == '' ? 5 : (f == 'm' ? 3 : parseInt(f));
+    for (var i = 0; i < num; i++) {
+      if (resA.v[i] > 0 && resA.v[i] == resB.v[i]) {
+        repeatCount++;
+      }
+    }
+    if (repeatCount >= num * 0.6) {
+      return true;
+    }
+    return false;
   }
   function compare(resA, resB, onlyResult) {
     var temp = 0;

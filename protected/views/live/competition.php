@@ -324,7 +324,7 @@
                 Loading...
               </td>
             </tr>
-            <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result)}" @dblclick="edit(result)">
+            <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result), warning: hasPermission && result.isRepeated}" @dblclick="edit(result)">
               <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
