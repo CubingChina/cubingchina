@@ -226,38 +226,54 @@ class ResultHandler extends MsgHandler {
 			'round'=>"{$this->msg->round->id}",
 		));
 		if ($round != null) {
-			$round->removeResults();
 			$competition = $this->competition;
+			$oldResults = [];
+			foreach ($round->getAllResults() as $result) {
+				$oldResults[$result->number] = $result;
+			}
 			$results = array();
 			//check if it has last round
 			if (($lastRound = $round->lastRound) !== null) {
 				foreach (array_slice($lastRound->results, 0, $round->number) as $result) {
-					$model = new LiveResult();
-					$model->competition_id = $competition->id;
-					$model->user_id = $result->user_id;
-					$model->number = $result->number;
-					$model->event = $round->event;
-					$model->round = $round->round;
-					$model->format = $round->format;
-					$model->save();
-					$results[] = $model;
+					if (!isset($oldResults[$result->number])) {
+						$model = new LiveResult();
+						$model->competition_id = $competition->id;
+						$model->user_id = $result->user_id;
+						$model->number = $result->number;
+						$model->event = $round->event;
+						$model->round = $round->round;
+						$model->format = $round->format;
+						$model->save();
+						$results[] = $model;
+					} else {
+						$results[] = $oldResults[$result->number];
+						unset($oldResults[$result->number]);
+					}
 				}
 			} else {
 				//empty results of first rounds
 				$registrations = Registration::getRegistrations($competition);
 				foreach ($registrations as $registration) {
 					if (in_array($round->event, $registration->events)) {
-						$model = new LiveResult();
-						$model->competition_id = $competition->id;
-						$model->user_id = $registration->user_id;
-						$model->number = $registration->number;
-						$model->event = $round->event;
-						$model->round = $round->round;
-						$model->format = $round->format;
-						$model->save();
-						$results[] = $model;
+						if (!isset($oldResults[$registration->number])) {
+							$model = new LiveResult();
+							$model->competition_id = $competition->id;
+							$model->user_id = $registration->user_id;
+							$model->number = $registration->number;
+							$model->event = $round->event;
+							$model->round = $round->round;
+							$model->format = $round->format;
+							$model->save();
+							$results[] = $model;
+						} else {
+							$results[] = $oldResults[$registration->number];
+							unset($oldResults[$registration->number]);
+						}
 					}
 				}
+			}
+			foreach ($oldResults as $result) {
+				$result->delete();
 			}
 			$this->success('result.all', array_map(function($result) {
 				return $result->getShowAttributes();
