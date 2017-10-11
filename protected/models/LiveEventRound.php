@@ -93,6 +93,14 @@ class LiveEventRound extends ActiveRecord {
 		));
 	}
 
+	public function getAllResults() {
+		return LiveResult::model()->findAllByAttributes([
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		]);
+	}
+
 	public function getIsClosed() {
 		return $this->status == self::STATUS_FINISHED;
 	}
