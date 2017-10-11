@@ -17,11 +17,12 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Live stream can be found here: {link}' => '點擊此鏈接觀看視頻直播：{link}',
   'Open' => '',
+  'Refresh competitors' => '刷新選手列表',
   'U10' => '',
   'U12' => '',
   'U8' => '',
+  'Reset competitors' => '重置選手',
   ' ({round})' => '（{round}）',
   'Children' => '少兒組',
   'Close this round' => '結束本輪',
@@ -33,10 +34,10 @@ return array (
   'Finished' => '已結束',
   'Input Panel' => '輸入板',
   'Live' => '進行中',
+  'Live stream can be found here: {link}' => '點擊此鏈接觀看視頻直播：{link}',
   'New Comers' => '新人組',
   'Online: ' => '在線人數：',
   'Open this round' => '開啟本輪',
-  'Reset competitors' => '重置選手',
   'Save' => '保存',
   'Show Message on Chat' => '在聊天界面顯示新消息',
   'Show Record on Chat' => '在聊天界面顯示項目紀錄',

@@ -219,49 +219,60 @@ class ResultHandler extends MsgHandler {
 		}
 	}
 
-	public function actionReset() {
+	public function actionRefresh() {
 		$round = LiveEventRound::model()->findByAttributes(array(
 			'competition_id'=>$this->competition->id,
 			'event'=>"{$this->msg->round->event}",
 			'round'=>"{$this->msg->round->id}",
 		));
 		if ($round != null) {
-			$round->removeResults();
 			$competition = $this->competition;
+			$oldResults = [];
+			$advancedNumbers = [];
+			foreach ($round->getAllResults() as $result) {
+				$oldResults[$result->number] = $result;
+			}
 			$results = array();
 			//check if it has last round
 			if (($lastRound = $round->lastRound) !== null) {
 				foreach (array_slice($lastRound->results, 0, $round->number) as $result) {
-					$model = new LiveResult();
-					$model->competition_id = $competition->id;
-					$model->user_id = $result->user_id;
-					$model->number = $result->number;
-					$model->event = $round->event;
-					$model->round = $round->round;
-					$model->format = $round->format;
-					$model->save();
-					$results[] = $model;
+					$results[] = $this->addResult($result, $oldResults, $round);
+					$advancedNumbers[] = $result->number;
 				}
 			} else {
 				//empty results of first rounds
 				$registrations = Registration::getRegistrations($competition);
 				foreach ($registrations as $registration) {
 					if (in_array($round->event, $registration->events)) {
-						$model = new LiveResult();
-						$model->competition_id = $competition->id;
-						$model->user_id = $registration->user_id;
-						$model->number = $registration->number;
-						$model->event = $round->event;
-						$model->round = $round->round;
-						$model->format = $round->format;
-						$model->save();
-						$results[] = $model;
+						$results[] = $this->addResult($registration, $oldResults, $round);
+						$advancedNumbers[] = $registration->number;
 					}
+				}
+			}
+			foreach ($round->getAllResults() as $result) {
+				if (!in_array($result->number, $advancedNumbers)) {
+					$result->delete();
 				}
 			}
 			$this->success('result.all', array_map(function($result) {
 				return $result->getShowAttributes();
 			}, $results));
+		}
+	}
+
+	private function addResult($result, $oldResults, $round) {
+		if (!isset($oldResults[$result->number])) {
+			$model = new LiveResult();
+			$model->competition_id = $result->competition_id;
+			$model->user_id = $result->user_id;
+			$model->number = $result->number;
+			$model->event = $round->event;
+			$model->round = $round->round;
+			$model->format = $round->format;
+			$model->save();
+			return $model;
+		} else {
+			return $oldResults[$result->number];
 		}
 	}
 
