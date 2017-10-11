@@ -510,7 +510,6 @@
                 number: that.n
               }
             });
-            $('#round-settings-modal').modal('hide');
           },
           closeRound: function() {
             this.current = {
@@ -547,17 +546,15 @@
             form.find('.round').val(this.r);
             form.submit();
           },
-          resetCompetitors: function() {
-            if (confirm('Do you want to reset competitors?')) {
-              ws.send({
-                type: 'result',
-                action: 'reset',
-                round: {
-                  event: state.params.e,
-                  id: state.params.r,
-                }
-              });
-            }
+          refreshCompetitors: function() {
+            ws.send({
+              type: 'result',
+              action: 'refresh',
+              round: {
+                event: state.params.e,
+                id: state.params.r,
+              }
+            });
           },
           goToUser: function(user) {
             this.$parent.currentUser = user;

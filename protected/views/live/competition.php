@@ -247,9 +247,9 @@
                 <button type="button"
                   class="btn btn-sm btn-warning"
                   v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"
-                  @click="resetCompetitors"
+                  @click="refreshCompetitors"
                 >
-                  <i class="fa fa-repeat"></i><?php echo Yii::t('live', 'Reset competitors'); ?>
+                  <i class="fa fa-repeat"></i><?php echo Yii::t('live', 'Refresh competitors'); ?>
                 </button>
               </div>
               <div class="form-group">
