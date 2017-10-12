@@ -71,6 +71,18 @@ class News extends ActiveRecord {
 		}
 	}
 
+	public function getUrl() {
+		return CHtml::normalizeUrl(['/post/detail', 'name'=>$this->alias]);
+	}
+
+	public function getDescriptionOrContent() {
+		$description = $this->getAttributeValue('description');
+		if (trim(strip_tags($description)) !== '') {
+			return $description . CHtml::tag('p', ['class'=>'read-more'], CHtml::link(Yii::t('common', 'Read more....'), $this->url));
+		}
+		return $this->getAttributeValue('content');
+	}
+
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/news/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));

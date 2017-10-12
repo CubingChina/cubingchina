@@ -18,7 +18,6 @@
  */
 return array (
   'Open' => '',
-  'Refresh competitors' => '刷新選手列表',
   'U10' => '',
   'U12' => '',
   'U8' => '',
@@ -38,6 +37,7 @@ return array (
   'New Comers' => '新人組',
   'Online: ' => '在線人數：',
   'Open this round' => '開啟本輪',
+  'Refresh competitors' => '刷新選手列表',
   'Save' => '保存',
   'Show Message on Chat' => '在聊天界面顯示新消息',
   'Show Record on Chat' => '在聊天界面顯示項目紀錄',
