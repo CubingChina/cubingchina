@@ -2,8 +2,11 @@
 
 class PostController extends Controller {
 	public function actionDetail() {
-		$alias = $this->sGet('name');
-		$news = News::model()->findByAttributes(['alias'=>$alias]);
+		$alias = $this->sGet('alias');
+		$news = News::model()->findByAttributes([
+			'alias'=>$alias,
+			'status'=>News::STATUS_SHOW,
+		]);
 		$this->title = $news->getAttributeValue('title');
 		$this->pageTitle = [$this->title];
 		$this->breadcrumbs = [

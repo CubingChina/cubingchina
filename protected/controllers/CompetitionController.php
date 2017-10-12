@@ -365,9 +365,9 @@ class CompetitionController extends Controller {
 	}
 
 	protected function getCompetition() {
-		$name = $this->sGet('name');
-		$competition = Competition::getCompetitionByName($name);
-		if ($competition === null || strtolower($name) != strtolower($competition->getUrlName())) {
+		$alias = $this->sGet('alias');
+		$competition = Competition::getCompetitionByName($alias);
+		if ($competition === null || strtolower($alias) != strtolower($competition->getUrlName())) {
 			throw new CHttpException(404, 'Error');
 		}
 		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {

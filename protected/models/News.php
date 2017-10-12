@@ -72,7 +72,7 @@ class News extends ActiveRecord {
 	}
 
 	public function getUrl() {
-		return CHtml::normalizeUrl(['/post/detail', 'name'=>$this->alias]);
+		return CHtml::normalizeUrl(['/post/detail', 'alias'=>$this->alias]);
 	}
 
 	public function getDescriptionOrContent() {
