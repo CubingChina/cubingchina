@@ -1,4 +1,4 @@
-<article class="events-item row clearfix">
+<article class="events-item clearfix">
   <div class="panel panel-<?php if ($data->weight > 0) echo 'theme'; else echo 'info'; ?>">
     <div class="panel-heading">
       <h3 class="panel-title"><?php echo CHtml::link(CHtml::encode($data->getAttributeValue('title')), $data->url); ?></h3>

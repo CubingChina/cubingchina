@@ -1,5 +1,5 @@
 <div class="news-wrapper col-lg-12">
-  <article class="events-item row clearfix">
+  <article class="events-item clearfix">
     <div class="panel panel-<?php if ($news->weight > 0) echo 'theme'; else echo 'info'; ?>">
       <div class="panel-heading">
         <h3 class="panel-title"><?php echo CHtml::link(CHtml::encode($news->getAttributeValue('title')), $news->url); ?></h3>
