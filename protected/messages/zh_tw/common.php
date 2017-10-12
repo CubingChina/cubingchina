@@ -18,6 +18,7 @@
  */
 return array (
   'Fee' => '',
+  'Read more....' => '閱讀全文&raquo;',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

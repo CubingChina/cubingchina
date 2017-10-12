@@ -750,7 +750,7 @@ class Competition extends ActiveRecord {
 		$controller = $controller ?? $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
 		$url = array(
 			"/$controller/$type",
-			'name'=>$this->getUrlName(),
+			'alias'=>$this->getUrlName(),
 		);
 		foreach ($params as $key=>$value) {
 			$url[$key] = $value;

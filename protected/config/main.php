@@ -71,7 +71,7 @@ $config = array(
 				),
 				'competition/<action:signin>'=>'competition/<action>',
 				'competition/<name:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
-				'competition/<name:[-A-z0-9]+>'=>'competition/detail',
+				'<controller:competition|post>/<alias:[-A-z0-9]+>'=>'<controller>/detail',
 				'live/<name:[-A-z0-9]+>/statistics/<type:[-A-z0-9]+>'=>'live/statistics',
 				'live/<name:[-A-z0-9]+>'=>'live/live',
 				'live/<name:[-A-z0-9]+>/<action:\w+>'=>'live/<action>',
