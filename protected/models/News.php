@@ -26,9 +26,9 @@ class News extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_HIDE=>'隐藏', 
-			self::STATUS_SHOW=>'发布', 
-			// self::STATUS_DELETE=>'删除', 
+			self::STATUS_HIDE=>'隐藏',
+			self::STATUS_SHOW=>'发布',
+			// self::STATUS_DELETE=>'删除',
 		);
 	}
 
@@ -71,6 +71,18 @@ class News extends ActiveRecord {
 		}
 	}
 
+	public function getUrl() {
+		return CHtml::normalizeUrl(['/post/detail', 'name'=>$this->alias]);
+	}
+
+	public function getDescriptionOrContent() {
+		$description = $this->getAttributeValue('description');
+		if (trim(strip_tags($description)) !== '') {
+			return $description . CHtml::tag('p', ['class'=>'read-more'], CHtml::link(Yii::t('common', 'Read more....'), $this->url));
+		}
+		return $this->getAttributeValue('content');
+	}
+
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/news/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
@@ -92,6 +104,13 @@ class News extends ActiveRecord {
 		return parent::beforeValidate();
 	}
 
+	protected function beforeSave() {
+		$this->alias = str_replace(' ', '-', $this->title);
+		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
+		$this->alias = preg_replace('{-+}i', '-', $this->alias);
+		return parent::beforeSave();
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -103,18 +122,13 @@ class News extends ActiveRecord {
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules() {
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('user_id, title, title_zh, content, content_zh, date', 'required'),
-			array('user_id, weight, status', 'numerical', 'integerOnly'=>true),
-			array('title, title_zh', 'length', 'max'=>1024),
-			// array('date', 'length', 'max'=>10),
-			array('time', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, title, title_zh, content, content_zh, weight, date, status', 'safe', 'on'=>'search'),
-		);
+		return [
+			['user_id, title, title_zh, content, content_zh, date', 'required'],
+			['user_id, weight, status', 'numerical', 'integerOnly'=>true],
+			['title, title_zh', 'length', 'max'=>1024],
+			['description_zh, description', 'safe'],
+			['id, user_id, title, title_zh, content, content_zh, weight, date, status', 'safe', 'on'=>'search'],
+		];
 	}
 
 	/**
@@ -141,7 +155,6 @@ class News extends ActiveRecord {
 			'content_zh' => Yii::t('News', 'Content Zh'),
 			'weight' => Yii::t('News', 'Weight'),
 			'date' => Yii::t('News', 'Date'),
-			'time' => Yii::t('News', 'Time'),
 			'status' => Yii::t('News', 'Status'),
 		);
 	}
