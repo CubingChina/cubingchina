@@ -117,6 +117,31 @@
               )),
               $form->error($model, 'content', array('class'=>'text-danger'))
             );?>
+            <div class="clearfix"></div>
+            <?php echo Html::formGroup(
+              $model, 'description_zh', array(
+                'class'=>'col-lg-6',
+              ),
+              $form->labelEx($model, 'description_zh', array(
+                'label'=>'中文摘要',
+              )),
+              $form->textArea($model, 'description_zh', array(
+                'class'=>'editor form-control'
+              )),
+              $form->error($model, 'description_zh', array('class'=>'text-danger'))
+            );?>
+            <?php echo Html::formGroup(
+              $model, 'description', array(
+                'class'=>'col-lg-6',
+              ),
+              $form->labelEx($model, 'description', array(
+                'label'=>'英文摘要',
+              )),
+              $form->textArea($model, 'description', array(
+                'class'=>'editor form-control'
+              )),
+              $form->error($model, 'description', array('class'=>'text-danger'))
+            );?>
             <div class="col-lg-12">
               <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
             </div>
