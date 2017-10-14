@@ -55,7 +55,7 @@ class QrCodeController extends Controller {
 		$qrCode->setText($this->createUrl(
 			'/competition/scan',
 			[
-				'name'=>$auth->competition->alias,
+				'alias'=>$auth->competition->alias,
 				'scan_code'=>$code,
 			]
 		))
