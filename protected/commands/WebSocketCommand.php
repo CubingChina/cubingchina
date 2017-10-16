@@ -20,6 +20,12 @@ class WebSocketCommand extends CConsoleCommand {
 
 		$loop = new StreamSelectLoop();
 		$liveServer = new LiveServer();
+		//for record computer
+		$client = new Predis\Async\Client([
+			'host'=>$cache->hostname,
+			'port'=>$cache->port,
+		], $loop);
+		$client->connect([$liveServer, 'initSubscriber']);
 
 		$session = new SessionProvider(
 			$liveServer,
