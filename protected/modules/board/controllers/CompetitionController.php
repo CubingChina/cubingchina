@@ -149,7 +149,7 @@ class CompetitionController extends AdminController {
 		$cannotEditAttr = array(
 			'name',
 			'name_zh',
-			'check_person',
+			'auto_accept',
 			'type',
 			'wca_competition_id',
 			'entry_fee',
@@ -290,7 +290,6 @@ class CompetitionController extends AdminController {
 		}
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
-		$checkPersons = Competition::getCheckPersons();
 		$cities = Region::getAllCities();
 		return array(
 			'model'=>$model,
@@ -299,7 +298,6 @@ class CompetitionController extends AdminController {
 			'ccaDelegates'=>$ccaDelegates,
 			'organizers'=>$organizers,
 			'types'=>$types,
-			'checkPersons'=>$checkPersons,
 		);
 	}
 

@@ -292,7 +292,7 @@ class CompetitionController extends Controller {
 				$model->ip = Yii::app()->request->getUserHostAddress();
 				$model->date = time();
 				$model->status = Registration::STATUS_PENDING;
-				if ($competition->check_person == Competition::NOT_CHECK_PERSON && $competition->online_pay != Competition::ONLINE_PAY) {
+				if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				// for FMC Asia

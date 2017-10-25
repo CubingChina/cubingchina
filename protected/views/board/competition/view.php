@@ -74,7 +74,7 @@
                 <dt>在线支付</dt>
                 <dd><?php echo $competition->online_pay == Competition::YES ? '是' : '否'; ?></dd>
                 <dt>自动审核</dt>
-                <dd><?php echo $competition->check_person == Competition::NO ? '是' : '否'; ?></dd>
+                <dd><?php echo $competition->auto_accept == Competition::YES ? '是' : '否'; ?></dd>
                 <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
                 <dd class="table-responsive">
                   <table class="table table-bordered table-hover table-condensed">

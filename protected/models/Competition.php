@@ -20,7 +20,6 @@
  * @property string $travel
  * @property string $travel_zh
  * @property integer $person_num
- * @property integer $check_person
  * @property integer $status
  */
 class Competition extends ActiveRecord {
@@ -36,9 +35,6 @@ class Competition extends ActiveRecord {
 	const STATUS_UNCONFIRMED = 3;
 	const STATUS_CONFIRMED = 4;
 	const STATUS_REJECTED = 5;
-
-	const NOT_CHECK_PERSON = 0;
-	const CHECK_PERSON = 1;
 
 	const UNPAID = 0;
 	const PAID = 1;
@@ -358,13 +354,6 @@ class Competition extends ActiveRecord {
 					self::STATUS_SHOW=>'已公示',
 				];
 		}
-	}
-
-	public static function getCheckPersons() {
-		return array(
-			self::CHECK_PERSON=>'否',
-			self::NOT_CHECK_PERSON=>'是',
-		);
 	}
 
 	public function isWCACompetition() {
@@ -2355,7 +2344,7 @@ class Competition extends ActiveRecord {
 		]);
 		$rules = [
 			['name, name_zh, date, reg_end', 'required'],
-			['entry_fee, second_stage_all, online_pay, person_num, check_person, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
+			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
 			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
@@ -2377,7 +2366,7 @@ class Competition extends ActiveRecord {
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
 			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
-			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, check_person, status', 'safe', 'on'=>'search'],
+			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
@@ -2444,7 +2433,6 @@ class Competition extends ActiveRecord {
 			'travel' => Yii::t('Competition', 'Travel'),
 			'travel_zh' => Yii::t('Competition', 'Travel'),
 			'person_num' => Yii::t('Competition', 'Person Num'),
-			'check_person' => Yii::t('Competition', 'Check Person'),
 			'status' => Yii::t('Competition', 'Status'),
 			'organizers' => Yii::t('Competition', 'Organizers'),
 			'delegates' => Yii::t('Competition', 'Delegates'),
@@ -2486,7 +2474,7 @@ class Competition extends ActiveRecord {
 		$criteria->compare('t.travel', $this->travel, true);
 		$criteria->compare('t.travel_zh', $this->travel_zh, true);
 		$criteria->compare('t.person_num', $this->person_num);
-		$criteria->compare('t.check_person', $this->check_person);
+		$criteria->compare('t.auto_accept', $this->auto_accept);
 		if ($this->status !== '' && $this->status !== null) {
 			$criteria->compare('t.status', $this->status);
 		} else {

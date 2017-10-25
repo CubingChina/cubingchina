@@ -124,16 +124,16 @@
                 $form->error($model, 'entry_fee', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
-                $model, 'check_person', array(
+                $model, 'auto_accept', array(
                   'class'=>'col-md-4',
                 ),
-                $form->labelEx($model, 'check_person', array(
+                $form->labelEx($model, 'auto_accept', array(
                   'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
                   'data-toggle'=>'tooltip',
                   'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
                 )),
-                Html::activeSwitch($model, 'check_person'),
-                $form->error($model, 'check_person', array('class'=>'text-danger'))
+                Html::activeSwitch($model, 'auto_accept'),
+                $form->error($model, 'auto_accept', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
                 $model, 'online_pay', array(
