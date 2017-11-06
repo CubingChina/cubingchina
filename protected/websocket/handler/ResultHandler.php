@@ -272,6 +272,8 @@ class ResultHandler extends MsgHandler {
 			$model->save();
 			return $model;
 		} else {
+			$oldResults[$result->number]->user_id = $result->user_id;
+			$oldResults[$result->number]->save();
 			return $oldResults[$result->number];
 		}
 	}
