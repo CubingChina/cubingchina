@@ -2216,7 +2216,7 @@ class Competition extends ActiveRecord {
 				$this->addError('locations.venue.' . $index, '英文地址请使用半角逗号');
 				$error = true;
 			}
-			if (!$this->multi_countries()) {
+			if (!$this->multi_countries) {
 				$venues = explode(',', $locations['venue'][$key]);
 				foreach ($venues as $k=>$venue) {
 					if (!preg_match('{^[0-9A-Z]}', trim($venue))) {
