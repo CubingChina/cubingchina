@@ -1177,8 +1177,9 @@ class Registration extends ActiveRecord {
 			}
 		}
 		$wcaIds = array();
-		foreach ($registrations as $registration) {
+		foreach ($registrations as $key=>$registration) {
 			if ($enableCache && $registration->location->status == CompetitionLocation::NO) {
+				unset($registrations[$key]);
 				continue;
 			}
 			if ($registration->isAccepted()) {
@@ -1300,7 +1301,7 @@ class Registration extends ActiveRecord {
 				'pageVar'=>'page',
 			);
 		}
-		return new NonSortArrayDataProvider($registrations, array(
+		return new NonSortArrayDataProvider(array_values($registrations), array(
 			'sort'=>$this->getSort($columns),
 			'pagination'=>$pagination,
 		));
