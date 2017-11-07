@@ -551,7 +551,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getSortedLocations() {
-		$locations = $this->location;
+		$locations = array_filter($this->location, function($location) {
+			return $location->status == CompetitionLocation::YES;
+		});
 		if (!$this->multi_countries) {
 			return $locations;
 		}
@@ -1975,6 +1977,9 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
+			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'status'] as $attribute) {
+				$location->$attribute = intval($location->$attribute);
+			}
 			$location->longitude = floatval($location->longitude);
 			$location->latitude = floatval($location->latitude);
 			$location->save(false);
@@ -2258,6 +2263,7 @@ class Competition extends ActiveRecord {
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
+				'status'=>intval($locations['status'][$key]),
 			);
 			$index++;
 		}

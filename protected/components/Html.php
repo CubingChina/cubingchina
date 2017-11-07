@@ -128,7 +128,7 @@ EOT
 			'offText'=>Yii::t('common', 'No'),
 		]);
 		$clientScript->registerScript('switch', '$("[data-switch]").bootstrapSwitch(' . $options . ')');
-		return self::tag('div', ['class'=>''],self::activeCheckBox($model, $name, $htmlOptions));
+		return self::tag('div', ['class'=>''], self::activeRadioButton($model, $name, $htmlOptions));
 	}
 
 	public static function fontAwesome($name, $position = '') {
