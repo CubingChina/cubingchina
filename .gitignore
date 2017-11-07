@@ -1,6 +1,7 @@
 protected/vendor/*
 protected/runtime/*
 protected/config/wcaDb
+protected/config/env.php
 protected/commands/shell/last
 protected/commands/Test*Command.php
 protected/bin

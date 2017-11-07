@@ -1,11 +1,15 @@
 <?php
 
 class RegistrationCommand extends CConsoleCommand {
-	public function actionClearWaitingList($id) {
-		$competition = Competition::model()->findByPk($id);
-		if ($competition !== null && $this->confirm($competition->name_zh)) {
-			$_SERVER['HTTPS'] = 1;
-			$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+	public function actionClearWaitingList() {
+		$competitions = Competition::model()->findAllByAttributes([
+			'status'=>Competition::STATUS_SHOW,
+		], [
+			'condition'=>'reg_end<' . time() . ' AND reg_end>' . (time() - 7 * 86400),
+		]);
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+		foreach ($competitions as $competition) {
 			$registrations = Registration::model()->findAllByAttributes([
 				'competition_id'=>$competition->id,
 				'status'=>Registration::STATUS_WAITING,
