@@ -148,6 +148,9 @@ class Registration extends ActiveRecord {
 		))->findAllByAttributes($attributes, array(
 			'order'=>'t.accept_time>0 DESC, t.accept_time, t.id',
 		));
+		$registrations = array_filter($registrations, function($registration) {
+			return $registration->location->status == CompetitionLocation::YES;
+		});
 		//计算序号
 		$number = 1;
 		foreach ($registrations as $registration) {
@@ -1175,6 +1178,9 @@ class Registration extends ActiveRecord {
 		}
 		$wcaIds = array();
 		foreach ($registrations as $registration) {
+			if ($enableCache && $registration->location->status == CompetitionLocation::NO) {
+				continue;
+			}
 			if ($registration->isAccepted()) {
 				$registration->number = $number++;
 			}
