@@ -178,6 +178,16 @@ class MultiLocations extends Widget {
 					CHtml::error($model, 'locations.fee.' . $key, array('class'=>'text-danger'))
 				);
 			}
+			echo Html::formGroup(
+				$model, 'locations[status][]', array(
+					'class'=>'col-lg-12',
+				),
+				CHtml::label('显示', false),
+				CHtml::dropDownList(CHtml::activeName($model, 'locations[status][]'), $location['status'], ActiveRecord::getYesOrNo(), array(
+					'class'=>'form-control',
+				)),
+				CHtml::error($model, 'locations.status.' . $key, array('class'=>'text-danger'))
+			);
 			echo CHtml::closeTag('div');
 		}
 		echo CHtml::closeTag('div');
