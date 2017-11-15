@@ -194,6 +194,6 @@ CREATE TABLE IF NOT EXISTS `Scrambles` (
   `groupId` varchar(3) NOT NULL,
   `isExtra` tinyint(1) NOT NULL,
   `scrambleNum` int(11) NOT NULL,
-  `scramble` varchar(500) NOT NULL,
+  `scramble` text NOT NULL,
   PRIMARY KEY (`scrambleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
