@@ -29,7 +29,7 @@ class Scrambles extends ActiveRecord {
 			case '666':
 			case '777':
 			case 'minx':
-				$scramble = explode(' ', $scramble);
+				$scramble = preg_split('{\s+}', $scramble);
 				$num = substr($this->eventId, 0, 1);
 				if ($num > 0) {
 					$scramble = array_map(function($scramble) use($num) {
@@ -71,6 +71,18 @@ class Scrambles extends ActiveRecord {
 					// $pos = strpos($scramble, ' ', $pos)
 					$scramble = substr($scramble, 0, $pos - 1) . '<br>' . substr($scramble, $pos);
 				}
+				break;
+			case '333mbf':
+				$scrambles = explode("\n", $scramble);
+				$scrambles = array_map(function($scramble) {
+					$scramble = explode(' ', $scramble);
+					$scramble = array_map(function($scramble) {
+						return str_pad($scramble, 2, ' ');
+					}, $scramble);
+					$scramble = implode(' ', $scramble);
+					return $scramble;
+				}, $scrambles);
+				$scramble = implode('<br>', $scrambles);
 				break;
 			default:
 				$scramble = explode(' ', $scramble);
