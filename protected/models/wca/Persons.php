@@ -257,23 +257,7 @@ class Persons extends ActiveRecord {
 		$personalBestResults[$year][$eventId]['best'] = $lastBest;
 		$personalBestResults[$year][$eventId]['average'] = $lastAverage;
 		krsort($personalBestResults);
-		//世锦赛获奖记录
-		$wcPodiums = Results::model()->with(array(
-			'competition',
-			'event',
-		))->findAllByAttributes(array(
-			'personId'=>$id,
-			'roundTypeId'=>array('c', 'f'),
-			'pos'=>array(1, 2, 3),
-		), array(
-			'condition'=>'competitionId LIKE "WC%"',
-			'order'=>'competition.year DESC, event.rank ASC',
-		));
 		$podiums = Results::getChampionshipPodiums($id);
-		//洲/国锦赛获奖记录
-		$ccPodiums = isset($podiums['continent']) ? $podiums['continent'] : array();
-		$ncPodiums = isset($podiums['country']) ? $podiums['country'] : array();
-		$rcPodiums = isset($podiums['region']) ? $podiums['region'] : array();
 		//WR们
 		$historyWR = Results::model()->with(array(
 			'competition',
@@ -501,10 +485,7 @@ class Persons extends ActiveRecord {
 			'byCompetition'=>$byCompetition,
 			'personalBests'=>$personalBests,
 			'personalBestResults'=>$personalBestResults,
-			'wcPodiums'=>$wcPodiums,
-			'ccPodiums'=>$ccPodiums,
-			'ncPodiums'=>$ncPodiums,
-			'rcPodiums'=>$rcPodiums,
+			'podiums'=>$podiums,
 			'historyWR'=>$historyWR,
 			'historyCR'=>$historyCR,
 			'historyNR'=>$historyNR,

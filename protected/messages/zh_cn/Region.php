@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Greater China' => '中国',
   'ID' => '',
   'Name' => '',
   'Name Zh' => '',
