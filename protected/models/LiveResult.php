@@ -232,7 +232,7 @@ class LiveResult extends ActiveRecord {
 			array('competition_id, user_id, number', 'required'),
 			array('user_type, number, best, average, value1, value2, value3, value4, value5, status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, user_id, operator_id, create_time, update_time', 'length', 'max'=>10),
-			array('event', 'length', 'max'=>6),
+			array('event', 'length', 'max'=>32),
 			array('round, format', 'length', 'max'=>1),
 			array('regional_single_record, regional_average_record', 'length', 'max'=>3),
 			// The following rule is used by search().
