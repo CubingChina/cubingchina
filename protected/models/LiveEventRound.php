@@ -127,7 +127,7 @@ class LiveEventRound extends ActiveRecord {
 			array('competition_id', 'required'),
 			array('status', 'numerical', 'integerOnly'=>true),
 			array('competition_id, cut_off, time_limit, number, operator_id, create_time, update_time', 'length', 'max'=>10),
-			array('event', 'length', 'max'=>6),
+			array('event', 'length', 'max'=>32),
 			array('round, format', 'length', 'max'=>1),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

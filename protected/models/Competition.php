@@ -1126,7 +1126,7 @@ class Competition extends ActiveRecord {
 			);
 			if ($key == 'Event') {
 				$column['type'] = 'raw';
-				$column['value'] = 'Events::getEventIcon($data["event"]) . " " . $data["Event"]';
+				$column['value'] = 'Events::getFullEventNameWithIcon($data["event"], $data["Event"])';
 			}
 			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
 				if ($key == 'End Time') {

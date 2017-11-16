@@ -96,7 +96,7 @@ class EventsForm extends Widget {
 				$labelOptions['class'] .= ' text-right col-md-2 col-sm-4';
 			}
 			echo CHtml::openTag('div', $htmlOptions);
-			foreach ($events as $key=>$value) {
+			foreach ($events as $event=>$value) {
 				echo CHtml::openTag('div', [
 					'class'=>'col-lg-12',
 				]);
@@ -104,8 +104,8 @@ class EventsForm extends Widget {
 					'class'=>'row',
 				]);
 				//label
-				$labelOptions['label'] = $value . ': ';
-				echo CHtml::activeLabelEx($model, "{$name}[{$key}][round]", $labelOptions);
+				$labelOptions['label'] = Events::getFullEventName($event) . ': ';
+				echo CHtml::activeLabelEx($model, "{$name}[{$event}][round]", $labelOptions);
 				//round
 				echo CHtml::openTag('div', [
 					'class'=>'col-md-2 col-sm-8',
@@ -113,7 +113,7 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('div', [
 					'class'=>'input-group',
 				]);
-				echo CHtml::activeNumberField($model, "{$name}[{$key}][round]", $numberOptions);
+				echo CHtml::activeNumberField($model, "{$name}[{$event}][round]", $numberOptions);
 				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'Rounds'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
@@ -129,7 +129,7 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
 				]);
-				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee]", $feeOptions);
+				echo CHtml::activeNumberField($model, "{$name}[{$event}][fee]", $feeOptions);
 				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
@@ -140,7 +140,7 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
 				]);
-				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_second]", $feeOptions);
+				echo CHtml::activeNumberField($model, "{$name}[{$event}][fee_second]", $feeOptions);
 				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
@@ -151,7 +151,7 @@ class EventsForm extends Widget {
 				echo CHtml::openTag('div', [
 					'class'=>'input-group row',
 				]);
-				echo CHtml::activeNumberField($model, "{$name}[{$key}][fee_third]", $feeOptions);
+				echo CHtml::activeNumberField($model, "{$name}[{$event}][fee_third]", $feeOptions);
 				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'CNY'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
@@ -170,7 +170,7 @@ class EventsForm extends Widget {
 						'class'=>'input-group row',
 					]);
 					echo CHtml::tag('span', ['class'=>'input-group-addon'], '单次');
-					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_best]", $feeOptions);
+					echo CHtml::activeNumberField($model, "{$name}[{$event}][qualifying_best]", $feeOptions);
 					echo CHtml::closeTag('div');
 					echo CHtml::closeTag('div');
 					//second
@@ -181,7 +181,7 @@ class EventsForm extends Widget {
 						'class'=>'input-group row',
 					]);
 					echo CHtml::tag('span', ['class'=>'input-group-addon'], '平均');
-					echo CHtml::activeNumberField($model, "{$name}[{$key}][qualifying_average]", $feeOptions);
+					echo CHtml::activeNumberField($model, "{$name}[{$event}][qualifying_average]", $feeOptions);
 					echo CHtml::closeTag('div');
 					echo CHtml::closeTag('div');
 					echo CHtml::closeTag('div');

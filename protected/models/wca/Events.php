@@ -109,23 +109,29 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getFullEventName($event) {
+		if (array_key_exists($event, self::getCustomEvents())) {
+			return CustomEvent::getFullEventName($event);
+		}
 		return Yii::t('event', self::getEventName($event));
 	}
 
-	public static function getFullEventNameWithIcon($event) {
-		$name = self::getFullEventName($event);
-		return CHtml::tag("i", array(
-			"class"=>"event-icon event-icon event-icon-" . $event,
-			"title"=>$name,
-		), '') . ' ' . $name;
+	public static function getFullEventNameWithIcon($event, $name = null) {
+		if ($name === null) {
+			$name = self::getFullEventName($event);
+		}
+		if (array_key_exists($event, self::getCustomEvents())) {
+			return CustomEvent::getFullEventName($event);
+		}
+		return self::getEventIcon($event) . ' ' . $name;
 	}
 
 	public static function getEventIcon($event) {
 		$name = self::getFullEventName($event);
-		return CHtml::tag("i", array(
-			"class"=>"event-icon event-icon event-icon-" . $event,
-			"title"=>$name,
-		), '');
+		$iconName = array_key_exists($event, self::getCustomEvents()) ? 'custom' : $event;
+		return CHtml::tag('i', [
+			'class'=>'event-icon event-icon-' . $iconName,
+			'title'=>$name,
+		], '');
 	}
 
 	public static function getScheduleEvents() {
@@ -148,12 +154,16 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getOtherEvents() {
-		return array(
+		return [
 			'magic'=>'Rubik\'s Magic',
 			'mmagic'=>'Master Magic',
 			'stack'=>'Sport Stacking',
 			'funny'=>'Funny Event',
-		);
+		] + self::getCustomEvents();
+	}
+
+	public static function getCustomEvents() {
+		return CHtml::listData(CustomEvent::getAllEvents(), 'id', 'name');
 	}
 
 	public static function getNormalEvents() {
