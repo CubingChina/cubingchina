@@ -18,7 +18,6 @@
  */
 return array (
   'Fee' => '',
-  'Read more....' => '閱讀全文&raquo;',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -238,6 +237,7 @@ return array (
   'Province' => '省份',
   'Psych Sheet' => '預排名',
   'Rankings' => '排名',
+  'Read more....' => '閱讀全文&raquo;',
   'Recommended Browsers:' => '推薦瀏覽器：',
   'Records' => '紀錄',
   'Region' => '地區',
