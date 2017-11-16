@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This is the model class for table "Continents".
+ * This is the model class for table "eligible_country_iso2s_for_championship".
  *
- * The followings are the available columns in table 'Continents':
+ * The followings are the available columns in table 'eligible_country_iso2s_for_championship':
  * @property string $id
- * @property string $name
- * @property string $recordName
- * @property integer $latitude
- * @property integer $longitude
- * @property integer $zoom
+ * @property string $championship_type
+ * @property string $eligible_country_iso2
  */
-class Continents extends ActiveRecord {
+class EligibleCountryIso2sForChampionship extends ActiveRecord {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Continents';
+		return 'eligible_country_iso2s_for_championship';
 	}
 
 	/**
@@ -26,12 +23,12 @@ class Continents extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('latitude, longitude, zoom', 'numerical', 'integerOnly'=>true),
-			array('id, name', 'length', 'max'=>50),
-			array('recordName', 'length', 'max'=>3),
+			array('championship_type, eligible_country_iso2', 'required'),
+			array('id', 'length', 'max'=>20),
+			array('championship_type, eligible_country_iso2', 'length', 'max'=>191),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, recordName, latitude, longitude, zoom', 'safe', 'on'=>'search'),
+			array('id, championship_type, eligible_country_iso2', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -40,7 +37,7 @@ class Continents extends ActiveRecord {
 	 */
 	public function relations() {
 		return [
-			'countries'=>[self::HAS_MANY, 'Countries', 'continentId'],
+			'country'=>[self::BELONGS_TO, 'Countries', ['eligible_country_iso2'=>'iso2']],
 		];
 	}
 
@@ -49,12 +46,9 @@ class Continents extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Continents', 'ID'),
-			'name' => Yii::t('Continents', 'Name'),
-			'recordName' => Yii::t('Continents', 'Record Name'),
-			'latitude' => Yii::t('Continents', 'Latitude'),
-			'longitude' => Yii::t('Continents', 'Longitude'),
-			'zoom' => Yii::t('Continents', 'Zoom'),
+			'id'=>'ID',
+			'championship_type'=>'Championship Type',
+			'eligible_country_iso2'=>'Eligible Country Iso2',
 		);
 	}
 
@@ -76,11 +70,8 @@ class Continents extends ActiveRecord {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('recordName',$this->recordName,true);
-		$criteria->compare('latitude',$this->latitude);
-		$criteria->compare('longitude',$this->longitude);
-		$criteria->compare('zoom',$this->zoom);
+		$criteria->compare('championship_type',$this->championship_type,true);
+		$criteria->compare('eligible_country_iso2',$this->eligible_country_iso2,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -98,7 +89,7 @@ class Continents extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Continents the static model class
+	 * @return EligibleCountryIso2sForChampionship the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

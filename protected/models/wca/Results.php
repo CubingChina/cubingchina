@@ -32,94 +32,32 @@ class Results extends ActiveRecord {
 		return array('single', 'average');
 	}
 
-	public static function buildChampionshipPodiums($type, $regionId) {
-		//special china championship
-		$chineseRegions = array('China', 'Hong Kong', 'Macau', 'Taiwan');
-		$events = Events::getNormalEvents() + Events::getDeprecatedEvents();
-		$podiums = array();
-		//continent championship podiums
-		$patterns = Competitions::getChampionshipPattern($type);
-		if (in_array($regionId, $chineseRegions) && $type == 'country') {
-			$regionId = 'China';
-		}
-		if (!isset($patterns[$regionId])) {
-			return array();
-		}
-		$pattern = $patterns[$regionId];
-		$competitions = Competitions::model()->findAll(array(
-			'condition'=>"id REGEXP '$pattern'",
-			'order'=>'year DESC',
-		));
-		if ($regionId === 'China') {
-			$regionId = $chineseRegions;
-		}
-		foreach ($competitions as $competition) {
-			foreach ($events as $eventId=>$eventName) {
-				$attributes = array(
-					'competitionId'=>$competition->id,
-					'eventId'=>"$eventId",
-					'roundTypeId'=>array('c', 'f'),
-				);
-				$with = array();
-				if ($type === 'continent') {
-					$with = array(
-						'personCountry'=>array(
-							'condition'=>'personCountry.continentId=:continentId',
-							'params'=>array(
-								':continentId'=>$regionId,
-							),
-						),
-					);
-				} else {
-					$attributes['personCountryId'] = $regionId;
-				}
-				//top 10 is enough
-				$top10 = Results::model()->with($with)->findAllByAttributes($attributes, array(
-					'condition'=>'best>0',
-					'order'=>'pos ASC',
-					'limit'=>10,
-				));
-				if ($top10 === array()) {
-					continue;
-				}
-				$pos = 0;
-				$lastPos = 0;
-				$count = 0;
-				foreach ($top10 as $result) {
-					$count++;
-					if ($result->pos != $lastPos) {
-						$pos = $count;
-						$lastPos = $result->pos;
-						//only top 3
-						if ($count > 3) {
-							break;
-						}
-					}
-					//the official pos might not be the regional podiums pos
-					$result->pos = $pos;
-					$podiums[$result->personId][] = $result;
-				}
-			}
-		}
-		return $podiums;
-	}
-
 	public static function getChampionshipPodiums($personId) {
 		$person = Persons::model()->with('country')->findByAttributes(array(
 			'id' => $personId,
 			'subid'=>1,
 		));
 		if ($person === null) {
-			return array();
+			return [];
 		}
-		$allPodiums['continent'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('continent', $person->country->continentId));
-		$allPodiums['country'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('country', $person->country->id));
-		$allPodiums['region'] = Yii::app()->cache->getData('Results::buildChampionshipPodiums', array('region', $person->country->id));
-		return array(
-			'continent'=>isset($allPodiums['continent'][$personId]) ? $allPodiums['continent'][$personId] : array(),
-			'country'=>isset($allPodiums['country'][$personId]) ? $allPodiums['country'][$personId] : array(),
-			'region'=>isset($allPodiums['region'][$personId]) ? $allPodiums['region'][$personId] : array(),
-		);
+		$cache = Yii::app()->cache;
+		$method = 'Championships::buildChampionshipPodiums';
+		$allPodiums['world'] = $cache->getData($method, ['world']);
+		$allPodiums['continent'] = $cache->getData($method, [$person->country->continentId]);
+		$eligibleChampionshipTypes = EligibleCountryIso2sForChampionship::model()->findAllByAttributes([
+			'eligible_country_iso2'=>$person->country->iso2,
+		]);
+		foreach ($eligibleChampionshipTypes as $eligibleChampionshipType) {
+			$allPodiums[$eligibleChampionshipType->championship_type] = $cache->getData($method, [$eligibleChampionshipType->championship_type]);
+		}
+		$allPodiums['region'] = $cache->getData($method, [$person->country->iso2]);
+		$personPodiums = [];
+		foreach ($allPodiums as $key=>$podiums) {
+			if (isset($podiums[$personId])) {
+				$personPodiums[$key] = $podiums[$personId];
+			}
+		}
+		return $personPodiums;
 	}
 
 	public static function getRankings($region = 'China', $type = 'single', $event = '333', $gender = 'all', $page = 1) {

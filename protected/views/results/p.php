@@ -202,11 +202,13 @@
       ),
     ),
   )); ?>
-  <?php if (!empty($wcPodiums)): ?>
-  <h2><?php echo Yii::t('Results', 'World Championship Podiums'); ?></h2>
+  <?php foreach ($podiums as $name=>$data): ?>
+  <h2><?php echo Yii::t('Results', '{region} Championship Podiums', [
+    '{region}'=>Championships::getRegionName($name, $person),
+  ]); ?></h2>
   <?php
   $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider($wcPodiums, array(
+    'dataProvider'=>new CArrayDataProvider($data, array(
       'pagination'=>false,
       'sort'=>false,
     )),
@@ -242,130 +244,7 @@
       ),
     ),
   )); ?>
-  <?php endif; ?>
-  <?php if (!empty($ccPodiums)): ?>
-  <h2><?php echo Yii::t('Results', 'Continental Championship Podiums'); ?></h2>
-  <?php
-  $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider($ccPodiums, array(
-      'pagination'=>false,
-      'sort'=>false,
-    )),
-    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-    'groupKey'=>'competition.year',
-    'groupHeader'=>'$data->competitionLink',
-    'columns'=>array(
-      array(
-        'name'=>Yii::t('common', 'Event'),
-        'type'=>'raw',
-        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
-      ),
-      array(
-        'name'=>Yii::t('Results', 'Place'),
-        'type'=>'raw',
-        'value'=>'$data->pos',
-        'headerHtmlOptions'=>array('class'=>'place'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Single'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("best", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Average'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("average", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Detail'),
-        'type'=>'raw',
-        'value'=>'$data->detail',
-      ),
-    ),
-  )); ?>
-  <?php endif; ?>
-  <?php if (!empty($ncPodiums)): ?>
-  <h2><?php echo Yii::t('Results', 'National Championship Podiums'); ?></h2>
-  <?php
-  $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider($ncPodiums, array(
-      'pagination'=>false,
-      'sort'=>false,
-    )),
-    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-    'groupKey'=>'competition.year',
-    'groupHeader'=>'$data->competitionLink',
-    'columns'=>array(
-      array(
-        'name'=>Yii::t('common', 'Event'),
-        'type'=>'raw',
-        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
-      ),
-      array(
-        'name'=>Yii::t('Results', 'Place'),
-        'type'=>'raw',
-        'value'=>'$data->pos',
-        'headerHtmlOptions'=>array('class'=>'place'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Single'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("best", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Average'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("average", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Detail'),
-        'type'=>'raw',
-        'value'=>'$data->detail',
-      ),
-    ),
-  )); ?>
-  <?php endif; ?>
-  <?php if (!empty($rcPodiums)): ?>
-  <h2><?php echo $person->countryId === 'Taiwan' ? Yii::t('Results', 'Taiwan Championship Podiums') : Yii::t('Results', 'Regional Championship Podiums'); ?></h2>
-  <?php
-  $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider($rcPodiums, array(
-      'pagination'=>false,
-      'sort'=>false,
-    )),
-    'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-    'groupKey'=>'competition.year',
-    'groupHeader'=>'$data->competitionLink',
-    'columns'=>array(
-      array(
-        'name'=>Yii::t('common', 'Event'),
-        'type'=>'raw',
-        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
-      ),
-      array(
-        'name'=>Yii::t('Results', 'Place'),
-        'type'=>'raw',
-        'value'=>'$data->pos',
-        'headerHtmlOptions'=>array('class'=>'place'),
-      ),
-      array(
-        'name'=>Yii::t('common', 'Single'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("best", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Average'),
-        'type'=>'raw',
-        'value'=>'$data->getTime("average", false, true)',
-      ),
-      array(
-        'name'=>Yii::t('common', 'Detail'),
-        'type'=>'raw',
-        'value'=>'$data->detail',
-      ),
-    ),
-  )); ?>
-  <?php endif; ?>
+  <?php endforeach; ?>
   <?php if (array_sum($overAll) > 0): ?>
   <div class="row">
     <?php $overAllDataProvider = new CArrayDataProvider(array($overAll), array(

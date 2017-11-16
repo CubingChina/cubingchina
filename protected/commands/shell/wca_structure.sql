@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS `championships` (
   `id` int(11) NOT NULL DEFAULT '0',
   `competition_id` varchar(32) NOT NULL,
   `championship_type` varchar(191) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `competition_id` (`competition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -211,6 +212,7 @@ CREATE TABLE IF NOT EXISTS `eligible_country_iso2s_for_championship` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `championship_type` varchar(191) NOT NULL,
   `eligible_country_iso2` varchar(191) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `championship_type` (`championship_type`),
   KEY `eligible_country_iso2` (`eligible_country_iso2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
