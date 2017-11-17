@@ -74,7 +74,7 @@
         <div class="modal-content">
           <div class="modal-body">
             <div class="well well-sm">
-              <a href="/results/person/{{currentUser.wcaid}}" v-if="currentUser.wcaid">{{currentUser.name}}</a>
+              <a href="/results/person/{{currentUser.wcaid}}" target="_blank" v-if="currentUser.wcaid">{{currentUser.name}}</a>
               <span v-else>{{currentUser.name}}</span>
               - {{currentUser.region}}
             </div>
