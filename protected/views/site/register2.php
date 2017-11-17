@@ -78,6 +78,7 @@ $this->renderPartial('registerSide', $_data_);
       'prompt'=>'',
     )),
     $form->error($model, 'gender', array('class'=>'text-danger'))
+    Yii::app()->language === 'zh_cn' ? '<div class="text-warning">请填写有效证件（身份证、户口簿等）上面的出生日期！</div>' : ''
   );?>
   <?php echo Html::formGroup(
     $model, 'birthday', array(),
