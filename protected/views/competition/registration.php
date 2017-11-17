@@ -223,7 +223,11 @@ $options = json_encode([
   'basicFee' => $competition->getEventFee('entry'),
   'entourageFee' => intval($competition->entourage_fee),
   'regulations'=>[
-    'common'=>ActiveRecord::getModelAttributeValue($regulations, 'common'),
+    'common'=>array_merge([
+      Yii::t('Competition', 'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.', [
+        '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('regulations'), ['target'=>'_blank']),
+      ]),
+    ], ActiveRecord::getModelAttributeValue($regulations, 'common')),
     'special'=>ActiveRecord::getModelAttributeValue($regulations, 'special'),
   ],
   'unmetEvents'=>$unmetEvents,

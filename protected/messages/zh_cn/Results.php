@@ -33,7 +33,6 @@ return array (
   'Value3' => '',
   'Value4' => '',
   'Value5' => '',
-  '{region} Championship Podiums' => '{region}锦标赛领奖台',
   'Current' => '当前纪录',
   'History' => '历史纪录',
   'Personal Record' => '官方成绩',
@@ -63,4 +62,5 @@ return array (
   'Times' => '次数',
   'Visited Provinces' => '去过的省份',
   'WR' => '世界纪录',
+  '{region} Championship Podiums' => '{region}锦标赛领奖台',
 );

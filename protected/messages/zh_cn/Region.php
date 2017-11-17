@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Greater China' => '中国',
   'ID' => '',
   'Name' => '',
   'Name Zh' => '',
@@ -230,6 +229,7 @@ return array (
   'China' => '中国',
   'Continents' => '洲',
   'Europe' => '欧洲',
+  'Greater China' => '中国',
   'Hong Kong' => '香港',
   'Macau' => '澳门',
   'North America' => '北美洲',
