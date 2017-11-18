@@ -17,7 +17,7 @@ $this->renderPartial('side', $_data_);
     $this->widget('EventsForm', array(
       'model'=>$user,
       'name'=>'preferredEvents',
-      'events'=>Events::getNormalEvents(),
+      'events'=>Events::getAllEvents(),
       'type'=>'checkbox',
     ), true)
   );?>
