@@ -451,9 +451,9 @@ class User extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('name, country_id, birthday, email, password, gender', 'required'),
-			array('gender, country_id, province_id, city_id, role, identity, status', 'numerical', 'integerOnly'=>true),
+			array('gender, country_id, province_id, city_id, role, identity, status, passport_type', 'numerical', 'integerOnly'=>true),
 			array('wcaid, avatar_id', 'length', 'max'=>10),
-			array('name, name_zh, email, password', 'length', 'max'=>128),
+			array('name, name_zh, email, password, passport_name, passport_number', 'length', 'max'=>128),
 			array('birthday, mobile', 'length', 'max'=>20),
 			array('reg_time', 'length', 'max'=>11),
 			array('reg_ip', 'length', 'max'=>15),
