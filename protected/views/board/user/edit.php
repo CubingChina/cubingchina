@@ -17,172 +17,215 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
-          <?php $form = $this->beginWidget('ActiveForm', array(
-            'htmlOptions'=>array(
+          <?php $form = $this->beginWidget('ActiveForm', [
+            'htmlOptions'=>[
               'class'=>'clearfix row',
-            ),
+            ],
             'enableClientValidation'=>true,
-          )); ?>
+          ]); ?>
           <?php echo Html::formGroup(
-            $model, 'name_zh', array(
+            $model, 'name_zh', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'name_zh', array(
+            ],
+            $form->labelEx($model, 'name_zh', [
               'label'=>'中文名',
-            )),
+            ]),
             Html::activeTextField($model, 'name_zh'),
-            $form->error($model, 'name_zh', array('class'=>'text-danger'))
+            $form->error($model, 'name_zh', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'name', array(
+            $model, 'name', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'name', array(
+            ],
+            $form->labelEx($model, 'name', [
               'label'=>'英文名',
-            )),
+            ]),
             Html::activeTextField($model, 'name'),
-            $form->error($model, 'name', array('class'=>'text-danger'))
+            $form->error($model, 'name', ['class'=>'text-danger'])
           );?>
           <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
-            $model, 'email', array(
+            $model, 'email', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'email', array(
+            ],
+            $form->labelEx($model, 'email', [
               'label'=>'邮箱',
-            )),
+            ]),
             Html::activeTextField($model, 'email'),
-            $form->error($model, 'email', array('class'=>'text-danger'))
+            $form->error($model, 'email', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'mobile', array(
+            $model, 'mobile', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'mobile', array(
+            ],
+            $form->labelEx($model, 'mobile', [
               'label'=>'手机号码',
-            )),
+            ]),
             Html::activeTextField($model, 'mobile'),
-            $form->error($model, 'mobile', array('class'=>'text-danger'))
+            $form->error($model, 'mobile', ['class'=>'text-danger'])
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
-            $model, 'wcaid', array(
+            $model, 'wcaid', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'wcaid', array(
+            ],
+            $form->labelEx($model, 'wcaid', [
               'label'=>'WCA ID',
-            )),
+            ]),
             Html::activeTextField($model, 'wcaid'),
-            $form->error($model, 'wcaid', array('class'=>'text-danger'))
+            $form->error($model, 'wcaid', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'country_id', array(
+            $model, 'country_id', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'country_id', array(
+            ],
+            $form->labelEx($model, 'country_id', [
               'label'=>'国家',
-            )),
-            $form->dropDownList($model, 'country_id', Region::getCountries(), array(
+            ]),
+            $form->dropDownList($model, 'country_id', Region::getCountries(), [
               'prompt'=>'',
               'class'=>'form-control',
-            )),
-            $form->error($model, 'country_id', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'country_id', ['class'=>'text-danger'])
           );?>
           <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
-            $model, 'province_id', array(
+            $model, 'province_id', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'province_id', array(
+            ],
+            $form->labelEx($model, 'province_id', [
               'label'=>'省份',
-            )),
-            $form->dropDownList($model, 'province_id', Region::getProvinces(), array(
+            ]),
+            $form->dropDownList($model, 'province_id', Region::getProvinces(), [
               'class'=>'form-control',
               'prompt'=>'',
-            )),
-            $form->error($model, 'province_id', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'province_id', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'city_id', array(
+            $model, 'city_id', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'city_id', array(
+            ],
+            $form->labelEx($model, 'city_id', [
               'label'=>'城市',
-            )),
-            $form->dropDownList($model, 'city_id', isset($cities[$model->province_id]) ? $cities[$model->province_id] : array(), array(
+            ]),
+            $form->dropDownList($model, 'city_id', isset($cities[$model->province_id]) ? $cities[$model->province_id] : [], [
               'prompt'=>'',
               'class'=>'form-control',
-            )),
-            $form->error($model, 'city_id', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'city_id', ['class'=>'text-danger'])
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
-            $model, 'gender', array(
+            $model, 'gender', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'gender', array(
+            ],
+            $form->labelEx($model, 'gender', [
               'label'=>'性别',
-            )),
-            $form->dropDownList($model, 'gender', $genders, array(
+            ]),
+            $form->dropDownList($model, 'gender', $genders, [
               'prompt'=>'',
               'class'=>'form-control',
-            )),
-            $form->error($model, 'gender', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'gender', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'birthday', array(
+            $model, 'birthday', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'birthday', array(
+            ],
+            $form->labelEx($model, 'birthday', [
               'label'=>'生日',
-            )),
-            Html::activeTextField($model, 'birthday', array(
+            ]),
+            Html::activeTextField($model, 'birthday', [
               'class'=>'datetime-picker',
               'data-date-format'=>'yyyy-mm-dd',
               'data-min-view'=>'2',
-            )),
-            $form->error($model, 'birthday', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'birthday', ['class'=>'text-danger'])
           );?>
           <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
-            $model, 'identity', array(
+            $model, 'identity', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'identity', array(
+            ],
+            $form->labelEx($model, 'identity', [
               'label'=>'身份',
-            )),
-            $form->dropDownList($model, 'identity', $identities, array(
+            ]),
+            $form->dropDownList($model, 'identity', $identities, [
               'class'=>'form-control',
-            )),
-            $form->error($model, 'identity', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'identity', ['class'=>'text-danger'])
           );?>
           <?php echo Html::formGroup(
-            $model, 'role', array(
+            $model, 'role', [
               'class'=>'col-lg-3 col-md-6',
-            ),
-            $form->labelEx($model, 'role', array(
+            ],
+            $form->labelEx($model, 'role', [
               'label'=>'角色',
-            )),
-            $form->dropDownList($model, 'role', $roles, array(
+            ]),
+            $form->dropDownList($model, 'role', $roles, [
               'class'=>'form-control',
-            )),
-            $form->error($model, 'role', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'role', ['class'=>'text-danger'])
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
-            $model, 'avatar_id', array(
+            $model, 'passport_type', [
+              'class'=>'col-lg-3 col-md-6'
+            ],
+            $form->labelEx($model, 'passport_type'),
+            $form->dropDownList($model, 'passport_type', User::getPassportTypes(), [
+              'prompt'=>'',
+              'class'=>'form-control',
+            ]),
+            $form->error($model, 'passport_type', ['class'=>'text-danger'])
+          ); ?>
+          <?php echo Html::formGroup(
+            $model, 'passport_name', [
+              'class'=>'col-lg-3 col-md-6'
+            ],
+            $form->labelEx($model, 'passport_name'),
+            Html::activeTextField($model, 'passport_name', [
+              'class'=>'form-control',
+            ]),
+            $form->error($model, 'passport_name', ['class'=>'text-danger'])
+          ); ?>
+          <div class="clearfix hidden-lg"></div>
+          <?php echo Html::formGroup(
+            $model, 'passport_number', [
+              'class'=>'col-lg-3 col-md-6',
+            ],
+            $form->labelEx($model, 'passport_number'),
+            Html::activeTextField($model, 'passport_number', [
+              'class'=>'form-control',
+            ]),
+            $form->error($model, 'passport_number', ['class'=>'text-danger'])
+          ); ?>
+          <?php echo Html::formGroup(
+            $model, 'show_as_delegate', [
+              'class'=>'col-lg-3 col-md-6',
+            ],
+            $form->labelEx($model, 'show_as_delegate', [
+              'label'=>'在代表页展示',
+            ]),
+            Html::activeSwitch($model, 'show_as_delegate'),
+            $form->error($model, 'show_as_delegate', ['class'=>'text-danger'])
+          );?>
+          <div class="clearfix"></div>
+          <?php echo Html::formGroup(
+            $model, 'avatar_id', [
               'class'=>'col-lg-12',
-            ),
-            $form->labelEx($model, 'avatar_id', array(
+            ],
+            $form->labelEx($model, 'avatar_id', [
               'label'=>'头像',
-            )),
-            $form->radioButtonList($model, 'avatar_id', $model->avatarList, array(
+            ]),
+            $form->radioButtonList($model, 'avatar_id', $model->avatarList, [
               'class'=>'form-control',
               'container'=>'div',
               'separator'=>'',
               'template'=>'<div class="radio user-avatar-option">{beginLabel}{input}{labelTitle}{endLabel}</div>',
-            )),
-            $form->error($model, 'avatar_id', array('class'=>'text-danger'))
+            ]),
+            $form->error($model, 'avatar_id', ['class'=>'text-danger'])
           );?>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
