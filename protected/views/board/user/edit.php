@@ -193,7 +193,7 @@
           <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
             $model, 'passport_number', [
-              'class'=>'col-lg-6 col-md-12',
+              'class'=>'col-lg-3 col-md-6',
             ],
             $form->labelEx($model, 'passport_number'),
             Html::activeTextField($model, 'passport_number', [
@@ -201,6 +201,17 @@
             ]),
             $form->error($model, 'passport_number', ['class'=>'text-danger'])
           ); ?>
+          <?php echo Html::formGroup(
+            $model, 'show_as_delegate', [
+              'class'=>'col-lg-3 col-md-6',
+            ],
+            $form->labelEx($model, 'show_as_delegate', [
+              'label'=>'在代表页展示',
+            ]),
+            Html::activeSwitch($model, 'show_as_delegate'),
+            $form->error($model, 'show_as_delegate', ['class'=>'text-danger'])
+          );?>
+          <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'avatar_id', [
               'class'=>'col-lg-12',

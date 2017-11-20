@@ -1,4 +1,4 @@
-<?php $this->setPageTitle(array('Contact')); ?>
+<?php $this->setPageTitle(['Contact']); ?>
 <?php $this->setTitle('Contact'); ?>
 <?php $this->breadcrumbs = array(
   'Contact'
@@ -21,42 +21,6 @@
   </p>
   <p>
   </p>
-  <div class="table-responsive">
-    <table class="table table-bordered table-condensed table-striped table-hover">
-      <tbody>
-      <tr>
-        <td><i class="fa fa-user"></i> 陈丹阳</td>
-        <td><i class="fa fa-building"></i> 聊城</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:danjonopolis@gmail.com">danjonopolis@gmail.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 常方圆</td>
-        <td><i class="fa fa-building"></i> 北京</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:yuanyuan.2328@qq.com">yuanyuan.2328@qq.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 郑鸣</td>
-        <td><i class="fa fa-building"></i> 广州</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:zm@cubingchina.com">zm@cubingchina.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 金晓波</td>
-        <td><i class="fa fa-building"></i> 上海</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:wavelet1988@gmail.com">wavelet1988@gmail.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 李冬雷</td>
-        <td><i class="fa fa-building"></i> 西安</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:20003214@sina.com">20003214@sina.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> 陳德泉</td>
-        <td><i class="fa fa-building"></i> 香港</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:kimchikoon@hkrcu.net">kimchikoon@hkrcu.net</a></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
 EOT
 ); ?>
   <?php else: ?>
@@ -71,41 +35,26 @@ EOT
   </p>
   <p>
   </p>
-  <div class="table-responsive">
-    <table class="table table-bordered table-condensed table-striped table-hover">
-      <tbody>
-      <tr>
-        <td><i class="fa fa-user"></i> Danyang Chen</td>
-        <td><i class="fa fa-building"></i> Liaocheng</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:danjonopolis@gmail.com">danjonopolis@gmail.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Fangyuan Chang</td>
-        <td><i class="fa fa-building"></i> Beijing</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:yuanyuan.2328@qq.com">yuanyuan.2328@qq.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Ming Zheng</td>
-        <td><i class="fa fa-building"></i> Guangzhou</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:zm@cubingchina.com">zm@cubingchina.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Xiaobo Jin</td>
-        <td><i class="fa fa-building"></i> Shanghai</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:wavelet1988@gmail.com">wavelet1988@gmail.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Donglei Li</td>
-        <td><i class="fa fa-building"></i> Xi’an</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:20003214@sina.com">20003214@sina.com</a></td>
-      </tr>
-      <tr>
-        <td><i class="fa fa-user"></i> Chan Tak Chuen (Kim)</td>
-        <td><i class="fa fa-building"></i> Hong Kong</td>
-        <td><i class="fa fa-envelope"></i> <a href="mailto:kimchikoon@hkrcu.net">kimchikoon@hkrcu.net</a></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
   <?php endif; ?>
+  <?php $this->widget('GridView', [
+    'dataProvider'=>new CArrayDataProvider(User::getShowDelegates()),
+    'enableSorting'=>false,
+    'hideHeader'=>true,
+    'front'=>true,
+    'emptyText'=>'',
+    'columns'=>[
+      [
+        'type'=>'raw',
+        'value'=>'Html::fontAwesome("user", "a") . $data->getAttributeValue("name")',
+      ],
+      [
+        'type'=>'raw',
+        'value'=>'Html::fontAwesome("building", "a") . ($data->city ? $data->city->getAttributeValue("name") : $data->country->getAttributeValue("name"))',
+      ],
+      [
+        'type'=>'raw',
+        'value'=>'Html::fontAwesome("envelope", "a") . CHtml::mailTo($data->email)',
+      ],
+    ],
+  ]); ?>
 </div>
