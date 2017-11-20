@@ -29,6 +29,11 @@ class CustomEvent extends ActiveRecord {
 		return self::$_allEvents;
 	}
 
+	public static function hasIcon($event) {
+		$allEvents = self::getAllEvents();
+		return isset($allEvents[$event]) ? $allEvents[$event]->has_icon : false;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
