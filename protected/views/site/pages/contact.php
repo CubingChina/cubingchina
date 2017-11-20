@@ -49,7 +49,7 @@ EOT
       ],
       [
         'type'=>'raw',
-        'value'=>'Html::fontAwesome("building", "a") . ($data->city ? $data->city->getAttributeValue("name") : $data->country->getAttributeValue("name"))',
+        'value'=>'Html::fontAwesome("building", "a") . ($data->city ? (in_array($data->province_id, [215, 525, 567, 642]) ? $data->province : $data->city)->getAttributeValue("name") : $data->country->getAttributeValue("name"))',
       ],
       [
         'type'=>'raw',
