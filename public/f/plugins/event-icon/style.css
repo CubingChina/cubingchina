@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'event-icon';
-  src:  url('fonts/event-icon.eot?b26n0h');
-  src:  url('fonts/event-icon.eot?b26n0h#iefix') format('embedded-opentype'),
-    url('fonts/event-icon.ttf?b26n0h') format('truetype'),
-    url('fonts/event-icon.woff?b26n0h') format('woff'),
-    url('fonts/event-icon.svg?b26n0h#event-icon') format('svg');
+  src:  url('fonts/event-icon.eot?3g4rqk');
+  src:  url('fonts/event-icon.eot?3g4rqk#iefix') format('embedded-opentype'),
+    url('fonts/event-icon.ttf?3g4rqk') format('truetype'),
+    url('fonts/event-icon.woff?3g4rqk') format('woff'),
+    url('fonts/event-icon.svg?3g4rqk#event-icon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -108,4 +108,12 @@
 .event-icon-lucky:before {
   content: "\e91a";
 }
-
+.event-icon-redi:before {
+  content: "\e91d";
+}
+.event-icon-kilominx:before {
+  content: "\e91e";
+}
+.event-icon-333relay:before {
+  content: "\e91c";
+}

@@ -109,7 +109,7 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getFullEventName($event) {
-		if (array_key_exists($event, self::getCustomEvents())) {
+		if (self::isCustomEvent($event)) {
 			return CustomEvent::getFullEventName($event);
 		}
 		return Yii::t('event', self::getEventName($event));
@@ -119,7 +119,7 @@ class Events extends ActiveRecord {
 		if ($name === null) {
 			$name = self::getFullEventName($event);
 		}
-		if (array_key_exists($event, self::getCustomEvents())) {
+		if (self::isCustomEvent($event) && !CustomEvent::hasIcon($event)) {
 			return CustomEvent::getFullEventName($event);
 		}
 		return self::getEventIcon($event) . ' ' . $name;
@@ -127,9 +127,12 @@ class Events extends ActiveRecord {
 
 	public static function getEventIcon($event) {
 		$name = self::getFullEventName($event);
-		$iconName = array_key_exists($event, self::getCustomEvents()) ? 'custom' : $event;
+		$class = ['event-icon', 'event-icon-' . $event];
+		if (self::isCustomEvent($event) && !CustomEvent::hasIcon($event)) {
+			$class[] = 'event-icon-custom';
+		}
 		return CHtml::tag('i', [
-			'class'=>'event-icon event-icon-' . $iconName,
+			'class'=>implode(' ', $class),
 			'title'=>$name,
 		], '');
 	}
@@ -196,6 +199,10 @@ class Events extends ActiveRecord {
 		));
 		$events = CHtml::listData($events, 'id', 'cellName');
 		return self::$_deprecatedEvents = $events;
+	}
+
+	public static function isCustomEvent($event) {
+		return array_key_exists($event, self::getCustomEvents());
 	}
 
 	/**
