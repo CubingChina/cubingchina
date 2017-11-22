@@ -18,7 +18,7 @@ class Championships extends ActiveRecord {
 		]);
 		$podiums = [];
 		foreach ($championships as $championship) {
-			$podiums = array_merge($podiums, $championship->getChampionshipPodiums());
+			$podiums = array_merge_recursive($podiums, $championship->getChampionshipPodiums());
 		}
 		return $podiums;
 	}
