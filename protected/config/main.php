@@ -350,7 +350,7 @@ $config = [
 				'bf'=>'Competitors participating in all blindfolded events must provide their own blindfold.',
 				'lbf'=>'For 4x4 blindfolded, 5x5 blindfolded and 3x3 multiple blindfolded events, cubes must be provided for scrambling when requested by the organizers.',
 				'bbf'=>'For 4x4 blindfolded and 5x5 blindfolded, “cumulative time limit” means that the total solving time of N attempts (N≤3) mustn’t exceeds the given time limit. If your total time exceeds the time limit, your current attempt will be stopped and recorded as DNF and any remaining attempts will be recorded as DNS. Attempt time for incomplete solves will be still recorded and added to the cumulative time.',
-				'clock'=>"For the Rubik's clock event, clocks will be disqualified if the four pins can't stay upright, such that the pins fall down if the clock is held horizontal or the pins fail to control the rotation of gears.",
+				'clock'=>"For the Clock event, clocks will be disqualified if the four pins can't stay upright, such that the pins fall down if the clock is held horizontal or the pins fail to control the rotation of gears.",
 			],
 			'special_zh'=>[
 				'333ft'=>'参加脚拧项目自备垫子及Speedstacks计时器，否则将被取消该项目参赛资格',
