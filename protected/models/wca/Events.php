@@ -158,7 +158,7 @@ class Events extends ActiveRecord {
 
 	public static function getOtherEvents() {
 		return [
-			'magic'=>'Rubik\'s Magic',
+			'magic'=>'Magic',
 			'mmagic'=>'Master Magic',
 			'stack'=>'Sport Stacking',
 			'funny'=>'Funny Event',

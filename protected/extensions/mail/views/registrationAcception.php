@@ -70,7 +70,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
 			(<?php echo ++$i; ?>) For 4x4 blindfolded and 5x5 blindfolded, “cumulative time limit” means that the total solving time of N attempts (N≤3) mustn’t exceeds the given time limit. If your total time exceeds the time limit, your current attempt will be stopped and recorded as DNF and any remaining attempts will be recorded as DNS. Attempt time for incomplete solves will be still recorded and added to the cumulative time.<br>
 			<?php endif; ?>
 			<?php if (in_array('clock', $registration->events)): ?>
-			(<?php echo ++$i; ?>) For the Rubik's clock event, clocks will be disqualified if the four pins can't stay upright, such that the pins fall down if the clock is held horizontal or the pins fail to control the rotation of gears.<br>
+			(<?php echo ++$i; ?>) For the Clock event, clocks will be disqualified if the four pins can't stay upright, such that the pins fall down if the clock is held horizontal or the pins fail to control the rotation of gears.<br>
 			<?php endif; ?>
 			(<?php echo ++$i; ?>) <?php echo $competition->organizer[0]->user->name; ?> reserves the final explanation right.<br>
 			If you have any questions, feel free to ask us by email.<br>
