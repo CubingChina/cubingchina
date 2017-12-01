@@ -72,6 +72,16 @@ class Controller extends CController {
 		if (isset($config['js'])) {
 			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		}
+		if (isset($config['jsConfig'])) {
+			$js = $application->js;
+			$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+			try {
+				$config = $js->config($config['jsConfig'], YII_DEBUG);
+			} catch (Exception $e) {
+				$config = '{}';
+			}
+			Yii::app()->clientScript->registerScript('wx.config', "wx.config({$config})");
+		}
 		return $this->_wechatApplication = $application;
 	}
 

@@ -171,24 +171,19 @@ class CompetitionController extends Controller {
 				'staff_type'=>$registration->getStaffTypeText(),
 			]);
 		}
+
+		$application = $this->getWechatApplication([
+			'js'=>true,
+			'jsConfig'=>[
+				'hideAllNonBaseMenuItem',
+				'scanQRCode',
+			],
+		]);
 		$min = DEV ? '' : '.min';
 		$version = '201704010032';
 		$clientScript = Yii::app()->clientScript;
-		$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/scan.js?ver=' . $version);
-
-		$application = $this->getWechatApplication();
-		$js = $application->js;
-		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
-		try {
-			$config = $js->config(array(
-				'hideAllNonBaseMenuItem',
-				'scanQRCode',
-			), YII_DEBUG);
-		} catch (Exception $e) {
-			$config = '{}';
-		}
 		$this->render('scan', [
 			'competition'=>$competition,
 			'config'=>$config,

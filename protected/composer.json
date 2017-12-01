@@ -1,15 +1,15 @@
 {
-	"require": {
-		"cboden/ratchet": "^0.3.6",
-		"doctrine/cache": "^1.6",
-		"endroid/qrcode": "^1.9",
-		"jonnyw/php-phantomjs": "^4.5",
-		"mpdf/mpdf": "^6.1",
-		"overtrue/wechat": "^3.2",
-		"phpoffice/phpexcel": "^1.8",
-		"ramsey/uuid": "^3.5",
-		"suin/php-rss-writer": "^1.5",
-		"zhuzhichao/ip-location-zh": "^2.2",
-		"predis/predis-async": "v0.3.x-dev"
-	}
+  "require": {
+    "cboden/ratchet": "^0.3.6",
+    "doctrine/cache": "^1.6",
+    "endroid/qrcode": "^1.9",
+    "jonnyw/php-phantomjs": "^4.5",
+    "mpdf/mpdf": "^6.1",
+    "overtrue/wechat": "^3.3",
+    "phpoffice/phpexcel": "^1.8",
+    "ramsey/uuid": "^3.5",
+    "suin/php-rss-writer": "^1.5",
+    "zhuzhichao/ip-location-zh": "^2.2",
+    "predis/predis-async": "v0.3.x-dev"
+  }
 }
