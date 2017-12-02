@@ -48,10 +48,10 @@
     </div>
   </div>
   <?php echo CHtml::link(Html::fontAwesome('object-group') . Yii::t('summary', '{year} Annual Summary', [
-    '{year}'=>2016,
+    '{year}'=>$year,
   ]), [
     '/summary/person',
-    'year'=>2016,
+    'year'=>$year,
     'id'=>$person->id
   ], [
     'class'=>'btn btn-lg btn-theme',
