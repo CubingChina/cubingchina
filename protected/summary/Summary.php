@@ -14,7 +14,7 @@ class Summary {
 		if ($this->year > $year || $this->year < 2003) {
 			return false;
 		}
-		if ($this->year == $year && date('z') < 357) {
+		if ($this->year == $year && date('z') < Yii::app()->params->summaryDaysToYearEnd) {
 			return false;
 		}
 		if ($this->type == 'site' && $this->year < 2016) {

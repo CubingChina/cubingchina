@@ -71,10 +71,3 @@
     </dd>
   </dl>
 </div>
-<?php
-Yii::app()->clientScript->registerScript('scan',
-<<<EOT
-  wx.config({$config})
-EOT
-);
-

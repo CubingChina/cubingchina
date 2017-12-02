@@ -443,7 +443,6 @@ Yii::app()->clientScript->registerScript('summary',
 <<<EOT
   var data = {$data};
   data.link = location.href;
-  wx.config({$config});
   wx.ready(function() {
     wx.onMenuShareTimeline(data);
     wx.onMenuShareAppMessage(data);

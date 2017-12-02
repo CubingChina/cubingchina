@@ -184,6 +184,10 @@ class ResultsController extends Controller {
 		$this->pageTitle = array($person->name, 'Personal Page');
 		$this->title = Yii::t('common', 'Personal Page');
 		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
+		$data['year'] = date('Y');
+		if (date('z') < Yii::app()->params->summaryDaysToYearEnd) {
+			$data['year']--;
+		}
 		$this->render('p', $data);
 	}
 
@@ -207,25 +211,19 @@ class ResultsController extends Controller {
 		);
 		$application = $this->getWechatApplication([
 			'js'=>true,
-		]);
-		$js = $application->js;
-		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
-		try {
-			$config = $js->config(array(
+			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
 				'onMenuShareQQ',
 				'onMenuShareWeibo',
 				'onMenuShareQZone',
-			), YII_DEBUG);
-		} catch (Exception $e) {
-			$config = '{}';
-		}
+			],
+		]);
+		$js = $application->js;
 		$this->pageTitle = array($competition->getAttributeValue('name'), 'Certificate');
 		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Certificate');
 		$this->render('cert', [
 			'cert'=>$cert,
-			'config'=>$config,
 			'competition'=>$competition,
 			'user'=>$cert->user,
 		]);
