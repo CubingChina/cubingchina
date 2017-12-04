@@ -61,7 +61,6 @@ Yii::app()->clientScript->registerScript('cert',
 <<<EOT
   var data = {$data};
   data.link = location.href;
-  wx.config({$config});
   wx.ready(function() {
     wx.onMenuShareTimeline(data);
     wx.onMenuShareAppMessage(data);

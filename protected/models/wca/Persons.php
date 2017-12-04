@@ -528,7 +528,7 @@ class Persons extends ActiveRecord {
 	public function getSummaryYears() {
 		$years = [];
 		$startYear = $this->startYear;
-		$endYear = date('z') < 357 ? date('Y') - 1 : date('Y');
+		$endYear = date('z') < Yii::app()->params->summaryDaysToYearEnd ? date('Y') - 1 : date('Y');
 		for ($year = $endYear; $year >= $startYear && $year >= 2003; $year--) {
 			$years[$year] = $year;
 		}

@@ -34,21 +34,14 @@ class SummaryController extends Controller {
 		];
 		$application = $this->getWechatApplication([
 			'js'=>true,
-		]);
-		$js = $application->js;
-		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
-		try {
-			$config = $js->config(array(
+			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
 				'onMenuShareQQ',
 				'onMenuShareWeibo',
 				'onMenuShareQZone',
-			), YII_DEBUG);
-		} catch (Exception $e) {
-			$config = '{}';
-		}
-		$data['config'] = $config;
+			],
+		]);
 		$this->render('index', $data);
 	}
 
@@ -77,21 +70,14 @@ class SummaryController extends Controller {
 		];
 		$application = $this->getWechatApplication([
 			'js'=>true,
-		]);
-		$js = $application->js;
-		$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
-		try {
-			$config = $js->config(array(
+			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
 				'onMenuShareQQ',
 				'onMenuShareWeibo',
 				'onMenuShareQZone',
-			), YII_DEBUG);
-		} catch (Exception $e) {
-			$config = '{}';
-		}
-		$data['config'] = $config;
+			],
+		]);
 		$this->render('person', $data);
 	}
 }

@@ -11,10 +11,10 @@
 class Championships extends ActiveRecord {
 
 	public static function buildChampionshipPodiums($type) {
-		$championships = self::model()->findAllByAttributes([
+		$championships = self::model()->with('competition')->findAllByAttributes([
 			'championship_type'=>$type,
 		], [
-			'order'=>'competition_id DESC',
+			'order'=>'competition.year DESC',
 		]);
 		$podiums = [];
 		foreach ($championships as $championship) {
