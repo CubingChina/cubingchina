@@ -17,9 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Avatar' => '头像',
+  'Bind successfully.' => '绑定成功！',
+  'Bind this account' => '绑定当前微信帐号',
+  'Current Wechat user has been bound to another user.' => '当前帐号已被绑定至另一个用户。',
   'ID' => '',
   'Password' => '',
+  'Please open this page in Wechat. You can scan the following QR.' => '请在微信中打开本页。你可以扫描下面的二维码以快速打开。',
+  'Unbind successfully.' => '解绑成功',
+  'Unbind this account' => '解绑当前微信帐号',
+  'You already bound an account.' => '你已经绑定过微信帐号了。',
+  'You haven\'t bound an account.' => '你尚未绑定微信帐号。',
+  'Avatar' => '头像',
   'Birthday' => '生日',
   'City' => '城市',
   'Email' => '邮箱',

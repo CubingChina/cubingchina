@@ -26,6 +26,10 @@ class WebUser extends CWebUser {
 		return !$this->isGuest && $user && ($user->hasPermission($permission) || $this->checkRole($role));
 	}
 
+	public function logout($destroySession = false) {
+		parent::logout($destroySession);
+	}
+
 	public function loginRequired() {
 		$app = Yii::app();
 		$request = $app->getRequest();

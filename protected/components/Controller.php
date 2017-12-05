@@ -96,6 +96,10 @@ class Controller extends CController {
 		return $this->_wechatApplications[$key] = $application;
 	}
 
+	public function getIsInWechat() {
+		return preg_match('{MicroMessenger}i', Yii::app()->request->getUserAgent());
+	}
+
 	public function getCacheKey() {
 		$args = func_get_args();
 		array_unshift($args, $this->action->id);
@@ -448,7 +452,7 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
-		if (preg_match('{MicroMessenger}i', $userAgent)) {
+		if ($this->isInWechat) {
 			$this->getWechatApplication([
 				'oauth'=>[
 					'scopes'=>['snsapi_userinfo'],

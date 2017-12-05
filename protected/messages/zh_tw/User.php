@@ -17,9 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Avatar' => '頭像',
+  'Bind successfully.' => '',
+  'Bind this account' => '',
+  'Current Wechat user has been bound to another user.' => '',
   'ID' => '',
   'Password' => '',
+  'Please open this page in Wechat. You can scan the following QR.' => '',
+  'Unbind successfully.' => '',
+  'Unbind this account' => '',
+  'You already bound an account.' => '',
+  'You haven\'t bound an account.' => '',
+  'Avatar' => '頭像',
   'Birthday' => '生日',
   'City' => '城市',
   'Email' => '郵箱',

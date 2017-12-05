@@ -477,14 +477,15 @@ class User extends ActiveRecord {
 	public function relations() {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
-			'country'=>array(self::BELONGS_TO, 'Region', 'country_id'),
-			'province'=>array(self::BELONGS_TO, 'Region', 'province_id'),
-			'city'=>array(self::BELONGS_TO, 'Region', 'city_id'),
-			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
-			'avatars'=>array(self::HAS_MANY, 'UserAvatar', 'user_id'),
-			'permissions'=>array(self::HAS_MANY, 'UserPermission', 'user_id'),
-		);
+		return [
+			'country'=>[self::BELONGS_TO, 'Region', 'country_id'],
+			'province'=>[self::BELONGS_TO, 'Region', 'province_id'],
+			'city'=>[self::BELONGS_TO, 'Region', 'city_id'],
+			'avatar'=>[self::BELONGS_TO, 'UserAvatar', 'avatar_id'],
+			'avatars'=>[self::HAS_MANY, 'UserAvatar', 'user_id'],
+			'permissions'=>[self::HAS_MANY, 'UserPermission', 'user_id'],
+			'wechatUser'=>[self::HAS_ONE, 'WechatUser', 'user_id'],
+		];
 	}
 
 	/**
