@@ -49,6 +49,46 @@ class UserController extends Controller {
 		));
 	}
 
+	public function actionBind() {
+		$user = $this->user;
+		$webUser = Yii::app()->user;
+		$sessionWechatUser = Yii::app()->session->get(Constant::WECHAT_SESSION_KEY);
+		if ($this->isInWechat) {
+			$action = $_POST['action'] ?? '';
+			switch ($action) {
+				case 'bind':
+					if ($user->wechatUser === null) {
+						$wechatUser = WechatUser::getOrCreate($sessionWechatUser);
+						if ($wechatUser->user === null) {
+							$wechatUser->user_id = $user->id;
+							$wechatUser->save();
+							$webUser->setFlash('success', Yii::t('User', 'Bind successfully.'));
+							$this->redirect(['/user/bind']);
+						} else {
+							$webUser->setFlash('danger', Yii::t('User', 'Current Wechat user has been bound to another user.'));
+						}
+					} else {
+						$webUser->setFlash('danger', Yii::t('User', 'You already bound an account.'));
+					}
+					break;
+				case 'unbind':
+					if ($user->wechatUser !== null) {
+						$user->wechatUser->user_id = 0;
+						$user->wechatUser->save();
+						$webUser->setFlash('success', Yii::t('User', 'Unbind successfully.'));
+						$this->redirect(['/user/bind']);
+					} else {
+						$webUser->setFlash('danger', Yii::t('User', 'You haven\'t bound an account.'));
+					}
+					break;
+			}
+		}
+		$this->render('bind', [
+			'user'=>$user,
+			'sessionWechatUser'=>$sessionWechatUser,
+		]);
+	}
+
 	public function actionEdit() {
 		$user = $this->getUser();
 		$model = new EditProfileForm();

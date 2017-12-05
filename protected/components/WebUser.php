@@ -26,6 +26,10 @@ class WebUser extends CWebUser {
 		return !$this->isGuest && $user && ($user->hasPermission($permission) || $this->checkRole($role));
 	}
 
+	public function logout($destroySession = false) {
+		parent::logout($destroySession);
+	}
+
 	public function loginRequired() {
 		$app = Yii::app();
 		$request = $app->getRequest();
@@ -45,6 +49,13 @@ class WebUser extends CWebUser {
 		}
 
 		throw new CHttpException(403, Yii::t('yii', 'Login Required'));
+	}
+
+	protected function restoreFromCookie() {
+		parent::restoreFromCookie();
+		if (!$this->isGuest) {
+			return;
+		}
 	}
 
 	public function getState($key, $defaultValue = null) {
