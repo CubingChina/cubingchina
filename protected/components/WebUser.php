@@ -47,6 +47,13 @@ class WebUser extends CWebUser {
 		throw new CHttpException(403, Yii::t('yii', 'Login Required'));
 	}
 
+	protected function restoreFromCookie() {
+		parent::restoreFromCookie();
+		if (!$this->isGuest) {
+			return;
+		}
+	}
+
 	public function getState($key, $defaultValue = null) {
 		$key = $this->getStateKeyPrefix() . $key;
 		return Yii::app()->session->get($key, $defaultValue);
