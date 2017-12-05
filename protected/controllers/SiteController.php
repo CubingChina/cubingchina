@@ -117,6 +117,24 @@ class SiteController extends Controller {
 		));
 	}
 
+	public function actionWechatLogin() {
+		try {
+			$application = $this->getWechatApplication(['oauth'=>[]]);
+			$user = $application->oauth->user();
+			$wechatUser = WechatUser::getOrCreate($user);
+			$session = Yii::app()->session;
+			$session->add(Constant::WECHAT_SESSION_KEY, $user);
+			if ($wechatUser->user) {
+				$userIdentify = new UserIdentity($wechatUser->user->email, $wechatUser->user->password);
+				$userIdentify->ID = $wechatUser->user->id;
+				Yii::app()->user->login($userIdentify, 30 * 86400);
+			}
+			$this->redirect($session->get(Constant::CURRENT_URL_KEY) ?: Yii::app()->homeUrl);
+		} catch (Exception $e) {
+			$this->redirect(Yii::app()->homeUrl);
+		}
+	}
+
 	public function actionRegister() {
 		$session = Yii::app()->session;
 		$step = $session->get('registerStep', 1);

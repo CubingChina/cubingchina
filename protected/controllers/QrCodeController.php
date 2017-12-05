@@ -38,9 +38,6 @@ class QrCodeController extends Controller {
 		->setSize(300)
 		->setPadding(10)
 		->setErrorCorrection('high')
-		// ->setForegroundColor(array('r' => 0, 'g' => 0, 'b' => 0, 'a' => 0))
-		// ->setBackgroundColor(array('r' => 255, 'g' => 255, 'b' => 255, 'a' => 0))
-		// ->setLabel('My label')
 		->setLabelFontSize(16);
 		$this->send($qrCode, 'signin');
 	}
@@ -64,6 +61,18 @@ class QrCodeController extends Controller {
 		->setErrorCorrection('high')
 		->setLabelFontSize(16);
 		$this->send($qrCode, 'signin');
+	}
+
+	public function actionBind() {
+		$qrCode = new QrCode();
+		$qrCode->setText($this->createUrl(
+			'/user/bind'
+		))
+		->setSize(300)
+		->setPadding(10)
+		->setErrorCorrection('high')
+		->setLabelFontSize(16);
+		$this->send($qrCode, 'bind');
 	}
 
 	private function send($qrCode, $name) {

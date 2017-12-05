@@ -29,7 +29,7 @@ class Controller extends CController {
 	private $_navibar;
 	private $_weiboShareDefaultText;
 	private $_weiboSharePic;
-	private $_wechatApplication;
+	private $_wechatApplications = [];
 
 	public function filters() {
 		return array(
@@ -59,8 +59,9 @@ class Controller extends CController {
 	}
 
 	public function getWechatApplication($config = []) {
-		if ($this->_wechatApplication !== null) {
-			return $this->_wechatApplication;
+		$key = implode('_', array_keys($config));
+		if (isset($this->_wechatApplications[$key])) {
+			return $this->_wechatApplications[$key];
 		}
 		$options = [
 			'debug'=>YII_DEBUG,
@@ -82,7 +83,21 @@ class Controller extends CController {
 			}
 			Yii::app()->clientScript->registerScript('wx.config', "wx.config({$config})");
 		}
-		return $this->_wechatApplication = $application;
+		if (isset($config['oauth'])) {
+			$scopes = $config['oauth']['scopes'] ?? ['snsapi_base'];
+			$application->config->set('oauth.scopes', $scopes);
+			$application->config->set('oauth.callback', CHtml::normalizeUrl(['/site/wechatLogin']));
+			$session = Yii::app()->session;
+			if ($this->action->id !== 'wechatLogin' && $session->get(Constant::WECHAT_SESSION_KEY) === null) {
+				$session->add(Constant::CURRENT_URL_KEY, Yii::app()->request->url);
+				$application->oauth->redirect()->send();
+			}
+		}
+		return $this->_wechatApplications[$key] = $application;
+	}
+
+	public function getIsInWechat() {
+		return preg_match('{MicroMessenger}i', Yii::app()->request->getUserAgent());
 	}
 
 	public function getCacheKey() {
@@ -437,6 +452,13 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
+		if ($this->isInWechat) {
+			$this->getWechatApplication([
+				'oauth'=>[
+					'scopes'=>['snsapi_userinfo'],
+				]
+			]);
+		}
 		if ($this->module === null) {
 			$clientScript = Yii::app()->clientScript;
 			$map = json_decode(file_get_contents(APP_PATH . '/public/f/assets-map.json'), true);

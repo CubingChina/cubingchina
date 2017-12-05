@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.' => '请先点击{here}仔细阅读比赛相应报名规则再来注册报名！如有任何问题请联系比赛主办团队。',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '轮',
@@ -36,6 +35,7 @@ return array (
   'At least one result' => '有官方有效成绩',
   'Base Entry Fee' => '基础报名费',
   'City' => '城市',
+  'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.' => '请先点击{here}仔细阅读比赛相应报名规则再来注册报名！如有任何问题请联系比赛主办团队。',
   'Click {here} to view the competitors list.' => '点击{here}查看选手列表。',
   'Competition Name' => '比赛名字',
   'Competitors' => '选手',

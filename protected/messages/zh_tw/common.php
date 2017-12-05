@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Bind Account' => '',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -36,6 +37,7 @@ return array (
   'Best of 2/Average of 5' => '兩次計最好/五次計平均',
   'Best of 3' => '三次計最好',
   'CR' => '洲際紀錄',
+  'Change Password' => '修改密碼',
   'Competition List' => '賽事列表',
   'Competition Results' => '賽果展示',
   'Competitors' => '參賽選手',
@@ -115,7 +117,6 @@ return array (
   'CNY' => '元',
   'Cancelled' => '已退賽',
   'Certificate' => '證書',
-  'Change Password' => '修改密碼',
   'Chatting has been disabled by administrator.' => '管理員已開啟全員禁言',
   'Choose a competition' => '選擇一場比賽',
   'Cities' => '城市',
