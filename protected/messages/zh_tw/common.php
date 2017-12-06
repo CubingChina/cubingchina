@@ -17,7 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Bind Account' => '',
+  'Bind Account' => '綁定賬號',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
