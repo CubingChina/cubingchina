@@ -424,10 +424,12 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
+              <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
               <div class="clearfix"></div>
               <hr>
               <div class="col-lg-12">
                 <h5>其他选项</h5>
+                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
               </div>
               <?php foreach (Competition::getOptions() as $key=>$value):?>
               <?php echo Html::formGroup(
@@ -441,6 +443,7 @@
                 $form->error($model, $key, array('class'=>'text-danger'))
               );?>
               <?php endforeach; ?>
+              <?php endif; ?>
             </div>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
