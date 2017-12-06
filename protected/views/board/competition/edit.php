@@ -443,6 +443,18 @@
                 $form->error($model, $key, array('class'=>'text-danger'))
               );?>
               <?php endforeach; ?>
+              <?php echo Html::formGroup(
+                $model, 'podiums_num', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiums_num', array(
+                  'label'=>'领奖台人数',
+                )),
+                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
+                  'class'=>'form-control',
+                ]),
+                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
+              );?>
               <?php endif; ?>
             </div>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
@@ -544,6 +556,7 @@
             </div>
             <?php endif; ?>
           </div>
+          <div class="clearfix"></div>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
           </div>
