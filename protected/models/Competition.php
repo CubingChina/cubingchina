@@ -1624,7 +1624,7 @@ class Competition extends ActiveRecord {
 						$result->pos = $count + 1;
 					}
 				}
-				if ($result->pos <= 3) {
+				if ($result->pos <= $this->podiums_num) {
 					$podiums[$eventRound->event][] = clone $result;
 				}
 				if ($this->podiums_greater_china && $result->user->isGreaterChinese()) {
@@ -1649,7 +1649,7 @@ class Competition extends ActiveRecord {
 				} else {
 					$result->pos = $count + 1;
 				}
-				if ($result->pos > 3) {
+				if ($result->pos > $this->podiums_num) {
 					break;
 				}
 				$temp[] = $result;
@@ -1683,6 +1683,7 @@ class Competition extends ActiveRecord {
 			$u12 = strtotime((date('Y', $this->date) - 12) . date('-m-d', $this->date));
 			$u10 = strtotime((date('Y', $this->date) - 10) . date('-m-d', $this->date));
 			$u8 = strtotime((date('Y', $this->date) - 8) . date('-m-d', $this->date));
+			$podiumsChildren = $this->podiums_children && !($this->podiums_u8 || $this->podiums_u10 || $this->podiums_u12);
 			foreach ($results as $result) {
 				//ignore non greater chinese user
 				if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
@@ -1692,7 +1693,7 @@ class Competition extends ActiveRecord {
 				if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
 					$temp[Yii::t('live', 'Females')][] = clone $result;
 				}
-				if ($birthday > $u12 && $this->podiums_children) {
+				if ($birthday > $u12 && $podiumsChildren) {
 					$temp[Yii::t('live', 'Children')][] = clone $result;
 				}
 				if ($result->user->wcaid === '' && $this->podiums_new_comers) {
@@ -1702,18 +1703,18 @@ class Competition extends ActiveRecord {
 					case $birthday > $u8:
 						if ($this->podiums_u8) {
 							$temp[Yii::t('live', 'U8')][] = clone $result;
+							break;
 						}
-						break;
 					case $birthday > $u10:
 						if ($this->podiums_u10) {
 							$temp[Yii::t('live', 'U10')][] = clone $result;
+							break;
 						}
-						break;
 					case $birthday > $u12:
 						if ($this->podiums_u12) {
 							$temp[Yii::t('live', 'U12')][] = clone $result;
+							break;
 						}
-						break;
 				}
 			}
 			foreach ($temp as $group=>$results) {
@@ -1732,7 +1733,7 @@ class Competition extends ActiveRecord {
 					} else {
 						$result->pos = $count + 1;
 					}
-					if ($result->pos > 3) {
+					if ($result->pos > $this->podiums_num) {
 						break;
 					}
 					$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
@@ -2354,6 +2355,7 @@ class Competition extends ActiveRecord {
 			['name, name_zh, date, reg_end', 'required'],
 			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
 			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
+			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
 			['name_zh', 'length', 'max'=>50],
