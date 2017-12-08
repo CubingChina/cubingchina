@@ -184,10 +184,7 @@ class ResultsController extends Controller {
 		$this->pageTitle = array($person->name, 'Personal Page');
 		$this->title = Yii::t('common', 'Personal Page');
 		$this->setWeiboShareDefaultText($person->name . '选手的魔方速拧成绩页 - 粗饼·中国魔方赛事网', false);
-		$data['year'] = date('Y');
-		if (date('z') < Yii::app()->params->summaryDaysToYearEnd) {
-			$data['year']--;
-		}
+		$data['year'] = Summary::getCurrentYear();
 		$this->render('p', $data);
 	}
 

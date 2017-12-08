@@ -9,12 +9,16 @@ class Summary {
 		$this->type = $type;
 	}
 
-	public function isExists($person = null) {
+	public static function getCurrentYear() {
 		$year = date('Y');
-		if ($this->year > $year || $this->year < 2003) {
-			return false;
+		if (date('z') < Yii::app()->params->summaryDaysToYearEnd) {
+			$year--;
 		}
-		if ($this->year == $year && date('z') < Yii::app()->params->summaryDaysToYearEnd) {
+		return $year;
+	}
+
+	public function isExists($person = null) {
+		if ($this->year > self::getCurrentYear() || $this->year < 2003) {
 			return false;
 		}
 		if ($this->type == 'site' && $this->year < 2016) {

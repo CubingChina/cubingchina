@@ -424,10 +424,12 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
+              <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
               <div class="clearfix"></div>
               <hr>
               <div class="col-lg-12">
                 <h5>其他选项</h5>
+                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
               </div>
               <?php foreach (Competition::getOptions() as $key=>$value):?>
               <?php echo Html::formGroup(
@@ -441,6 +443,19 @@
                 $form->error($model, $key, array('class'=>'text-danger'))
               );?>
               <?php endforeach; ?>
+              <?php echo Html::formGroup(
+                $model, 'podiums_num', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiums_num', array(
+                  'label'=>'领奖台人数',
+                )),
+                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
+                  'class'=>'form-control',
+                ]),
+                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
+              );?>
+              <?php endif; ?>
             </div>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
@@ -541,6 +556,7 @@
             </div>
             <?php endif; ?>
           </div>
+          <div class="clearfix"></div>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
           </div>
