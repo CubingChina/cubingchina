@@ -305,9 +305,9 @@ class Controller extends CController {
 					),
 					array(
 						'label'=>Yii::t('common', 'My Annual Summary', [
-							'{year}'=>2016,
+							'{year}'=>Summary::getCurrentYear(),
 						]),
-						'url'=>$isGuest ? '' : array('/summary/person', 'id'=>$user->wcaid, 'year'=>2016),
+						'url'=>$isGuest ? '' : array('/summary/person', 'id'=>$user->wcaid, 'year'=>Summary::getCurrentYear()),
 						'visible'=>!$isGuest && $user->wcaid != '',
 					),
 					array(

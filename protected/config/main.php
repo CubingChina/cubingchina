@@ -19,6 +19,7 @@ $config = [
 		'application.forms.*',
 		'application.widgets.*',
 		'application.statistics.*',
+		'application.summary.*',
 		'application.extensions.debugtb.*',
 		'application.extensions.mail.*',
 	],
