@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  Vue.config.debug = true;
+  // Vue.config.debug = true;
 
   var body = $('body');
   var liveContainer = $('#live-container');
@@ -638,7 +638,7 @@
                 var that = this;
                 var searchText = that.searchText.toLowerCase();
                 return that.results.filter(that.filterCompetitors.bind(that)).sort(function(resA, resB) {
-                  if (!/^\d+$/.test(searchText)) {
+                  if (!/^\d+$/.test(searchText) && !/^\d{4}[A-Z]+\d*$/i.test(searchText)) {
                     var temp = getUser(resA.n).name.toLowerCase().indexOf(searchText) - getUser(resB.n).name.toLowerCase().indexOf(searchText);
                     if (temp == 0) {
                       temp = getUser(resA.n).name < getUser(resB.n).name ? -1 : 1;
@@ -802,6 +802,9 @@
                 }
                 if (/^\d+$/.test(searchText)) {
                   return !!result.n.toString().match(searchText);
+                }
+                if (/^\d{4}[A-Z]+\d*$/i.test(searchText)) {
+                  return !!getUser(result.n).wcaid.toUpperCase().match(searchText.toUpperCase());
                 }
                 return !!getUser(result.n).name.match(new RegExp(searchText, 'i'));
               },
