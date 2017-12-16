@@ -83,6 +83,7 @@ class Summary {
 		$lastDate = strtotime(sprintf('%d-%d-%d', $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay));
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
 			'wca_competition_id'=>$competitionIds,
+			'status'=>Competition::STATUS_SHOW,
 		]);
 		foreach ($chineseCompetitions as $competition) {
 			if (!$competition->isMultiLocation()) {
