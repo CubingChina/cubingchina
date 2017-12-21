@@ -36,20 +36,28 @@ class Summary {
 
 	public function person($person, $data) {
 		//competitions, cities
-		$competitions = 0;
+		$competitionCount = [];
 		$competitionIds = [];
 		$visitedRegionList = [];
 		$visitedCityList = [];
-		$firstCompetition = $lastCompetition = null;
-		foreach ($data['competitions'] as $competition) {
-			if ($competition->year == $this->year) {
-				if ($lastCompetition === null) {
-					$lastCompetition = $competition;
+		$firstCompetition = [];
+		$lastCompetition = [];
+		foreach ([
+			'competed'=>$data['competitions'],
+			'delegated'=>$person->delegatedCompetitions
+		] as $type=>$competitions) {
+			$competitionCount[$type] = 0;
+			foreach ($competitions as $competition) {
+				if ($competition->year != $this->year) {
+					continue;
 				}
-				$firstCompetition = $competition;
-				$competitions++;
+				if (!isset($lastCompetition[$type])) {
+					$lastCompetition[$type] = $competition;
+				}
+				$firstCompetition[$type] = $competition;
 				$competitionIds[] = $competition->id;
-				if (!in_array($competition->countryId, ['XA', 'XE', 'XS'])) {
+				$competitionCount[$type]++;
+				if (!in_array($competition->countryId, ['XA', 'XE', 'XS', 'XM'])) {
 					if (!isset($visitedRegionList[$competition->countryId])) {
 						$visitedRegionList[$competition->countryId] = [
 							'name'=>$competition->countryId,
@@ -72,17 +80,27 @@ class Summary {
 				}
 			}
 		}
-		if ($competitions == 0) {
+		$competitionIds = array_unique($competitionIds);
+		$totalCompetitionCount = count($competitionIds);
+		if (array_sum($competitionCount) == 0) {
 			return [
-				'competitions'=>$competitions,
+				'totalCompetitionCount'=>$totalCompetitionCount,
+				'competitionCount'=>$competitionCount,
 				'person'=>$person,
 				'year'=>$this->year,
 			];
 		}
-		$firstDate = strtotime(sprintf('%d-%d-%d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day));
-		$lastDate = strtotime(sprintf('%d-%d-%d', $lastCompetition->year, $lastCompetition->endMonth, $lastCompetition->endDay));
+		$firstDate = [];
+		$lastDate = [];
+		foreach ($firstCompetition as $type=>$competition) {
+			$firstDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->month, $competition->day));
+		}
+		foreach ($lastCompetition as $type=>$competition) {
+			$lastDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->month, $competition->day));
+		}
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
 			'wca_competition_id'=>$competitionIds,
+			'status'=>Competition::STATUS_SHOW,
 		]);
 		foreach ($chineseCompetitions as $competition) {
 			if (!$competition->isMultiLocation()) {
@@ -118,6 +136,7 @@ class Summary {
 		];
 		$solves = [
 			'total'=>$solvesTemplate,
+			'events'=>[],
 		];
 		$events = [];
 		$rounds = 0;
@@ -233,29 +252,29 @@ class Summary {
 		//closest cubers and seen cubers
 		$db = Yii::app()->wcaDb;
 		$allCubers = $db->createCommand()
-		->select(array(
-			'personId',
-			'personName',
-			'count(DISTINCT competitionId) AS count',
-		))
-		->from('Results')
-		->where(array('in', 'competitionId', $competitionIds))
-		->group('personId')
-		->having('count>1')
-		->order('count ASC, personName DESC')
-		// ->limit(21)
-		->queryAll();
+			->select(array(
+				'personId',
+				'personName',
+				'count(DISTINCT competitionId) AS count',
+			))
+			->from('Results')
+			->where(array('in', 'competitionId', $competitionIds))
+			->group('personId')
+			->having('count>1')
+			->order('count ASC, personName DESC')
+			// ->limit(21)
+			->queryAll();
 		$cuberRegions = $db->createCommand()
-		->select('count(DISTINCT personCountryId)')
-		->from('Results')
-		->where(array('in', 'competitionId', $competitionIds))
-		->queryScalar();
-		$closestCubers = array_values(array_filter(array_slice(array_reverse($allCubers), 0, 11), function($cuber) use($person, $competitions) {
+			->select('count(DISTINCT personCountryId)')
+			->from('Results')
+			->where(array('in', 'competitionId', $competitionIds))
+			->queryScalar();
+		$closestCubers = array_values(array_filter(array_slice(array_reverse($allCubers), 0, 11), function($cuber) use($person) {
 			return $cuber['personId'] != $person->id && $cuber['count'] > 1;
 		}));
 		$onlyOne = [];
 		foreach ($closestCubers as $cuber) {
-			if ($cuber['count'] == $competitions) {
+			if ($cuber['count'] == $totalCompetitionCount) {
 				if ($onlyOne === []) {
 					$onlyOne = $cuber;
 				} else {
@@ -263,7 +282,7 @@ class Summary {
 				}
 			}
 		}
-		if ($competitions == 1 || $onlyOne === []) {
+		if ($totalCompetitionCount == 1 || $onlyOne === []) {
 			$onlyOne = false;
 		}
 		$seenCubers = [];
@@ -274,7 +293,7 @@ class Summary {
 					'count'=>$count,
 					'competitors'=>0,
 				];
-				if ($count == $competitions) {
+				if ($count == $totalCompetitionCount) {
 					$seenCubers[$count]['competitors']--;
 				}
 			}
@@ -282,12 +301,12 @@ class Summary {
 		}
 		ksort($seenCubers);
 		$allSeenCubers = $db->createCommand()
-		->select(array(
-			'count(DISTINCT personId) AS count',
-		))
-		->from('Results')
-		->where(array('in', 'competitionId', $competitionIds))
-		->queryScalar();
+			->select(array(
+				'count(DISTINCT personId) AS count',
+			))
+			->from('Results')
+			->where(array('in', 'competitionId', $competitionIds))
+			->queryScalar();
 		$sum = array_sum(array_map(function($data) {
 			return $data['competitors'];
 		}, $seenCubers));
@@ -305,7 +324,8 @@ class Summary {
 		return [
 			'year'=>$this->year,
 			'person'=>$person,
-			'competitions'=>$competitions,
+			'totalCompetitionCount'=>$totalCompetitionCount,
+			'competitionCount'=>$competitionCount,
 			'firstDate'=>$firstDate,
 			'lastDate'=>$lastDate,
 			'rounds'=>$rounds,

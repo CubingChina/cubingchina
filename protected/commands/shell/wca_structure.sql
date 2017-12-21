@@ -216,3 +216,11 @@ CREATE TABLE IF NOT EXISTS `eligible_country_iso2s_for_championship` (
   KEY `championship_type` (`championship_type`),
   KEY `eligible_country_iso2` (`eligible_country_iso2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `delegates`;
+CREATE TABLE IF NOT EXISTS `delegates` (
+  `wca_id` char(10) NOT NULL,
+  `email` varchar(128) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`wca_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

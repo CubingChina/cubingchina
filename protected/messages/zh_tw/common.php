@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Bind Account' => '綁定賬號',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',
@@ -109,6 +108,7 @@ return array (
   'Average' => '平均',
   'Battle' => '較量',
   'Best' => '最好',
+  'Bind Account' => '綁定賬號',
   'Birthday' => '生日',
   'Board' => '後台',
   'By Competition' => '按比賽',

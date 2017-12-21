@@ -7,27 +7,39 @@
       )); ?>
     </div>
   </div>
-  <?php if ($competitions == 0): ?>
+  <?php if ($totalCompetitionCount == 0): ?>
   <p><?php echo Yii::t('summary', '{genderPronoun} was very lazy so that nothing left.', [
     '{genderPronoun}'=>strtolower($person->gender) == 'f' ? Yii::t('common', 'She') : Yii::t('common', 'He'),
   ]); ?></p>
   <?php else: ?>
   <p>
-    <?php echo Yii::t('summary', 'In the past year ({year}), {personName} competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}, {date}.', [
+    <?php echo Yii::t('summary', 'In the past year ({year}), {personName}{competed}{delegated}.', [
       '{year}'=>$year,
       '{personName}'=>Persons::getLinkByNameNId($person->name, $person->id),
-      '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitions),
-      '{rounds}'=>CHtml::tag('span', ['class'=>'num'], $rounds),
-      '{events}'=>CHtml::tag('span', ['class'=>'num'], $events),
-      '{cs}'=>$competitions > 1 ? 's' : '',
-      '{rs}'=>$rounds > 1 ? 's' : '',
-      '{es}'=>$events > 1 ? 's' : '',
-      '{date}'=>$firstDate == $lastDate ? Yii::t('summary', 'on {date}', [
-        '{date}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate) : date('m月d日', $firstDate),
-      ]) : Yii::t('summary', 'from {date1} to {date2}', [
-        '{date1}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate) : date('m月d日', $firstDate),
-        '{date2}'=>Yii::app()->language == 'en' ? date('M jS', $lastDate) : date('m月d日', $lastDate),
-      ]),
+      '{competed}'=>$competitionCount['competed'] > 0 ? Yii::t('summary', ' competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}, {date}', [
+        '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitionCount['competed']),
+        '{rounds}'=>CHtml::tag('span', ['class'=>'num'], $rounds),
+        '{events}'=>CHtml::tag('span', ['class'=>'num'], $events),
+        '{cs}'=>$competitionCount['competed'] > 1 ? 's' : '',
+        '{rs}'=>$rounds > 1 ? 's' : '',
+        '{es}'=>$events > 1 ? 's' : '',
+        '{date}'=>$firstDate['competed'] == $lastDate['competed'] ? Yii::t('summary', 'on {date}', [
+          '{date}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate['competed']) : date('m月d日', $firstDate['competed']),
+        ]) : Yii::t('summary', 'from {date1} to {date2}', [
+          '{date1}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate['competed']) : date('m月d日', $firstDate['competed']),
+          '{date2}'=>Yii::app()->language == 'en' ? date('M jS', $lastDate['competed']) : date('m月d日', $lastDate['competed']),
+        ]),
+      ]) : '',
+      '{delegated}'=>$competitionCount['delegated'] > 0 ? Yii::t('summary', '{and} delegated {competitions} competition{cs} {date}', [
+        '{and}'=>$competitionCount['competed'] > 0 ? Yii::t('summary', ' and') : '',
+        '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitionCount['delegated']),
+        '{date}'=>$firstDate['delegated'] == $lastDate['delegated'] ? Yii::t('summary', 'on {date}', [
+          '{date}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate['delegated']) : date('m月d日', $firstDate['delegated']),
+        ]) : Yii::t('summary', 'from {date1} to {date2}', [
+          '{date1}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate['delegated']) : date('m月d日', $firstDate['delegated']),
+          '{date2}'=>Yii::app()->language == 'en' ? date('M jS', $lastDate['delegated']) : date('m月d日', $lastDate['delegated']),
+        ]),
+      ]) : '',
     ]); ?>
   </p>
   <?php if (($temp = array_sum($records)) != 0): ?>
@@ -139,6 +151,7 @@
     </div>
   </div>
   <?php endif; ?>
+  <?php if ($competitionCount['competed'] != 0): ?>
   <h2><?php echo Yii::t('statistics', 'Solves/Attempts'); ?></h2>
   <p>
     <?php echo Yii::t('summary', '{genderPronoun} attempted {attempt} solves and completed {solve}.', [
@@ -175,6 +188,7 @@
       )); ?>
     </div>
   </div>
+  <?php endif; ?>
   <?php if ($personalBests != []): ?>
   <h2><?php echo Yii::t('Results', 'Personal Bests'); ?></h2>
   <p>
@@ -310,7 +324,7 @@
       ]),
       '{onlyOne}'=>$onlyOne === false ? '' : Yii::t('summary', ' {cuber} was the only one who accompanied the whole {competitions} competitions.', [
         '{cuber}'=>Persons::getLinkByNameNId($onlyOne["personName"], $onlyOne["personId"]),
-       '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitions),
+       '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $totalCompetitionCount),
       ]),
     ]); ?>
   </p>

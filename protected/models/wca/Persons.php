@@ -514,6 +514,16 @@ class Persons extends ActiveRecord {
 		));
 	}
 
+	public function getDelegatedCompetitions() {
+		if ($this->delegate === null) {
+			return [];
+		}
+		$criteria = new CDbCriteria();
+		$criteria->compare('wcaDelegate', $this->delegate->email, true);
+		$criteria->order = 'year DESC, month DESC, day DESC';
+		return Competitions::model()->findAll($criteria);
+	}
+
 	public function getLocalName() {
 		if (preg_match('{\((.+)\)}', $this->name, $matches)) {
 			return $matches[1];
@@ -528,7 +538,7 @@ class Persons extends ActiveRecord {
 	public function getSummaryYears() {
 		$years = [];
 		$startYear = $this->startYear;
-		$endYear = date('z') < Yii::app()->params->summaryDaysToYearEnd ? date('Y') - 1 : date('Y');
+		$endYear = Summary::getCurrentYear();
 		for ($year = $endYear; $year >= $startYear && $year >= 2003; $year--) {
 			$years[$year] = $year;
 		}
@@ -564,11 +574,10 @@ class Persons extends ActiveRecord {
 	 * @return array relational rules.
 	 */
 	public function relations() {
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'country'=>array(self::BELONGS_TO, 'Countries', 'countryId'),
-		);
+		return [
+			'country'=>[self::BELONGS_TO, 'Countries', 'countryId'],
+			'delegate'=>[self::HAS_ONE, 'Delegates', ['wca_id'=>'id']],
+		];
 	}
 
 	/**

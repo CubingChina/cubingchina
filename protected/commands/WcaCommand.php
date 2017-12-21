@@ -1,10 +1,32 @@
 <?php
+use GuzzleHttp\Client;
 
 class WcaCommand extends CConsoleCommand {
 	private $_panalties = [];
 
 	public function actionUpdate() {
 		$this->log('start update');
+		$client = new Client();
+		try {
+			$response = $client->get('https://www.worldcubeassociation.org/delegates');
+			if ($response->getStatusCode() != 200) {
+				throw new Exception('Error response');
+			}
+			$body = $response->getBody();
+			if (!preg_match_all('|href="mailto:(?P<email>[^"]+)".+?href="/persons/(?P<wcaid>[^"]+)".+?<div class="name">(?P<name>[^<]+)</div>|s', $body, $matches)) {
+				throw new Exception('Error response');
+			}
+			Delegates::model()->deleteAll();
+			foreach ($matches['wcaid'] as $key=>$wcaid) {
+				$delegate = new Delegates();
+				$delegate->wca_id = $wcaid;
+				$delegate->email = $matches['email'][$key];
+				$delegate->name = $matches['name'][$key];
+				$delegate->save();
+			}
+		} catch (Exception $e) {
+		}
+		$this->log('updated delegates');
 		$competitions = Competition::model()->findAllByAttributes(array(
 			'type'=>Competition::TYPE_WCA,
 		), array(
