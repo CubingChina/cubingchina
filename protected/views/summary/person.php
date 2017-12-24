@@ -33,6 +33,7 @@
       '{delegated}'=>$competitionCount['delegated'] > 0 ? Yii::t('summary', '{and} delegated {competitions} competition{cs} {date}', [
         '{and}'=>$competitionCount['competed'] > 0 ? Yii::t('summary', ' and') : '',
         '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitionCount['delegated']),
+        '{cs}'=>$competitionCount['delegated'] > 1 ? 's' : '',
         '{date}'=>$firstDate['delegated'] == $lastDate['delegated'] ? Yii::t('summary', 'on {date}', [
           '{date}'=>Yii::app()->language == 'en' ? date('M jS', $firstDate['delegated']) : date('m月d日', $firstDate['delegated']),
         ]) : Yii::t('summary', 'from {date1} to {date2}', [
