@@ -42,6 +42,8 @@ class Summary {
 		$visitedCityList = [];
 		$firstCompetition = [];
 		$lastCompetition = [];
+		$tempCity = [];
+		$tempRegion = [];
 		foreach ([
 			'competed'=>$data['competitions'],
 			'delegated'=>$person->delegatedCompetitions
@@ -57,7 +59,8 @@ class Summary {
 				$firstCompetition[$type] = $competition;
 				$competitionIds[] = $competition->id;
 				$competitionCount[$type]++;
-				if (!in_array($competition->countryId, ['XA', 'XE', 'XS', 'XM'])) {
+				if (!in_array($competition->countryId, ['XA', 'XE', 'XS', 'XM']) && !isset($tempRegion[$competition->id])) {
+					$tempRegion[$competition->id] = true;
 					if (!isset($visitedRegionList[$competition->countryId])) {
 						$visitedRegionList[$competition->countryId] = [
 							'name'=>$competition->countryId,
@@ -68,7 +71,8 @@ class Summary {
 					}
 					$visitedRegionList[$competition->countryId]['count']++;
 				}
-				if (in_array($competition->countryId, ['Hong Kong', 'Macau'])) {
+				if (in_array($competition->countryId, ['Hong Kong', 'Macau']) && !isset($tempCity[$competition->id])) {
+					$tempCity[$competition->id] = true;
 					if (!isset($visitedCityList[$competition->countryId])) {
 						$visitedCityList[$competition->countryId] = [
 							'name'=>$competition->countryId,
