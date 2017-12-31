@@ -100,7 +100,7 @@ class Summary {
 			$firstDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->month, $competition->day));
 		}
 		foreach ($lastCompetition as $type=>$competition) {
-			$lastDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->month, $competition->day));
+			$lastDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->endMonth, $competition->endDay));
 		}
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
 			'wca_competition_id'=>$competitionIds,
