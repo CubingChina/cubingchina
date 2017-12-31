@@ -13,12 +13,14 @@
     <dt><?php echo Yii::t('Competition', 'WCA Official Page'); ?></dt>
     <dd><?php echo CHtml::link($competition->getWcaUrl(), $competition->getWcaUrl(), array('target'=>'_blank')); ?>
     <?php endif; ?>
+    <?php if ($competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Date'); ?></dt>
     <dd><?php echo $competition->getDisplayDate(); ?></dd>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
     <dd>
       <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
+    <?php endif; ?>
     <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
     <dd>
       <?php if ($competition->isOld()): ?>
@@ -48,11 +50,13 @@
     <dt><?php echo Yii::t('Competition', 'Events and Qualifying Times'); ?></dt>
     <dd>
       <div class="row">
+        <?php if ($competition->tba == Competition::NO): ?>
         <div class="col-lg-12">
           <?php echo Yii::t('Competition', 'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.', [
             '{date}'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),
           ]); ?>
         </div>
+        <?php endif; ?>
         <div class="col-md-4 col-sm-6">
           <?php $this->widget('GridView', [
             'dataProvider'=>new CArrayDataProvider($competition->allEvents, [
@@ -94,10 +98,8 @@
       ), Html::fontAwesome('plus') . 'more'); ?>
       <?php endif; ?>
     </dt>
+    <?php if ($competition->tba == Competition::NO): ?>
     <dd style="height:104px;overflow:hidden">
-      <?php if ($competition->tba == Competition::YES): ?>
-      <?php echo Yii::t('common', 'To be announced'); ?>
-      <?php else: ?>
       <div class="row">
         <div class="col-md-6 col-sm-8">
           <div class="table-responsive">
@@ -141,8 +143,8 @@
             </table>
         </div>
       </div>
-      <?php endif; ?>
     </dd>
+    <?php endif; ?>
     <?php endif; ?>
     <?php if ($competition->person_num > 0): ?>
     <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
