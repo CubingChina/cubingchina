@@ -89,6 +89,7 @@
       }, array_keys($competition->getRegistrationEvents()))); ?>
     </dd>
     <?php endif; ?>
+    <?php if ($competition->tba == Competition::NO): ?>
     <?php if (!$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?>
       <?php if ($competition->tba == Competition::NO): ?>
@@ -98,7 +99,6 @@
       ), Html::fontAwesome('plus') . 'more'); ?>
       <?php endif; ?>
     </dt>
-    <?php if ($competition->tba == Competition::NO): ?>
     <dd style="height:104px;overflow:hidden">
       <div class="row">
         <div class="col-md-6 col-sm-8">
