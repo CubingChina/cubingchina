@@ -34,20 +34,7 @@ class Region extends ActiveRecord {
 	}
 
 	public static function getIconName($country, $iso2) {
-		return CHtml::image('https://i.cubingchina.com/flag/' . strtolower($iso2) . '.png', $country, array('class'=>'flag-icon')) . Yii::t('Region', $country);
-	}
-
-	//wac stands for Wolrd, Asia and China
-	public static function getWACRegions($region = 'China') {
-		$regions = array(
-			'World'=>Yii::t('Region', 'World'),
-			'Asia'=>Yii::t('Region', 'Asia'),
-			'China'=>Yii::t('Region', 'China'),
-		);
-		if (!isset($regions[$region])) {
-			$regions[$region] = $region;
-		}
-		return $regions;
+		return Yii::t('Region', $country);
 	}
 
 	public static function isValidRegion($region) {
