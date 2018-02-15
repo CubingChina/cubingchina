@@ -976,6 +976,7 @@ class ResultsController extends Controller {
 	private function statMostSolves() {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');
+		$year = $this->iGet('year', null);
 		$eventIds = $this->aGet('event');
 		$region = $this->sGet('region', 'China');
 		if (!Region::isValidRegion($region)) {
@@ -983,6 +984,9 @@ class ResultsController extends Controller {
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
+		}
+		if (!array_key_exists($year, Competitions::getYears(false))) {
+			$year = null;
 		}
 		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
 			$eventIds = array();
@@ -992,6 +996,7 @@ class ResultsController extends Controller {
 			'type'=>'all',
 			'eventIds'=>$eventIds,
 			'gender'=>$gender,
+			'year'=>$year,
 			'region'=>$region,
 		);
 		if ($page < 1) {
@@ -1014,6 +1019,7 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'gender'=>$gender,
+			'year'=>$year,
 			'eventIds'=>$eventIds,
 			'region'=>$region,
 		));

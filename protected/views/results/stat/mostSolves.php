@@ -46,6 +46,13 @@
           'class'=>'form-control',
         )); ?>
       </div>
+      <div class="form-group">
+        <label for="year"><?php echo Yii::t('common', 'Year'); ?></label>
+        <?php echo CHtml::dropDownList('year', $year, Competitions::getYears(false), array(
+          'class'=>'form-control',
+          'prompt'=>Yii::t('common', 'All'),
+        )); ?>
+      </div>
       <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
     </div>
   <?php $this->endWidget(); ?>
