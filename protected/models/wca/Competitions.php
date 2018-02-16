@@ -45,10 +45,11 @@ class Competitions extends ActiveRecord {
 		);
 	}
 
-	public static function getYears() {
-		$years = array(
-			'current'=>Yii::t('common', 'Current'),
-		);
+	public static function getYears($current = true) {
+		$years = [];
+		if ($current) {
+			$years['current'] = Yii::t('common', 'Current');
+		}
 		$lastCompetition = self::model()->find(array(
 			'order'=>'year DESC',
 		));

@@ -63,6 +63,11 @@ class MostNumber extends Statistics {
 					break;
 			}
 		}
+		if (isset($statistic['year'])) {
+			$command->andWhere('competitionId LIKE :year', [
+				':year'=>'%' . $statistic['year'],
+			]);
+		}
 		$limit = self::$limit;
 		$cmd = clone $command;
 		$rows = $command
@@ -79,7 +84,7 @@ class MostNumber extends Statistics {
 		}
 		$statistic['count'] = $cmd->select('count(DISTINCT ' . $statistic['group'] . ') AS count')->queryScalar();
 		$statistic['rank'] = ($page - 1) * $limit;
-		$statistic['rankKey'] = 'count'; 
+		$statistic['rankKey'] = 'count';
 		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 
