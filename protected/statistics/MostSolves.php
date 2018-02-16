@@ -38,6 +38,11 @@ class MostSolves extends Statistics {
 					break;
 			}
 		}
+		if (isset($statistic['year'])) {
+			$command->andWhere('competitionId LIKE :year', [
+				':year'=>'%' . $statistic['year'],
+			]);
+		}
 		$cmd = clone $command;
 		$command->group('personId')
 		->order('solve DESC, attempt ASC')
