@@ -693,16 +693,21 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$region = $this->sGet('region', 'China');
 		$gender = $this->sGet('gender', 'all');
+		$year = $this->iGet('year', null);
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
+		if (!array_key_exists($year, Competitions::getYears(false))) {
+			$year = null;
+		}
 		$statistic = array(
 			'class'=>'MostNumber',
 			'region'=>$region,
 			'gender'=>$gender,
+			'year'=>$year,
 			'group'=>'personId',
 		);
 		if ($page < 1) {
@@ -726,6 +731,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'region'=>$region,
 			'gender'=>$gender,
+			'year'=>$year,
 		));
 	}
 
