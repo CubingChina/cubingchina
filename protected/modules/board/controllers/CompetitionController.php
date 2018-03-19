@@ -69,7 +69,7 @@ class CompetitionController extends AdminController {
 			$this->redirect($this->getReferrer());
 		}
 		if ($model->isAccepted()) {
-			$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
+			// $this->redirect(['/board/competition/edit', 'id'=>$model->id]);
 		}
 		if (isset($_POST['Competition']) && ($this->user->isAdministrator() || $this->user->isWCADelegate())) {
 			$status = $model->status;
@@ -176,13 +176,6 @@ class CompetitionController extends AdminController {
 			'show_qrcode',
 			't_shirt',
 			'staff',
-			'podiums_children',
-			'podiums_females',
-			'podiums_new_comers',
-			'podiums_greater_china',
-			'podiums_u8',
-			'podiums_u10',
-			'podiums_u12',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {
@@ -195,9 +188,18 @@ class CompetitionController extends AdminController {
 				}
 				$model->formatDate();
 			}
+			if (isset($_POST['lock']) && $this->user->canLock($model)) {
+				$model->status = Competition::STATUS_LOCKED;
+			}
+			if (isset($_POST['hide']) && $this->user->canHide($model)) {
+				$model->status = Competition::STATUS_HIDE;
+			}
+			if (isset($_POST['announce']) && $this->user->canAnnounce($model)) {
+				$model->status = Competition::STATUS_SHOW;
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
-				$this->redirect($this->getReferrer());
+				$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
 			}
 		}
 		$model->formatDate();
@@ -221,7 +223,7 @@ class CompetitionController extends AdminController {
 		if (isset($_POST['Competition']['associatedEvents'])) {
 			if ($model->updateEvents($_POST['Competition']['associatedEvents'])) {
 				Yii::app()->user->setFlash('success', '更新比赛项目成功');
-				$this->redirect($this->getReferrer());
+				$this->redirect(['/board/competition/event', 'id'=>$model->id]);
 			}
 		}
 		$this->render('event', [
@@ -243,7 +245,7 @@ class CompetitionController extends AdminController {
 			$model->schedules = $_POST['Competition']['schedules'];
 			if ($model->updateSchedules()) {
 				Yii::app()->user->setFlash('success', '更新比赛赛程成功');
-				$this->redirect($this->getReferrer());
+				$this->redirect(['/board/competition/schedule', 'id'=>$model->id]);
 			}
 		}
 		$this->render('schedule', [
@@ -298,6 +300,7 @@ class CompetitionController extends AdminController {
 			'ccaDelegates'=>$ccaDelegates,
 			'organizers'=>$organizers,
 			'types'=>$types,
+			'isOrganizerEditable'=>!($this->user->isOrganizer() && $model->isPublic()),
 		);
 	}
 

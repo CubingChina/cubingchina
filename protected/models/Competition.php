@@ -35,6 +35,7 @@ class Competition extends ActiveRecord {
 	const STATUS_UNCONFIRMED = 3;
 	const STATUS_CONFIRMED = 4;
 	const STATUS_REJECTED = 5;
+	const STATUS_LOCKED = 6;
 
 	const UNPAID = 0;
 	const PAID = 1;
@@ -98,7 +99,7 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public static function getOptions() {
+	public static function getBaseOptions() {
 		return [
 			'fill_passport'=>[
 				'label'=>'选手证件号',
@@ -115,6 +116,11 @@ class Competition extends ActiveRecord {
 			'staff'=>[
 				'label'=>'工作人员报名',
 			],
+		];
+	}
+
+	public static function getOtherOptions() {
+		return [
 			'podiums_children'=>[
 				'label'=>'少儿组',
 			],
@@ -261,7 +267,7 @@ class Competition extends ActiveRecord {
 	public static function getCompetitionByName($name) {
 		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
-			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE],
+			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE, self::STATUS_LOCKED],
 		));
 	}
 
@@ -343,6 +349,7 @@ class Competition extends ActiveRecord {
 			default:
 				return [
 					self::STATUS_HIDE=>'待公示',
+					self::STATUS_LOCKED=>'已锁定',
 					self::STATUS_SHOW=>'已公示',
 				];
 			case 'all':
@@ -351,6 +358,7 @@ class Competition extends ActiveRecord {
 					self::STATUS_CONFIRMED=>'已确认',
 					self::STATUS_REJECTED=>'已拒绝',
 					self::STATUS_HIDE=>'待公示',
+					self::STATUS_LOCKED=>'已锁定',
 					self::STATUS_SHOW=>'已公示',
 				];
 		}
@@ -366,6 +374,18 @@ class Competition extends ActiveRecord {
 
 	public function isPublic() {
 		return $this->status == self::STATUS_SHOW;
+	}
+
+	public function isHide() {
+		return $this->status == self::STATUS_HIDE && !$this->isNewRecord;
+	}
+
+	public function isLocked() {
+		return $this->status == self::STATUS_LOCKED;
+	}
+
+	public function isPublicVisible() {
+		return $this->isPublic() || $this->isLocked();
 	}
 
 	public function isRegistrationStarted() {
@@ -446,7 +466,7 @@ class Competition extends ActiveRecord {
 
 	public function isAccepted() {
 		return !$this->isNewRecord &&
-			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
+			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE || $this->status == self::STATUS_LOCKED);
 	}
 
 	public function isRejected() {
@@ -1219,41 +1239,9 @@ class Competition extends ActiveRecord {
 		switch ($this->status) {
 			case self::STATUS_HIDE:
 			case self::STATUS_SHOW:
-				$buttons[] = CHtml::link(Html::fontAwesome('external-link'), $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);
-				$buttons[] = CHtml::link(Html::fontAwesome('edit'), ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
-				if ($this->status == self::STATUS_HIDE || $isAdministrator) {
-					$buttons[] = CHtml::link(Html::fontAwesome('cube'), ['/board/competition/event', 'id'=>$this->id], ['class'=>'btn btn-sm btn-white btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'项目']);
-				}
-				$buttons[] = CHtml::link(Html::fontAwesome('list-alt'), ['/board/competition/schedule', 'id'=>$this->id], ['class'=>'btn btn-sm btn-default btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'赛程']);
-				if ($this->status == self::STATUS_SHOW) {
-					$buttons[] = CHtml::link(Html::fontAwesome('users'), ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-sm btn-purple btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'报名管理']);
-					if ($this->isRegistrationEnded()) {
-						$buttons[] = CHtml::tag('button', [
-							'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->live ? 'red' : 'green'),
-							'title'=>'开启/关闭成绩直播',
-							'data-id'=>$this->id,
-							'data-toggle'=>'tooltip',
-							'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-							'data-attribute'=>'live',
-							'data-value'=>$this->live,
-							'data-text'=>json_encode([Html::fontAwesome('play'), Html::fontAwesome('stop')]),
-							'data-name'=>$this->name_zh,
-						], !$this->live ? Html::fontAwesome('play') : Html::fontAwesome('stop'));
-					}
-				}
-				if ($isAdministrator) {
-					$buttons[] = CHtml::tag('button', [
-						'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
-						'title'=>'公示/隐藏',
-						'data-id'=>$this->id,
-						'data-toggle'=>'tooltip',
-						'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>json_encode([Html::fontAwesome('eye'), Html::fontAwesome('eye-slash')]),
-						'data-name'=>$this->name_zh,
-					], $this->status == self::STATUS_HIDE ? Html::fontAwesome('eye') : Html::fontAwesome('eye-slash'));
-				}
+			case self::STATUS_LOCKED:
+				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);
+				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
 				break;
 			case self::STATUS_UNCONFIRMED:
 			case self::STATUS_CONFIRMED:
@@ -1905,14 +1893,17 @@ class Competition extends ActiveRecord {
 		return null;
 	}
 
-	public function checkPermission($user) {
+	public function checkPermission($user, $scope = 'default') {
+		if ($user === null) {
+			return false;
+		}
 		if ($user->isAdministrator()) {
 			return true;
 		}
 		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
 			return true;
 		}
-		if (isset($this->organizers[$user->id])) {
+		if ($scope == 'default' && isset($this->organizers[$user->id])) {
 			return true;
 		}
 		return false;
@@ -2264,7 +2255,7 @@ class Competition extends ActiveRecord {
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
-				'status'=>intval($locations['status'][$key]),
+				'status'=>$this->multi_countries ? intval($locations['status'][$key]) : 1,
 			);
 			$index++;
 		}

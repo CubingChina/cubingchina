@@ -1,13 +1,5 @@
 <div class="row">
   <div class="col-lg-12">
-    <div class="page-title">
-      <h1>比赛信息</h1>
-    </div>
-  </div>
-  <!-- /.col-lg-12 -->
-</div>
-<div class="row">
-  <div class="col-lg-12">
     <div class="portlet portlet-default">
       <div class="portlet-heading">
         <div class="portlet-title">
@@ -39,21 +31,27 @@
             ], ['target'=>'_blank']); ?> ！</p>
           </div>
           <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
+            <?php if ($isOrganizerEditable): ?>
+            <li role="presentation"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
+            <?php endif; ?>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
             <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
+            <?php if ($this->user->isAdministrator()): ?>
+            <li><?php echo CHtml::link('项目', ['/board/competition/event', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
+            <?php endif; ?>
+            <li><?php echo CHtml::link('赛程', ['/board/competition/schedule', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
+            <?php if ($model->isPublic()): ?>
+            <li><?php echo CHtml::link('报名', ['/board/registration/index', 'Registration'=>['competition_id'=>$model->id]], ['target'=>'_blank']); ?></li>
+            <li><?php echo CHtml::link('支付', ['/board/pay/index', 'Pay'=>['type_id'=>$model->id]], ['target'=>'_blank']); ?></li>
+            <?php endif; ?>
             <?php endif; ?>
           </ul>
           <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="baseinfo">
-              <?php if ($this->user->isOrganizer() && $model->isPublic()): ?>
-              <div class="col-lg-12">
-                <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:admin@cubingchina.com"><i class="fa fa-envelope"></i>管理员</a></div>
-              </div>
-              <?php endif; ?>
+            <?php if ($isOrganizerEditable): ?>
+            <div role="tabpanel" class="tab-pane" id="baseinfo">
               <div class="col-lg-12">
                 <div class="text-danger">请参阅<?php echo CHtml::link('粗饼网比赛名称规范试行版', '/static/naming conventions.pdf', ['target'=>'_blank']); ?>填写比赛名称。</div>
               </div>
@@ -208,18 +206,6 @@
                 )),
                 Html::activeTextField($model, 'third_stage_ratio'),
                 $form->error($model, 'third_stage_ratio', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'local_type', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'local_type', array(
-                  'label'=>'人数统计选项',
-                )),
-                $form->dropDownList($model, 'local_type', Competition::getLocalTypes(), array(
-                  'class'=>'form-control',
-                )),
-                $form->error($model, 'local_type', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
@@ -429,9 +415,8 @@
               <hr>
               <div class="col-lg-12">
                 <h5>其他选项</h5>
-                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
               </div>
-              <?php foreach (Competition::getOptions() as $key=>$value):?>
+              <?php foreach (Competition::getBaseOptions() as $key=>$value):?>
               <?php echo Html::formGroup(
                 $model, $key, array(
                   'class'=>'col-md-3',
@@ -443,20 +428,9 @@
                 $form->error($model, $key, array('class'=>'text-danger'))
               );?>
               <?php endforeach; ?>
-              <?php echo Html::formGroup(
-                $model, 'podiums_num', array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, 'podiums_num', array(
-                  'label'=>'领奖台人数',
-                )),
-                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
-                  'class'=>'form-control',
-                ]),
-                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
-              );?>
               <?php endif; ?>
             </div>
+            <?php endif; ?>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
               <?php $this->renderPartial('editorTips'); ?>
@@ -542,9 +516,20 @@
               );?>
             </div>
             <div role="tabpanel" class="tab-pane" id="other">
+              <?php if ($model->isRegistrationEnded()): ?>
+              <?php echo Html::formGroup(
+                $model, 'live', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'live', array(
+                  'label'=>'开启直播',
+                )),
+                Html::activeSwitch($model, 'live'),
+                $form->error($model, 'live', array('class'=>'text-danger'))
+              );?>
               <?php echo Html::formGroup(
                 $model, 'live_stream_url', array(
-                  'class'=>'col-lg-12',
+                  'class'=>'col-lg-9',
                 ),
                 $form->labelEx($model, 'live_stream_url', array(
                   'label'=>'直播链接',
@@ -553,12 +538,79 @@
                 CHtml::tag('div', ['class'=>'help-text'], '该链接会展示在成绩直播页面'),
                 $form->error($model, 'live_stream_url', array('class'=>'text-danger'))
               );?>
+              <?php endif; ?>
+              <div class="col-lg-12">
+                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
+              </div>
+              <?php echo Html::formGroup(
+                $model, 'podiums_num', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiums_num', array(
+                  'label'=>'领奖台人数',
+                )),
+                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
+                  'class'=>'form-control',
+                ]),
+                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
+              );?>
+              <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
+              <?php echo Html::formGroup(
+                $model, $key, array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, $key, array(
+                  'label'=>$value['label'],
+                )),
+                Html::activeSwitch($model, $key),
+                $form->error($model, $key, array('class'=>'text-danger'))
+              );?>
+              <?php endforeach; ?>
+              <?php echo Html::formGroup(
+                $model, 'local_type', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'local_type', array(
+                  'label'=>'人数统计选项',
+                )),
+                $form->dropDownList($model, 'local_type', Competition::getLocalTypes(), array(
+                  'class'=>'form-control',
+                )),
+                $form->error($model, 'local_type', array('class'=>'text-danger'))
+              );?>
             </div>
             <?php endif; ?>
           </div>
           <div class="clearfix"></div>
           <div class="col-lg-12">
-            <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
+            <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Save'); ?></button>
+            <?php if ($this->user->canLock($model)): ?>
+            <?php echo CHtml::tag('button', [
+              'type'=>'submit',
+              'name'=>'lock',
+              'value'=>1,
+              'class'=>'btn btn-warning btn-square',
+              'data-message'=>Yii::t('Competition', 'After locking the competition, organizers are no longer able to edit the basic infomation and anyone can visit this competition via url. Please confirm it!'),
+            ], Yii::t('common', 'Lock')); ?>
+            <?php endif; ?>
+            <?php if ($this->user->canHide($model)): ?>
+              <?php echo CHtml::tag('button', [
+              'type'=>'submit',
+              'name'=>'hide',
+              'value'=>1,
+              'class'=>'btn btn-danger btn-square',
+              'data-message'=>Yii::t('Competition', 'The competition will be hide. People can\' visit it without permission.'),
+            ], Yii::t('common', 'Hide')); ?>
+            <?php endif; ?>
+            <?php if ($this->user->canAnnounce($model)): ?>
+              <?php echo CHtml::tag('button', [
+              'type'=>'submit',
+              'name'=>'announce',
+              'value'=>1,
+              'class'=>'btn btn-green btn-square',
+              'data-message'=>Yii::t('Competition', 'Do you confirm this can be announced?'),
+            ], Yii::t('common', 'Announce')); ?>
+            <?php endif; ?>
           </div>
           <?php $this->endWidget(); ?>
         </div>
@@ -587,6 +639,7 @@ $datum = json_encode(array_map(function($user) {
 $organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
+  $('[role="presentation"] a').first().tab('show');
   $('[data-toggle="tooltip"]').tooltip();
   $('.datetime-picker').on('mousedown touchstart', function() {
     $(this).datetimepicker({
@@ -644,6 +697,10 @@ Yii::app()->clientScript->registerScript('competition',
   }).on('changeDate', '#Competition_cancellation_end_time', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_reg_reopen_time').datetimepicker('setStartDate', new Date(+date + 43200000));
+  }).on('click', 'button[data-message]', function(e) {
+    if (!confirm(this.dataset.message)) {
+      e.preventDefault();
+    }
   });
   $('#Competition_date').trigger('changeDate');
   $('#Competition_reg_start').trigger('changeDate');

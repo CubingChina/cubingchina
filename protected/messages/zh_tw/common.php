@@ -17,7 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Announce' => '公示',
   'Fee' => '',
+  'Hide' => '隱藏',
+  'Lock' => '鎖定',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

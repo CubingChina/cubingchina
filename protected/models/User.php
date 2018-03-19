@@ -268,6 +268,24 @@ class User extends ActiveRecord {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
 	}
 
+	public function canLock($competition) {
+		if (!$competition->isHide()) {
+			return false;
+		}
+		return $this->isAdministrator() || $thih->isWCADelegate() && $competition->checkPermission($this, 'ultra');
+	}
+
+	public function canHide($competition) {
+		if ($competition->isHide()) {
+			return false;
+		}
+		return $this->isAdministrator() || $this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && $competition->isLocked();
+	}
+
+	public function canAnnounce($competition) {
+		return $this->isAdministrator() && $competition->isLocked();
+	}
+
 	public function hasSuccessfulRegistration() {
 		return Registration::model()->countByAttributes([
 			'user_id'=>$this->id,
