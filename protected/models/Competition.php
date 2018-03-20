@@ -35,6 +35,7 @@ class Competition extends ActiveRecord {
 	const STATUS_UNCONFIRMED = 3;
 	const STATUS_CONFIRMED = 4;
 	const STATUS_REJECTED = 5;
+	const STATUS_LOCKED = 6;
 
 	const UNPAID = 0;
 	const PAID = 1;
@@ -98,7 +99,7 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public static function getOptions() {
+	public static function getBaseOptions() {
 		return [
 			'fill_passport'=>[
 				'label'=>'选手证件号',
@@ -115,6 +116,11 @@ class Competition extends ActiveRecord {
 			'staff'=>[
 				'label'=>'工作人员报名',
 			],
+		];
+	}
+
+	public static function getOtherOptions() {
+		return [
 			'podiums_children'=>[
 				'label'=>'少儿组',
 			],
@@ -261,7 +267,7 @@ class Competition extends ActiveRecord {
 	public static function getCompetitionByName($name) {
 		return self::model()->with('location', 'location.province', 'location.city')->findByAttributes(array(
 			'alias'=>$name,
-			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE],
+			'status'=>[self::STATUS_SHOW, self::STATUS_HIDE, self::STATUS_LOCKED],
 		));
 	}
 
@@ -343,6 +349,7 @@ class Competition extends ActiveRecord {
 			default:
 				return [
 					self::STATUS_HIDE=>'待公示',
+					self::STATUS_LOCKED=>'已锁定',
 					self::STATUS_SHOW=>'已公示',
 				];
 			case 'all':
@@ -351,6 +358,7 @@ class Competition extends ActiveRecord {
 					self::STATUS_CONFIRMED=>'已确认',
 					self::STATUS_REJECTED=>'已拒绝',
 					self::STATUS_HIDE=>'待公示',
+					self::STATUS_LOCKED=>'已锁定',
 					self::STATUS_SHOW=>'已公示',
 				];
 		}
@@ -366,6 +374,18 @@ class Competition extends ActiveRecord {
 
 	public function isPublic() {
 		return $this->status == self::STATUS_SHOW;
+	}
+
+	public function isHide() {
+		return $this->status == self::STATUS_HIDE && !$this->isNewRecord;
+	}
+
+	public function isLocked() {
+		return $this->status == self::STATUS_LOCKED;
+	}
+
+	public function isPublicVisible() {
+		return $this->isPublic() || $this->isLocked();
 	}
 
 	public function isRegistrationStarted() {
@@ -446,7 +466,7 @@ class Competition extends ActiveRecord {
 
 	public function isAccepted() {
 		return !$this->isNewRecord &&
-			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE);
+			($this->status == self::STATUS_SHOW || $this->status == self::STATUS_HIDE || $this->status == self::STATUS_LOCKED);
 	}
 
 	public function isRejected() {
@@ -1219,41 +1239,9 @@ class Competition extends ActiveRecord {
 		switch ($this->status) {
 			case self::STATUS_HIDE:
 			case self::STATUS_SHOW:
-				$buttons[] = CHtml::link(Html::fontAwesome('external-link'), $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);
-				$buttons[] = CHtml::link(Html::fontAwesome('edit'), ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
-				if ($this->status == self::STATUS_HIDE || $isAdministrator) {
-					$buttons[] = CHtml::link(Html::fontAwesome('cube'), ['/board/competition/event', 'id'=>$this->id], ['class'=>'btn btn-sm btn-white btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'项目']);
-				}
-				$buttons[] = CHtml::link(Html::fontAwesome('list-alt'), ['/board/competition/schedule', 'id'=>$this->id], ['class'=>'btn btn-sm btn-default btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'赛程']);
-				if ($this->status == self::STATUS_SHOW) {
-					$buttons[] = CHtml::link(Html::fontAwesome('users'), ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-sm btn-purple btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'报名管理']);
-					if ($this->isRegistrationEnded()) {
-						$buttons[] = CHtml::tag('button', [
-							'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->live ? 'red' : 'green'),
-							'title'=>'开启/关闭成绩直播',
-							'data-id'=>$this->id,
-							'data-toggle'=>'tooltip',
-							'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-							'data-attribute'=>'live',
-							'data-value'=>$this->live,
-							'data-text'=>json_encode([Html::fontAwesome('play'), Html::fontAwesome('stop')]),
-							'data-name'=>$this->name_zh,
-						], !$this->live ? Html::fontAwesome('play') : Html::fontAwesome('stop'));
-					}
-				}
-				if ($isAdministrator) {
-					$buttons[] = CHtml::tag('button', [
-						'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->status == self::STATUS_HIDE ? 'green' : 'red'),
-						'title'=>'公示/隐藏',
-						'data-id'=>$this->id,
-						'data-toggle'=>'tooltip',
-						'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>json_encode([Html::fontAwesome('eye'), Html::fontAwesome('eye-slash')]),
-						'data-name'=>$this->name_zh,
-					], $this->status == self::STATUS_HIDE ? Html::fontAwesome('eye') : Html::fontAwesome('eye-slash'));
-				}
+			case self::STATUS_LOCKED:
+				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);
+				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
 				break;
 			case self::STATUS_UNCONFIRMED:
 			case self::STATUS_CONFIRMED:
@@ -1905,17 +1893,301 @@ class Competition extends ActiveRecord {
 		return null;
 	}
 
-	public function checkPermission($user) {
+	public function checkPermission($user, $scope = 'default') {
+		if ($user === null) {
+			return false;
+		}
 		if ($user->isAdministrator()) {
 			return true;
 		}
 		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
 			return true;
 		}
-		if (isset($this->organizers[$user->id])) {
+		if ($scope == 'default' && isset($this->organizers[$user->id])) {
 			return true;
 		}
 		return false;
+	}
+
+	public function lock() {
+		$this->status = self::STATUS_LOCKED;
+	}
+
+	public function hide() {
+		$this->status = self::STATUS_HIDE;
+	}
+
+	public function announce() {
+		$this->status = self::STATUS_SHOW;
+		$this->attachEventHandler('onAfterSave', function($event) {
+			if ($this->announcement_posted == self::YES) {
+				return;
+			}
+			$news = new News();
+			$template = NewsTemplate::model()->findByPk(1);
+			if (!$template) {
+				return;
+			}
+			//post annoucement
+			$data = $this->generateTemplateData();
+			$contents = $template->render($data);
+			foreach ($contents as $key=>$value) {
+				if ($news->hasAttribute($key) && $key !== $news->getTableSchema()->primaryKey) {
+					$news->$key = $value;
+				}
+			}
+			$news->description = $news->description_zh = '';
+			$news->user_id = Yii::app()->user->id;
+			$news->date = time();
+			$news->status = News::STATUS_SHOW;
+			$news->formatDate();
+			try {
+				$news->save();
+			} catch (Exception $e) {
+
+			}
+		});
+	}
+
+	public function generateTemplateData() {
+		$data = array(
+			'competition'=>$this,
+		);
+		if ($this->wca_competition_id == '') {
+			return $data;
+		}
+		$events = CHtml::listData(Results::model()->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		), array(
+			'group'=>'eventId',
+			'select'=>'eventId,COUNT(1) AS average'
+		)), 'eventId', 'average');
+		if ($events === array()) {
+			return $data;
+		}
+		arsort($events);
+		$eventId = array_keys($events)[0];
+		$primaryEvents = array(
+			'333',
+			'777',
+			'666',
+			'555',
+			'444',
+			'222',
+			'333fm',
+			'333oh',
+			'333ft',
+			'333bf',
+			'444bf',
+			'555bf',
+		);
+		foreach ($primaryEvents as $event) {
+			if (isset($events[$event])) {
+				$eventId = $event;
+				break;
+			}
+		}
+		$results = Results::model()->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+			'roundTypeId'=>array(
+				'c',
+				'f',
+			),
+			'eventId'=>$eventId,
+			'pos'=>array(1, 2, 3),
+		), array(
+			'order'=>'eventId, pos',
+		));
+		if (count($results) < 3) {
+			return $data;
+		}
+		$event = new stdClass();
+		$event->name = Events::getEventName($eventId);
+		$event->name_zh = Yii::t('event', $event->name);
+		$data['event'] = $event;
+		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
+		foreach ($winners as $key=>$top3) {
+			$data[$top3] = $this->makePerson($results[$key]);
+		}
+		$data['records'] = array();
+		$data['records_zh'] = array();
+		$recordResults = Results::model()->with('event')->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		), array(
+			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
+			'order'=>'event.rank ASC, best ASC, average ASC',
+		));
+		$records = array();
+		foreach ($recordResults as $record) {
+			if ($record->regionalSingleRecord) {
+				$records[$record->regionalSingleRecord]['single'][] = $record;
+			}
+			if ($record->regionalAverageRecord) {
+				$records[$record->regionalAverageRecord]['average'][] = $record;
+			}
+		}
+		foreach ($records as $region=>$record) {
+			if (isset($record['single'])) {
+				$records[$region]['single'] = $this->filterRecords($record['single'], 'best', $region);
+			}
+			if (isset($record['average'])) {
+				$records[$region]['average'] = $this->filterRecords($record['average'], 'average', $region);
+			}
+		}
+		if (isset($records['WR'])) {
+			$rec = $this->makeRecords($records['WR']);
+			$data['records'][] = sprintf('World records: %s.', $rec['en']);
+			$data['records_zh'][] = sprintf('世界纪录：%s。', $rec['zh']);
+		}
+		$continents = array(
+			'AfR'=>array(
+				'en'=>'Africa',
+				'zh'=>'非洲',
+			),
+			'AsR'=>array(
+				'en'=>'Asia',
+				'zh'=>'亚洲',
+			),
+			'OcR'=>array(
+				'en'=>'Oceania',
+				'zh'=>'大洋洲',
+			),
+			'ER'=>array(
+				'en'=>'Europe',
+				'zh'=>'欧洲',
+			),
+			'NAR'=>array(
+				'en'=>'North America',
+				'zh'=>'北美洲',
+			),
+			'SAR'=>array(
+				'en'=>'South America',
+				'zh'=>'南美洲',
+			),
+		);
+		foreach ($continents as $cr=>$continent) {
+			if (isset($records[$cr])) {
+				$rec = $this->makeRecords($records[$cr]);
+				$data['records'][] = sprintf('%s records: %s.', $continent['en'], $rec['en']);
+				$data['records_zh'][] = sprintf('%s纪录：%s。', $continent['zh'], $rec['zh']);
+			}
+		}
+		if (isset($records['NR'])) {
+			$rec = $this->makeRecords($records['NR'], true);
+			foreach ($rec['en'] as $country=>$re) {
+				$re = implode(', ', $re);
+				$data['records'][] =sprintf('%s records: %s.', $country, $re);
+			}
+			foreach ($rec['zh'] as $country=>$re) {
+				$re = implode('；', $re);
+				$country = Yii::t('Region', $country);
+				$data['records_zh'][] =sprintf('%s纪录：%s。', $country, $re);
+			}
+		}
+		$data['records'] = implode('<br>', $data['records']);
+		$data['records_zh'] = implode('<br>', $data['records_zh']);
+		if (!empty($data['records'])) {
+			$data['records'] = '<br>' . $data['records'];
+			$data['records_zh'] = '<br>' . $data['records_zh'];
+		}
+		return $data;
+	}
+
+	private function filterRecords($records, $attribute, $region) {
+		$temp = array();
+		$region = strtoupper($region);
+		foreach ($records as $record) {
+			if ($region !== 'NR') {
+				if (!isset($temp[$record->eventId])) {
+					$temp[$record->eventId] = $record;
+				}
+			} else {
+				if (!isset($temp[$record->personCountryId][$record->eventId])) {
+					$temp[$record->personCountryId][$record->eventId] = $record;
+				}
+			}
+		}
+		if ($region === 'NR') {
+			$temp = call_user_func_array('array_merge', array_map('array_values', $temp));
+		}
+		return $temp;
+	}
+
+	private function makePerson($result, $appendUnit = true, $type = 'both') {
+		switch ($type) {
+			case 'average':
+				$score = $result->average;
+				break;
+			case 'single':
+				$score = $result->best;
+				break;
+			default:
+				$score = $result->average ?: $result->best;
+				break;
+		}
+		$temp = new stdClass();
+		$temp->name = $result->personName;
+		$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
+		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->personId), array());
+		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->personId), array());
+		$temp->score = Results::formatTime($score, $result->eventId);
+		$temp->score_zh = $temp->score;
+		if ($appendUnit && is_numeric($temp->score)) {
+			switch ($result->eventId) {
+				case '333fm':
+					$unit = array(
+						'en'=>' turns',
+						'zh'=>'步',
+					);
+					break;
+				default:
+					$unit = array(
+						'en'=>' seconds',
+						'zh'=>'秒',
+					);
+					break;
+			}
+			$temp->score .= $unit['en'];
+			$temp->score_zh .= $unit['zh'];
+		}
+		return $temp;
+	}
+
+	private function makeRecords($records, $isNR = false) {
+		$rec = array(
+			'en'=>array(),
+			'zh'=>array(),
+		);
+		foreach ($records as $type=>$recs) {
+			foreach ($recs as $result) {
+				$eventName = Events::getEventName($result->eventId);
+				$temp = $this->makePerson($result, true, $type);
+				$enRec = sprintf('%s %s %s (%s)',
+					$temp->link,
+					$eventName,
+					$temp->score,
+					$type
+				);
+				$zhRec = sprintf('%s的%s纪录（%s），创造者%s',
+					Yii::t('event', $eventName),
+					$type === 'average' ? '平均' : '单次',
+					$temp->score_zh,
+					$temp->link_zh
+				);
+				if ($isNR) {
+					$rec['en'][$result->personCountryId][] = $enRec;
+					$rec['zh'][$result->personCountryId][] = $zhRec;
+				} else {
+					$rec['en'][] = $enRec;
+					$rec['zh'][] = $zhRec;
+				}
+			}
+		}
+		if (!$isNR) {
+			$rec['en'] = implode(', ', $rec['en']);
+			$rec['zh'] = implode('；', $rec['zh']);
+		}
+		return $rec;
 	}
 
 	protected function beforeValidate() {
@@ -1936,6 +2208,7 @@ class Competition extends ActiveRecord {
 	}
 
 	protected function afterSave() {
+		parent::afterSave();
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
@@ -2264,7 +2537,7 @@ class Competition extends ActiveRecord {
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
-				'status'=>intval($locations['status'][$key]),
+				'status'=>$this->multi_countries ? intval($locations['status'][$key]) : 1,
 			);
 			$index++;
 		}

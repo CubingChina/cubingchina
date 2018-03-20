@@ -17,8 +17,11 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'After locking the competition, organizers are no longer able to edit the basic infomation and anyone can visit this competition via url. Please confirm it!' => '鎖定之後，主辦方將不能編輯比賽基本信息，比賽也可以通過連接訪問，請確認！',
+  'Do you confirm this can be announced?' => '請確認該比賽可以公示了！',
   'ID' => '',
   'Online Pay' => '',
+  'The competition will be hide. People can\' visit it without permission.' => '隱藏比賽後，沒有權限的人將無法訪問到。',
   ' round' => '輪',
   ' rounds' => '輪',
   'Check Person' => '報名自動審核',

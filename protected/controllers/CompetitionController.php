@@ -365,9 +365,9 @@ class CompetitionController extends Controller {
 		if ($competition === null || strtolower($alias) != strtolower($competition->getUrlName())) {
 			throw new CHttpException(404, 'Error');
 		}
-		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
-		// 	throw new CHttpException(404, 'Error');
-		// }
+		if (!$competition->isPublicVisible() && !$competition->checkPermission($this->user)) {
+			throw new CHttpException(404, 'Error');
+		}
 		$this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
 		$name = $competition->getAttributeValue('name');

@@ -49,13 +49,13 @@
               'sortable'=>false,
               'filter'=>false,
             ],
-            [
-              'name'=>'venue',
-              'type'=>'raw',
-              'value'=>'$data->getLocationInfo("venue")',
-              'sortable'=>false,
-              'filter'=>false,
-            ],
+            // [
+            //   'name'=>'venue',
+            //   'type'=>'raw',
+            //   'value'=>'$data->getLocationInfo("venue")',
+            //   'sortable'=>false,
+            //   'filter'=>false,
+            // ],
             [
               'name'=>'status',
               'type'=>'raw',
