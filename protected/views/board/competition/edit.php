@@ -39,7 +39,7 @@
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
             <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
-            <?php if ($this->user->isAdministrator()): ?>
+            <?php if ($this->user->canEditEvent($model)): ?>
             <li><?php echo CHtml::link('项目', ['/board/competition/event', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
             <?php endif; ?>
             <li><?php echo CHtml::link('赛程', ['/board/competition/schedule', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
@@ -47,6 +47,7 @@
             <li><?php echo CHtml::link('报名', ['/board/registration/index', 'Registration'=>['competition_id'=>$model->id]], ['target'=>'_blank']); ?></li>
             <li><?php echo CHtml::link('支付', ['/board/pay/index', 'Pay'=>['type_id'=>$model->id]], ['target'=>'_blank']); ?></li>
             <?php endif; ?>
+            <li><?php echo CHtml::link('预览', $model->getUrl(), ['target'=>'_blank']); ?></li>
             <?php endif; ?>
           </ul>
           <div class="tab-content">

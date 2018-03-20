@@ -189,13 +189,13 @@ class CompetitionController extends AdminController {
 				$model->formatDate();
 			}
 			if (isset($_POST['lock']) && $this->user->canLock($model)) {
-				$model->status = Competition::STATUS_LOCKED;
+				$model->lock();
 			}
 			if (isset($_POST['hide']) && $this->user->canHide($model)) {
-				$model->status = Competition::STATUS_HIDE;
+				$model->hide();
 			}
 			if (isset($_POST['announce']) && $this->user->canAnnounce($model)) {
-				$model->status = Competition::STATUS_SHOW;
+				$model->announce();
 			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');

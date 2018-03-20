@@ -19,6 +19,27 @@ class NewsTemplate extends ActiveRecord {
 		return implode(' ',  $buttons);
 	}
 
+	public function render($data) {
+		$contents = [];
+		set_error_handler(function($errno, $errstr) {
+			throw new Exception($errstr);
+		});
+		try {
+			foreach ($this->attributes as $key=>$template) {
+				$contents[$key] = preg_replace_callback('|\{([^}]+)\}|i', function($matches) use($data) {
+					$result = $this->evaluateExpression($matches[1], $data);
+					if (is_array($result)) {
+						$result = CHtml::normalizeUrl($result);
+					}
+					return $result;
+				}, $template);
+			}
+		} catch (Exception $e) {
+		}
+		restore_error_handler();
+		return $contents;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

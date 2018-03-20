@@ -1909,6 +1909,287 @@ class Competition extends ActiveRecord {
 		return false;
 	}
 
+	public function lock() {
+		$this->status = self::STATUS_LOCKED;
+	}
+
+	public function hide() {
+		$this->status = self::STATUS_HIDE;
+	}
+
+	public function announce() {
+		$this->status = self::STATUS_SHOW;
+		$this->attachEventHandler('onAfterSave', function($event) {
+			if ($this->announcement_posted == self::YES) {
+				return;
+			}
+			$news = new News();
+			$template = NewsTemplate::model()->findByPk(1);
+			if (!$template) {
+				return;
+			}
+			//post annoucement
+			$data = $this->generateTemplateData();
+			$contents = $template->render($data);
+			foreach ($contents as $key=>$value) {
+				if ($news->hasAttribute($key) && $key !== $news->getTableSchema()->primaryKey) {
+					$news->$key = $value;
+				}
+			}
+			$news->description = $news->description_zh = '';
+			$news->user_id = Yii::app()->user->id;
+			$news->date = time();
+			$news->status = News::STATUS_SHOW;
+			$news->formatDate();
+			try {
+				$news->save();
+			} catch (Exception $e) {
+
+			}
+		});
+	}
+
+	public function generateTemplateData() {
+		$data = array(
+			'competition'=>$this,
+		);
+		if ($this->wca_competition_id == '') {
+			return $data;
+		}
+		$events = CHtml::listData(Results::model()->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		), array(
+			'group'=>'eventId',
+			'select'=>'eventId,COUNT(1) AS average'
+		)), 'eventId', 'average');
+		if ($events === array()) {
+			return $data;
+		}
+		arsort($events);
+		$eventId = array_keys($events)[0];
+		$primaryEvents = array(
+			'333',
+			'777',
+			'666',
+			'555',
+			'444',
+			'222',
+			'333fm',
+			'333oh',
+			'333ft',
+			'333bf',
+			'444bf',
+			'555bf',
+		);
+		foreach ($primaryEvents as $event) {
+			if (isset($events[$event])) {
+				$eventId = $event;
+				break;
+			}
+		}
+		$results = Results::model()->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+			'roundTypeId'=>array(
+				'c',
+				'f',
+			),
+			'eventId'=>$eventId,
+			'pos'=>array(1, 2, 3),
+		), array(
+			'order'=>'eventId, pos',
+		));
+		if (count($results) < 3) {
+			return $data;
+		}
+		$event = new stdClass();
+		$event->name = Events::getEventName($eventId);
+		$event->name_zh = Yii::t('event', $event->name);
+		$data['event'] = $event;
+		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
+		foreach ($winners as $key=>$top3) {
+			$data[$top3] = $this->makePerson($results[$key]);
+		}
+		$data['records'] = array();
+		$data['records_zh'] = array();
+		$recordResults = Results::model()->with('event')->findAllByAttributes(array(
+			'competitionId'=>$this->wca_competition_id,
+		), array(
+			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
+			'order'=>'event.rank ASC, best ASC, average ASC',
+		));
+		$records = array();
+		foreach ($recordResults as $record) {
+			if ($record->regionalSingleRecord) {
+				$records[$record->regionalSingleRecord]['single'][] = $record;
+			}
+			if ($record->regionalAverageRecord) {
+				$records[$record->regionalAverageRecord]['average'][] = $record;
+			}
+		}
+		foreach ($records as $region=>$record) {
+			if (isset($record['single'])) {
+				$records[$region]['single'] = $this->filterRecords($record['single'], 'best', $region);
+			}
+			if (isset($record['average'])) {
+				$records[$region]['average'] = $this->filterRecords($record['average'], 'average', $region);
+			}
+		}
+		if (isset($records['WR'])) {
+			$rec = $this->makeRecords($records['WR']);
+			$data['records'][] = sprintf('World records: %s.', $rec['en']);
+			$data['records_zh'][] = sprintf('世界纪录：%s。', $rec['zh']);
+		}
+		$continents = array(
+			'AfR'=>array(
+				'en'=>'Africa',
+				'zh'=>'非洲',
+			),
+			'AsR'=>array(
+				'en'=>'Asia',
+				'zh'=>'亚洲',
+			),
+			'OcR'=>array(
+				'en'=>'Oceania',
+				'zh'=>'大洋洲',
+			),
+			'ER'=>array(
+				'en'=>'Europe',
+				'zh'=>'欧洲',
+			),
+			'NAR'=>array(
+				'en'=>'North America',
+				'zh'=>'北美洲',
+			),
+			'SAR'=>array(
+				'en'=>'South America',
+				'zh'=>'南美洲',
+			),
+		);
+		foreach ($continents as $cr=>$continent) {
+			if (isset($records[$cr])) {
+				$rec = $this->makeRecords($records[$cr]);
+				$data['records'][] = sprintf('%s records: %s.', $continent['en'], $rec['en']);
+				$data['records_zh'][] = sprintf('%s纪录：%s。', $continent['zh'], $rec['zh']);
+			}
+		}
+		if (isset($records['NR'])) {
+			$rec = $this->makeRecords($records['NR'], true);
+			foreach ($rec['en'] as $country=>$re) {
+				$re = implode(', ', $re);
+				$data['records'][] =sprintf('%s records: %s.', $country, $re);
+			}
+			foreach ($rec['zh'] as $country=>$re) {
+				$re = implode('；', $re);
+				$country = Yii::t('Region', $country);
+				$data['records_zh'][] =sprintf('%s纪录：%s。', $country, $re);
+			}
+		}
+		$data['records'] = implode('<br>', $data['records']);
+		$data['records_zh'] = implode('<br>', $data['records_zh']);
+		if (!empty($data['records'])) {
+			$data['records'] = '<br>' . $data['records'];
+			$data['records_zh'] = '<br>' . $data['records_zh'];
+		}
+		return $data;
+	}
+
+	private function filterRecords($records, $attribute, $region) {
+		$temp = array();
+		$region = strtoupper($region);
+		foreach ($records as $record) {
+			if ($region !== 'NR') {
+				if (!isset($temp[$record->eventId])) {
+					$temp[$record->eventId] = $record;
+				}
+			} else {
+				if (!isset($temp[$record->personCountryId][$record->eventId])) {
+					$temp[$record->personCountryId][$record->eventId] = $record;
+				}
+			}
+		}
+		if ($region === 'NR') {
+			$temp = call_user_func_array('array_merge', array_map('array_values', $temp));
+		}
+		return $temp;
+	}
+
+	private function makePerson($result, $appendUnit = true, $type = 'both') {
+		switch ($type) {
+			case 'average':
+				$score = $result->average;
+				break;
+			case 'single':
+				$score = $result->best;
+				break;
+			default:
+				$score = $result->average ?: $result->best;
+				break;
+		}
+		$temp = new stdClass();
+		$temp->name = $result->personName;
+		$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
+		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->personId), array());
+		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->personId), array());
+		$temp->score = Results::formatTime($score, $result->eventId);
+		$temp->score_zh = $temp->score;
+		if ($appendUnit && is_numeric($temp->score)) {
+			switch ($result->eventId) {
+				case '333fm':
+					$unit = array(
+						'en'=>' turns',
+						'zh'=>'步',
+					);
+					break;
+				default:
+					$unit = array(
+						'en'=>' seconds',
+						'zh'=>'秒',
+					);
+					break;
+			}
+			$temp->score .= $unit['en'];
+			$temp->score_zh .= $unit['zh'];
+		}
+		return $temp;
+	}
+
+	private function makeRecords($records, $isNR = false) {
+		$rec = array(
+			'en'=>array(),
+			'zh'=>array(),
+		);
+		foreach ($records as $type=>$recs) {
+			foreach ($recs as $result) {
+				$eventName = Events::getEventName($result->eventId);
+				$temp = $this->makePerson($result, true, $type);
+				$enRec = sprintf('%s %s %s (%s)',
+					$temp->link,
+					$eventName,
+					$temp->score,
+					$type
+				);
+				$zhRec = sprintf('%s的%s纪录（%s），创造者%s',
+					Yii::t('event', $eventName),
+					$type === 'average' ? '平均' : '单次',
+					$temp->score_zh,
+					$temp->link_zh
+				);
+				if ($isNR) {
+					$rec['en'][$result->personCountryId][] = $enRec;
+					$rec['zh'][$result->personCountryId][] = $zhRec;
+				} else {
+					$rec['en'][] = $enRec;
+					$rec['zh'][] = $zhRec;
+				}
+			}
+		}
+		if (!$isNR) {
+			$rec['en'] = implode(', ', $rec['en']);
+			$rec['zh'] = implode('；', $rec['zh']);
+		}
+		return $rec;
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		return parent::beforeValidate();
@@ -1927,6 +2208,7 @@ class Competition extends ActiveRecord {
 	}
 
 	protected function afterSave() {
+		parent::afterSave();
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
