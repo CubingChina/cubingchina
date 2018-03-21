@@ -29,6 +29,7 @@ class Pay extends ActiveRecord {
 	const CHANNEL_BALIPAY = 'balipay';
 
 	const TYPE_REGISTRATION = 0;
+	const TYPE_APPLICATION = 1;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
