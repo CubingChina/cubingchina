@@ -5,6 +5,7 @@ class ApiModule extends CWebModule {
 		$this->setImport(array(
 			'api.components.*',
 		));
+		$this->setViewPath(Yii::getPathOfAlias('application.views.api'));
 		Yii::app()->errorHandler->errorAction = 'api/default/error';
 	}
 

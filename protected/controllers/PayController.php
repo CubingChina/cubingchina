@@ -56,6 +56,15 @@ class PayController extends Controller {
 					$competition = $model->competition;
 					$this->redirect($competition->getUrl('registration'));
 					break;
+				case Pay::TYPE_APPLICATION:
+					$params = json_decode($model->params);
+					if (!isset($params->return_url)) {
+						break;
+					}
+					$application = $model->application;
+					$returnParams = $application->generateReturnParams($model);
+					$this->redirect($params->return_url . '?' . http_build_query($returnParams));
+					break;
 			}
 		}
 		$this->render('result', array(

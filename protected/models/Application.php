@@ -19,7 +19,7 @@ class Application extends ActiveRecord {
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
 
-	const MAX_TIMESTAMP_RANGE = 3000000;
+	const MAX_TIMESTAMP_RANGE = 300;
 
 	public static function getAllStatus() {
 		return [
@@ -67,15 +67,38 @@ class Application extends ActiveRecord {
 
 	public function checkSignature($params) {
 		$sign = $params['sign'] ?? '';
-		unset($params['sign']);
+		$paramsSign = $this->sign($params);
+		$result =  strtolower($sign) === $paramsSign;
+		return $result;
+	}
+
+	public function sign($params) {
+		if (isset($params['sign'])) {
+			unset($params['sign']);
+		}
 		ksort($params);
-		$str = implode('=', array_map(function($key, $value) {
+		$str = implode('&', array_map(function($key, $value) {
 			return $key . '=' . $value;
 		}, array_keys($params), $params));
 		$str .= $this->secret;
-		$paramsSign = hash('sha256', $str);
-		$result =  strtolower($sign) === $paramsSign;
-		return $result;
+		return hash('sha256', $str);
+	}
+
+	public function generateReturnParams($pay) {
+		$payParams = json_decode($pay->params);
+		$params = [
+			'trade_no'=>$pay->order_no,
+			'order_no'=>$payParams->order_no,
+			'amount'=>$pay->amount,
+			'paid_amount'=>$pay->paid_amount,
+			'paid_time'=>$pay->paid_time,
+		];
+		$params['sign'] = $this->sign($params);
+		return $params;
+	}
+
+	public function generateNotifyParams($pay) {
+		return $this->generateReturnParams($pay);
 	}
 
 	public function getOrderNo($orderNo) {

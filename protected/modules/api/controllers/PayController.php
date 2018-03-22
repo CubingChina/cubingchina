@@ -55,7 +55,12 @@ class PayController extends ApiController {
 			if (!$pay->save()) {
 				$this->ajaxError(Constant::STATUS_INTERNAL_ERROR);
 			}
+		} else {
+			if ($pay->isPaid()) {
+				$this->ajaxError(Constant::STATUS_PAYMENT_ALREADY_MADE);
+			}
 		}
-		$this->ajaxOK($pay->generateParams($isMobile));
+		$this->ajaxOk($pay->generateParams($isMobile));
+		// $this->render('sendForm', ['form'=>$pay->generateParams($isMobile)]);
 	}
 }

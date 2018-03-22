@@ -11,6 +11,7 @@ class Constant {
 	const STATUS_TIMESTAMP_OUT_OF_RANGE = 1001;
 	const STATUS_WRONG_SIGNATURE = 1002;
 	const STATUS_WRONG_PARAMS = 1003;
+	const STATUS_PAYMENT_ALREADY_MADE = 1004;
 
 	const WECHAT_SESSION_KEY = 'wechat_user';
 	const CURRENT_URL_KEY = 'current_url';
@@ -25,6 +26,7 @@ class Constant {
 		self::STATUS_TIMESTAMP_OUT_OF_RANGE=>'Timestamp out of Range',
 		self::STATUS_WRONG_SIGNATURE=>'Wrong Signature',
 		self::STATUS_WRONG_PARAMS=>'Wrong Params',
+		self::STATUS_PAYMENT_ALREADY_MADE=>'Payment has already been made',
 
 	);
 
