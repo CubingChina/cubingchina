@@ -92,6 +92,7 @@ class Application extends ActiveRecord {
 			'amount'=>$pay->amount,
 			'paid_amount'=>$pay->paid_amount,
 			'paid_time'=>$pay->paid_time,
+			'timestamp'=>time(),
 		];
 		$params['sign'] = $this->sign($params);
 		return $params;
