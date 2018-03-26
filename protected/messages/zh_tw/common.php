@@ -17,8 +17,10 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Application' => '',
   'Fee' => '',
   'WCA ID' => '',
+  'You are being redirected, please wait patiently.' => '正在為您跳轉，請耐心等待。',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',

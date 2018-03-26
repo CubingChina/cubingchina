@@ -63,7 +63,7 @@ class PayController extends Controller {
 					}
 					$application = $model->application;
 					$returnParams = $application->generateReturnParams($model);
-					$this->redirect($params->return_url . '?' . http_build_query($returnParams));
+					$this->sendForm($params->return_url, $returnParams);
 					break;
 			}
 		}

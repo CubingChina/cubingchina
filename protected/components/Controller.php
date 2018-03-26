@@ -645,6 +645,13 @@ class Controller extends CController {
 		$this->ajaxReturn($status, null, $message);
 	}
 
+	public function sendForm($url, $params) {
+		$this->render('/common/sendForm', [
+			'url'=>$url,
+			'params'=>$params,
+		]);
+	}
+
 	/**
 	 * Returns the named GET parameter value.
 	 * If the GET parameter does not exist, the second parameter to this method will be returned.
