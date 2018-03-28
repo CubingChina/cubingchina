@@ -176,6 +176,7 @@ class CompetitionController extends AdminController {
 			'show_qrcode',
 			't_shirt',
 			'staff',
+			'status',
 		);
 		if (isset($_POST['Competition'])) {
 			foreach ($cannotEditAttr as $attr) {

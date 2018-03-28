@@ -1900,10 +1900,10 @@ class Competition extends ActiveRecord {
 		if ($user->isAdministrator()) {
 			return true;
 		}
-		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
+		if ($user->isWCADelegate() && array_search($user->id, $this->delegates) !== false) {
 			return true;
 		}
-		if ($scope == 'default' && isset($this->organizers[$user->id])) {
+		if ($scope == 'default' && array_search($user->id, $this->organizers) !== false) {
 			return true;
 		}
 		return false;
