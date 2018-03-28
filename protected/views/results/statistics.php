@@ -7,23 +7,19 @@
       <p class="text-muted"><small><?php echo Yii::t('statistics', 'Generated on {time}.', array(
         '{time}'=>date('Y-m-d H:i:s', $time),
       )); ?></small></p>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6">
-      <?php echo CHtml::dropdownList('statistics', '', array_combine(array_map(function($statistic) {
-        return $statistic['id'];
-      }, $statistics), array_map(function($name) {
-        return Yii::t('statistics', $name);
-      }, array_keys($statistics))), array(
-        'class'=>'form-control',
-      )); ?>
+      <ul class="list-unstyled">
+        <?php foreach ($statistics as $statistic): ?>
+        <li><?php echo CHtml::link(Yii::t('statistics', $statistic['name']), '#' . $statistic['id']); ?></li>
+        <?php endforeach; ?>
+      </ul>
     </div>
     <div class="clearfix"></div>
     <?php $i = 0; ?>
-    <?php foreach ($statistics as $name=>$statistic): ?>
+    <?php foreach ($statistics as $statistic): ?>
     <div class="<?php echo $statistic['class']; ?>" id= "<?php echo $statistic['id']; ?>">
     <?php if (isset($statistic['columns'])): ?>
       <h3>
-        <?php echo Yii::t('statistics', $name); ?>
+        <?php echo Yii::t('statistics', $statistic['name']); ?>
         <?php if (isset($statistic['more'])): ?>
         <small><?php echo CHtml::link(Yii::t('common', 'more') . Html::fontAwesome('angle-double-right', 'b'), $statistic['more'], array('class'=>'more')); ?></small>
         <?php endif; ?>
@@ -35,7 +31,7 @@
       )); ?>
     <?php else: ?>
       <h3 class="pull-left">
-        <?php echo Yii::t('statistics', $name); ?>
+        <?php echo Yii::t('statistics', $statistic['name']); ?>
       </h3>
       <div class="pull-left stat-select">
         <?php if (isset($statistic['selectHandler'])) {
@@ -68,6 +64,17 @@
     <div class="clearfix hidden-sm"></div>
     <?php endif; ?>
     <?php endforeach; ?>
+    <?php $this->widget('CLinkPager', [
+      'itemCount'=>count(Statistics::$lists),
+      'pageSize'=>1,
+      'selectedPageCssClass'=>'active',
+      'hiddenPageCssClass'=>'disabled',
+      'header'=>'',
+      'htmlOptions'=>array(
+        'class'=>'pagination text-center',
+      ),
+      'cssFile'=>false,
+    ]); ?>
   </div>
 </div>
 <?php
@@ -86,9 +93,6 @@ Yii::app()->clientScript->registerScript('statistics',
       more.attr('href', addParams(more.attr('href'), params));
     }
   }).trigger('change');
-  $('select[name="statistics"]').on('change', function() {
-    location.href = '#' + $(this).val();
-  });
   function addParams(url, params) {
     var oldParams = {};
     url = url.split('?');

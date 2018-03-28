@@ -626,6 +626,7 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
+		$page = $this->iGet('page', 1);
 		$name = $this->sGet('name');
 		$names = array_map('ucfirst', explode('-', $name));
 		$class = implode('', $names);
@@ -638,7 +639,7 @@ class ResultsController extends Controller {
 				throw new CHttpException(404);
 			}
 		}
-		$data = Statistics::getData();
+		$data = Statistics::getData($page);
 		extract($data);
 		$this->pageTitle = array('Fun Statistics');
 		$this->title = 'Fun Statistics';

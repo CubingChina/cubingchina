@@ -3,221 +3,254 @@
 class Statistics {
 
 	const CACHE_EXPIRE = 604800;
+	const SIZE = 4;
 
 	public static $limit = 10;
 	public static $offset = 0;
 
 	private static $_competitions = array();
-
 	public static $lists = [
-		'Sum of all single ranks'=>[
-			'type'=>'single',
-			'region'=>'China',
-			'class'=>'SumOfRanks',
-			'more'=>[
-				'/results/statistics',
-				'name'=>'sum-of-ranks',
+		[
+			[
+				'name'=>'Sum of all single ranks',
 				'type'=>'single',
+				'region'=>'China',
+				'class'=>'SumOfRanks',
+				'more'=>[
+					'/results/statistics',
+					'name'=>'sum-of-ranks',
+					'type'=>'single',
+				],
 			],
-		],
-		'Sum of all average ranks'=>[
-			'type'=>'average',
-			'class'=>'SumOfRanks',
-			'region'=>'China',
-			'more'=>[
-				'/results/statistics',
-				'name'=>'sum-of-ranks',
-				'type'=>'average'
-			],
-		],
-		'Sum of 2x2 to 5x5 single ranks'=>[
-			'type'=>'single',
-			'region'=>'China',
-			'class'=>'SumOfRanks',
-			'eventIds'=>['222', '333', '444', '555'],
-			'width'=>6,
-		],
-		'Sum of 2x2 to 5x5 average ranks'=>[
-			'type'=>'average',
-			'region'=>'China',
-			'class'=>'SumOfRanks',
-			'eventIds'=>['222', '333', '444', '555'],
-			'width'=>6,
-		],
-		'Sum of country single ranks'=>[
-			'type'=>'single',
-			'class'=>'SumOfCountryRanks',
-			'more'=>[
-				'/results/statistics',
-				'name'=>'sum-of-country-ranks',
-				'type'=>'single',
-			],
-		],
-		'Sum of country average ranks'=>[
-			'type'=>'average',
-			'class'=>'SumOfCountryRanks',
-			'more'=>[
-				'/results/statistics',
-				'name'=>'sum-of-country-ranks',
-				'type'=>'average'
-			],
-		],
-		'Best "medal collection" of all events'=>[
-			'type'=>'all',
-			'class'=>'MedalCollection',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'medal-collection',
-			],
-		],
-		'Best "medal collection" in each event'=>[
-			'type'=>'each',
-			'class'=>'MedalCollection',
-			'width'=>6,
-		],
-		'Best "uncrowned kings" in each event'=>[
-			'type'=>'all',
-			'class'=>'BestMisser',
-			'exclude'=>'pos',
-			'pos'=>[1],
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'uncrowned-kings',
-			],
-		],
-		'Best "podium missers" in each event'=>[
-			'type'=>'all',
-			'class'=>'BestMisser',
-			'exclude'=>'pos',
-			'pos'=>[1, 2, 3],
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'podium-missers',
-			],
-		],
-		'Best "record missers" in each event'=>[
-			'type'=>'all',
-			'class'=>'BestMisser',
-			'exclude'=>'record',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'record-missers',
-			],
-		],
-		'All Events Achiever'=>[
-			'class'=>'AllEventsAchiever',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'all-events-achiever',
-			],
-		],
-		'Appearances in top 100 Chinese single results of'=>[
-			'count'=>true,
-			'region'=>'China',
-			'type'=>'single',
-			'class'=>'Top100',
-			'event'=>'333',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'top-100',
-				'event'=>'333',
-				'type'=>'single',
-			],
-		],
-		'Appearances in top 100 Chinese average results of'=>[
-			'count'=>true,
-			'region'=>'China',
-			'type'=>'average',
-			'class'=>'Top100',
-			'event'=>'333',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'top-100',
-				'event'=>'333',
+			[
+				'name'=>'Sum of all average ranks',
 				'type'=>'average',
+				'class'=>'SumOfRanks',
+				'region'=>'China',
+				'more'=>[
+					'/results/statistics',
+					'name'=>'sum-of-ranks',
+					'type'=>'average'
+				],
+			],
+			[
+				'name'=>'Sum of 2x2 to 5x5 single ranks',
+				'type'=>'single',
+				'region'=>'China',
+				'class'=>'SumOfRanks',
+				'eventIds'=>['222', '333', '444', '555'],
+				'width'=>6,
+			],
+			[
+				'name'=>'Sum of 2x2 to 5x5 average ranks',
+				'type'=>'average',
+				'region'=>'China',
+				'class'=>'SumOfRanks',
+				'eventIds'=>['222', '333', '444', '555'],
+				'width'=>6,
+			],
+			[
+				'name'=>'Sum of country single ranks',
+				'type'=>'single',
+				'class'=>'SumOfCountryRanks',
+				'more'=>[
+					'/results/statistics',
+					'name'=>'sum-of-country-ranks',
+					'type'=>'single',
+				],
+			],
+			[
+				'name'=>'Sum of country average ranks',
+				'type'=>'average',
+				'class'=>'SumOfCountryRanks',
+				'more'=>[
+					'/results/statistics',
+					'name'=>'sum-of-country-ranks',
+					'type'=>'average'
+				],
+			],
+			[
+				'name'=>'Best "medal collection" of all events',
+				'type'=>'all',
+				'class'=>'MedalCollection',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'medal-collection',
+				],
+			],
+			[
+				'name'=>'Best "medal collection" in each event',
+				'type'=>'each',
+				'class'=>'MedalCollection',
+				'width'=>6,
 			],
 		],
-		'Best podiums in Chinese competitions'=>[
-			'class'=>'BestPodiums',
-			'eventId'=>'333',
-			'type'=>'all',
-			'more'=>[
-				'/results/statistics',
-				'name'=>'best-podiums',
+		[
+			[
+				'name'=>'Appearances in top 100 Chinese single results of',
+				'count'=>true,
+				'region'=>'China',
+				'type'=>'single',
+				'class'=>'Top100',
+				'event'=>'333',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'top-100',
+					'event'=>'333',
+					'type'=>'single',
+				],
+			],
+			[
+				'name'=>'Appearances in top 100 Chinese average results of',
+				'count'=>true,
+				'region'=>'China',
+				'type'=>'average',
+				'class'=>'Top100',
+				'event'=>'333',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'top-100',
+					'event'=>'333',
+					'type'=>'average',
+				],
+			],
+			[
+				'name'=>'Best podiums in Chinese competitions',
+				'class'=>'BestPodiums',
+				'eventId'=>'333',
+				'type'=>'all',
+				'more'=>[
+					'/results/statistics',
+					'name'=>'best-podiums',
+				],
+			],
+			[
+				'name'=>'Records set by Chinese competitors',
+				'class'=>'RecordsSet',
+				'group'=>'personId',
+				'width'=>6,
+			],
+			[
+				'name'=>'Records set in Chinese competitions',
+				'class'=>'RecordsSet',
+				'group'=>'competitionId',
+				'width'=>6,
+			],
+			[
+				'name'=>'Oldest standing of current Chinese records in all events',
+				'class'=>'OldestStandingRecords',
 			],
 		],
-		'Records set by Chinese competitors'=>[
-			'class'=>'RecordsSet',
-			'group'=>'personId',
-			'width'=>6,
-		],
-		'Records set in Chinese competitions'=>[
-			'class'=>'RecordsSet',
-			'group'=>'competitionId',
-			'width'=>6,
-		],
-		'Oldest standing of current Chinese records in all events'=>[
-			'class'=>'OldestStandingRecords',
-		],
-		'Most competitions by one person'=>[
-			'class'=>'MostNumber',
-			'group'=>'personId',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'most-competitions',
+		[
+			[
+				'name'=>'Most competitions by one person',
+				'class'=>'MostNumber',
+				'group'=>'personId',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-competitions',
+				],
+			],
+			[
+				'name'=>'Most persons in one competition',
+				'class'=>'MostNumber',
+				'group'=>'competitionId',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-persons',
+				],
+			],
+			[
+				'name'=>'Most personal solves in one competition',
+				'class'=>'MostSolves',
+				'type'=>'person',
+				'width'=>6,
+			],
+			[
+				'name'=>'Most solves in one competition',
+				'class'=>'MostSolves',
+				'type'=>'competition',
+				'width'=>6,
+			],
+			[
+				'name'=>'Most personal solves',
+				'class'=>'MostSolves',
+				'type'=>'all',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-solves',
+				],
+			],
+			[
+				'name'=>'Most personal solves in each year',
+				'class'=>'MostSolves',
+				'type'=>'year',
+				'width'=>6,
 			],
 		],
-		'Most persons in one competition'=>[
-			'class'=>'MostNumber',
-			'group'=>'competitionId',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'most-persons',
+		[
+			[
+				'name'=>'Best "uncrowned kings" in each event',
+				'type'=>'all',
+				'class'=>'BestMisser',
+				'exclude'=>'pos',
+				'pos'=>[1],
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'uncrowned-kings',
+				],
 			],
-		],
-		'Most personal solves in one competition'=>[
-			'class'=>'MostSolves',
-			'type'=>'person',
-			'width'=>6,
-		],
-		'Most solves in one competition'=>[
-			'class'=>'MostSolves',
-			'type'=>'competition',
-			'width'=>6,
-		],
-		'Most personal solves'=>[
-			'class'=>'MostSolves',
-			'type'=>'all',
-			'width'=>6,
-			'more'=>[
-				'/results/statistics',
-				'name'=>'most-solves',
+			[
+				'name'=>'Best "podium missers" in each event',
+				'type'=>'all',
+				'class'=>'BestMisser',
+				'exclude'=>'pos',
+				'pos'=>[1, 2, 3],
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'podium-missers',
+				],
 			],
-		],
-		'Most personal solves in each year'=>[
-			'class'=>'MostSolves',
-			'type'=>'year',
-			'width'=>6,
+			[
+				'name'=>'Best "record missers" in each event',
+				'type'=>'all',
+				'class'=>'BestMisser',
+				'exclude'=>'record',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'record-missers',
+				],
+			],
+			[
+				'name'=>'All Events Achiever',
+				'class'=>'AllEventsAchiever',
+				'width'=>6,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'all-events-achiever',
+				],
+			],
 		],
 	];
 
-	public static function getData($removeCache = false) {
+	public static function getData($page = 1) {
+		$page = intval(min(max(1, $page), count(self::$lists)));
 		$cache = Yii::app()->cache;
-		$cacheKey = 'results_statistics_data';
-		if (!$removeCache && ($data = $cache->get($cacheKey)) !== false) {
+		$cacheKey = 'results_statistics_data_' . $page;
+		if (($data = $cache->get($cacheKey)) !== false) {
 			return $data;
 		}
 		$statistics = array();
-		foreach (self::$lists as $name=>$statistic) {
+		foreach (self::$lists[$page - 1] as $name=>$statistic) {
 			if ($statistic['class'] !== '') {
 				$statistics[$name] = $statistic['class']::build($statistic);
 			}
