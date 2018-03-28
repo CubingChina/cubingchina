@@ -625,24 +625,31 @@ class Controller extends CController {
 		return $this->_user = User::model()->findByPk(Yii::app()->user->id);
 	}
 
-	public function ajaxReturn($status, $data, $message = '') {
-		echo CJSON::encode(array(
+	public function ajaxReturn($status, $data, $message = null) {
+		if ($message === null) {
+			$message = Constant::getAjaxMessage($status);
+		}
+		echo json_encode([
 			'status'=>$status,
 			'data'=>$data,
-			'msg'=>$message,
-		));
+			'message'=>$message,
+		]);
 		Yii::app()->end();
 	}
 
 	public function ajaxOK($data) {
-		$this->ajaxReturn(Constant::AJAX_OK, $data);
+		$this->ajaxReturn(Constant::STATUS_OK, $data);
 	}
 
 	public function ajaxError($status, $message = null) {
-		if ($message === null) {
-			$message = Constant::getAjaxMessage($status);
-		}
-		$this->ajaxReturn($status, array(), $message);
+		$this->ajaxReturn($status, null, $message);
+	}
+
+	public function sendForm($url, $params) {
+		$this->render('/common/sendForm', [
+			'url'=>$url,
+			'params'=>$params,
+		]);
 	}
 
 	/**

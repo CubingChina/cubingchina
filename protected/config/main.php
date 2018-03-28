@@ -27,6 +27,7 @@ $config = [
 		'board'=>[
 			'defaultController'=>'competition',
 		],
+		'api',
 	],
 	// application components
 	'components'=>[
@@ -87,6 +88,7 @@ $config = [
 				'pay/<action:notify|frontNotify>/<channel:\w+>'=>'pay/<action>',
 				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
 				'board'=>'board/competition/index',
+				'api/v0/<controller:\w+>/<action:\w+>'=>'api/<controller>/<action>',
 				'<controller:\w+>'=>'<controller>/index',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			],
