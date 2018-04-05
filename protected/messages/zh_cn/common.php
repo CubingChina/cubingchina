@@ -18,10 +18,12 @@
  */
 return array (
   'Announce' => '公示',
+  'Application' => '',
   'Fee' => '',
   'Hide' => '隐藏',
   'Lock' => '锁定',
   'WCA ID' => '',
+  'You are being redirected, please wait patiently.' => '正在为您跳转，请耐心等待。',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',

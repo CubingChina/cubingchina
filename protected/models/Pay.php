@@ -29,6 +29,7 @@ class Pay extends ActiveRecord {
 	const CHANNEL_BALIPAY = 'balipay';
 
 	const TYPE_REGISTRATION = 0;
+	const TYPE_APPLICATION = 1;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -88,6 +89,7 @@ class Pay extends ActiveRecord {
 	public static function getTypes() {
 		return array(
 			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'),
+			// self::TYPE_APPLICATION=>Yii::t('common', 'Application'),
 		);
 	}
 
@@ -171,7 +173,6 @@ class Pay extends ActiveRecord {
 			Yii::log(json_encode($log), 'pay', 'request');
 			return false;
 		}
-
 	}
 
 	public function validateNotify($channel, $params) {
@@ -252,7 +253,53 @@ class Pay extends ActiveRecord {
 					$registration->accept();
 				}
 				break;
+			case self::TYPE_APPLICATION:
+				$this->notifyApplication();
+				break;
 		}
+	}
+
+	public function notifyApplication() {
+		if ($this->notify_result == self::YES) {
+			return true;
+		}
+		if ($this->notify_times > 15) {
+			return false;
+		}
+		$params = json_decode($this->params);
+		if (!isset($params->notify_url)) {
+			return false;
+		}
+		$notifyParams = $this->application->generateNotifyParams($this);
+		$client = new Client();
+		try {
+			$response = $client->post($params->notify_url, [
+				'form_params'=>$notifyParams,
+			]);
+			if ($response->getStatusCode() != 200) {
+				throw new Exception('Failed to post notify url: ' . $params->url, $response->getStatusCode());
+			}
+			$body = $response->getBody();
+			if (strtolower($body) !== 'success') {
+				throw new Exception('Notify url returning is not success: ' . $body, 403);
+			}
+			$this->notify_result = self::YES;
+		} catch (Exception $e) {
+			$this->notify_times++;
+			$log = [
+				'code'=>$e->getCode(),
+				'message'=>$e->getMessage(),
+			];
+			if (method_exists($e, 'getRequest')) {
+				$log['request'] = Psr7\str($e->getRequest());
+				if ($e->hasResponse()) {
+					$log['response'] = Psr7\str($e->getResponse());
+				}
+			}
+			Yii::log(json_encode($log), 'pay', 'notify.application');
+		}
+		$this->last_notify_time = time();
+		$this->save();
 	}
 
 	public function generateParams($isMobile) {
@@ -363,7 +410,7 @@ class Pay extends ActiveRecord {
 			),
 			array(
 				'name'=>'user_id',
-				'value'=>'$data->user->getCompetitionName()',
+				'value'=>'$data->username',
 				'filter'=>false,
 			),
 			array(
@@ -416,7 +463,7 @@ class Pay extends ActiveRecord {
 				'filter'=>Pay::getChannels(),
 			),
 		);
-		if ($this->type !== '') {
+		if ($this->type !== null) {
 			switch ($this->type) {
 				case self::TYPE_REGISTRATION:
 					array_splice($columns, 1, 0, array(
@@ -506,6 +553,15 @@ class Pay extends ActiveRecord {
 		return $this->find($criteria)->paid_amount;
 	}
 
+	public function getUsername() {
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+				return $this->user->getCompetitionName();
+			case self::TYPE_APPLICATION:
+				return $this->application->getAttributeValue('name');
+		}
+	}
+
 	protected function beforeValidate() {
 		if ($this->isNewRecord) {
 			$this->create_time = $this->update_time = time();
@@ -553,6 +609,7 @@ class Pay extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
+			'application'=>array(self::BELONGS_TO, 'Application', 'type_id'),
 			'competition'=>array(self::BELONGS_TO, 'Competition', 'type_id'),
 			'registration'=>array(self::BELONGS_TO, 'Registration', 'sub_type_id'),
 		);

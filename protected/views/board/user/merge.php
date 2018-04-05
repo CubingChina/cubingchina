@@ -60,7 +60,7 @@ Yii::app()->clientScript->registerScript('merge',
           alert('Merge success!');
           $('.user').tagsinput('removeAll');
         } else {
-          alert(result.msg);
+          alert(result.message);
         }
       }
     })
