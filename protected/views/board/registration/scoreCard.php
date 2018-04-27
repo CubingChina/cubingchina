@@ -99,6 +99,13 @@
           </div>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
+              <?php if ($competition->hasGroupSchedules): ?>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" value="1" name="group" checked> 按分组排序
+                </label>
+              </div>
+              <?php endif; ?>
               <div class="checkbox">
                 <label>
                   <input type="checkbox" value="1" name="all"> 包括未审核用户

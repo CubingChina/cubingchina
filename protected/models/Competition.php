@@ -708,6 +708,12 @@ class Competition extends ActiveRecord {
 		)) > 0;
 	}
 
+	public function getHasGroupSchedules() {
+		return GroupSchedule::model()->countByAttributes([
+			'competition_id'=>$this->id,
+		]) > 0;
+	}
+
 	public function getCountdown($type = 'normal') {
 		if (!$this->canRegister()) {
 			return '';
