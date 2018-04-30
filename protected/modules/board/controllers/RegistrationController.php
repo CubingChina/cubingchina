@@ -542,12 +542,12 @@ class RegistrationController extends AdminController {
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round));
 	}
 
-	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical', $group = false) {
+	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical', $byGroup = false) {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$this->exportScoreCard($competition, $registrations, $split, $direction, null, $group);
+		$this->exportScoreCard($competition, $registrations, $split, $direction, null, $byGroup);
 	}
 
-	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null, $group = false) {
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null, $byGroup = false) {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
 		if (isset($competition->associatedEvents['333mbf']) && ($round === null || $round->event != '333mbf')) {
@@ -598,7 +598,7 @@ class RegistrationController extends AdminController {
 							];
 						}
 					}
-				} elseif ($group) {
+				} elseif ($byGroup) {
 					foreach ($groups[$event] ?? [] as $group=>$userIds) {
 						foreach ($registrations as $registration) {
 							if (!in_array("$event", $registration->events)) {
