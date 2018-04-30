@@ -1,8 +1,8 @@
 <?php
 
 class CompetitionHandler extends MsgHandler {
-	public $users = [];
-	public $currentRecords = [];
+	public static $users = [];
+	public static $currentRecords = [];
 
 	public function process() {
 		if (isset($this->msg->competitionId)) {
@@ -10,11 +10,11 @@ class CompetitionHandler extends MsgHandler {
 			$this->client->server->increaseOnlineNumber($this->client->competitionId);
 			$competition = $this->getCompetition();
 			if ($competition) {
-				if (!isset($this->users[$competition->id])) {
-					$this->users[$competition->id] = [];
+				if (!isset(self::$users[$competition->id])) {
+					self::$users[$competition->id] = [];
 					$registrations = Registration::getRegistrations($competition);
 					foreach ($registrations as $registration) {
-						$this->users[$competition->id][$registration->number] = [
+						self::$users[$competition->id][$registration->number] = [
 							'number'=>$registration->number,
 							'name'=>$registration->user->getCompetitionName(),
 							'wcaid'=>$registration->user->wcaid,
@@ -22,11 +22,13 @@ class CompetitionHandler extends MsgHandler {
 						];
 					}
 				}
-				$this->success('users', $this->users[$competition->id]);
+				$this->success('users', self::$users[$competition->id]);
 				if ($this->checkAccess()) {
-					if (!isset($this->currentRecords[$competition->id])) {
-						$this->currentRecords[$competition->id] = [];
-						$registrations = Registration::getRegistrations($competition);
+					if (!isset(self::$currentRecords[$competition->id])) {
+						self::$currentRecords[$competition->id] = [];
+						if (!isset($registrations)) {
+							$registrations = Registration::getRegistrations($competition);
+						}
 						$events = $competition->getAssociatedEvents();
 						$currentRecords = [];
 						foreach ($registrations as $registration) {
@@ -43,9 +45,9 @@ class CompetitionHandler extends MsgHandler {
 								}
 							}
 						}
-						$this->currentRecords[$competition->id] = $currentRecords;
+						self::$currentRecords[$competition->id] = $currentRecords;
 					}
-					$this->success('record.current', $this->currentRecords[$competition->id]);
+					$this->success('record.current', self::$currentRecords[$competition->id]);
 				}
 			}
 		}
