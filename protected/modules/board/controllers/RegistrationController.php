@@ -127,7 +127,7 @@ class RegistrationController extends AdminController {
 		}
 		if (isset($_POST['order'])) {
 			$this->pagePerStack = $this->iPost('stack', 50);
-			$this->exportAllScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'));
+			$this->exportAllScoreCard($model, $this->iPost('all'), $this->sPost('order'), $this->sPost('split'), $this->sPost('direction'), $this->sPost('group'));
 		}
 		$this->render('scoreCard', array(
 			'model'=>$model,
@@ -542,12 +542,12 @@ class RegistrationController extends AdminController {
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round));
 	}
 
-	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical') {
+	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical', $byGroup = false) {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$this->exportScoreCard($competition, $registrations, $split, $direction);
+		$this->exportScoreCard($competition, $registrations, $split, $direction, null, $byGroup);
 	}
 
-	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null) {
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null, $byGroup = false) {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
 		if (isset($competition->associatedEvents['333mbf']) && ($round === null || $round->event != '333mbf')) {
@@ -568,6 +568,17 @@ class RegistrationController extends AdminController {
 					break;
 			}
 		}
+		$groupSchedules = GroupSchedule::model()->findAllByAttributes([
+			'competition_id'=>$competition->id,
+		], [
+			'order'=>'event, `group`',
+		]);
+		$groups = [];
+		foreach ($groupSchedules as $groupSchedule) {
+			$groups[$groupSchedule->event][$groupSchedule->group] = array_map(function($userSchedule) {
+				return $userSchedule->user_id;
+			}, $groupSchedule->users);
+		}
 		if ($split === 'event') {
 			foreach ($competition->associatedEvents as $event=>$value) {
 				if ($event === '333fm') {
@@ -584,6 +595,22 @@ class RegistrationController extends AdminController {
 								'event'=>$event,
 								'start'=>$i,
 								'attempt'=>$i + 1,
+							];
+						}
+					}
+				} elseif ($byGroup) {
+					foreach ($groups[$event] ?? [] as $group=>$userIds) {
+						foreach ($registrations as $registration) {
+							if (!in_array("$event", $registration->events)) {
+								continue;
+							}
+							if (!in_array($registration->user_id, $userIds)) {
+								continue;
+							}
+							$scoreCards[] = [
+								'registration'=>$registration,
+								'event'=>$event,
+								'group'=>$group,
 							];
 						}
 					}
@@ -664,6 +691,7 @@ class RegistrationController extends AdminController {
 		$registration = $scoreCard['registration'];
 		$user = $registration->user;
 		$event = $scoreCard['event'];
+		$group = $scoreCard['group'] ?? '';
 		if ($round === null) {
 			$round = $competition->getFirstRound($scoreCard['event']);
 		}
@@ -740,9 +768,14 @@ class RegistrationController extends AdminController {
 		}
 		echo CHtml::tag('td', [
 		], '轮次<br>Round');
-		echo CHtml::tag('td', [
+		echo CHtml::openTag('td', [
 			'class'=>'bdld',
-		], $roundId);
+		]);
+		echo $roundId;
+		if ($group) {
+			echo '-' . $group;
+		}
+		echo CHtml::closeTag('td');
 		echo CHtml::tag('td', [
 		], '姓名<br>Name');
 		echo CHtml::openTag('td', [
