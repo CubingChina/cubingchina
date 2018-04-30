@@ -1,31 +1,32 @@
 <?php
 
 class CompetitionHandler extends MsgHandler {
-	public static $users = [];
-	public static $currentRecords = [];
 
 	public function process() {
 		if (isset($this->msg->competitionId)) {
 			$this->client->competitionId = $this->msg->competitionId;
 			$this->client->server->increaseOnlineNumber($this->client->competitionId);
 			$competition = $this->getCompetition();
+			$cache = Yii::app()->cache;
 			if ($competition) {
-				if (!isset(self::$users[$competition->id])) {
-					self::$users[$competition->id] = [];
+				$usersKey = 'live_users_' . $competition->id;
+				if (($users = $cache->get($usersKey)) === false) {
+					$users = [];
 					$registrations = Registration::getRegistrations($competition);
 					foreach ($registrations as $registration) {
-						self::$users[$competition->id][$registration->number] = [
+						$users[$registration->number] = [
 							'number'=>$registration->number,
 							'name'=>$registration->user->getCompetitionName(),
 							'wcaid'=>$registration->user->wcaid,
 							'region'=>$registration->user->country->name,
 						];
 					}
+					$cache->set($usersKey, $users);
 				}
-				$this->success('users', self::$users[$competition->id]);
+				$this->success('users', $users);
 				if ($this->checkAccess()) {
-					if (!isset(self::$currentRecords[$competition->id])) {
-						self::$currentRecords[$competition->id] = [];
+					$recordsKey = 'live_current_record_' . $competition->id;
+					if (($currentRecords = $cache->get($recordsKey)) === false) {
 						if (!isset($registrations)) {
 							$registrations = Registration::getRegistrations($competition);
 						}
@@ -45,9 +46,9 @@ class CompetitionHandler extends MsgHandler {
 								}
 							}
 						}
-						self::$currentRecords[$competition->id] = $currentRecords;
+						$cache->set($recordsKey, $currentRecords);
 					}
-					$this->success('record.current', self::$currentRecords[$competition->id]);
+					$this->success('record.current', $currentRecords);
 				}
 			}
 		}
