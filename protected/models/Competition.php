@@ -1831,9 +1831,11 @@ class Competition extends ActiveRecord {
 							}
 						}
 					}
-					foreach ($results as $result) {
-						$result->$attribute = $record;
-						$records[$result->id] = $result;
+					if ($recordSet) {
+						foreach ($results as $result) {
+							$result->$attribute = $record;
+							$records[$result->id] = $result;
+						}
 					}
 				}
 			}

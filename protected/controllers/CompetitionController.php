@@ -186,7 +186,6 @@ class CompetitionController extends Controller {
 		$clientScript->registerScriptFile('/f/js/scan.js?ver=' . $version);
 		$this->render('scan', [
 			'competition'=>$competition,
-			'config'=>$config,
 		]);
 	}
 
