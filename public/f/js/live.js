@@ -262,6 +262,9 @@
     },
     vuex: {
       getters: {
+        canChangeRoundSettings: function(state) {
+          return state.type != 'WCA' || state.user.isDelegate || user.isAdmin
+        },
         hasPermission: function(state) {
           var user = state.user;
           return user.isOrganizer || user.isDelegate || user.isAdmin;
@@ -314,7 +317,7 @@
   //vuex
   var store = new Vuex.Store({
     state: state,
-    strict: true,
+    // strict: true,
     mutations: mutations
   });
   Vue.mixin(mixin);
