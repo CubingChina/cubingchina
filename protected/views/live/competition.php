@@ -212,28 +212,30 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-body">
-              <div class="form-group">
-                <label><?php echo Yii::t('Schedule', 'Cut Off'); ?></label>
-                <input type="tel" class="form-control" id="co" v-model="co">
-              </div>
-              <div class="form-group">
-                <label><?php echo Yii::t('Schedule', 'Time Limit'); ?></label>
-                <input type="tel" class="form-control" id="tl" v-model="tl">
-              </div>
-              <div class="form-group">
-                <label><?php echo Yii::t('Schedule', 'Format'); ?></label>
-                <select v-model="f" class="form-control" id="f">
-                  <?php foreach (Formats::getAllFormats() as $id=>$value): ?>
-                  <?php if (strpos($id, '/') === false): ?>
-                  <option value="<?php echo $id; ?>"><?php echo Yii::t('common', $value); ?></option>
-                  <?php endif; ?>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label><?php echo Yii::t('Schedule', 'Competitors'); ?></label>
-                <input type="tel" class="form-control" id="n" v-model="n">
-              </div>
+              <template v-if="canChangeRoundSettings">
+                <div class="form-group">
+                  <label><?php echo Yii::t('Schedule', 'Cut Off'); ?></label>
+                  <input type="tel" class="form-control" id="co" v-model="co">
+                </div>
+                <div class="form-group">
+                  <label><?php echo Yii::t('Schedule', 'Time Limit'); ?></label>
+                  <input type="tel" class="form-control" id="tl" v-model="tl">
+                </div>
+                <div class="form-group">
+                  <label><?php echo Yii::t('Schedule', 'Format'); ?></label>
+                  <select v-model="f" class="form-control" id="f">
+                    <?php foreach (Formats::getAllFormats() as $id=>$value): ?>
+                    <?php if (strpos($id, '/') === false): ?>
+                    <option value="<?php echo $id; ?>"><?php echo Yii::t('common', $value); ?></option>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label><?php echo Yii::t('Schedule', 'Competitors'); ?></label>
+                  <input type="tel" class="form-control" id="n" v-model="n">
+                </div>
+              </template>
               <div class="form-group">
                 <button type="button"
                   class="btn btn-sm btn-danger"
@@ -272,8 +274,12 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-theme" type="button" @click="saveRoundSettings"><?php echo Yii::t('live', 'Save'); ?></button>
-              <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
+              <button class="btn btn-theme" type="button" @click="saveRoundSettings" v-if="canChangeRoundSettings">
+                <?php echo Yii::t('live', 'Save'); ?>
+              </button>
+              <button data-dismiss="modal" class="btn btn-default" type="button">
+                <?php echo Yii::t('common', 'Close'); ?>
+              </button>
             </div>
           </div>
         </div>

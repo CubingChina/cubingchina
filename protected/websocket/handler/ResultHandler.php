@@ -209,10 +209,14 @@ class ResultHandler extends MsgHandler {
 			'round'=>"{$this->msg->round->id}",
 		));
 		if ($round != null) {
-			foreach (array('number', 'cut_off', 'time_limit', 'format', 'status') as $attribute) {
-				if (isset($this->msg->round->$attribute)) {
+			$hasPermission = !$this->competition->isWCACompetition() || $this->user->isDelegate() || $this->user->isAdministrator();
+			foreach (array('number', 'cut_off', 'time_limit', 'format') as $attribute) {
+				if (isset($this->msg->round->$attribute) && $hasPermission) {
 					$round->$attribute = $this->msg->round->$attribute;
 				}
+			}
+			if (isset($this->msg->round->status)) {
+				$round->status = $this->msg->round->status;
 			}
 			$round->save();
 			$this->broadcastSuccess('round.update', $round->getBroadcastAttributes(), $this->competition);

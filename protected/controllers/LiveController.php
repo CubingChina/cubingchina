@@ -33,6 +33,7 @@ class LiveController extends CompetitionController {
 		$htmlOptions = [
 			'id'=>'live-container',
 			'data-c'=>$competition->id,
+			'data-type'=>$competition->type,
 			'data-events'=>json_encode($events),
 			'data-params'=>json_encode($params),
 			'data-filters'=>json_encode([
