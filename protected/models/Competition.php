@@ -70,7 +70,7 @@ class Competition extends ActiveRecord {
 	public $event;
 	public $distance;
 
-	public static function formatTime($second, $event) {
+	public static function formatTime($second, $event = '') {
 		$second = intval($second);
 		if ($second <= 0) {
 			return '';
@@ -1017,7 +1017,7 @@ class Competition extends ActiveRecord {
 				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off, $schedule->event),
-				'Time Limit'=>self::formatTime($schedule->time_limit, $schedule->event),
+				'Time Limit'=>self::formatTime($schedule->time_limit),
 				'Competitors'=>$schedule->number,
 				'id'=>$schedule->id,
 				'event'=>$schedule->event,
@@ -1111,7 +1111,7 @@ class Competition extends ActiveRecord {
 				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off, $schedule->event),
-				'Time Limit'=>self::formatTime($schedule->time_limit, $schedule->event),
+				'Time Limit'=>self::formatTime($schedule->time_limit),
 				'Competitors'=>$schedule->number,
 				'id'=>$schedule->id,
 				'event'=>$schedule->event,
