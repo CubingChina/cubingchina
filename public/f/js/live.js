@@ -687,12 +687,13 @@
                 if (!result || !result.i || !this.$parent.isCurrentRoundOpen) {
                   return true;
                 }
-                var round = eventRoundTypes[state.params.e][state.params.r];
+                var round = eventRoundTypes[that.e][that.r];
+                var coefficient = that.e === '333fm' ? 1 : 100;
                 if (round.co > 0) {
                   var num = round.f == 'a' ? 2 : 1;
                   var passed = false;
                   for (var i = 0; i < num; i++) {
-                    if (that.result.v[i] > 0 && that.result.v[i] / 100 < round.co) {
+                    if (that.result.v[i] > 0 && that.result.v[i] / coefficient < round.co) {
                       passed = true;
                       break;
                     }
@@ -1256,7 +1257,7 @@
       var msecond = parseInt(match[3]);
       //above 10 minutes
       if (minute * 60 + second > 600) {
-        second += msecond > 50 ? 1 : 0;
+        second += msecond >= 50 ? 1 : 0;
         msecond = 0;
       }
       return (minute * 60 + second) * 100 + msecond;

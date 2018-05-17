@@ -17,11 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'After locking the competition, organizers are no longer able to edit the basic infomation and anyone can visit this competition via url. Please confirm it!' => '锁定之后，主办方将不能编辑比赛基本信息，比赛也可以通过连接访问，请确认！',
-  'Do you confirm this can be announced?' => '请确认该比赛可以公示了！',
   'ID' => '',
   'Online Pay' => '',
-  'The competition will be hide. People can\' visit it without permission.' => '隐藏比赛后，没有权限的人将无法访问到。',
   ' round' => '轮',
   ' rounds' => '轮',
   'Check Person' => '报名自动审核',
@@ -35,6 +32,7 @@ return array (
   'The limited number of competitor has been reached.' => '报名人数已达到上限。',
   'Wca Competition' => 'WCA比赛',
   'About the Competition' => '关于比赛',
+  'After locking the competition, organizers are no longer able to edit the basic infomation and anyone can visit this competition via url. Please confirm it!' => '锁定之后，主办方将不能编辑比赛基本信息，比赛也可以通过连接访问，请确认！',
   'At least one result' => '有官方有效成绩',
   'Base Entry Fee' => '基础报名费',
   'City' => '城市',
@@ -48,6 +46,7 @@ return array (
   'Date' => '日期',
   'Delegate' => '代表',
   'Delegates' => '代表',
+  'Do you confirm this can be announced?' => '请确认该比赛可以公示了！',
   'End Date' => '结束日期',
   'Entry Fee' => '报名费',
   'Events' => '项目',
@@ -84,6 +83,7 @@ return array (
   'Second Stage Ratio' => '第二阶段倍率',
   'Signin List' => '签到列表',
   'Status' => '状态',
+  'The competition will be hide. People can\' visit it without permission.' => '隐藏比赛后，没有权限的人将无法访问到。',
   'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.' => '此处为比赛主办预计赛程，可能会依据比赛现场情况进行调整，请在比赛日注意现场通知以免耽误您的参赛。',
   'The registration has been closed.' => '比赛报名已截止。',
   'The registration has been paused and it will be restarted after {time}.' => '比赛报名已暂停，补报名将于{time}之后开放。',
