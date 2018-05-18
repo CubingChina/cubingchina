@@ -1086,6 +1086,9 @@ class Competition extends ActiveRecord {
 			$event = Events::getFullEventName($schedule->event);
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
+				if ($times > 0) {
+					$schedule->cut_off = 0;
+				}
 				switch ($times + 1) {
 					case 1:
 						$event .= Yii::t('common', ' (1st attempt)');
