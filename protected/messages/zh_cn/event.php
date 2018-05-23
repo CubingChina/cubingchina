@@ -47,4 +47,5 @@ return array (
   'Master Magic'=>'十二板',
   'Sport Stacking'=>'竞技叠杯',
   'Funny Event'=>'趣味项目',
+  'Puzzle Submission'=>'提交魔方',
 );

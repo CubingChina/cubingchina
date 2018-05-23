@@ -1045,18 +1045,19 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getListableSchedules() {
-		$listableSchedules = array();
+		$listableSchedules = [];
 		$schedules = $this->schedule;
-		usort($schedules, array($this, 'sortSchedules'));
+		usort($schedules, [$this, 'sortSchedules']);
 		$hasGroup = false;
 		$hasCutOff = false;
 		$hasTimeLimit = false;
 		$hasNumber = false;
 		$cumulative = Yii::t('common', 'Cumulative ');
-		$specialEvents = array(
-			'333fm'=>array(),
-			'333mbf'=>array(),
-		);
+		$specialEvents = [
+			'333fm'=>[],
+			'333mbf'=>[],
+			'submission'=>[],
+		];
 		foreach ($schedules as $key=>$schedule) {
 			if (trim($schedule->group) != '') {
 				$hasGroup = true;
@@ -1084,6 +1085,7 @@ class Competition extends ActiveRecord {
 				$schedule->cut_off = $schedule->time_limit = 0;
 			}
 			$event = Events::getFullEventName($schedule->event);
+			$round = Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round));
 			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				if ($times > 0) {
@@ -1091,27 +1093,27 @@ class Competition extends ActiveRecord {
 				}
 				switch ($times + 1) {
 					case 1:
-						$event .= Yii::t('common', ' (1st attempt)');
+						$round .= Yii::t('common', ' (1st attempt)');
 						break;
 					case 2:
-						$event .= Yii::t('common', ' (2nd attempt)');
+						$round .= Yii::t('common', ' (2nd attempt)');
 						break;
 					case 3:
-						$event .= Yii::t('common', ' (3rd attempt)');
+						$round .= Yii::t('common', ' (3rd attempt)');
 						break;
 					default:
-						$event .= Yii::t('common', ' ({times}th attempt)', array(
-							'{times}'=>$times,
-						));
+						$round .= Yii::t('common', ' ({times}th attempt)', [
+							'{times}'=>$times + 1,
+						]);
 						break;
 				}
 			}
-			$temp = array(
+			$temp = [
 				'Start Time'=>date('H:i', $schedule->start_time),
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
+				'Round'=>$round,
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off, $schedule->event),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
@@ -1120,7 +1122,7 @@ class Competition extends ActiveRecord {
 				'event'=>$schedule->event,
 				'round'=>$schedule->round,
 				'schedule'=>$schedule,
-			);
+			];
 			if ($schedule->cumulative) {
 				$temp['Time Limit'] = $cumulative . $temp['Time Limit'];
 			}
