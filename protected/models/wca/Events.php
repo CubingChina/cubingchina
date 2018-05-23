@@ -149,7 +149,7 @@ class Events extends ActiveRecord {
 			'break'=>'Break',
 			'lucky'=>'Lucky Draw',
 			'ceremony'=>'Award Ceremony',
-			'submission'=>'Puzzle Submission',
+			'submission'=>'3x3x3 Multi-Blind Puzzle Submission',
 		);
 	}
 

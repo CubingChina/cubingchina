@@ -1113,7 +1113,7 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>$round,
+				'Round'=>trim($round),
 				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off, $schedule->event),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
