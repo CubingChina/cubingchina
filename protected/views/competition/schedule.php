@@ -162,6 +162,10 @@ Yii::app()->clientScript->registerScript('schedule',
       func = $(this).prop('checked') ? 'addClass' : 'removeClass',
       func2 = $(this).prop('checked') ? 'removeClass' : 'addClass',
       uncheckAll = true;
+    if (event === '333mbf') {
+      events = events.add($('tr.event-submission'));
+      events2 = events2.add($('td.event-submission'));
+    }
     $('.schedule-event input').each(function() {
       if (this.checked) {
         uncheckAll = false;
@@ -169,7 +173,7 @@ Yii::app()->clientScript->registerScript('schedule',
       }
     })
     events.each(function() {
-      var c = classes[$(this).data('round')] || 'info';
+      var c = classes[$(this).data('round')] || 'danger';
       $(this)[func](c);
     });
     events2[func2]('unselected');
