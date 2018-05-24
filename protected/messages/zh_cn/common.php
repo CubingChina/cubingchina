@@ -19,13 +19,13 @@
 return array (
   'Application' => '',
   'Fee' => '',
+  'Show full schedule?' => '显示完整赛程？',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
   '{minute}min {second}s' => '',
   '{minute}mins' => '',
   '{minute}mins {second}s' => '',
-  '{moves} moves' => '{moves}步',
   '1 hour' => '1小时',
   'About us' => '关于本站',
   'AfR' => '非洲纪录',
@@ -328,6 +328,7 @@ return array (
   '{minute} minute {second} seconds' => '{minute}分{second}秒',
   '{minute} minutes' => '{minute}分',
   '{minute} minutes {second} seconds' => '{minute}分{second}秒',
+  '{moves} moves' => '{moves}步',
   '{personName}\'s {year} Annual Summary' => '{personName}的{year}年度总结',
   '{year} Annual Summary' => '{year}年度总结',
 );

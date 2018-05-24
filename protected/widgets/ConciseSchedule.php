@@ -162,7 +162,7 @@ class ConciseSchedule extends Widget {
 			$schedule['Event'],
 			$schedule['Round'],
 		]);
-		foreach (array('Cut Off', 'Time Limit', 'Group') as $key) {
+		foreach (array('Cut Off', 'Time Limit', 'Group', 'Competitors') as $key) {
 			if (isset($schedule[$key]) && $schedule[$key] != '') {
 				$text[] = Yii::t('Schedule', $key) . $this->space . $schedule[$key];
 			}
@@ -171,6 +171,6 @@ class ConciseSchedule extends Widget {
 			'class'=>implode(' ', $tdClass),
 			'colspan'=>$colSpan,
 			'rowspan'=>($schedule['schedule']->end_time - $schedule['schedule']->start_time) / $this->timeSpan,
-		), implode('<br>', $text));
+		), CHtml::tag('div', ['class'=>'show-on-small'], Events::getShortNameWithIcon($schedule['event'])) . CHtml::tag('div', ['class'=>'show-on-full'], implode('<br>', $text)));
 	}
 }

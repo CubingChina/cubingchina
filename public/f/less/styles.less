@@ -755,7 +755,7 @@ table.concise-schedule {
     &.inverse {
       color: #f0f0f0;
     }
-    .loop-concise-schedule-event()
+    .loop-concise-schedule-event();
   }
   &.highlight tbody > tr > td[rowspan].unselected {
     background-color: #bdbdbd;
@@ -798,6 +798,32 @@ table.concise-schedule {
       min-width: 50px;
       width: 50px;
     }
+  }
+}
+
+.show-on-small {
+  display: none;
+}
+@media (max-width: 560px) {
+  .show-on-full {
+    display: none;
+  }
+  .show-on-small {
+    display: block;
+  }
+  span.show-on-small {
+    display: inline;
+  }
+}
+.concise-schedule.show-full {
+  .show-on-full {
+    display: block;
+  }
+  span.show-on-full {
+    display: inline;
+  }
+  .show-on-small {
+    display: none;
   }
 }
 .loop-concise-schedule-event(@index: 1) when (iscolor(extract(@conciseEventColors, @index))) {
