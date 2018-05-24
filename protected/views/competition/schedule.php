@@ -30,6 +30,14 @@
   <?php if (!empty($listableSchedules)): ?>
   <p><?php echo Yii::t('Competition', 'The following schedule is proposed by the organizing team. Be aware that the organizing team may change it according to the actual situation. Please pay attention to the announced schedule at the venue to avoid missing your events.'); ?></p>
   <?php if ($hasManyStages || $userSchedules != []): ?>
+  <?php if ($hasManyStages): ?>
+  <div class="form-group show-on-small">
+    <?php echo Html::switch('show-full', false, [
+      'data-label-text'=>Yii::t('common', 'Show full schedule?'),
+      'data-label-width'=>'150',
+    ]); ?>
+  </div>
+  <?php endif; ?>
   <ul class="nav nav-tabs">
     <?php if ($hasManyStages): ?>
     <li<?php if ($userSchedules == []) echo ' class="active"'; ?>><a href="#concise" data-toggle="tab"><?php echo Yii::t('common', 'Event List'); ?></a></li>
@@ -162,6 +170,10 @@ Yii::app()->clientScript->registerScript('schedule',
       func = $(this).prop('checked') ? 'addClass' : 'removeClass',
       func2 = $(this).prop('checked') ? 'removeClass' : 'addClass',
       uncheckAll = true;
+    if (event === '333mbf') {
+      events = events.add($('tr.event-submission'));
+      events2 = events2.add($('td.event-submission'));
+    }
     $('.schedule-event input').each(function() {
       if (this.checked) {
         uncheckAll = false;
@@ -169,7 +181,7 @@ Yii::app()->clientScript->registerScript('schedule',
       }
     })
     events.each(function() {
-      var c = classes[$(this).data('round')] || 'info';
+      var c = classes[$(this).data('round')] || 'danger';
       $(this)[func](c);
     });
     events2[func2]('unselected');
@@ -180,6 +192,9 @@ Yii::app()->clientScript->registerScript('schedule',
     var tr = that.parent();
     var endTime = tr.nextAll().eq(this.rowSpan - 1);
     endTime.find('.time span')[func]('hover');
+  }).on('switchChange.bootstrapSwitch', '#show-full', function(e) {
+    var func = $(this).prop('checked') ? 'addClass' : 'removeClass';
+    $('.concise-schedule')[func]('show-full')
   });
 EOT
 );

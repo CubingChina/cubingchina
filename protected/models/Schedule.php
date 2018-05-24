@@ -22,15 +22,15 @@ class Schedule extends ActiveRecord {
 
 	public static function getStages() {
 		return array(
-			'main'=>Yii::t('Schedule', 'Main Stage'),
-			'side'=>Yii::t('Schedule', 'Side Stage'),
-			'long'=>Yii::t('Schedule', 'Long-time Event Stage'),
+			'main'=>Yii::t('Schedule', 'Main<span class="show-on-full"> Stage</span>'),
+			'side'=>Yii::t('Schedule', 'Side<span class="show-on-full"> Stage</span>'),
+			'long'=>Yii::t('Schedule', 'Long<span class="show-on-full">-time</span> Event<span class="show-on-full"> Stage</span>'),
 			'room'=>Yii::t('Schedule', 'Classroom'),
-			'red'=>Yii::t('Schedule', 'Red Stage'),
-			'blue'=>Yii::t('Schedule', 'Blue Stage'),
-			'green'=>Yii::t('Schedule', 'Green Stage'),
-			'yellow'=>Yii::t('Schedule', 'Yellow Stage'),
-			'orange'=>Yii::t('Schedule', 'Orange Stage'),
+			'red'=>Yii::t('Schedule', 'Red<span class="show-on-full"> Stage</span>'),
+			'blue'=>Yii::t('Schedule', 'Blue<span class="show-on-full"> Stage</span>'),
+			'green'=>Yii::t('Schedule', 'Green<span class="show-on-full"> Stage</span>'),
+			'yellow'=>Yii::t('Schedule', 'Yellow<span class="show-on-full"> Stage</span>'),
+			'orange'=>Yii::t('Schedule', 'Orange<span class="show-on-full"> Stage</span>'),
 		);
 	}
 

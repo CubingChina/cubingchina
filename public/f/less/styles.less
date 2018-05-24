@@ -5,11 +5,11 @@
 @conciseEventColors: #00a6ac, #76becc, #2a5caa, #2585a6, #00ae9d, #009ad6, #b2d235,
   #dea32c, #f58220, #decb00, #f69c9f, #7fb80e, #78a355, #a3cf62,
   #585eaa, #6f599c, #8552a1, #867892, #9b95c9, #faa755, #deab8a,
-  #f3715c, #d64f44, #f05b72, #d9d6c3, #d1c8b7, #f2eada, #d3d7d4;
+  #f3715c, #d64f44, #f05b72, #d9d6c3, #d1c8b7, #f2eada, #d3d7d4, #f05b72;
 @conciseEvents: registration, intro, lunch, break, lucky, ceremony,
 333, 444, 555, 222, 333bf, 333oh, 333fm, 333ft, minx,
 pyram, sq1, clock, skewb, 666, 777, 444bf, 555bf, 333mbf,
-magic, mmagic, stack, funny;
+magic, mmagic, stack, funny, submission;
 
 .main-nav.colorful {
   .cube-red > a {
@@ -755,7 +755,7 @@ table.concise-schedule {
     &.inverse {
       color: #f0f0f0;
     }
-    .loop-concise-schedule-event()
+    .loop-concise-schedule-event();
   }
   &.highlight tbody > tr > td[rowspan].unselected {
     background-color: #bdbdbd;
@@ -798,6 +798,32 @@ table.concise-schedule {
       min-width: 50px;
       width: 50px;
     }
+  }
+}
+
+.show-on-small {
+  display: none;
+}
+@media (max-width: 560px) {
+  .show-on-full {
+    display: none;
+  }
+  .show-on-small {
+    display: block;
+  }
+  span.show-on-small {
+    display: inline;
+  }
+}
+.concise-schedule.show-full {
+  .show-on-full {
+    display: block;
+  }
+  span.show-on-full {
+    display: inline;
+  }
+  .show-on-small {
+    display: none;
   }
 }
 .loop-concise-schedule-event(@index: 1) when (iscolor(extract(@conciseEventColors, @index))) {

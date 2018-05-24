@@ -125,6 +125,20 @@ class Events extends ActiveRecord {
 		return self::getEventIcon($event) . ' ' . $name;
 	}
 
+	public static function getShortNameWithIcon($event) {
+		switch (Yii::app()->language) {
+			case 'zh_cn':
+				return self::getFullEventNameWithIcon($event, $event === 'submission' ? '交魔方' : null);
+			case 'en':
+				return self::getFullEventNameWithIcon($event, ucfirst($event));
+			case 'zh_tw':
+				Yii::app()->language = 'zh_cn';
+				$name = self::getFullEventNameWithIcon($event, $event === 'submission' ? '交方块' : null);
+				Yii::app()->language = 'zh_tw';
+				return Yii::app()->controller->translateTWInNeed($name);
+		}
+	}
+
 	public static function getEventIcon($event) {
 		$name = self::getFullEventName($event);
 		$class = ['event-icon', 'event-icon-' . $event];
@@ -149,6 +163,7 @@ class Events extends ActiveRecord {
 			'break'=>'Break',
 			'lucky'=>'Lucky Draw',
 			'ceremony'=>'Award Ceremony',
+			'submission'=>'3x3x3 Multi-Blind Puzzle Submission',
 		);
 	}
 

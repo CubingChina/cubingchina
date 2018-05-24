@@ -78,6 +78,9 @@
 .event-icon-333mbf:before {
   content: "\e911";
 }
+.event-icon-submission:before {
+  content: "\e911";
+}
 .event-icon-magic:before {
   content: "\e912";
 }
