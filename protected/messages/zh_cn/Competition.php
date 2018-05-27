@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Qualification is based on wca official results.' => '选手是否达到资格线以WCA官方成绩为准。',
   ' round' => '轮',
   ' rounds' => '轮',
   'Check Person' => '报名自动审核',
