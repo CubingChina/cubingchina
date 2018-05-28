@@ -294,7 +294,7 @@ class CompetitionController extends Controller {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				// for oversea users
-				if ($this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
+				if ($competition->auto_accept == Competition::YES && $this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				if ($model->save()) {

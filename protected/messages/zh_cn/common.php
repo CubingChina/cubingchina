@@ -19,7 +19,6 @@
 return array (
   'Application' => '',
   'Fee' => '',
-  'Show full schedule?' => '显示完整赛程？',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -271,6 +270,7 @@ return array (
   'Scrambler' => '打乱',
   'Settings' => '设置',
   'She' => '她',
+  'Show full schedule?' => '显示完整赛程？',
   'Sign in' => '签到',
   'Signed in Date' => '签到日期',
   'Single' => '单次',

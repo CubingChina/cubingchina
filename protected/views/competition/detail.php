@@ -47,14 +47,15 @@
     </dd>
     <?php endif; ?>
     <?php if ($competition->has_qualifying_time): ?>
-    <dt><?php echo Yii::t('Competition', 'Events and Qualifying Times'); ?></dt>
+    <dt id="events"><?php echo Yii::t('Competition', 'Events and Qualifying Times'); ?></dt>
     <dd>
       <div class="row">
         <?php if ($competition->tba == Competition::NO): ?>
         <div class="col-lg-12">
           <?php echo Yii::t('Competition', 'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.', [
             '{date}'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),
-          ]); ?>
+          ]); ?><br>
+          <?php echo Yii::t('Competition', 'Qualification is based on wca official results.'); ?>
         </div>
         <?php endif; ?>
         <div class="col-md-4 col-sm-6">
@@ -82,7 +83,7 @@
       </div>
     </dd>
     <?php else: ?>
-    <dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
+    <dt id="events"><?php echo Yii::t('Competition', 'Events'); ?></dt>
     <dd>
       <?php echo implode(Yii::t('common', ', '), array_map(function($event) use ($competition) {
         return Yii::t('event', $competition->getFullEventName($event));
@@ -91,7 +92,7 @@
     <?php endif; ?>
     <?php if ($competition->tba == Competition::NO): ?>
     <?php if (!$competition->multi_countries): ?>
-    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?>
+    <dt id="fees"><?php echo Yii::t('Competition', 'Entry Fee'); ?>
       <?php if ($competition->tba == Competition::NO): ?>
       <?php echo CHtml::tag('span', array(
         'class'=>'btn btn-xs btn-primary',
