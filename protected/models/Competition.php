@@ -865,6 +865,10 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function getPaypalLink($registration) {
+		return rtrim($this->paypal_link, '/') . '/' . round($registration->getTotalFee() / Yii::app()->params->exchangeRate['usd'], 2) . 'usd';
+	}
+
 	public function getOrganizers() {
 		if ($this->_organizers === null) {
 			$this->_organizers = CHtml::listData($this->organizer, 'organizer_id', 'organizer_id');

@@ -19,7 +19,6 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
-  'Qualification is based on wca official results.' => '選手是否達到資格線以WCA官方成績為准。',
   ' round' => '輪',
   ' rounds' => '輪',
   'Check Person' => '報名自動審核',
@@ -68,6 +67,7 @@ return array (
   'Person Num' => '限制人數',
   'Please deeply remember the followings to avoid any inconveniences.' => '請您牢記下述注意事項，以免帶來不便。',
   'Province' => '省份',
+  'Qualification is based on wca official results.' => '選手是否達到資格線以WCA官方成績為准。',
   'Qualifying Ending Time' => '資格線截止時間',
   'Qualifying Time' => '資格線',
   'Registration' => '報名',
