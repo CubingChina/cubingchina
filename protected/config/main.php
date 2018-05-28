@@ -364,6 +364,9 @@ $config = [
 			],
 		],
 		'summaryDaysToYearEnd'=>357,
+		'exchangeRate'=>[
+			'usd'=>6.5,
+		],
 	],
 ];
 

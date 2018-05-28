@@ -81,6 +81,14 @@
               <img src="<?php echo $payment['img']; ?>">
             </div>
             <?php endforeach; ?>
+            <?php if ($this->user->country_id > 1 && $competition->paypal_link): ?>
+            <div class="pay-channel pay-channel-<?php echo $channel; ?>">
+              <a href="<?php echo $competition->getPaypalLink($registration); ?>" target="_blank">
+                <img src="/f/images/pay/paypal.png">
+              </a>
+              <p class="text-danger"><?php echo Yii::t('Registration', 'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.'); ?></p>
+            </div>
+            <?php endif; ?>
           </div>
           <p class="hide lead text-danger" id="redirect-tips">
             <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
@@ -180,7 +188,9 @@ if ($registration->payable) {
   var channel = $('.pay-channel.active').data('channel');
   $('.pay-channel').on('click', function() {
     channel = $(this).data('channel');
-    $(this).addClass('active').siblings().removeClass('active');
+    if (channel) {
+      $(this).addClass('active').siblings().removeClass('active');
+    }
   });
   $('#pay').on('click', function() {
     $('#pay-tips').removeClass('hide');

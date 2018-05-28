@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'No.' => '',
+  'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.' => '通过Paypal付款不是即时通过的。如果您已付款，请耐心等待，我们会尽快审核。',
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',

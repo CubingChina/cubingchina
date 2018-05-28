@@ -16,7 +16,10 @@ class CustomCache extends CCache {
 		$redis->select($this->database);
 		$redisCache = new \Doctrine\Common\Cache\RedisCache();
 		$redisCache->setRedis($redis);
-		$chain = [new \Doctrine\Common\Cache\ArrayCache()];
+		$chain = [];
+		if (!Yii::app() instanceof CConsoleApplication) {
+			$chain[] = new \Doctrine\Common\Cache\ArrayCache();
+		}
 		if (!DEV) {
 			$chain[] = $redisCache;
 		}
