@@ -19,7 +19,6 @@
 return array (
   'ID' => '',
   'No.' => '',
-  'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.' => '通过Paypal付款不是即时通过的。如果您已付款，请耐心等待，我们会尽快审核。',
   'User' => '',
   'Date' => '报名时间',
   ' CNY' => '元',
@@ -45,6 +44,7 @@ return array (
   'Name of Identity' => '证件名',
   'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受参赛选手与一名注册观众进场。您需要为该陪同人员缴纳{fee}元费用，此费用组委会将用来购买安全保险以及制作入场凭证等花销。',
   'Paid Fee via Cubing China' => '已付报名费',
+  'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.' => '通过Paypal付款不是即时通过的。如果您已付款，请耐心等待，我们会尽快审核。',
   'Please choose from the options listed below.' => '请选择：',
   'Please double-confirm your cancellation.' => '请再次确认你的退赛申请。',
   'Please fill your ID number {here} before you register.' => '请先点击{here}填写你的证件号码以便报名。',

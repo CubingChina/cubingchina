@@ -184,8 +184,16 @@
     ); ?>
     <div class="checkbox">
       <label>
-        <input id="disclaimer" value="agree" type="checkbox" name="disclaimer" checked>
-        <?php echo Yii::t('Competition', 'I have read and know the {disclaimer} of Cubing China.', [
+        <input id="regulations" class="registration-agreements" value="agree" type="checkbox" name="regulations" checked>
+        <?php echo Yii::t('Competition', 'I have read and am familiar with this competition’s {regulations}.', [
+          '{regulations}'=>CHtml::link(Yii::t('Competition', 'regulations'), $competition->getUrl('regulations')),
+        ]); ?>
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input id="disclaimer" class="registration-agreements" value="agree" type="checkbox" name="disclaimer" checked>
+        <?php echo Yii::t('Competition', 'I have read and am familiar the {disclaimer} of Cubing China.', [
           '{disclaimer}'=>CHtml::link(Yii::t('Competition', 'disclaimer'), ['/site/page', 'view'=>'disclaimer']),
         ]); ?>
       </label>
@@ -243,4 +251,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20170827');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180530');

@@ -3,8 +3,12 @@ $(function() {
   var regulations = options.regulations;
   var specialRegulations = {}
   var fee = $('#fee');
-  $(document).on('change', '#disclaimer', function() {
-    $('#submit-button').prop('disabled', !this.checked);
+  $(document).on('change', '.registration-agreements', function() {
+    var checked = true
+    $('.registration-agreements').each(function() {
+      checked = checked && this.checked
+    });
+    $('#submit-button').prop('disabled', !checked);
   }).on('change', '.registration-events', function() {
     updateFee();
   }).on('change', '#Registration_has_entourage', function() {
