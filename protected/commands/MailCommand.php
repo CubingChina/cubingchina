@@ -21,6 +21,7 @@ class MailCommand extends CConsoleCommand {
 			'limit'=>30,
 		));
 		$mailer = Yii::app()->mailer;
+		$mailer->removeBounceList();
 		foreach ($mails as $key=>$mail) {
 			$result = $mailer->send($mail);
 			$mail->update_time = time();

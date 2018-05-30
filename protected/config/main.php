@@ -297,6 +297,7 @@ $config = [
 			'api'=>[
 				'user'=>'cubingchina',
 				'key'=>Env::get('MAILER_KEY'),
+				'baseUrl'=>'http://api.sendcloud.net/apiv2/',
 			],
 		],
 	],
