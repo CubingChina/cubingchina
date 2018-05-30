@@ -1,4 +1,5 @@
 <?php
+use GuzzleHttp\Client;
 
 class Mailer extends CApplicationComponent {
 	const SEPARATOR = ';';
@@ -254,40 +255,23 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function send($mail) {
-		$fields = array(
-			'apiUser'=>$this->api['user'],
-			'apiKey'=>$this->api['key'],
+		$params = [
 			'from'=>$this->from,
 			'fromName'=>$this->fromname,
 			'to'=>$mail->to,
 			'subject'=>$mail->subject,
 			'html'=>$mail->message,
-		);
+		];
 		if ($mail->reply_to) {
-			$fields['replyTo'] = $mail->reply_to;
+			$params['replyTo'] = $mail->reply_to;
 		}
 		if ($mail->cc) {
-			$fields['cc'] = $mail->cc;
+			$params['cc'] = $mail->cc;
 		}
 		if ($mail->bcc) {
-			$fields['bcc'] = $mail->bcc;
+			$params['bcc'] = $mail->bcc;
 		}
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($ch, CURLOPT_URL, 'http://api.sendcloud.net/apiv2/mail/send');
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-
-		$result = curl_exec($ch);
-
-		if($result === false) {
-			$error = curl_error($ch);
-			Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, $error)), 'error', 'sendmail');
-			return false;
-		}
-		curl_close($ch);
-		$result = json_decode($result);
+		$result = $this->request($this->getApiUrl('mail/send'), $params);
 		if ($result === false) {
 			return false;
 		}
@@ -297,6 +281,35 @@ class Mailer extends CApplicationComponent {
 			if (isset($result->message)) {
 				Yii::log(implode('|', array($mail->to, $mail->subject, $mail->message, json_encode($result->message))), 'error', 'sendmail');
 			}
+			return false;
+		}
+	}
+
+	public function removeBounceList() {
+		$list = $this->request($this->getApiUrl('bounce/delete'), [
+			'days'=>3,
+		]);
+	}
+
+	protected function getApiUrl($path) {
+		return $this->api['baseUrl'] . $path;
+	}
+
+	protected function request($url, $params = []) {
+		$params['apiUser'] = $this->api['user'];
+		$params['apiKey'] = $this->api['key'];
+		$client = new Client();
+		try {
+			$response = $client->post($url, [
+				'form_params'=>$params,
+			]);
+			if ($response->getStatusCode() != 200) {
+				return false;
+			}
+			$body = $response->getBody(true);
+			$body = json_decode($body);
+			return $body;
+		} catch (Exception $e) {
 			return false;
 		}
 	}
