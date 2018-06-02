@@ -13,19 +13,7 @@
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('common', 'Region'); ?>:</span>
           <span class="info-value">
-            <?php if (Yii::app()->language === 'en' && $user !== null && $user->province !== null): ?>
-            <?php if (!in_array($user->province_id, array(215, 525, 567, 642))): ?>
-            <?php echo $user->city->getAttributeValue('name'); ?>,
-            <?php endif; ?>
-            <?php echo $user->province->getAttributeValue('name'); ?>,
-            <?php endif; ?>
             <?php echo Yii::t('Region', $person->country->name); ?>
-            <?php if (Yii::app()->language !== 'en' && $user !== null && $user->province !== null): ?>
-            <?php echo $user->province->getAttributeValue('name'); ?>
-            <?php if (!in_array($user->province_id, array(215, 525, 567, 642))): ?>
-            <?php echo $user->city->getAttributeValue('name'); ?>
-            <?php endif; ?>
-            <?php endif; ?>
           </span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
