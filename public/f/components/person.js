@@ -1,5 +1,7 @@
 import L from 'leaflet'
 import 'leaflet.markercluster'
+import echarts from 'echarts'
+import china from 'echarts/map/json/china'
 
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -17,13 +19,18 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: marker2x,
   iconUrl: marker,
   shadowUrl: markerShadow
-});
+})
 
 if ($('body').hasClass('results-p')) {
-  let map
+  let map = false
   const personId = $('[data-person-id]').data('person-id')
   $(window).resize(function() {
-    $('#competition-cluster').height($(window).height() - 20)
+    let win = $(window)
+    $('#competition-cluster').height(win.height() - 20)
+    $('#competition-provinces').height(Math.min(win.height() - 20, win.width() - 60))
+    if (map) {
+      map.resize()
+    }
   }).resize()
   $('a[href="#person-map"]').on('shown.bs.tab', function() {
     if (!map) {
@@ -34,8 +41,10 @@ if ($('body').hasClass('results-p')) {
         },
         dataType: 'json'
       }).then((result) => {
-        const center = result.data.worlds.center
-        const mapData = result.data.worlds.data
+        const data = result.data
+        //worlds
+        const center = data.worlds.center
+        const mapData = data.worlds.data
         const tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
           maxZoom: 18,
           attribution: '&copy <a href="http://openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -43,7 +52,7 @@ if ($('body').hasClass('results-p')) {
           accessToken: 'pk.eyJ1IjoiYmFpcWlhbmciLCJhIjoiY2l2YjZ1cHoxMDBnMDJ4bG04dzdseHd6bSJ9.MsHNIxGXeC_w2BRpMUE4ng'
         })
 
-        map = L.map('competition-cluster', {
+        const worlds = L.map('competition-cluster', {
           center: L.latLng(center.latitude, center.longitude),
           zoom: 4,
           layers: [tiles]
@@ -62,7 +71,60 @@ if ($('body').hasClass('results-p')) {
           ].join('<br>'))
           markers.addLayer(marker)
         }
-        map.addLayer(markers)
+        worlds.addLayer(markers)
+
+        //provinces
+        map = echarts.init(document.getElementById('competition-provinces'))
+        echarts.registerMap('China', china)
+        const values = data.provinces.map((province) => province.value)
+        const option = {
+            tooltip: {
+              trigger: 'item',
+              showDelay: 0,
+              transitionDuration: 0.2,
+              formatter: function (params) {
+                return params.dataIndex < 0 ? '' : params.data.province + ': ' + params.value;
+              }
+            },
+            visualMap: {
+              left: 'right',
+              min: Math.min(...values),
+              max: Math.max(...[10, ...values]),
+              inRange: {
+                color: [
+                  '#fae5f8',
+                  '#f2baec',
+                  '#e990e0',
+                  '#e165d4',
+                  '#d93ac9',
+                  '#bc24ac',
+                  '#911c85',
+                  '#7c1871',
+                  '#66145e',
+                  '#51104a',
+                ]
+              },
+              text: ['Max', 'Min'],
+              calculable: true
+            },
+            series: [
+              {
+                name: 'Visited Provinces',
+                type: 'map',
+                roam: true,
+                map: 'China',
+                itemStyle: {
+                  emphasis: {
+                    label: {
+                      show: true
+                    }
+                  }
+                },
+                data: result.data.provinces
+              }
+            ]
+        }
+        map.setOption(option)
       })
     }
   })

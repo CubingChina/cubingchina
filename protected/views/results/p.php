@@ -575,6 +575,9 @@
     </div>
     <?php endif; ?>
     <div class="tab-pane" id="person-map">
+      <?php if (count($visitedProvinces) > 0): ?>
+      <div id="competition-provinces"></div>
+      <?php endif; ?>
       <div id="competition-cluster"></div>
     </div>
     <div class="tab-pane" id="competition-history">
