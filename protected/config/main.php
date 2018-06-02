@@ -276,18 +276,6 @@ $config = [
 						'js/pinyin.min.js',
 					],
 				],
-				'leaflet'=>[
-					'baseUrl'=>'f/plugins/leaflet',
-					'css'=>[
-						'leaflet.css?20161009',
-						'plugins/MarkerCluster/MarkerCluster.css',
-						'plugins/MarkerCluster/MarkerCluster.Default.css',
-					],
-					'js'=>[
-						'leaflet.js',
-						'plugins/MarkerCluster/leaflet.markercluster.js',
-					],
-				],
 			],
 		],
 		'mailer'=>[
