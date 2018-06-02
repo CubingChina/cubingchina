@@ -1,4 +1,4 @@
-<div class="col-lg-12 results-person">
+<div class="col-lg-12 results-person" data-person-id="<?php echo $person->id; ?>">
   <h1 class="text-center"><?php echo $user && $user->id === Yii::app()->user->id ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
   <?php if ($user && $user->avatar): ?>
   <div class="text-center"><?php echo $user->avatar->img; ?></div>
@@ -746,52 +746,3 @@
     <?php endif; ?>
   </div>
 </div>
-<?php
-$mapCenter = json_encode($mapCenter);
-$mapData = json_encode(array_map(function($data) {
-  $data['name'] = ActiveRecord::getModelAttributeValue($data, 'name');
-  $data['city_name'] = ActiveRecord::getModelAttributeValue($data, 'city_name');
-  return $data;
-}, $mapData));
-Yii::app()->clientScript->registerPackage('leaflet');
-Yii::app()->clientScript->registerScript('person',
-<<<EOT
-  $(window).resize(function() {
-    $('#competition-cluster').height($(window).height() - 20);
-  }).resize();
-  var map;
-  $('a[href="#person-map"]').on('shown.bs.tab', function() {
-    if (!map) {
-      var center = {$mapCenter},
-        mapData = {$mapData},
-        tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-          maxZoom: 18,
-          attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a>',
-          id: 'baiqiang.22k7e3en',
-          accessToken: 'pk.eyJ1IjoiYmFpcWlhbmciLCJhIjoiY2l2YjZ1cHoxMDBnMDJ4bG04dzdseHd6bSJ9.MsHNIxGXeC_w2BRpMUE4ng'
-        });
-
-      map = L.map('competition-cluster', {
-        center: L.latLng(center.latitude, center.longitude),
-        zoom: 4,
-        layers: [tiles]
-      });
-
-      var markers = L.markerClusterGroup();
-      var marker;
-      for (var i = 0; i < mapData.length; i++) {
-        var marker = L.marker(new L.LatLng(mapData[i].latitude, mapData[i].longitude), {
-          title: mapData[i].name,
-        });
-        marker.bindPopup([
-          '<a href="' + mapData[i].url + '" target="_blank">' + mapData[i].name + '</a>',
-          mapData[i].city_name,
-          mapData[i].date
-        ].join('<br>'));
-        markers.addLayer(marker);
-      }
-      map.addLayer(markers);
-    }
-  });
-EOT
-);
