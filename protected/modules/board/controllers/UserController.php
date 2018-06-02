@@ -277,6 +277,10 @@ class UserController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
+		if ($model->hasSuccessfulRegistration() && !$this->iGet('confirm')) {
+			Yii::app()->user->setFlash('warning', '该用户有报名比赛，确认拉黑请点击' . CHtml::link('这里', ['/board/user/disable', 'id'=>$id, 'confirm'=>1]));
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
 		$model->status = User::STATUS_BANNED;
 		$model->save();
 		Yii::app()->user->setFlash('success', '拉黑用户成功');

@@ -394,15 +394,16 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationStarted() {
-		return time() >= $this->reg_start;
+		return time() >= $this->getTimeInNumber('reg_start');
 	}
 
 	public function isRegistrationEnded() {
-		return time() > $this->reg_end;
+		return time() > $this->getTimeInNumber('reg_end');
 	}
 
 	public function isRegistrationPaused() {
-		return $this->cancellation_end_time > 0 && time() > $this->cancellation_end_time && time() < $this->reg_reopen_time;
+		$cancellationEndTime = $this->getTimeInNumber('cancellation_end_time');
+		return $cancellationEndTime > 0 && time() > $cancellationEndTime && time() < $this->getTimeInNumber('reg_reopen_time');
 	}
 
 	public function isRegistrationFull() {
@@ -1319,9 +1320,9 @@ class Competition extends ActiveRecord {
 
 	public function getEventsColumns($headerText = false) {
 		$region = 'Yii::t("Region", $data->user->country->getAttributeValue("name"))';
-		if (Yii::app()->language == 'zh_cn') {
-			$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
-		}
+		// if (Yii::app()->language == 'zh_cn') {
+		// 	$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
+		// }
 		$columns = array(
 			array(
 				'headerHtmlOptions'=>array(
