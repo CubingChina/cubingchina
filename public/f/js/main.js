@@ -4,11 +4,14 @@ import '../less/styles.less'
 
 import 'jquery-cookie'
 import 'jquery-countdown'
+import 'bootstrap-hover-dropdown'
 import ProgressBar from 'progressbar.js'
+
+import utils from '../utils'
 import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
-import 'bootstrap-hover-dropdown'
-import utils from '../utils'
+
+import '../components/person'
 
 window.jQuery = window.$ = jQuery
 window.CubingChina = {
