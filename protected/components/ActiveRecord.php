@@ -55,6 +55,14 @@ class ActiveRecord extends CActiveRecord {
 		), $this->$attribute);
 	}
 
+	protected function getTimeInNumber($attribute) {
+		$time = $this->$attribute;
+		if (!ctype_digit($time)) {
+			$time = strtotime($time);
+		}
+		return $time;
+	}
+
 	protected function beforeSave() {
 		if ($this->isNewRecord && $this->hasAttribute('create_time')) {
 			$this->create_time = time();
