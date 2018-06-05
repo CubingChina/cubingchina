@@ -626,6 +626,7 @@ class ResultsController extends Controller {
 	}
 
 	public function actionStatistics() {
+		$page = $this->iGet('page', 1);
 		$name = $this->sGet('name');
 		$names = array_map('ucfirst', explode('-', $name));
 		$class = implode('', $names);
@@ -638,7 +639,7 @@ class ResultsController extends Controller {
 				throw new CHttpException(404);
 			}
 		}
-		$data = Statistics::getData();
+		$data = Statistics::getData($page);
 		extract($data);
 		$this->pageTitle = array('Fun Statistics');
 		$this->title = 'Fun Statistics';
@@ -1105,6 +1106,62 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'eventIds'=>$eventIds,
+		));
+	}
+
+	private function statMostPos() {
+		$page = $this->iGet('page', 1);
+		$pos = $this->iGet('pos', 2);
+		$region = $this->sGet('region', 'China');
+		$eventIds = $this->aGet('event');
+		$gender = $this->sGet('gender', 'all');
+		$includeDNF = $this->iGet('includeDNF', 0);
+		if (!in_array($pos, MostPos::$positions)) {
+			$pos = 2;
+		}
+		if (!Region::isValidRegion($region)) {
+			$region = 'China';
+		}
+		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
+			$eventIds = array();
+		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		$statistic = array(
+			'class'=>'MostPos',
+			'type'=>'all',
+			'region'=>$region,
+			'pos'=>$pos,
+			'region'=>$region,
+			'eventIds'=>$eventIds,
+			'gender'=>$gender,
+			'includeDNF'=>$includeDNF,
+		);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$this->title = Yii::t('statistics', 'Most nth Place');
+		$this->pageTitle = array('Fun Statistics', $this->title);
+		$this->breadcrumbs = array(
+			'Results'=>array('/results/index'),
+			'Statistics'=>array('/results/statistics'),
+			$this->title,
+		);
+		$data = Statistics::buildRankings($statistic, $page);
+		extract($data);
+		if ($page > ceil($statistic['count'] / Statistics::$limit)) {
+			$page = ceil($statistic['count'] / Statistics::$limit);
+		}
+		$this->render('stat/mostPos', array(
+			'statistic'=>$statistic,
+			'time'=>$time,
+			'page'=>$page,
+			'pos'=>$pos,
+			'region'=>$region,
+			'eventIds'=>$eventIds,
+			'gender'=>$gender,
+			'includeDNF'=>$includeDNF,
 		));
 	}
 }
