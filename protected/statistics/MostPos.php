@@ -10,7 +10,7 @@ class MostPos extends Statistics {
 			$temp = $statistic;
 			$temp['type'] = 'all';
 			foreach ($events as $eventId=>$name) {
-				$temp['eventIds'] = [$eventId];
+				$temp['eventIds'] = ["$eventId"];
 				$statistics[$eventId] = self::build($temp);
 			}
 			return self::makeStatisticsData($statistic, array(
