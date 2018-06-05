@@ -240,6 +240,56 @@ class Statistics {
 				],
 			],
 		],
+		[
+			[
+				'name'=>'Most 2nd place',
+				'class'=>'MostPos',
+				'width'=>6,
+				'type'=>'all',
+				'pos'=>2,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-pos',
+					'pos'=>2,
+				],
+			],
+			[
+				'name'=>'Most 2nd place in each event',
+				'class'=>'MostPos',
+				'width'=>6,
+				'type'=>'each',
+				'pos'=>2,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-pos',
+					'pos'=>2,
+				],
+			],
+			[
+				'name'=>'Most 4th place',
+				'class'=>'MostPos',
+				'width'=>6,
+				'type'=>'all',
+				'pos'=>4,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-pos',
+					'pos'=>2,
+				],
+			],
+			[
+				'name'=>'Most 4th place in each event',
+				'class'=>'MostPos',
+				'width'=>6,
+				'type'=>'each',
+				'pos'=>4,
+				'more'=>[
+					'/results/statistics',
+					'name'=>'most-pos',
+					'pos'=>2,
+				],
+			],
+		]
 	];
 
 	public static function getData($page = 1) {

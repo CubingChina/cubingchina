@@ -17,6 +17,13 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Count' => '次数',
+  'Include DNF' => '包括DNF',
+  'Most nth Place' => '第n名次数排行榜',
+  'Most 2nd place' => '全项目第二名次数排行榜',
+  'Most 2nd place in each event' => '分项目第二名次数排行榜',
+  'Most 4th place' => '全项目第四名次数排行榜',
+  'Most 4th place in each event' => '分项目第四名次数排行榜',
   'Welcome to the Cubing China results page, where you can find the Chinese personal rankings, official records, and fun statistics.' => '',
   'Appearances' => '席位',
   'Appearances in top 100 Chinese average results of' => '中国各项平均成绩前100占席',
