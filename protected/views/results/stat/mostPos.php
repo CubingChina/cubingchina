@@ -53,9 +53,10 @@
         )); ?>
       </div>
       <div class="form-group checkbox">
-        <label for="includeDNF"><?php echo Yii::t('statistics', 'Include DNF'); ?></label>
-        <?php echo CHtml::checkBox('includeDNF', $includeDNF, array(
-        )); ?>
+        <?php echo Html::switch('includeDNF', $includeDNF, [
+          'data-label-text'=>Yii::t('statistics', 'Include DNF'),
+          'data-label-width'=>Yii::app()->language == 'en' ? 80 : 60,
+        ]); ?>
       </div>
       <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
     </div>
