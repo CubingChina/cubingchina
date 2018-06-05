@@ -78,6 +78,7 @@ $config = [
 				'live/<alias:[-A-z0-9]+>/statistics/<type:[-A-z0-9]+>'=>'live/statistics',
 				'live/<alias:[-A-z0-9]+>'=>'live/live',
 				'live/<alias:[-A-z0-9]+>/<action:\w+>'=>'live/<action>',
+				'results/statistics/<page:[0-9]+>'=>'results/statistics',
 				'results/statistics/<name:[-A-z0-9]+>'=>'results/statistics',
 				'results/person/<id:(1982|20\d\d)[A-z]{4}\d\d>'=>'results/p',
 				'results/battle/<ids:(1982|20\d\d)[A-z]{4}\d\d(-(1982|20\d\d)[A-z]{4}\d\d){0,3}>'=>'results/battle',

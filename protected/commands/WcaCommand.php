@@ -68,7 +68,9 @@ class WcaCommand extends CConsoleCommand {
 		}
 		$this->log('podiums built');
 		Yii::import('application.statistics.*');
-		$data = Statistics::getData(true);
+		foreach (Statistics::getLists() as $key=>$list) {
+			Statistics::getData($key + 1);
+		}
 		$this->log('set results_statistics_data:', $data ? 1 : 0);
 	}
 
