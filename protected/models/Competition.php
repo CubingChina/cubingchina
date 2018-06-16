@@ -2351,7 +2351,9 @@ class Competition extends ActiveRecord {
 
 	public function checkCancellationEnd() {
 		//之前的比赛ID到669
-		if ($this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
+		if ($this->person_num > 0 && (
+			$this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
+		)) {
 			if ($this->cancellation_end_time > $this->reg_end - 86400) {
 				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
 			}
