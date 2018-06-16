@@ -82,7 +82,7 @@ class EditProfileForm extends CFormModel {
 
 	public function checkMobile() {
 		$user = Yii::app()->controller->user;
-		if ($user->country_id == 1 && !preg_match('{^1[34578]\d{9}$}', $this->mobile)) {
+		if ($user->country_id == 1 && !preg_match('{^1\d{10}$}', $this->mobile)) {
 			$this->addError('mobile', Yii::t('common', 'Invalid mobile.'));
 		}
 	}
