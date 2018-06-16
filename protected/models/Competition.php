@@ -2369,7 +2369,9 @@ class Competition extends ActiveRecord {
 
 	public function checkRegistrationReopen() {
 		//之前的比赛ID到669
-		if ($this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
+		if ($this->person_num > 0 && (
+			$this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
+		)) {
 			if ($this->reg_reopen_time > $this->reg_end - 43200) {
 				$this->addError('reg_reopen_time', '报名重开时间必须早于比赛开始至少半天');
 			}
