@@ -176,7 +176,7 @@ class RegisterForm extends CFormModel {
 	}
 
 	public function checkMobile() {
-		if ($this->country_id == 1 && !preg_match('{^1[34578]\d{9}$}', $this->mobile)) {
+		if ($this->country_id == 1 && !preg_match('{^1\d{10}$}', $this->mobile)) {
 			$this->addError('mobile', Yii::t('common', 'Invalid mobile.'));
 		}
 	}
