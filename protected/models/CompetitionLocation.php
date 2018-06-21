@@ -36,7 +36,11 @@ class CompetitionLocation extends ActiveRecord {
 	}
 
 	public function getFeeInfo() {
-		return $this->country_id == 1 ? $this->competition->getEventFee('entry') : $this->fee;
+		if ($this->country_id != 1) {
+			return $this->fee;
+		}
+		$fee = $this->fee > 0 ? $this->fee : $this->competition->getEventFee('entry');
+		return Html::fontAwesome('rmb') . $fee;
 	}
 
 	public function getFullAddress($includeVenue = true) {
@@ -80,7 +84,7 @@ class CompetitionLocation extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id', 'required'),
-			array('location_id, country_id, province_id, city_id, delegate_id, status', 'numerical', 'integerOnly'=>true),
+			array('location_id, country_id, province_id, city_id, delegate_id, status, competitor_limit', 'numerical', 'integerOnly'=>true),
 			array('competition_id', 'length', 'max'=>10),
 			array('venue, venue_zh, city_name, city_name_zh, delegate_text, fee, longitude, latitude', 'length', 'max'=>512),
 			// The following rule is used by search().

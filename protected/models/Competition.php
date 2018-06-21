@@ -2274,7 +2274,7 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
-			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'status'] as $attribute) {
+			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'status', 'competitor_limit'] as $attribute) {
 				$location->$attribute = intval($location->$attribute);
 			}
 			$location->longitude = floatval($location->longitude);
@@ -2468,7 +2468,6 @@ class Competition extends ActiveRecord {
 		}
 		$temp = array();
 		$index = 0;
-		$error = false;
 		foreach ($locations['province_id'] as $key=>$provinceId) {
 			if (empty($provinceId) && empty($locations['city_id'][$key])
 				&& empty($locations['venue'][$key])  && empty($locations['venue_zh'][$key])
@@ -2484,55 +2483,47 @@ class Competition extends ActiveRecord {
 					$locations['city_id'][$key] = 0;
 					if (empty($locations['fee'][$key])) {
 						$this->addError('locations.fee.' . $index, '非大陆地区请填写费用！');
-						$error = true;
 					}
 					if ($locations['country_id'][$key] > 4) {
 						if (empty($locations['city_name'][$key])) {
 							$this->addError('locations.city_name.' . $index, '非大陆及港澳台地区请填写英文城市！');
-							$error = true;
 						}
 						if (empty($locations['city_name_zh'][$key])) {
 							$this->addError('locations.city_name_zh.' . $index, '非大陆及港澳台地区请填写中文城市！');
-							$error = true;
 						}
 					}
+				} elseif (!empty($locations['fee'][$key]) && !ctype_digit($locations['fee'][$key])) {
+					$this->addError('locations.fee.' . $index, '大陆地区请填写整数费用！');
 				}
 				if (empty($locations['delegate_id'][$key]) && empty($locations['delegate_text'][$key])) {
 					$this->addError('locations.delegate_text.' . $index, '必须选择一个代表或者手动填写！');
-					$error = true;
 				}
 			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
 				if (empty($provinceId)) {
 					$this->addError('locations.province_id.' . $index, '省份不能为空');
-					$error = true;
 				}
 				if (empty($locations['city_id'][$key])) {
 					$this->addError('locations.city_id.' . $index, '城市不能为空');
-					$error = true;
 				}
 			}
 			$locations['venue'][$key] = trim($locations['venue'][$key]);
 			if ($locations['venue'][$key] == '') {
 				$this->addError('locations.venue.' . $index, '英文地址不能为空');
-				$error = true;
 			}
 			// check capitalization, comma and space
 			if (strpos($locations['venue'][$key], '，') !== false) {
 				$this->addError('locations.venue.' . $index, '英文地址请使用半角逗号');
-				$error = true;
 			}
 			if (!$this->multi_countries) {
 				$venues = explode(',', $locations['venue'][$key]);
 				foreach ($venues as $k=>$venue) {
 					if (!preg_match('{^[0-9A-Z]}', trim($venue))) {
 						$this->addError('locations.venue.' . $index, '首字母请大写');
-						$error = true;
 						break;
 					}
 					if ($k > 0 && $venue{0} !== ' ') {
 						$this->addError('locations.venue.' . $index, '逗号之后请添加空格');
-						$error = true;
 						break;
 					}
 				}
@@ -2541,15 +2532,12 @@ class Competition extends ActiveRecord {
 			$locations['venue_zh'][$key] = trim($locations['venue_zh'][$key]);
 			if ($locations['venue_zh'][$key] == '') {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
-				$error = true;
 			}
 			if ($locations['longitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['longitude'][$key])) {
 				$this->addError('locations.longitude.' . $index, '经度无效！');
-				$error = true;
 			}
 			if ($locations['latitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['latitude'][$key])) {
 				$this->addError('locations.latitude.' . $index, '纬度无效！');
-				$error = true;
 			}
 			$temp[] = array(
 				'country_id'=>$this->multi_countries ? $locations['country_id'][$key] : 0,
@@ -2565,10 +2553,11 @@ class Competition extends ActiveRecord {
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
 				'status'=>$this->multi_countries ? intval($locations['status'][$key]) : 1,
+				'competitor_limit'=>$this->multi_countries ? intval($locations['competitor_limit'][$key]) : 0,
 			);
 			$index++;
 		}
-		if ($error || count($temp) == 0) {
+		if ($this->hasErrors() || count($temp) == 0) {
 			$this->addError('locations', '地址填写有误，请检查各地址填写！');
 		}
 		$this->locations = $temp;
