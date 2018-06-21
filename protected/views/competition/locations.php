@@ -14,6 +14,10 @@
     </dd>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
     <dd><?php echo $location->getFeeInfo(); ?></dd>
+    <?php if ($location->competitor_limit > 0): ?>
+    <dt><?php echo Yii::t('Competition', 'Competitor Limit'); ?></dt>
+    <dd><?php echo $location->competitor_limit; ?></dd>
+  <?php endif; ?>
   </dl>
   <?php endif; ?>
   <?php if ($showMap): ?>
