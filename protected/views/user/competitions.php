@@ -26,7 +26,7 @@
       array(
         'name'=>'fee',
         'type'=>'raw',
-        'value'=>'$data->getTotalFee() . Yii::t("Registration", " CNY")',
+        'value'=>'$data->getFeeInfo()',
       ),
       array(
         'type'=>'raw',

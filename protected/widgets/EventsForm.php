@@ -61,13 +61,18 @@ class EventsForm extends Widget {
 			if ($competition && $competition->isMultiLocation()) {
 				echo CHtml::closeTag('div');
 				$locations = [];
+				$options = [];
 				foreach ($competition->sortedLocations as $location) {
 					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
+					$options[$location->location_id] = [
+						'data-fee'=>$location->getFeeInfo(),
+					];
 				}
 				echo CHtml::activeLabelEx($model, 'location_id');
 				echo CHtml::activeDropDownList($model, 'location_id', $locations, [
 					'class'=>'form-control',
 					'prompt'=>'',
+					'options'=>$options,
 				]);
 				echo CHtml::error($model, 'location_id', ['class'=>'text-danger']);
 				echo CHtml::openTag('div', [

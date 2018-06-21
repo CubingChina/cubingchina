@@ -24,7 +24,7 @@
       // $form->error($model, 'events', array('class'=>'text-danger'))
     );?>
     <div id="fee" class="hide">
-      <p><b><?php echo Yii::t('Registration', 'Fee (CNY)'); ?></b></p>
+      <p><b><?php echo Yii::t('Registration', $competition->multi_countries ? 'Fee' : 'Fee (CNY)'); ?></b></p>
       <p id="totalFee"></p>
     </div>
     <hr>
@@ -251,4 +251,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180530');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180621');

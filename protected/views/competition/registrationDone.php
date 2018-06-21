@@ -39,8 +39,12 @@
           <h4><?php echo Yii::t('Registration', 'No.'); ?></h4>
           <p><?php echo $registration->getUserNumber(); ?></p>
           <?php endif; ?>
+          <?php if ($competition->isMultiLocation()): ?>
+          <h4><?php echo Yii::t('Competition', 'Location'); ?></h4>
+          <p><?php echo $registration->location->getCityName(); ?></p>
+          <?php endif; ?>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
-          <p><i class="fa fa-rmb"></i><?php echo $registration->getTotalFee(); ?></p>
+          <p><?php echo $registration->getFeeInfo(); ?></p>
           <?php if ($registration->isCancelled() && $registration->getRefundFee() > 0): ?>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
           <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>

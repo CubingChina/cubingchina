@@ -9,7 +9,7 @@ $(function() {
       checked = checked && this.checked
     });
     $('#submit-button').prop('disabled', !checked);
-  }).on('change', '.registration-events', function() {
+  }).on('change', '.registration-events, #Registration_location_id', function() {
     updateFee();
   }).on('change', '#Registration_has_entourage', function() {
     $('.entourage-info')[this.value == 1 ? 'removeClass' : 'addClass']('hide');
@@ -90,8 +90,11 @@ $(function() {
     $('.registration-events:checked').each(function() {
       totalFee += $(this).data('fee');
     });
-    if (totalFee > 0) {
-      fee.removeClass('hide').find('#totalFee').text(totalFee);
+    if (options.multiCountries) {
+      totalFee = $('#Registration_location_id option:selected').data('fee');
+    }
+    if (totalFee && totalFee != 0) {
+      fee.removeClass('hide').find('#totalFee').html(totalFee);
     } else {
       fee.addClass('hide');
     }
