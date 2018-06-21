@@ -178,6 +178,16 @@ class MultiLocations extends Widget {
 					CHtml::error($model, 'locations.fee.' . $key, array('class'=>'text-danger'))
 				);
 				echo Html::formGroup(
+					$model, 'locations[competitor_limit][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('人数', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[competitor_limit][]'), $location['competitor_limit'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.competitor_limit.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
 					$model, 'locations[status][]', array(
 						'class'=>'col-lg-12',
 					),

@@ -289,6 +289,9 @@ class Registration extends ActiveRecord {
 		$this->formatEvents();
 		//calculate refund fee before change status
 		$refundFee = $this->getRefundFee();
+		if ($this->isWaiting()) {
+			$status = self::STATUS_CANCELLED_TIME_END;
+		}
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
@@ -463,7 +466,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRegistrationFee() {
-		$fee = $this->getTotalFee();
+		$fee = $this->getFeeInfo();
 		if ($this->isPaid() && $fee > 0) {
 			$fee .= Yii::t('common', ' (paid)');
 		}
@@ -478,6 +481,9 @@ class Registration extends ActiveRecord {
 			return $this->total_fee;
 		}
 		$competition = $this->competition;
+		if ($competition->multi_countries && $this->location->country_id == 1 && $this->location->fee > 0) {
+			return $this->location->fee;
+		}
 		$competitionEvents = $competition->associatedEvents;
 		$fees = array();
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
@@ -488,6 +494,13 @@ class Registration extends ActiveRecord {
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
 		return $competition->getEventFee('entry') + $entourageFee + array_sum($fees);
+	}
+
+	public function getFeeInfo() {
+		if ($this->location->country_id > 1) {
+			return $this->location->fee;
+		}
+		return Html::fontAwesome('rmb') . $this->getTotalFee();
 	}
 
 	public function getPaidFee() {
@@ -672,7 +685,7 @@ class Registration extends ActiveRecord {
 				'name'=>'fee',
 				'header'=>Yii::t('common', 'Fee'),
 				'type'=>'raw',
-				'value'=>'$data->getTotalFee() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")',
+				'value'=>'$data->getFeeInfo() . ($data->isPaid() ? Yii::t("common", " (paid)") : "")',
 			),
 			array(
 				'name'=>'comment',
@@ -871,7 +884,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayable() {
-		if ($this->isCancelled()) {
+		if ($this->isCancelled() || $this->location->country_id > 1) {
 			return false;
 		}
 		$totalFee = $this->getTotalFee();

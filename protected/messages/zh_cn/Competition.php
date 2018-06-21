@@ -17,10 +17,9 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'I have read and am familiar with this competition’s {regulations}.' => '我已阅读并知晓本次比赛{regulations}要求。',
+  'Competitor Limit' => '人数限制',
   'ID' => '',
   'Online Pay' => '',
-  'regulations' => '规则',
   ' round' => '轮',
   ' rounds' => '轮',
   'Check Person' => '报名自动审核',
@@ -54,6 +53,7 @@ return array (
   'Events' => '项目',
   'Events and Qualifying Times' => '项目与资格线',
   'I have read and am familiar the {disclaimer} of Cubing China.' => '我已阅读并知晓粗饼网{disclaimer}。',
+  'I have read and am familiar with this competition’s {regulations}.' => '我已阅读并知晓本次比赛{regulations}要求。',
   'Information' => '详情',
   'It will be verified automatically after your {paying}.' => '在您{paying}报名费后，系统将自动审核你的报名。',
   'It will be verified by the organisation team soon. Please wait with patience.' => '主办方会尽快审核您的报名，请耐心等待。',
@@ -111,6 +111,7 @@ return array (
   'Your registration was submitted successfully.' => '您的报名已经成功提交。',
   'disclaimer' => '免责声明',
   'here' => '这里',
+  'regulations' => '规则',
   '{type} < {moves} moves' => '{type} < {moves}步',
   '{type} < {time}' => '{type} < {time}',
   '{type} > {points} point(s)' => '{type} > {points}分',
