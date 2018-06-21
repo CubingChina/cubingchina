@@ -289,6 +289,9 @@ class Registration extends ActiveRecord {
 		$this->formatEvents();
 		//calculate refund fee before change status
 		$refundFee = $this->getRefundFee();
+		if ($this->isWaiting()) {
+			$status = self::STATUS_CANCELLED_TIME_END;
+		}
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
