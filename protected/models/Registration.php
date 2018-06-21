@@ -884,7 +884,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getPayable() {
-		if ($this->isCancelled() || $this->location->country_id > 1) {
+		if ($this->isCancelled() || $this->location && $this->location->country_id > 1) {
 			return false;
 		}
 		$totalFee = $this->getTotalFee();
