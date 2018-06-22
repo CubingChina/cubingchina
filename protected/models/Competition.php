@@ -125,7 +125,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getOtherOptions() {
-		return [
+		$options = [
 			'podiums_children'=>[
 				'label'=>'少儿组',
 			],
@@ -138,16 +138,13 @@ class Competition extends ActiveRecord {
 			'podiums_greater_china'=>[
 				'label'=>'中华组',
 			],
-			'podiums_u8'=>[
-				'label'=>'U8少儿组',
-			],
-			'podiums_u10'=>[
-				'label'=>'U10少儿组',
-			],
-			'podiums_u12'=>[
-				'label'=>'U12少儿组',
-			],
 		];
+		for ($i = 3; $i <= 18; $i++) {
+			$options['podiums_u' . $i] = [
+				'label'=>'U' . $i . '组',
+			];
+		}
+		return $options;
 	}
 
 	public static function getAppliedCount($user) {
@@ -340,6 +337,10 @@ class Competition extends ActiveRecord {
 			$years[$year] = $year;
 		}
 		return $years;
+	}
+
+	public static function getPodiumAges() {
+		return range(3, 18);
 	}
 
 	public static function getAllStatus($actionId = 'index') {
@@ -1681,18 +1682,22 @@ class Competition extends ActiveRecord {
 				'condition'=>'best > 0',
 				'order'=>'average > 0 DESC, average ASC, best ASC',
 			]);
+			$ages = self::getPodiumAges();
 			$temp = [
-				Yii::t('live', 'U8')=>[],
-				Yii::t('live', 'U10')=>[],
-				Yii::t('live', 'U12')=>[],
 				Yii::t('live', 'Children')=>[],
 				Yii::t('live', 'Females')=>[],
 				Yii::t('live', 'New Comers')=>[],
 			];
-			$u12 = strtotime((date('Y', $this->date) - 12) . date('-m-d', $this->date));
-			$u10 = strtotime((date('Y', $this->date) - 10) . date('-m-d', $this->date));
-			$u8 = strtotime((date('Y', $this->date) - 8) . date('-m-d', $this->date));
-			$podiumsChildren = $this->podiums_children && !($this->podiums_u8 || $this->podiums_u10 || $this->podiums_u12);
+			$year = date('Y', $this->date);
+			$monthAndDay = date('-m-d', $this->date);
+			$podiumsChildren = $this->podiums_children;
+			$dobs = [];
+			foreach ($ages as $age) {
+				$temp['U' . $age] = [];
+				$podiumsChildren = $podiumsChildren && !($this->{'podiums_u' . $age});
+				$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
+			}
+			$u12 = strtotime(($year - 12) . $monthAndDay);
 			foreach ($results as $result) {
 				//ignore non greater chinese user
 				if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
@@ -1708,22 +1713,11 @@ class Competition extends ActiveRecord {
 				if ($result->user->wcaid === '' && $this->podiums_new_comers) {
 					$temp[Yii::t('live', 'New Comers')][] = clone $result;
 				}
-				switch (true) {
-					case $birthday > $u8:
-						if ($this->podiums_u8) {
-							$temp[Yii::t('live', 'U8')][] = clone $result;
-							break;
-						}
-					case $birthday > $u10:
-						if ($this->podiums_u10) {
-							$temp[Yii::t('live', 'U10')][] = clone $result;
-							break;
-						}
-					case $birthday > $u12:
-						if ($this->podiums_u12) {
-							$temp[Yii::t('live', 'U12')][] = clone $result;
-							break;
-						}
+				foreach ($ages as $age) {
+					if ($birthday > $dobs[$age] && $this->{'podiums_u' . $age}) {
+						$temp['U' . $age][] = clone $result;
+						break;
+					}
 				}
 			}
 			foreach ($temp as $group=>$results) {
@@ -2643,7 +2637,10 @@ class Competition extends ActiveRecord {
 		$rules = [
 			['name, name_zh, date, reg_end', 'required'],
 			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
-			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
+			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
+				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,
+				podiums_u9, podiums_u10, podiums_u11, podiums_u12, podiums_u13, podiums_u14,
+				podiums_u15, podiums_u16, podiums_u17, podiums_u18', 'numerical', 'integerOnly'=>true],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
@@ -2664,7 +2661,7 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
 		];

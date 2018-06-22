@@ -541,7 +541,7 @@
               );?>
               <?php endif; ?>
               <div class="col-lg-12">
-                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
+                <div class="text-danger">请注意，当你选择Ux时，少儿组将失效。Ux三组可以自由组合，系统自动匹配年龄。</div>
               </div>
               <?php echo Html::formGroup(
                 $model, 'podiums_num', array(
