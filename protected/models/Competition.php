@@ -64,6 +64,7 @@ class Competition extends ActiveRecord {
 	private $_description;
 	private $_timezones;
 	private $_remainedNumber;
+	private $_podiumsEvents;
 
 	public $year;
 	public $province;
@@ -125,7 +126,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getOtherOptions() {
-		return [
+		$options = [
 			'podiums_children'=>[
 				'label'=>'少儿组',
 			],
@@ -138,16 +139,13 @@ class Competition extends ActiveRecord {
 			'podiums_greater_china'=>[
 				'label'=>'中华组',
 			],
-			'podiums_u8'=>[
-				'label'=>'U8少儿组',
-			],
-			'podiums_u10'=>[
-				'label'=>'U10少儿组',
-			],
-			'podiums_u12'=>[
-				'label'=>'U12少儿组',
-			],
 		];
+		for ($i = 3; $i <= 18; $i++) {
+			$options['podiums_u' . $i] = [
+				'label'=>'U' . $i . '组',
+			];
+		}
+		return $options;
 	}
 
 	public static function getAppliedCount($user) {
@@ -340,6 +338,10 @@ class Competition extends ActiveRecord {
 			$years[$year] = $year;
 		}
 		return $years;
+	}
+
+	public static function getPodiumAges() {
+		return range(3, 18);
 	}
 
 	public static function getAllStatus($actionId = 'index') {
@@ -554,6 +556,12 @@ class Competition extends ActiveRecord {
 			$events[$event->event] = $event->attributes;
 		}
 		return $this->_events = $events;
+	}
+
+	public function getEventsNames() {
+		return array_map(function($event) {
+			return Events::getFullEventName($event['event']);
+		}, $this->associatedEvents);
 	}
 
 	public function getShouldDisableUnmetEvents() {
@@ -949,6 +957,20 @@ class Competition extends ActiveRecord {
 
 	public function setSchedules($schedules) {
 		$this->_schedules = $schedules;
+	}
+
+	public function getPodiumsEvents() {
+		if ($this->_podiumsEvents === null) {
+			$this->_podiumsEvents = json_decode($this->podiums_events);
+			if ($this->_podiumsEvents == null) {
+				$this->_podiumsEvents = [];
+			}
+		}
+		return $this->_podiumsEvents;
+	}
+
+	public function setPodiumsEvents($podiumsEvents) {
+		$this->_podiumsEvents = $podiumsEvents;
 	}
 
 	public function getUserSchedules($user) {
@@ -1665,93 +1687,88 @@ class Competition extends ActiveRecord {
 			}
 			$greaterChinaPodiums[$event] = $temp;
 		}
-		// females, children and new comers
-		$eventRound = LiveEventRound::model()->findByAttributes([
-			'competition_id'=>$this->id,
-			'event'=>'333',
-			'round'=>['1', 'd'],
-			'status'=>LiveEventRound::STATUS_FINISHED,
-		]);
-		if ($eventRound !== null) {
-			$results = LiveResult::model()->with('user')->findAllByAttributes([
+		foreach ($this->podiumsEvents as $event) {
+			// females, children and new comers
+			$eventRound = LiveEventRound::model()->findByAttributes([
 				'competition_id'=>$this->id,
-				'event'=>'333',
-				'round'=>$eventRound->round,
-			], [
-				'condition'=>'best > 0',
-				'order'=>'average > 0 DESC, average ASC, best ASC',
+				'event'=>$event,
+				'round'=>['1', 'd'],
+				'status'=>LiveEventRound::STATUS_FINISHED,
 			]);
-			$temp = [
-				Yii::t('live', 'U8')=>[],
-				Yii::t('live', 'U10')=>[],
-				Yii::t('live', 'U12')=>[],
-				Yii::t('live', 'Children')=>[],
-				Yii::t('live', 'Females')=>[],
-				Yii::t('live', 'New Comers')=>[],
-			];
-			$u12 = strtotime((date('Y', $this->date) - 12) . date('-m-d', $this->date));
-			$u10 = strtotime((date('Y', $this->date) - 10) . date('-m-d', $this->date));
-			$u8 = strtotime((date('Y', $this->date) - 8) . date('-m-d', $this->date));
-			$podiumsChildren = $this->podiums_children && !($this->podiums_u8 || $this->podiums_u10 || $this->podiums_u12);
-			foreach ($results as $result) {
-				//ignore non greater chinese user
-				if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
-					continue;
+			if ($eventRound !== null) {
+				$results = LiveResult::model()->with('user')->findAllByAttributes([
+					'competition_id'=>$this->id,
+					'event'=>$event,
+					'round'=>$eventRound->round,
+				], [
+					'condition'=>'best > 0',
+					'order'=>'average > 0 DESC, average ASC, best ASC',
+				]);
+				$ages = self::getPodiumAges();
+				$temp = [
+					Yii::t('live', 'Children')=>[],
+					Yii::t('live', 'Females')=>[],
+					Yii::t('live', 'New Comers')=>[],
+				];
+				$year = date('Y', $this->date);
+				$monthAndDay = date('-m-d', $this->date);
+				$podiumsChildren = $this->podiums_children;
+				$dobs = [];
+				foreach ($ages as $age) {
+					$temp['U' . $age] = [];
+					$podiumsChildren = $podiumsChildren && !($this->{'podiums_u' . $age});
+					$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
 				}
-				$birthday = $result->user->birthday;
-				if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
-					$temp[Yii::t('live', 'Females')][] = clone $result;
-				}
-				if ($birthday > $u12 && $podiumsChildren) {
-					$temp[Yii::t('live', 'Children')][] = clone $result;
-				}
-				if ($result->user->wcaid === '' && $this->podiums_new_comers) {
-					$temp[Yii::t('live', 'New Comers')][] = clone $result;
-				}
-				switch (true) {
-					case $birthday > $u8:
-						if ($this->podiums_u8) {
-							$temp[Yii::t('live', 'U8')][] = clone $result;
-							break;
-						}
-					case $birthday > $u10:
-						if ($this->podiums_u10) {
-							$temp[Yii::t('live', 'U10')][] = clone $result;
-							break;
-						}
-					case $birthday > $u12:
-						if ($this->podiums_u12) {
-							$temp[Yii::t('live', 'U12')][] = clone $result;
-							break;
-						}
-				}
-			}
-			foreach ($temp as $group=>$results) {
-				$count = 0;
-				$lastBest = 0;
-				$lastAverage = 0;
-				foreach ($results as $i=>$result) {
-					if ($result->average != $lastAverage) {
-						$lastAverage = $result->average;
-						$result->pos = $i + 1;
-						$count = $i;
-					} elseif ($result->best != $lastBest) {
-						$lastBest = $result->best;
-						$result->pos = $i + 1;
-						$count = $i;
-					} else {
-						$result->pos = $count + 1;
+				$u12 = strtotime(($year - 12) . $monthAndDay);
+				foreach ($results as $result) {
+					//ignore non greater chinese user
+					if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
+						continue;
 					}
-					if ($result->pos > $this->podiums_num) {
-						break;
+					$birthday = $result->user->birthday;
+					if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
+						$temp[Yii::t('live', 'Females')][] = clone $result;
 					}
-					$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
-						'{round}'=>Yii::t('RoundTypes', 'First'),
-					]);
-					if ($this->podiums_greater_china) {
-						$greaterChinaPodiums['unofficial'][] = $result;
-					} else {
-						$podiums['unofficial'][] = $result;
+					if ($birthday > $u12 && $podiumsChildren) {
+						$temp[Yii::t('live', 'Children')][] = clone $result;
+					}
+					if ($result->user->wcaid === '' && $this->podiums_new_comers) {
+						$temp[Yii::t('live', 'New Comers')][] = clone $result;
+					}
+					foreach ($ages as $age) {
+						if ($birthday > $dobs[$age] && $this->{'podiums_u' . $age}) {
+							$temp['U' . $age][] = clone $result;
+							break;
+						}
+					}
+				}
+				foreach ($temp as $group=>$results) {
+					$count = 0;
+					$lastBest = 0;
+					$lastAverage = 0;
+					foreach ($results as $i=>$result) {
+						if ($result->average != $lastAverage) {
+							$lastAverage = $result->average;
+							$result->pos = $i + 1;
+							$count = $i;
+						} elseif ($result->best != $lastBest) {
+							$lastBest = $result->best;
+							$result->pos = $i + 1;
+							$count = $i;
+						} else {
+							$result->pos = $count + 1;
+						}
+						if ($result->pos > $this->podiums_num) {
+							break;
+						}
+						$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
+							'{round}'=>Yii::t('RoundTypes', 'First'),
+						]);
+						if ($this->podiums_greater_china) {
+							$greaterChinaPodiums['unofficial'][] = $result;
+						} else {
+							$podiums['unofficial'][] = $result;
+						}
 					}
 				}
 			}
@@ -2227,6 +2244,7 @@ class Competition extends ActiveRecord {
 		$this->alias = str_replace(' ', '-', $this->name);
 		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
 		$this->alias = preg_replace('{-+}i', '-', $this->alias);
+		$this->podiums_events = json_encode($this->podiumsEvents);
 		return parent::beforeSave();
 	}
 
@@ -2643,7 +2661,10 @@ class Competition extends ActiveRecord {
 		$rules = [
 			['name, name_zh, date, reg_end', 'required'],
 			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
-			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
+			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
+				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,
+				podiums_u9, podiums_u10, podiums_u11, podiums_u12, podiums_u13, podiums_u14,
+				podiums_u15, podiums_u16, podiums_u17, podiums_u18', 'numerical', 'integerOnly'=>true],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
@@ -2664,7 +2685,8 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules,
+				regulations, regulations_zh, information, information_zh, travel, travel_zh, events, podiumsEvents', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
 		];
