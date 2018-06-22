@@ -579,6 +579,21 @@
                 )),
                 $form->error($model, 'local_type', array('class'=>'text-danger'))
               );?>
+              <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'podiumsEvents', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiumsEvents', array(
+                  'label'=>'非官方领奖台项目',
+                )),
+                $form->listBox($model, 'podiumsEvents', $model->eventsNames, array(
+                  'class'=>'form-control',
+                  'size'=>count($model->associatedEvents),
+                  'multiple'=>true,
+                )),
+                $form->error($model, 'podiumsEvents', array('class'=>'text-danger'))
+              );?>
             </div>
             <?php endif; ?>
           </div>
