@@ -59,11 +59,11 @@ class LiveEventRound extends ActiveRecord {
 			'i'=>$this->round,
 			'e'=>$this->event,
 			'f'=>$this->format,
-			'co'=>$this->cut_off,
-			'tl'=>$this->time_limit,
-			'n'=>$this->number,
-			's'=>$this->status,
-			'rn'=>$this->resultsNumber,
+			'co'=>intval($this->cut_off),
+			'tl'=>intval($this->time_limit),
+			'n'=>intval($this->number),
+			's'=>intval($this->status),
+			'rn'=>intval($this->resultsNumber),
 		);
 	}
 

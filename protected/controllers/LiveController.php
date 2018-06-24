@@ -27,8 +27,8 @@ class LiveController extends CompetitionController {
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20180609');
-		$events = $competition->getEventsRoundTypes();
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20180625');
+		$events = $competition->getEventsRounds();
 		$params = $competition->getLastActiveEventRound($events);
 		$htmlOptions = [
 			'id'=>'live-container',

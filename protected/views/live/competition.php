@@ -59,7 +59,7 @@
                 'action'=>array('/board/registration/exportLiveData', 'id'=>$competition->id),
               )); ?>
               <input type="hidden" value="1" name="xlsx">
-              <button type="submit" class="btn btn-theme"><?php echo Yii::t('live', 'Export'); ?></button>
+              <button type="submit" class="btn btn-theme" @click="checkRounds"><?php echo Yii::t('live', 'Export'); ?></button>
               <?php $this->endWidget(); ?>
             </div>
             <div class="modal-footer">
