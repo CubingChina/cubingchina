@@ -22,6 +22,8 @@ class Registration extends ActiveRecord {
 	public $coefficients = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
 	public $codes = array(1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2);
 
+	private $_location;
+
 	public static $sortByUserAttribute = false;
 	public static $sortByEvent = false;
 	public static $sortAttribute = 'number';
@@ -497,7 +499,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getFeeInfo() {
-		if ($this->location->country_id > 1) {
+		if ($this->location && $this->location->country_id > 1) {
 			return $this->location->fee;
 		}
 		return Html::fontAwesome('rmb') . $this->getTotalFee();
@@ -571,10 +573,13 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getLocation() {
-		return CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
-			'competition_id'=>$this->competition_id,
-			'location_id'=>$this->location_id,
-		));
+		if ($this->_location === null) {
+			$this->_location = CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
+				'competition_id'=>$this->competition_id,
+				'location_id'=>$this->location_id,
+			));
+		}
+		return $this->_location;
 	}
 
 	public function getNoticeColumns($model) {
