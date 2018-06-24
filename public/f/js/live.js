@@ -20,6 +20,11 @@
     default: 0.42,
   };
   var currentRecords = {};
+  var ROUNDSTATUS = {
+    OPEN: 0,
+    FINISHED: 1,
+    LIVE: 2
+  }
   //websocket
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
@@ -97,9 +102,9 @@
     messages: [],
     staticMessages: []
   };
-  var lastFetchRoundTypesTime = Date.now();
+  var lastFetchRoundsTime = Date.now();
   var events = {};
-  var eventRoundTypes = {};
+  var eventRounds = {};
   var allUsers = {};
   var current = {};
   var mutations = {
@@ -108,12 +113,12 @@
     },
     UPDATE_ROUNDS: function(state, rounds) {
       rounds.forEach(function(round) {
-        $.extend(eventRoundTypes[round.e][round.i], round);
+        $.extend(eventRounds[round.e][round.i], round);
       });
-      lastFetchRoundTypesTime = Date.now();
+      lastFetchRoundsTime = Date.now();
     },
     UPDATE_ROUND: function(state, round) {
-      $.extend(eventRoundTypes[round.e][round.i], round);
+      $.extend(eventRounds[round.e][round.i], round);
     },
     NEW_RESULT: function(state, result) {
       if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
@@ -214,9 +219,9 @@
   $.extend(options, storedOptions);
   state.events.forEach(function(event) {
     events[event.i] = event;
-    eventRoundTypes[event.i] = {};
+    eventRounds[event.i] = {};
     event.rs.forEach(function(round) {
-      eventRoundTypes[event.i][round.i] = round;
+      eventRounds[event.i][round.i] = round;
       if (!current.e && round.s == 2) {
         current.e = event.i;
         current.r = round.i;
@@ -263,7 +268,7 @@
     vuex: {
       getters: {
         canChangeRoundSettings: function(state) {
-          return state.type != 'WCA' || state.user.isDelegate || user.isAdmin
+          return state.type != 'WCA' || state.user.isDelegate || state.user.isAdmin
         },
         hasPermission: function(state) {
           var user = state.user;
@@ -355,6 +360,20 @@
     methods: {
       showOptions: function() {
         $('#options-modal').modal();
+      },
+      checkRounds: function(e) {
+        var allFinished = true;
+        this.events.forEach(function(event) {
+          event.rs.forEach(function(round) {
+            if (round.s != ROUNDSTATUS.FINISHED) {
+              allFinished = false;
+            }
+          });
+        });
+        if (!allFinished) {
+          e.preventDefault();
+          alert('请确保所有轮次已结束再导出！');
+        }
       }
     },
     components: {
@@ -518,6 +537,13 @@
             this.current = {
               v: []
             };
+            if (!this.checkEmptyResults()) {
+              alert('本轮成绩有不应出现的空白成绩，请检查！');
+              return false;
+            }
+            if (!this.checkRepeatedResults() && !confirm('本轮成绩有疑似重复录入的成绩，确定结束本轮？')) {
+              return false;
+            }
             ws.send({
               type: 'result',
               action: 'round',
@@ -590,7 +616,7 @@
               r: this.eventRound.r,
               filter: this.filter
             });
-            if (Date.now() - lastFetchRoundTypesTime > 300000) {
+            if (Date.now() - lastFetchRoundsTime > 300000) {
               ws.send({
                 type: 'result',
                 action: 'rounds',
@@ -613,6 +639,55 @@
               }
             }
             return false;
+          },
+          checkEmptyResults: function() {
+            var that = this;
+            var round = that.currentRound;
+            var f = round.f;
+            var cutoff = round.co;
+            var coefficient = that.e === '333fm' ? 1 : 100;
+            var num = f == 'a' || f == '' ? 5 : (f == 'm' ? 3 : parseInt(f));
+            var cutoffNum = round.f == 'a' ? 2 : 1;
+            var results = that.results;
+            var i = 0, j, len = results.length;
+            var result
+            var passed
+            var isZero
+            for (i = 0; i < len; i++) {
+              result = results[i];
+              passed = false;
+              if (result.b == 0) {
+                continue;
+              }
+              for (j = 0; j < num; j++) {
+                isZero = result.v[j] == 0;
+                //if there's cutoff
+                if (cutoff > 0) {
+                  if (j < cutoffNum) {
+                    if (result.v[j] > 0 && result.v[j] / coefficient < cutoff) {
+                      passed = true
+                    } else if (isZero) {
+                      return false;
+                    }
+                  } else if (passed != !isZero) {
+                    return false;
+                  }
+                } else if (isZero) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          },
+          checkRepeatedResults: function() {
+            var results = this.results;
+            var i = 0, j, len = results.length;
+            for (i = 0; i < len; i++) {
+              if (results[i].isRepeated) {
+                return false;
+              }
+            }
+            return true;
           }
         },
         components: {
@@ -687,7 +762,7 @@
                 if (!result || !result.i || !this.$parent.isCurrentRoundOpen) {
                   return true;
                 }
-                var round = eventRoundTypes[that.e][that.r];
+                var round = eventRounds[that.e][that.r];
                 var coefficient = that.e === '333fm' ? 1 : 100;
                 if (round.co > 0) {
                   var num = round.f == 'a' ? 2 : 1;
@@ -1150,7 +1225,7 @@
     return events[result.e];
   }
   function getRound(result) {
-    return eventRoundTypes[result.e][result.r];
+    return eventRounds[result.e][result.r];
   }
   function getUser(number) {
     return allUsers[number] || {};
@@ -1361,12 +1436,24 @@
     var round = getRound(resA);
     var f = round.f;
     var num = f == 'a' || f == '' ? 5 : (f == 'm' ? 3 : parseInt(f));
+    var cutoffNum = f == 'a' ? 2 : 1;
+    var passed = false;
+    var DNFCount = 0;
     for (var i = 0; i < num; i++) {
       if (resA.v[i] > 0 && resA.v[i] == resB.v[i]) {
         repeatCount++;
       }
+      if (resA.v[i] > 0 && resA.v[i] / 100 < round.co) {
+        passed = true;
+      }
+      if (resA.v[i] < 0) {
+        DNFCount++;
+      }
     }
-    if (repeatCount >= num * 0.6) {
+    if (repeatCount == 0) {
+      return false;
+    }
+    if (repeatCount >= num * 0.6 || !passed && repeatCount >= cutoffNum - DNFCount) {
       return true;
     }
     return false;
