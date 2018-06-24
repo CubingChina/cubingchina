@@ -1534,15 +1534,15 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public function getEventsRoundTypes() {
-		$eventRoundTypes = LiveEventRound::model()->findAllByAttributes(array(
+	public function getEventsRounds() {
+		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
 		), array(
 			'order'=>'id ASC',
 		));
 		$events = array();
 		$ranks = [];
-		foreach ($eventRoundTypes as $eventRound) {
+		foreach ($eventRounds as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
 				$events[$eventRound->event] = array(
 					'i'=>$eventRound->event,
