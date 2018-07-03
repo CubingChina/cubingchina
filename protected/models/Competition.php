@@ -236,6 +236,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getRegistrationCompetitions() {
+		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
+			return [];
+		}
 		$with = array();
 		if (Yii::app()->controller->user->isOrganizer()) {
 			$with = array(
