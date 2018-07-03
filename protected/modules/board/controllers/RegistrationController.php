@@ -34,7 +34,7 @@ class RegistrationController extends AdminController {
 				'deny',
 				'users'=>['*'],
 			],
-		);
+		];
 	}
 
 	public function actionIndex() {
