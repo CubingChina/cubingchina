@@ -22,6 +22,21 @@ class RegistrationController extends AdminController {
 	);
 	private $scoreCardInfo = array();
 
+	public function accessRules() {
+		return [
+			[
+				'allow',
+				'roles'=>[
+					'role'=>User::ROLE_ORGANIZER,
+				],
+			],
+			[
+				'deny',
+				'users'=>['*'],
+			],
+		);
+	}
+
 	public function actionIndex() {
 		$model = new Registration();
 		$model->unsetAttributes();
