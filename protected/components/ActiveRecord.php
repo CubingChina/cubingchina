@@ -64,7 +64,7 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	protected function beforeSave() {
-		if ($this->isNewRecord && $this->hasAttribute('create_time')) {
+		if ($this->isNewRecord && $this->hasAttribute('create_time') && $this->create_time == 0) {
 			$this->create_time = time();
 		}
 		if ($this->hasAttribute('update_time')) {

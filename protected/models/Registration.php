@@ -23,6 +23,7 @@ class Registration extends ActiveRecord {
 	public $codes = array(1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2);
 
 	private $_location;
+	private $_events;
 
 	public static $sortByUserAttribute = false;
 	public static $sortByEvent = false;
@@ -249,11 +250,10 @@ class Registration extends ActiveRecord {
 	}
 
 	public function accept($forceAccept = false) {
-		if ($this->isCancelled()) {
+		if ($this->isCancelled() || $this->isAccepted()) {
 			return false;
 		}
-		$this->formatEvents();
-		$this->status = Registration::STATUS_ACCEPTED;
+		$this->status = self::STATUS_ACCEPTED;
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
@@ -270,8 +270,13 @@ class Registration extends ActiveRecord {
 				$this->competition->save();
 			}
 		}
-		if ($this->isAccepted() && $this->competition->show_qrcode) {
-			Yii::app()->mailer->sendRegistrationAcception($this);
+		if ($this->isAccepted()) {
+			foreach ($this->allEvents as $registrationEvent) {
+				$registrationEvent->accept();
+			}
+			if ($this->competition->show_qrcode) {
+				Yii::app()->mailer->sendRegistrationAcception($this);
+			}
 		}
 	}
 
@@ -288,7 +293,6 @@ class Registration extends ActiveRecord {
 	}
 
 	public function cancel($status = Registration::STATUS_CANCELLED) {
-		$this->formatEvents();
 		//calculate refund fee before change status
 		$refundFee = $this->getRefundFee();
 		if ($this->isWaiting()) {
@@ -310,7 +314,6 @@ class Registration extends ActiveRecord {
 	}
 
 	public function disqualify() {
-		$this->formatEvents();
 		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
 		$this->cancel_time = time();
 		if ($this->save()) {
@@ -562,7 +565,6 @@ class Registration extends ActiveRecord {
 
 	public function getQRCodeUrl() {
 		if ($this->code == '') {
-			$this->formatEvents();
 			$this->code = substr(sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
 			$this->save();
 		}
@@ -580,6 +582,21 @@ class Registration extends ActiveRecord {
 			));
 		}
 		return $this->_location;
+	}
+
+	public function getEvents() {
+		if ($this->_events === null) {
+			$this->_events = array_map(function($registrationEvent) {
+				return $registrationEvent->event;
+			}, array_filter($this->allEvents, function($registrationEvent) {
+				return !$registrationEvent->isCancelled() && !$registrationEvent->isDisqualified();
+			}));
+		}
+		return $this->_events;
+	}
+
+	public function setEvents($events) {
+		$this->_events = $events;
 	}
 
 	public function getNoticeColumns($model) {
@@ -919,35 +936,56 @@ class Registration extends ActiveRecord {
 		return $pay;
 	}
 
-	public function handleEvents() {
-		if ($this->events !== null) {
-			$this->events = json_encode($this->events);
+	protected function beforeSave() {
+		if ($this->old_events == null) {
+			$this->old_events = '';
 		}
-	}
-
-	public function formatEvents() {
-		if (is_array($this->events)) {
-			return;
-		}
-		$temp = json_decode($this->events, true);
-		if ($temp === null) {
-			$temp = array();
-		}
-		$this->events = $temp;
-	}
-
-	protected function afterFind() {
-		$this->formatEvents();
-	}
-
-	protected function beforeValidate() {
-		$this->handleEvents();
-		return parent::beforeValidate();
+		return parent::beforeSave();
 	}
 
 	protected function afterSave() {
 		parent::afterSave();
 		Yii::app()->cache->delete('competitors_' . $this->competition_id);
+	}
+
+	public function updateEvents($events, $realRemoveEvent = false) {
+		foreach ($this->allEvents as $registrationEvent) {
+			if (!in_array($registrationEvent->event, $events)) {
+				$this->removeEvent($registrationEvent, $realRemoveEvent);
+			} else {
+				// set status to pending if it's cancelled
+				if ($registrationEvent->isCancelled()) {
+					$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
+					$registrationEvent->save();
+				}
+				unset($events[array_search($registrationEvent->event, $events)]);
+			}
+		}
+		foreach ($events as $event) {
+			$this->addEvent($event);
+		}
+		return true;
+	}
+
+	public function addEvent($event, $attributes = []) {
+		$registrationEvent = new RegistrationEvent();
+		$registrationEvent->registration_id = $this->id;
+		$registrationEvent->event = $event;
+		$registrationEvent->fee = $attributes['fee'] ?? $this->competition->getEventFee($event);
+		$registrationEvent->paid = $attributes['paid'] ?? $this->paid;
+		$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
+		$registrationEvent->accept_time = $attributes['accept_time'] ?? $this->accept_time;
+		return $registrationEvent->save();
+	}
+
+	public function removeEvent($event, $realRemove = false) {
+		if (is_string($event)) {
+			$event = $this->associatedEvents[$event] ?? null;
+		}
+		if ($event === null) {
+			return;
+		}
+		return $realRemove ? $event->delete() : $event->cancel();
 	}
 
 	/**
@@ -965,7 +1003,7 @@ class Registration extends ActiveRecord {
 			array('competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, entourage_passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, entourage_passport_number', 'length', 'max'=>20),
-			array('events', 'length', 'max'=>512),
+			array('events', 'safe'),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -1003,18 +1041,13 @@ class Registration extends ActiveRecord {
 	 * @return array relational rules.
 	 */
 	public function relations() {
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
-			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
-			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
-			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
-			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
-			// 	'competition_id'=>'competition_id',
-			// 	'location_id'=>'location_id',
-			// ]),
-		);
+		return [
+			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
+			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
+			'pay'=>[self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION],
+			'avatar'=>[self::BELONGS_TO, 'UserAvatar', 'avatar_id'],
+			'allEvents'=>[self::HAS_MANY, 'RegistrationEvent', 'registration_id', 'order'=>'allEvents.id'],
+		];
 	}
 
 	/**
@@ -1140,8 +1173,7 @@ class Registration extends ActiveRecord {
 			$criteria->compare('t.id', $this->id,true);
 			$criteria->compare('t.competition_id', $this->competition_id);
 			$criteria->compare('t.user_id', $this->user_id);
-			$criteria->compare('t.events', $this->events,true);
-			$criteria->compare('t.comments', $this->comments,true);
+			$criteria->compare('t.comments', $this->comments, true);
 			$criteria->compare('t.date', $this->date,true);
 			$criteria->compare('t.status', $this->status);
 			$criteria->compare('user.status', User::STATUS_NORMAL);
@@ -1331,12 +1363,11 @@ class Registration extends ActiveRecord {
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.date DESC';
 
-		$criteria->compare('t.id', $this->id,true);
+		$criteria->compare('t.id', $this->id, true);
 		$criteria->compare('t.competition_id', $this->competition_id);
 		$criteria->compare('t.user_id', $this->user_id);
-		$criteria->compare('t.events', $this->events,true);
-		$criteria->compare('t.comments', $this->comments,true);
-		$criteria->compare('t.date', $this->date,true);
+		$criteria->compare('t.comments', $this->comments, true);
+		$criteria->compare('t.date', $this->date, true);
 		$criteria->compare('t.status', $this->status);
 
 		return new CActiveDataProvider($this, array(

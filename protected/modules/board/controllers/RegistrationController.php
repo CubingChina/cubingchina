@@ -1003,13 +1003,13 @@ class RegistrationController extends AdminController {
 				$model->avatar_id = $model->user->avatar_id;
 			}
 			if ($model->save()) {
+				$model->updateEvents($model->events);
 				Yii::app()->user->setFlash('success', '更新报名信息成功');
 				$this->redirect(array('/board/registration/index', 'Registration'=>array(
 					'competition_id'=>$model->competition_id,
 				)));
 			}
 		}
-		$model->formatEvents();
 		$this->render('edit', array(
 			'model'=>$model,
 		));
@@ -1035,7 +1035,6 @@ class RegistrationController extends AdminController {
 				$this->redirect(['/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]]);
 			}
 		}
-		$model->formatEvents();
 		$this->render('cancel', array(
 			'model'=>$model,
 		));

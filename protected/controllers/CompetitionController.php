@@ -150,7 +150,6 @@ class CompetitionController extends Controller {
 					$registration->signed_date = time();
 					$registration->signed_scan_code = $session->get('scan_code');
 			}
-			$registration->formatEvents();
 			$registration->save();
 			$this->ajaxOK([
 				'id'=>$registration->id,
@@ -249,7 +248,6 @@ class CompetitionController extends Controller {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
 				}
 			}
-			$registration->formatEvents();
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'competition'=>$competition,
@@ -298,12 +296,11 @@ class CompetitionController extends Controller {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				if ($model->save()) {
+					$model->updateEvents($model->events);
 					Yii::app()->mailer->sendRegistrationNotice($model);
 					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
-					$model->formatEvents();
 					if ($model->isAccepted()) {
 						$model->accept();
-						$model->formatEvents();
 					}
 					$this->render('registrationDone', array(
 						'user'=>$user,
@@ -315,7 +312,6 @@ class CompetitionController extends Controller {
 				}
 			}
 		}
-		$model->formatEvents();
 		$this->render('registration', array(
 			'competition'=>$competition,
 			'model'=>$model,
