@@ -18,10 +18,10 @@
  */
 return array (
   'Open' => '',
+  'Reset competitors' => '重置選手',
   'U10' => '',
   'U12' => '',
   'U8' => '',
-  'Reset competitors' => '重置選手',
   ' ({round})' => '（{round}）',
   'Children' => '少兒組',
   'Close this round' => '結束本輪',
