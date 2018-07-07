@@ -198,7 +198,7 @@ class RegisterForm extends CFormModel {
 			'email'=>Yii::t('common', 'Email'),
 			'password'=>Yii::t('common', 'Password'),
 			'repeatPassword'=>Yii::t('common', 'Repeat Password'),
-			'verifyCode'=>Yii::t('common', 'Verify Code'),
+			'verifyCode'=>Yii::t('common', 'Verification Code'),
 		);
 	}
 

@@ -24,7 +24,7 @@ class ActivateForm extends CFormModel {
 	 */
 	public function attributeLabels() {
 		return array(
-			'verifyCode'=>Yii::t('common', 'Verify Code'),
+			'verifyCode'=>Yii::t('common', 'Verification Code'),
 			'email'=>Yii::t('common', 'Email'),
 		);
 	}
