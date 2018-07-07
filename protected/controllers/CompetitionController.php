@@ -244,6 +244,18 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		if ($registration !== null) {
+			$overseaUserVerifyForm = new OverseaUserVerifyForm();
+			if (isset($_POST['OverseaUserVerifyForm']) && $registration->isPending() && $this->user->country_id > 1) {
+				$overseaUserVerifyForm->attributes = $_POST['OverseaUserVerifyForm'];
+				if ($overseaUserVerifyForm->validate()) {
+					$registration->accept();
+					if ($registration->isAccepted()) {
+						Yii::app()->user->getFlashes();
+						Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been accepted.'));
+						$this->redirect($competition->getUrl('registration'));
+					}
+				}
+			}
 			if (isset($_POST['cancel']) && $registration->isCancellable()) {
 				if ($registration->cancel()) {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
@@ -254,6 +266,7 @@ class CompetitionController extends Controller {
 				'user'=>$user,
 				'competition'=>$competition,
 				'registration'=>$registration,
+				'overseaUserVerifyForm'=>$overseaUserVerifyForm,
 			));
 			Yii::app()->end();
 		}
@@ -293,10 +306,6 @@ class CompetitionController extends Controller {
 				if ($competition->multi_countries && $model->location->country_id != 1) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
-				// for oversea users
-				if ($competition->auto_accept == Competition::YES && $this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
 				if ($model->save()) {
 					Yii::app()->mailer->sendRegistrationNotice($model);
 					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
@@ -305,13 +314,7 @@ class CompetitionController extends Controller {
 						$model->accept();
 						$model->formatEvents();
 					}
-					$this->render('registrationDone', array(
-						'user'=>$user,
-						'accepted'=>$model->isAccepted(),
-						'competition'=>$competition,
-						'registration'=>$model,
-					));
-					Yii::app()->end();
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 		}

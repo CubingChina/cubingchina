@@ -41,7 +41,7 @@ class ForgetPasswordForm extends CFormModel {
 	public function attributeLabels() {
 		return array(
 			'email'=>Yii::t('common', 'Email'),
-			'verifyCode'=>Yii::t('common', 'Verify Code'),
+			'verifyCode'=>Yii::t('common', 'Verification Code'),
 		);
 	}
 

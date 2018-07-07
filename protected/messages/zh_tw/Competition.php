@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competitor Limit' => '人數限制',
   'ID' => '',
   'Online Pay' => '',
   ' round' => '輪',
@@ -40,6 +39,7 @@ return array (
   'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.' => '請先點擊{here}仔細閱讀比賽相應報名規則再來注冊報名！如有任何問題請聯系比賽主辦團隊。',
   'Click {here} to view the competitors list.' => '點擊{here}查看選手列表。',
   'Competition Name' => '比賽名字',
+  'Competitor Limit' => '人數限制',
   'Competitors' => '選手',
   'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.' => '選手需要在{date}之前達到本次比賽項目的<b>資格線</b>。',
   'Cubing China' => '粗餅',

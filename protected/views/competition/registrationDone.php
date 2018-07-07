@@ -98,15 +98,40 @@
             <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
             <?php echo Yii::t('common', 'Please open with browser!'); ?>
           </p>
-          <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
-          <div class="text-center">
-            <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
+          <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer as soon as possible.'); ?></p>
+          <div class="">
+            <button id="pay" class="btn btn-lg btn-theme"><?php echo Yii::t('common', 'Pay'); ?></button>
           </div>
           <div class="hide text-center" id="pay-tips">
             <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
             <br>
             <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
           </div>
+          <?php if ($this->user->country_id > 1): ?>
+          <hr>
+          <p>
+            <?php echo Yii::t('common', 'International competitors that are not able to pay online with alipay, please enter the verification code. Your registration will be accepted, please pay cash at the venue.'); ?>
+          </p>
+          <?php $form = $this->beginWidget('ActiveForm', [
+            'id'=>'registration-form',
+            'htmlOptions'=>[
+              'role'=>'form',
+            ],
+          ]); ?>
+          <?php echo Html::formGroup(
+            $overseaUserVerifyForm, 'verifyCode', [],
+            $form->labelEx($overseaUserVerifyForm, 'verifyCode'),
+            Html::activeTextField($overseaUserVerifyForm, 'verifyCode', []),
+            $this->widget('CCaptcha', [
+              'captchaAction'=>'site/captcha',
+              'clickableImage'=>true,
+              'showRefreshButton'=>false,
+            ], true),
+            $form->error($overseaUserVerifyForm, 'verifyCode', ['class'=>'text-danger'])
+          );?>
+          <button type="submit" class="btn btn-theme btn-lg"><?php echo Yii::t('common', 'Submit'); ?></button>
+          <?php $this->endWidget(); ?>
+          <?php endif; ?>
           <?php endif; ?>
           <?php if ($registration->isAccepted() && $competition->show_qrcode): ?>
           <p><?php echo Yii::t('Registration', 'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.'); ?></p>
