@@ -15,7 +15,7 @@
     </dd>
     <?php endif; ?>
     <?php if ($location->organizer): ?>
-    <dt><?php echo Yii::t('Competition', 'PIC'); ?></dt>
+    <dt><?php echo Yii::t('Competition', 'Organizer'); ?></dt>
     <dd><?php echo $location->organizer->getMailtoLink(); ?></dd>
     <?php endif; ?>
     <dt><?php echo Yii::t('Competition', ($competition->complex_multi_location ? 'Base ' : '') . 'Entry Fee'); ?></dt>

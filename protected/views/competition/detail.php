@@ -21,6 +21,7 @@
       <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
     <?php endif; ?>
+    <?php if (!$competition->complex_multi_location): ?>
     <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
     <dd>
       <?php if ($competition->isOld()): ?>
@@ -32,6 +33,7 @@
       <?php endforeach; ?>
       <?php endif; ?>
     </dd>
+    <?php endif; ?>
     <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
     <dd>
