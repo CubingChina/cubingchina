@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'PIC' => '负责人',
   ' round' => '轮',
   ' rounds' => '轮',
   'Check Person' => '报名自动审核',

@@ -84,6 +84,10 @@ $(function() {
   });
   function updateFee() {
     var totalFee = options.basicFee;
+    if (options.complexMultiLocation) {
+      totalFee = $('#Registration_location_id option:selected').data('fee') || 0;
+      $('#entry-fee').text(totalFee || '-')
+    }
     if ($('#Registration_has_entourage').val() == 1) {
       totalFee += options.entourageFee;
     }
@@ -91,7 +95,7 @@ $(function() {
       totalFee += $(this).data('fee');
     });
     if (options.multiCountries) {
-      totalFee = $('#Registration_location_id option:selected').data('fee');
+      totalFee = $('#Registration_location_id option:selected').data('display-fee');
     }
     if (totalFee && totalFee != 0) {
       fee.removeClass('hide').find('#totalFee').html(totalFee);

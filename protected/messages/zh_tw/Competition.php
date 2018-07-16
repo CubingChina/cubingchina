@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'PIC' => '負責人',
   ' round' => '輪',
   ' rounds' => '輪',
   'Check Person' => '報名自動審核',

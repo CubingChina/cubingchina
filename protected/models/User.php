@@ -364,8 +364,15 @@ class User extends ActiveRecord {
 		return Persons::getLinkByNameNId($name, $this->wcaid);
 	}
 
-	public function getEmailLink() {
-		return CHtml::mailto($this->email, $this->email);
+	public function getEmailLink($text = null) {
+		if ($text === null) {
+			$text = $this->email;
+		}
+		return CHtml::mailto($text, $this->email);
+	}
+
+	public function getMailtoLink() {
+		return $this->getEmailLink(Html::fontAwesome('envelope', 'a') . $this->getCompetitionName());
 	}
 
 	public function getOperationButton() {

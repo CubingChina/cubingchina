@@ -53,7 +53,7 @@ EOT
       ],
       [
         'type'=>'raw',
-        'value'=>'Html::fontAwesome("envelope", "a") . CHtml::mailTo($data->email)',
+        'value'=>'Html::fontAwesome("envelope", "a") . $data->getEmailLink()',
       ],
     ],
   ]); ?>
