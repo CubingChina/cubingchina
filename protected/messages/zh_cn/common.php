@@ -19,7 +19,6 @@
 return array (
   'Application' => '',
   'Fee' => '',
-  'International competitors that are not able to pay online with alipay, please enter the verification code. Your registration will be accepted, please pay cash at the venue.' => '如果你是海外（境外）选手，无法通过“支付宝”在线支付报名费，请输入验证码后提交。你的报名会被审核通过，请在现场交报名费。',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -170,6 +169,7 @@ return array (
   'Improvement' => '提升',
   'Inactive User' => '未激活用户',
   'Incorrect email or password.' => '邮箱或密码错误',
+  'International competitors that are not able to pay online with alipay, please enter the verification code. Your registration will be accepted, please pay cash at the venue.' => '如果你是海外（境外）选手，无法通过“支付宝”在线支付报名费，请输入验证码后提交。你的报名会被审核通过，请在现场交报名费。',
   'Invalid birthday format' => '生日格式错误',
   'Invalid city.' => '城市不对。',
   'Invalid email.' => '邮箱不对。',

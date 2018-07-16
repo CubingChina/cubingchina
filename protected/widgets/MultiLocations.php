@@ -167,6 +167,8 @@ class MultiLocations extends Widget {
 					)),
 					CHtml::error($model, 'locations.delegate_text.' . $key, array('class'=>'text-danger'))
 				);
+			}
+			if ($model->multi_countries || $model->complex_multi_location) {
 				echo Html::formGroup(
 					$model, 'locations[fee][]', array(
 						'class'=>'col-lg-12',
@@ -186,6 +188,16 @@ class MultiLocations extends Widget {
 						'class'=>'form-control',
 					)),
 					CHtml::error($model, 'locations.competitor_limit.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
+					$model, 'locations[organizer_id][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('负责人（填写粗饼ID）', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[organizer_id][]'), $location['organizer_id'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.organizer_id.' . $key, array('class'=>'text-danger'))
 				);
 				echo Html::formGroup(
 					$model, 'locations[status][]', array(

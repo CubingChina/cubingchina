@@ -19,6 +19,7 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
+  'Organizer' => '主辦方',
   ' round' => '輪',
   ' rounds' => '輪',
   'Check Person' => '報名自動審核',

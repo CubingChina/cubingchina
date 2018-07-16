@@ -7,7 +7,7 @@
   )); ?>
     <?php if (!$competition->multi_countries): ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
-    <p><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry'); ?></p>
+    <p><i class="fa fa-rmb"></i><span id="entry-fee"><?php echo $competition->getEventFee('entry'); ?></span></p>
     <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'events', array(),
@@ -226,6 +226,7 @@
 $regulations = Yii::app()->params->regulations;
 $options = json_encode([
   'multiCountries'=>!!$competition->multi_countries,
+  'complexMultiLocation'=>!!$competition->complex_multi_location,
   'showRegulations'=>!!$competition->show_regulations,
   'regulationDesc'=>Yii::t('Competition', 'Please deeply remember the followings to avoid any inconveniences.'),
   'basicFee' => $competition->getEventFee('entry'),
@@ -251,4 +252,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180621');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180716');

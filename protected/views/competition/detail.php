@@ -21,6 +21,7 @@
       <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
     <?php endif; ?>
+    <?php if (!$competition->complex_multi_location): ?>
     <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
     <dd>
       <?php if ($competition->isOld()): ?>
@@ -28,16 +29,17 @@
       <?php else: ?>
       <?php foreach ($competition->organizer as $key=>$organizer): ?>
       <?php if ($key > 0) echo Yii::t('common', ', '); ?>
-      <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $organizer->user->getAttributeValue('name', true), $organizer->user->email); ?>
+      <?php echo $organizer->user->getMailtoLink(); ?>
       <?php endforeach; ?>
       <?php endif; ?>
     </dd>
+    <?php endif; ?>
     <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
     <dd>
       <?php foreach ($competition->delegate as $key=>$delegate): ?>
       <?php if ($key > 0) echo Yii::t('common', ', '); ?>
-      <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $delegate->user->getAttributeValue('name', true), $delegate->user->email); ?>
+      <?php echo $delegate->user->getMailtoLink(); ?>
       <?php endforeach; ?>
     </dd>
     <?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
@@ -118,6 +120,7 @@
                 </tr>
               </thead>
               <tbody>
+                <?php if (!$competition->complex_multi_location): ?>
                 <tr>
                   <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
                   <td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
@@ -128,6 +131,7 @@
                   <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
                   <?php endif; ?>
                 </tr>
+                <?php endif; ?>
                 <?php foreach ($competition->associatedEvents as $key=>$value): ?>
                 <tr>
                   <td><?php echo Events::getFullEventNameWithIcon($key); ?></td>

@@ -65,7 +65,8 @@ class EventsForm extends Widget {
 				foreach ($competition->sortedLocations as $location) {
 					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
 					$options[$location->location_id] = [
-						'data-fee'=>$location->getFeeInfo(),
+						'data-display-fee'=>$location->getFeeInfo(),
+						'data-fee'=>$location->getFeeNumber(),
 					];
 				}
 				echo CHtml::activeLabelEx($model, 'location_id');
