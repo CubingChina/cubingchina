@@ -841,7 +841,7 @@ class Competition extends ActiveRecord {
 		return $this->third_stage_date > 0;
 	}
 
-	public function getEventFee($event, $stage = null) {
+	public function getEventFee($event, $stage = null, $entryFee = 0) {
 		$now = time();
 		$events = $this->associatedEvents;
 		$isBasic = !isset($events[$event]);
@@ -860,7 +860,8 @@ class Competition extends ActiveRecord {
 				$stage = self::STAGE_FIRST;
 			}
 		}
-		$basicFee = intval($isBasic ? $this->entry_fee : $events[$event]['fee']);
+		$entryFee = $this->complex_multi_location && $entryFee > 0 ? $entryFee : $this->entry_fee;
+		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {
 			case self::STAGE_FIRST:
 				return $basicFee;
@@ -874,6 +875,32 @@ class Competition extends ActiveRecord {
 					return intval($events[$event]['fee_' . $stage]);
 				}
 				return $this->second_stage_all ? ceil($basicFee * $ratio) : $basicFee;
+		}
+	}
+
+	public function getFeeRatio($stage = null) {
+		$now = time();
+		if ($stage === null) {
+			if ($now < $this->second_stage_date) {
+				$stage = self::STAGE_FIRST;
+			} elseif ($now < $this->third_stage_date) {
+				$stage = self::STAGE_SECOND;
+			} else {
+				$stage = self::STAGE_THIRD;
+			}
+			if (!$this->hasThirdStage && $stage == self::STAGE_THIRD) {
+				$stage = self::STAGE_SECOND;
+			}
+			if (!$this->hasSecondStage && $stage == self::STAGE_SECOND) {
+				$stage = self::STAGE_FIRST;
+			}
+		}
+		switch ($stage) {
+			case self::STAGE_FIRST:
+				return 1;
+			case self::STAGE_SECOND:
+			case self::STAGE_THIRD:
+				return $this->{$stage . '_stage_ratio'};
 		}
 	}
 
@@ -2295,7 +2322,7 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
-			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'status', 'competitor_limit'] as $attribute) {
+			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'organizer_id', 'status', 'competitor_limit'] as $attribute) {
 				$location->$attribute = intval($location->$attribute);
 			}
 			$location->longitude = floatval($location->longitude);
@@ -2489,6 +2516,7 @@ class Competition extends ActiveRecord {
 		}
 		$temp = array();
 		$index = 0;
+		$hasFeeInfo = $this->multi_countries || $this->complex_multi_location;
 		foreach ($locations['province_id'] as $key=>$provinceId) {
 			if (empty($provinceId) && empty($locations['city_id'][$key])
 				&& empty($locations['venue'][$key])  && empty($locations['venue_zh'][$key])
@@ -2572,9 +2600,10 @@ class Competition extends ActiveRecord {
 				'latitude'=>$locations['latitude'][$key],
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
-				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
+				'fee'=>$hasFeeInfo ? $locations['fee'][$key] : '',
 				'status'=>$this->multi_countries ? intval($locations['status'][$key]) : 1,
-				'competitor_limit'=>$this->multi_countries ? intval($locations['competitor_limit'][$key]) : 0,
+				'organizer_id'=>$this->complex_multi_location ? intval($locations['organizer_id'][$key]) : 0,
+				'competitor_limit'=>$hasFeeInfo ? intval($locations['competitor_limit'][$key]) : 0,
 			);
 			$index++;
 		}

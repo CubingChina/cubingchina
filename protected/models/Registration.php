@@ -495,7 +495,7 @@ class Registration extends ActiveRecord {
 			}
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
-		return $competition->getEventFee('entry') + $entourageFee + array_sum($fees);
+		return $competition->getEventFee('entry', null, $this->location->fee) + $entourageFee + array_sum($fees);
 	}
 
 	public function getFeeInfo() {
