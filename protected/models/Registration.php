@@ -576,7 +576,7 @@ class Registration extends ActiveRecord {
 		if ($this->_location === null) {
 			$this->_location = CompetitionLocation::model()->with('province', 'city')->findByAttributes(array(
 				'competition_id'=>$this->competition_id,
-				'location_id'=>$this->location_id,
+				'location_id'=>intval($this->location_id),
 			));
 		}
 		return $this->_location;
