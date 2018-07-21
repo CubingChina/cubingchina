@@ -403,7 +403,6 @@
               class="list-group-item"
               :class="{active: selectedIndex == $index}"
               @mousedown.prevent="selectCompetitor(result)"
-              @mouseenter="selectedIndex = $index"
             >
               <b class="number">No.{{result.n}}</b>{{getUser(result.n).name}}
             </li>
