@@ -988,9 +988,13 @@ class Registration extends ActiveRecord {
 	}
 
 	public function updateEvents($events, $realRemoveEvent = false) {
-		foreach ($this->allEvents as $registrationEvent) {
+		$allEvents = $this->allEvents;
+		foreach ($allEvents as $index => $registrationEvent) {
 			if (!in_array($registrationEvent->event, $events)) {
 				$this->removeEvent($registrationEvent, $realRemoveEvent);
+				if ($realRemoveEvent) {
+					unset($allEvents[$index]);
+				}
 			} else {
 				// set status to pending if it's cancelled
 				if ($registrationEvent->isCancelled()) {
@@ -1001,8 +1005,9 @@ class Registration extends ActiveRecord {
 			}
 		}
 		foreach ($events as $event) {
-			$this->addEvent($event);
+			$allEvents[] = $this->addEvent($event);
 		}
+		$this->allEvents = array_values($allEvents);
 		return true;
 	}
 
@@ -1014,7 +1019,8 @@ class Registration extends ActiveRecord {
 		$registrationEvent->paid = $attributes['paid'] ?? $this->paid;
 		$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
 		$registrationEvent->accept_time = $attributes['accept_time'] ?? $this->accept_time;
-		return $registrationEvent->save();
+		$registrationEvent->save();
+		return $registrationEvent;
 	}
 
 	public function removeEvent($event, $realRemove = false) {
