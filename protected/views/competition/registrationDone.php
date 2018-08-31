@@ -45,9 +45,9 @@
           <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
-          <?php if ($registration->isCancelled() && $registration->getRefundFee() > 0): ?>
+          <?php if ($registration->isCancelled() && $registration->getRefundAmount() > 0): ?>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
-          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
           <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
@@ -148,7 +148,7 @@
           <h4><?php echo Yii::t('Registration', 'Paid Fee via Cubing China') ;?></h4>
           <p><i class="fa fa-rmb"></i><?php echo $registration->getPaidFee(); ?></p>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
-          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
           <?php endif; ?>
           <?php echo CHtml::tag('button', [

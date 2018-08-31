@@ -555,7 +555,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRefundAmount() {
-		return $this->getPaidAmount() * $this->getRefundAmount();
+		return $this->getPaidAmount() * $this->getRefundPercent();
 	}
 
 	public function getRefundFee() {
