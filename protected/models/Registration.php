@@ -241,6 +241,11 @@ class Registration extends ActiveRecord {
 		return time() < $competition->cancellation_end_time && $this->isAccepted() || $this->isWaiting();
 	}
 
+	public function isEditable() {
+		$competition = $this->competition;
+		return !$competition->isRegistrationEnded() && $competition->allow_change_event;
+	}
+
 	public function isWaiting() {
 		return $this->status == self::STATUS_WAITING;
 	}
@@ -249,7 +254,7 @@ class Registration extends ActiveRecord {
 		return $this->paid == self::PAID;
 	}
 
-	public function accept($forceAccept = false) {
+	public function accept($pay = null, $forceAccept = false) {
 		if ($this->isCancelled() || $this->isAccepted()) {
 			return false;
 		}
@@ -271,8 +276,14 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if ($this->isAccepted()) {
+			$registrationEventIds = $pay === null ? [] : array_map(function($payEvent) {
+				return $payEvent->registration_event_id;
+			}, $pay->events);
 			foreach ($this->allEvents as $registrationEvent) {
-				$registrationEvent->accept();
+				if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
+					$registrationEvent->paid = $this->paid;
+					$registrationEvent->accept();
+				}
 			}
 			if ($this->competition->show_qrcode) {
 				Yii::app()->mailer->sendRegistrationAcception($this);
@@ -294,15 +305,17 @@ class Registration extends ActiveRecord {
 
 	public function cancel($status = Registration::STATUS_CANCELLED) {
 		//calculate refund fee before change status
-		$refundFee = $this->getRefundFee();
+		$refundPercent = $this->getRefundPercent();
 		if ($this->isWaiting()) {
 			$status = self::STATUS_CANCELLED_TIME_END;
 		}
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
-			if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
-				$this->pay->refund($refundFee);
+			foreach ($this->payments as $payment) {
+				if ($payment->isPaid()) {
+					$payment->refund($payment->paid_amount * $refundPercent);
+				}
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
 			if (!$this->competition->isRegistrationFull()) {
@@ -508,27 +521,24 @@ class Registration extends ActiveRecord {
 		return Html::fontAwesome('rmb') . $this->getTotalFee();
 	}
 
+	public function getPaidAmount() {
+		$amount = 0;
+		foreach ($this->payments as $payment) {
+			if ($payment->isPaid()) {
+				$amount += $payment->paid_amount;
+			}
+		}
+		return $amount;
+	}
+
 	public function getPaidFee() {
-		if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
-			return number_format($this->pay->paid_amount / 100, 2, '.', '');
-		}
-		return 0;
+		return number_format($this->getPaidAmount() / 100, 2, '.', '');
 	}
 
-	public function getOtherFee() {
-		if ($this->isPaid()) {
-			$this->getTotalFee() - $this->getPaidFee();
-		}
-		return 0;
-	}
-
-	public function getRefundFee() {
-		if ($this->getPaidFee() == 0) {
-			return 0;
-		}
+	public function getRefundPercent() {
 		//候补列表的直接全额退款
 		if ($this->isWaiting() || $this->status == self::STATUS_CANCELLED_TIME_END) {
-			return $this->pay->paid_amount;
+			return 1;
 		}
 		//被资格线清掉的，就是0
 		if ($this->status == self::STATUS_CANCELLED_QUALIFYING_TIME) {
@@ -538,10 +548,18 @@ class Registration extends ActiveRecord {
 			case Competition::REFUND_TYPE_50_PERCENT:
 			case Competition::REFUND_TYPE_100_PERCENT:
 				$percent = intval($this->competition->refund_type);
-				return $this->pay->paid_amount * $percent / 100;
+				return $percent / 100;
 			default:
 				return 0;
 		}
+	}
+
+	public function getRefundAmount() {
+		return $this->getPaidAmount() * $this->getRefundAmount();
+	}
+
+	public function getRefundFee() {
+		return number_format($this->getRefundAmount() / 100, 2, '.', '');
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
@@ -909,31 +927,52 @@ class Registration extends ActiveRecord {
 		if ($this->isCancelled() || $this->location && $this->location->country_id > 1) {
 			return false;
 		}
-		$totalFee = $this->getTotalFee();
-		if ($this->competition->isOnlinePay() && $totalFee > 0) {
-			if ($this->pay === null) {
-				$this->pay = $this->createPay();
-			}
-			if ($this->pay->amount !== $totalFee * 100 && !$this->pay->isPaid()) {
-				$this->pay->amount = $totalFee * 100;
-				$this->pay->save(false);
+		$allPaid = $this->payments === [] ? false : true;
+		foreach ($this->payments as $payment) {
+			if (!$payment->isPaid()) {
+				$allPaid = false;
+				break;
 			}
 		}
+		if ($allPaid) {
+			return false;
+		}
+		$totalFee = $this->getTotalFee();
 		return $this->competition->isOnlinePay() && $totalFee > 0
 			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
 			&& !$this->competition->isRegistrationEnded();
 	}
 
-	public function createPay() {
+	public function getUnpaidPayment() {
+		foreach ($this->payments as $payment) {
+			if (!$payment->isPaid()) {
+				return $payment;
+			}
+		}
+	}
+
+	public function createPayment() {
+		if ($this->getUnpaidPayment() !== null) {
+			return $this->getUnpaidPayment();
+		}
 		$pay = new Pay();
 		$pay->user_id = $this->user_id;
 		$pay->type = Pay::TYPE_REGISTRATION;
 		$pay->type_id = $this->competition_id;
 		$pay->sub_type_id = $this->id;
-		$pay->amount = $this->total_fee * 100;
 		$pay->order_name = $this->competition->name_zh;
-		$r = $pay->save();
-		return $pay;
+		if ($pay->save()) {
+			foreach ($this->allEvents as $registrationEvent) {
+				if ($registrationEvent->isPending()) {
+					$payEvent = new PayEvent();
+					$payEvent->pay_id = $pay->primaryKey;
+					$payEvent->registration_event_id = $registrationEvent->id;
+					$payEvent->save();
+				}
+			}
+			$pay->reviseAmount();
+			return $pay;
+		}
 	}
 
 	protected function beforeSave() {
@@ -1044,7 +1083,7 @@ class Registration extends ActiveRecord {
 		return [
 			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
 			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
-			'pay'=>[self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION],
+			'payments'=>[self::HAS_MANY, 'Pay', 'sub_type_id', 'on'=>'payments.type=' . Pay::TYPE_REGISTRATION],
 			'avatar'=>[self::BELONGS_TO, 'UserAvatar', 'avatar_id'],
 			'allEvents'=>[self::HAS_MANY, 'RegistrationEvent', 'registration_id', 'order'=>'allEvents.id'],
 		];

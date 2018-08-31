@@ -93,6 +93,7 @@ class PayController extends Controller {
 		} else {
 			$params = $model->generateParams($isMobile, $channel);
 		}
+		$model->reviseAmount();
 		$this->ajaxOk($params);
 	}
 }

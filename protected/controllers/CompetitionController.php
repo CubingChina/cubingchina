@@ -298,17 +298,11 @@ class CompetitionController extends Controller {
 				if ($model->save()) {
 					$model->updateEvents($model->events);
 					Yii::app()->mailer->sendRegistrationNotice($model);
-					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 					if ($model->isAccepted()) {
 						$model->accept();
 					}
-					$this->render('registrationDone', array(
-						'user'=>$user,
-						'accepted'=>$model->isAccepted(),
-						'competition'=>$competition,
-						'registration'=>$model,
-					));
-					Yii::app()->end();
+					$model->createPayment();
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 		}

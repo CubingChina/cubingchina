@@ -93,6 +93,46 @@ class Pay extends ActiveRecord {
 		);
 	}
 
+	public function reviseAmount() {
+		if ($this->isPaid()) {
+			return;
+		}
+		$revised = false;
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+				$registration = $this->registration;
+				$competition = $this->competition;
+				// if (!$registration->isAccepted()) {
+				// 	if ($this->amount != $registration->getTotalFee() * 100) {
+				// 		$this->amount = $registration->getTotalFee() * 100;
+				// 		$this->save();
+				// 		$revised = true;
+				// 	}
+				// 	break;
+				// }
+				$fee = 0;
+				foreach ($this->events as $payEvent) {
+					$registrationEvent = $payEvent->registrationEvent;
+					if ($registrationEvent->fee != $competition->getEventFee($registrationEvent->event)) {
+						$registrationEvent->fee = $competition->getEventFee($registrationEvent->event);
+						$r = $registrationEvent->save();
+					}
+					$fee += $registrationEvent->fee;
+				}
+				// add base entry fee
+				if (!$registration->isAccepted()) {
+					$fee += $competition->getEventFee('entry');
+				}
+				$fee *= 100;
+				if ($this->amount != $fee) {
+					$this->amount = $fee;
+					$this->save();
+					$revised = true;
+				}
+				break;
+		}
+	}
+
 	public function refund($amount) {
 		if ($this->refund_time > 0 || $amount <= 0) {
 			return false;
@@ -250,7 +290,7 @@ class Pay extends ActiveRecord {
 					$registration->paid = Registration::PAID;
 					$registration->total_fee = $registration->getTotalFee(true);
 					$registration->guest_paid = $registration->has_entourage;
-					$registration->accept();
+					$registration->accept($this);
 				}
 				break;
 			case self::TYPE_APPLICATION:
@@ -605,14 +645,13 @@ class Pay extends ActiveRecord {
 	 * @return array relational rules.
 	 */
 	public function relations() {
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
-			'application'=>array(self::BELONGS_TO, 'Application', 'type_id'),
-			'competition'=>array(self::BELONGS_TO, 'Competition', 'type_id'),
-			'registration'=>array(self::BELONGS_TO, 'Registration', 'sub_type_id'),
-		);
+		return [
+			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
+			'application'=>[self::BELONGS_TO, 'Application', 'type_id'],
+			'competition'=>[self::BELONGS_TO, 'Competition', 'type_id'],
+			'registration'=>[self::BELONGS_TO, 'Registration', 'sub_type_id'],
+			'events'=>[self::HAS_MANY, 'PayEvent', 'pay_id'],
+		];
 	}
 
 	/**

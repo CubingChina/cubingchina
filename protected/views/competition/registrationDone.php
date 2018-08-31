@@ -33,8 +33,6 @@
           <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Name'); ?></h4>
           <p><?php echo $registration->user->getCompetitionName(); ?></p>
-          <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <?php if ($registration->isAccepted()): ?>
           <h4><?php echo Yii::t('Registration', 'No.'); ?></h4>
           <p><?php echo $registration->getUserNumber(); ?></p>
@@ -43,6 +41,8 @@
           <h4><?php echo Yii::t('Competition', 'Location'); ?></h4>
           <p><?php echo $registration->location->getCityName(); ?></p>
           <?php endif; ?>
+          <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
+          <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
           <?php if ($registration->isCancelled() && $registration->getRefundFee() > 0): ?>
@@ -59,20 +59,6 @@
           <?php if ($registration->isCancelled()): ?>
           <h4><?php echo Yii::t('Registration', 'Cancellation Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->cancel_time); ?></p>
-          <?php endif; ?>
-          <?php if ($registration->isWaiting()): ?>
-          <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
-          <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list. There are {count} people on the list ahead of you.', [
-            '{count}'=>$registration->getWaitingNumber(),
-          ]); ?></p>
-          <?php endif; ?>
-          <?php if ($competition->fill_passport && $user->passport_type != User::NO): ?>
-          <hr>
-          <p><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
-          <h4><?php echo Yii::t('Registration', 'Type of Identity'); ?></h4>
-          <p><?php echo $registration->user->getPassportTypeText(); ?></p>
-          <h4><?php echo Yii::t('Registration', 'Identity Number'); ?></h4>
-          <p><?php echo $registration->user->passport_number; ?></p>
           <?php endif; ?>
           <hr>
           <?php if ($registration->payable): ?>
@@ -107,6 +93,20 @@
             <br>
             <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
           </div>
+          <?php endif; ?>
+          <?php if ($registration->isWaiting()): ?>
+          <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
+          <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list. There are {count} people on the list ahead of you.', [
+            '{count}'=>$registration->getWaitingNumber(),
+          ]); ?></p>
+          <?php endif; ?>
+          <?php if ($competition->fill_passport && $user->passport_type != User::NO): ?>
+          <hr>
+          <p><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
+          <h4><?php echo Yii::t('Registration', 'Type of Identity'); ?></h4>
+          <p><?php echo $registration->user->getPassportTypeText(); ?></p>
+          <h4><?php echo Yii::t('Registration', 'Identity Number'); ?></h4>
+          <p><?php echo $registration->user->passport_number; ?></p>
           <?php endif; ?>
           <?php if ($registration->isAccepted() && $competition->show_qrcode): ?>
           <p><?php echo Yii::t('Registration', 'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.'); ?></p>
@@ -182,6 +182,7 @@ EOT
 }
 
 if ($registration->payable) {
+  $paymentId = $registration->getUnpaidPayment()->id;
   Yii::app()->clientScript->registerScript('pay',
 <<<EOT
   if (navigator.userAgent.match(/MicroMessenger/i)) {
@@ -203,7 +204,7 @@ if ($registration->payable) {
     $.ajax({
       url: '/pay/params',
       data: {
-        id: '{$registration->pay->id}',
+        id: {$paymentId},
         is_mobile: Number('ontouchstart' in window),
         channel: channel
       },
