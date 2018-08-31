@@ -2,6 +2,8 @@
 
 class m180706_155849_add_allow_change_event extends CDbMigration {
 	public function up() {
+		Yii::getLogger()->autoDump = true;
+		Yii::getLogger()->autoFlush = 1;
 		$this->createTable('pay_event', [
 			'id'=>'INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
 			'pay_id'=>"INT(11) UNSIGNED NOT NULL",
