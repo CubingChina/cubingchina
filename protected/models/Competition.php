@@ -842,23 +842,10 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getEventFee($event, $stage = null, $entryFee = 0) {
-		$now = time();
 		$events = $this->associatedEvents;
 		$isBasic = !isset($events[$event]);
 		if ($stage === null) {
-			if ($now < $this->second_stage_date) {
-				$stage = self::STAGE_FIRST;
-			} elseif ($now < $this->third_stage_date) {
-				$stage = self::STAGE_SECOND;
-			} else {
-				$stage = self::STAGE_THIRD;
-			}
-			if (!$this->hasThirdStage && $stage == self::STAGE_THIRD) {
-				$stage = self::STAGE_SECOND;
-			}
-			if (!$this->hasSecondStage && $stage == self::STAGE_SECOND) {
-				$stage = self::STAGE_FIRST;
-			}
+			$stage = $this->calculateStage();
 		}
 		$entryFee = $this->complex_multi_location && $entryFee > 0 ? $entryFee : $this->entry_fee;
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
@@ -879,21 +866,8 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getFeeRatio($stage = null) {
-		$now = time();
 		if ($stage === null) {
-			if ($now < $this->second_stage_date) {
-				$stage = self::STAGE_FIRST;
-			} elseif ($now < $this->third_stage_date) {
-				$stage = self::STAGE_SECOND;
-			} else {
-				$stage = self::STAGE_THIRD;
-			}
-			if (!$this->hasThirdStage && $stage == self::STAGE_THIRD) {
-				$stage = self::STAGE_SECOND;
-			}
-			if (!$this->hasSecondStage && $stage == self::STAGE_SECOND) {
-				$stage = self::STAGE_FIRST;
-			}
+			$stage = $this->calculateStage($stage);
 		}
 		switch ($stage) {
 			case self::STAGE_FIRST:
@@ -902,6 +876,26 @@ class Competition extends ActiveRecord {
 			case self::STAGE_THIRD:
 				return $this->{$stage . '_stage_ratio'};
 		}
+	}
+
+	public function calculateStage($time = null) {
+		if (!$time) {
+			$time = time();
+		}
+		if ($time < $this->second_stage_date) {
+			$stage = self::STAGE_FIRST;
+		} elseif ($time < $this->third_stage_date) {
+			$stage = self::STAGE_SECOND;
+		} else {
+			$stage = self::STAGE_THIRD;
+		}
+		if (!$this->hasThirdStage && $stage == self::STAGE_THIRD) {
+			$stage = self::STAGE_SECOND;
+		}
+		if (!$this->hasSecondStage && $stage == self::STAGE_SECOND) {
+			$stage = self::STAGE_FIRST;
+		}
+		return $stage;
 	}
 
 	public function getPaypalLink($registration) {
