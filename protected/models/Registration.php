@@ -244,7 +244,7 @@ class Registration extends ActiveRecord {
 	public function isEditable() {
 		$competition = $this->competition;
 		$payment = $this->getUnpaidPayment();
-		return !$competition->isRegistrationEnded() && $competition->allow_change_event
+		return !$this->isCancelled() && !$competition->isRegistrationEnded() && $competition->allow_change_event
 			&& ($payment === null || !$payment->isLocked());
 	}
 

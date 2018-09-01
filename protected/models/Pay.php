@@ -272,7 +272,7 @@ class Pay extends ActiveRecord {
 
 	public function request($gateway, $params, $type) {
 		$client = new Client();
-		$bodyKey = "alipay_trade_{type}_response";
+		$bodyKey = "alipay_trade_{$type}_response";
 		try {
 			$response = $client->post($gateway, [
 				'form_params'=>$params,
