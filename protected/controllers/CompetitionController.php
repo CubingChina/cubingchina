@@ -261,9 +261,9 @@ class CompetitionController extends Controller {
 					$this->redirect($competition->getUrl('registration'));
 				}
 			}
-			if (isset($_POST['unlock']) && $registration->isLocked()) {
-				if ($registration->unlock()) {
-					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been unlocked successfully.'));
+			if (isset($_POST['reset'])) {
+				if ($registration->resetPayment()) {
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your order has been reset successfully.'));
 					$this->redirect($competition->getUrl('registration'));
 				}
 			}

@@ -218,7 +218,7 @@ class Pay extends ActiveRecord {
 		$this->save();
 	}
 
-	public function unlock() {
+	public function resetOrder() {
 		if (!$this->isLocked()) {
 			return false;
 		}

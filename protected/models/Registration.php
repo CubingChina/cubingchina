@@ -341,12 +341,12 @@ class Registration extends ActiveRecord {
 		return false;
 	}
 
-	public function unlock() {
+	public function resetPayment() {
 		$payment = $this->getUnpaidPayment();
 		if ($payment === null) {
-			return;
+			return false;
 		}
-		return $payment->unlock();
+		return $payment->resetOrder();
 	}
 
 	public function disqualify() {

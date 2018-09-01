@@ -93,6 +93,7 @@
     </div>
   </div>
   <?php $this->renderPartial('editRegistration', $_data_); ?>
+  <?php $this->renderPartial('resetPayment', $_data_); ?>
   <?php if ($registration->isCancellable()): ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">

@@ -3,11 +3,11 @@
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
     <div class="panel panel-info">
       <div class="panel-heading">
-        <a data-toggle="collapse" href="#edit"><?php echo Yii::t('Registration', 'Edit Registration'); ?></a>
+        <a data-toggle="collapse" href="#update"><?php echo Yii::t('Registration', 'Update Registration'); ?></a>
       </div>
-      <div class="panel-body collapse" id="edit">
+      <div class="panel-body collapse" id="update">
         <?php $form = $this->beginWidget('ActiveForm', array(
-          'id'=>'edit-form',
+          'id'=>'update-form',
           'htmlOptions'=>array(
           ),
         )); ?>
