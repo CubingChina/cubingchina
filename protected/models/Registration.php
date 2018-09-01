@@ -255,14 +255,15 @@ class Registration extends ActiveRecord {
 	}
 
 	public function accept($pay = null, $forceAccept = false) {
-		if ($this->isCancelled() || $this->isAccepted() && $pay != null) {
+		if ($this->isCancelled()) {
 			return false;
 		}
+		$hasBeenAccepted = $this->isAccepted();
 		$this->status = self::STATUS_ACCEPTED;
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
-		if ($this->competition->isRegistrationFull()) {
+		if ($this->competition->isRegistrationFull() && !$hasBeenAccepted) {
 			if (!$forceAccept) {
 				$this->status = self::STATUS_WAITING;
 			}
@@ -288,7 +289,7 @@ class Registration extends ActiveRecord {
 					$registrationEvent->accept();
 				}
 			}
-			if ($this->competition->show_qrcode) {
+			if ($this->competition->show_qrcode && !$hasBeenAccepted) {
 				Yii::app()->mailer->sendRegistrationAcception($this);
 			}
 		}
