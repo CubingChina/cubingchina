@@ -1055,7 +1055,7 @@ class Registration extends ActiveRecord {
 		$registrationEvent->registration_id = $this->id;
 		$registrationEvent->event = $event;
 		$registrationEvent->fee = $attributes['fee'] ?? $this->competition->getEventFee($event);
-		$registrationEvent->paid = $attributes['paid'] ?? $this->paid;
+		$registrationEvent->paid = $attributes['paid'] ?? self::UNPAID;
 		$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
 		$registrationEvent->accept_time = $attributes['accept_time'] ?? $this->accept_time;
 		$registrationEvent->save();
