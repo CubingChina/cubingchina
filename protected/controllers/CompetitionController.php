@@ -242,22 +242,32 @@ class CompetitionController extends Controller {
 			));
 			Yii::app()->end();
 		}
+		$unmetEvents = [];
+		if ($competition->has_qualifying_time) {
+			$unmetEvents = $competition->getUserUnmetEvents($this->user);
+		}
 		if ($registration !== null) {
 			if (isset($_POST['cancel']) && $registration->isCancellable()) {
 				if ($registration->cancel()) {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
+					$this->redirect($competition->getUrl('registration'));
+				}
+			}
+			if (isset($_POST['update']) && $registration->isEditable()) {
+				$events = $_POST['Registration']['events'] ?? [];
+				if ($registration->isAccepted() || $events !== []) {
+					$registration->updateEvents($events);
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been updated successfully.'));
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'competition'=>$competition,
 				'registration'=>$registration,
+				'unmetEvents'=>$unmetEvents,
 			));
 			Yii::app()->end();
-		}
-		$unmetEvents = [];
-		if ($competition->has_qualifying_time) {
-			$unmetEvents = $competition->getUserUnmetEvents($this->user);
 		}
 		$model = new Registration('register');
 		$model->unsetAttributes();
@@ -301,7 +311,6 @@ class CompetitionController extends Controller {
 					if ($model->isAccepted()) {
 						$model->accept();
 					}
-					$model->createPayment();
 					$this->redirect($competition->getUrl('registration'));
 				}
 			}

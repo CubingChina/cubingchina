@@ -18,7 +18,7 @@
   <?php endif; ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
-      <div class="panel panel-info">
+      <div class="panel panel-primary">
         <div class="panel-heading"><?php echo Yii::t('Registration', 'Registration Detail'); ?></div>
         <div class="panel-body">
           <?php if ($registration->isAccepted()): ?>
@@ -41,10 +41,12 @@
           <h4><?php echo Yii::t('Competition', 'Location'); ?></h4>
           <p><?php echo $registration->location->getCityName(); ?></p>
           <?php endif; ?>
+          <?php if ($registration->isAccepted()): ?>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->getRegistrationEvents(); ?></p>
+          <p><?php echo $registration->getAcceptedEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
+          <?php endif; ?>
           <?php if ($registration->isCancelled() && $registration->getRefundAmount() > 0): ?>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
           <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
@@ -59,40 +61,6 @@
           <?php if ($registration->isCancelled()): ?>
           <h4><?php echo Yii::t('Registration', 'Cancellation Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->cancel_time); ?></p>
-          <?php endif; ?>
-          <hr>
-          <?php if ($registration->payable): ?>
-          <?php if (count(Yii::app()->params->payments) > 1): ?>
-          <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
-          <?php endif; ?>
-          <div class="pay-channels clearfix">
-            <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
-            <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
-              <img src="<?php echo $payment['img']; ?>">
-            </div>
-            <?php endforeach; ?>
-            <?php if ($this->user->country_id > 1 && $competition->paypal_link): ?>
-            <div class="pay-channel pay-channel-<?php echo $channel; ?>">
-              <a href="<?php echo $competition->getPaypalLink($registration); ?>" target="_blank">
-                <img src="/f/images/pay/paypal.png">
-              </a>
-              <p class="text-danger"><?php echo Yii::t('Registration', 'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.'); ?></p>
-            </div>
-            <?php endif; ?>
-          </div>
-          <p class="hide lead text-danger" id="redirect-tips">
-            <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
-            <?php echo Yii::t('common', 'Please open with browser!'); ?>
-          </p>
-          <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer.'); ?></p>
-          <div class="text-center">
-            <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
-          </div>
-          <div class="hide text-center" id="pay-tips">
-            <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
-            <br>
-            <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
-          </div>
           <?php endif; ?>
           <?php if ($registration->isWaiting()): ?>
           <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
@@ -119,10 +87,12 @@
             )); ?>
           </p>
           <?php endif; ?>
+          <?php $this->renderPartial('payRegistration', $_data_); ?>
         </div>
       </div>
     </div>
   </div>
+  <?php $this->renderPartial('editRegistration', $_data_); ?>
   <?php if ($registration->isCancellable()): ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">

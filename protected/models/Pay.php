@@ -37,6 +37,7 @@ class Pay extends ActiveRecord {
 	const STATUS_WAIT_SEND = 3;
 	const STATUS_WAIT_CONFIRM = 4;
 	const STATUS_WAIT_PAY = 5;
+	const STATUS_CLOSED = 6;
 
 	const DEVICE_TYPE_PC = '02';
 	const DEVICE_TYPE_MOBILE = '06';
@@ -102,17 +103,12 @@ class Pay extends ActiveRecord {
 			case self::TYPE_REGISTRATION:
 				$registration = $this->registration;
 				$competition = $this->competition;
-				// if (!$registration->isAccepted()) {
-				// 	if ($this->amount != $registration->getTotalFee() * 100) {
-				// 		$this->amount = $registration->getTotalFee() * 100;
-				// 		$this->save();
-				// 		$revised = true;
-				// 	}
-				// 	break;
-				// }
 				$fee = 0;
 				foreach ($this->events as $payEvent) {
 					$registrationEvent = $payEvent->registrationEvent;
+					if ($registrationEvent->isCancelled()) {
+						continue;
+					}
 					if ($registrationEvent->fee != $competition->getEventFee($registrationEvent->event)) {
 						$registrationEvent->fee = $competition->getEventFee($registrationEvent->event);
 						$r = $registrationEvent->save();
@@ -181,6 +177,11 @@ class Pay extends ActiveRecord {
 			return true;
 		}
 		return false;
+	}
+
+	public function close() {
+		$this->status = self::STATUS_CLOSED;
+		$this->save();
 	}
 
 	public function request($gateway, $params) {
@@ -282,6 +283,10 @@ class Pay extends ActiveRecord {
 		$this->save(false);
 		if ($this->status == self::STATUS_WAIT_PAY || $this->status == self::STATUS_UNPAID) {
 			return;
+		}
+		foreach ($this->events as $payEvent) {
+			$payEvent->status = $this->status;
+			$payEvent->save();
 		}
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
@@ -412,6 +417,13 @@ class Pay extends ActiveRecord {
 		return $this->status == self::STATUS_PAID;
 	}
 
+	public function isUnpaid() {
+		return !$this->isPaid() && !$this->isClosed();
+	}
+
+	public function isClosed() {
+		return $this->status == self::STATUS_CLOSED;
+	}
 
 	public function amountMismatch() {
 		return $this->isPaid() && $this->amount != $this->paid_amount;

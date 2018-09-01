@@ -255,7 +255,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function accept($pay = null, $forceAccept = false) {
-		if ($this->isCancelled() || $this->isAccepted()) {
+		if ($this->isCancelled() || $this->isAccepted() && $pay != null) {
 			return false;
 		}
 		$this->status = self::STATUS_ACCEPTED;
@@ -280,6 +280,9 @@ class Registration extends ActiveRecord {
 				return $payEvent->registration_event_id;
 			}, $pay->events);
 			foreach ($this->allEvents as $registrationEvent) {
+				if ($registrationEvent->isCancelled()) {
+					continue;
+				}
 				if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
 					$registrationEvent->paid = $this->paid;
 					$registrationEvent->accept();
@@ -288,6 +291,10 @@ class Registration extends ActiveRecord {
 			if ($this->competition->show_qrcode) {
 				Yii::app()->mailer->sendRegistrationAcception($this);
 			}
+		}
+		if ($pay === null && $this->getUnpaidPayment() !== null) {
+			$payment = $this->getUnpaidPayment();
+			$payment->close();
 		}
 	}
 
@@ -472,15 +479,38 @@ class Registration extends ActiveRecord {
 		return $str;
 	}
 
-	public function getRegistrationEvents() {
+	public function getAcceptedEvents() {
 		$competitionEvents = $this->competition->getRegistrationEvents();
 		$events = array();
-		foreach ($this->events as $event) {
-			if (isset($competitionEvents[$event])) {
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isAccepted() && isset($competitionEvents[$event])) {
 				$events[] = Yii::t('event', $competitionEvents[$event]);
 			}
 		}
 		return implode(Yii::t('common', ', '), $events);
+	}
+
+	public function getPendingEvents() {
+		$competitionEvents = $this->competition->getRegistrationEvents();
+		$events = array();
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isPending() && isset($competitionEvents[$event])) {
+				$events[] = Yii::t('event', $competitionEvents[$event]);
+			}
+		}
+		return implode(Yii::t('common', ', '), $events);
+	}
+
+	public function getEditableEvents() {
+		$events = $this->competition->getRegistrationEvents();
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isAccepted()) {
+				unset($events[$registrationEvent->event]);
+			}
+		}
+		return $events;
 	}
 
 	public function getRegistrationFee() {
@@ -519,6 +549,10 @@ class Registration extends ActiveRecord {
 			return $this->location->fee;
 		}
 		return Html::fontAwesome('rmb') . $this->getTotalFee();
+	}
+
+	public function getPendingFee() {
+		return Html::fontAwesome('rmb') . $this->getUnpaidPayment()->amount / 100;
 	}
 
 	public function getPaidAmount() {
@@ -939,40 +973,42 @@ class Registration extends ActiveRecord {
 		}
 		$totalFee = $this->getTotalFee();
 		return $this->competition->isOnlinePay() && $totalFee > 0
-			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
-			&& !$this->competition->isRegistrationEnded();
+			&& !$this->competition->isRegistrationFull()
+			&& $this->getUnpaidPayment() !== null && $this->getUnpaidPayment()->amount > 0;
 	}
 
 	public function getUnpaidPayment() {
 		foreach ($this->payments as $payment) {
-			if (!$payment->isPaid()) {
+			if ($payment->isUnpaid()) {
 				return $payment;
 			}
 		}
 	}
 
 	public function createPayment() {
-		if ($this->getUnpaidPayment() !== null) {
-			return $this->getUnpaidPayment();
+		// check if any unpaid payment
+		if (($payment = $this->getUnpaidPayment()) === null) {
+			$payment = new Pay();
+			$payment->user_id = $this->user_id;
+			$payment->type = Pay::TYPE_REGISTRATION;
+			$payment->type_id = $this->competition_id;
+			$payment->sub_type_id = $this->id;
+			$payment->order_name = $this->competition->name_zh;
+			$payment->save();
 		}
-		$pay = new Pay();
-		$pay->user_id = $this->user_id;
-		$pay->type = Pay::TYPE_REGISTRATION;
-		$pay->type_id = $this->competition_id;
-		$pay->sub_type_id = $this->id;
-		$pay->order_name = $this->competition->name_zh;
-		if ($pay->save()) {
-			foreach ($this->allEvents as $registrationEvent) {
-				if ($registrationEvent->isPending()) {
+		$this->payments = [$payment];
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isPending()) {
+				if (($payEvent = $registrationEvent->payEvent) === null) {
 					$payEvent = new PayEvent();
-					$payEvent->pay_id = $pay->primaryKey;
-					$payEvent->registration_event_id = $registrationEvent->id;
-					$payEvent->save();
 				}
+				$payEvent->pay_id = $payment->primaryKey;
+				$payEvent->registration_event_id = $registrationEvent->id;
+				$payEvent->save();
 			}
-			$pay->reviseAmount();
-			return $pay;
 		}
+		$payment->reviseAmount();
+		return $payment;
 	}
 
 	protected function beforeSave() {
@@ -987,17 +1023,17 @@ class Registration extends ActiveRecord {
 		Yii::app()->cache->delete('competitors_' . $this->competition_id);
 	}
 
-	public function updateEvents($events, $realRemoveEvent = false) {
+	public function updateEvents($events) {
 		$allEvents = $this->allEvents;
 		foreach ($allEvents as $index => $registrationEvent) {
+			if ($registrationEvent->isAccepted()) {
+				continue;
+			}
 			if (!in_array($registrationEvent->event, $events)) {
-				$this->removeEvent($registrationEvent, $realRemoveEvent);
-				if ($realRemoveEvent) {
-					unset($allEvents[$index]);
-				}
+				$this->removeEvent($registrationEvent);
 			} else {
 				// set status to pending if it's cancelled
-				if ($registrationEvent->isCancelled()) {
+				if ($registrationEvent->isCancelled() && !$registrationEvent->isDisqualified()) {
 					$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
 					$registrationEvent->save();
 				}
@@ -1008,6 +1044,8 @@ class Registration extends ActiveRecord {
 			$allEvents[] = $this->addEvent($event);
 		}
 		$this->allEvents = array_values($allEvents);
+		$this->_events = null;
+		$this->createPayment();
 		return true;
 	}
 
@@ -1023,14 +1061,14 @@ class Registration extends ActiveRecord {
 		return $registrationEvent;
 	}
 
-	public function removeEvent($event, $realRemove = false) {
+	public function removeEvent($event) {
 		if (is_string($event)) {
 			$event = $this->associatedEvents[$event] ?? null;
 		}
 		if ($event === null) {
 			return;
 		}
-		return $realRemove ? $event->delete() : $event->cancel();
+		return $event->cancel();
 	}
 
 	/**
