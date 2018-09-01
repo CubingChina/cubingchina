@@ -7,7 +7,7 @@
       </div>
       <div class="panel-body collapse" id="edit">
         <?php $form = $this->beginWidget('ActiveForm', array(
-          'id'=>'cancel-form',
+          'id'=>'edit-form',
           'htmlOptions'=>array(
           ),
         )); ?>

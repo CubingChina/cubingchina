@@ -243,7 +243,9 @@ class Registration extends ActiveRecord {
 
 	public function isEditable() {
 		$competition = $this->competition;
-		return !$competition->isRegistrationEnded() && $competition->allow_change_event;
+		$payment = $this->getUnpaidPayment();
+		return !$competition->isRegistrationEnded() && $competition->allow_change_event
+			&& ($payment === null || !$payment->isLocked());
 	}
 
 	public function isWaiting() {
@@ -252,6 +254,11 @@ class Registration extends ActiveRecord {
 
 	public function isPaid() {
 		return $this->paid == self::PAID;
+	}
+
+	public function isLocked() {
+		$payment = $this->getUnpaidPayment();
+		return $payment !== null && $payment->isLocked();
 	}
 
 	public function accept($pay = null, $forceAccept = false) {
@@ -295,7 +302,7 @@ class Registration extends ActiveRecord {
 		}
 		if ($pay === null && $this->getUnpaidPayment() !== null) {
 			$payment = $this->getUnpaidPayment();
-			$payment->close();
+			$payment->cancel();
 		}
 	}
 
@@ -332,6 +339,14 @@ class Registration extends ActiveRecord {
 			return true;
 		}
 		return false;
+	}
+
+	public function unlock() {
+		$payment = $this->getUnpaidPayment();
+		if ($payment === null) {
+			return;
+		}
+		return $payment->unlock();
 	}
 
 	public function disqualify() {
