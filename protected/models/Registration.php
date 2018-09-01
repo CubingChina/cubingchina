@@ -553,7 +553,7 @@ class Registration extends ActiveRecord {
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
 		foreach ($this->allEvents as $registrationEvent) {
 			$event = $registrationEvent->event;
-			if (isset($competitionEvents[$event])) {
+			if (isset($competitionEvents[$event]) && !$registrationEvent->isCancelled()) {
 				$fees[] = $competition->getEventFee($event, $competition->calculateStage($registrationEvent->accept_time));
 			}
 		}
@@ -1072,7 +1072,7 @@ class Registration extends ActiveRecord {
 		$registrationEvent->fee = $attributes['fee'] ?? $this->competition->getEventFee($event);
 		$registrationEvent->paid = $attributes['paid'] ?? self::UNPAID;
 		$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
-		$registrationEvent->accept_time = $attributes['accept_time'] ?? $this->accept_time;
+		$registrationEvent->accept_time = $attributes['accept_time'] ?? 0;
 		$registrationEvent->save();
 		return $registrationEvent;
 	}
