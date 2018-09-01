@@ -1,13 +1,9 @@
 <?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
-  <?php if ($registration->isPending() || $registration->isAccepted()): ?>
+  <?php if ($registration->isPending()): ?>
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
-    <?php if ($registration->isAccepted()): ?>
-    <?php echo Yii::t('Competition', 'Click {here} to view the competitors list.', array(
-      '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('competitors')),
-    )); ?>
-    <?php elseif ($registration->payable): ?>
+    <?php if ($registration->payable): ?>
     <?php echo Yii::t('Competition', 'It will be verified automatically after your {paying}.', array(
       '{paying}'=>CHtml::tag('b', array('class'=>'text-danger'), Yii::t('common', 'paying the fee online')),
     )); ?>
@@ -16,9 +12,14 @@
     <?php endif; ?>
   </div>
   <?php endif; ?>
+  <?php if ($registration->isAccepted() && $registration->payable): ?>
+  <div class="alert alert-warning">
+    <?php echo Yii::t('Registration', 'Your registration has some events in pending status. Please pay for them.'); ?>
+  </div>
+  <?php endif; ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
-      <div class="panel panel-info">
+      <div class="panel panel-primary">
         <div class="panel-heading"><?php echo Yii::t('Registration', 'Registration Detail'); ?></div>
         <div class="panel-body">
           <?php if ($registration->isAccepted()): ?>
@@ -33,8 +34,6 @@
           <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Name'); ?></h4>
           <p><?php echo $registration->user->getCompetitionName(); ?></p>
-          <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->getRegistrationEvents(); ?></p>
           <?php if ($registration->isAccepted()): ?>
           <h4><?php echo Yii::t('Registration', 'No.'); ?></h4>
           <p><?php echo $registration->getUserNumber(); ?></p>
@@ -43,11 +42,15 @@
           <h4><?php echo Yii::t('Competition', 'Location'); ?></h4>
           <p><?php echo $registration->location->getCityName(); ?></p>
           <?php endif; ?>
+          <?php if ($registration->isAccepted()): ?>
+          <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
+          <p><?php echo $registration->getAcceptedEvents(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
-          <?php if ($registration->isCancelled() && $registration->getRefundFee() > 0): ?>
+          <?php endif; ?>
+          <?php if ($registration->isCancelled() && $registration->getRefundAmount() > 0): ?>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
-          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
           <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
@@ -74,65 +77,6 @@
           <h4><?php echo Yii::t('Registration', 'Identity Number'); ?></h4>
           <p><?php echo $registration->user->passport_number; ?></p>
           <?php endif; ?>
-          <hr>
-          <?php if ($registration->payable): ?>
-          <?php if (count(Yii::app()->params->payments) > 1): ?>
-          <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
-          <?php endif; ?>
-          <div class="pay-channels clearfix">
-            <?php foreach (Yii::app()->params->payments as $channel=>$payment): ?>
-            <div class="pay-channel pay-channel-<?php echo $channel; ?>" data-channel="<?php echo $channel; ?>">
-              <img src="<?php echo $payment['img']; ?>">
-            </div>
-            <?php endforeach; ?>
-            <?php if ($this->user->country_id > 1 && $competition->paypal_link): ?>
-            <div class="pay-channel pay-channel-<?php echo $channel; ?>">
-              <a href="<?php echo $competition->getPaypalLink($registration); ?>" target="_blank">
-                <img src="/f/images/pay/paypal.png">
-              </a>
-              <p class="text-danger"><?php echo Yii::t('Registration', 'Payment via Paypal is not accepted automatically. Please wait patiently if you\'ve already paid. We will accept your registration soon.'); ?></p>
-            </div>
-            <?php endif; ?>
-          </div>
-          <p class="hide lead text-danger" id="redirect-tips">
-            <?php echo Yii::t('common', 'Alipay has been blocked by wechat.'); ?><br>
-            <?php echo Yii::t('common', 'Please open with browser!'); ?>
-          </p>
-          <p class="text-danger"><?php echo Yii::t('common', 'If you were unable to pay online, please contact the organizer as soon as possible.'); ?></p>
-          <div class="">
-            <button id="pay" class="btn btn-lg btn-theme"><?php echo Yii::t('common', 'Pay'); ?></button>
-          </div>
-          <div class="hide text-center" id="pay-tips">
-            <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
-            <br>
-            <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
-          </div>
-          <?php if ($this->user->country_id > 1): ?>
-          <hr>
-          <p>
-            <?php echo Yii::t('common', 'International competitors that are not able to pay online with alipay, please enter the verification code. Your registration will be accepted, please pay cash at the venue.'); ?>
-          </p>
-          <?php $form = $this->beginWidget('ActiveForm', [
-            'id'=>'registration-form',
-            'htmlOptions'=>[
-              'role'=>'form',
-            ],
-          ]); ?>
-          <?php echo Html::formGroup(
-            $overseaUserVerifyForm, 'verifyCode', [],
-            $form->labelEx($overseaUserVerifyForm, 'verifyCode'),
-            Html::activeTextField($overseaUserVerifyForm, 'verifyCode', []),
-            $this->widget('CCaptcha', [
-              'captchaAction'=>'site/captcha',
-              'clickableImage'=>true,
-              'showRefreshButton'=>false,
-            ], true),
-            $form->error($overseaUserVerifyForm, 'verifyCode', ['class'=>'text-danger'])
-          );?>
-          <button type="submit" class="btn btn-theme btn-lg"><?php echo Yii::t('common', 'Submit'); ?></button>
-          <?php $this->endWidget(); ?>
-          <?php endif; ?>
-          <?php endif; ?>
           <?php if ($registration->isAccepted() && $competition->show_qrcode): ?>
           <p><?php echo Yii::t('Registration', 'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.'); ?></p>
           <p class="text-center">
@@ -144,10 +88,13 @@
             )); ?>
           </p>
           <?php endif; ?>
+          <?php $this->renderPartial('payRegistration', $_data_); ?>
         </div>
       </div>
     </div>
   </div>
+  <?php $this->renderPartial('editRegistration', $_data_); ?>
+  <?php $this->renderPartial('resetPayment', $_data_); ?>
   <?php if ($registration->isCancellable()): ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
@@ -173,7 +120,7 @@
           <h4><?php echo Yii::t('Registration', 'Paid Fee via Cubing China') ;?></h4>
           <p><i class="fa fa-rmb"></i><?php echo $registration->getPaidFee(); ?></p>
           <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
-          <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
+          <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
           <?php endif; ?>
           <?php echo CHtml::tag('button', [
@@ -202,57 +149,6 @@ if ($registration->isCancellable()) {
       $('#cancel-form').submit();
     })
   });
-EOT
-  );
-}
-
-if ($registration->payable) {
-  Yii::app()->clientScript->registerScript('pay',
-<<<EOT
-  if (navigator.userAgent.match(/MicroMessenger/i)) {
-    $('#redirect-tips').removeClass('hide').nextAll().hide();
-    $('#pay').prop('disabled', true);
-  }
-  $('.pay-channel').first().addClass('active');
-  var channel = $('.pay-channel.active').data('channel');
-  $('.pay-channel').on('click', function() {
-    channel = $(this).data('channel');
-    if (channel) {
-      $(this).addClass('active').siblings().removeClass('active');
-    }
-  });
-  $('#pay').on('click', function() {
-    $('#pay-tips').removeClass('hide');
-    $(this).prop('disabled', true);
-    $('.pay-channel').off('click');
-    $.ajax({
-      url: '/pay/params',
-      data: {
-        id: '{$registration->pay->id}',
-        is_mobile: Number('ontouchstart' in window),
-        channel: channel
-      },
-      dataType: 'json',
-      success: function(data) {
-        if (data.data.url) {
-          location.href = data.data.url;
-        } else {
-          submitForm(data.data);
-        }
-      }
-    });
-  });
-  function submitForm(data) {
-    var form = $('<form>').attr({
-      action: data.action,
-      method: data.method || 'get'
-    });
-    for (var k in data.params) {
-      $('<input type="hidden">').attr('name', k).val(data.params[k]).appendTo(form);
-    }
-    form.appendTo(document.body);
-    form.submit();
-  }
 EOT
   );
 }

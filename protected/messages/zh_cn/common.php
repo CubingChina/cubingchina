@@ -19,6 +19,7 @@
 return array (
   'Application' => '',
   'Fee' => '',
+  'If you were unable to pay online, please contact the organizer.' => '',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -50,6 +51,7 @@ return array (
   'Forget Password' => '忘记密码',
   'Fun Statistics' => '趣味统计',
   'Hours' => '小时',
+  'If you were unable to pay online, please contact the organizer as soon as possible.' => '如果你无法在线支付，请尽快联系主办方。',
   'It supports Unionpay and many China bankcards.' => '支持中国银联快捷支付和常见银行卡支付。',
   'Language' => '语言',
   'Mean of 3' => '三次计平均',
@@ -164,7 +166,6 @@ return array (
   'I want to focus on competition.' => '我想专心比赛',
   'ID Card (Chinese Citizen)' => '身份证（中国大陆居民）',
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活过程中有任何问题，请发送邮件到{email}联系管理员。',
-  'If you were unable to pay online, please contact the organizer as soon as possible.' => '如果你无法在线支付，请尽快联系主办方。',
   'Image height or width exceeded, the limited width is {width} and height is {height}' => '图像宽度或高度过大，最大宽度是{width}，最大高度是{height}',
   'Improvement' => '提升',
   'Inactive User' => '未激活用户',

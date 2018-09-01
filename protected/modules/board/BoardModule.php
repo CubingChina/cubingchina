@@ -7,7 +7,9 @@ class BoardModule extends CWebModule {
 			'board.components.*',
 		));
 		$this->setViewPath(Yii::getPathOfAlias('application.views.board'));
-		Yii::app()->errorHandler->errorAction = '/board/default/error';
+		if (!DEV) {
+			Yii::app()->errorHandler->errorAction = '/board/default/error';
+		}
 		Yii::app()->language = 'zh_cn';
 		Yii::app()->clientScript->registerPackage('board');
 	}

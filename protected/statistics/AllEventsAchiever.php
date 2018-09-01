@@ -38,7 +38,7 @@ class AllEventsAchiever extends Statistics {
 				max(CHtml::listData($averageDates, 'eventId', 'time'))
 			);
 			$competitions = (clone $cmd)->select('COUNT(DISTINCT(competitionId)) as competitions')->andWhere(
-				'c.year<:year OR (c.year=:year AND c.endMonth<:month) OR (c.year=:year AND c.endMonth<:month AND c.endDay<:day)',
+				'c.year<:year OR (c.year=:year AND c.endMonth<:month) OR (c.year=:year AND c.endMonth=:month AND c.endDay<=:day)',
 				[
 					':year'=>date('Y', $finishDate),
 					':month'=>date('n', $finishDate),

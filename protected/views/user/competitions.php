@@ -65,7 +65,7 @@
       array(
         'name'=>'events',
         'type'=>'raw',
-        'value'=>'$data->getRegistrationEvents()',
+        'value'=>'$data->isPending() ? $data->getPendingFee() : $data->getAcceptedEvents()',
       ),
       'comments',
     ),

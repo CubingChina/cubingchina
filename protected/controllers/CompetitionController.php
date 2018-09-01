@@ -150,7 +150,6 @@ class CompetitionController extends Controller {
 					$registration->signed_date = time();
 					$registration->signed_scan_code = $session->get('scan_code');
 			}
-			$registration->formatEvents();
 			$registration->save();
 			$this->ajaxOK([
 				'id'=>$registration->id,
@@ -243,6 +242,10 @@ class CompetitionController extends Controller {
 			));
 			Yii::app()->end();
 		}
+		$unmetEvents = [];
+		if ($competition->has_qualifying_time) {
+			$unmetEvents = $competition->getUserUnmetEvents($this->user);
+		}
 		if ($registration !== null) {
 			$overseaUserVerifyForm = new OverseaUserVerifyForm();
 			if (isset($_POST['OverseaUserVerifyForm']) && $registration->isPending() && $this->user->country_id > 1) {
@@ -259,20 +262,31 @@ class CompetitionController extends Controller {
 			if (isset($_POST['cancel']) && $registration->isCancellable()) {
 				if ($registration->cancel()) {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
-			$registration->formatEvents();
+			if (isset($_POST['update']) && $registration->isEditable()) {
+				$events = $_POST['Registration']['events'] ?? [];
+				if ($registration->isAccepted() || $events !== []) {
+					$registration->updateEvents($events);
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been updated successfully.'));
+					$this->redirect($competition->getUrl('registration'));
+				}
+			}
+			if (isset($_POST['reset'])) {
+				if ($registration->resetPayment()) {
+					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your order has been reset successfully.'));
+					$this->redirect($competition->getUrl('registration'));
+				}
+			}
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'competition'=>$competition,
 				'registration'=>$registration,
 				'overseaUserVerifyForm'=>$overseaUserVerifyForm,
+				'unmetEvents'=>$unmetEvents,
 			));
 			Yii::app()->end();
-		}
-		$unmetEvents = [];
-		if ($competition->has_qualifying_time) {
-			$unmetEvents = $competition->getUserUnmetEvents($this->user);
 		}
 		$model = new Registration('register');
 		$model->unsetAttributes();
@@ -307,18 +321,15 @@ class CompetitionController extends Controller {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				if ($model->save()) {
+					$model->updateEvents($model->events);
 					Yii::app()->mailer->sendRegistrationNotice($model);
-					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
-					$model->formatEvents();
 					if ($model->isAccepted()) {
 						$model->accept();
-						$model->formatEvents();
 					}
 					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 		}
-		$model->formatEvents();
 		$this->render('registration', array(
 			'competition'=>$competition,
 			'model'=>$model,

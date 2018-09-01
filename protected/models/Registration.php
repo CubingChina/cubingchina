@@ -23,6 +23,7 @@ class Registration extends ActiveRecord {
 	public $codes = array(1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2);
 
 	private $_location;
+	private $_events;
 
 	public static $sortByUserAttribute = false;
 	public static $sortByEvent = false;
@@ -240,6 +241,13 @@ class Registration extends ActiveRecord {
 		return time() < $competition->cancellation_end_time && $this->isAccepted() || $this->isWaiting();
 	}
 
+	public function isEditable() {
+		$competition = $this->competition;
+		$payment = $this->getUnpaidPayment();
+		return !$this->isCancelled() && !$competition->isRegistrationEnded() && $competition->allow_change_event
+			&& ($payment === null || !$payment->isLocked());
+	}
+
 	public function isWaiting() {
 		return $this->status == self::STATUS_WAITING;
 	}
@@ -248,16 +256,21 @@ class Registration extends ActiveRecord {
 		return $this->paid == self::PAID;
 	}
 
-	public function accept($forceAccept = false) {
+	public function isLocked() {
+		$payment = $this->getUnpaidPayment();
+		return $payment !== null && $payment->isLocked();
+	}
+
+	public function accept($pay = null, $forceAccept = false) {
 		if ($this->isCancelled()) {
 			return false;
 		}
-		$this->formatEvents();
-		$this->status = Registration::STATUS_ACCEPTED;
+		$hasBeenAccepted = $this->isAccepted();
+		$this->status = self::STATUS_ACCEPTED;
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
-		if ($this->competition->isRegistrationFull()) {
+		if ($this->competition->isRegistrationFull() && !$hasBeenAccepted) {
 			if (!$forceAccept) {
 				$this->status = self::STATUS_WAITING;
 			}
@@ -270,8 +283,26 @@ class Registration extends ActiveRecord {
 				$this->competition->save();
 			}
 		}
-		if ($this->isAccepted() && $this->competition->show_qrcode) {
-			Yii::app()->mailer->sendRegistrationAcception($this);
+		if ($this->isAccepted()) {
+			$registrationEventIds = $pay === null ? [] : array_map(function($payEvent) {
+				return $payEvent->registration_event_id;
+			}, $pay->events);
+			foreach ($this->allEvents as $registrationEvent) {
+				if ($registrationEvent->isCancelled()) {
+					continue;
+				}
+				if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
+					$registrationEvent->paid = $this->paid;
+					$registrationEvent->accept();
+				}
+			}
+			if ($this->competition->show_qrcode && !$hasBeenAccepted) {
+				Yii::app()->mailer->sendRegistrationAcception($this);
+			}
+		}
+		if ($pay === null && $this->getUnpaidPayment() !== null) {
+			$payment = $this->getUnpaidPayment();
+			$payment->cancel();
 		}
 	}
 
@@ -288,17 +319,18 @@ class Registration extends ActiveRecord {
 	}
 
 	public function cancel($status = Registration::STATUS_CANCELLED) {
-		$this->formatEvents();
 		//calculate refund fee before change status
-		$refundFee = $this->getRefundFee();
+		$refundPercent = $this->getRefundPercent();
 		if ($this->isWaiting()) {
 			$status = self::STATUS_CANCELLED_TIME_END;
 		}
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
-			if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
-				$this->pay->refund($refundFee);
+			foreach ($this->payments as $payment) {
+				if ($payment->isPaid()) {
+					$payment->refund($payment->paid_amount * $refundPercent);
+				}
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
 			if (!$this->competition->isRegistrationFull()) {
@@ -309,8 +341,15 @@ class Registration extends ActiveRecord {
 		return false;
 	}
 
+	public function resetPayment() {
+		$payment = $this->getUnpaidPayment();
+		if ($payment === null) {
+			return false;
+		}
+		return $payment->resetOrder();
+	}
+
 	public function disqualify() {
-		$this->formatEvents();
 		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
 		$this->cancel_time = time();
 		if ($this->save()) {
@@ -456,15 +495,38 @@ class Registration extends ActiveRecord {
 		return $str;
 	}
 
-	public function getRegistrationEvents() {
+	public function getAcceptedEvents() {
 		$competitionEvents = $this->competition->getRegistrationEvents();
 		$events = array();
-		foreach ($this->events as $event) {
-			if (isset($competitionEvents[$event])) {
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isAccepted() && isset($competitionEvents[$event])) {
 				$events[] = Yii::t('event', $competitionEvents[$event]);
 			}
 		}
 		return implode(Yii::t('common', ', '), $events);
+	}
+
+	public function getPendingEvents() {
+		$competitionEvents = $this->competition->getRegistrationEvents();
+		$events = array();
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isPending() && isset($competitionEvents[$event])) {
+				$events[] = Yii::t('event', $competitionEvents[$event]);
+			}
+		}
+		return implode(Yii::t('common', ', '), $events);
+	}
+
+	public function getEditableEvents() {
+		$events = $this->competition->getRegistrationEvents();
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isAccepted()) {
+				unset($events[$registrationEvent->event]);
+			}
+		}
+		return $events;
 	}
 
 	public function getRegistrationFee() {
@@ -489,13 +551,15 @@ class Registration extends ActiveRecord {
 		$competitionEvents = $competition->associatedEvents;
 		$fees = array();
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
-		foreach ($this->events as $event) {
-			if (isset($competitionEvents[$event])) {
-				$fees[] = $competition->getEventFee($event);
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if (isset($competitionEvents[$event]) && !$registrationEvent->isCancelled()) {
+				$fees[] = $competition->getEventFee($event, $competition->calculateStage($registrationEvent->accept_time));
 			}
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
 		return $competition->getEventFee('entry', null, $this->location->fee) + $entourageFee + array_sum($fees);
+		return $competition->getEventFee('entry', $competition->calculateStage($this->accept_time)) + $entourageFee + array_sum($fees);
 	}
 
 	public function getFeeInfo() {
@@ -505,27 +569,28 @@ class Registration extends ActiveRecord {
 		return Html::fontAwesome('rmb') . $this->getTotalFee();
 	}
 
+	public function getPendingFee() {
+		return Html::fontAwesome('rmb') . $this->getUnpaidPayment()->amount / 100;
+	}
+
+	public function getPaidAmount() {
+		$amount = 0;
+		foreach ($this->payments as $payment) {
+			if ($payment->isPaid()) {
+				$amount += $payment->paid_amount;
+			}
+		}
+		return $amount;
+	}
+
 	public function getPaidFee() {
-		if ($this->isPaid() && $this->pay != null && $this->pay->isPaid()) {
-			return number_format($this->pay->paid_amount / 100, 2, '.', '');
-		}
-		return 0;
+		return number_format($this->getPaidAmount() / 100, 2, '.', '');
 	}
 
-	public function getOtherFee() {
-		if ($this->isPaid()) {
-			$this->getTotalFee() - $this->getPaidFee();
-		}
-		return 0;
-	}
-
-	public function getRefundFee() {
-		if ($this->getPaidFee() == 0) {
-			return 0;
-		}
+	public function getRefundPercent() {
 		//候补列表的直接全额退款
 		if ($this->isWaiting() || $this->status == self::STATUS_CANCELLED_TIME_END) {
-			return $this->pay->paid_amount;
+			return 1;
 		}
 		//被资格线清掉的，就是0
 		if ($this->status == self::STATUS_CANCELLED_QUALIFYING_TIME) {
@@ -535,10 +600,18 @@ class Registration extends ActiveRecord {
 			case Competition::REFUND_TYPE_50_PERCENT:
 			case Competition::REFUND_TYPE_100_PERCENT:
 				$percent = intval($this->competition->refund_type);
-				return $this->pay->paid_amount * $percent / 100;
+				return $percent / 100;
 			default:
 				return 0;
 		}
+	}
+
+	public function getRefundAmount() {
+		return $this->getPaidAmount() * $this->getRefundPercent();
+	}
+
+	public function getRefundFee() {
+		return number_format($this->getRefundAmount() / 100, 2, '.', '');
 	}
 
 	public function getPayButton($checkOnlinePay = true) {
@@ -562,7 +635,6 @@ class Registration extends ActiveRecord {
 
 	public function getQRCodeUrl() {
 		if ($this->code == '') {
-			$this->formatEvents();
 			$this->code = substr(sprintf('registration-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
 			$this->save();
 		}
@@ -580,6 +652,21 @@ class Registration extends ActiveRecord {
 			));
 		}
 		return $this->_location;
+	}
+
+	public function getEvents() {
+		if ($this->_events === null) {
+			$this->_events = array_map(function($registrationEvent) {
+				return $registrationEvent->event;
+			}, array_filter($this->allEvents, function($registrationEvent) {
+				return !$registrationEvent->isCancelled() && !$registrationEvent->isDisqualified();
+			}));
+		}
+		return $this->_events;
+	}
+
+	public function setEvents($events) {
+		$this->_events = $events;
 	}
 
 	public function getNoticeColumns($model) {
@@ -892,62 +979,113 @@ class Registration extends ActiveRecord {
 		if ($this->isCancelled() || $this->location && $this->location->country_id > 1) {
 			return false;
 		}
+		$allPaid = $this->payments === [] ? false : true;
+		foreach ($this->payments as $payment) {
+			if (!$payment->isPaid()) {
+				$allPaid = false;
+				break;
+			}
+		}
+		if ($allPaid) {
+			return false;
+		}
 		$totalFee = $this->getTotalFee();
-		if ($this->competition->isOnlinePay() && $totalFee > 0) {
-			if ($this->pay === null) {
-				$this->pay = $this->createPay();
-			}
-			if ($this->pay->amount !== $totalFee * 100 && !$this->pay->isPaid()) {
-				$this->pay->amount = $totalFee * 100;
-				$this->pay->save(false);
-			}
-		}
 		return $this->competition->isOnlinePay() && $totalFee > 0
-			&& !$this->isAccepted() && !$this->competition->isRegistrationFull()
-			&& !$this->competition->isRegistrationEnded();
+			&& !$this->competition->isRegistrationFull()
+			&& $this->getUnpaidPayment() !== null && $this->getUnpaidPayment()->amount > 0;
 	}
 
-	public function createPay() {
-		$pay = new Pay();
-		$pay->user_id = $this->user_id;
-		$pay->type = Pay::TYPE_REGISTRATION;
-		$pay->type_id = $this->competition_id;
-		$pay->sub_type_id = $this->id;
-		$pay->amount = $this->total_fee * 100;
-		$pay->order_name = $this->competition->name_zh;
-		$r = $pay->save();
-		return $pay;
-	}
-
-	public function handleEvents() {
-		if ($this->events !== null) {
-			$this->events = json_encode($this->events);
+	public function getUnpaidPayment() {
+		foreach ($this->payments as $payment) {
+			if ($payment->isUnpaid()) {
+				return $payment;
+			}
 		}
 	}
 
-	public function formatEvents() {
-		if (is_array($this->events)) {
-			return;
+	public function createPayment() {
+		// check if any unpaid payment
+		if (($payment = $this->getUnpaidPayment()) === null) {
+			$payment = new Pay();
+			$payment->user_id = $this->user_id;
+			$payment->type = Pay::TYPE_REGISTRATION;
+			$payment->type_id = $this->competition_id;
+			$payment->sub_type_id = $this->id;
+			$payment->order_name = $this->competition->name_zh;
+			$payment->save();
 		}
-		$temp = json_decode($this->events, true);
-		if ($temp === null) {
-			$temp = array();
+		$this->payments = [$payment];
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isPending()) {
+				if (($payEvent = $registrationEvent->payEvent) === null) {
+					$payEvent = new PayEvent();
+				}
+				$payEvent->pay_id = $payment->primaryKey;
+				$payEvent->registration_event_id = $registrationEvent->id;
+				$payEvent->save();
+			}
 		}
-		$this->events = $temp;
+		$payment->reviseAmount();
+		return $payment;
 	}
 
-	protected function afterFind() {
-		$this->formatEvents();
-	}
-
-	protected function beforeValidate() {
-		$this->handleEvents();
-		return parent::beforeValidate();
+	protected function beforeSave() {
+		if ($this->old_events == null) {
+			$this->old_events = '';
+		}
+		return parent::beforeSave();
 	}
 
 	protected function afterSave() {
 		parent::afterSave();
 		Yii::app()->cache->delete('competitors_' . $this->competition_id);
+	}
+
+	public function updateEvents($events) {
+		$allEvents = $this->allEvents;
+		foreach ($allEvents as $index => $registrationEvent) {
+			if (!in_array($registrationEvent->event, $events)) {
+				if (!$registrationEvent->isAccepted()) {
+					$this->removeEvent($registrationEvent);
+				}
+			} else {
+				// set status to pending if it's cancelled
+				if ($registrationEvent->isCancelled() && !$registrationEvent->isDisqualified()) {
+					$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
+					$registrationEvent->save();
+				}
+				unset($events[array_search($registrationEvent->event, $events)]);
+			}
+		}
+		foreach ($events as $event) {
+			$allEvents[] = $this->addEvent($event);
+		}
+		$this->allEvents = array_values($allEvents);
+		$this->_events = null;
+		$this->createPayment();
+		return true;
+	}
+
+	public function addEvent($event, $attributes = []) {
+		$registrationEvent = new RegistrationEvent();
+		$registrationEvent->registration_id = $this->id;
+		$registrationEvent->event = $event;
+		$registrationEvent->fee = $attributes['fee'] ?? $this->competition->getEventFee($event);
+		$registrationEvent->paid = $attributes['paid'] ?? self::UNPAID;
+		$registrationEvent->status = RegistrationEvent::STATUS_PENDING;
+		$registrationEvent->accept_time = $attributes['accept_time'] ?? 0;
+		$registrationEvent->save();
+		return $registrationEvent;
+	}
+
+	public function removeEvent($event) {
+		if (is_string($event)) {
+			$event = $this->associatedEvents[$event] ?? null;
+		}
+		if ($event === null) {
+			return;
+		}
+		return $event->cancel();
 	}
 
 	/**
@@ -965,7 +1103,7 @@ class Registration extends ActiveRecord {
 			array('competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, entourage_passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, entourage_passport_number', 'length', 'max'=>20),
-			array('events', 'length', 'max'=>512),
+			array('events', 'safe'),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -1003,18 +1141,13 @@ class Registration extends ActiveRecord {
 	 * @return array relational rules.
 	 */
 	public function relations() {
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
-			'competition'=>array(self::BELONGS_TO, 'Competition', 'competition_id'),
-			'pay'=>array(self::HAS_ONE, 'Pay', 'sub_type_id', 'on'=>'pay.type=' . Pay::TYPE_REGISTRATION),
-			'avatar'=>array(self::BELONGS_TO, 'UserAvatar', 'avatar_id'),
-			// 'location'=>array(self::HAS_ONE, 'CompetitionLocation', [
-			// 	'competition_id'=>'competition_id',
-			// 	'location_id'=>'location_id',
-			// ]),
-		);
+		return [
+			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
+			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
+			'payments'=>[self::HAS_MANY, 'Pay', 'sub_type_id', 'on'=>'payments.type=' . Pay::TYPE_REGISTRATION],
+			'avatar'=>[self::BELONGS_TO, 'UserAvatar', 'avatar_id'],
+			'allEvents'=>[self::HAS_MANY, 'RegistrationEvent', 'registration_id', 'order'=>'allEvents.id'],
+		];
 	}
 
 	/**
@@ -1140,8 +1273,7 @@ class Registration extends ActiveRecord {
 			$criteria->compare('t.id', $this->id,true);
 			$criteria->compare('t.competition_id', $this->competition_id);
 			$criteria->compare('t.user_id', $this->user_id);
-			$criteria->compare('t.events', $this->events,true);
-			$criteria->compare('t.comments', $this->comments,true);
+			$criteria->compare('t.comments', $this->comments, true);
 			$criteria->compare('t.date', $this->date,true);
 			$criteria->compare('t.status', $this->status);
 			$criteria->compare('user.status', User::STATUS_NORMAL);
@@ -1331,12 +1463,11 @@ class Registration extends ActiveRecord {
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.date DESC';
 
-		$criteria->compare('t.id', $this->id,true);
+		$criteria->compare('t.id', $this->id, true);
 		$criteria->compare('t.competition_id', $this->competition_id);
 		$criteria->compare('t.user_id', $this->user_id);
-		$criteria->compare('t.events', $this->events,true);
-		$criteria->compare('t.comments', $this->comments,true);
-		$criteria->compare('t.date', $this->date,true);
+		$criteria->compare('t.comments', $this->comments, true);
+		$criteria->compare('t.date', $this->date, true);
 		$criteria->compare('t.status', $this->status);
 
 		return new CActiveDataProvider($this, array(

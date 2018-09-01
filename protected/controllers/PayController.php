@@ -82,6 +82,7 @@ class PayController extends Controller {
 		if ($model === null || $model->user_id !== Yii::app()->user->id) {
 			throw new CHttpException(401, 'Unauthorized Access');
 		}
+		$model->reviseAmount();
 		$params = array();
 		if ($model->isPaid()) {
 			switch ($model->type) {

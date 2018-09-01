@@ -37,6 +37,8 @@ class Pay extends ActiveRecord {
 	const STATUS_WAIT_SEND = 3;
 	const STATUS_WAIT_CONFIRM = 4;
 	const STATUS_WAIT_PAY = 5;
+	const STATUS_CANCELLED = 6;
+	const STATUS_LOCKED = 7;
 
 	const DEVICE_TYPE_PC = '02';
 	const DEVICE_TYPE_MOBILE = '06';
@@ -93,6 +95,41 @@ class Pay extends ActiveRecord {
 		);
 	}
 
+	public function reviseAmount() {
+		if ($this->isPaid()) {
+			return;
+		}
+		$revised = false;
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+				$registration = $this->registration;
+				$competition = $this->competition;
+				$fee = 0;
+				foreach ($this->events as $payEvent) {
+					$registrationEvent = $payEvent->registrationEvent;
+					if ($registrationEvent->isCancelled()) {
+						continue;
+					}
+					if ($registrationEvent->fee != $competition->getEventFee($registrationEvent->event)) {
+						$registrationEvent->fee = $competition->getEventFee($registrationEvent->event);
+						$r = $registrationEvent->save();
+					}
+					$fee += $registrationEvent->fee;
+				}
+				// add base entry fee
+				if (!$registration->isAccepted()) {
+					$fee += $competition->getEventFee('entry');
+				}
+				$fee *= 100;
+				if ($this->amount != $fee) {
+					$this->amount = $fee;
+					$this->save();
+					$revised = true;
+				}
+				break;
+		}
+	}
+
 	public function refund($amount) {
 		if ($this->refund_time > 0 || $amount <= 0) {
 			return false;
@@ -103,8 +140,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>'alipay.trade.refund',
@@ -124,7 +159,7 @@ class Pay extends ActiveRecord {
 			'amount'=>$amount,
 			'params'=>$params,
 		]), 'pay', 'refund.params');
-		$response = $this->request($alipay['gateway'], $params);
+		$response = $this->request($alipay['gateway'], $params, 'refund');
 		if ($response === false) {
 			return false;
 		}
@@ -143,8 +178,96 @@ class Pay extends ActiveRecord {
 		return false;
 	}
 
-	public function request($gateway, $params) {
+	public function close() {
+		$app = Yii::app();
+		$alipay = $app->params->payments['balipay'];
+		$baseUrl = $app->request->getBaseUrl(true);
+		$commonParams = [
+			'app_id'=>trim($alipay['app_id']),
+			'method'=>'alipay.trade.close',
+			'timestamp'=>date('Y-m-d H:i:s'),
+			'version'=>'1.0',
+			'charset'=>self::CHARSET,
+		];
+		$bizParams = [
+			'out_trade_no'=>$this->order_no,
+		];
+		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
+		$response = $this->request($alipay['gateway'], $params, 'close');
+		if ($response === false) {
+			return false;
+		}
+		$sign = $response['sign'];
+		$params = $response['alipay_trade_close_response'];
+		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
+				'sign',
+				'code',
+				'msg',
+			])) {
+			return $params['code'] == 10000;
+		}
+		return false;
+	}
+
+	public function lock() {
+		$this->status = self::STATUS_LOCKED;
+		$this->save();
+	}
+
+	public function resetOrder() {
+		if (!$this->isLocked()) {
+			return false;
+		}
+		if ($this->queryStatus()) {
+			if($this->close()) {
+				$this->order_no = '';
+				$this->status = self::STATUS_UNPAID;
+			}
+		} else {
+			$this->status = self::STATUS_UNPAID;
+		}
+		return $this->save();
+	}
+
+	public function queryStatus($tradeStatus = ['WAIT_BUYER_PAY']) {
+		$app = Yii::app();
+		$alipay = $app->params->payments['balipay'];
+		$baseUrl = $app->request->getBaseUrl(true);
+		$commonParams = [
+			'app_id'=>trim($alipay['app_id']),
+			'method'=>'alipay.trade.query',
+			'timestamp'=>date('Y-m-d H:i:s'),
+			'version'=>'1.0',
+			'charset'=>self::CHARSET,
+		];
+		$bizParams = [
+			'out_trade_no'=>$this->order_no,
+		];
+		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
+		$response = $this->request($alipay['gateway'], $params, 'query');
+		if ($response === false) {
+			return false;
+		}
+		$sign = $response['sign'];
+		$params = $response['alipay_trade_query_response'];
+		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
+				'sign',
+				'code',
+				'msg',
+			])) {
+			return in_array($params['trade_status'], $tradeStatus);
+		}
+		return false;
+	}
+
+	public function cancel() {
+		$this->status = self::STATUS_CANCELLED;
+		$this->save();
+	}
+
+	public function request($gateway, $params, $type) {
 		$client = new Client();
+		$bodyKey = "alipay_trade_{$type}_response";
 		try {
 			$response = $client->post($gateway, [
 				'form_params'=>$params,
@@ -155,7 +278,7 @@ class Pay extends ActiveRecord {
 			$body = $response->getBody();
 			Yii::log($body, 'pay', 'response');
 			$body = json_decode($body, true);
-			if (!isset($body['alipay_trade_refund_response'])) {
+			if (!isset($body[$bodyKey])) {
 				return false;
 			}
 			return $body;
@@ -243,14 +366,19 @@ class Pay extends ActiveRecord {
 		if ($this->status == self::STATUS_WAIT_PAY || $this->status == self::STATUS_UNPAID) {
 			return;
 		}
+		foreach ($this->events as $payEvent) {
+			$payEvent->status = $this->status;
+			$payEvent->save();
+		}
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
 				$registration = $this->registration;
-				if ($registration !== null && !$registration->isAccepted()) {
+				if ($registration !== null) {
 					$registration->paid = Registration::PAID;
+					$registration->accept($this);
 					$registration->total_fee = $registration->getTotalFee(true);
 					$registration->guest_paid = $registration->has_entourage;
-					$registration->accept();
+					$registration->save();
 				}
 				break;
 			case self::TYPE_APPLICATION:
@@ -310,8 +438,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>$isMobile ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay',
@@ -328,6 +454,7 @@ class Pay extends ActiveRecord {
 			'subject'=>'粗饼-' . $this->order_name,
 		);
 		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
+		$this->lock();
 		return array(
 			'action'=>$alipay['gateway'],
 			'method'=>'post',
@@ -372,6 +499,17 @@ class Pay extends ActiveRecord {
 		return $this->status == self::STATUS_PAID;
 	}
 
+	public function isUnpaid() {
+		return !$this->isPaid() && !$this->isCancelled();
+	}
+
+	public function isCancelled() {
+		return $this->status == self::STATUS_CANCELLED;
+	}
+
+	public function isLocked() {
+		return $this->status == self::STATUS_LOCKED;
+	}
 
 	public function amountMismatch() {
 		return $this->isPaid() && $this->amount != $this->paid_amount;
@@ -565,9 +703,9 @@ class Pay extends ActiveRecord {
 	protected function beforeValidate() {
 		if ($this->isNewRecord) {
 			$this->create_time = $this->update_time = time();
-			if (!$this->order_no) {
-				$this->order_no = sprintf('%s-%d-%06d-%05d', date('YmdHis', $this->create_time), $this->type, $this->sub_type_id, mt_rand(10000, 99999));
-			}
+		}
+		if (!$this->order_no) {
+			$this->order_no = sprintf('%s-%d-%06d-%05d', date('YmdHis', $this->create_time), $this->type, $this->sub_type_id, mt_rand(10000, 99999));
 		}
 		return parent::beforeValidate();
 	}
@@ -605,14 +743,13 @@ class Pay extends ActiveRecord {
 	 * @return array relational rules.
 	 */
 	public function relations() {
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'user'=>array(self::BELONGS_TO, 'User', 'user_id'),
-			'application'=>array(self::BELONGS_TO, 'Application', 'type_id'),
-			'competition'=>array(self::BELONGS_TO, 'Competition', 'type_id'),
-			'registration'=>array(self::BELONGS_TO, 'Registration', 'sub_type_id'),
-		);
+		return [
+			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
+			'application'=>[self::BELONGS_TO, 'Application', 'type_id'],
+			'competition'=>[self::BELONGS_TO, 'Competition', 'type_id'],
+			'registration'=>[self::BELONGS_TO, 'Registration', 'sub_type_id'],
+			'events'=>[self::HAS_MANY, 'PayEvent', 'pay_id'],
+		];
 	}
 
 	/**
