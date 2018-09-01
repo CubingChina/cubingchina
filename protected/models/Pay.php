@@ -224,6 +224,7 @@ class Pay extends ActiveRecord {
 		}
 		if ($this->queryStatus()) {
 			if($this->close()) {
+				$this->order_no = '';
 				$this->status = self::STATUS_UNPAID;
 			}
 		} else {
