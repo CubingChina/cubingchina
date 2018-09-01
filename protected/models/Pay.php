@@ -140,8 +140,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>'alipay.trade.refund',
@@ -184,8 +182,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>'alipay.trade.close',
@@ -237,8 +233,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>'alipay.trade.query',
@@ -444,8 +438,6 @@ class Pay extends ActiveRecord {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
-		$language = $app->language;
-		$app->language = 'zh_cn';
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>$isMobile ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay',
