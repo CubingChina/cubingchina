@@ -551,13 +551,14 @@ class Registration extends ActiveRecord {
 		$competitionEvents = $competition->associatedEvents;
 		$fees = array();
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
-		foreach ($this->events as $event) {
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
 			if (isset($competitionEvents[$event])) {
-				$fees[] = $competition->getEventFee($event);
+				$fees[] = $competition->getEventFee($event, $competition->calculateStage($registrationEvent->accept_time));
 			}
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
-		return $competition->getEventFee('entry') + $entourageFee + array_sum($fees);
+		return $competition->getEventFee('entry', $competition->calculateStage($this->accept_time)) + $entourageFee + array_sum($fees);
 	}
 
 	public function getFeeInfo() {
@@ -1042,11 +1043,10 @@ class Registration extends ActiveRecord {
 	public function updateEvents($events) {
 		$allEvents = $this->allEvents;
 		foreach ($allEvents as $index => $registrationEvent) {
-			if ($registrationEvent->isAccepted()) {
-				continue;
-			}
 			if (!in_array($registrationEvent->event, $events)) {
-				$this->removeEvent($registrationEvent);
+				if (!$registrationEvent->isAccepted()) {
+					$this->removeEvent($registrationEvent);
+				}
 			} else {
 				// set status to pending if it's cancelled
 				if ($registrationEvent->isCancelled() && !$registrationEvent->isDisqualified()) {
