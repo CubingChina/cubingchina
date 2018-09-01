@@ -1,19 +1,20 @@
 <?php $this->renderPartial('operation', $_data_); ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
-  <?php if ($registration->isPending() || $registration->isAccepted()): ?>
+  <?php if ($registration->isPending()): ?>
   <div class="alert alert-success">
     <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
-    <?php if ($registration->isAccepted()): ?>
-    <?php echo Yii::t('Competition', 'Click {here} to view the competitors list.', array(
-      '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('competitors')),
-    )); ?>
-    <?php elseif ($registration->payable): ?>
+    <?php if ($registration->payable): ?>
     <?php echo Yii::t('Competition', 'It will be verified automatically after your {paying}.', array(
       '{paying}'=>CHtml::tag('b', array('class'=>'text-danger'), Yii::t('common', 'paying the fee online')),
     )); ?>
     <?php else: ?>
     <?php echo Yii::t('Competition', 'It will be verified by the organisation team soon. Please wait with patience.'); ?>
     <?php endif; ?>
+  </div>
+  <?php endif; ?>
+  <?php if ($registration->isAccepted() && $registration->payable): ?>
+  <div class="alert alert-warning">
+    <?php echo Yii::t('Registration', 'Your registration has some events in pending status. Please pay for them.'); ?>
   </div>
   <?php endif; ?>
   <div class="row">
