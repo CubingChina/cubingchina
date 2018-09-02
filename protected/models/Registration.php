@@ -29,6 +29,7 @@ class Registration extends ActiveRecord {
 	public static $sortByEvent = false;
 	public static $sortAttribute = 'number';
 	public static $sortDesc = false;
+	public static $showPending = false;
 
 	const UNPAID = 0;
 	const PAID = 1;
@@ -488,7 +489,7 @@ class Registration extends ActiveRecord {
 		if ($registrationEvent === null) {
 			return '';
 		}
-		if ($showPending === false && $registrationEvent->isPending()) {
+		if ($showPending === false && !$registrationEvent->isAccepted()) {
 			return '';
 		}
 		$str = Events::getEventIcon($event);
@@ -535,7 +536,7 @@ class Registration extends ActiveRecord {
 
 	public function getRegistrationEvent($event) {
 		foreach ($this->allEvents as $registrationEvent) {
-			if ("$event" === $registrationEvent->event) {
+			if ("$event" === $registrationEvent->event && !$registrationEvent->isCancelled()) {
 				return $registrationEvent;
 			}
 		}
@@ -671,7 +672,7 @@ class Registration extends ActiveRecord {
 			$this->_events = array_map(function($registrationEvent) {
 				return $registrationEvent->event;
 			}, array_filter($this->allEvents, function($registrationEvent) {
-				return !$registrationEvent->isCancelled() && !$registrationEvent->isDisqualified();
+				return !$registrationEvent->isCancelled();
 			}));
 		}
 		return $this->_events;
@@ -679,6 +680,21 @@ class Registration extends ActiveRecord {
 
 	public function setEvents($events) {
 		$this->_events = $events;
+	}
+
+	public function hasRegistered($event, $showPending = false) {
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isCancelled()) {
+				continue;
+			}
+			if ($registrationEvent->event != "$event") {
+				continue;
+			}
+			if ($showPending || $registrationEvent->isAccepted()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function getNoticeColumns($model) {
@@ -1231,7 +1247,7 @@ class Registration extends ActiveRecord {
 				$temp = strcmp($rA->user->$attribute, $rB->user->$attribute);
 			}
 		} elseif (self::$sortByEvent === true) {
-			$temp = in_array($attribute, $rB->events) - in_array($attribute, $rA->events);
+			$temp = $rB->hasRegistered($attribute, self::$showPending) - $rA->hasRegistered($attribute, self::$showPending);
 			if ($temp == 0) {
 				if ($rA->best > 0 && $rB->best > 0) {
 					$temp = $rA->best - $rB->best;
@@ -1273,7 +1289,7 @@ class Registration extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search(&$columns = array(), $enableCache = true, $pagination = false) {
+	public function search(&$columns = array(), $enableCache = true, $pagination = false, $showPending = false) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 		$cacheKey = 'competitors_' . $this->competition_id;
 		$cache = Yii::app()->cache;
@@ -1338,6 +1354,7 @@ class Registration extends ActiveRecord {
 					break;
 			}
 		}
+		self::$showPending = $showPending;
 		$wcaIds = array();
 		foreach ($registrations as $key=>$registration) {
 			if ($enableCache && $registration->location->status == CompetitionLocation::NO) {
@@ -1364,7 +1381,14 @@ class Registration extends ActiveRecord {
 			} else {
 				$statistics['nonlocal']++;
 			}
-			foreach ($registration->events as $event) {
+			foreach ($registration->allEvents as $registrationEvent) {
+				if ($registrationEvent->isCancelled()) {
+					continue;
+				}
+				if (!$showPending && !$registrationEvent->isAccepted()) {
+					continue;
+				}
+				$event = $registrationEvent->event;
 				if (!isset($statistics[$event])) {
 					$statistics[$event] = 0;
 				}
@@ -1432,10 +1456,23 @@ class Registration extends ActiveRecord {
 		if ($localType != Competition::LOCAL_TYPE_NONE) {
 			$statistics['country_id'] =  $statistics['local'] . '/' . $statistics['nonlocal'];
 		}
+		$sortByEventColumnIndex = 0;
 		foreach ($columns as $key=>$column) {
 			if (isset($column['name']) && isset($statistics[$column['name']])) {
 				$columns[$key]['footer'] = $statistics[$column['name']];
 			}
+			if (self::$sortByEvent && ($column['name'] ?? '') == self::$sortAttribute) {
+				$sortByEventColumnIndex = $key;
+			}
+		}
+		if ($sortByEventColumnIndex > 0) {
+			if (count($columns) - count($this->competition->associatedEvents) == 5) {
+				$firstEventColumnIndex = 5;
+			} else {
+				$firstEventColumnIndex = 7;
+			}
+			$column = array_splice($columns, $sortByEventColumnIndex, 1);
+			array_splice($columns, $firstEventColumnIndex, 0, $column);
 		}
 		if ($sort !== '') {
 			usort($registrations, array($this, 'sortRegistration'));
