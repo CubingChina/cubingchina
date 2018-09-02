@@ -33,7 +33,8 @@ class RegistrationEvent extends ActiveRecord {
 
 	public function isCancelled() {
 		return $this->status == self::STATUS_CANCELLED
-			|| $this->status == self::STATUS_CANCELLED_TIME_END;
+			|| $this->status == self::STATUS_CANCELLED_TIME_END
+			|| $this->isDisqualified();
 	}
 
 	public function isDisqualified() {
