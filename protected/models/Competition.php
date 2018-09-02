@@ -1364,7 +1364,7 @@ class Competition extends ActiveRecord {
 		return $registrationEvents;
 	}
 
-	public function getEventsColumns($headerText = false) {
+	public function getEventsColumns($headerText = false, $showPending = false) {
 		$region = 'Yii::t("Region", $data->user->country->getAttributeValue("name"))';
 		if (Yii::app()->language == 'zh_cn' && $headerText) {
 			$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
@@ -1422,10 +1422,11 @@ class Competition extends ActiveRecord {
 				'value'=>'$data->location->getFullAddress(false)',
 			);
 		}
+		$showPending = json_encode($showPending);
 		foreach ($this->associatedEvents as $event=>$value) {
 			$columns[] = array(
 				'name'=>(string)$event,
-				'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
+				'header'=>Events::getEventIcon($event),
 				'headerHtmlOptions'=>array(
 					'class'=>'header-event',
 				),
@@ -1433,7 +1434,7 @@ class Competition extends ActiveRecord {
 					'class'=>'hover',
 				) : array(),
 				'type'=>'raw',
-				'value'=>"\$data->getEventsString('$event')",
+				'value'=>"\$data->getEventsString('${event}', {$showPending})",
 			);
 		}
 		return $columns;

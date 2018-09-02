@@ -28,12 +28,15 @@ class EventsForm extends Widget {
 		if ($this->type == 'checkbox') {
 			echo CHtml::openTag('div', $htmlOptions);
 			foreach ($events as $event=>$value) {
-				$disabled = $this->shouldDisableUnmetEvents && isset($this->unmetEvents[$event]);
+				$unmet = isset($this->unmetEvents[$event]);
+				$disabled = $this->shouldDisableUnmetEvents && $unmet;
 				$text = Events::getFullEventNameWithIcon($event);
 				echo CHtml::openTag('div', [
 					'class'=>'checkbox checkbox-inline' . ($disabled ? ' disabled' : ''),
 				]);
-				echo CHtml::openTag('label');
+				echo CHtml::openTag('label', [
+					'class'=>$unmet ? 'bg-danger' : '',
+				]);
 				$options = [
 					'id'=>'Registration_events_' . $event,
 					'class'=>'registration-events',

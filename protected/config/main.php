@@ -200,7 +200,13 @@ $config = [
 						'js/flex.js',
 						'js/main.js?v=20170523',
 					],
-					'depends'=>['jquery'],
+					'depends'=>['jquery', 'event-icon'],
+				],
+				'event-icon'=>[
+					'baseUrl'=>'f',
+					'css'=>[
+						'plugins/event-icon/style.css',
+					],
 				],
 				'main'=>[
 					'baseUrl'=>'',
