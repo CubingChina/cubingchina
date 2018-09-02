@@ -18,12 +18,12 @@
     <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
   <?php $columns = $competition->getEventsColumns(); ?>
-  <?php $this->widget('RepeatHeaderGridView', array(
+  <?php $this->widget('GridView', array(
     'dataProvider'=>$model->search($columns),
     // 'filter'=>false,
     // 'enableSorting'=>false,
     'front'=>true,
-    'footerOnTop'=>true,
+    // 'footerOnTop'=>true,
     'columns'=>$columns,
   )); ?>
 </div>
