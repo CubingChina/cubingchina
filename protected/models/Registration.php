@@ -491,9 +491,7 @@ class Registration extends ActiveRecord {
 		if ($showPending === false && $registrationEvent->isPending()) {
 			return '';
 		}
-		$str = CHtml::tag('span', [
-			'class'=>'event-icon event-icon-' . $event,
-		], '');
+		$str = Events::getEventIcon($event);
 		if ($this->best > 0 && self::$sortAttribute === $event && self::$sortDesc !== true) {
 			$str = self::$sortDesc === true ? '' : '[' . $this->pos . ']' . $str;
 			$str .= Results::formatTime($this->best, $event);
