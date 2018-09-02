@@ -483,14 +483,20 @@ class Registration extends ActiveRecord {
 		}
 	}
 
-	public function getEventsString($event) {
-		$str = '';
-		if (in_array($event, $this->events)) {
-			$str = '<span class="fa fa-check"></span>';
-			if ($this->best > 0 && self::$sortAttribute === $event && self::$sortDesc !== true) {
-				$str = self::$sortDesc === true ? '' : '[' . $this->pos . ']' . $str;
-				$str .= Results::formatTime($this->best, $event);
-			}
+	public function getEventsString($event, $showPending = false) {
+		$registrationEvent = $this->getRegistrationEvent($event);
+		if ($registrationEvent === null) {
+			return '';
+		}
+		if ($showPending === false && $registrationEvent->isPending()) {
+			return '';
+		}
+		$str = CHtml::tag('span', [
+			'class'=>'event-icon event-icon-' . $event,
+		], '');
+		if ($this->best > 0 && self::$sortAttribute === $event && self::$sortDesc !== true) {
+			$str = self::$sortDesc === true ? '' : '[' . $this->pos . ']' . $str;
+			$str .= Results::formatTime($this->best, $event);
 		}
 		return $str;
 	}
@@ -527,6 +533,14 @@ class Registration extends ActiveRecord {
 			}
 		}
 		return $events;
+	}
+
+	public function getRegistrationEvent($event) {
+		foreach ($this->allEvents as $registrationEvent) {
+			if ("$event" === $registrationEvent->event) {
+				return $registrationEvent;
+			}
+		}
 	}
 
 	public function getRegistrationFee() {
@@ -706,7 +720,7 @@ class Registration extends ActiveRecord {
 		if ($this->competition === null) {
 			$columns = array();
 		} else {
-			$columns = array_slice($this->competition->getEventsColumns(true), 1);
+			$columns = array_slice($this->competition->getEventsColumns(true, true), 1);
 			array_splice($columns, 4, 0, array(
 				array(
 					'name'=>'birthday',
