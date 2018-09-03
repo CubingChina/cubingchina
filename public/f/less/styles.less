@@ -826,6 +826,22 @@ table.concise-schedule {
     display: none;
   }
 }
+#competitors {
+  @media (max-width: 560px) {
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4) {
+      display: none;
+    }
+  }
+  &.show-all {
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4) {
+      display: table-cell;
+    }
+  }
+}
 .loop-concise-schedule-event(@index: 1) when (iscolor(extract(@conciseEventColors, @index))) {
   @color: extract(@conciseEventColors, @index);
   @event: extract(@conciseEvents, @index);

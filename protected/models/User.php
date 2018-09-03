@@ -372,7 +372,7 @@ class User extends ActiveRecord {
 	}
 
 	public function getMailtoLink() {
-		return $this->getEmailLink(Html::fontAwesome('envelope', 'a') . $this->getCompetitionName());
+		return $this->getEmailLink(Html::fontAwesome('envelope', 'a') . $this->getAttributeValue('name', true));
 	}
 
 	public function getOperationButton() {

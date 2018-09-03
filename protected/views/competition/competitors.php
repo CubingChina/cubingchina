@@ -17,13 +17,27 @@
     </div>
     <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
   <?php $this->endWidget(); ?>
+  <div class="form-group show-on-small">
+    <?php echo Html::switch('show-all', false, [
+      'data-label-text'=>Yii::t('common', 'Show all information?'),
+      'data-label-width'=>'150',
+    ]); ?>
+  </div>
   <?php $columns = $competition->getEventsColumns(); ?>
   <?php $this->widget('GridView', array(
+    'id'=>'competitors',
     'dataProvider'=>$model->search($columns),
-    // 'filter'=>false,
-    // 'enableSorting'=>false,
     'front'=>true,
-    // 'footerOnTop'=>true,
+    'footerOnTop'=>true,
     'columns'=>$columns,
   )); ?>
 </div>
+<?php
+Yii::app()->clientScript->registerScript('schedule',
+<<<EOT
+  $(document).on('switchChange.bootstrapSwitch', '#show-all', function(e) {
+    var func = $(this).prop('checked') ? 'addClass' : 'removeClass';
+    $('#competitors')[func]('show-all')
+  });
+EOT
+);
