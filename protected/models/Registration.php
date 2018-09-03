@@ -582,8 +582,18 @@ class Registration extends ActiveRecord {
 		return Html::fontAwesome('rmb') . $this->getTotalFee();
 	}
 
+	public function getPendingAmount() {
+		$fee = 0;
+		foreach ($this->allEvents AS $registrationEvent) {
+			if ($registrationEvent->isPending() && !$registrationEvent->isPaid()) {
+				$fee += $registrationEvent->fee;
+			}
+		}
+		return $fee * 100;
+	}
+
 	public function getPendingFee() {
-		return Html::fontAwesome('rmb') . $this->getUnpaidPayment()->amount / 100;
+		return Html::fontAwesome('rmb') . number_format($this->getPendingAmount() / 100, 2, '.', '');
 	}
 
 	public function getPaidAmount() {
@@ -1020,7 +1030,7 @@ class Registration extends ActiveRecord {
 		$totalFee = $this->getTotalFee();
 		return $this->competition->isOnlinePay() && $totalFee > 0
 			&& !$this->competition->isRegistrationFull()
-			&& $this->getUnpaidPayment() !== null && $this->getUnpaidPayment()->amount > 0;
+			&& $this->getPendingAmount() > 0;
 	}
 
 	public function getUnpaidPayment() {
