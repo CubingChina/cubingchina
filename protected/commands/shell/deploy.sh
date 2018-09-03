@@ -1,3 +1,4 @@
+export PATH=$PATH
 dir=`dirname "$0"`
 cd $dir
 cd ../../../
