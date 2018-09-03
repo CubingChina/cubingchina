@@ -21,6 +21,37 @@ class GridView extends CGridView {
 		'class'=>'table-responsive',
 	);
 	public $front = false;
+	public $footerOnTop = false;
+
+	public function renderTableBody() {
+		$data = $this->dataProvider->getData();
+		$n = count($data);
+		echo "<tbody>\n";
+		if ($n > 0) {
+			if ($this->footerOnTop) {
+				$this->renderTableFooterColumns();
+			}
+			for ($row = 0; $row < $n; ++$row) {
+				$this->renderTableRow($row);
+			}
+		} else {
+			echo '<tr><td colspan="' . count($this->columns) . '" class="empty">';
+			$this->renderEmptyText();
+			echo "</td></tr>\n";
+		}
+		echo "</tbody>\n";
+	}
+
+	public function renderTableFooterColumns() {
+		$hasFooter = $this->getHasFooter();
+		if ($hasFooter) {
+			echo "<tr>\n";
+			foreach ($this->columns as $column) {
+				$column->renderFooterCell();
+			}
+			echo "</tr>\n";
+		}
+	}
 
 	public function renderKeys() {
 		if ($this->front === false) {

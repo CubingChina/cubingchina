@@ -20,10 +20,8 @@
   <?php $columns = $competition->getEventsColumns(); ?>
   <?php $this->widget('GridView', array(
     'dataProvider'=>$model->search($columns),
-    // 'filter'=>false,
-    // 'enableSorting'=>false,
     'front'=>true,
-    // 'footerOnTop'=>true,
+    'footerOnTop'=>true,
     'columns'=>$columns,
   )); ?>
 </div>
