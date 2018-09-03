@@ -1466,8 +1466,8 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if ($sortByEventColumnIndex > 0) {
-			if (count($columns) - count($this->competition->associatedEvents) == 5) {
-				$firstEventColumnIndex = 5;
+			if (count($columns) - count($this->competition->associatedEvents) == 4) {
+				$firstEventColumnIndex = 4;
 			} else {
 				$firstEventColumnIndex = 7;
 			}
