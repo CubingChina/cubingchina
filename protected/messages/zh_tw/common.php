@@ -20,6 +20,7 @@ return array (
   'Application' => '',
   'Fee' => '',
   'If you were unable to pay online, please contact the organizer.' => '',
+  'Show all information?' => '顯示所有信息？',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',

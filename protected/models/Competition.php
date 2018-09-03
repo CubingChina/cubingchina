@@ -1370,14 +1370,14 @@ class Competition extends ActiveRecord {
 			$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
 		}
 		$columns = array(
-			array(
-				'headerHtmlOptions'=>array(
-					'class'=>'battle-checkbox',
-				),
-				'header'=>Yii::t('common', 'Battle'),
-				'value'=>'Persons::getBattleCheckBox($data->user->getCompetitionName(), $data->user->wcaid)',
-				'type'=>'raw',
-			),
+			// array(
+			// 	'headerHtmlOptions'=>array(
+			// 		'class'=>'battle-checkbox',
+			// 	),
+			// 	'header'=>Yii::t('common', 'Battle'),
+			// 	'value'=>'Persons::getBattleCheckBox($data->user->getCompetitionName(), $data->user->wcaid)',
+			// 	'type'=>'raw',
+			// ),
 			array(
 				'name'=>'number',
 				'header'=>'No.',
@@ -1390,7 +1390,7 @@ class Competition extends ActiveRecord {
 					'class'=>'header-username',
 				),
 				'type'=>'raw',
-				'value'=>'$data->user->getWcaLink()',
+				'value'=>'$data->user->getWcaLink($data->user->getAttributeValue("name", true))',
 			),
 			array(
 				'name'=>'gender',

@@ -20,7 +20,6 @@ return array (
   'ID' => '',
   'No.' => '',
   'User' => '',
-  'Your registration has some events in pending status. Please pay for them.' => '您有項目處於待支付狀態，請支付。',
   ' CNY' => '元',
   'Date' => '報名時間',
   'Fee (CNY)' => '報名費(元)',
@@ -75,5 +74,6 @@ return array (
   'Your registration has been cancelled.' => '你已成功退賽。',
   'Your registration has been disqualified.' => '你的報名因未達到資格線而被取消。',
   'Your registration has been updated successfully.' => '你的報名信息已更新成功。',
+  'Your registration has some events in pending status. Please pay for them.' => '您有項目處於待支付狀態，請支付。',
   'Your registration is on the waiting list. There are {count} people on the list ahead of you.' => '你當前在候補列表中，前面有{count}個在等待。',
 );
