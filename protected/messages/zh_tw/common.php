@@ -18,7 +18,7 @@
  */
 return array (
   'Application' => '',
-  'Fee' => '',
+  'Fee' => '費用',
   'If you were unable to pay online, please contact the organizer.' => '',
   'Show all information?' => '顯示所有信息？',
   'WCA ID' => '',

@@ -46,7 +46,7 @@ class RegistrationEvent extends ActiveRecord {
 	}
 
 	public function isPaid() {
-		return $this->paid == self::PAID;
+		return $this->paid == Registration::PAID;
 	}
 
 	public function accept($forceAccept = false) {
