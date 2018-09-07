@@ -218,18 +218,26 @@ class Pay extends ActiveRecord {
 		if (!$this->isLocked()) {
 			return false;
 		}
-		if ($this->queryStatus()) {
-			if($this->close()) {
+		$tradeStatus = $this->getTradeStatus();
+		switch ($tradeStatus) {
+			case 'WAIT_BUYER_PAY':
+				if($this->close()) {
+					$this->order_no = '';
+					$this->status = self::STATUS_UNPAID;
+				}
+				break;
+			case 'TRADE_CLOSED':
 				$this->order_no = '';
 				$this->status = self::STATUS_UNPAID;
-			}
-		} else {
-			$this->status = self::STATUS_UNPAID;
+				break;
+			default:
+				$this->status = self::STATUS_UNPAID;
+				break;
 		}
 		return $this->save();
 	}
 
-	public function queryStatus($tradeStatus = ['WAIT_BUYER_PAY']) {
+	public function getTradeStatus() {
 		$app = Yii::app();
 		$alipay = $app->params->payments['balipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
@@ -255,9 +263,13 @@ class Pay extends ActiveRecord {
 				'code',
 				'msg',
 			])) {
-			return in_array($params['trade_status'], $tradeStatus);
+			return $params['trade_status'];
 		}
 		return false;
+	}
+
+	public function queryStatus($tradeStatus = ['WAIT_BUYER_PAY']) {
+		return in_array($this->getTradeStatus(), $tradeStatus);
 	}
 
 	public function cancel() {

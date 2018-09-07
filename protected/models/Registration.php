@@ -589,6 +589,9 @@ class Registration extends ActiveRecord {
 				$fee += $registrationEvent->fee;
 			}
 		}
+		if (!$this->isAccepted()) {
+			$fee += $this->competition->getEventFee('entry');
+		}
 		return $fee * 100;
 	}
 

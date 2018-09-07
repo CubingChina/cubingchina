@@ -279,6 +279,9 @@ class CompetitionController extends Controller {
 					$this->redirect($competition->getUrl('registration'));
 				}
 			}
+			if (($payment = $registration->getUnpaidPayment()) != null) {
+				$payment->reviseAmount();
+			}
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'competition'=>$competition,
