@@ -30,7 +30,7 @@
     array(
       'name'=>'events',
       'type'=>'raw',
-      'value'=>'$data->getRegistrationEvents()',
+      'value'=>'$data->isPending() ? $data->getPendingEvents() : $data->getAcceptedEvents()',
     ),
     array(
       'name'=>'fee',
