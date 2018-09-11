@@ -64,6 +64,7 @@
               <button type="button" class="btn btn-blue btn-square select" data-type="reverse">反选</button>
               <button type="button" class="btn btn-orange btn-square select" data-type="accepted">已审核</button>
               <button type="button" class="btn btn-purple btn-square select" data-type="unaccepted">未审核</button>
+              <button type="button" class="btn btn-primary btn-square select" data-type="oversea">海外及港澳台</button>
               <?php if ($competition->staff): ?>
               <button type="button" class="btn btn-theme btn-square select" data-type="staff">工作人员</button>
               <?php endif; ?>
@@ -71,6 +72,7 @@
             <div class="col-lg-12">
               <?php $columns = $registration->getNoticeColumns($model); ?>
               <?php $this->widget('RepeatHeaderGridView', array(
+                'id'=>'competitors',
                 'dataProvider'=>$registration->search($columns, false),
                 'columns'=>$columns,
               )); ?>
@@ -126,6 +128,13 @@ Yii::app()->clientScript->registerScript('sendNotice',
           }
         });
         break;
+      case 'oversea':
+        $('.competitor').prop('checked', false).each(function() {
+          if ($(this).data('country-id') > 1 && $(this).data('accepted')) {
+            this.checked = true;
+          }
+        });
+        break;
     }
     updateCount();
   }).on('click', '#preview', function() {
@@ -146,10 +155,15 @@ Yii::app()->clientScript->registerScript('sendNotice',
   }).on('change', '.competitor', function() {
     updateCount();
   });
+  var countRowInserted = false
   updateCount();
   function updateCount() {
     var count = $('.competitor:checked').length;
-    $('table tbody tr:first-child td:first-child, table tfoot tr:first-child td:first-child').text('已选择' + count + '人');
+    if (!countRowInserted) {
+      countRowInserted = true
+      $('<tr>').append($('<td>').attr('colspan', $('#competitors table tbody tr:first-child').find('td').length)).prependTo($('#competitors table tbody'))
+    }
+    $('#competitors table tbody tr:first-child td:first-child, #competitors table tfoot tr:first-child td:first-child').text('已选择' + count + '人');
   }
 EOT
 );

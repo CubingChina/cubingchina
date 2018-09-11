@@ -190,7 +190,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function sendCompetitionNotice($competition, $users, $title, $content, $englishContent = '') {
-		$subject = "【{$competition->name_zh}】$title";
+		$subject = $content == '' ? "【{$competition->name}】$title" : "【{$competition->name_zh}】$title";
 		$organizers = array();
 		foreach ($competition->organizer as $organizer) {
 			$organizers[] = $organizer->user->email;
@@ -210,7 +210,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function getCompetitionNoticePreview($competition, $users, $title, $content, $englishContent = '') {
-		$subject = "【{$competition->name_zh}】$title";
+		$subject = $content == '' ? "【{$competition->name}】$title" : "【{$competition->name_zh}】$title";
 		$organizers = array();
 		foreach ($competition->organizer as $organizer) {
 			$organizers[] = $organizer->user->email;
