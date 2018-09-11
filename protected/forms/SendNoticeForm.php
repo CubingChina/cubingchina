@@ -14,10 +14,18 @@ class SendNoticeForm extends CFormModel {
 		return Yii::app()->mailer->getCompetitionNoticePreview($competition, $this->competitors, $this->title, $this->content_zh, $this->content);
 	}
 
+	public function checkContent() {
+		if (trim($this->content) == '' && trim($this->content_zh) == '') {
+			$this->addError('content', '中文正文和英文正文至少一项不为空');
+			$this->addError('content_zh', '中文正文和英文正文至少一项不为空');
+		}
+	}
+
 	public function rules() {
 		return array(
-			array('title, content_zh, competitors', 'required'),
-			array('content', 'safe'),
+			array('title, competitors', 'required'),
+			array('content, content_zh', 'safe'),
+			array('content', 'checkContent'),
 		);
 	}
 

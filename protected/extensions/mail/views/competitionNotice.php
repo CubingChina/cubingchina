@@ -1,6 +1,7 @@
 <?php
 $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:13px;text-align:left;border-bottom:1px solid #ddd';
 ?>
+<?php if (trim(strip_tags($content, '<img>')) != ''): ?>
 <tr>
 	<td style="<?php echo $style; ?>">
 		<p><strong>亲爱的<i><?php echo $competition->name_zh; ?></i>参赛者：</strong></p>
@@ -8,6 +9,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
 		<p>本邮件由系统代发，如有疑问，请联系主办方：<br><?php echo implode('<br>', $organizers); ?>。</p>
 	</td>
 <tr>
+<?php endif; ?>
 <?php if (trim(strip_tags($englishContent, '<img>')) != ''): ?>
 </tr>
 	<td style="<?php echo $style; ?>">

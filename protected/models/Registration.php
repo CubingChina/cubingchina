@@ -734,6 +734,7 @@ class Registration extends ActiveRecord {
 					}, \$data->events)) . ' competitor',
 					'value'=>\$data->user->email,
 					'data-accepted'=>intval(\$data->isAccepted()),
+					'data-country-id'=>\$data->user->country_id,
 					'data-staff'=>\$data->staff_type,
 				)) . ' ' . \$data->user->email, false, array(
 					'class'=>'checkbox',
