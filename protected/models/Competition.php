@@ -1434,7 +1434,7 @@ class Competition extends ActiveRecord {
 					'class'=>'hover',
 				) : array(),
 				'type'=>'raw',
-				'value'=>"\$data->getEventsString('${event}', {$showPending})",
+				'value'=>"\$data->getEventString('${event}', {$showPending})",
 			);
 		}
 		return $columns;

@@ -44,7 +44,7 @@
           <?php endif; ?>
           <?php if ($registration->isAcceptedOrWaiting()): ?>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->isAccepted() ? $registration->getAcceptedEvents() : $registration->getWaitingEvents(); ?></p>
+          <p><?php echo $registration->isAccepted() ? $registration->getAcceptedEventsString() : $registration->getWaitingEventsString(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
           <?php endif; ?>

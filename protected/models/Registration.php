@@ -41,7 +41,7 @@ class Registration extends ActiveRecord {
 	const STATUS_ACCEPTED = 1;
 	const STATUS_CANCELLED = 2;
 	const STATUS_CANCELLED_TIME_END = 3;
-	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
+	const STATUS_DISQUALIFIED = 4;
 	const STATUS_WAITING = 5;
 
 	const T_SHIRT_SIZE_NONE = 0;
@@ -122,7 +122,7 @@ class Registration extends ActiveRecord {
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
 			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
 			self::STATUS_CANCELLED_TIME_END=>Yii::t('common', 'Cancelled'),
-			self::STATUS_CANCELLED_QUALIFYING_TIME=>Yii::t('common', 'Cancelled'),
+			self::STATUS_DISQUALIFIED=>Yii::t('common', 'Cancelled'),
 			self::STATUS_WAITING=>Yii::t('common', 'Waiting'),
 		);
 	}
@@ -234,7 +234,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function isDisqualified() {
-		return $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+		return $this->status == self::STATUS_DISQUALIFIED;
 	}
 
 	public function isCancellable() {
@@ -263,7 +263,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function isAcceptedOrWaiting() {
-		return $this->isAccepted() || $this->isWaiting()
+		return $this->isAccepted() || $this->isWaiting();
 	}
 
 	public function accept($pay = null, $forceAccept = false) {
@@ -341,9 +341,11 @@ class Registration extends ActiveRecord {
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
-			foreach ($this->payments as $payment) {
-				if ($payment->isPaid()) {
-					$payment->refund($payment->paid_amount * $refundPercent);
+			if ($refundPercent > 0) {
+				foreach ($this->payments as $payment) {
+					if ($payment->isPaid()) {
+						$payment->refund($payment->paid_amount * $refundPercent);
+					}
 				}
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
@@ -364,7 +366,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function disqualify() {
-		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
+		$this->status = self::STATUS_DISQUALIFIED;
 		$this->cancel_time = time();
 		if ($this->save()) {
 			Yii::app()->mailer->sendRegistrationDisqualified($this);
@@ -497,7 +499,7 @@ class Registration extends ActiveRecord {
 		}
 	}
 
-	public function getEventsString($event, $showPending = false) {
+	public function getEventString($event, $showPending = false) {
 		$registrationEvent = $this->getRegistrationEvent($event);
 		if ($registrationEvent === null) {
 			return '';
@@ -519,10 +521,10 @@ class Registration extends ActiveRecord {
 		foreach ($this->allEvents as $registrationEvent) {
 			$event = $registrationEvent->event;
 			if ($registrationEvent->isAccepted() && isset($competitionEvents[$event])) {
-				$events[] = Yii::t('event', $competitionEvents[$event]);
+				$events[] = $registrationEvent;
 			}
 		}
-		return implode(Yii::t('common', ', '), $events);
+		return $events;
 	}
 
 	public function getWaitingEvents() {
@@ -543,28 +545,46 @@ class Registration extends ActiveRecord {
 		foreach ($this->allEvents as $registrationEvent) {
 			$event = $registrationEvent->event;
 			if ($registrationEvent->isPending() && isset($competitionEvents[$event])) {
-				$events[] = Yii::t('event', $competitionEvents[$event]);
-			}
-		}
-		return implode(Yii::t('common', ', '), $events);
-	}
-
-	public function getEditableEvents() {
-		$events = $this->competition->getRegistrationEvents();
-		foreach ($this->allEvents as $registrationEvent) {
-			if ($registrationEvent->isAccepted() || $registrationEvent->isWaiting()) {
-				unset($events[$registrationEvent->event]);
+				$events[] = $registrationEvent;
 			}
 		}
 		return $events;
 	}
 
-	public function getRegistrationEvent($event) {
+	public function getDisqualifiedEvents() {
+		$competitionEvents = $this->competition->getRegistrationEvents();
+		$events = array();
 		foreach ($this->allEvents as $registrationEvent) {
-			if ("$event" === $registrationEvent->event && !$registrationEvent->isCancelled()) {
-				return $registrationEvent;
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isDisqualified() && isset($competitionEvents[$event])) {
+				$events[] = $registrationEvent;
 			}
 		}
+		return $events;
+	}
+
+	/**
+	 * Accepted or Pending or Disqualified
+	 */
+	public function getAPDEvents() {
+		switch (true) {
+			case $this->isPending():
+				return $this->getPendingEvents();
+			case $this->isAccepted():
+				return $this->getAcceptedEvents();
+			case $this->isDisqualified():
+				return $this->getDisqualifiedEvents();
+		}
+	}
+
+	public function getEditableEvents() {
+		$events = $this->competition->getRegistrationEvents();
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isAccepted()) {
+				unset($events[$registrationEvent->event]);
+			}
+		}
+		return $events;
 	}
 
 	public function getRegistrationFee() {
@@ -644,7 +664,7 @@ class Registration extends ActiveRecord {
 			return 1;
 		}
 		//被资格线清掉的，就是0
-		if ($this->status == self::STATUS_CANCELLED_QUALIFYING_TIME) {
+		if ($this->status == self::STATUS_DISQUALIFIED) {
 			return 0;
 		}
 		switch ($this->competition->refund_type) {
@@ -720,19 +740,17 @@ class Registration extends ActiveRecord {
 		$this->_events = $events;
 	}
 
-	public function hasRegistered($event, $showPending = false) {
+	public function getRegistrationEvent($event) {
 		foreach ($this->allEvents as $registrationEvent) {
-			if ($registrationEvent->isCancelled()) {
-				continue;
-			}
-			if ($registrationEvent->event != "$event") {
-				continue;
-			}
-			if ($showPending || $registrationEvent->isAccepted()) {
-				return true;
+			if ("$event" === $registrationEvent->event && !$registrationEvent->isCancelled()) {
+				return $registrationEvent;
 			}
 		}
-		return false;
+	}
+
+	public function hasRegistered($event, $showPending = false) {
+		$event = $this->getRegistrationEvent($event);
+		return $event !== null && ($showPending || $event->isAccepted());
 	}
 
 	public function getNoticeColumns($model) {
@@ -1549,7 +1567,8 @@ class Registration extends ActiveRecord {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria = new CDbCriteria;
-		$criteria->order = 't.date DESC';
+		$criteria->with = 'competition';
+		$criteria->order = 'competition.date DESC, competition.end_date DESC';
 
 		$criteria->compare('t.id', $this->id, true);
 		$criteria->compare('t.competition_id', $this->competition_id);
@@ -1574,5 +1593,21 @@ class Registration extends ActiveRecord {
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);
+	}
+
+	public function __call($name, $parameters) {
+		if (strtolower(substr($name, -6)) === 'string') {
+			$method = substr($name, 0, -6);
+			if (method_exists($this, $method)) {
+				$events = (array)call_user_func_array([$this, $method], $parameters);
+				return implode(Yii::t('common', ', '), array_map(function($event) {
+					if (is_object($event) && isset($event->event)) {
+						$event = $event->event;
+					}
+					return Events::getFullEventName($event);
+				}, $events));
+			}
+		}
+		return parent::__call($name, $parameters);
 	}
 }
