@@ -1,7 +1,7 @@
 <?php if ($registration->payable): ?>
 <hr>
 <h4><?php echo Yii::t('Registration', 'Pending Events'); ?></h4>
-<p><?php echo $registration->getPendingEvents(); ?></p>
+<p><?php echo $registration->getPendingEventsString(); ?></p>
 <h4><?php echo Yii::t('common', 'Fee'); ?></h4>
 <p><?php echo $registration->getPendingFee(); ?></p>
 <?php if (count(Yii::app()->params->payments) > 1): ?>

@@ -65,7 +65,7 @@
       array(
         'name'=>'events',
         'type'=>'raw',
-        'value'=>'$data->isPending() ? $data->getPendingEvents() : $data->getAcceptedEvents()',
+        'value'=>'$data->getAPDEventsString()',
       ),
       'comments',
     ),

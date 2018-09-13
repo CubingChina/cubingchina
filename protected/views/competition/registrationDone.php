@@ -44,7 +44,7 @@
           <?php endif; ?>
           <?php if ($registration->isAccepted()): ?>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->getAcceptedEvents(); ?></p>
+          <p><?php echo $registration->getAcceptedEventsString(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
           <?php endif; ?>
