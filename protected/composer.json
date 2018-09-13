@@ -10,6 +10,7 @@
     "ramsey/uuid": "^3.5",
     "suin/php-rss-writer": "^1.5",
     "zhuzhichao/ip-location-zh": "^2.2",
-    "predis/predis-async": "v0.3.x-dev"
+    "predis/predis-async": "v0.3.x-dev",
+    "yunpian/yunpian-php-sdk": "^1.0"
   }
 }
