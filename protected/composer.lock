@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "eebefa62ceac484384bc9ee34e56a6e6",
+    "content-hash": "462b784251ab41639abc3f353599a2ca",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -173,12 +173,12 @@
             "version": "1.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/endroid/QrCode.git",
+                "url": "https://github.com/endroid/qr-code.git",
                 "reference": "ab09b42778ad67cfe850f9c23165f8d08b756680"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/endroid/QrCode/zipball/ab09b42778ad67cfe850f9c23165f8d08b756680",
+                "url": "https://api.github.com/repos/endroid/qr-code/zipball/ab09b42778ad67cfe850f9c23165f8d08b756680",
                 "reference": "ab09b42778ad67cfe850f9c23165f8d08b756680",
                 "shasum": ""
             },
@@ -226,6 +226,7 @@
                 "qrcode",
                 "symfony"
             ],
+            "abandoned": "endroid/qr-code",
             "time": "2017-01-03T11:02:14+00:00"
         },
         {
@@ -1094,6 +1095,7 @@
                 "xls",
                 "xlsx"
             ],
+            "abandoned": "phpoffice/phpspreadsheet",
             "time": "2015-05-01T07:00:55+00:00"
         },
         {
@@ -2344,6 +2346,52 @@
                 "templating"
             ],
             "time": "2017-02-27T00:07:03+00:00"
+        },
+        {
+            "name": "yunpian/yunpian-php-sdk",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yunpian/yunpian-php-sdk.git",
+                "reference": "ea176d9b70d16e561acef55756862b2ec304be85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yunpian/yunpian-php-sdk/zipball/ea176d9b70d16e561acef55756862b2ec304be85",
+                "reference": "ea176d9b70d16e561acef55756862b2ec304be85",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yunpian\\Sdk\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dzh",
+                    "email": "daizhong@yunpian.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Yunpian PHP SDK",
+            "homepage": "https://github.com/yunpian/yunpian-php-sdk",
+            "keywords": [
+                "sdk",
+                "yunpian"
+            ],
+            "time": "2017-12-28T08:09:44+00:00"
         },
         {
             "name": "zhuzhichao/ip-location-zh",

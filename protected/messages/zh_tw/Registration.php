@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Disqualified Events' => '已取消的項目',
   'ID' => '',
   'No.' => '',
   'User' => '',

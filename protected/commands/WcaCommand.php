@@ -71,7 +71,7 @@ class WcaCommand extends CConsoleCommand {
 		foreach (Statistics::$lists as $key=>$list) {
 			Statistics::getData($key + 1);
 		}
-		$this->log('set results_statistics_data:', $data ? 1 : 0);
+		$this->log('statistics data built');
 	}
 
 	public function actionBuildRanksSum() {

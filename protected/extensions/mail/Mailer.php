@@ -181,6 +181,34 @@ class Mailer extends CApplicationComponent {
 			'registration'=>$registration,
 			'competition'=>$registration->competition,
 			'user'=>$registration->user,
+			'regulationUrl'=>$this->getUrl($registration->competition->getUrl('regulations')),
+		));
+		$cc = array();
+		foreach ($registration->competition->organizer as $organizer) {
+			$cc[] = $organizer->user->email;
+		}
+		return $this->add($registration->user->email, $subject, $message, $cc[0], $cc);
+	}
+
+	public function sendRegistrationEventsDisqualified($registration) {
+		$events = array();
+		$translation = include APP_PATH . '/protected/messages/zh_cn/event.php';
+		foreach ($registration->getDisqualifiedEvents() as $registrationEvent) {
+			$event = $registrationEvent->event;
+			$enName = Events::getEventName($event);
+			$cnName = isset($translation[$enName]) ? $translation[$enName] : $enName;
+			$events['en'][] = $enName;
+			$events['cn'][] = $cnName;
+		}
+		$events['en'] = implode(', ', $events['en']);
+		$events['cn'] = implode('、', $events['cn']);
+		$subject = "【{$registration->competition->name_zh}】报名项目取消通知 Registration Events Disqualified";
+		$message = $this->render('registrationEventsDisqualified', array(
+			'registration'=>$registration,
+			'competition'=>$registration->competition,
+			'user'=>$registration->user,
+			'events'=>$events,
+			'regulationUrl'=>$this->getUrl($registration->competition->getUrl('regulations')),
 		));
 		$cc = array();
 		foreach ($registration->competition->organizer as $organizer) {
@@ -226,6 +254,10 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function getUrl($url) {
+		if (is_array($url)) {
+			$url = CHtml::normalizeUrl($url);
+		}
+		$url = ltrim($url, '.');
 		if (strpos($url, 'http') !== 0) {
 			$url = $this->baseUrl . $url;
 		}

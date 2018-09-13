@@ -20,7 +20,7 @@ class RegistrationEvent extends ActiveRecord {
 	const STATUS_ACCEPTED = 1;
 	const STATUS_CANCELLED = 2;
 	const STATUS_CANCELLED_TIME_END = 3;
-	const STATUS_CANCELLED_QUALIFYING_TIME = 4;
+	const STATUS_DISQUALIFIED = 4;
 	const STATUS_WAITING = 5;
 
 	public function isPending() {
@@ -38,7 +38,7 @@ class RegistrationEvent extends ActiveRecord {
 	}
 
 	public function isDisqualified() {
-		return $this->status == self::STATUS_CANCELLED_QUALIFYING_TIME;
+		return $this->status == self::STATUS_DISQUALIFIED;
 	}
 
 	public function isWaiting() {
@@ -66,7 +66,7 @@ class RegistrationEvent extends ActiveRecord {
 	}
 
 	public function disqualify() {
-		$this->status = self::STATUS_CANCELLED_QUALIFYING_TIME;
+		$this->status = self::STATUS_DISQUALIFIED;
 		return $this->save();
 	}
 
@@ -163,5 +163,9 @@ class RegistrationEvent extends ActiveRecord {
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);
+	}
+
+	public function __toString() {
+		return $this->event;
 	}
 }

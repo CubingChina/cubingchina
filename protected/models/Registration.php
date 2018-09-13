@@ -122,7 +122,7 @@ class Registration extends ActiveRecord {
 			self::STATUS_ACCEPTED=>Yii::t('common', 'Accepted'),
 			self::STATUS_CANCELLED=>Yii::t('common', 'Cancelled'),
 			self::STATUS_CANCELLED_TIME_END=>Yii::t('common', 'Cancelled'),
-			self::STATUS_DISQUALIFIED=>Yii::t('common', 'Cancelled'),
+			self::STATUS_DISQUALIFIED=>Yii::t('common', 'Disqualified'),
 			self::STATUS_WAITING=>Yii::t('common', 'Waiting'),
 		);
 	}
@@ -368,7 +368,7 @@ class Registration extends ActiveRecord {
 	public function disqualify() {
 		$this->status = self::STATUS_DISQUALIFIED;
 		$this->cancel_time = time();
-		if ($this->save()) {
+		if ($this->save(false)) {
 			Yii::app()->mailer->sendRegistrationDisqualified($this);
 			return true;
 		}
@@ -596,9 +596,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getTotalFee($recalculate = false) {
-		if (empty($this->events)) {
-			return 0;
-		}
+		// if (empty($this->events)) {
+		// 	return 0;
+		// }
 		if (($this->isAccepted() || $this->isWaiting() || $this->paid) && !$recalculate) {
 			return $this->total_fee;
 		}

@@ -63,13 +63,17 @@
           <h4><?php echo Yii::t('Registration', 'Cancellation Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->cancel_time); ?></p>
           <?php endif; ?>
+          <?php if ($registration->getDisqualifiedEvents() !== []): ?>
+          <h4><?php echo Yii::t('Registration', 'Disqualified Events'); ?> <small><?php echo CHtml::link(Yii::t('Competition', 'Regulations'), $competition->getUrl('regulations')); ?></small></h4>
+          <p><?php echo $registration->getDisqualifiedEventsString(); ?></p>
+          <?php endif; ?>
           <?php if ($registration->isWaiting()): ?>
           <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
           <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list. There are {count} people on the list ahead of you.', [
             '{count}'=>$registration->getWaitingNumber(),
           ]); ?></p>
           <?php endif; ?>
-          <?php if ($competition->fill_passport && $user->passport_type != User::NO): ?>
+          <?php if ($competition->fill_passport && $user->passport_type != User::NO && !$registration->isDisqualified()): ?>
           <hr>
           <p><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
           <h4><?php echo Yii::t('Registration', 'Type of Identity'); ?></h4>

@@ -18,9 +18,8 @@
  */
 return array (
   'Application' => '',
-  'Fee' => '费用',
-  'If you were unable to pay online, please contact the organizer.' => '',
-  'Show all information?' => '显示所有信息？',
+  'Disqualified' => '已取消',
+  'If you were unable to pay online, please contact the organizer.' => '如果你无法在线支付，请尽快联系主办方。',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -153,6 +152,7 @@ return array (
   'Event' => '项目',
   'Event List' => '项目列表',
   'FAQ' => '常见问题',
+  'Fee' => '费用',
   'Female' => '女',
   'File is too large, the limited size is {size}' => '文件太大，最大允许{size}',
   'Fill More Information' => '填写信息',
@@ -273,6 +273,7 @@ return array (
   'Scrambler' => '打乱',
   'Settings' => '设置',
   'She' => '她',
+  'Show all information?' => '显示所有信息？',
   'Show full schedule?' => '显示完整赛程？',
   'Sign in' => '签到',
   'Signed in Date' => '签到日期',
