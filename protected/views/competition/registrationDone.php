@@ -42,9 +42,9 @@
           <h4><?php echo Yii::t('Competition', 'Location'); ?></h4>
           <p><?php echo $registration->location->getCityName(); ?></p>
           <?php endif; ?>
-          <?php if ($registration->isAccepted()): ?>
+          <?php if ($registration->isAcceptedOrWaiting()): ?>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->getAcceptedEventsString(); ?></p>
+          <p><?php echo $registration->isAccepted() ? $registration->getAcceptedEventsString() : $registration->getWaitingEventsString(); ?></p>
           <h4><?php echo Yii::t('common', 'Total Fee'); ?></h4>
           <p><?php echo $registration->getFeeInfo(); ?></p>
           <?php endif; ?>

@@ -267,7 +267,7 @@ class CompetitionController extends Controller {
 			}
 			if (isset($_POST['update']) && $registration->isEditable()) {
 				$events = $_POST['Registration']['events'] ?? [];
-				if ($registration->isAccepted() || $events !== []) {
+				if ($registration->isAcceptedOrWaiting() || $events !== []) {
 					$registration->updateEvents($events);
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been updated successfully.'));
 					$this->redirect($competition->getUrl('registration'));
