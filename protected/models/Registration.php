@@ -262,6 +262,10 @@ class Registration extends ActiveRecord {
 		return $payment !== null && $payment->isLocked();
 	}
 
+	public function isAcceptedOrWaiting() {
+		return $this->isAccepted() || $this->isWaiting()
+	}
+
 	public function accept($pay = null, $forceAccept = false) {
 		if ($this->isCancelled()) {
 			return false;
@@ -271,10 +275,8 @@ class Registration extends ActiveRecord {
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
-		if ($this->competition->isRegistrationFull() && !$hasBeenAccepted) {
-			if (!$forceAccept) {
-				$this->status = self::STATUS_WAITING;
-			}
+		if (!$hasBeenAccepted && !$forceAccept && $this->competition->isRegistrationFull()) {
+			$this->status = self::STATUS_WAITING;
 		}
 		$this->save();
 		if ($this->competition->isRegistrationFull()) {
@@ -285,25 +287,36 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if ($this->isAccepted()) {
-			$registrationEventIds = $pay === null ? [] : array_map(function($payEvent) {
-				return $payEvent->registration_event_id;
-			}, $pay->events);
-			foreach ($this->allEvents as $registrationEvent) {
-				if ($registrationEvent->isCancelled()) {
-					continue;
-				}
-				if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
-					$registrationEvent->paid = $this->paid;
-					$registrationEvent->accept();
-				}
-			}
+			$this->updateEventsStatus($pay);
 			if ($this->competition->show_qrcode && !$hasBeenAccepted) {
 				Yii::app()->mailer->sendRegistrationAcception($this);
 			}
+		} elseif ($this->isWaiting()) {
+			$this->updateEventsStatus($pay);
 		}
 		if ($pay === null && $this->getUnpaidPayment() !== null) {
 			$payment = $this->getUnpaidPayment();
 			$payment->cancel();
+		}
+	}
+
+	public function updateEventsStatus($pay = null) {
+		$registrationEventIds = $pay === null ? [] : array_map(function($payEvent) {
+			return $payEvent->registration_event_id;
+		}, $pay->events);
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isCancelled()) {
+				continue;
+			}
+			if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
+				$registrationEvent->paid = $this->paid;
+				if ($this->isAccepted()) {
+					$registrationEvent->accept();
+				} elseif ($this->isWaiting()) {
+					$registrationEvent->status = RegistrationEvent::STATUS_WAITING;
+					$registrationEvent->save();
+				}
+			}
 		}
 	}
 
@@ -512,6 +525,18 @@ class Registration extends ActiveRecord {
 		return implode(Yii::t('common', ', '), $events);
 	}
 
+	public function getWaitingEvents() {
+		$competitionEvents = $this->competition->getRegistrationEvents();
+		$events = array();
+		foreach ($this->allEvents as $registrationEvent) {
+			$event = $registrationEvent->event;
+			if ($registrationEvent->isWaiting() && isset($competitionEvents[$event])) {
+				$events[] = Yii::t('event', $competitionEvents[$event]);
+			}
+		}
+		return implode(Yii::t('common', ', '), $events);
+	}
+
 	public function getPendingEvents() {
 		$competitionEvents = $this->competition->getRegistrationEvents();
 		$events = array();
@@ -527,7 +552,7 @@ class Registration extends ActiveRecord {
 	public function getEditableEvents() {
 		$events = $this->competition->getRegistrationEvents();
 		foreach ($this->allEvents as $registrationEvent) {
-			if ($registrationEvent->isAccepted()) {
+			if ($registrationEvent->isAccepted() || $registrationEvent->isWaiting()) {
 				unset($events[$registrationEvent->event]);
 			}
 		}
@@ -554,7 +579,7 @@ class Registration extends ActiveRecord {
 		if (empty($this->events)) {
 			return 0;
 		}
-		if (($this->isAccepted() || $this->paid) && !$recalculate) {
+		if (($this->isAccepted() || $this->isWaiting() || $this->paid) && !$recalculate) {
 			return $this->total_fee;
 		}
 		$competition = $this->competition;
@@ -589,7 +614,7 @@ class Registration extends ActiveRecord {
 				$fee += $registrationEvent->fee;
 			}
 		}
-		if (!$this->isAccepted()) {
+		if (!$this->isAcceptedOrWaiting()) {
 			$fee += $this->competition->getEventFee('entry');
 		}
 		return $fee * 100;
@@ -1033,7 +1058,7 @@ class Registration extends ActiveRecord {
 		}
 		$totalFee = $this->getTotalFee();
 		return $this->competition->isOnlinePay() && $totalFee > 0
-			&& !$this->competition->isRegistrationFull()
+			&& (!$this->competition->isRegistrationFull() || $this->isAccepted() || $this->isWaiting())
 			&& $this->getPendingAmount() > 0;
 	}
 
@@ -1087,7 +1112,7 @@ class Registration extends ActiveRecord {
 		$allEvents = $this->allEvents;
 		foreach ($allEvents as $index => $registrationEvent) {
 			if (!in_array($registrationEvent->event, $events)) {
-				if (!$registrationEvent->isAccepted()) {
+				if (!$registrationEvent->isAccepted() && !$registrationEvent->isWaiting()) {
 					$this->removeEvent($registrationEvent);
 				}
 			} else {

@@ -602,6 +602,7 @@ class RegistrationController extends AdminController {
 				if ($event === '333mbf') {
 					for ($i = 0; $i < $attempt; $i++) {
 						foreach ($registrations as $registration) {
+							if ($registration->hasRegistered())
 							if (!in_array("$event", $registration->events)) {
 								continue;
 							}
@@ -1091,6 +1092,7 @@ class RegistrationController extends AdminController {
 		//前面改过status了，所以此处是isAccepted
 		if ($attribute == 'status' && $model->isAccepted()) {
 			$model->total_fee = $model->getTotalFee(true);
+			$model->$attribute = 1 - $model->$attribute;
 			$model->accept();
 		} else {
 			$model->save();
