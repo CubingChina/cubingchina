@@ -1544,7 +1544,8 @@ class Competition extends ActiveRecord {
 		//empty results of first rounds
 		$registrations = Registration::getRegistrations($this);
 		foreach ($registrations as $registration) {
-			foreach ($registration->events as $event) {
+			foreach ($registration->getAcceptedEvents() as $registrationEvent) {
+				$event = $registrationEvent->event;
 				if (!isset($rounds[$event])) {
 					continue;
 				}

@@ -36,17 +36,26 @@ class GroupCommand extends CConsoleCommand {
 				->setTitle($competition->wca_competition_id ?: $competition->name)
 				->setSubject($competition->name);
 			$excel->removeSheetByIndex(0);
+			$sheet = $excel->createSheet();
+			$sheet->setTitle('Groups');
+			$sheet->setCellValue('A1', 'No.')
+				->setCellValue('B1', 'Name');
+			$col = 'C';
+			$row = 1;
 			foreach ($associatedEvents as $event=>$value) {
-				$sheet = $excel->createSheet();
-				$sheet->setTitle(Events::getFullEventName($event));
-				$sheet->setCellValue('A1', 'No.')
-					->setCellValue('B1', 'Name')
-					->setCellValue('C1', 'Group');
-				$row = 2;
-				foreach ($registrations as $registration) {
-					if (!in_array("$event", $registration->events)) {
-						continue;
-					}
+				$sheet->setCellValue($col . $row, $event);
+				$col++;
+				$sheet->setCellValue($col . $row, '开始时间');
+				$col++;
+				$sheet->setCellValue($col . $row, '结束时间');
+				$col++;
+			}
+			$row++;
+			foreach ($registrations as $registration) {
+				$sheet->setCellValue('A' . $row, $registration->number)
+					->setCellValue('B' . $row, $registration->user->name_zh ?: $registration->user->name);
+				$col = 'C';
+				foreach ($associatedEvents as $event=>$value) {
 					$userSchedule = UserSchedule::model()->with('schedule')->findByAttributes([
 						'user_id'=>$registration->user_id,
 						'competition_id'=>$competition->id,
@@ -57,12 +66,19 @@ class GroupCommand extends CConsoleCommand {
 						],
 					]);
 					if ($userSchedule != null) {
-						$sheet->setCellValue('A' . $row, $registration->number)
-							->setCellValue('B' . $row, $registration->user->getCompetitionName())
-							->setCellValue('C' . $row, $userSchedule->schedule->group);
-						$row++;
+						$sheet->setCellValue($col . $row, $userSchedule->schedule->group);
+						$col++;
+						$sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->start_time));
+						$col++;
+						$sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->end_time));
+						$col++;
+					} else {
+						$col++;
+						$col++;
+						$col++;
 					}
 				}
+				$row++;
 			}
 			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 			$writer->save($path);
@@ -111,7 +127,7 @@ class GroupCommand extends CConsoleCommand {
 						}
 						$totalTime = $schedule->end_time - $schedule->start_time;
 						$groupTime = floor($totalTime / $groupNum);
-						$groupTime = floor($groupTime / 5) * 5;
+						$groupTime = floor($groupTime / 300) * 300;
 						$group = $groupNum > 1 ? 'A' : '';
 						for ($i = 0; $i < $groupNum; $i++) {
 							$groupSchedule = new GroupSchedule();
@@ -180,7 +196,7 @@ class GroupCommand extends CConsoleCommand {
 						$wcaidRegistrations[$registration->user->wcaid] = $registration;
 					}
 				}
-				switch ($event) {
+				switch ("$event") {
 					case '333bf':
 					case '444bf':
 					case '555bf':
@@ -193,9 +209,12 @@ class GroupCommand extends CConsoleCommand {
 				}
 				//fetch result
 				$results = $modelName::model()->findAllByAttributes(array(
-					'eventId'=>$event,
+					'eventId'=>"$event",
 					'personId'=>array_keys($wcaidRegistrations),
 				));
+				array_walk($registrations, function($registration) {
+					$registration->best = 0;
+				});
 				foreach ($results as $result) {
 					$wcaidRegistrations[$result->personId]->best = $result->best;
 				}

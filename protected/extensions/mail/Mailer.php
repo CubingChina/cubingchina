@@ -142,7 +142,8 @@ class Mailer extends CApplicationComponent {
 		$qrCodeUrl = $this->getUrl($registration->qrCodeUrl);
 		$events = array();
 		$translation = include APP_PATH . '/protected/messages/zh_cn/event.php';
-		foreach ($registration->events as $event) {
+		foreach ($registration->getAcceptedEvents() as $registrationEvent) {
+			$event = $registrationEvent->event;
 			$enName = Events::getEventName($event);
 			$cnName = isset($translation[$enName]) ? $translation[$enName] : $enName;
 			$events['en'][] = $enName;
