@@ -749,8 +749,17 @@ class Registration extends ActiveRecord {
 	}
 
 	public function hasRegistered($event, $showPending = false) {
-		$event = $this->getRegistrationEvent($event);
-		return $event !== null && ($showPending || $event->isAccepted());
+		$registrationEvent = $this->getRegistrationEvent($event);
+		return $registrationEvent !== null && ($showPending || $registrationEvent->isAccepted());
+	}
+
+	public function hasRegisteredOneOf($events, $showPending = false) {
+		foreach ($events as $event) {
+			if ($this->hasRegistered($event)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function getNoticeColumns($model) {

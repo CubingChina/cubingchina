@@ -201,7 +201,7 @@ class RegistrationController extends AdminController {
 				));
 			$col = 'J';
 			foreach ($events as $event=>$data) {
-				if (in_array("$event", $registration->events)) {
+				if ($registration->hasRegistered($event)) {
 					$sheet->setCellValue($col . $row, 1);
 				}
 				$col++;
@@ -282,7 +282,7 @@ class RegistrationController extends AdminController {
 				if ($round == 1 || $count == 1) {
 					$row = 5;
 					foreach ($registrations as $registration) {
-						if (!in_array("$event", $registration->events)) {
+						if (!$registration->hasRegistered($event)) {
 							continue;
 						}
 						$user = $registration->user;
@@ -602,8 +602,7 @@ class RegistrationController extends AdminController {
 				if ($event === '333mbf') {
 					for ($i = 0; $i < $attempt; $i++) {
 						foreach ($registrations as $registration) {
-							if ($registration->hasRegistered())
-							if (!in_array("$event", $registration->events)) {
+							if (!$registration->hasRegistered($event)) {
 								continue;
 							}
 							$scoreCards[] = [
@@ -617,7 +616,7 @@ class RegistrationController extends AdminController {
 				} elseif ($byGroup) {
 					foreach ($groups[$event] ?? [] as $group=>$userIds) {
 						foreach ($registrations as $registration) {
-							if (!in_array("$event", $registration->events)) {
+							if (!$registration->hasRegistered($event)) {
 								continue;
 							}
 							if (!in_array($registration->user_id, $userIds)) {
@@ -632,7 +631,7 @@ class RegistrationController extends AdminController {
 					}
 				} else {
 					foreach ($registrations as $registration) {
-						if (!in_array("$event", $registration->events)) {
+						if (!$registration->hasRegistered($event)) {
 							continue;
 						}
 						$scoreCards[] = [
