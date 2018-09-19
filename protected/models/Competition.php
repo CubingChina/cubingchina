@@ -108,20 +108,23 @@ class Competition extends ActiveRecord {
 	public static function getBaseOptions() {
 		return [
 			'fill_passport'=>[
-				'label'=>'选手证件号',
+				'label'=>'要求选手填写证件号',
 			],
 			'show_regulations'=>[
-				'label'=>'报名规则提醒',
+				'label'=>'弹出报名规则提醒',
 			],
 			'show_qrcode'=>[
-				'label'=>'二维码签到',
+				'label'=>'使用二维码签到',
 			],
 			't_shirt'=>[
-				'label'=>'T恤尺码',
+				'label'=>'询问T恤尺码',
 			],
 			'staff'=>[
-				'label'=>'工作人员报名',
+				'label'=>'询问工作人员报名',
 			],
+			'allow_change_event'=>[
+				'label'=>'允许选手自助编辑项目',
+			]
 		];
 	}
 
@@ -146,6 +149,36 @@ class Competition extends ActiveRecord {
 			];
 		}
 		return $options;
+	}
+
+	public static function getProtectedAttributes() {
+		return array_merge([
+			'name',
+			'name_zh',
+			'auto_accept',
+			'type',
+			'wca_competition_id',
+			'entry_fee',
+			'online_pay',
+			'person_num',
+			'second_stage_date',
+			'second_stage_ratio',
+			'second_stage_all',
+			'third_stage_date',
+			'third_stage_ratio',
+			'date',
+			'end_date',
+			'reg_start',
+			'reg_end',
+			'delegates',
+			'organizers',
+			'locations',
+			'qualifying_end_time',
+			'refund_type',
+			'cancellation_end_time',
+			'reg_reopen_time',
+			'status',
+		], array_keys(self::getBaseOptions()));
 	}
 
 	public static function getAppliedCount($user) {
@@ -2689,7 +2722,8 @@ class Competition extends ActiveRecord {
 		$rules = [
 			['name, name_zh, date, reg_end', 'required'],
 			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
-			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
+			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, allow_change_event,
+				podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
 				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,
 				podiums_u9, podiums_u10, podiums_u11, podiums_u12, podiums_u13, podiums_u14,
 				podiums_u15, podiums_u16, podiums_u17, podiums_u18', 'numerical', 'integerOnly'=>true],
