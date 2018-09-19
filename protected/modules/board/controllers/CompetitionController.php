@@ -146,46 +146,15 @@ class CompetitionController extends AdminController {
 			Yii::app()->user->setFlash('danger', '申请已确认，不能编辑！');
 			$this->redirect($this->getReferrer());
 		}
-		$cannotEditAttr = array(
-			'name',
-			'name_zh',
-			'auto_accept',
-			'type',
-			'wca_competition_id',
-			'entry_fee',
-			'online_pay',
-			'person_num',
-			'second_stage_date',
-			'second_stage_ratio',
-			'second_stage_all',
-			'third_stage_date',
-			'third_stage_ratio',
-			'date',
-			'end_date',
-			'reg_start',
-			'reg_end',
-			'delegates',
-			'organizers',
-			'locations',
-			'qualifying_end_time',
-			'refund_type',
-			'cancellation_end_time',
-			'reg_reopen_time',
-			'fill_passport',
-			'show_regulations',
-			'show_qrcode',
-			't_shirt',
-			'staff',
-			'status',
-		);
+		$protectedAttributes = Competition::getProtectedAttributes();
 		if (isset($_POST['Competition'])) {
-			foreach ($cannotEditAttr as $attr) {
-				$$attr = $model->$attr;
+			foreach ($protectedAttributes as $attribute) {
+				$protectedValues[$attribute] = $model->$attribute;
 			}
 			$model->attributes = $_POST['Competition'];
 			if ($this->user->isOrganizer() && $model->isPublic()) {
-				foreach ($cannotEditAttr as $attr) {
-					$model->$attr = $$attr;
+				foreach ($protectedAttributes as $attribute) {
+					$model->$attribute = $protectedValues[$attribute];
 				}
 				$model->formatDate();
 			}
