@@ -355,8 +355,13 @@ class CompetitionController extends Controller {
 			$userId = $user->id;
 			if ($competition->checkPermission($user)) {
 				$userId = $this->iGet('user_id', $userId);
+				$number = $this->iGet('number');
+				if ($number) {
+					$registrations = Registration::getRegistrations($competition);
+					$registration = $registrations[$number - 1] ?? null;
+				}
 			}
-			$registration = Registration::getUserRegistration($competition->id, $userId);
+			$registration = $registration ?? Registration::getUserRegistration($competition->id, $userId);
 			if ($registration !== null) {
 				$userSchedules = $competition->getUserSchedules($registration->user);
 			}
