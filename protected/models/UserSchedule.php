@@ -40,6 +40,7 @@ class UserSchedule extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'schedule'=>[self::BELONGS_TO, 'GroupSchedule', 'group_id'],
+			'user'=>[self::BELONGS_TO, 'User', 'user_id'],
 		);
 	}
 
