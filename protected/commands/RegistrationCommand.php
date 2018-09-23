@@ -2,6 +2,39 @@
 
 class RegistrationCommand extends CConsoleCommand {
 
+	public function actionCheckRefund() {
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+		$registrations = Registration::model()->with([
+			'competition',
+			'payments'
+		])->findAllByAttributes([
+			'status'=>Registration::STATUS_CANCELLED,
+		], [
+			'condition'=>'competition.refund_type!="none" and payments.paid_amount>0 and payments.refund_amount=0'
+		]);
+		$now = time();
+		foreach ($registrations as $registration) {
+			echo implode("\t", [
+				$registration->user->getCompetitionName(),
+				$registration->competition->name_zh,
+			]);
+			echo "\n";
+			foreach ($registration->payments as $payment) {
+				$refundPercent = $registration->refundPercent;
+				echo "Paid: {$payment->paid_amount}\n";
+				echo "Refund Percent: {$refundPercent}\n";
+				echo "Should Refund: " . ($payment->paid_amount * $refundPercent) . "\n";
+				// within 3 months
+				if ($now - $payment->paid_time < 3 * 30 * 86400) {
+					if ($this->confirm('refund?')) {
+						$payment->refund($payment->paid_amount * $refundPercent);
+					}
+				}
+			}
+		}
+	}
+
 	public function actionClearWaitingList() {
 		$competitions = Competition::model()->findAllByAttributes([
 			'status'=>Competition::STATUS_SHOW,
