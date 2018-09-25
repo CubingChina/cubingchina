@@ -20,6 +20,8 @@ class GroupCommand extends CConsoleCommand {
 		'minx'=>20,
 	];
 	private $_specialEvents = ['333fm', '333mbf'];
+	private $_fixedScheduleEvents = ['333fm', '444bf', '555bf', '333mbf'];
+	private static $_staffs;
 
 	public function actionExportList($id, $path = null) {
 		$competition = Competition::model()->findByPk($id);
@@ -39,8 +41,9 @@ class GroupCommand extends CConsoleCommand {
 			$sheet = $excel->createSheet();
 			$sheet->setTitle('Groups');
 			$sheet->setCellValue('A1', 'No.')
-				->setCellValue('B1', 'Name');
-			$col = 'C';
+				->setCellValue('B1', 'Name')
+				->setCellValue('C1', 'Staff');
+			$col = 'D';
 			$row = 1;
 			foreach ($associatedEvents as $event=>$value) {
 				$sheet->setCellValue($col . $row, $event);
@@ -53,8 +56,9 @@ class GroupCommand extends CConsoleCommand {
 			$row++;
 			foreach ($registrations as $registration) {
 				$sheet->setCellValue('A' . $row, $registration->number)
-					->setCellValue('B' . $row, $registration->user->name_zh ?: $registration->user->name);
-				$col = 'C';
+					->setCellValue('B' . $row, $registration->user->name_zh ?: $registration->user->name)
+					->setCellValue('C' . $row, $this->isStaff($registration) ? 1 : '');
+				$col = 'D';
 				foreach ($associatedEvents as $event=>$value) {
 					$userSchedule = UserSchedule::model()->with('schedule')->findByAttributes([
 						'user_id'=>$registration->user_id,
@@ -85,7 +89,19 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
-	public function actionSchedule($id) {
+	public function actionClear($id) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null && $this->confirm($competition->name_zh)) {
+			GroupSchedule::model()->deleteAllByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+			UserSchedule::model()->deleteAllByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+		}
+	}
+
+	public function actionMake($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
 			$scheduleExists = GroupSchedule::model()->countByAttributes([
@@ -102,7 +118,8 @@ class GroupCommand extends CConsoleCommand {
 			$registrations = Registration::getRegistrations($competition);
 			$competitors = [];
 			foreach ($registrations as $registration) {
-				foreach ($registration->events as $event) {
+				foreach ($registration->getAcceptedEvents() as $registrationEvent) {
+					$event = $registrationEvent->event;
 					$competitors[$event] = ($competitors[$event] ?? 0) + 1;
 				}
 			}
@@ -144,7 +161,7 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
-	public function actionAutoUser($id) {
+	public function actionCompetitor($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
 			$scheduleExists = UserSchedule::model()->countByAttributes([
@@ -161,7 +178,8 @@ class GroupCommand extends CConsoleCommand {
 			$registrations = Registration::getRegistrations($competition);
 			$eventRegistrations = [];
 			foreach ($registrations as $registration) {
-				foreach ($registration->events as $event) {
+				foreach ($registration->getAcceptedEvents() as $registrationEvent) {
+					$event = $registrationEvent->event;
 					$eventRegistrations[$event][$registration->user_id] = $registration;
 				}
 			}
@@ -220,6 +238,14 @@ class GroupCommand extends CConsoleCommand {
 				}
 				//sort by best desc
 				uasort($registrations, function($rA, $rB) {
+					$isStaffA = $this->isStaff($rA);
+					$isStaffB = $this->isStaff($rB);
+					if ($isStaffA && !$isStaffB) {
+						return -1;
+					}
+					if ($isStaffB && !$isStaffA) {
+						return 1;
+					}
 					if ($rA->best > 0 && $rB->best > 0) {
 						$temp = $rA->best - $rB->best;
 					} elseif ($rA->best > 0) {
@@ -246,13 +272,64 @@ class GroupCommand extends CConsoleCommand {
 					$userSchedule->save();
 					$i++;
 					$groupCount++;
-					if ($groupCount > $groupNum) {
+					if ($groupCount >= $groupNum) {
 						$groupCount = 0;
 						$groupKey++;
 					}
 				}
 			}
 		}
+	}
+
+	public function actionStaffs($id) {
+		$competition = Competition::model()->findByPk($id);
+		$registrations = Registration::getRegistrations($competition);
+		$staffs = [];
+		foreach ($registrations as $registration) {
+			if ($this->isStaff($registration)) {
+				$staffs[] = $registration->user_id;
+			}
+		}
+		$staffs = array_unique($staffs);
+		$userSchedules = UserSchedule::model()->with('schedule')->findAllByAttributes([
+			'user_id'=>$staffs,
+			'competition_id'=>$competition->id,
+		], [
+			'condition'=>'schedule.group!="A"',
+		]);
+		foreach ($userSchedules as $userSchedule) {
+			var_dump($userSchedule->user_id, $userSchedule->user->name_zh, $userSchedule->schedule->event);
+		}
+	}
+
+	public function isStaff($registration) {
+		$staffs = self::getStaffs($registration->competition_id);
+		$user = $registration->user;
+		if (!isset($staffs[$user->name_zh])) {
+			return false;
+		}
+		$staff = $staffs[$user->name_zh];
+		$isStaff = $staff['mobile'] == $user->mobile || $staff['passport'] == $user->passport_number || $staff['email'] == $user->email;
+		return $isStaff;
+	}
+
+	public static function getStaffs($competitionId) {
+		if (self::$_staffs === null) {
+			self::$_staffs = [];
+			if (is_file(BASE_PATH . '/data/staffs' . $competitionId . '.tsv')) {
+				foreach (file(BASE_PATH . '/data/staffs' . $competitionId . '.tsv') as $line) {
+					if (!trim($line)) {
+						continue;
+					}
+					list($name, $mobile, $passport, $email) = explode("\t", $line);
+					foreach (['name', 'mobile', 'passport', 'email'] as $var) {
+						$$var = trim($$var);
+					}
+					self::$_staffs[$name] = compact('name', 'mobile', 'passport', 'email');
+				}
+			}
+		}
+		return self::$_staffs;
 	}
 
 	public function actionSolveConflict($id, $solve = 0) {
@@ -266,45 +343,36 @@ class GroupCommand extends CConsoleCommand {
 					'competition_id'=>$competition->id,
 				]);
 				$count = count($userSchedules);
-				for ($i = 0; $i < $count; $i++) {
-					$scheduleA = $userSchedules[$i]->schedule;
-					if (in_array($scheduleA->event, $this->_specialEvents)) {
-						// continue;
-					}
-					for ($j = 0; $j < $count; $j++) {
-						if ($i == $j) {
-							continue;
-						}
-						$scheduleB = $userSchedules[$j]->schedule;
-						if (in_array($scheduleB->event, ["333fm", "444bf", "555bf", "333mbf"])) {
-							// continue;
-						}
-						if (in_array($scheduleA->event, ["444bf", "555bf", "333mbf"])) {
-							// continue;
-						}
-						if ($scheduleA->day != $scheduleB->day) {
-							continue;
-						}
-						if ($this->isConflict($scheduleA, $scheduleB)) {
+				for ($i = 0; $i < $count - 1; $i++) {
+					for ($j = $i + 1; $j < $count; $j++) {
+						if ($this->isConflict($userSchedules[$i]->schedule, $userSchedules[$j]->schedule)) {
 							//@todo to be completed
-							$conflict = sprintf('No.%d %d %s: [%s - %s]', $registration->number, $registration->user_id, $registration->user->getCompetitionName(), $scheduleA->event, $scheduleB->event);
-							$conflicts[$scheduleA->event] = ($conflicts[$scheduleA->event] ?? 0) + 1;
-							$conflicts[$scheduleB->event] = ($conflicts[$scheduleB->event] ?? 0) + 1;
+							$conflict = sprintf('No.%d %d %s: [%s - %s]', $registration->number, $registration->user_id, $registration->user->getCompetitionName(), $userSchedules[$i]->schedule->event, $userSchedules[$j]->schedule->event);
+							$conflicts[$userSchedules[$i]->schedule->event] = ($conflicts[$userSchedules[$i]->schedule->event] ?? 0) + 1;
+							$conflicts[$userSchedules[$j]->schedule->event] = ($conflicts[$userSchedules[$j]->schedule->event] ?? 0) + 1;
 							echo $conflict, PHP_EOL;
 							if ($solve) {
-								$attributes = [
-									'competition_id'=>$competition->id,
-									'day'=>$scheduleA->day,
-									'event'=>$scheduleB->event,
-								];
-								$groupSchedules = GroupSchedule::model()->findAllByAttributes($attributes);
-								foreach ($groupSchedules as $schedule) {
-									if (!$this->isConflict($scheduleA, $schedule)) {
-										echo sprintf("Move %s to group %s.\n", $scheduleB->event, $schedule->group);
-										$userSchedules[$j]->group_id = $schedule->id;
-										$userSchedules[$j]->save();
-										break;
+								$events = [$userSchedules[$i]->schedule->event, $userSchedules[$j]->schedule->event];
+								sort($events);
+								if ($events === ['333oh', '555bf'] && $registration->hasRegistered('333fm')) {
+									$toMoveSchedule = $userSchedules[$i]->schedule->event === '333oh' ? $userSchedules[$i] : $userSchedules[$j];
+									if ($toMoveSchedule->schedule->group != 'D') {
+										$groupD = GroupSchedule::model()->findByAttributes([
+											'competition_id'=>$competition->id,
+											'day'=>$toMoveSchedule->schedule->day,
+											'event'=>$toMoveSchedule->schedule->event,
+											'group'=>'D',
+										]);
+										$toMoveSchedule->schedule = $groupD;
+										$toMoveSchedule->group_id = $groupD->id;
+										$toMoveSchedule->save();
+										$this->moveGroup($groupD, $userSchedules[$i]->schedule->event === '333oh' ? $userSchedules[$i]->schedule : $userSchedules[$j]->schedule, 1);
 									}
+									continue;
+								}
+								// try to move userSchedules[$j]->schedule first
+								if (!$this->tryToMove($userSchedules, $i, $j)) {
+									$this->tryToMove($userSchedules, $j, $i);
 								}
 							}
 						}
@@ -317,58 +385,155 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionDistribution($id) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null) {
+			$groupSchedules = GroupSchedule::model()->with('users')->findAllByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+			$distribution = [];
+			$maxGroup = 'A';
+			foreach ($groupSchedules as $groupSchedule) {
+				$distribution[$groupSchedule->group ?: 'A'][$groupSchedule->event] = count($groupSchedule->users);
+				if ($groupSchedule->group > $maxGroup) {
+					$maxGroup = $groupSchedule->group;
+				}
+			}
+			echo "Group\t";
+			echo implode("\t", array_keys($competition->associatedEvents));
+			echo "\n";
+			for ($group = 'A'; $group <= $maxGroup; $group++) {
+				echo "{$group}\t";
+				foreach ($competition->associatedEvents as $event=>$value) {
+					echo $distribution[$group][$event] ?? '';
+					echo "\t";
+				}
+				echo "\n";
+			}
+		}
+	}
+
 	public function actionMoveGroup($id, $event, $from, $to, $num) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm(sprintf('%s %s: %s - %s', $competition->name_zh, $event, $from, $to))) {
-			$groupScheduleA = GroupSchedule::model()->findByAttributes([
+			$fromSchedule = GroupSchedule::model()->findByAttributes([
 				'competition_id'=>$competition->id,
 				'event'=>$event,
 				'group'=>$from,
 			]);
-			if ($groupScheduleA == null) {
+			if ($fromSchedule == null) {
 				return;
 			}
-			$groupScheduleB = GroupSchedule::model()->findByAttributes([
+			$toSchedule = GroupSchedule::model()->findByAttributes([
 				'competition_id'=>$competition->id,
 				'event'=>$event,
 				'group'=>$to,
 			]);
-			if ($groupScheduleB == null) {
+			if ($toSchedule == null) {
 				return;
 			}
-			$userSchedules = UserSchedule::model()->findAllByAttributes([
-				'group_id'=>$groupScheduleA->id,
+			if ($this->moveGroup($fromSchedule, $groupScheduleB, $num)) {
+				echo "{$count} moved\n";
+			} else {
+				echo "less thant {$count} moves\n";
+			}
+		}
+	}
+
+	private function moveGroup($fromSchedule, $toSchedule, $num) {
+		$userSchedules = UserSchedule::model()->findAllByAttributes([
+			'group_id'=>$fromSchedule->id,
+		]);
+		$count = 0;
+		foreach ($userSchedules as $userSchedule) {
+			//fetch all
+			$schedules = UserSchedule::model()->findAllByAttributes([
+				'competition_id'=>$fromSchedule->competition_id,
+				'user_id'=>$userSchedule->user_id,
+			], [
+				'condition'=>'id != ' . $userSchedule->id,
 			]);
-			$count = 0;
-			foreach ($userSchedules as $userSchedule) {
-				//fetch all
-				$schedules = UserSchedule::model()->findAllByAttributes([
-					'competition_id'=>$competition->id,
-					'user_id'=>$userSchedule->user_id,
-				], [
-					'condition'=>'id != ' . $userSchedule->id,
-				]);
+			$conflict = false;
+			foreach ($schedules as $schedule) {
+				if ($this->isConflict($toSchedule, $schedule->schedule)) {
+					$conflict = true;
+					break;
+				}
+			}
+			if (!$conflict) {
+				echo sprintf("Move 1 competitor from %s to group %s.\n", $fromSchedule->group, $toSchedule->group);
+				$userSchedule->group_id = $toSchedule->id;
+				$userSchedule->save();
+				$count++;
+			}
+			if ($count == $num) {
+				break;
+			}
+		}
+		return $count == $num;
+	}
+
+	private function tryToMove($userSchedules, $i, $j) {
+		$userScheduleA = $userSchedules[$i];
+		$userScheduleB = $userSchedules[$j];
+		$attributes = [
+			'competition_id'=>$userScheduleA->schedule->competition_id,
+			'day'=>$userScheduleA->schedule->day,
+			'event'=>$userScheduleA->schedule->event,
+		];
+		$groupSchedules = GroupSchedule::model()->findAllByAttributes($attributes);
+		foreach ($groupSchedules as $schedule) {
+			// ignore itself
+			if ($schedule->id == $userScheduleA->group_id) {
+				continue;
+			}
+			// ignore any conflict groups
+			if ($this->isConflict($userScheduleB->schedule, $schedule)) {
+				continue;
+			}
+			if (!in_array($userScheduleB->schedule->event, $this->_fixedScheduleEvents)) {
 				$conflict = false;
-				foreach ($schedules as $schedule) {
-					if ($this->isConflict($groupScheduleB, $schedule->schedule)) {
+				// check all user schedules
+				foreach ($userSchedules as $userSchedule) {
+					if ($this->isConflict($userSchedule->schedule, $schedule)) {
 						$conflict = true;
 						break;
 					}
 				}
-				if (!$conflict) {
-					$userSchedule->group_id = $groupScheduleB->id;
-					$userSchedule->save();
-					$count++;
-				}
-				if ($count == $num) {
-					break;
+				if ($conflict) {
+					continue;
 				}
 			}
-			echo $count, " moved\n";
+			echo sprintf("Move %s to group %s.\n", $userScheduleA->schedule->event, $schedule->group);
+			$oldSchedule = $userScheduleA->schedule;
+			$userScheduleA->schedule = $schedule;
+			$userScheduleA->group_id = $schedule->id;
+			$userScheduleA->save();
+			// move another one back
+			$this->moveGroup($schedule, $oldSchedule, 1);
+			return true;
 		}
+		return false;
+	}
+
+	private function dumpSchedule($schedule) {
+		echo implode("\n", [
+			"Event: {$schedule->event}",
+			"Group: {$schedule->group}",
+			"Day: {$schedule->day}",
+			"Start Time: " . date('H:i', $schedule->start_time),
+			"End Time: " . date('H:i', $schedule->end_time),
+			"",
+		]);
 	}
 
 	private function isConflict($scheduleA, $scheduleB) {
+		if ($scheduleA->id == $scheduleB->id) {
+			return false;
+		}
+		if ($scheduleA->day != $scheduleB->day) {
+			return false;
+		}
 		if ($scheduleA->end_time == $scheduleB->start_time) {
 			return false;
 		}
@@ -389,7 +554,7 @@ class GroupCommand extends CConsoleCommand {
 	}
 
 	private function getProposedGroup($schedule, $competitors) {
-		if (in_array($schedule->event, ["333fm", "444bf", "555bf", "333mbf"])) {
+		if (in_array($schedule->event, $this->_fixedScheduleEvents)) {
 			return 1;
 		}
 		$stations = $this->getStations($schedule->stage);
