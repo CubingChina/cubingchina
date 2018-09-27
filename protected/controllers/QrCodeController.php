@@ -42,6 +42,22 @@ class QrCodeController extends Controller {
 		$this->send($qrCode, 'signin');
 	}
 
+	public function actionTicket() {
+		$code = $this->sGet('code');
+		$qrCode = new QrCode();
+		$qrCode->setText($this->createUrl(
+			'/competition/ticket',
+			[
+				'code'=>$code,
+			]
+		))
+		->setSize(300)
+		->setPadding(10)
+		->setErrorCorrection('high')
+		->setLabelFontSize(16);
+		$this->send($qrCode, 'signin');
+	}
+
 	public function actionSigninAdmin() {
 		$code = $this->sGet('code');
 		$auth = ScanAuth::model()->findByAttributes(['code'=>$code]);

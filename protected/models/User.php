@@ -48,6 +48,7 @@ class User extends ActiveRecord {
 
 	private $_hasCerts;
 	private $_preferredEvents;
+	private $_tickets = [];
 
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
@@ -296,6 +297,31 @@ class User extends ActiveRecord {
 			'user_id'=>$this->id,
 			'status'=>Registration::STATUS_ACCEPTED,
 		]) > 0;
+	}
+
+	public function hasPaidTickets($competition) {
+		return $this->getTickets($competition, UserTicket::STATUS_PAID) !== [];
+	}
+
+	public function hasUnpaidTickets($competition) {
+		return $this->getTickets($competition, UserTicket::STATUS_UNPAID) !== [];
+	}
+
+	public function getUnpaidTicket($competition) {
+		return $this->getTickets($competition, UserTicket::STATUS_UNPAID)[0] ?? null;
+	}
+
+	public function getTickets($competition, $status = null) {
+		$tickets = $this->_tickets[$competition->id] ?? $this->_tickets[$competition->id] = UserTicket::model()->findAllByAttributes([
+			'user_id'=>$this->id,
+			'ticket_id'=>$competition->getTicketIds(),
+		]);
+		if ($status !== null) {
+			$tickets = array_values(array_filter($tickets, function($ticket) use ($status) {
+				return $ticket->status == $status;
+			}));
+		}
+		return $tickets;
 	}
 
 	public function getPreferredEvents() {

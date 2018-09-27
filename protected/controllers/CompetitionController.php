@@ -7,12 +7,12 @@ class CompetitionController extends Controller {
 			array(
 				'deny',
 				'users'=>array('?'),
-				'actions'=>array('registration'),
+				'actions'=>array('registration', 'ticket'),
 			),
 			array(
 				'allow',
 				'users'=>array('@'),
-				'actions'=>array('registration'),
+				'actions'=>array('registration', 'ticket'),
 			),
 			array(
 				'allow',
@@ -380,6 +380,32 @@ class CompetitionController extends Controller {
 		));
 	}
 
+	public function actionTicket() {
+		$competition = $this->getCompetition();
+		$user = $this->getUser();
+		$model = new UserTicket();
+		$model->unsetAttributes();
+		$model->user_id = $this->user->id;
+		$model->user = $this->user;
+		if ($model->hasDiscount($competition)) {
+			$model->discount = Ticket::CHILDREN_DISCOUNT;
+		}
+		if (isset($_POST['UserTicket'])) {
+			$model->attributes = $_POST['UserTicket'];
+			$model->calculateFee();
+			if ($model->save()) {
+				$model->createPayment();
+				$this->redirect($competition->getUrl('ticket'));
+			}
+		}
+		$this->render('ticket', [
+			'user'=>$user,
+			'competition'=>$competition,
+			'tickets'=>$competition->tickets,
+			'model'=>$model,
+		]);
+	}
+
 	protected function getCompetition() {
 		$alias = $this->sGet('alias');
 		$competition = Competition::getCompetitionByName($alias);
@@ -463,6 +489,14 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-blue',
 				),
+			),
+			array(
+				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Ticket'),
+				'url'=>$competition->getUrl('ticket'),
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-indigo',
+				),
+				'visible'=>$competition->tickets !== [],
 			),
 			array(
 				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),

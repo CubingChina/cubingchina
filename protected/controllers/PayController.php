@@ -90,6 +90,11 @@ class PayController extends Controller {
 					$competition = $model->competition;
 					$params['url'] = CHtml::normalizeUrl($competition->getUrl('registration'));
 					break;
+				case Pay::TYPE_TICKET:
+					$ticket = $model->ticket;
+					$competition = $ticket->competition;
+					$params['url'] = CHtml::normalizeUrl($competition->getUrl('ticket'));
+					break;
 			}
 		} else {
 			$params = $model->generateParams($isMobile, $channel);

@@ -111,6 +111,14 @@ magic, mmagic, stack, funny, submission;
       background-color: #f7adbd;
     }
   }
+  .cube-indigo.active > a {
+    background-color: #2d44a8;
+  }
+  .cube-indigo {
+    &:hover > a {
+      background-color: #6993fd;
+    }
+  }
 }
 .timeline {
   list-style: none;
@@ -1273,5 +1281,30 @@ body.live.disconnected {
   tbody td .event-icon {
     font-size: 1em;
     color: #666;
+  }
+}
+
+.ticket-list {
+  .ticket {
+    input {
+      display: none;
+      &:checked + label {
+        background-color: #91bfe9;
+        border-color: #2b6fae;
+      }
+    }
+    label {
+      display: block;
+      cursor: pointer;
+      padding: 5px 15px;
+      background-color: #deefff;
+      border: 2px solid #deefff;
+      h3 {
+        margin-top: 0;
+      }
+      p {
+        font-weight: normal;
+      }
+    }
   }
 }
