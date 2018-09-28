@@ -71,7 +71,8 @@ class UserTicket extends ActiveRecord {
 		if ($competition === null) {
 			$competition = $this->ticket->competition;
 		}
-		return $competition->date - $user->birthday <= 12 * 365.25 * 86400 && self::model()->countByAttributes([
+		$registration = Registration::getUserRegistration($competition->id, $user->id);
+		return $registration !== null && $registration->isAccepted() && $competition->date - $user->birthday <= 12 * 365.25 * 86400 && self::model()->countByAttributes([
 			'ticket_id'=>$competition->getTicketIds(),
 			'user_id'=>$this->user_id,
 		], [
