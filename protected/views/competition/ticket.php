@@ -71,7 +71,7 @@
             <?php endforeach; ?>
             <?php echo $form->error($model, 'ticket_id', ['class'=>'text-danger']); ?>
           </div>
-          <h3><?php echo Yii::t('Competition', 'Fill who\'s the ticket for') ;?></h3>
+          <h3><?php echo Yii::t('Competition', 'Who\'s the ticket for') ;?></h3>
           <?php echo Html::formGroup(
             $model, 'name', [
             ],

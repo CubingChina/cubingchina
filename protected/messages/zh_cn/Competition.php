@@ -19,7 +19,7 @@
 return array (
   'Buy Tickets' => '购买入场券',
   'Choose a ticket' => '选择一种入场券',
-  'Fill who\'s the ticket for' => '填写观众信息',
+  'Who\'s the ticket for' => '填写观众信息',
   'ID' => '',
   'My Tickets' => '我的入场券',
   'Online Pay' => '',
