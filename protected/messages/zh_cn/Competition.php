@@ -17,8 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Buy Tickets' => '购买入场券',
+  'Choose a ticket' => '选择一种入场券',
+  'Fill who\'s the ticket for' => '填写观众信息',
   'ID' => '',
+  'My Tickets' => '我的入场券',
   'Online Pay' => '',
+  'Please choose a ticket!' => '请选择一种入场券！',
+  'Ticket' => '入场券',
   ' round' => '轮',
   ' rounds' => '轮',
   'Check Person' => '报名自动审核',

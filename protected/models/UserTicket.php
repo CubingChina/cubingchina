@@ -80,7 +80,7 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function getFee() {
-		return Html::fontAwesome('rmb') . ($this->total_amount * ($this->discount ?? 100) / 10000);
+		return Html::fontAwesome('rmb') . ($this->total_amount * ($this->discount ?: 100) / 10000);
 	}
 
 	public function getQRCodeUrl() {
@@ -92,6 +92,15 @@ class UserTicket extends ActiveRecord {
 			'/qrCode/ticket',
 			'code'=>$this->code,
 		]);
+	}
+
+	public function getPassportTypeText() {
+		$types = User::getPassportTypes();
+		$text = $types[$this->passport_type] ?? $this->passport_type;
+		if ($this->passport_type == User::PASSPORT_TYPE_OTHER) {
+			$text .= "($this->passport_name)";
+		}
+		return $text;
 	}
 
 	public function accept() {
@@ -203,9 +212,11 @@ class UserTicket extends ActiveRecord {
 			'paid_time'=>Yii::t('UserTicket', 'Paid Time'),
 			'discount'=>Yii::t('UserTicket', 'Discount'),
 			'name'=>Yii::t('UserTicket', 'Name'),
-			'passport_type'=>Yii::t('UserTicket', 'Passport Type'),
-			'passport_name'=>Yii::t('UserTicket', 'Passport Name'),
-			'passport_number'=>Yii::t('UserTicket', 'Passport Number'),
+			'fee'=>Yii::t('common', 'Fee'),
+			'passport_type' => Yii::t('Registration', 'Type of Identity'),
+			'passport_name' => Yii::t('Registration', 'Name of Identity'),
+			'passport_number' => Yii::t('Registration', 'Identity Number'),
+			'repeatPassportNumber' => Yii::t('Registration', 'Repeat Identity Number'),
 			'code'=>Yii::t('UserTicket', 'Code'),
 			'status'=>Yii::t('UserTicket', 'Status'),
 			'create_time'=>Yii::t('UserTicket', 'Create Time'),

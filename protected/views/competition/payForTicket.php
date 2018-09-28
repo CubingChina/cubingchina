@@ -26,7 +26,6 @@
   <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
 </div>
 <?php endif; ?>
-
 <?php
 if ($userTicket->isUnpaid()) {
   $paymentId = $userTicket->createPayment()->id;

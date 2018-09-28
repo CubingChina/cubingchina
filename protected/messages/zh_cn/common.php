@@ -18,8 +18,6 @@
  */
 return array (
   'Application' => '',
-  'Disqualified' => '已取消',
-  'If you were unable to pay online, please contact the organizer.' => '如果你无法在线支付，请尽快联系主办方。',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -140,6 +138,7 @@ return array (
   'Current' => '近期',
   'Delegate' => '代表',
   'Detail' => '详情',
+  'Disqualified' => '已取消',
   'Download' => '下载',
   'Download Participation Certificate' => '下载参赛证明',
   'Download Result Certificate' => '下载成绩证书',
@@ -167,6 +166,7 @@ return array (
   'I want to focus on competition.' => '我想专心比赛',
   'ID Card (Chinese Citizen)' => '身份证（中国大陆居民）',
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活过程中有任何问题，请发送邮件到{email}联系管理员。',
+  'If you were unable to pay online, please contact the organizer.' => '如果你无法在线支付，请尽快联系主办方。',
   'Image height or width exceeded, the limited width is {width} and height is {height}' => '图像宽度或高度过大，最大宽度是{width}，最大高度是{height}',
   'Improvement' => '提升',
   'Inactive User' => '未激活用户',

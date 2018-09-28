@@ -19,7 +19,7 @@ magic, mmagic, stack, funny, submission;
     background-color: #d2322d;
   }
   .cube-red {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #d2322d;
     }
   }
@@ -31,7 +31,7 @@ magic, mmagic, stack, funny, submission;
     background-color: #ed9c28;
   }
   .cube-orange {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #ed9c28;
     }
   }
@@ -43,7 +43,7 @@ magic, mmagic, stack, funny, submission;
     background-color: #47a447;
   }
   .cube-green {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #47a447;
     }
   }
@@ -55,7 +55,7 @@ magic, mmagic, stack, funny, submission;
     background-color: #39b3d7;
   }
   .cube-blue {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #39b3d7;
     }
   }
@@ -68,7 +68,7 @@ magic, mmagic, stack, funny, submission;
     color: #999999;
   }
   .cube-white {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #e9e9e9;
       color: #999999;
     }
@@ -82,7 +82,7 @@ magic, mmagic, stack, funny, submission;
     color: #888888;
   }
   .cube-yellow {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #ffea00;
       color: #888888;
     }
@@ -95,7 +95,7 @@ magic, mmagic, stack, funny, submission;
     background-color: #CD3BC6;
   }
   .cube-purple {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #CD3BC6;
     }
   }
@@ -107,15 +107,19 @@ magic, mmagic, stack, funny, submission;
     background-color: #f7adbd;
   }
   .cube-pink {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #f7adbd;
     }
   }
-  .cube-indigo.active > a {
+  .cube-indigo > a {
     background-color: #2d44a8;
+    color: #ffffff;
+  }
+  .cube-indigo.active > a {
+    background-color: #6993fd;
   }
   .cube-indigo {
-    &:hover > a {
+    &:hover > a, > a:focus {
       background-color: #6993fd;
     }
   }
@@ -1304,6 +1308,33 @@ body.live.disconnected {
       }
       p {
         font-weight: normal;
+      }
+    }
+  }
+}
+
+.my-ticket-list {
+  .ticket {
+    padding: 5px 15px;
+    background-color: #deefff;
+    border: 2px solid #deefff;
+    margin: 10px 0;
+    @media (min-width: 768px) {
+      display: flex;
+      .ticket-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        dl {
+          margin-bottom: 0;
+        }
+      }
+      .ticket-qrcode {
+        padding: 20px;
+        img {
+          width: 300px;
+        }
       }
     }
   }

@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Disqualified Events' => '已取消的项目',
   'ID' => '',
   'No.' => '',
   'User' => '',
@@ -34,6 +33,7 @@ return array (
   'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.' => '所有信息<b>仅用于</b>比赛相关的身份确认、保险办理及公安机关报备等。你可以选择在比赛结束后删除或者留在数据库以便后续比赛使用。',
   'Cancellation Time' => '退赛时间',
   'Competition' => '比赛',
+  'Disqualified Events' => '已取消的项目',
   'Do you have any guests joining you at the competition?' => '是否有陪同人员一同前往观看比赛？',
   'Events' => '项目',
   'Fee' => '报名费',
