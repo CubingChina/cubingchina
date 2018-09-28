@@ -1,8 +1,7 @@
 <?php if ($userTicket->isUnpaid()): ?>
-<h4><?php echo Yii::t('Ticket', 'Name'); ?></h4>
-<p><?php echo $userTicket->ticket->getAttributeValue('name'); ?></p>
-<h4><?php echo Yii::t('common', 'Fee'); ?></h4>
-<p><?php echo $userTicket->getFee(); ?></p>
+<?php $this->renderPartial('ticketInfo', [
+  'userTicket'=>$userTicket,
+]); ?>
 <?php if (count(Yii::app()->params->payments) > 1): ?>
 <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
 <?php endif; ?>

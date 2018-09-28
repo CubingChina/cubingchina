@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Ticket' => '入場券',
   'Application' => '',
   'WCA ID' => '',
   'more' => '',
