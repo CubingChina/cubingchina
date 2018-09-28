@@ -65,6 +65,12 @@ class PayController extends Controller {
 					$returnParams = $application->generateReturnParams($model);
 					$this->sendForm($params->return_url, $returnParams);
 					break;
+				case Pay::TYPE_TICKET:
+					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
+					$ticket = $model->ticket;
+					$competition = $ticket->competition;
+					$this->redirect($competition->getUrl('ticket'));
+					break;
 			}
 		}
 		$this->render('result', array(
