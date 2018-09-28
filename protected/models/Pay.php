@@ -30,6 +30,7 @@ class Pay extends ActiveRecord {
 
 	const TYPE_REGISTRATION = 0;
 	const TYPE_APPLICATION = 1;
+	const TYPE_TICKET = 2;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -396,6 +397,9 @@ class Pay extends ActiveRecord {
 			case self::TYPE_APPLICATION:
 				$this->notifyApplication();
 				break;
+			case self::TYPE_TICKET:
+				$this->userTicket->accept();
+				break;
 		}
 	}
 
@@ -761,6 +765,8 @@ class Pay extends ActiveRecord {
 			'competition'=>[self::BELONGS_TO, 'Competition', 'type_id'],
 			'registration'=>[self::BELONGS_TO, 'Registration', 'sub_type_id'],
 			'events'=>[self::HAS_MANY, 'PayEvent', 'pay_id'],
+			'ticket'=>[self::BELONGS_TO, 'Ticket', 'type_id'],
+			'userTicket'=>[self::BELONGS_TO, 'UserTicket', 'sub_type_id'],
 		];
 	}
 

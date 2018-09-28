@@ -786,6 +786,12 @@ class Competition extends ActiveRecord {
 		)) > 0;
 	}
 
+	public function getTicketIds() {
+		return array_map(function($ticket) {
+			return $ticket->id;
+		}, $this->tickets);
+	}
+
 	public function getMyCertUrl() {
 		$user = Yii::app()->controller->user;
 		return $this->getUserCertUrl($user);
@@ -2779,6 +2785,7 @@ class Competition extends ActiveRecord {
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
 			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'allEvents.id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
+			'tickets'=>[self::HAS_MANY, 'Ticket', 'type_id', 'on'=>'type=' . Ticket::TYPE_COMPETITION],
 		];
 	}
 

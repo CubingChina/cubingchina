@@ -18,8 +18,6 @@
  */
 return array (
   'Application' => '',
-  'Disqualified' => '已取消',
-  'If you were unable to pay online, please contact the organizer.' => '如果你無法在線支付，請盡快聯系主辦方。',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -72,6 +70,7 @@ return array (
   'Speedcubing' => '競速魔方',
   'Success' => '成功',
   'The Chinese speedcubing website.' => '中國魔方競速網站',
+  'Ticket' => '入場券',
   'Total Fee:' => '總計報名費：',
   'Travel' => '交通信息',
   'Type' => '類型',
@@ -140,6 +139,7 @@ return array (
   'Current' => '近期',
   'Delegate' => '代表',
   'Detail' => '詳情',
+  'Disqualified' => '已取消',
   'Download' => '下載',
   'Download Participation Certificate' => '下載參賽證明',
   'Download Result Certificate' => '下載成績證書',
@@ -167,6 +167,7 @@ return array (
   'I want to focus on competition.' => '我想專心比賽',
   'ID Card (Chinese Citizen)' => '身份證（中國大陸居民）',
   'If you have got problems in activating your account, please contact the administrator via {email}.' => '如果您在激活過程中有任何問題，請發送郵件到{email}聯系管理員。',
+  'If you were unable to pay online, please contact the organizer.' => '如果你無法在線支付，請盡快聯系主辦方。',
   'Image height or width exceeded, the limited width is {width} and height is {height}' => '圖像寬度或高度過大，最大寬度是{width}，最大高度是{height}',
   'Improvement' => '提升',
   'Inactive User' => '未激活用戶',
