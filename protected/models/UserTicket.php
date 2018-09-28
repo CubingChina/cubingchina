@@ -41,7 +41,7 @@ class UserTicket extends ActiveRecord {
 		$this->total_amount = $ticket->fee * 100;
 		switch ($ticket->type) {
 			case Ticket::TYPE_COMPETITION:
-				if (!$this->hasDiscount()) {
+				if ($this->hasDiscount()) {
 					$this->discount = Ticket::CHILDREN_DISCOUNT;
 				}
 				break;
@@ -84,6 +84,10 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function getQRCodeUrl() {
+		if ($this->code == '') {
+			$this->code = substr(sprintf('ticket-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
+			$this->save();
+		}
 		return CHtml::normalizeUrl([
 			'/qrCode/ticket',
 			'code'=>$this->code,
@@ -156,13 +160,14 @@ class UserTicket extends ActiveRecord {
 	public function rules() {
 		return [
 			['ticket_id', 'required', 'message'=>Yii::t('Competition', 'Please choose a ticket!')],
-			['name, passport_type, passport_number, repeatPassportNumber', 'required'],
+			['name, passport_type, passport_number', 'required'],
 			['discount, passport_type, status', 'numerical', 'integerOnly'=>true],
 			['id', 'length', 'max'=>32],
 			['ticket_id, user_id, total_amount, paid_amount, paid_time, create_time, update_time, cancel_time', 'length', 'max'=>11],
 			['name, passport_name', 'length', 'max'=>100],
 			['passport_number', 'length', 'max'=>50],
-			['repeatPassportNumber', 'compare', 'compareAttribute'=>'passport_number', 'allowEmpty'=>!$this->isNewRecord],
+			['repeatPassportNumber', 'required', 'on'=>'insert'],
+			['repeatPassportNumber', 'compare', 'compareAttribute'=>'passport_number', 'on'=>'insert'],
 			['passport_type', 'checkPassportType'],
 			['passport_number', 'checkPassportNumber'],
 			['code', 'length', 'max'=>64],
