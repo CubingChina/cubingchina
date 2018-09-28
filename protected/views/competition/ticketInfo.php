@@ -11,4 +11,11 @@
     <dt><?php echo $userTicket->getAttributeLabel('passport_number'); ?></dt>
     <dd><?php echo $userTicket->passport_number; ?></dd>
   </dl>
+  <p>
+    <?php echo CHtml::link(Yii::t('common', 'Edit'), $competition->getUrl('ticket', [
+      'id'=>$userTicket->id,
+    ]), [
+      'class'=>'btn btn-sm btn-primary'
+    ]); ?>
+  </p>
 </div>

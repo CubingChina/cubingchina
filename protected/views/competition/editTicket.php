@@ -2,65 +2,14 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
-      <?php if ($user->hasPaidTickets($competition)): ?>
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          <a data-toggle="collapse" href="#my-tickets"><?php echo Yii::t('Competition', 'My Tickets'); ?></a>
-        </div>
-        <div class="panel-body collapse in" id="my-tickets">
-          <div class="my-ticket-list">
-            <?php foreach ($user->getTickets($competition, UserTicket::STATUS_PAID) as $userTicket): ?>
-            <div class="ticket">
-              <?php $this->renderPartial('ticketInfo', [
-                'userTicket'=>$userTicket,
-                'competition'=>$competition,
-              ]); ?>
-              <div class="ticket-qrcode">
-                <?php echo CHtml::image($userTicket->getQRCodeUrl()); ?>
-              </div>
-            </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      </div>
-      <?php endif; ?>
       <div class="panel panel-primary">
-        <div class="panel-heading"><?php echo Yii::t('Competition', 'Buy Tickets'); ?></div>
+        <div class="panel-heading"><?php echo Yii::t('Competition', 'Edit Ticket'); ?></div>
         <div class="panel-body">
-          <?php if ($user->hasUnpaidTickets($competition)): ?>
-          <?php $_data_['userTicket'] = $user->getUnpaidTicket($competition); ?>
-          <?php $this->renderPartial('payForTicket', $_data_); ?>
-          <?php else: ?>
           <?php $form = $this->beginWidget('ActiveForm', [
             'id'=>'buy-ticket-form',
             'htmlOptions'=>[
             ],
           ]); ?>
-          <h3><?php echo Yii::t('Competition', 'Choose a ticket'); ?> <span class="required">*</span></h3>
-          <div class="ticket-list">
-            <?php foreach ($tickets as $ticket): ?>
-            <div class="ticket" data-fee="<?php echo $ticket->fee; ?>">
-              <?php echo $form->radioButton($model, 'ticket_id', [
-                'id'=>'ticket-' . $ticket->id,
-                'value'=>$ticket->id,
-                'uncheckValue'=>null,
-              ]); ?>
-              <label for="ticket-<?php echo $ticket->id; ?>">
-                <h4><?php echo $ticket->getAttributeValue('name'); ?></h4>
-                <p><?php echo $ticket->getAttributeValue('description'); ?></p>
-                <?php if ($model->discount > 0): ?>
-                <p>
-                  <s><?php echo Html::fontAwesome('rmb'), $ticket->fee; ?></s>
-                  <?php echo Html::fontAwesome('rmb'), $ticket->fee * $model->discount / 100; ?>
-                </p>
-                <?php else: ?>
-                <p><?php echo Html::fontAwesome('rmb'), $ticket->fee; ?></p>
-                <?php endif; ?>
-              </label>
-            </div>
-            <?php endforeach; ?>
-            <?php echo $form->error($model, 'ticket_id', ['class'=>'text-danger']); ?>
-          </div>
           <h3><?php echo Yii::t('Competition', 'Who\'s the ticket for') ;?></h3>
           <?php echo Html::formGroup(
             $model, 'name', [
@@ -112,10 +61,8 @@
             'id'=>'submit-button',
           ], Yii::t('common', 'Submit')); ?>
           <?php $this->endWidget(); ?>
-          <?php endif; ?>
         </div>
       </div>
-      <p class="help-text text-danger"><?php echo Yii::t('Ticket', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition.') ;?></p>
     </div>
   </div>
 </div>

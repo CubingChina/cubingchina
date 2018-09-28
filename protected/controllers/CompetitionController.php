@@ -383,6 +383,29 @@ class CompetitionController extends Controller {
 	public function actionTicket() {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
+		$id = $this->iGet('id');
+		if ($id && ($userTicket = UserTicket::model()->findByPk($id)) !== null) {
+			if ($user->isAdministrator() || $userTicket->user_id == $user->id) {
+				$userTicket->repeatPassportNumber = $userTicket->passport_number;
+				$userTicket->setScenario('edit');
+				if (isset($_POST['UserTicket'])) {
+					foreach (['name', 'passport_type', 'passport_number', 'passport_name', 'repeatPassportNumber'] as $attribute) {
+						if (isset($_POST['UserTicket'][$attribute])) {
+							$userTicket->$attribute = $_POST['UserTicket'][$attribute];
+						}
+					}
+					if ($userTicket->save()) {
+						Yii::app()->user->setFlash('success', Yii::t('Competition', 'Update ticket info successfully.'));
+						$this->redirect($competition->getUrl('ticket'));
+					}
+				}
+				$this->render('editTicket', [
+					'user'=>$user,
+					'competition'=>$competition,
+					'model'=>$userTicket,
+				]);
+			}
+		}
 		$model = new UserTicket();
 		$model->unsetAttributes();
 		$model->user_id = $this->user->id;

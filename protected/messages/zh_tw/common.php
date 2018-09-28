@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Ticket' => '入場券',
   'Application' => '',
   'WCA ID' => '',
   'more' => '',
@@ -71,6 +70,7 @@ return array (
   'Speedcubing' => '競速魔方',
   'Success' => '成功',
   'The Chinese speedcubing website.' => '中國魔方競速網站',
+  'Ticket' => '入場券',
   'Total Fee:' => '總計報名費：',
   'Travel' => '交通信息',
   'Type' => '類型',

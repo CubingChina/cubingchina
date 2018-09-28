@@ -1,7 +1,5 @@
 <?php if ($userTicket->isUnpaid()): ?>
-<?php $this->renderPartial('ticketInfo', [
-  'userTicket'=>$userTicket,
-]); ?>
+<?php $this->renderPartial('ticketInfo', $_data_); ?>
 <?php if (count(Yii::app()->params->payments) > 1): ?>
 <h4><?php echo Yii::t('common', 'Please choose a payment channel.'); ?></h4>
 <?php endif; ?>
@@ -24,11 +22,9 @@
   <br>
   <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
 </div>
-<?php endif; ?>
 <?php
-if ($userTicket->isUnpaid()) {
-  $paymentId = $userTicket->createPayment()->id;
-  Yii::app()->clientScript->registerScript('pay',
+$paymentId = $userTicket->createPayment()->id;
+Yii::app()->clientScript->registerScript('pay',
 <<<EOT
   if (navigator.userAgent.match(/MicroMessenger/i)) {
     $('#redirect-tips').removeClass('hide').nextAll().hide();
@@ -75,5 +71,5 @@ if ($userTicket->isUnpaid()) {
     form.submit();
   }
 EOT
-  );
-}
+);
+endif;
