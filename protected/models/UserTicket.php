@@ -123,7 +123,7 @@ class UserTicket extends ActiveRecord {
 	public function checkPassportNumber() {
 		switch ($this->passport_type) {
 			case User::PASSPORT_TYPE_ID:
-				if (!preg_match('|^\d{18}$|i', $this->passport_number)) {
+				if (!preg_match('|^\d{17}[\dX]$|i', $this->passport_number)) {
 					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
