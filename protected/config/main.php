@@ -73,8 +73,8 @@ $config = [
 					'urlSuffix'=>'.html'
 				],
 				'competition/<action:signin>'=>'competition/<action>',
-				'competition/<alias:[-A-z0-9]+>/<action:\w+>'=>'competition/<action>',
 				'<controller:competition|post>/<alias:[-A-z0-9]+>'=>'<controller>/detail',
+				'competition/<alias:[-A-z0-9]+>/<action:\w+>'=>'competition/<action>',
 				'live/<alias:[-A-z0-9]+>/statistics/<type:[-A-z0-9]+>'=>'live/statistics',
 				'live/<alias:[-A-z0-9]+>'=>'live/live',
 				'live/<alias:[-A-z0-9]+>/<action:\w+>'=>'live/<action>',

@@ -181,4 +181,26 @@ EOT
 		array_splice($containers, 2, 0, self::tag('div', ['class'=>'clearfix visible-sm visible-xs'], ''));
 		return self::tag('div', $options, implode('', $containers));
 	}
+
+	public static function wcaRegulationLink($text, $entry = null) {
+		return self::link($text, self::getWcaRegulationUrl($entry), ['target'=>'_blank']);
+	}
+
+	public static function getWcaRegulationUrl($entry = null) {
+		switch (Yii::app()->language) {
+			case 'zh_cn':
+				$url = 'https://www.worldcubeassociation.org/regulations/translations/chinese/';
+				break;
+			case 'zh_tw':
+				$url = 'https://www.worldcubeassociation.org/regulations/translations/chinese-traditional/';
+				break;
+			default:
+				$url = 'https://www.worldcubeassociation.org/regulations/';
+				break;
+		}
+		if ($entry !== null) {
+			$url .= '#' . $entry;
+		}
+		return $url;
+	}
 }

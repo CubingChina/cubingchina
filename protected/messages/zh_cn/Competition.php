@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Edit Ticket' => '编辑入场券信息',
   'ID' => '',
   'Online Pay' => '',
   'Update ticket info successfully.' => '',
@@ -52,6 +51,7 @@ return array (
   'Delegate' => '代表',
   'Delegates' => '代表',
   'Do you confirm this can be announced?' => '请确认该比赛可以公示了！',
+  'Edit Ticket' => '编辑入场券信息',
   'End Date' => '结束日期',
   'Entry Fee' => '报名费',
   'Events' => '项目',
