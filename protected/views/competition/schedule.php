@@ -149,6 +149,33 @@
     </div>
   </div>
   <?php endif; ?>
+  <?php if ($competition->isWCACompetition()): ?>
+  <div class="schedule-comment">
+    <p></p>
+    <ul>
+      <li>
+        <b><?php echo Yii::t('Schedule', 'Cutoff'); ?></b>: <?php echo Yii::t('Schedule', 'The result to beat to proceed to the second phase of a combined round (see Regulation {9g}).', [
+          '{9g}'=>Html::wcaRegulationLink('9g', '9g'),
+        ]); ?>
+      </li>
+      <li>
+        <b><?php echo Yii::t('Schedule', 'Time Limit'); ?></b>: <?php echo Yii::t('Schedule', 'If you reach the time limit during your solve, the judge will stop you and your result will be DNF (see Regulation {A1a4}).', [
+          '{A1a4}'=>Html::wcaRegulationLink('A1a4', 'A1a4'),
+        ]); ?>
+      </li>
+      <li>
+        <b><?php echo Yii::t('Schedule', 'Competitors'); ?></b>: <?php echo Yii::t('Schedule', 'The number of advanced competitors will not exceed 75% (see Regulation {9p2}).', [
+          '{9p2}'=>Html::wcaRegulationLink('9p2', 'p92'),
+        ]); ?>
+      </li>
+      <li>
+        <span class="comment">*</span> <?php echo Yii::t('Schedule', 'The time limit for 3x3x3 multi-blindfolded is 10 minutes per cube, up to 60 minutes (see Regulation {H1b}).', [
+          '{H1b}'=>Html::wcaRegulationLink('H1b', 'H1b'),
+        ]); ?>
+      </li>
+    </ul>
+  </div>
+  <?php endif ;?>
 </div>
 <?php
 Yii::app()->clientScript->registerScript('schedule',

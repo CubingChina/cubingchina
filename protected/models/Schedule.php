@@ -112,7 +112,7 @@ class Schedule extends ActiveRecord {
 			'format' => Yii::t('Schedule', 'Format'),
 			'round' => Yii::t('Schedule', 'Round'),
 			'number' => Yii::t('Schedule', 'Competitors'),
-			'cut_off' => Yii::t('Schedule', 'Cut Off'),
+			'cut_off' => Yii::t('Schedule', 'Cutoff'),
 			'time_limit' => Yii::t('Schedule', 'Time Limit'),
 			'cumulative' => Yii::t('Schedule', 'Cumulative'),
 		);

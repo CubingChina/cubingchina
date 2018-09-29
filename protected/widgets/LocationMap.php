@@ -16,7 +16,6 @@ class LocationMap extends Widget {
 			'data-venue'=>$location->getAttributeValue('venue'),
 			'data-address'=>$location->getFullAddress(false),
 		]);
-		Yii::app()->clientScript->registerPackage('leaflet');
 		Yii::app()->clientScript->registerScript('locationMap',
 <<<EOT
 $('.location-map').each(function() {

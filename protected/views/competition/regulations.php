@@ -5,7 +5,7 @@
     <dt><?php echo Yii::t('Competition', 'WCA Competition'); ?></dt>
     <dd>
       <?php echo Yii::t('Competition', 'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.', array(
-      '{regulations}'=>CHtml::link(Yii::t('Competition', 'WCA regulations'), $competition->getWcaRegulationUrl(), array('target'=>'_blank')),
+      '{regulations}'=>Html::wcaRegulationLink(Yii::t('Competition', 'WCA regulations')),
     ));?>
     </dd>
     <?php endif; ?>
