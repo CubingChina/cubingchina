@@ -19,10 +19,10 @@
 return array (
   'Cumulative' => '',
   'ID' => '',
-  'If you reach the time limit during your solve, the judge will stop you and your result will be DNF (see Regulation {A1a4}).' => '如果你某次復原的過程中超過還原時限，裁判會叫停該次復原並記為DNF（參閱規則{A1a4}）。',
+  'If you reach the time limit during your solve, the judge will stop you and your result will be DNF (see Regulation {A1a4}).' => '如果你某次復原的過程中達到還原時限，裁判會叫停該次復原並記為DNF（參閱規則{A1a4}）。',
   'Number' => '',
-  'The number of advanced competitors will not exceed 75% (see Regulation {9p2}).' => '每輪的晉級人數不會超過上一輪參賽人數的75%（參閱規則{9p2}）。',
-  'The result to beat to proceed to the second phase of a combined round (see Regulation {9g}).' => '在組合制輪次中，達到及格線以獲得後面的還原機會（參閱規則{9g}）。',
+  'The number of advancing competitors will not exceed 75% (see Regulation {9p2}).' => '每輪的晉級人數不會超過上一輪參賽人數的75%（參閱規則{9p2}）。',
+  'The result to beat to proceed to the second phase of a combined round (see Regulation {9g}).' => '在組合制輪次中，取得小於及格線的成績，以獲得後面的還原機會（參閱規則{9g}）。',
   'The time limit for 3x3x3 multi-blindfolded is 10 minutes per cube, up to 60 minutes (see Regulation {H1b}).' => '三階多盲的還原時限是每個魔方10分鍾，上限60分鍾（參閱規則{H1b}）。',
   'Up to 60 minutes' => '上限60分',
   'Blue<span class="show-on-full"> Stage</span>' => '藍色賽台',
