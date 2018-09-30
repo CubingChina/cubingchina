@@ -18,6 +18,8 @@
  */
 return array (
   'Application' => '',
+  'Has signed in' => '已簽到',
+  'Hasn\'t signed in' => '未簽到',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -73,7 +75,6 @@ return array (
   'Ticket' => '入場券',
   'Total Fee:' => '總計報名費：',
   'Travel' => '交通信息',
-  'Type' => '類型',
   'WR' => '世界紀錄',
   'bronze' => '銅牌',
   'gold' => '金牌',
@@ -296,6 +297,7 @@ return array (
   'To be announced' => '待定',
   'Tools' => '工具',
   'Total Fee' => '總計報名費',
+  'Type' => '類型',
   'Unknown' => '未知',
   'Unpaid' => '未付',
   'Upcoming Competitions' => '近期賽事',
