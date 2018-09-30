@@ -106,70 +106,6 @@ class CompetitionController extends Controller {
 				Yii::app()->end();
 			}
 		}
-		$code = $this->sPost('code');
-		if ($code != '') {
-			$registration = Registration::model()->findByAttributes(array(
-				'code'=>substr($code, 0, 64),
-			));
-			if ($registration == null) {
-				$this->ajaxError(404);
-			}
-			$this->ajaxOK([
-				'id'=>$registration->id,
-				'number'=>$registration->getUserNumber(),
-				'passport'=>$registration->user->passport_number,
-				'user'=>[
-					'name'=>$registration->user->getCompetitionName(),
-				],
-				'fee'=>$registration->getTotalFee(),
-				'paid'=>!!$registration->paid,
-				'signed_in'=>!!$registration->signed_in,
-				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
-				'has_entourage'=>!!$registration->has_entourage,
-				'entourage_name'=>$registration->entourage_name,
-				'entourage_passport_type_text'=>$registration->getPassportTypeText(),
-				'entourage_passport_number'=>$registration->entourage_passport_number,
-				't_shirt_size'=>$registration->getTShirtSizeText(),
-				'staff_type'=>$registration->getStaffTypeText(),
-			]);
-		}
-		if (isset($_POST['id'])) {
-			$registration = Registration::model()->findByAttributes(array(
-				'id'=>$_POST['id'],
-			));
-			if ($registration === null) {
-				$this->ajaxError(404);
-			}
-			$action = $this->sPost('action');
-			switch ($action) {
-				case 'pay':
-					$registration->paid = Registration::PAID;
-					break;
-				case 'signin':
-					$registration->signed_in = Registration::YES;
-					$registration->signed_date = time();
-					$registration->signed_scan_code = $session->get('scan_code');
-			}
-			$registration->save();
-			$this->ajaxOK([
-				'id'=>$registration->id,
-				'number'=>$registration->getUserNumber(),
-				'passport'=>$registration->user->passport_number,
-				'user'=>[
-					'name'=>$registration->user->getCompetitionName(),
-				],
-				'fee'=>$registration->getTotalFee(),
-				'paid'=>!!$registration->paid,
-				'signed_in'=>!!$registration->signed_in,
-				'signed_date'=>date('Y-m-d H:i:s', $registration->signed_date),
-				'has_entourage'=>!!$registration->has_entourage,
-				'entourage_name'=>$registration->entourage_name,
-				'entourage_passport_type_text'=>$registration->getPassportTypeText(),
-				'entourage_passport_number'=>$registration->entourage_passport_number,
-				't_shirt_size'=>$registration->getTShirtSizeText(),
-				'staff_type'=>$registration->getStaffTypeText(),
-			]);
-		}
 
 		$application = $this->getWechatApplication([
 			'js'=>true,
@@ -179,7 +115,7 @@ class CompetitionController extends Controller {
 			],
 		]);
 		$min = DEV ? '' : '.min';
-		$version = '201704010032';
+		$version = '201809301932';
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('/f/plugins/vue/vue' . $min . '.js');
 		$clientScript->registerScriptFile('/f/js/scan.js?ver=' . $version);

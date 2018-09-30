@@ -220,6 +220,27 @@ class Registration extends ActiveRecord {
 		return $types[$this->staff_type] ?? '';
 	}
 
+	public function getDataForSignin() {
+		return [
+			'id'=>$this->id,
+			'number'=>$this->getUserNumber(),
+			'passport'=>$this->user->passport_number,
+			'user'=>[
+				'name'=>$this->user->getCompetitionName(),
+			],
+			'fee'=>$this->getTotalFee(),
+			'paid'=>!!$this->paid,
+			'signed_in'=>!!$this->signed_in,
+			'signed_date'=>date('Y-m-d H:i:s', $this->signed_date),
+			'has_entourage'=>!!$this->has_entourage,
+			'entourage_name'=>$this->entourage_name,
+			'entourage_passport_type_text'=>$this->getPassportTypeText(),
+			'entourage_passport_number'=>$this->entourage_passport_number,
+			't_shirt_size'=>$this->getTShirtSizeText(),
+			'staff_type'=>$this->getStaffTypeText(),
+		];
+	}
+
 	public function isPending() {
 		return $this->status == self::STATUS_PENDING;
 	}
