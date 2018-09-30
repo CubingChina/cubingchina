@@ -222,6 +222,8 @@ class Registration extends ActiveRecord {
 
 	public function getDataForSignin() {
 		return [
+			'type'=>'registration',
+			'title'=>Yii::t('Competition', 'Competitor'),
 			'id'=>$this->id,
 			'number'=>$this->getUserNumber(),
 			'passport'=>$this->user->passport_number,
@@ -237,7 +239,7 @@ class Registration extends ActiveRecord {
 			'entourage_passport_type_text'=>$this->getPassportTypeText(),
 			'entourage_passport_number'=>$this->entourage_passport_number,
 			't_shirt_size'=>$this->getTShirtSizeText(),
-			'staff_type'=>$this->getStaffTypeText(),
+			'staff_type'=>$this->competition->staff ? $this->getStaffTypeText() : '',
 		];
 	}
 

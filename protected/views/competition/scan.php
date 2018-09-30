@@ -21,13 +21,15 @@
     >
   </div>
   <dl class="dl-horizontal" v-if="registration.id">
-    <dt>No.</dt>
-    <dd>{{registration.number}}</dd>
+    <dt><?php echo Yii::t('common', 'Type'); ?></dt>
+    <dd>{{registration.title}}</dd>
+    <dt v-if="registration.number">No.</dt>
+    <dd v-if="registration.number">{{registration.number}}</dd>
     <dt><?php echo Yii::t('Registration', 'Name'); ?></dt>
     <dd>{{registration.user.name}}</dd>
     <dt v-if="registration.passport"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
     <dd v-if="registration.passport">{{registration.passport}}</dd>
-    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
+    <dt><?php echo Yii::t('common', 'Fee'); ?></dt>
     <dd>{{registration.fee}}
       (<span v-if="registration.paid">
         <?php echo Yii::t('common', 'Paid'); ?>
@@ -36,6 +38,8 @@
         <?php echo Yii::t('common', 'Unpaid'); ?>
       </span>)
     </dd>
+    <dt><?php echo Yii::t('Competition', 'Status'); ?></dt>
+    <dd>{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</dd>
     <dt v-if="registration.signed_in"><?php echo Yii::t('common', 'Signed in Date'); ?></dt>
     <dd v-if="registration.signed_in">{{registration.signed_date}}
     </dd>

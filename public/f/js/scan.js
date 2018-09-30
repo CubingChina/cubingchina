@@ -47,10 +47,11 @@
         if (!code) {
           return;
         }
+        var type = code.split('-')[0]
         var that = this;
         that.loading = true;
         $.ajax({
-          url: '/api/competition/competitor',
+          url: '/api/competition/' + type,
           data: {
             competition_id: that.competitionId,
             code: code,
@@ -75,6 +76,8 @@
         $.ajax({
           url: '/api/competition/signin',
           data: {
+            competition_id: that.competitionId,
+            type: that.registration.type,
             id: that.registration.id,
             action: action
           },
