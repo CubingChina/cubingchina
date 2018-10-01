@@ -3,8 +3,9 @@
   if (!supportWebSocket) {
     return;
   }
+  var msgKey = 'websocket_msgs';
   function WS(uri) {
-    this._msgs = [];
+    this._msgs = store.get(msgKey) || [];
     this._eventHandlers = [];
     this.threshold = 20000;
     this.lastActiveTime = Date.now();
@@ -27,6 +28,7 @@
     send: function(msg) {
       if (this.conn.readyState != WebSocket.OPEN) {
         this._msgs.push(msg);
+        store.set(msgKey, this._msgs);
         this.connect();
       } else {
         this.conn.send(JSON.stringify(msg));
@@ -60,6 +62,7 @@
             conn.send(JSON.stringify(msg));
           });
           that._msgs = [];
+          store.set(msgKey, []);
           that.lastActiveTime = Date.now();
           conn.onmessage = that.receive.bind(that);
         }
