@@ -162,7 +162,7 @@ class ConciseSchedule extends Widget {
 			$schedule['Event'],
 			$schedule['Round'],
 		]);
-		foreach (array('Cut Off', 'Time Limit', 'Group', 'Competitors') as $key) {
+		foreach (array('Cutoff', 'Time Limit', 'Group', 'Competitors') as $key) {
 			if (isset($schedule[$key]) && $schedule[$key] != '') {
 				$text[] = Yii::t('Schedule', $key) . $this->space . $schedule[$key];
 			}
