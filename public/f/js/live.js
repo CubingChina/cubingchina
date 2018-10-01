@@ -822,7 +822,7 @@
                   }
                 };
                 if (that.checkResult(true)) {
-                  store.dispatch('UPDATE_RESULT', that.result);
+                  // store.dispatch('UPDATE_RESULT', that.result);
                   that.result = {
                     v: []
                   };
