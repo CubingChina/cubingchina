@@ -320,7 +320,7 @@ class CompetitionController extends Controller {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
 		$id = $this->iGet('id');
-		if ($id && ($userTicket = UserTicket::model()->findByPk($id)) !== null) {
+		if ($id && ($userTicket = UserTicket::model()->findByPk($id)) !== null && $userTicket->isEditable()) {
 			if ($user->isAdministrator() || $userTicket->user_id == $user->id) {
 				$userTicket->repeatPassportNumber = $userTicket->passport_number;
 				$userTicket->setScenario('edit');

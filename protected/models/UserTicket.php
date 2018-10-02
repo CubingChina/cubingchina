@@ -173,6 +173,10 @@ class UserTicket extends ActiveRecord {
 		return $this->status == self::STATUS_UNPAID;
 	}
 
+	public function isEditable() {
+		return !$this->signed_in;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

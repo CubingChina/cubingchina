@@ -10,7 +10,7 @@
         <div class="panel-body collapse in" id="my-tickets">
           <div class="my-ticket-list">
             <?php foreach ($user->getTickets($competition, UserTicket::STATUS_PAID) as $userTicket): ?>
-            <div class="ticket">
+            <div class="ticket<?php if ($userTicket->signed_in) echo ' used'; ?>">
               <?php $this->renderPartial('ticketInfo', [
                 'userTicket'=>$userTicket,
                 'competition'=>$competition,
