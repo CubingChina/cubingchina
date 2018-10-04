@@ -1612,6 +1612,7 @@ class Competition extends ActiveRecord {
 				if ($format == 'a') {
 					if ($result->average != $lastAverage) {
 						$lastAverage = $result->average;
+						$lastBest = $result->best;
 						$result->pos = $i + 1;
 						$count = $i;
 					} elseif ($result->best != $lastBest) {
@@ -1646,6 +1647,7 @@ class Competition extends ActiveRecord {
 			foreach ($results as $i=>$result) {
 				if ($result->average != $lastAverage) {
 					$lastAverage = $result->average;
+					$lastBest = $result->best;
 					$result->pos = $i + 1;
 					$count = $i;
 				} elseif ($result->best != $lastBest) {
