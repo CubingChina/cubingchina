@@ -22,9 +22,9 @@ class Faq extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_HIDE=>'隐藏', 
-			self::STATUS_SHOW=>'发布', 
-			// self::STATUS_DELETE=>'删除', 
+			self::STATUS_HIDE=>'隐藏',
+			self::STATUS_SHOW=>'发布',
+			// self::STATUS_DELETE=>'删除',
 		);
 	}
 
@@ -57,7 +57,7 @@ class Faq extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/faq/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkPermission('faq_admin')) {
+		if (Yii::app()->user->checkPermission('faq')) {
 			switch ($this->status) {
 				case self::STATUS_HIDE:
 					$buttons[] = CHtml::link('发布',  array('/board/faq/show',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));

@@ -147,7 +147,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 新闻 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'news',
-          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+          'visible'=>Yii::app()->user->checkPermission('news'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -173,6 +173,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 新闻模板',
               'url'=>array('/board/news/template'),
+              'visible'=>Yii::app()->user->checkPermission('news_admin'),
             ),
           ),
         ),
