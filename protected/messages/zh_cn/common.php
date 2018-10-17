@@ -18,8 +18,6 @@
  */
 return array (
   'Application' => '',
-  'Has signed in' => '已签到',
-  'Hasn\'t signed in' => '未签到',
   'WCA ID' => '',
   'more' => '',
   '{minute}min' => '',
@@ -162,6 +160,8 @@ return array (
   'Frequently Asked Questions' => '常见问题解答',
   'Gender' => '性别',
   'Greater China' => '中华组',
+  'Has signed in' => '已签到',
+  'Hasn\'t signed in' => '未签到',
   'He' => '他',
   'Hide' => '隐藏',
   'Home' => '首页',

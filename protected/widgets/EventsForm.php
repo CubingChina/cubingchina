@@ -66,7 +66,7 @@ class EventsForm extends Widget {
 				$locations = [];
 				$options = [];
 				foreach ($competition->sortedLocations as $location) {
-					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName() : $location->getFullAddress(false);
+					$locations[$location->location_id] = $competition->multi_countries ? $location->getCityName(true, true) : $location->getFullAddress(false);
 					$options[$location->location_id] = [
 						'data-display-fee'=>$location->getFeeInfo(),
 						'data-fee'=>$location->getFeeNumber(),

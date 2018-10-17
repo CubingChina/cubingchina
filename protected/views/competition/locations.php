@@ -5,26 +5,35 @@
 <ol>
 <?php foreach ($competition->sortedLocations as $location): ?>
   <li>
-  <?php echo $location->getFullAddress(); ?><br>
   <?php if ($competition->multi_countries || $competition->complex_multi_location): ?>
-  <dl class="dl-horizontal location-delegate">
+  <div class="competition-location">
+    <div class="attribute"><?php echo Yii::t('common', 'City'); ?></div>
+    <div class="value"><?php echo $location->getCityName(true, true); ?></div>
+    <div class="attribute"><?php echo Yii::t('Competition', 'Address'); ?></div>
+    <div class="value"><?php echo $location->getAttributeValue('venue'); ?></div>
     <?php if ($competition->multi_countries): ?>
-    <dt><?php echo Yii::t('Competition', 'Delegate'); ?></dt>
-    <dd>
+    <div class="attribute"><?php echo Yii::t('Competition', 'Delegate'); ?></div>
+    <div class="value">
       <?php echo (new CMarkdownParser())->transform($location->getDelegateInfo()); ?>
-    </dd>
+    </div>
     <?php endif; ?>
     <?php if ($location->organizer): ?>
-    <dt><?php echo Yii::t('Competition', 'Organizer'); ?></dt>
-    <dd><?php echo $location->organizer->getMailtoLink(); ?></dd>
+    <div class="attribute"><?php echo Yii::t('Competition', 'Organizer'); ?></div>
+    <div class="value"><?php echo $location->organizer->getMailtoLink(); ?></div>
     <?php endif; ?>
-    <dt><?php echo Yii::t('Competition', ($competition->complex_multi_location ? 'Base ' : '') . 'Entry Fee'); ?></dt>
-    <dd><?php echo $location->getFeeInfo(); ?></dd>
+    <div class="attribute"><?php echo Yii::t('Competition', ($competition->complex_multi_location ? 'Base ' : '') . 'Entry Fee'); ?></div>
+    <div class="value"><?php echo $location->getFeeInfo(); ?></div>
+    <?php if ($location->payment_method): ?>
+    <div class="attribute"><?php echo Yii::t('Competition', 'Payment Method'); ?></div>
+    <div class="value"><?php echo $location->payment_method; ?></div>
+    <?php endif; ?>
     <?php if ($location->competitor_limit > 0): ?>
-    <dt><?php echo Yii::t('Competition', 'Competitor Limit'); ?></dt>
-    <dd><?php echo $location->competitor_limit; ?></dd>
-  <?php endif; ?>
-  </dl>
+    <div class="attribute"><?php echo Yii::t('Competition', 'Competitor Limit'); ?></div>
+    <div class="value"><?php echo $location->competitor_limit; ?></div>
+    <?php endif; ?>
+  </div>
+  <?php else: ?>
+  <?php echo $location->getFullAddress(); ?><br>
   <?php endif; ?>
   <?php if ($showMap): ?>
   <?php $this->widget('LocationMap', [
