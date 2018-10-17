@@ -158,14 +158,24 @@ class MultiLocations extends Widget {
 					CHtml::error($model, 'locations.delegate_id.' . $key, array('class'=>'text-danger'))
 				);
 				echo Html::formGroup(
-					$model, 'locations[delegate_text][]', array(
+					$model, 'locations[delegate_name][]', array(
 						'class'=>'col-lg-12',
 					),
-					CHtml::label('手写代表', false),
-					CHtml::textField(CHtml::activeName($model, 'locations[delegate_text][]'), $location['delegate_text'], array(
+					CHtml::label('代表名字', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[delegate_name][]'), $location['delegate_name'], array(
 						'class'=>'form-control',
 					)),
-					CHtml::error($model, 'locations.delegate_text.' . $key, array('class'=>'text-danger'))
+					CHtml::error($model, 'locations.delegate_name.' . $key, array('class'=>'text-danger'))
+				);
+				echo Html::formGroup(
+					$model, 'locations[delegate_email][]', array(
+						'class'=>'col-lg-12',
+					),
+					CHtml::label('代表邮箱', false),
+					CHtml::textField(CHtml::activeName($model, 'locations[delegate_email][]'), $location['delegate_email'], array(
+						'class'=>'form-control',
+					)),
+					CHtml::error($model, 'locations.delegate_email.' . $key, array('class'=>'text-danger'))
 				);
 			}
 			if ($model->multi_countries || $model->complex_multi_location) {
@@ -179,6 +189,18 @@ class MultiLocations extends Widget {
 					)),
 					CHtml::error($model, 'locations.fee.' . $key, array('class'=>'text-danger'))
 				);
+				if ($model->multi_countries) {
+					echo Html::formGroup(
+						$model, 'locations[payment_method][]', array(
+							'class'=>'col-lg-12',
+						),
+						CHtml::label('支付方式', false),
+						CHtml::textField(CHtml::activeName($model, 'locations[payment_method][]'), $location['payment_method'], array(
+							'class'=>'form-control',
+						)),
+						CHtml::error($model, 'locations.payment_method.' . $key, array('class'=>'text-danger'))
+					);
+				}
 				echo Html::formGroup(
 					$model, 'locations[competitor_limit][]', array(
 						'class'=>'col-lg-12',

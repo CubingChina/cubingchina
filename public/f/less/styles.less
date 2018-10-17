@@ -1054,19 +1054,25 @@ table.concise-schedule {
     }
   }
 }
-dl.location-delegate {
-  margin-bottom: 0;
-  dd, dt, p {
+.competition-location {
+  padding-left: 5px;
+  border-left: 2px solid #6091ba;
+  p {
     line-height: inherit;
     margin-bottom: 0;
   }
+  .attribute {
+    font-weight: bold;
+  }
   @media (min-width: 768px) {
-    dd {
-      margin-left: 80px;
+    .value {
+      margin-left: 120px;
     }
-    dt {
+    .attribute {
       text-align: left;
       width: 120px;
+      float: left;
+      clear: left;
     }
   }
 }

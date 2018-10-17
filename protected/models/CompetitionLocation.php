@@ -14,24 +14,37 @@
  */
 class CompetitionLocation extends ActiveRecord {
 
-	public function getCityName($showDisinct = true) {
+	public function getCityName($showDisinct = true, $showRegion = false) {
 		switch (true) {
 			case $this->country_id > 3:
-				return $this->getAttributeValue('city_name');
+				$cityName = $this->getAttributeValue('city_name');
+				break;
 			case $this->country_id > 1:
-				return $this->country->getAttributeValue('name');
+				$cityName = $this->country->getAttributeValue('name');
+				break;
 			case $showDisinct && in_array($this->province_id, [215, 525, 567, 642]):
-				return $this->province->getAttributeValue('name');
+				$cityName = $this->province->getAttributeValue('name');
+				break;
 			default:
-				return $this->city ? $this->city->getAttributeValue('name') : $this->getAttributeValue('venue');
+				$cityName = $this->city ? $this->city->getAttributeValue('name') : $this->getAttributeValue('venue');
+				break;
 		}
+		if ($showRegion) {
+			$country = $this->country ? Yii::t('Region', $this->country->getAttributeValue('name')) : '';
+			if (Yii::app()->controller->isCN) {
+				$cityName = $country . $cityName;
+			} else {
+				$cityName .= ', ' . $country;
+			}
+		}
+		return $cityName;
 	}
 
 	public function getDelegateInfo() {
 		if ($this->delegate) {
 			return CHtml::mailto(Html::fontAwesome('envelope', 'a') . $this->delegate->getAttributeValue('name', true), $this->delegate->email);
 		} else {
-			return $this->delegate_text;
+			return CHtml::mailto(Html::fontAwesome('envelope', 'a') . $this->delegate_name, $this->delegate_email);
 		}
 	}
 
@@ -94,7 +107,7 @@ class CompetitionLocation extends ActiveRecord {
 			array('competition_id', 'required'),
 			array('location_id, country_id, province_id, city_id, delegate_id, status, competitor_limit, organizer_id', 'numerical', 'integerOnly'=>true),
 			array('competition_id', 'length', 'max'=>10),
-			array('venue, venue_zh, city_name, city_name_zh, delegate_text, fee, longitude, latitude', 'length', 'max'=>512),
+			array('venue, venue_zh, city_name, city_name_zh, delegate_name, delegate_email, fee, payment_method, longitude, latitude', 'length', 'max'=>512),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, competition_id, location_id, province_id, city_id, venue, venue_zh', 'safe', 'on'=>'search'),

@@ -53,6 +53,10 @@
           <p><i class="fa fa-rmb"></i><?php echo $registration->getRefundFee(); ?></p>
           <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
           <?php endif; ?>
+          <?php if ($registration->location->payment_method): ?>
+          <h4><?php echo Yii::t('Competition', 'Payment Method') ;?></h4>
+          <p><?php echo $registration->location->payment_method; ?></p>
+          <?php endif; ?>
           <h4><?php echo Yii::t('Registration', 'Registration Time'); ?></h4>
           <p><?php echo date('Y-m-d H:i:s', $registration->date); ?></p>
           <?php if ($registration->isAccepted()): ?>

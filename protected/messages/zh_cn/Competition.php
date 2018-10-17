@@ -17,7 +17,8 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Competitor' => '选手',
+  'Address' => '地址',
+  'Payment Method' => '支付方式',
   'ID' => '',
   'Online Pay' => '',
   'Update ticket info successfully.' => '',
@@ -43,6 +44,7 @@ return array (
   'City' => '城市',
   'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.' => '请先点击{here}仔细阅读比赛相应报名规则再来注册报名！如有任何问题请联系比赛主办团队。',
   'Competition Name' => '比赛名字',
+  'Competitor' => '选手',
   'Competitor Limit' => '人数限制',
   'Competitors' => '选手',
   'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.' => '选手需要在{date}之前达到本次比赛项目的<b>资格线</b>。',

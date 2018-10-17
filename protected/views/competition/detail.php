@@ -167,6 +167,8 @@
     <?php if ($competition->cancellation_end_time > 0 && $competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Registration Cancellation Deadline'); ?></dt>
     <dd><?php echo date('Y-m-d H:i:s', $competition->cancellation_end_time); ?></dd>
+    <?php endif; ?>
+    <?php if ($competition->reg_reopen_time > 0 && $competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Registration Restarting Time'); ?></dt>
     <dd>
       <?php echo date('Y-m-d H:i:s', $competition->reg_reopen_time); ?>

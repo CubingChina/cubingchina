@@ -228,7 +228,7 @@ class CompetitionController extends Controller {
 			Yii::app()->end();
 		}
 		$model = new Registration('register');
-		$model->unsetAttributes();
+		// $model->unsetAttributes();
 		$model->competition = $competition;
 		$model->competition_id = $competition->id;
 		$model->events = array_values(PreferredEvent::getUserEvents($user));
