@@ -95,6 +95,22 @@ class UserTicket extends ActiveRecord {
 		]);
 	}
 
+	public function getDataForSignin() {
+		return [
+			'type'=>'ticket',
+			'title'=>$this->ticket->getAttributeValue('name'),
+			'id'=>$this->id,
+			'passport'=>$this->passport_number,
+			'user'=>[
+				'name'=>$this->name,
+			],
+			'fee'=>$this->total_amount * ($this->discount ?: 100) / 10000,
+			'paid'=>$this->isPaid(),
+			'signed_in'=>!!$this->signed_in,
+			'signed_date'=>date('Y-m-d H:i:s', $this->signed_date),
+		];
+	}
+
 	public function getPassportTypeText() {
 		$types = User::getPassportTypes();
 		$text = $types[$this->passport_type] ?? $this->passport_type;
@@ -155,6 +171,10 @@ class UserTicket extends ActiveRecord {
 
 	public function isUnpaid() {
 		return $this->status == self::STATUS_UNPAID;
+	}
+
+	public function isEditable() {
+		return !$this->signed_in;
 	}
 
 	/**

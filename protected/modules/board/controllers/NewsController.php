@@ -3,18 +3,25 @@
 class NewsController extends AdminController {
 
 	public function accessRules() {
-		return array(
-			array(
+		return [
+			[
 				'allow',
-				'roles'=>array(
-					'role'=>User::ROLE_ADMINISTRATOR,
-				),
-			),
-			array(
+				'actions'=>['index', 'add', 'edit', 'render', 'show', 'hide'],
+				'roles'=>[
+					'permission'=>'news',
+				],
+			],
+			[
+				'allow',
+				'roles'=>[
+					'permission'=>'news_admin',
+				],
+			],
+			[
 				'deny',
-				'users'=>array('*'),
-			),
-		);
+				'users'=>['*'],
+			],
+		];
 	}
 
 	public function actionAdd() {
@@ -27,13 +34,13 @@ class NewsController extends AdminController {
 			$model->attributes = $_POST['News'];
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '新加新闻成功');
-				$this->redirect(array('/board/news/index'));
+				$this->redirect(['/board/news/index']);
 			}
 		}
 		$model->formatDate();
-		$this->render('edit', array(
+		$this->render('edit', [
 			'model'=>$model,
-		));
+		]);
 	}
 
 	public function actionEdit() {
@@ -50,18 +57,18 @@ class NewsController extends AdminController {
 			}
 		}
 		$model->formatDate();
-		$this->render('edit', array(
+		$this->render('edit', [
 			'model'=>$model,
-		));
+		]);
 	}
 
 	public function actionIndex() {
 		$model = new News();
 		$model->unsetAttributes();
 		$model->attributes = $this->aRequest('News');
-		$this->render('index', array(
+		$this->render('index', [
 			'model'=>$model,
-		));
+		]);
 	}
 
 	public function actionEditTemplate() {
@@ -77,18 +84,18 @@ class NewsController extends AdminController {
 				$this->redirect($this->getReferrer());
 			}
 		}
-		$this->render('editTemplate', array(
+		$this->render('editTemplate', [
 			'model'=>$model,
-		));
+		]);
 	}
 
 	public function actionTemplate() {
 		$model = new NewsTemplate();
 		$model->unsetAttributes();
 		$model->attributes = $this->aRequest('NewsTemplate');
-		$this->render('template', array(
+		$this->render('template', [
 			'model'=>$model,
-		));
+		]);
 	}
 
 	public function actionRender() {

@@ -1,4 +1,4 @@
-<div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" v-cloak>
+<div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" data-competition-id="<?php echo $competition->id; ?>" v-cloak>
   <?php echo CHtml::link(Yii::t('Competition', 'Signin List'), ['/board/registration/signin', 'Registration'=>['competition_id'=>$competition->id]], ['class'=>'btn btn-theme']); ?>
   <div class="text-center" v-if="mode == 'wx'">
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
@@ -21,13 +21,15 @@
     >
   </div>
   <dl class="dl-horizontal" v-if="registration.id">
-    <dt>No.</dt>
-    <dd>{{registration.number}}</dd>
+    <dt><?php echo Yii::t('common', 'Type'); ?></dt>
+    <dd>{{registration.title}}</dd>
+    <dt v-if="registration.number">No.</dt>
+    <dd v-if="registration.number">{{registration.number}}</dd>
     <dt><?php echo Yii::t('Registration', 'Name'); ?></dt>
     <dd>{{registration.user.name}}</dd>
     <dt v-if="registration.passport"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
     <dd v-if="registration.passport">{{registration.passport}}</dd>
-    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
+    <dt><?php echo Yii::t('common', 'Fee'); ?></dt>
     <dd>{{registration.fee}}
       (<span v-if="registration.paid">
         <?php echo Yii::t('common', 'Paid'); ?>
@@ -36,6 +38,8 @@
         <?php echo Yii::t('common', 'Unpaid'); ?>
       </span>)
     </dd>
+    <dt><?php echo Yii::t('Competition', 'Status'); ?></dt>
+    <dd>{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</dd>
     <dt v-if="registration.signed_in"><?php echo Yii::t('common', 'Signed in Date'); ?></dt>
     <dd v-if="registration.signed_in">{{registration.signed_date}}
     </dd>

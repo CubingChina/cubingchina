@@ -1612,6 +1612,7 @@ class Competition extends ActiveRecord {
 				if ($format == 'a') {
 					if ($result->average != $lastAverage) {
 						$lastAverage = $result->average;
+						$lastBest = $result->best;
 						$result->pos = $i + 1;
 						$count = $i;
 					} elseif ($result->best != $lastBest) {
@@ -1646,6 +1647,7 @@ class Competition extends ActiveRecord {
 			foreach ($results as $i=>$result) {
 				if ($result->average != $lastAverage) {
 					$lastAverage = $result->average;
+					$lastBest = $result->best;
 					$result->pos = $i + 1;
 					$count = $i;
 				} elseif ($result->best != $lastBest) {
@@ -2347,15 +2349,15 @@ class Competition extends ActiveRecord {
 		if ($this->person_num > 0 && (
 			$this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
 		)) {
-			if ($this->cancellation_end_time > $this->reg_end - 86400) {
+			if ($this->cancellation_end_time > $this->reg_end - 86400 && !$this->multi_countries) {
 				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
 			}
 			if ($this->cancellation_end_time < $this->reg_start + 86400 * 7) {
 				$this->addError('cancellation_end_time', '补报截止时间必须晚于报名开始时间至少一周');
 			}
 		}
-		if ($this->cancellation_end_time == 0 xor $this->reg_reopen_time == 0) {
-			$this->addError('reg_reopen_time', '请同时设置补报截止时间和报名重开时间');
+		if (!$this->multi_countries && ($this->cancellation_end_time == 0 xor $this->reg_reopen_time == 0)) {
+			$this->addError('cancellation_end_time', '请同时设置补报截止时间和报名重开时间');
 			$this->addError('reg_reopen_time', '请同时设置补报截止时间和报名重开时间');
 		}
 	}
@@ -2489,8 +2491,13 @@ class Competition extends ActiveRecord {
 				} elseif (!empty($locations['fee'][$key]) && !ctype_digit($locations['fee'][$key])) {
 					$this->addError('locations.fee.' . $index, '大陆地区请填写整数费用！');
 				}
-				if (empty($locations['delegate_id'][$key]) && empty($locations['delegate_text'][$key])) {
-					$this->addError('locations.delegate_text.' . $index, '必须选择一个代表或者手动填写！');
+				if (empty($locations['delegate_id'][$key])) {
+					if (empty($locations['delegate_name'][$key])) {
+						$this->addError('locations.delegate_name.' . $index, '必须选择一个代表或者手动填写！');
+					}
+					if (empty($locations['delegate_email'][$key])) {
+						$this->addError('locations.delegate_email.' . $index, '必须选择一个代表或者手动填写！');
+					}
 				}
 			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
@@ -2544,8 +2551,10 @@ class Competition extends ActiveRecord {
 				'longitude'=>$locations['longitude'][$key],
 				'latitude'=>$locations['latitude'][$key],
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
-				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
+				'delegate_name'=>$this->multi_countries ? $locations['delegate_name'][$key] : '',
+				'delegate_email'=>$this->multi_countries ? $locations['delegate_email'][$key] : '',
 				'fee'=>$hasFeeInfo ? $locations['fee'][$key] : '',
+				'payment_method'=>$this->multi_countries ? $locations['payment_method'][$key] : '',
 				'status'=>$this->multi_countries ? intval($locations['status'][$key]) : 1,
 				'organizer_id'=>$this->complex_multi_location ? intval($locations['organizer_id'][$key]) : 0,
 				'competitor_limit'=>$hasFeeInfo ? intval($locations['competitor_limit'][$key]) : 0,

@@ -5,10 +5,13 @@
       loading: true,
       scanning: false,
       url: '',
+      competitionId: '',
       registration: {}
     },
     el: '#scan-container',
-    watch: {
+    ready: function() {
+      this.competitionId = this.$el.dataset.competitionId;
+      // console.log(111)
     },
     methods: {
       check: function() {
@@ -44,17 +47,22 @@
         if (!code) {
           return;
         }
+        var type = code.split('-')[0]
         var that = this;
         that.loading = true;
         $.ajax({
+          url: '/api/competition/' + type,
           data: {
-            code: code
+            competition_id: that.competitionId,
+            code: code,
           },
           dataType: 'json',
-          type: 'post',
           success: function(res) {
             if (res.status == 0) {
               that.registration = res.data;
+            } else {
+              alert(res.message);
+              that.registration = {};
             }
           },
           complete: function() {
@@ -66,7 +74,10 @@
         var that = this;
         that.loading = true;
         $.ajax({
+          url: '/api/competition/signin',
           data: {
+            competition_id: that.competitionId,
+            type: that.registration.type,
             id: that.registration.id,
             action: action
           },
@@ -75,6 +86,8 @@
           success: function(res) {
             if (res.status == 0) {
               that.registration = res.data;
+            } else {
+              alert(res.message);
             }
           },
           complete: function() {

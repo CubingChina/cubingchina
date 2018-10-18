@@ -5,8 +5,10 @@
     <dd>
       <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
+    <?php if ($competition->getAttributeValue('travel')): ?>
     <dt><?php echo Yii::t('Competition', 'Travel Info'); ?></dt>
     <dd><?php echo $competition->getAttributeValue('travel'); ?></dd>
+    <?php endif; ?>
   </dl>
   <?php $this->renderPartial('disclaimer'); ?>
 </div>
