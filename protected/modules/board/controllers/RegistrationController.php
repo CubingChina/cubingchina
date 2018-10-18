@@ -944,7 +944,7 @@ class RegistrationController extends AdminController {
 		echo CHtml::tag('td', [
 			'class'=>'bdr',
 			'colspan'=>2,
-		], '');
+		], '桌号 : 　　');
 		echo CHtml::closeTag('tr');
 
 		echo CHtml::closeTag('tbody');
