@@ -184,13 +184,20 @@ class CompetitionController extends Controller {
 		}
 		if ($registration !== null) {
 			$overseaUserVerifyForm = new OverseaUserVerifyForm();
-			if (isset($_POST['OverseaUserVerifyForm']) && $registration->isPending() && $this->user->country_id > 1) {
+			if (isset($_POST['OverseaUserVerifyForm']) && $this->user->country_id > 1) {
 				$overseaUserVerifyForm->attributes = $_POST['OverseaUserVerifyForm'];
 				if ($overseaUserVerifyForm->validate()) {
-					$registration->accept();
-					if ($registration->isAccepted()) {
-						Yii::app()->user->getFlashes();
-						Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been accepted.'));
+					if ($registration->isPending()) {
+						$registration->accept();
+						if ($registration->isAccepted()) {
+							Yii::app()->user->getFlashes();
+							Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been accepted.'));
+							$this->redirect($competition->getUrl('registration'));
+						}
+					} elseif ($registration->isAcceptedOrWaiting()) {
+						$payment = $registration->getUnpaidPayment();
+						$registration->accept($payment);
+						Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been updated successfully.'));
 						$this->redirect($competition->getUrl('registration'));
 					}
 				}
