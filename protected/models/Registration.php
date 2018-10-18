@@ -1179,7 +1179,10 @@ class Registration extends ActiveRecord {
 		}
 		$this->allEvents = array_values($allEvents);
 		$this->_events = null;
-		$this->createPayment();
+		$payment = $this->createPayment();
+		if ($this->isAccepted() && $this->getPendingAmount() == 0 && $this->getPendingEvents() != []) {
+			$this->accept($payment);
+		}
 		return true;
 	}
 

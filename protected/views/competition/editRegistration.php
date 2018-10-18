@@ -1,4 +1,4 @@
-<?php if ($registration->isEditable()): ?>
+<?php if ($registration->isEditable() && $registration->getEditableEvents() != []): ?>
 <div class="row">
   <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
     <div class="panel panel-info">
