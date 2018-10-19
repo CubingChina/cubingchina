@@ -17,8 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Address' => '地址',
-  'Payment Method' => '支付方式',
   'ID' => '',
   'Online Pay' => '',
   'Update ticket info successfully.' => '',
@@ -36,6 +34,7 @@ return array (
   'The limited number of competitor has been reached.' => '报名人数已达到上限。',
   'Wca Competition' => 'WCA比赛',
   'About the Competition' => '关于比赛',
+  'Address' => '地址',
   'After locking the competition, organizers are no longer able to edit the basic infomation and anyone can visit this competition via url. Please confirm it!' => '锁定之后，主办方将不能编辑比赛基本信息，比赛也可以通过连接访问，请确认！',
   'At least one result' => '有官方有效成绩',
   'Base Entry Fee' => '基础报名费',
@@ -75,6 +74,7 @@ return array (
   'Now' => '即日起',
   'Organizer' => '主办方',
   'Organizers' => '主办方',
+  'Payment Method' => '支付方式',
   'Person Num' => '限制人数',
   'Please choose a ticket!' => '请选择一种入场券！',
   'Please deeply remember the followings to avoid any inconveniences.' => '请您牢记下述注意事项，以免带来不便。',
