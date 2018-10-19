@@ -13,7 +13,7 @@ class Region extends ActiveRecord {
 
 	const EARTH_RADIUS = 6378.137;
 
-	public static $HKMCTW = array(2, 3, 4);
+	public static $HKMCTW = [2, 3, 4];
 
 	public static function getDistance($lat1, $lng1, $lat2, $lng2) {
 		$lat1 = self::toRad($lat1);
@@ -44,27 +44,27 @@ class Region extends ActiveRecord {
 
 	public static function getWCARegions() {
 		$countriesKey = Yii::t('common', 'Region');
-		$regions = array(
+		$regions = [
 			'World'=>Yii::t('Region', 'World'),
-			Yii::t('Region', 'Continents')=>array(
+			Yii::t('Region', 'Continents')=>[
 				'Asia'=>Yii::t('Region', 'Asia'),
 				'Africa'=>Yii::t('Region', 'Africa'),
 				'Europe'=>Yii::t('Region', 'Europe'),
 				'North America'=>Yii::t('Region', 'North America'),
 				'Oceania'=>Yii::t('Region', 'Oceania'),
 				'South America'=>Yii::t('Region', 'South America'),
-			),
-			$countriesKey=>array(
+			],
+			$countriesKey=>[
 				'China'=>Yii::t('Region', 'China'),
 				'Hong Kong'=>Yii::t('Region', 'Hong Kong'),
 				'Macau'=>Yii::t('Region', 'Macau'),
 				'Taiwan'=>Yii::t('Region', 'Taiwan'),
-			),
-		);
-		$countries = Countries::getUsedCountries();
-		uksort($countries, function($countryA, $countryB) {
-			return strcmp(iconv('UTF-8', 'GBK', Yii::t('Region', $countryA)), iconv('UTF-8', 'GBK', Yii::t('Region', $countryB)));
-		});
+			],
+		];
+		$countries = array_map(function($region) {
+			return Yii::t('Region', $region);
+		}, Countries::getUsedCountries());
+		uksort($countries, ['Region', 'sortRegion']);
 		foreach ($countries as $id=>$country) {
 			$regions[$countriesKey][$id] = Yii::t('Region', $country);
 		}
@@ -83,10 +83,12 @@ class Region extends ActiveRecord {
 	public static function getProvinces($mainland = true) {
 		$attribute = Yii::app()->controller->getAttributeName('name');
 		$regions = self::getRegionsByPid(1);
+		usort($regions, ['Region', 'sortRegion']);
 		if (!$mainland) {
 			$regions = array_merge($regions, self::getRegionsById(self::$HKMCTW));
 		}
-		return CHtml::listData($regions, 'id', $attribute);
+		$provinces = CHtml::listData($regions, 'id', $attribute);
+		return $provinces;
 	}
 
 	public static function getAllCities() {
@@ -99,20 +101,23 @@ class Region extends ActiveRecord {
 			->where('pid>1')
 			->order('id')
 			->queryAll();
-		$allCities = array();
+		$allCities = [];
 		foreach ($cities as $city) {
 			if (!isset($allCities[$city['pid']])) {
-				$allCities[$city['pid']] = array();
+				$allCities[$city['pid']] = [];
 			}
 			$allCities[$city['pid']][$city['id']] = $city[$attribute];
+		}
+		foreach ($allCities as &$cities) {
+			uasort($cities, ['Region', 'sortRegion']);
 		}
 		return $allCities;
 	}
 
 	public static function getRegionIdByName($name) {
-		$region = self::model()->findByAttributes(array(
+		$region = self::model()->findByAttributes([
 			'name'=>$name,
-		));
+		]);
 		if ($region === null) {
 			return 0;
 		}
@@ -120,19 +125,27 @@ class Region extends ActiveRecord {
 	}
 
 	public static function getRegionsByPid($pid) {
-		return self::model()->findAllByAttributes(array(
+		return self::model()->findAllByAttributes([
 			'pid'=>$pid,
-		));
+		]);
 	}
 
 	public static function getRegionsById($id) {
-		return self::model()->findAllByAttributes(array(
+		return self::model()->findAllByAttributes([
 			'id'=>$id,
-		));
+		]);
 	}
 
 	public static function isContinent($region) {
-		return in_array($region, array('Africa', 'Asia', 'Oceania', 'Europe', 'North America', 'South America'));
+		return in_array($region, ['Africa', 'Asia', 'Oceania', 'Europe', 'North America', 'South America']);
+	}
+
+	public static function sortRegion($regionA, $regionB) {
+		if (is_object($regionA)) {
+			$regionA = $regionA->getAttributeValue('name');
+			$regionB = $regionB->getAttributeValue('name');
+		}
+		return strcmp(iconv('UTF-8', 'GBK', $regionA), iconv('UTF-8', 'GBK', $regionB));
 	}
 
 	/**
@@ -148,15 +161,15 @@ class Region extends ActiveRecord {
 	public function rules() {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		return array(
-			array('name', 'required'),
-			array('pid', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>32),
-			array('name_zh', 'length', 'max'=>128),
+		return [
+			['name', 'required'],
+			['pid', 'numerical', 'integerOnly'=>true],
+			['name', 'length', 'max'=>32],
+			['name_zh', 'length', 'max'=>128],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, name_zh, pid', 'safe', 'on'=>'search'),
-		);
+			['id, name, name_zh, pid', 'safe', 'on'=>'search'],
+		];
 	}
 
 	/**
@@ -165,21 +178,21 @@ class Region extends ActiveRecord {
 	public function relations() {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
+		return [
 			'wcaCountry'=>[self::BELONGS_TO, 'Countries', ['name'=>'id']],
-		);
+		];
 	}
 
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels() {
-		return array(
+		return [
 			'id' => Yii::t('Region', 'ID'),
 			'name' => Yii::t('Region', 'Name'),
 			'name_zh' => Yii::t('Region', 'Name Zh'),
 			'pid' => Yii::t('Region', 'Pid'),
-		);
+		];
 	}
 
 	/**
@@ -204,9 +217,9 @@ class Region extends ActiveRecord {
 		$criteria->compare('name_zh',$this->name_zh,true);
 		$criteria->compare('pid',$this->pid);
 
-		return new CActiveDataProvider($this, array(
+		return new CActiveDataProvider($this, [
 			'criteria'=>$criteria,
-		));
+		]);
 	}
 
 	/**
