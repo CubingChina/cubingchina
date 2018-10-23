@@ -1279,7 +1279,7 @@ class Competition extends ActiveRecord {
 		if ($this->id < 382) {
 			return '';
 		}
-		$fee = $this->operationFee * $this->days;
+		$fee = $this->registeredCompetitors * $this->days;
 		$buttons = array();
 		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
@@ -1964,6 +1964,26 @@ class Competition extends ActiveRecord {
 
 			}
 		});
+	}
+
+	public function __toJson() {
+		return [
+			'id'=>$this->id,
+			'name'=>$this->getAttributeValue('name'),
+			'alias'=>$this->alias,
+			'url'=>CHtml::normalizeUrl($this->getUrl()),
+			'date'=>[
+				'from'=>$this->date,
+				'to'=>$this->end_date ?: $this->date,
+			],
+			'locations'=>JsonHelper::formatData($this->location),
+			'registration'=>[
+				'from'=>$this->reg_start,
+				'to'=>$this->reg_end,
+			],
+			'competitor_limit'=>$this->person_num,
+			'registered_competitors'=>$this->registeredCompetitors,
+		];
 	}
 
 	public function generateTemplateData() {
@@ -2700,7 +2720,7 @@ class Competition extends ActiveRecord {
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
-			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
+			'registeredCompetitors'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
 			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'allEvents.id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],

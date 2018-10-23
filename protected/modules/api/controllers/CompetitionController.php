@@ -1,6 +1,19 @@
 <?php
 
 class CompetitionController extends ApiController {
+	public function actionIndex($year = 'current', $type = '', $province = '', $event = '') {
+		$model = new Competition('search');
+		$model->unsetAttributes();
+		$model->year = $year;
+		$model->type = $type;
+		$model->province = $province;
+		$model->event = $event;
+		$model->status = Competition::STATUS_SHOW;
+		$dataProvider = $model->search();
+		$competitions = $dataProvider->getData();
+		$this->ajaxOK(JsonHelper::formatData($competitions));
+	}
+
 	public function actionRegistration() {
 		if (Yii::app()->session->get('scan_code') === null) {
 			$this->ajaxError(Constant::STATUS_FORBIDDEN);

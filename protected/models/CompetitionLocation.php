@@ -90,6 +90,19 @@ class CompetitionLocation extends ActiveRecord {
 		return $address;
 	}
 
+	public function __toJson() {
+		return [
+			'competition_id'=>$this->competition_id,
+			'location_id'=>$this->location_id,
+			'region'=>$this->country ? Yii::t('Region', $this->country->getAttributeValue('name')) : null,
+			'province'=>$this->province ? $this->province->getAttributeValue('name') : null,
+			'city'=>$this->getCityName(),
+			'venue'=>$this->getAttributeValue('venue'),
+			'longitude'=>$this->longitude,
+			'latitude'=>$this->latitude,
+		];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

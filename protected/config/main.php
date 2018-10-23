@@ -17,6 +17,7 @@ $config = [
 		'application.models.*',
 		'application.models.wca.*',
 		'application.forms.*',
+		'application.helpers.*',
 		'application.widgets.*',
 		'application.statistics.*',
 		'application.summary.*',
