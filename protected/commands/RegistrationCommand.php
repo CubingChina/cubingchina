@@ -22,13 +22,16 @@ class RegistrationCommand extends CConsoleCommand {
 			echo "\n";
 			foreach ($registration->payments as $payment) {
 				$refundPercent = $registration->refundPercent;
+				$shouldRefund = $payment->paid_amount * $refundPercent;
 				echo "Paid: {$payment->paid_amount}\n";
 				echo "Refund Percent: {$refundPercent}\n";
-				echo "Should Refund: " . ($payment->paid_amount * $refundPercent) . "\n";
+				echo "Should Refund: {$shouldRefund}\n";
 				// within 3 months
-				if ($now - $payment->paid_time < 3 * 30 * 86400) {
-					if ($this->confirm('refund?')) {
-						$payment->refund($payment->paid_amount * $refundPercent);
+				if ($this->confirm('refund?')) {
+					if ($now - $payment->paid_time < 3 * 30 * 86400) {
+						$payment->refund($shouldRefund);
+					} else {
+						$payment->transfer($shouldRefund);
 					}
 				}
 			}

@@ -138,76 +138,29 @@ class Pay extends ActiveRecord {
 		if ($amount >= $this->paid_amount) {
 			$amount = $this->paid_amount;
 		}
-		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
-		$baseUrl = $app->request->getBaseUrl(true);
-		$commonParams = [
-			'app_id'=>trim($alipay['app_id']),
-			'method'=>'alipay.trade.refund',
-			'timestamp'=>date('Y-m-d H:i:s'),
-			'version'=>'1.0',
-			'charset'=>self::CHARSET,
-		];
-		$bizParams = array(
+		$bizParams = [
 			'out_trade_no'=>$this->order_no,
 			'refund_amount'=>number_format($amount / 100, 2, '.', ''),
 			// 'refund_reason'=>'退赛-' . $this->order_name,
 			//暂时没有多次退款的case，统一使用-1
 			'out_request_no'=>$this->order_no . '-1',
-		);
-		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
-		Yii::log(json_encode([
-			'amount'=>$amount,
-			'params'=>$params,
-		]), 'pay', 'refund.params');
-		$response = $this->request($alipay['gateway'], $params, 'refund');
+		];
+		$response = $this->alipayRequest('alipay.trade.refund', $bizParams);
 		if ($response === false) {
 			return false;
 		}
-		$sign = $response['sign'];
-		$params = $response['alipay_trade_refund_response'];
-		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
-				'sign',
-				'code',
-				'msg',
-			])) {
-			$this->refund_amount = $params['refund_fee'] * 100;
-			$this->refund_time = strtotime($params['gmt_refund_pay']);
-			$this->save();
-			return true;
-		}
-		return false;
+		$this->refund_amount = $response['refund_fee'] * 100;
+		$this->refund_time = strtotime($response['gmt_refund_pay']);
+		$this->save();
+		return true;
 	}
 
 	public function close() {
-		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
-		$baseUrl = $app->request->getBaseUrl(true);
-		$commonParams = [
-			'app_id'=>trim($alipay['app_id']),
-			'method'=>'alipay.trade.close',
-			'timestamp'=>date('Y-m-d H:i:s'),
-			'version'=>'1.0',
-			'charset'=>self::CHARSET,
-		];
 		$bizParams = [
 			'out_trade_no'=>$this->order_no,
 		];
-		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
-		$response = $this->request($alipay['gateway'], $params, 'close');
-		if ($response === false) {
-			return false;
-		}
-		$sign = $response['sign'];
-		$params = $response['alipay_trade_close_response'];
-		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
-				'sign',
-				'code',
-				'msg',
-			])) {
-			return $params['code'] == 10000;
-		}
-		return false;
+		$response = $this->alipayRequest('alipay.trade.close', $bizParams);
+		return $response !== false;
 	}
 
 	public function lock() {
@@ -239,38 +192,22 @@ class Pay extends ActiveRecord {
 	}
 
 	public function getTradeStatus() {
-		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
-		$baseUrl = $app->request->getBaseUrl(true);
-		$commonParams = [
-			'app_id'=>trim($alipay['app_id']),
-			'method'=>'alipay.trade.query',
-			'timestamp'=>date('Y-m-d H:i:s'),
-			'version'=>'1.0',
-			'charset'=>self::CHARSET,
-		];
-		$bizParams = [
-			'out_trade_no'=>$this->order_no,
-		];
-		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
-		$response = $this->request($alipay['gateway'], $params, 'query');
+		$response = $this->alipayQuery();
 		if ($response === false) {
 			return false;
 		}
-		$sign = $response['sign'];
-		$params = $response['alipay_trade_query_response'];
-		if ($this->validateAlipaySign(json_encode($params), $sign, $alipay['alipay_public_key_path'], [
-				'sign',
-				'code',
-				'msg',
-			])) {
-			return $params['trade_status'];
-		}
-		return false;
+		return $response['trade_status'];
 	}
 
-	public function queryStatus($tradeStatus = ['WAIT_BUYER_PAY']) {
-		return in_array($this->getTradeStatus(), $tradeStatus);
+	public function alipayQuery() {
+		$bizParams = [
+			'out_trade_no'=>$this->order_no,
+		];
+		$response = $this->alipayRequest('alipay.trade.query', $bizParams);
+		if ($response === false) {
+			return false;
+		}
+		return $response;
 	}
 
 	public function cancel() {
@@ -278,23 +215,86 @@ class Pay extends ActiveRecord {
 		$this->save();
 	}
 
-	public function request($gateway, $params, $type) {
+	public function transfer($amount) {
+		if ($this->refund_time > 0 || $amount <= 0) {
+			return false;
+		}
+		if ($amount >= $this->paid_amount) {
+			$amount = $this->paid_amount;
+		}
+		$response = $this->alipayQuery();
+		if ($response === false) {
+			return false;
+		}
+		switch ($this->type) {
+			case self::TYPE_REGISTRATION:
+			case self::TYPE_TICKET:
+				$name = $this->competition->name_zh;
+				break;
+			case self::TYPE_APPLICATION:
+				$name = $this->application->name_zh;
+				break;
+			default:
+				$name = '';
+		}
+		$bizParams = [
+			'out_biz_no'=>$this->order_no,
+			'payee_type'=>'ALIPAY_USERID',
+			'payee_account'=>$response['buyer_user_id'],
+			'amount'=>number_format($amount / 100, 2, '.', ''),
+			'payer_show_name'=>'粗饼网',
+			'remark'=>$name . '退款',
+		];
+		$response = $this->alipayRequest('alipay.fund.trans.toaccount.transfer', $bizParams);
+		if ($response === false) {
+			return false;
+		}
+		$this->refund_amount = $amount;
+		$this->refund_time = strtotime($response['pay_date']);
+		$this->transfer_order_id = $response['order_id'];
+		$this->save();
+		return true;
+	}
+
+	public function alipayRequest($method, $bizParams) {
+		$app = Yii::app();
+		$alipay = $app->params->payments['balipay'];
+		$commonParams = [
+			'app_id'=>trim($alipay['app_id']),
+			'method'=>$method,
+			'timestamp'=>date('Y-m-d H:i:s'),
+			'version'=>'1.0',
+			'charset'=>self::CHARSET,
+		];
+		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
+		Yii::log(json_encode($bizParams), 'pay', $method . '.params');
 		$client = new Client();
-		$bodyKey = "alipay_trade_{$type}_response";
+		$bodyKey = str_replace('.', '_', $method) . '_response';
 		try {
-			$response = $client->post($gateway, [
+			$httpResponse = $client->post($alipay['gateway'], [
 				'form_params'=>$params,
 			]);
-			if ($response->getStatusCode() != 200) {
+			if ($httpResponse->getStatusCode() != 200) {
 				return false;
 			}
-			$body = $response->getBody();
+			$body = $httpResponse->getBody();
 			Yii::log($body, 'pay', 'response');
 			$body = json_decode($body, true);
 			if (!isset($body[$bodyKey])) {
 				return false;
 			}
-			return $body;
+			$response = $body[$bodyKey];
+			if ($response['code'] != 10000) {
+				return false;
+			}
+			if (!$this->validateAlipaySign(json_encode($response), $body['sign'], $alipay['alipay_public_key_path'], [
+					'sign',
+					'code',
+					'msg',
+				])) {
+				return false;
+			}
+			return $response;
 		} catch (Exception $e) {
 			$log = [
 				'code'=>$e->getCode(),
