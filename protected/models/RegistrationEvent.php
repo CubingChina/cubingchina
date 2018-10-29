@@ -87,7 +87,7 @@ class RegistrationEvent extends ActiveRecord {
 			['registration_id', 'required'],
 			['fee, paid, status', 'numerical', 'integerOnly'=>true],
 			['registration_id, create_time, update_time, accept_time', 'length', 'max'=>11],
-			['event', 'length', 'max'=>6],
+			['event', 'length', 'max'=>32],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			['id, registration_id, event, fee, paid, status, create_time, update_time, accept_time', 'safe', 'on'=>'search'],
