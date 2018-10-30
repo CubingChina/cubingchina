@@ -59,6 +59,34 @@ class Schedule extends ActiveRecord {
 		return $format;
 	}
 
+	public function __toJson() {
+		$competition = $this->competition;
+		$date = $competition->date + ($this->day - 1) * 86400;
+		return [
+			'day'=>$this->day,
+			'stage'=>$this->stage,
+			'start_time'=>$date + $this->start_time % 86400,
+			'end_time'=>$date + $this->end_time % 86400,
+			'event'=>[
+				'id'=>$this->event,
+				'name'=>Events::getFullEventName($this->event),
+			],
+			'group'=>$this->group,
+			'format'=>$this->format,
+			'round'=>[
+				'id'=>$this->round,
+				'name'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($this->round)),
+			],
+			'advancing_condition'=>[
+				'type'=>'rank',
+				'number'=>$this->number,
+			],
+			'cutoff'=>$this->cut_off,
+			'time_limit'=>$this->time_limit,
+			'cumulative'=>!!$this->cumulative,
+		];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
