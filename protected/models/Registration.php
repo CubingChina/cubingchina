@@ -1208,6 +1208,14 @@ class Registration extends ActiveRecord {
 		return $event->cancel();
 	}
 
+	public function __toJson($full) {
+		return [
+			'number'=>$this->number,
+			'competitor'=>$this->user,
+			'events'=>$this->getAcceptedEvents(),
+		];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

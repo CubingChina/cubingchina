@@ -24,6 +24,12 @@ class CompetitionController extends ApiController {
 		$this->ajaxOK(JsonHelper::formatData($competition->schedule));
 	}
 
+	public function actionCompetitors() {
+		$competition = $this->getCompetition();
+		$registrations = Registration::getRegistrations($competition);
+		$this->ajaxOK(JsonHelper::formatData($registrations));
+	}
+
 	protected function getCompetition() {
 		$alias = $this->sGet('alias');
 		$competition = Competition::getCompetitionByName($alias);

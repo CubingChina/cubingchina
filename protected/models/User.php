@@ -502,6 +502,8 @@ class User extends ActiveRecord {
 	public function __toJson($full = false) {
 		$data = [
 			'name'=>$this->getAttributeValue('name'),
+			'gender'=>$this->getGenderText(),
+			'wcaid'=>$this->wcaid,
 			'region'=>Yii::t('Region', $this->country->name),
 		];
 		if ($full) {
