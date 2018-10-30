@@ -365,6 +365,7 @@
               <?php echo Html::formGroup(
                 $model, 'delegates', array(
                   'class'=>'col-lg-12',
+                  'id'=>'delegates',
                 ),
                 $form->labelEx($model, 'delegates', array(
                   'label'=>'代表',
@@ -394,7 +395,7 @@
                   'separator'=>'',
                   'class'=>'form-control',
                   'labelOptions'=>array(
-                    'class'=>'checkbox-inline',
+                    'class'=>'checkbox-inline hide',
                   ),
                   'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
                 )),
@@ -677,11 +678,9 @@ Yii::app()->clientScript->registerScript('competition',
   }).on('change', '#Competition_type', function() {
     var type = $(this).val();
     if (type === 'WCA') {
-      $('#wca_delegates').show();
-      $('#cca_delegates').hide().find('input').prop('checked', false);
+      $('#delegates').show();
     } else {
-      $('#cca_delegates').show();
-      $('#wca_delegates').hide().find('input').prop('checked', false);
+      $('#delegates').hide().find('input').prop('checked', false);
     }
   }).on('keydown', '.token-input', function(e) {
     if (e.which == 13) {
