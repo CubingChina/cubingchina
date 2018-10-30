@@ -71,10 +71,7 @@ class RegistrationEvent extends ActiveRecord {
 	}
 
 	public function __toJson() {
-		return [
-			'id'=>$this->event,
-			'name'=>Events::getFullEventName($this->event),
-		];
+		return $this->event;
 	}
 
 	/**

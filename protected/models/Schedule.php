@@ -67,16 +67,10 @@ class Schedule extends ActiveRecord {
 			'stage'=>$this->stage,
 			'start_time'=>$date + $this->start_time % 86400,
 			'end_time'=>$date + $this->end_time % 86400,
-			'event'=>[
-				'id'=>$this->event,
-				'name'=>Events::getFullEventName($this->event),
-			],
+			'event'=>$this->event,
 			'group'=>$this->group,
 			'format'=>$this->format,
-			'round'=>[
-				'id'=>$this->round,
-				'name'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($this->round)),
-			],
+			'round_type'=>$this->round,
 			'advancing_condition'=>[
 				'type'=>'rank',
 				'number'=>$this->number,

@@ -96,10 +96,7 @@ class CompetitionEvent extends ActiveRecord {
 	public function __toJson() {
 		$competition = $this->competition;
 		return [
-			'event'=>[
-				'id'=>$this->event,
-				'name'=>Events::getFullEventName($this->event),
-			],
+			'event'=>$this->event,
 			'round'=>$this->round,
 			'fee'=>$this->fee,
 			'second_phase_fee'=>$competition->getEventFee($this->event, Competition::STAGE_SECOND),
