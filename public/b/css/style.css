@@ -2213,3 +2213,17 @@ table.table tbody tr td {
 body img {
   max-width: 100%;
 }
+
+.event-icon-custom {
+  font-size: 1.25em;
+  vertical-align: baseline;
+}
+.event-icon-custom:before {
+  content: attr(title);
+}
+table tbody .event-icon-custom {
+  font-family: 'FontAwesome' !important;
+}
+table tbody .event-icon-custom:before {
+  content: "\F00C";
+}
