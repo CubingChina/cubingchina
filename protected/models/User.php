@@ -499,6 +499,19 @@ class User extends ActiveRecord {
 		return $avatarList;
 	}
 
+	public function __toJson($full = false) {
+		$data = [
+			'name'=>$this->getAttributeValue('name'),
+			'region'=>Yii::t('Region', $this->country->name),
+		];
+		if ($full) {
+			$data += [
+				'email'=>$this->email,
+			];
+		}
+		return $data;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

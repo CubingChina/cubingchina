@@ -14,6 +14,23 @@ class CompetitionController extends ApiController {
 		$this->ajaxOK(JsonHelper::formatData($competitions));
 	}
 
+	public function actionDetail() {
+		$competition = $this->getCompetition();
+		$this->ajaxOK(JsonHelper::formatData($competition, true));
+	}
+
+	protected function getCompetition() {
+		$alias = $this->sGet('alias');
+		$competition = Competition::getCompetitionByName($alias);
+		if ($competition === null || strtolower($alias) != strtolower($competition->getUrlName())) {
+			$this->ajaxError(Constant::STATUS_NOT_FOUND);
+		}
+		if (!$competition->isPublicVisible() && !$competition->checkPermission($this->user)) {
+			$this->ajaxError(Constant::STATUS_NOT_FOUND);
+		}
+		return $competition;
+	}
+
 	public function actionRegistration() {
 		if (Yii::app()->session->get('scan_code') === null) {
 			$this->ajaxError(Constant::STATUS_FORBIDDEN);

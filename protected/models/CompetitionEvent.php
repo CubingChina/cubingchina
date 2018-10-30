@@ -93,6 +93,22 @@ class CompetitionEvent extends ActiveRecord {
 		return $ret ?? true;
 	}
 
+	public function __toJson() {
+		$competition = $this->competition;
+		return [
+			'event'=>[
+				'id'=>$this->event,
+				'name'=>Events::getFullEventName($this->event),
+			],
+			'round'=>$this->round,
+			'fee'=>$this->fee,
+			'second_phase_fee'=>$competition->getEventFee($this->event, Competition::STAGE_SECOND),
+			'third_phase_fee'=>$competition->getEventFee($this->event, Competition::STAGE_THIRD),
+			'qualifying_best'=>$this->qualifying_best,
+			'qualifying_average'=>$this->qualifying_average,
+		];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

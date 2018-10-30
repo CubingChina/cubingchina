@@ -9,6 +9,11 @@
  * @property string $delegate_id
  */
 class CompetitionDelegate extends ActiveRecord {
+
+	public function __toJson() {
+		return $this->user;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

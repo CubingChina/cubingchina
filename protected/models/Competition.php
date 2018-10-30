@@ -1966,10 +1966,11 @@ class Competition extends ActiveRecord {
 		});
 	}
 
-	public function __toJson() {
-		return [
+	public function __toJson($full = false) {
+		$data = [
 			'id'=>$this->id,
 			'name'=>$this->getAttributeValue('name'),
+			'type'=>$this->type,
 			'alias'=>$this->alias,
 			'url'=>CHtml::normalizeUrl($this->getUrl()),
 			'date'=>[
@@ -1984,6 +1985,27 @@ class Competition extends ActiveRecord {
 			'competitor_limit'=>$this->person_num,
 			'registered_competitors'=>$this->registeredCompetitors,
 		];
+		if ($full) {
+			$data += [
+				'wca_competition_id'=>$this->wca_competition_id,
+				'organizers'=>$this->organizer,
+				'delegates'=>$this->delegate,
+				'base_entry_fee'=>$this->entry_fee,
+				'second_phase_time'=>$this->second_stage_date,
+				'second_phase_fee'=>$this->getEventFee('entry', self::STAGE_SECOND),
+				'third_phase_time'=>$this->third_stage_date,
+				'third_phase_fee'=>$this->getEventFee('entry', self::STAGE_THIRD),
+				'events'=>$this->allEvents,
+				'information'=>$this->getAttributeValue('information'),
+				'regulations'=>$this->getAttributeValue('regulations'),
+				'travel'=>$this->getAttributeValue('travel'),
+			];
+			$data['registration'] += [
+				'cancellation_end_time'=>$this->cancellation_end_time,
+				'reopen_time'=>$this->reg_reopen_time,
+			];
+		}
+		return $data;
 	}
 
 	public function generateTemplateData() {
