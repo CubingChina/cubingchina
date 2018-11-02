@@ -2,15 +2,17 @@
 ====
 
 ##环境##
-1. [Nginx][1]/[Apache][2]
-2. [PHP][3] 5.5+
-    * [Redis扩展][4]
-3. [MySql][5] 5.1+
-4. [Yii Framework][6] 1.1.14+
-5. [Composer][7]
-6. [Redis][8]
+
+1. [Nginx][]/[Apache][]
+2. [PHP][] *7.0+*
+  * [Redis Extension][]
+3. [MySQL][] *5.1+*
+4. [Yii Framework][] *1.1.20*
+5. [Composer][]
+6. [Redis][]
 
 ##步骤##
+
 1. clone本项目至cubingchina目录
 2. 部署yii至与cubingchina同级的framework目录
 3. 数据库创建cubingchina, cubingchina_dev, wca_0, wca_1四个数据库，并赋予空密码用户cubingchina相关权限
@@ -22,11 +24,11 @@
 9. 若需要开启DEV模式，设置php环境变量ENV为dev
 
 
-  [1]: http://nginx.org/
-  [2]: http://www.apache.org/
-  [3]: http://php.net/
-  [4]: https://github.com/phpredis/phpredis
-  [5]: http://www.mysql.com/
-  [6]: http://www.yiiframework.com/
-  [7]: https://getcomposer.org/
-  [8]: https://redis.io/
+[1]: http://nginx.org/
+[2]: http://www.apache.org/
+[3]: http://php.net/
+[4]: https://github.com/phpredis/phpredis
+[5]: http://www.mysql.com/
+[6]: http://www.yiiframework.com/
+[7]: https://getcomposer.org/
+[8]: https://redis.io/
