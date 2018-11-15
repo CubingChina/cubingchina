@@ -17,6 +17,11 @@
     <?php echo Yii::t('Registration', 'Your registration has some events in pending status. Please pay for them.'); ?>
   </div>
   <?php endif; ?>
+  <?php if ($registration->isWaiting()): ?>
+  <div class="alert alert-warning">
+    <?php echo Yii::t('Registration', 'Your registration is on the waiting list.'); ?>
+  </div>
+  <?php endif; ?>
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
       <div class="panel panel-primary">
@@ -73,9 +78,7 @@
           <?php endif; ?>
           <?php if ($registration->isWaiting()): ?>
           <h4><?php echo Yii::t('common', 'Waiting'); ?></h4>
-          <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list. There are {count} people on the list ahead of you.', [
-            '{count}'=>$registration->getWaitingNumber(),
-          ]); ?></p>
+          <p><?php echo Yii::t('Registration', 'Your registration is on the waiting list.'), Yii::t('Registration', 'If there are sufficient openings from other competitors canceling their registration, your registration will be automatically accepted. If at the end of the registration period your registration has not been accepted, your registration fee will be returned in full.'); ?></p>
           <?php endif; ?>
           <?php if ($competition->fill_passport && $user->passport_type != User::NO && !$registration->isDisqualified()): ?>
           <hr>
