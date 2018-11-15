@@ -18,6 +18,7 @@
  */
 return array (
   'ID' => '',
+  'If there are sufficient openings from other competitors canceling their registration, your registration will be automatically accepted. If at the end of the registration period your registration has not been accepted, your registration fee will be returned in full.' => '当有足够多的人退赛时，你的报名将会自动通过。若比赛报名结束后你仍在候选列表中，你的报名费将会被全额退款。',
   'No.' => '',
   'User' => '',
   ' CNY' => '元',
@@ -76,5 +77,5 @@ return array (
   'Your registration has been disqualified.' => '你的报名因未达到资格线而被取消。',
   'Your registration has been updated successfully.' => '你的报名信息已更新成功。',
   'Your registration has some events in pending status. Please pay for them.' => '您有项目处于待支付状态，请支付。',
-  'Your registration is on the waiting list. There are {count} people on the list ahead of you.' => '你当前在候补列表中，前面有{count}个在等待。',
+  'Your registration is on the waiting list.' => '你当前在候补列表中。',
 );
