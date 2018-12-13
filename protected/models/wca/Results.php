@@ -224,8 +224,8 @@ class Results extends ActiveRecord {
 		->leftJoin('Countries country', 'rs.personCountryId=country.id')
 		->where('rs.eventId=:eventId', array(
 			':eventId'=>$event,
-		))
-		->order('c.year DESC, c.month DESC, c.day DESC, round.rank DESC, rs.personName ASC');
+		));
+		$order = 'c.year DESC, c.month DESC, c.day DESC, rs.%s ASC, round.rank DESC, rs.personName ASC';
 		self::applyRegionCondition($command, $region);
 		$rows = array();
 		foreach (self::getRankingTypes() as $type) {
@@ -247,6 +247,7 @@ class Results extends ActiveRecord {
 					$cmd->andWhere(sprintf('rs.regional%sRecord!=""', ucfirst($type)));
 					break;
 			}
+			$cmd->order(sprintf($order, $type === 'single' ? 'best' : $type));
 			$rows[$type] = array();
 			foreach ($cmd->queryAll() as $row) {
 				$row['type'] = $type;
