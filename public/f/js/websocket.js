@@ -4,9 +4,11 @@
     return;
   }
   var msgKey = 'websocket_msgs';
+  var identifierKey = 'websockets_identifiers';
   function WS(uri) {
     this._msgs = store.get(msgKey) || [];
-    this._eventHandlers = [];
+    this._eventHandlers = store.get(identifierKey) || {};
+    this._identifiers = [];
     this.threshold = 20000;
     this.lastActiveTime = Date.now();
     this.uri = uri;
@@ -23,8 +25,21 @@
         this.send('ping');
       }
     }.bind(this), 1000)
+    setInterval(function() {
+      if (this.conn.readyState == WebSocket.OPEN) {
+        for (var id in this._identifiers) {
+          this.send(this._identifiers[id]);
+        }
+      }
+    }.bind(this), 10000)
   }
   WS.prototype = {
+    safeSend: function(msg, type, id) {
+      id = type + '-' + id;
+      this._identifiers[id] = msg;
+      store.set(identifierKey, this._identifiers);
+      this.send(msg);
+    },
     send: function(msg) {
       if (this.conn.readyState != WebSocket.OPEN) {
         this._msgs.push(msg);
@@ -45,6 +60,10 @@
           return;
         }
         if (message.code === 200) {
+          var id = message.type + '-' + message.data.i;
+          if (this._identifiers[id]) {
+            delete this._identifiers[id];
+          }
           this.fire(message.type, message.data, message);
         }
       } catch (e) {}
