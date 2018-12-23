@@ -828,7 +828,7 @@
                   };
                   $('#input-panel-name').focus();
                   Vue.nextTick(function() {
-                    ws.send(data);
+                    ws.safeSend(data, 'result.update', data.result.id);
                   });
                   that.breakRecord = false;
                   that.hasError = false;
