@@ -4,6 +4,8 @@ class Summary {
 	public $year;
 	public $type;
 
+	const TAIWAN_CITIES = ['Hsinchu', 'Kaohsiung', 'New Taipei City', 'Taichung', 'Tainan', 'Taipei', 'Taoyuan', 'Yilan'];
+
 	public function __construct($year, $type = 'person') {
 		$this->year = $year;
 		$this->type = $type;
@@ -81,6 +83,22 @@ class Summary {
 						];
 					}
 					$visitedCityList[$competition->countryId]['count']++;
+				}
+				if ($competition->countryId === 'Taiwan' && !isset($tempCity[$competition->id])) {
+					$tempCity[$competition->id] = true;
+					foreach (self::TAIWAN_CITIES as $city) {
+						if (strpos($competition->cityName, $city) !== false) {
+							if (!isset($visitedCityList[$city])) {
+								$visitedCityList[$city] = [
+									'name'=>$city,
+									'name_zh'=>$city,
+									'count'=>0,
+								];
+							}
+							$visitedCityList[$city]['count']++;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -235,17 +253,15 @@ class Summary {
 			uasort($personalBests['events'], function($pbA, $pbB) {
 				return $pbB['total'] - $pbA['total'];
 			});
-			$thisYearsBests = $data['personalBestResults'][$this->year];
-			$lastYearsBests = isset($data['personalBestResults'][$this->year - 1]) ? $data['personalBestResults'][$this->year - 1] : null;
 			foreach ($personalBests['events'] as $event=>$pb) {
 				$personalBests['events'][$event]['event'] = $event;
-				$personalBestsComparison['best'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], "$event", 'best');
-				$personalBestsComparison['average'][$event] = $this->getBestsComparison($thisYearsBests, $data['personalBestResults'], "$event", 'average');
+				$personalBestsComparison['best'][$event] = $this->getBestsComparison($data['personalBestResults'], "$event", 'best');
+				$personalBestsComparison['average'][$event] = $this->getBestsComparison($data['personalBestResults'], "$event", 'average');
 			}
 			$personalBests['events'] = array_values($personalBests['events']);
 			foreach (['best', 'average'] as $key) {
 				$personalBestsComparison[$key] = array_filter($personalBestsComparison[$key], function($data) {
-					return $data['thisYearsBest'] != null && ($data['improvement'] > 0 || $data['event'] == '333mbf' || $data['lastYearsBest'] == null);
+					return $data['improved'];
 				});
 				usort($personalBestsComparison[$key], function($dataA, $dataB) {
 					return floatval($dataB['improvementPercent']) - floatval($dataA['improvementPercent']) > 0 ? 1 : -1;
@@ -354,8 +370,8 @@ class Summary {
 		];
 	}
 
-	public function getBestsComparison($thisYearsBests, $personalBestResults, $event, $type) {
-		$thisYearsBest = $thisYearsBests[$event][$type];
+	public function getBestsComparison($personalBestResults, $event, $type) {
+		$thisYearsBest = $personalBestResults[$this->year][$event][$type];
 		$lastYearsBest = null;
 		foreach ($personalBestResults as $year=>$value) {
 			if ($year < $this->year && isset($value[$event][$type])) {
@@ -363,10 +379,17 @@ class Summary {
 				break;
 			}
 		}
-		if ($lastYearsBest === null || $thisYearsBest == null) {
+		$improved = false;
+		if ($lastYearsBest === null || $thisYearsBest === null) {
 			$improvement = null;
 			$improvementPercent = null;
+			if ($lastYearsBest === null && $thisYearsBest !== null) {
+				$improved = true;
+			}
 		} else {
+			if ($thisYearsBest->competition->year == $this->year) {
+				$improved = true;
+			}
 			if ($event === '333mbf') {
 				$thisYearsScore = Results::getMBFPoints($thisYearsBest->$type);
 				$lastYearsScore = Results::getMBFPoints($lastYearsBest->$type);
@@ -375,9 +398,12 @@ class Summary {
 			} else {
 				$improvement = $lastYearsBest->$type - $thisYearsBest->$type;
 				$improvementPercent = number_format($improvement / $thisYearsBest->$type * 100, 2, '.', '');
+				if ($event === '333fm' && $type === 'average') {
+					$improvement /= 100;
+				}
 			}
 		}
-		return compact('event', 'improvement', 'improvementPercent', 'thisYearsBest', 'lastYearsBest');
+		return compact('event', 'improved', 'improvement', 'improvementPercent', 'thisYearsBest', 'lastYearsBest');
 	}
 
 	public static function getRecordsDetail($records, $person) {
