@@ -17,6 +17,14 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Hsinchu' => '新竹',
+  'Kaohsiung' => '高雄',
+  'New Taipei City' => '新北',
+  'Taichung' => '台中',
+  'Tainan' => '台南',
+  'Taipei' => '台北',
+  'Taoyuan' => '桃園',
+  'Yilan' => '宜蘭',
   'Greater China' => '',
   'ID' => '',
   'Name' => '',

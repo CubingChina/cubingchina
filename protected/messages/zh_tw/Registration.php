@@ -18,7 +18,6 @@
  */
 return array (
   'ID' => '',
-  'If there are sufficient openings from other competitors canceling their registration, your registration will be automatically accepted. If at the end of the registration period your registration has not been accepted, your registration fee will be returned in full.' => '當有足夠多的人退賽時，你的報名將會自動通過。若比賽報名結束後你仍在候選列表中，你的報名費將會被全額退款。',
   'No.' => '',
   'User' => '',
   ' CNY' => '元',
@@ -42,6 +41,7 @@ return array (
   'I have submitted my photo to ACA before and I do not need to change my photo.' => '我曾經給ACA提交過照片，不需更換',
   'I have submitted my photo to ACA before and now I want to change it. / I have not submitted my photo before.' => '我曾經給ACA提交過照片，現在想更換/我沒有給ACA提交過照片',
   'Identity Number' => '證件號碼',
+  'If there are sufficient openings from other competitors canceling their registration, your registration will be automatically accepted. If at the end of the registration period your registration has not been accepted, your registration fee will be returned in full.' => '當有足夠多的人退賽時，你的報名將會自動通過。若比賽報名結束後你仍在候選列表中，你的報名費將會被全額退款。',
   'Name' => '姓名',
   'Name of Identity' => '證件名',
   'Only competitors and registered guests may enter the venue. Each competitor may register at most one guest. Guest registration is {fee} RMB. This fee is necessary for venue liability insurance.' => '只接受參賽選手與一名注冊觀眾進場。您需要為該陪同人員繳納{fee}元費用，此費用組委會將用來購買安全保險以及制作入場憑證等花銷。',
