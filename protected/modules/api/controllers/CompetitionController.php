@@ -30,6 +30,12 @@ class CompetitionController extends ApiController {
 		$this->ajaxOK(JsonHelper::formatData($registrations));
 	}
 
+	public function actionWcif($type = null) {
+		$competition = $this->getCompetition();
+		$wcif = $competition->WCIF;
+		echo json_encode($wcif);
+	}
+
 	protected function getCompetition() {
 		$alias = $this->sGet('alias');
 		$competition = Competition::getCompetitionByName($alias);

@@ -43,6 +43,21 @@ class Schedule extends ActiveRecord {
 		return array_search($stage, array_keys(self::getStages()));
 	}
 
+	public static function getStageColor($stage) {
+		$colors = [
+			'main'=>'#6091ba',
+			'side'=>'#6f599c',
+			'long'=>'#f05b72',
+			'room'=>'#78a355',
+			'red'=>'#d9534f',
+			'blue'=>'#5bc0de',
+			'green'=>'#5cb85c',
+			'yellow'=>'#ffea00',
+			'orange'=>'#f0ad4e',
+		];
+		return $colors[$stage] ?? '#6091ba';
+	}
+
 	public function getTime($offset) {
 		$chineseTime = $this->start_time;
 		$time = $chineseTime + $offset;
