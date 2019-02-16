@@ -601,7 +601,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getShouldDisableUnmetEvents() {
-		return $this->has_qualifying_time && time() >= $this->qualifying_end_time;
+		return $this->has_qualifying_time;
 	}
 
 	public function getUserUnmetEvents($user) {
