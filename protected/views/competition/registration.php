@@ -198,11 +198,12 @@
         ]); ?>
       </label>
     </div>
+    <?php $disabled = $competition->fill_passport && $this->user->passport_type == User::NO || count($competition->getRegistrationEvents()) == count($unmetEvents); ?>
     <?php echo CHtml::tag('button', [
       'type'=>'submit',
-      'class'=>'btn btn-theme',
+      'class'=>'btn btn-theme' . ($disabled ? ' disabled' : ''),
       'id'=>'submit-button',
-      'disabled'=>$competition->fill_passport && $this->user->passport_type == User::NO,
+      'disabled'=>$disabled,
     ], Yii::t('common', 'Submit')); ?>
   <?php $this->endWidget(); ?>
 </div>
@@ -252,4 +253,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20180716');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20190221');

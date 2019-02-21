@@ -19,6 +19,8 @@
 return array (
   'ID' => '',
   'No.' => '',
+  'To register the following events, you need to meet the qualifying times before {time}. Please come back after you meet any qualifying times.' => '需要在{time}前達到資格線方可報名以下項目，在到達資格線後你可以繼續增加這些項目。',
+  'To register the following events, you need to meet the qualifying times before {time}. You can add them later after you reach the corresponding qualifying time.' => '需要在{time}前達到資格線方可報名以下項目。很抱歉，你還沒有任何一個項目達標，暫時不能報名比賽。',
   'User' => '',
   ' CNY' => '元',
   'Date' => '報名時間',

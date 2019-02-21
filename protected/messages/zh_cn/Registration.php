@@ -19,6 +19,8 @@
 return array (
   'ID' => '',
   'No.' => '',
+  'To register the following events, you need to meet the qualifying times before {time}. Please come back after you meet any qualifying times.' => '需要在{time}前达到资格线方可报名以下项目，在到达资格线后你可以继续增加这些项目。',
+  'To register the following events, you need to meet the qualifying times before {time}. You can add them later after you reach the corresponding qualifying time.' => '需要在{time}前达到资格线方可报名以下项目。很抱歉，你还没有任何一个项目达标，暂时不能报名比赛。',
   'User' => '',
   ' CNY' => '元',
   'Date' => '报名时间',

@@ -4,6 +4,9 @@ $(function() {
   var specialRegulations = {}
   var fee = $('#fee');
   $(document).on('change', '.registration-agreements', function() {
+    if ($('#submit-button').hasClass('disabled')) {
+      return
+    }
     var checked = true
     $('.registration-agreements').each(function() {
       checked = checked && this.checked
