@@ -38,7 +38,7 @@ class EventsForm extends Widget {
 			echo CHtml::error($model, 'events', ['class'=>'text-danger']);
 			if ($this->shouldDisableUnmetEvents) {
 				$params = [
-					'{time}'=>date('Y-m-d H:i', $competition->qualifying_end_time) . ' GMT+8',
+					'{time}'=>date('Y-m-d H:i:s', $competition->qualifying_end_time) . ' GMT+8',
 				];
 				if (count($events) == count($this->unmetEvents)) {
 					echo CHtml::tag('p', [], Yii::t('Registration', 'To register the following events, you need to meet the qualifying times before {time}. Please come back after you meet any qualifying times.', $params));
