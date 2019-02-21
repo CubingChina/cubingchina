@@ -53,7 +53,7 @@
               'class'=>'col-sm-2 control-label',
               'required'=>false,
             ]),
-            CHtml::tag('div', ['class'=>'col-sm-10'], CHtml::tag('p', ['class'=>'form-control-static'], $model->getRegistrationEvents()))
+            CHtml::tag('div', ['class'=>'col-sm-10'], CHtml::tag('p', ['class'=>'form-control-static'], $model->getAPDEventsString()))
           );?>
           <?php echo Html::formGroup(
             $model, 'totalFee', array(),
