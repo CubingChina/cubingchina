@@ -4,6 +4,9 @@ $(function() {
   var specialRegulations = {}
   var fee = $('#fee');
   $(document).on('change', '.registration-agreements', function() {
+    if ($('#submit-button').hasClass('disabled')) {
+      return
+    }
     var checked = true
     $('.registration-agreements').each(function() {
       checked = checked && this.checked
@@ -19,15 +22,7 @@ $(function() {
     updateFee();
   }).on('click', '#submit-button', function(e) {
     var checkedEvents = $('.registration-events:checked');
-    var userUnmetEvents = [];
-    checkedEvents.each(function() {
-      var that = $(this);
-      var event = that.val();
-      if (options.unmetEvents[event]) {
-        userUnmetEvents.push(event);
-      }
-    })
-    if (options.showRegulations || userUnmetEvents.length > 0) {
+    if (options.showRegulations) {
       e.preventDefault();
       var specialRegulations = {}
       checkedEvents.each(function() {
@@ -54,14 +49,6 @@ $(function() {
         }
       });
       var message = [];
-      if (userUnmetEvents.length > 0) {
-        message.push(options.unmetEventsMessage);
-        message.push('\n');
-        message.push(userUnmetEvents.map(function(event) {
-          return $('.event-icon-' + event).attr('title');
-        }).join(options.delimiter));
-        message.push('<hr>');
-      }
       if (options.showRegulations) {
         var ol = $('<ol>');
         options.regulations.common.forEach(function(r) {
