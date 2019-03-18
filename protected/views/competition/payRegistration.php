@@ -35,7 +35,7 @@
   <br>
   <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
 </div>
-<?php if ($this->user->country_id > 1 && !$competition->paypal_link): ?>
+<?php if ($this->user->country_id > 1 && !$competition->paypal_link && $competition->auto_accept == Competition::YES): ?>
 <hr>
 <p>
   <?php echo Yii::t('common', 'International competitors that are not able to pay online with alipay, please enter the verification code. Your registration will be accepted, please pay cash at the venue.'); ?>
