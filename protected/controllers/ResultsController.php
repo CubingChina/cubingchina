@@ -604,7 +604,7 @@ class ResultsController extends Controller {
 			$competition->location = $c->isMultiLocation() ? $c->getLocationInfo('venue') : $c->location[0]->getFullAddress(false);
 			$competition->c = $c;
 		}
-		$data = Yii::app()->cache->getData(array('Competitions', 'getResults'), $id);
+		$data = Yii::app()->cache->getData([$competition, 'getResults'], $id);
 		if (empty($data['records']) && $type !== 'records') {
 			unset($types['records']);
 		}

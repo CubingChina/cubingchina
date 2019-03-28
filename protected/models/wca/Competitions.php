@@ -60,7 +60,7 @@ class Competitions extends ActiveRecord {
 		return $years;
 	}
 
-	public static function getResults($id) {
+	public function getResults($id) {
 		//比赛成绩
 		$winners = Results::model()->with(array(
 			'person',
@@ -105,17 +105,61 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'event.rank, round.rank, t.pos'
 		));
-		$byPerson = Results::model()->with(array(
-			'person',
-			'person.country',
-			'round',
-			'event',
-			'format',
-		))->findAllByAttributes(array(
-			'competitionId'=>$id,
-		), array(
-			'order'=>'personName, personId, event.rank, round.rank DESC'
-		));
+		$personIds = array_unique(array_map(function($result) {
+			return $result->personId;
+		}, $all));
+		$previousPersonalRecords = [];
+		$command = Yii::app()->wcaDb->createCommand()
+			->select([
+				'personId',
+				'eventId',
+				'MIN(CASE WHEN best > 0 THEN best ELSE 999999999 END) AS best',
+				'MIN(CASE WHEN average > 0 THEN average ELSE 999999999 END) AS average',
+			])
+			->from('Results rs')
+			->leftJoin('Competitions c', 'rs.competitionId=c.id')
+			->where(['in', 'personId', $personIds])
+			->andWhere('c.year<:year OR (c.year=:year AND c.month<:month) OR (c.year=:year AND c.month=:month AND c.day<:day)', [
+				':year'=>$this->year,
+				':month'=>$this->month,
+				':day'=>$this->day,
+			])
+			->group('personId, eventId');
+		foreach ($command->queryAll() as $result) {
+			$previousPersonalRecords[$result['personId']][$result['eventId']] = $result;
+		}
+		array_walk($all, function($result) use (&$previousPersonalRecords) {
+			$personId = $result->personId;
+			$eventId = $result->eventId;
+			if ($result->best > 0 && (!isset($previousPersonalRecords[$personId][$eventId]['best'])
+				|| $previousPersonalRecords[$personId][$eventId]['best'] == 999999999
+				|| $previousPersonalRecords[$personId][$eventId]['best'] >= $result->best)
+			) {
+				$result->newBest = true;
+				$previousPersonalRecords[$personId][$eventId]['best'] = $result->best;
+			}
+			if ($result->average > 0 && (!isset($previousPersonalRecords[$personId][$eventId]['average'])
+				|| $previousPersonalRecords[$personId][$eventId]['average'] == 999999999
+				|| $previousPersonalRecords[$personId][$eventId]['average'] >= $result->average)
+			) {
+				$result->newAverage = true;
+				$previousPersonalRecords[$personId][$eventId]['average'] = $result->average;
+			}
+		});
+		$byPerson = $all;
+		usort($byPerson, function($resultA, $resultB) {
+			$temp = $resultA->personName <=> $resultB->personName;
+			if ($temp === 0) {
+				$temp = $resultA->personId <=> $resultB->personId;
+			}
+			if ($temp === 0) {
+				$temp = $resultA->event->rank <=> $resultB->event->rank;
+			}
+			if ($temp === 0) {
+				$temp = $resultB->round->rank <=> $resultA->round->rank;
+			}
+			return $temp;
+		});
 		$records = array_filter($all, function($result) {
 			return $result->regionalSingleRecord != '' || $result->regionalAverageRecord != '';
 		});

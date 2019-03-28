@@ -46,14 +46,14 @@ $this->widget('GroupRankGridView', [
     [
       'name'=>Yii::t('common', 'Best'),
       'type'=>'raw',
-      'value'=>'$data->getTime("best", false, true)',
+      'value'=>'$data->getTime("best", true, true)',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],
     [
       'name'=>Yii::t('common', 'Average'),
       'type'=>'raw',
-      'value'=>'$data->getTime("average", false, true)',
+      'value'=>'$data->getTime("average", true, true)',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],
