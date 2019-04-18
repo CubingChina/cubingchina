@@ -4,6 +4,7 @@ class RegistrationController extends AdminController {
 
 	const ROW_PER_CARD = 11;
 	const CARD_PER_PAGE = 3;
+	const TIME_SLOT = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
 
 	private $pagePerStack = 50;
 	private $imageStyle = array(
@@ -665,7 +666,7 @@ class RegistrationController extends AdminController {
 				}
 			}
 		}
-		$pdf = new mPDF();
+		$pdf = new \Mpdf\Mpdf();
 		$pdf->useAdobeCJK = true;
 		$pdf->autoScriptToLang = true;
 		$pdf->autoLangToFont = true;
@@ -875,7 +876,7 @@ class RegistrationController extends AdminController {
 				'class'=>'trial-no'
 			], $i + 1);
 			echo CHtml::tag('td', [], '');
-			echo CHtml::tag('td', [], '');
+			echo CHtml::tag('td', [], self::TIME_SLOT);
 			if ($event === '333mbf') {
 				echo CHtml::tag('td', [
 					'colspan'=>2,
@@ -897,7 +898,7 @@ class RegistrationController extends AdminController {
 			}
 			echo CHtml::tag('td', [
 				'class'=>$class
-			]);
+			], self::TIME_SLOT);
 			echo CHtml::tag('td', [], '');
 			echo CHtml::tag('td', [
 				'class'=>'bdr'
