@@ -1,6 +1,53 @@
 <?php
 
 class CompetitionController extends ApiController {
+	public function actionIndex($year = 'current', $type = '', $province = '', $event = '') {
+		$model = new Competition('search');
+		$model->unsetAttributes();
+		$model->year = $year;
+		$model->type = $type;
+		$model->province = $province;
+		$model->event = $event;
+		$model->status = Competition::STATUS_SHOW;
+		$dataProvider = $model->search();
+		$competitions = $dataProvider->getData();
+		$this->ajaxOK(JsonHelper::formatData($competitions));
+	}
+
+	public function actionDetail() {
+		$competition = $this->getCompetition();
+		$this->ajaxOK(JsonHelper::formatData($competition, true));
+	}
+
+	public function actionSchedule() {
+		$competition = $this->getCompetition();
+		$this->ajaxOK(JsonHelper::formatData($competition->schedule));
+	}
+
+	public function actionCompetitors() {
+		$competition = $this->getCompetition();
+		$registrations = Registration::getRegistrations($competition);
+		$this->ajaxOK(JsonHelper::formatData($registrations));
+	}
+
+	public function actionWcif($type = null) {
+		$competition = $this->getCompetition();
+		$wcif = $competition->WCIF;
+		echo json_encode($wcif);
+	}
+
+	protected function getCompetition() {
+		$alias = $this->sGet('alias');
+		$competition = Competition::getCompetitionByName($alias);
+		if ($competition === null || strtolower($alias) != strtolower($competition->getUrlName())) {
+			$this->ajaxError(Constant::STATUS_NOT_FOUND);
+		}
+		if (!$competition->isPublicVisible() && !$competition->checkPermission($this->user)) {
+			$this->ajaxError(Constant::STATUS_NOT_FOUND);
+		}
+		return $competition;
+	}
+
 	public function actionRegistration() {
 		if (Yii::app()->session->get('scan_code') === null) {
 			$this->ajaxError(Constant::STATUS_FORBIDDEN);

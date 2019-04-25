@@ -1279,7 +1279,7 @@ class Competition extends ActiveRecord {
 		if ($this->id < 382) {
 			return '';
 		}
-		$fee = $this->operationFee * $this->days;
+		$fee = $this->registeredCompetitors * $this->days;
 		$buttons = array();
 		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
@@ -1964,6 +1964,182 @@ class Competition extends ActiveRecord {
 
 			}
 		});
+	}
+
+	public function __toJson($full = false) {
+		$data = [
+			'id'=>$this->id,
+			'name'=>$this->getAttributeValue('name'),
+			'type'=>$this->type,
+			'alias'=>$this->alias,
+			'url'=>CHtml::normalizeUrl($this->getUrl()),
+			'date'=>[
+				'from'=>$this->date,
+				'to'=>$this->end_date ?: $this->date,
+			],
+			'locations'=>JsonHelper::formatData($this->location),
+			'registration'=>[
+				'from'=>$this->reg_start,
+				'to'=>$this->reg_end,
+			],
+			'competitor_limit'=>$this->person_num,
+			'registered_competitors'=>$this->registeredCompetitors,
+		];
+		if ($full) {
+			$data += [
+				'wca_competition_id'=>$this->wca_competition_id,
+				'organizers'=>$this->organizer,
+				'delegates'=>$this->delegate,
+				'base_entry_fee'=>$this->entry_fee,
+				'second_phase_time'=>$this->second_stage_date,
+				'second_phase_fee'=>$this->getEventFee('entry', self::STAGE_SECOND),
+				'third_phase_time'=>$this->third_stage_date,
+				'third_phase_fee'=>$this->getEventFee('entry', self::STAGE_THIRD),
+				'events'=>$this->allEvents,
+				'information'=>$this->getAttributeValue('information'),
+				'regulations'=>$this->getAttributeValue('regulations'),
+				'travel'=>$this->getAttributeValue('travel'),
+			];
+			$data['registration'] += [
+				'cancellation_end_time'=>$this->cancellation_end_time,
+				'reopen_time'=>$this->reg_reopen_time,
+			];
+		}
+		return $data;
+	}
+
+	public function getWCIF() {
+		$schedules = $this->schedule;
+		usort($schedules, [$this, 'sortSchedules']);
+		$specialEvents = [
+			'333fm'=>[],
+			'333mbf'=>[],
+		];
+		foreach ($schedules as $key=>$schedule) {
+			$eventSchedules[$schedule->event][$schedule->round] = $schedule;
+			if (isset($specialEvents[$schedule->event])) {
+				$specialEvents[$schedule->event][$schedule->round][] = $key;
+			}
+		}
+		$wcaEvents = Events::getNormalEvents();
+		$events = [];
+		foreach ($wcaEvents as $event=>$name) {
+			$temp = [
+				'id'=>"$event",
+				'rounds'=>[],
+			];
+			if (isset($this->associatedEvents[$event])) {
+				$eventSchedules[$event] = array_values($eventSchedules[$event]);
+				for ($i = 1; $i <= $this->associatedEvents[$event]['round']; $i++) {
+					$schedule = $eventSchedules[$event][$i - 1];
+					$format = substr($schedule->format, -1);
+					$round = [
+						'id'=>"{$event}-r{$i}",
+						'format'=>$format,
+						'timeLimit'=>[
+							'centiseconds'=>$schedule->time_limit * 100,
+							'cumulativeRoundIds'=>[],
+						],
+						'cutoff'=>$schedule->cut_off > 0 ? [
+							'numberOfAttempts'=>(int)substr($schedule->format, 0, 1),
+							'attemptResult'=>$schedule->cut_off * 100,
+						] : null,
+						'advancementCondition'=>isset($eventSchedules[$event][$i]) ? [
+							'type'=>'ranking',
+							'level'=>(int)$eventSchedules[$event][$i]->number,
+						] : null,
+						'scrambleGroupCount'=>1,
+						'scrambleSetCount'=>1,
+						'roundResults'=>[],
+					];
+					$temp['rounds'][] = $round;
+				}
+			} else {
+				$temp['rounds'] = null;
+			}
+			$events[] = $temp;
+		}
+		$activities = [];
+		$rounds = [];
+		$ids = [];
+		$codes = ["registration", "tutorial", "breakfast", "lunch", "dinner", "awards", "misc"];
+		$rooms = [];
+		foreach ($schedules as $key=>$schedule) {
+			if (isset($wcaEvents[$schedule->event])) {
+				$round = $this->getRoundNumber($schedule->event, $schedule->round);
+				$activityCode = "{$schedule->event}-r{$round}";
+			} elseif (in_array($schedule->event, $codes)) {
+				$activityCode = "other-{$schedule->event}";
+			} else {
+				$activityCode = "other-misc";
+			}
+			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
+				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
+				if ($times > 0) {
+					$schedule->cut_off = 0;
+				}
+				$activityCode .= '-a' . ($times + 1);
+			}
+			$stage = $schedule->stage;
+			if (!isset($ids[$stage])) {
+				$ids[$stage] = 0;
+			}
+			$rooms[$stage][] = [
+				'id'=>++$ids[$stage],
+				'name'=>Events::getFullEventName($schedule->event),
+				'activityCode'=>$activityCode,
+				'startTime'=>sprintf("%sT%s+08:00", date('Y-m-d', $this->date + ($schedule->day - 1) * 86400), date('H:i:s', $schedule->start_time)),
+				'endTime'=>sprintf("%sT%s+08:00", date('Y-m-d', $this->date + ($schedule->day - 1) * 86400), date('H:i:s', $schedule->end_time)),
+				'childActivities'=>[],
+			];
+		}
+		$location = $this->location[0];
+		$venue = explode(',', $location->venue);
+		$schedule = [
+			'startDate'=>date('Y-m-d', $this->date),
+			'numberOfDays'=>$this->days,
+			'venues'=>[
+				[
+					'id'=>1,
+					'name'=>trim($venue[0]),
+					'latitudeMicrodegrees'=>(int)($location->latitude * 1e6),
+					'longitudeMicrodegrees'=>(int)($location->longitude * 1e6),
+					'timezone'=>'Asia/Shanghai',
+					'rooms'=>array_values(array_map(function($activities, $stage, $id) {
+						return [
+							'id'=>$id,
+							'name'=>trim(strip_tags(Schedule::getStageText($stage))),
+							'color'=>Schedule::getStageColor($stage),
+							'activities'=>$activities,
+						];
+					}, $rooms, array_keys($rooms), range(1, count($rooms)))),
+				],
+			],
+		];
+		return [
+			'events'=>$events,
+			'schedule'=>$schedule,
+		];
+	}
+
+	private function getRoundNumber($event, $round) {
+		$roundNum = $this->associatedEvents[$event]['round'];
+		switch ($round) {
+			case '1':
+			case 'd':
+				return 1;
+			case '2':
+			case 'e':
+				return 2;
+			case '3':
+			case 'g':
+				return 3;
+			case 'f':
+			case 'd':
+				return $roundNum;
+			default:
+				return 1;
+		}
 	}
 
 	public function generateTemplateData() {
@@ -2700,7 +2876,7 @@ class Competition extends ActiveRecord {
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
-			'operationFee'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
+			'registeredCompetitors'=>[self::STAT, 'Registration', 'competition_id', 'condition'=>'status=1'],
 			'liveResults'=>[self::HAS_MANY, 'LiveResult', 'competition_id'],
 			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'allEvents.id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],

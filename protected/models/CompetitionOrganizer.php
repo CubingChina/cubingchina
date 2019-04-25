@@ -9,6 +9,11 @@
  * @property string $organizer_id
  */
 class CompetitionOrganizer extends ActiveRecord {
+
+	public function __toJson() {
+		return $this->user;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

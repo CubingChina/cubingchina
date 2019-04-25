@@ -70,6 +70,10 @@ class RegistrationEvent extends ActiveRecord {
 		return $this->save();
 	}
 
+	public function __toJson() {
+		return $this->event;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */

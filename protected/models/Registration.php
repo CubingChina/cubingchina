@@ -1107,8 +1107,8 @@ class Registration extends ActiveRecord {
 			return false;
 		}
 		$totalFee = $this->getTotalFee();
-		return $this->competition->isOnlinePay() && $totalFee > 0
-			&& (!$this->competition->isRegistrationFull() || $this->isAccepted() || $this->isWaiting())
+		return $this->competition->isOnlinePay() && !$this->competition->isRegistrationEnded() && $totalFee > 0
+			&& (!$this->competition->isRegistrationFull() || $this->isAcceptedOrWaiting())
 			&& $this->getPendingAmount() > 0;
 	}
 
@@ -1206,6 +1206,14 @@ class Registration extends ActiveRecord {
 			return;
 		}
 		return $event->cancel();
+	}
+
+	public function __toJson($full) {
+		return [
+			'number'=>$this->number,
+			'competitor'=>$this->user,
+			'events'=>$this->getAcceptedEvents(),
+		];
 	}
 
 	/**
