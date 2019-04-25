@@ -104,6 +104,7 @@ class MultiLocations extends Widget {
 					'class'=>'col-lg-12',
 				),
 				CHtml::label('中文地址', false),
+				'<p class="text-muted">示例：颐和园路5号北京大学二教503</p>',
 				CHtml::textField(CHtml::activeName($model, 'locations[venue_zh][]'), $location['venue_zh'], array(
 					'class'=>'form-control',
 				)),
@@ -115,6 +116,7 @@ class MultiLocations extends Widget {
 					'class'=>'col-lg-12',
 				),
 				CHtml::label('英文地址', false),
+				'<p class="text-muted">Eg. Room 503, No.2 Teaching Building, Peking University, No.5, Yiheyuan Road, Haidian District</p>',
 				CHtml::textField(CHtml::activeName($model, 'locations[venue][]'), $location['venue'], array(
 					'class'=>'form-control',
 				)),
