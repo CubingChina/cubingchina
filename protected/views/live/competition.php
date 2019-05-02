@@ -320,7 +320,7 @@
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
             <th class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage()}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th class="text-right" :class="{'sorting-column': !hasAverage()}"><?php echo Yii::t('common', 'Best'); ?></th>
-            <th class="text-right" v-if="hasAverage(true)" :class="{'sorting-column': hasAverage(true)}"><?php echo Yii::t('common', 'Average'); ?></th>
+            <th class="text-right" v-if="!hasAverage() && hasAverage(true)"><?php echo Yii::t('common', 'Average'); ?></th>
             <th><?php echo Yii::t('common', 'Region'); ?></th>
             <th><?php echo Yii::t('common', 'Detail'); ?></th>
           </thead>
@@ -339,7 +339,7 @@
               <td>
                 <a href="javascript:void(0)" @click="goToUser(getUser(result.n))">{{getUser(result.n).name}}</a>
               </td>
-              <td class="text-right" v-if="hasAverage(false)" :class="{'sorting-column': hasAverage(false)}">
+              <td class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage()}">
                 <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
                   {{result.ar}}
                 </span>
@@ -351,7 +351,7 @@
                 </span>
                 {{result.b | decodeResult result.e}}
               </td>
-              <td class="text-right" v-if="hasAverage(true)" :class="{'sorting-column': hasAverage()}">
+              <td class="text-right" v-if="!hasAverage() && hasAverage(true)">
                 <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
                   {{result.ar}}
                 </span>
