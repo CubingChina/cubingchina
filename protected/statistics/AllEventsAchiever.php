@@ -17,7 +17,7 @@ class AllEventsAchiever extends Statistics {
 			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
 			->leftJoin('Countries country', 'p.countryId=country.id')
 			->group('rs.personId')
-			->having('singles + averages = 33');
+			->having('singles + averages = 35');
 		ActiveRecord::applyRegionCondition($cmd, $statistic['region'] ?? 'China', 'p.countryId');
 		$persons = $cmd->queryAll();
 		$cmd = $db->createCommand()
