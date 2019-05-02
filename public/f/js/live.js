@@ -497,9 +497,9 @@
         },
         template: '#result-template',
         methods: {
-          hasAverage: function(result) {
-            var round = getRound(result || this);
-            return round.f == 'a' || round.f == 'm' || (round.e == '333bf' && round.f == '3');
+          hasAverage: function(includeBlindFolded) {
+            var round = getRound(this);
+            return round.f == 'a' || round.f == 'm' || (includeBlindFolded && isSingleBlindFolded(round.e) && round.f == '3');
           },
           showRoundSettings: function() {
             $('#round-settings-modal').modal();
@@ -1269,7 +1269,7 @@
     if (DNFCount > 1 || (DNFCount == 1 && (f == 'm' || f == '3'))) {
       hasAverage = false;
     }
-    if (f == '1' || f == '2' || (f == '3' && result.e != '333bf')) {
+    if (f == '1' || f == '2' || (f == '3' && !isSingleBlindFolded(result.e))) {
       hasAverage = false;
     }
     if (zeroCount > 0) {
@@ -1289,7 +1289,7 @@
       }
     } else if (f == 'm' || f == 'a') {
       result.a = zeroCount > 0 ? 0 : -1;
-    } else if (result.e == '333bf' || f == '') {
+    } else if (isSingleBlindFolded(result.e) || f == '') {
       result.a = 0;
     }
   }
@@ -1427,6 +1427,9 @@
       }
       results[i].isNew = results[i] === result;
     }
+  }
+  function isSingleBlindFolded(event) {
+    return ['333bf', '444bf', '555bf'].indexOf(event) > -1
   }
   function isRepeated(resA, resB) {
     if (resA.e === '333fm') {
