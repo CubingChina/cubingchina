@@ -243,7 +243,7 @@
       </tr>
       <?php foreach (Events::getNormalTranslatedEvents() as $eventId=>$eventName): ?>
       <?php if (isset($eventIds[$eventId])): ?>
-      <?php $nonAverage = in_array("$eventId", array('333mbf', '444bf', '555bf')) || !$eventIds[$eventId]; ?>
+      <?php $nonAverage = !$eventIds[$eventId]; ?>
       <tr class="event-row">
         <td colspan="<?php echo 2 + count($persons); ?>">&nbsp;</td>
       </tr>
