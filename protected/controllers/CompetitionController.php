@@ -339,7 +339,7 @@ class CompetitionController extends Controller {
 					}
 					if ($userTicket->save()) {
 						Yii::app()->user->setFlash('success', Yii::t('Competition', 'Update ticket info successfully.'));
-						$this->redirect($competition->getUrl('ticket'));
+						$this->redirect($competition->getUrl('ticket', ['id'=>$id]));
 					}
 				}
 				$this->render('editTicket', [
@@ -347,6 +347,7 @@ class CompetitionController extends Controller {
 					'competition'=>$competition,
 					'model'=>$userTicket,
 				]);
+				Yii::app()->end();
 			}
 		}
 		$model = new UserTicket();
@@ -361,7 +362,7 @@ class CompetitionController extends Controller {
 			$model->calculateFee();
 			if ($model->save()) {
 				$model->createPayment();
-				$this->redirect($competition->getUrl('ticket'));
+				$this->redirect($competition->getUrl('ticket', ['id'=>$model->id]));
 			}
 		}
 		$this->render('ticket', [

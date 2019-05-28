@@ -10,15 +10,25 @@
         <div class="panel-body collapse in" id="my-tickets">
           <div class="my-ticket-list">
             <?php foreach ($user->getTickets($competition, UserTicket::STATUS_PAID) as $userTicket): ?>
-            <div class="ticket<?php if ($userTicket->signed_in) echo ' used'; ?>">
-              <?php $this->renderPartial('ticketInfo', [
-                'userTicket'=>$userTicket,
-                'competition'=>$competition,
-              ]); ?>
-              <div class="ticket-qrcode">
-                <?php echo CHtml::image($userTicket->getQRCodeUrl()); ?>
-              </div>
-            </div>
+            <?php $this->renderPartial('ticketInfo', [
+              'userTicket'=>$userTicket,
+              'competition'=>$competition,
+            ]); ?>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+      <?php endif; ?>
+      <?php if ($user->hasUnpaidTickets($competition)): ?>
+      <div class="panel panel-warning">
+        <div class="panel-heading"><?php echo Yii::t('Competition', 'Pending Order'); ?></div>
+        <div class="panel-body">
+          <div class="my-ticket-list">
+            <?php foreach ($user->getTickets($competition, UserTicket::STATUS_UNPAID) as $userTicket): ?>
+            <?php $this->renderPartial('ticketInfo', [
+              'userTicket'=>$userTicket,
+              'competition'=>$competition,
+            ]); ?>
             <?php endforeach; ?>
           </div>
         </div>
@@ -27,10 +37,6 @@
       <div class="panel panel-primary">
         <div class="panel-heading"><?php echo Yii::t('Competition', 'Buy Tickets'); ?></div>
         <div class="panel-body">
-          <?php if ($user->hasUnpaidTickets($competition)): ?>
-          <?php $_data_['userTicket'] = $user->getUnpaidTicket($competition); ?>
-          <?php $this->renderPartial('payForTicket', $_data_); ?>
-          <?php else: ?>
           <?php $form = $this->beginWidget('ActiveForm', [
             'id'=>'buy-ticket-form',
             'htmlOptions'=>[
@@ -44,6 +50,7 @@
                 'id'=>'ticket-' . $ticket->id,
                 'value'=>$ticket->id,
                 'uncheckValue'=>null,
+                'disabled'=>!$ticket->isAvailable(),
               ]); ?>
               <label for="ticket-<?php echo $ticket->id; ?>">
                 <h4><?php echo $ticket->getAttributeValue('name'); ?></h4>
@@ -56,6 +63,7 @@
                 <?php else: ?>
                 <p><?php echo Html::fontAwesome('rmb'), $ticket->fee; ?></p>
                 <?php endif; ?>
+                <p><?php echo Yii::t('Ticket', 'Stock: '); ?><?php echo $ticket->stock; ?></p>
               </label>
             </div>
             <?php endforeach; ?>
@@ -112,7 +120,6 @@
             'id'=>'submit-button',
           ], Yii::t('common', 'Submit')); ?>
           <?php $this->endWidget(); ?>
-          <?php endif; ?>
         </div>
       </div>
       <p class="help-text text-danger"><?php echo Yii::t('Ticket', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition.') ;?></p>
