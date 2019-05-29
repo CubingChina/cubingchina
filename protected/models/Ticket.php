@@ -23,6 +23,47 @@ class Ticket extends ActiveRecord {
 	const TYPE_COMPETITION = 0;
 	const CHILDREN_DISCOUNT = 60;
 
+	private $_stock;
+
+	public function getStock() {
+		if ($this->_stock !== null) {
+			return $this->_stock;
+		}
+		$number = $this->number;
+		$number -= $this->soldTicketsNum;
+		if ($this->multi_days) {
+			// maybe need to minus single day tickets
+		} else {
+			$soldMultiDaysTicketsNum = $this->dbConnection->createCommand()
+				->select('count(user_ticket.id)')
+				->from('user_ticket')
+				->leftJoin('ticket', 'ticket.id=user_ticket.ticket_id')
+				->where('ticket.type=:type AND ticket.type_id=:type_id AND ticket.multi_days=1 AND user_ticket.status=1', [
+					':type'=>$this->type,
+					':type_id'=>$this->type_id,
+				])
+				->queryScalar();
+			$number -= $soldMultiDaysTicketsNum;
+		}
+		return $this->_stock = max($number, 0);
+	}
+
+	public function isSoldOut() {
+		return $this->stock <= 0;
+	}
+
+	public function isAvailable() {
+		if ($this->isSoldOut()) {
+			return false;
+		}
+		if (!Yii::app()->controller->user) {
+			return true;
+		}
+		return array_filter(Yii::app()->controller->user->getUnpaidTickets($this->competition), function($userTicket) {
+			return $userTicket->ticket_id == $this->id;
+		}) === [];
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -57,6 +98,7 @@ class Ticket extends ActiveRecord {
 		return [
 			'userTickets'=>[self::HAS_MANY, 'UserTicket', 'ticket_id'],
 			'competition'=>[self::BELONGS_TO, 'Competition', 'type_id'],
+			'soldTicketsNum'=>[self::STAT, 'UserTicket', 'ticket_id', 'condition'=>'status=1'],
 		];
 	}
 

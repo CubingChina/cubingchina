@@ -19,8 +19,6 @@
 return array (
   'ID' => '',
   'No.' => '',
-  'To register the following events, you need to meet the qualifying times before {time}. Please come back after you meet any qualifying times.' => '需要在{time}前达到资格线方可报名以下项目。很抱歉，你还没有任何一个项目达标，暂时不能报名比赛。',
-  'To register the following events, you need to meet the qualifying times before {time}. You can add them later after you reach the corresponding qualifying time.' => '需要在{time}前达到资格线方可报名以下项目，在到达资格线后你可以继续增加这些项目。',
   'User' => '',
   ' CNY' => '元',
   'Date' => '报名时间',
@@ -65,6 +63,8 @@ return array (
   'T-shirt Size' => 'T恤尺码',
   'The QR code below is for check-in and relevant matters. You can find it in your registration page at all time. Please show <b class="text-danger">the QR code and the corresponding ID credentials</b> to our staffs for check-in.' => '下方二维码将用于比赛签到及相关事宜，您可以随时在您的报名信息中查看。请在签到时将<b class="text-danger">二维码及相关证件</b>出示给工作人员进行签到。',
   'The refund will be made via the payment method which you have used at the registration.' => '您所退回的费用将通过付款时选择的支付方式退回。',
+  'To register the following events, you need to meet the qualifying times before {time}. Please come back after you meet any qualifying times.' => '需要在{time}前达到资格线方可报名以下项目。很抱歉，你还没有任何一个项目达标，暂时不能报名比赛。',
+  'To register the following events, you need to meet the qualifying times before {time}. You can add them later after you reach the corresponding qualifying time.' => '需要在{time}前达到资格线方可报名以下项目，在到达资格线后你可以继续增加这些项目。',
   'Total Fee' => '报名费',
   'Type of Identity' => '证件类型',
   'Update Registration' => '变更项目',

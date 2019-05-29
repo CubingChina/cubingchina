@@ -67,6 +67,7 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function hasDiscount($competition = null) {
+		return false;
 		$user = $this->user;
 		if ($competition === null) {
 			$competition = $this->ticket->competition;
@@ -125,7 +126,7 @@ class UserTicket extends ActiveRecord {
 		$this->paid_amount = $this->payment->paid_amount;
 		$this->paid_time = $this->payment->paid_time;
 		$this->code = substr(sprintf('ticket-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
-		$this->save();
+		$this->save(false);
 	}
 
 	public function checkPassportType() {
@@ -165,6 +166,17 @@ class UserTicket extends ActiveRecord {
 		}
 	}
 
+	public function checkTicket() {
+		if ($this->ticket && !$this->ticket->isAvailable()) {
+			$this->addError('ticket_id', Yii::t('Ticket', 'The ticket you chose is not available.'));
+			return false;
+		}
+	}
+
+	public function isPayable() {
+		return $this->isUnpaid() && !$this->ticket->isSoldOut();
+	}
+
 	public function isPaid() {
 		return $this->status == self::STATUS_PAID;
 	}
@@ -174,7 +186,7 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function isEditable() {
-		return !$this->signed_in;
+		return !$this->signed_in && ($this->isPaid() || !$this->ticket->isSoldOut());
 	}
 
 	/**
@@ -190,6 +202,7 @@ class UserTicket extends ActiveRecord {
 	public function rules() {
 		return [
 			['ticket_id', 'required', 'message'=>Yii::t('Competition', 'Please choose a ticket!')],
+			['ticket_id', 'checkTicket'],
 			['name, passport_type, passport_number', 'required'],
 			['discount, passport_type, status', 'numerical', 'integerOnly'=>true],
 			['id', 'length', 'max'=>32],

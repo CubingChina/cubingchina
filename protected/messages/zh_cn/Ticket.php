@@ -17,17 +17,19 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition.' => '所有信息<b>仅用于</b>比赛相关的身份确认、保险办理及公安机关报备等。',
   'Create Time' => '',
   'Description' => '',
   'Description Zh' => '',
   'Fee' => '',
   'ID' => '',
-  'Name' => '入场券种类',
   'Name Zh' => '',
   'Number' => '',
-  'Purchase Deadline' => '购买截止日期',
   'Status' => '',
+  'Stock: ' => '库存：',
+  'The ticket you chose is not available.' => '你所选的入场券不能购买。',
   'Type' => '',
   'Update Time' => '',
+  'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition.' => '所有信息<b>仅用于</b>比赛相关的身份确认、保险办理及公安机关报备等。',
+  'Name' => '入场券种类',
+  'Purchase Deadline' => '购买截止日期',
 );

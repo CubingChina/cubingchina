@@ -19,7 +19,9 @@
 return array (
   'ID' => '',
   'Online Pay' => '',
-  'Update ticket info successfully.' => '',
+  'Pay for Ticket' => '支付',
+  'Pending Order' => '待支付訂單',
+  'Update ticket info successfully.' => '更新入場券信息成功！',
   ' round' => '輪',
   ' rounds' => '輪',
   'Check Person' => '報名自動審核',

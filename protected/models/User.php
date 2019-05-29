@@ -307,8 +307,8 @@ class User extends ActiveRecord {
 		return $this->getTickets($competition, UserTicket::STATUS_UNPAID) !== [];
 	}
 
-	public function getUnpaidTicket($competition) {
-		return $this->getTickets($competition, UserTicket::STATUS_UNPAID)[0] ?? null;
+	public function getUnpaidTickets($competition) {
+		return $this->getTickets($competition, UserTicket::STATUS_UNPAID);
 	}
 
 	public function getTickets($competition, $status = null) {

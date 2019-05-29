@@ -61,6 +61,7 @@ class Competition extends ActiveRecord {
 	private $_locations;
 	private $_events;
 	private $_schedules;
+	private $_scheduledRounds;
 	private $_description;
 	private $_timezones;
 	private $_remainedNumber;
@@ -1885,13 +1886,12 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getAllScheduleRounds() {
-		static $rounds;
-		if ($rounds === null) {
+		if ($this->_scheduledRounds === null) {
 			foreach ($this->schedule as $schedule) {
-				$rounds[$schedule->event][$schedule->round] = $schedule;
+				$this->_scheduledRounds[$schedule->event][$schedule->round] = $schedule;
 			}
 		}
-		return $rounds;
+		return $this->_scheduledRounds;
 	}
 
 	public function getScheduledRound($event, $round) {
@@ -2033,12 +2033,16 @@ class Competition extends ActiveRecord {
 				for ($i = 1; $i <= $this->associatedEvents[$event]['round']; $i++) {
 					$schedule = $eventSchedules[$event][$i - 1];
 					$format = substr($schedule->format, -1);
+					$cumulativeRoundIds = [];
+					if ($schedule->cumulative) {
+						$cumulativeRoundIds[] = "$event";
+					}
 					$round = [
 						'id'=>"{$event}-r{$i}",
 						'format'=>$format,
 						'timeLimit'=>[
 							'centiseconds'=>$schedule->time_limit * 100,
-							'cumulativeRoundIds'=>[],
+							'cumulativeRoundIds'=>$cumulativeRoundIds,
 						],
 						'cutoff'=>$schedule->cut_off > 0 ? [
 							'numberOfAttempts'=>(int)substr($schedule->format, 0, 1),
@@ -2073,7 +2077,7 @@ class Competition extends ActiveRecord {
 			} else {
 				$activityCode = "other-misc";
 			}
-			if (isset($specialEvents[$schedule->event][$schedule->round]) && count($specialEvents[$schedule->event][$schedule->round]) > 1) {
+			if (isset($specialEvents[$schedule->event][$schedule->round])) {
 				$times = array_search($key, $specialEvents[$schedule->event][$schedule->round]);
 				if ($times > 0) {
 					$schedule->cut_off = 0;

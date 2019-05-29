@@ -2,6 +2,10 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <div class="row">
     <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+      <?php $this->renderPartial('payForTicket', [
+        'userTicket'=>$model,
+        'competition'=>$competition,
+      ]); ?>
       <div class="panel panel-primary">
         <div class="panel-heading"><?php echo Yii::t('Competition', 'Edit Ticket'); ?></div>
         <div class="panel-body">
