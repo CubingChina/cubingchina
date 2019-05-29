@@ -1,4 +1,4 @@
-<?php if ($userTicket->isUnpaid()): ?>
+<?php if ($userTicket->isPayable()): ?>
 <div class="panel panel-warning">
   <div class="panel-heading"><?php echo Yii::t('Competition', 'Pay for Ticket'); ?></div>
   <div class="panel-body">

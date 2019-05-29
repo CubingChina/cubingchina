@@ -126,7 +126,7 @@ class UserTicket extends ActiveRecord {
 		$this->paid_amount = $this->payment->paid_amount;
 		$this->paid_time = $this->payment->paid_time;
 		$this->code = substr(sprintf('ticket-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
-		$this->save();
+		$this->save(false);
 	}
 
 	public function checkPassportType() {
@@ -173,6 +173,10 @@ class UserTicket extends ActiveRecord {
 		}
 	}
 
+	public function isPayable() {
+		return $this->isUnpaid() && !$this->ticket->isSoldOut();
+	}
+
 	public function isPaid() {
 		return $this->status == self::STATUS_PAID;
 	}
@@ -182,7 +186,7 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function isEditable() {
-		return !$this->signed_in;
+		return !$this->signed_in && ($this->isPaid() || !$this->ticket->isSoldOut());
 	}
 
 	/**

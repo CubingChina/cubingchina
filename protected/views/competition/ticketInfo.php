@@ -1,4 +1,4 @@
-<div class="ticket<?php if ($userTicket->signed_in) echo ' used'; ?>">
+<div class="ticket<?php if ($userTicket->signed_in || $userTicket->isUnpaid() && !$userTicket->isPayable()) echo ' used'; ?>">
   <div class="ticket-info">
     <h4><?php echo $userTicket->ticket->getAttributeValue('name'); ?></h4>
     <p><?php echo $userTicket->ticket->getAttributeValue('description'); ?></p>
@@ -14,7 +14,7 @@
     </dl>
     <?php if (!isset($showButton)): ?>
     <p>
-      <?php if ($userTicket->isUnpaid()): ?>
+      <?php if ($userTicket->isPayable()): ?>
       <?php echo CHtml::link(Yii::t('common', 'Pay'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
       ]), [
