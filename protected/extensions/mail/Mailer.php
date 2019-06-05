@@ -254,6 +254,33 @@ class Mailer extends CApplicationComponent {
 		return compact('subject', 'message');
 	}
 
+	public function sendToUsers($users, $title, $content, $englishContent = '') {
+		$subject = $this->makeTitle($title);
+		foreach ($users as $user) {
+			$message = $this->render('toUsers', array(
+				'title'=>$title,
+				'content'=>$content,
+				'englishContent'=>$englishContent,
+				'user'=>$user,
+				'sender'=>Yii::app()->controller->user,
+			));
+			$this->add($user->email, $subject, $message, Yii::app()->controller->user->email);
+		}
+		return true;
+	}
+
+	public function getSendToUsersPreview($title, $content, $englishContent = '') {
+		$subject = $this->makeTitle($title);
+		$message = $this->render('toUsers', array(
+			'title'=>$title,
+			'content'=>$content,
+			'englishContent'=>$englishContent,
+			'user'=>Yii::app()->controller->user,
+			'sender'=>Yii::app()->controller->user,
+		));
+		return compact('subject', 'message');
+	}
+
 	public function getUrl($url) {
 		if (is_array($url)) {
 			$url = CHtml::normalizeUrl($url);
