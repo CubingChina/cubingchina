@@ -174,6 +174,39 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionSendEmails() {
+		$model = new SendEmailsForm();
+		if (isset($_POST['SendEmailsForm'])) {
+			$model->attributes = $_POST['SendEmailsForm'];
+			if ($model->validate() && $model->send()) {
+				Yii::app()->user->setFlash('success', '发送成功！');
+				$this->redirect('/board/user/sendEmails');
+			}
+		}
+		$this->render('sendEmails', [
+			'model'=>$model,
+		]);
+	}
+
+	public function actionPreviewEmail() {
+		$model = new SendEmailsForm();
+		if (isset($_POST['SendEmailsForm'])) {
+			$model->attributes = $_POST['SendEmailsForm'];
+		}
+		echo json_encode($model->getPreview());
+	}
+
+	public function actionSendToMyself() {
+		$model = new SendEmailsForm();
+		if (isset($_POST['SendEmailsForm'])) {
+			$model->attributes = $_POST['SendEmailsForm'];
+			if ($model->validate() && $model->send([$this->user])) {
+				$this->ajaxOk(null);
+			}
+		}
+		$this->ajaxError(500);
+	}
+
 	private function mergeDailyData() {
 		$data = func_get_args();
 		$keys = array();
