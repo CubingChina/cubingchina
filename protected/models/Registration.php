@@ -18,6 +18,7 @@ class Registration extends ActiveRecord {
 	public $number;
 	public $best = -1;
 	public $pos = -1;
+	public $isStaff = false;
 	public $repeatPassportNumber;
 	public $coefficients = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
 	public $codes = array(1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2);

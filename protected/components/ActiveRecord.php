@@ -31,11 +31,21 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	public static function getModelAttributeValue($model, $name, $forceValue = false) {
-		$value = $model[Yii::app()->controller->getAttributeName($name)];
+		$value = $model[self::getAttributeName($name)];
 		if ($forceValue) {
 			$value = $value ?: $model[$name];
 		}
+		if (Yii::app() instanceof CConsoleApplication) {
+			return $value;
+		}
 		return Yii::app()->controller->translateTWInNeed($value);
+	}
+
+	public static function getAttributeName($name = 'name') {
+		if (Yii::app()->language{0} == 'z' && Yii::app()->language{1} == 'h') {
+			$name .= '_zh';
+		}
+		return $name;
 	}
 
 	public static function getYesOrNo() {

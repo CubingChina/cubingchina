@@ -558,12 +558,12 @@ class RegistrationController extends AdminController {
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round));
 	}
 
-	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical', $byGroup = false) {
+	public function exportAllScoreCard($competition, $all = false, $order = 'date', $split = 'user', $direction = 'vertical', $byGroup = true) {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
 		$this->exportScoreCard($competition, $registrations, $split, $direction, null, $byGroup);
 	}
 
-	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null, $byGroup = false) {
+	public function exportScoreCard($competition, $registrations, $split = 'user', $direction = 'vertical', $round = null, $byGroup = true) {
 		$tempPath = Yii::app()->runtimePath;
 		$scoreCards = [];
 		if (isset($competition->associatedEvents['333mbf']) && ($round === null || $round->event != '333mbf')) {
@@ -591,7 +591,7 @@ class RegistrationController extends AdminController {
 		]);
 		$groups = [];
 		foreach ($groupSchedules as $groupSchedule) {
-			$groups[$groupSchedule->event][$groupSchedule->group] = array_map(function($userSchedule) {
+			$groups[$groupSchedule->event][$groupSchedule->round][$groupSchedule->group] = array_map(function($userSchedule) {
 				return $userSchedule->user_id;
 			}, $groupSchedule->users);
 		}
@@ -615,19 +615,25 @@ class RegistrationController extends AdminController {
 						}
 					}
 				} elseif ($byGroup) {
-					foreach ($groups[$event] ?? [] as $group=>$userIds) {
-						foreach ($registrations as $registration) {
-							if (!$registration->hasRegistered($event)) {
-								continue;
+					foreach ($groups[$event] ?? [] as $roundId=>$groupUserIds) {
+						$firstRound = $competition->getFirstRound($event);
+						if ($round == null && $firstRound->round != $roundId || $round != null && $round->round != $roundId) {
+							continue;
+						}
+						foreach ($groupUserIds as $group=>$userIds) {
+							foreach ($registrations as $registration) {
+								if (!$registration->hasRegistered($event)) {
+									continue;
+								}
+								if (!in_array($registration->user_id, $userIds)) {
+									continue;
+								}
+								$scoreCards[] = [
+									'registration'=>$registration,
+									'event'=>$event,
+									'group'=>$group,
+								];
 							}
-							if (!in_array($registration->user_id, $userIds)) {
-								continue;
-							}
-							$scoreCards[] = [
-								'registration'=>$registration,
-								'event'=>$event,
-								'group'=>$group,
-							];
 						}
 					}
 				} else {
@@ -643,25 +649,51 @@ class RegistrationController extends AdminController {
 				}
 			}
 		} else {
-			foreach ($registrations as $registration) {
-				foreach ($registration->events as $event) {
-					if ($event === '333fm') {
-						continue;
+			if ($byGroup) {
+				foreach ($groups as $event=>$eventGroups) {
+					foreach ($eventGroups as $roundId=>$groupUserIds) {
+						$firstRound = $competition->getFirstRound($event);
+						if ($round == null && $firstRound->round != $roundId || $round != null && $round->round != $roundId) {
+							continue;
+						}
+						foreach ($groupUserIds as $group=>$userIds) {
+							foreach ($registrations as $registration) {
+								if (!in_array("$event", $registration->events)) {
+									continue;
+								}
+								if (!in_array($registration->user_id, $userIds)) {
+									continue;
+								}
+								$scoreCards[] = [
+									'registration'=>$registration,
+									'event'=>$event,
+									'group'=>$group,
+								];
+							}
+						}
 					}
-					if ($event === '333mbf') {
-						for ($i = 0; $i < $attempt; $i++) {
+				}
+			} else {
+				foreach ($registrations as $registration) {
+					foreach ($registration->events as $event) {
+						if ($event === '333fm') {
+							continue;
+						}
+						if ($event === '333mbf') {
+							for ($i = 0; $i < $attempt; $i++) {
+								$scoreCards[] = [
+									'registration'=>$registration,
+									'event'=>$event,
+									'start'=>$i,
+									'attempt'=>$i + 1,
+								];
+							}
+						} else {
 							$scoreCards[] = [
 								'registration'=>$registration,
 								'event'=>$event,
-								'start'=>$i,
-								'attempt'=>$i + 1,
 							];
 						}
-					} else {
-						$scoreCards[] = [
-							'registration'=>$registration,
-							'event'=>$event,
-						];
 					}
 				}
 			}
