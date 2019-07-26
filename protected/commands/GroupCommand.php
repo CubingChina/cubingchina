@@ -142,7 +142,7 @@ class GroupCommand extends CConsoleCommand {
 						if ($schedule->wcaRound === null || $schedule->round != $firstRound->round) {
 							continue;
 						}
-						$groupNum = $this->getProposedGroup($schedule, $competitors);
+						$groupNum = $this->getProposedGroup($schedule, $competitors[$schedule->event]);
 						if (is_array($groupNum)) {
 							$groupNum = $this->prompt(
 								$this->makeRoundMessage($schedule, $competitors, $groupNum),
@@ -281,6 +281,90 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionRound($id, $event, $round) {
+		$competition = Competition::model()->findByPk($id);
+		$attributes = [
+			'competition_id'=>$competition->id,
+			'event'=>$event,
+			'round'=>$round,
+		];
+		if ($competition !== null && $this->confirm($competition->name_zh)) {
+			$groups = GroupSchedule::model()->findAllByAttributes($attributes);
+			if ($groups !== [] && !$this->confirm('regenerate?')) {
+				return;
+			}
+			if ($groups !== []) {
+				$groupIds = CHtml::listData($groups, 'id', 'id');
+				UserSchedule::model()->deleteAllByAttributes([
+					'group_id'=>$groupIds,
+				]);
+				GroupSchedule::model()->deleteByPk($groupIds);
+			}
+			$round = LiveEventRound::model()->findByAttributes($attributes);
+			if ($round === null) {
+				exit('Can not find such round in live result!');
+			}
+			$results = array_reverse($round->results);
+			$schedule = Schedule::model()->findByAttributes($attributes);
+			if ($round === null) {
+				exit('Can not find such round in schedule!');
+			}
+			if ($results === []) {
+				exit('Please update competitors first!');
+			}
+ 			$competitors = count($results);
+			$groupNum = $this->getProposedGroup($schedule, $competitors);
+			if (is_array($groupNum)) {
+				$groupNum = $this->prompt(
+					$this->makeRoundMessage($schedule, $competitors, $groupNum),
+					min($groupNum)
+				);
+			}
+			$totalTime = $schedule->end_time - $schedule->start_time;
+			$groupTime = floor($totalTime / $groupNum);
+			$groupTime = floor($groupTime / 300) * 300;
+			$group = $groupNum > 1 ? 'A' : '';
+			$results = array_chunk($results, ceil($competitors / $groupNum));
+			$groupSchedules = [];
+			$userSchedules = [];
+			$anyGroup = GroupSchedule::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+			$day = date('Y-m-d ', $anyGroup->start_time);
+			for ($i = 0; $i < $groupNum; $i++) {
+				$groupSchedule = new GroupSchedule();
+				$groupSchedule->attributes = $schedule->attributes;
+				$groupSchedule->start_time = strtotime($day . date('H:i', $schedule->start_time + $i * $groupTime));
+				$groupSchedule->end_time = $groupSchedule->start_time + $groupTime;
+				$groupSchedule->group = $group;
+				$groupSchedule->save();
+				$groupSchedules[] = $groupSchedule;
+				foreach ($results[$i] as $result) {
+					$userSchedules[] = $this->addUserSchedule($groupSchedule, $result);
+				}
+				$group++;
+			}
+			foreach ($userSchedules as $userSchedule) {
+				$groupSchedule = $userSchedule->schedule;
+				$allUserSchedules = UserSchedule::model()->findAllByAttributes([
+					'user_id'=>$userSchedule->user_id,
+					'competition_id'=>$competition->id,
+				]);
+				if ($this->hasConflict($groupSchedule, $allUserSchedules)) {
+					foreach ($groupSchedules as $schedule) {
+						if (!$this->hasConflict($schedule, $allUserSchedules)) {
+							$userSchedule->schedule = $schedule;
+							$userSchedule->group_id = $schedule->id;
+							$userSchedule->save();
+							$this->moveGroup($schedule, $groupSchedule, 1);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public function actionSubmission($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
@@ -327,7 +411,8 @@ class GroupCommand extends CConsoleCommand {
 		$userSchedule->group_id = $schedule->id;
 		$userSchedule->competition_id = $schedule->competition_id;
 		$userSchedule->user_id = $registration->user_id;
-		return $userSchedule->save();
+		$userSchedule->save();
+		return $userSchedule;
 	}
 
 	public function actionStaffs($id) {
@@ -410,20 +495,28 @@ class GroupCommand extends CConsoleCommand {
 			]);
 			$distribution = [];
 			$maxGroup = 'A';
+			$eventRounds = [];
 			foreach ($groupSchedules as $groupSchedule) {
-				$distribution[$groupSchedule->group ?: 'A'][$groupSchedule->event] = count($groupSchedule->users);
+				$eventRounds[$groupSchedule->event][$groupSchedule->round] = $groupSchedule->round;
+				$distribution[$groupSchedule->group ?: 'A'][$groupSchedule->event][$groupSchedule->round] = count($groupSchedule->users);
 				if ($groupSchedule->group > $maxGroup) {
 					$maxGroup = $groupSchedule->group;
 				}
 			}
 			echo "Group\t";
-			echo implode("\t", array_keys($competition->associatedEvents));
+			foreach ($eventRounds as $event=>$rounds) {
+				foreach ($rounds as $round) {
+					echo "${event}-${round}\t";
+				}
+			}
 			echo "\n";
 			for ($group = 'A'; $group <= $maxGroup; $group++) {
 				echo "{$group}\t";
-				foreach ($competition->associatedEvents as $event=>$value) {
-					echo $distribution[$group][$event] ?? '';
-					echo "\t";
+				foreach ($eventRounds as $event=>$rounds) {
+					foreach ($rounds as $round) {
+						echo $distribution[$group][$event][$round] ?? '';
+						echo "\t";
+					}
 				}
 				echo "\n";
 			}
@@ -697,6 +790,18 @@ class GroupCommand extends CConsoleCommand {
 		return false;
 	}
 
+	private function hasConflict($groupSchedule, $userSchedules, $strict = false) {
+		foreach ($userSchedules as $userSchedule) {
+			if ($userSchedule->schedule === null) {
+				var_dump($userSchedule->attributes);
+			}
+			if ($this->isConflict($groupSchedule, $userSchedule->schedule, $strict)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private function isConflict($scheduleA, $scheduleB, $strict = false) {
 		if ($scheduleA->event === 'submission' || $scheduleB->event === 'submission') {
 			return false;
@@ -726,7 +831,7 @@ class GroupCommand extends CConsoleCommand {
 
 	private function makeRoundMessage($schedule, $competitors, $proposedGroup) {
 		return sprintf("[%s - %s] Competitors: %d Time: %d (%d - %d):",
-			Events::getFullEventName($schedule->event), RoundTypes::getFullRoundName($schedule->round), $competitors[$schedule->event] ?? '?',
+			Events::getFullEventName($schedule->event), RoundTypes::getFullRoundName($schedule->round), $competitors,
 			($schedule->end_time - $schedule->start_time) / 60,
 			$proposedGroup[0], $proposedGroup[1]
 		);
@@ -738,7 +843,6 @@ class GroupCommand extends CConsoleCommand {
 		}
 		$stations = $this->getStations($schedule->stage);
 		$totalTime = ($schedule->end_time - $schedule->start_time) / 60;
-		$competitors = $competitors[$schedule->event] ?? 1;
 		return [ceil($competitors / $stations), floor($totalTime / ($this->_proposedTime[$schedule->event] ?? 10))];
 	}
 
