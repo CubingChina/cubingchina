@@ -311,12 +311,13 @@
           </select>
         </div>
       </div>
+      <div v-if="hasPermission">已录/未录/总数：{{ currentRound.en }} / {{ currentRound.tt - currentRound.en }} / {{ currentRound.tt }} </div>
       <div class="table-responsive">
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>
             <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
-            <th v-if="hasPermission"><?php echo Yii::t('Results', 'No.'); ?></th>
+            <th><?php echo Yii::t('Results', 'No.'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
             <th class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage()}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th class="text-right" :class="{'sorting-column': !hasAverage()}"><?php echo Yii::t('common', 'Best'); ?></th>
@@ -335,7 +336,7 @@
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.p}}</td>
-              <td v-if="hasPermission">{{result.n}}</td>
+              <td>{{result.n}}</td>
               <td>
                 <a href="javascript:void(0)" @click="goToUser(getUser(result.n))">{{getUser(result.n).name}}</a>
               </td>

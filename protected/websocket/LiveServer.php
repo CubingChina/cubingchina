@@ -90,6 +90,18 @@ class LiveServer implements MessageComponentInterface {
 		}
 	}
 
+	public function broadcastSuccessToDataTaker($type, $data, $competition = null, $exclude = null) {
+		foreach ($this->clients as $client) {
+			$user = $client->user;
+			if (!$competition->checkPermission($user)) {
+				continue;
+			}
+			if ($client != $exclude && ($competition === null || $client->competitionId == $competition->id)) {
+				$client->success($type, $data);
+			}
+		}
+	}
+
 	public function getOnlineNumber($competitionId) {
 		if (!isset($this->_onlineNumbers[$competitionId])) {
 			$this->_onlineNumbers[$competitionId] = 0;
