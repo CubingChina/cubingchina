@@ -17,12 +17,16 @@
       <?php echo CHtml::link('导出初赛成绩单', array('/board/registration/scoreCard', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-green')); ?>
       <?php echo CHtml::link('发邮件给选手', array('/board/registration/sendNotice', 'id'=>$model->competition_id), array('class'=>'btn btn-square btn-large btn-blue')); ?>
       <?php echo CHtml::link('报名管理', array('/board/registration/index', 'Registration'=>['competition_id'=>$model->competition_id]), array('class'=>'btn btn-square btn-large btn-red')); ?>
-      <?php endif; ?>
       <div class="well">
         <p>请使用微信扫描如下二维码进入签到页面，<b class="text-danger">切勿外传</b>！</p>
         <p><?php echo CHtml::image($scanAuth->getQRCodeUrl()); ?></p>
         <p>扫码枪请<?php echo CHtml::link('点击这里', $model->competition->getUrl('scan'), ['target'=>'_blank']); ?>进行签到。</p>
       </div>
+      <div>
+        已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::YES]) ?><br>
+        未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::NO]) ?>
+      </div>
+      <?php endif; ?>
       <?php $columns = $model->getAdminColumns(); ?>
       <?php $this->widget('RepeatHeaderGridView', array(
         'dataProvider'=>$model->search($columns, false, true),
