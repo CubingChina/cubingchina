@@ -55,6 +55,18 @@ class LiveEventRound extends ActiveRecord {
 	}
 
 	public function getBroadcastAttributes() {
+		$entered = LiveResult::model()->countByAttributes([
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		], [
+			'condition'=>'best>0',
+		]);
+		$total = LiveResult::model()->countByAttributes([
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+			'round'=>$this->round,
+		]);
 		return array(
 			'i'=>$this->round,
 			'e'=>$this->event,
@@ -64,6 +76,8 @@ class LiveEventRound extends ActiveRecord {
 			'n'=>intval($this->number),
 			's'=>intval($this->status),
 			'rn'=>intval($this->resultsNumber),
+			'tt'=>$total,
+			'en'=>$entered,
 		);
 	}
 

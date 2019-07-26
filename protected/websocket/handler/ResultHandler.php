@@ -91,6 +91,7 @@ class ResultHandler extends MsgHandler {
 		$result->save();
 		$this->broadcastSuccess('result.update', $result->getShowAttributes(), $competition);
 		$eventRound = $result->eventRound;
+		$this->broadcastSuccessToDataTaker('round.update', $eventRound->getBroadcastAttributes(), $competition);
 		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {
 			$eventRound->status = LiveEventRound::STATUS_LIVE;
 			$eventRound->save();
