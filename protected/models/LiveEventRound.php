@@ -60,7 +60,7 @@ class LiveEventRound extends ActiveRecord {
 			'event'=>$this->event,
 			'round'=>$this->round,
 		], [
-			'condition'=>'best>0',
+			'condition'=>'best!=0',
 		]);
 		$total = LiveResult::model()->countByAttributes([
 			'competition_id'=>$this->competition_id,
