@@ -1,4 +1,8 @@
 <?php
+use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\FilesystemCache;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\ChainCache;
 
 class CustomCache extends CCache {
 	public $hostname;
@@ -14,16 +18,17 @@ class CustomCache extends CCache {
 		$this->_redis = $redis = new Redis();
 		$redis->connect($this->hostname, $this->port);
 		$redis->select($this->database);
-		$redisCache = new \Doctrine\Common\Cache\RedisCache();
+		$redisCache = new RedisCache();
 		$redisCache->setRedis($redis);
+		$fileCache = new FilesystemCache(APP_PATH . '/protected/runtime/cache');
 		$chain = [];
 		if (!Yii::app() instanceof CConsoleApplication) {
-			$chain[] = new \Doctrine\Common\Cache\ArrayCache();
+			$chain[] = new ArrayCache();
 		}
-		if (!DEV) {
-			$chain[] = $redisCache;
+		if (!DEV || Yii::app() instanceof CConsoleApplication) {
+			$chain[] = $fileCache;
 		}
-		$chainCache = new \Doctrine\Common\Cache\ChainCache($chain);
+		$chainCache = new ChainCache($chain);
 		$this->_cache = $chainCache;
 	}
 
