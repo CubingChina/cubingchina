@@ -15,7 +15,7 @@ _log "get export data from wca"
 wget $wca_home/results/misc/export.html || exit
 zipname=`grep -oP 'WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
 _log "zipname: $zipname"
-if [ $a = '' ]
+if [ $zipname = '' ]
 then
   exit
 fi

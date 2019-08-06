@@ -119,7 +119,7 @@ INSERT INTO `RanksSum` (`personId`, `countryId`, `continentId`, `type`, `country
     SUM(
       CASE WHEN
         `r`.`countryRank`=0 OR `r`.`countryRank` IS NULL
-      THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
+      THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId`!='333mbf' THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
       ELSE `r`.`countryRank`
     END) AS `countryRank`
   FROM `Persons` `p`
@@ -166,7 +166,7 @@ UPDATE `RanksSum` `sor` INNER JOIN
     SUM(
       CASE WHEN
         `r`.`continentRank`=0 OR `r`.`continentRank` IS NULL
-      THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId` NOT IN ('444bf', '555bf', '333mbf') THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
+      THEN (CASE WHEN `rp`.`penalty` IS NULL THEN (CASE WHEN `rp`.`eventId`!='333mbf' THEN 1 ELSE 0 END) ELSE `rp`.`penalty` END)
       ELSE `r`.`continentRank`
     END) AS `continentRank`
   FROM `Persons` `p`
@@ -218,3 +218,40 @@ UPDATE `RanksSum` `sor` INNER JOIN
   GROUP BY `p`.`id`
 ) `t` ON `sor`.`personId`=`t`.`personId`
 SET `sor`.`worldRank`=`t`.`worldRank` WHERE `sor`.`type`='average';
+
+
+-- BestResults
+-- Single
+INSERT INTO `BestResults` (`type`, `eventId`, `best`, `personId`, `gender`, `countryId`, `continentId`)
+(
+  SELECT
+    'single',
+    `rs`.`eventId`,
+    MIN(`rs`.`best`) AS `best`,
+    `rs`.`personId`,
+    `p`.`gender`,
+    `rs`.`personCountryId` AS `countryId`,
+    `country`.`continentId`
+  FROM `Results` `rs`
+  LEFT JOIN `Persons` `p` ON `rs`.`personId`=`p`.`id` AND `p`.`subid`=1
+  LEFT JOIN `Countries` `country` ON `rs`.`personCountryId`=`country`.`id`
+  WHERE `rs`.`best`>0
+  GROUP BY `rs`.`eventId`, `rs`.`personId`, `rs`.`personCountryId`
+);
+-- Average
+INSERT INTO `BestResults` (`type`, `eventId`, `best`, `personId`, `gender`, `countryId`, `continentId`)
+(
+  SELECT
+    'average',
+    `rs`.`eventId`,
+    MIN(`rs`.`average`) AS `best`,
+    `rs`.`personId`,
+    `p`.`gender`,
+    `rs`.`personCountryId` AS `countryId`,
+    `country`.`continentId`
+  FROM `Results` `rs`
+  LEFT JOIN `Persons` `p` ON `rs`.`personId`=`p`.`id` AND `p`.`subid`=1
+  LEFT JOIN `Countries` `country` ON `rs`.`personCountryId`=`country`.`id`
+  WHERE `rs`.`average`>0
+  GROUP BY `rs`.`eventId`, `rs`.`personId`, `rs`.`personCountryId`
+);

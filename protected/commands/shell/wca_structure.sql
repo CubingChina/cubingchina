@@ -195,7 +195,8 @@ CREATE TABLE IF NOT EXISTS `Scrambles` (
   `isExtra` tinyint(1) NOT NULL,
   `scrambleNum` int(11) NOT NULL,
   `scramble` text NOT NULL,
-  PRIMARY KEY (`scrambleId`)
+  PRIMARY KEY (`scrambleId`),
+  KEY `competitionId` (`competitionId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
 DROP TABLE IF EXISTS `championships`;
@@ -223,4 +224,18 @@ CREATE TABLE IF NOT EXISTS `delegates` (
   `email` varchar(128) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`wca_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `BestResults`;
+CREATE TABLE IF NOT EXISTS `BestResults` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `type` varchar(10) NOT NULL,
+  `eventId` varchar(6) NOT NULL DEFAULT '',
+  `best` int(11) DEFAULT NULL,
+  `personId` varchar(10) NOT NULL DEFAULT '',
+  `gender` char(1) DEFAULT '',
+  `countryId` varchar(50) DEFAULT NULL,
+  `continentId` varchar(50) DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`eventId`,`best`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

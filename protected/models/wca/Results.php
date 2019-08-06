@@ -67,38 +67,36 @@ class Results extends ActiveRecord {
 		$field = $type === 'single' ? 'best' : 'average';
 		if (($data = $cache->get($cacheKey)) === false) {
 			$command = Yii::app()->wcaDb->createCommand()
-			->select(array(
-				'rs.eventId',
-				sprintf('MIN(rs.%s) AS best', $field),
-				'rs.personId',
-			))
-			->from('Results rs')
-			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-			->leftJoin('Countries country', 'rs.personCountryId=country.id')
-			->where('rs.eventId=:eventId', array(
-				':eventId'=>$event,
-			))
-			->andWhere(sprintf('rs.%s>0', $field));
-			self::applyRegionCondition($command, $region);
+				->select(array(
+					'eventId',
+					'best',
+					'personId',
+				))
+				->from('BestResults')
+				->where('type=:type AND eventId=:eventId', array(
+					':type'=>$type,
+					':eventId'=>$event,
+				));
+			self::applyRegionCondition($command, $region, 'countryId', 'continentId');
 			switch ($gender) {
 				case 'female':
-					$command->andWhere('p.gender="f"');
+					$command->andWhere('gender="f"');
 					break;
 				case 'male':
-					$command->andWhere('p.gender="m"');
+					$command->andWhere('gender="m"');
 					break;
 			}
 			$cmd1 = clone $command;
 			$cmd2 = clone $command;
-			$count = $cmd1->select('COUNT(DISTINCT rs.personId) AS count')
+			$count = $cmd1->select('COUNT(DISTINCT personId) AS count')
 			->queryScalar();
 			if ($page > ceil($count / 100)) {
 				$page = ceil($count / 100);
 			}
 			$rows = array();
-			$command->group('rs.personId')
-			->order(sprintf('best ASC, p.name ASC', $field))
-			->limit(100, ($page - 1) * 100);
+			$command
+				->order('best ASC')
+				->limit(100, ($page - 1) * 100);
 			$eventBestPerson = array_map(function($row) {
 				return sprintf('("%s", %d, "%s")', $row['eventId'], $row['best'], $row['personId']);
 			}, $command->queryAll());
@@ -140,9 +138,12 @@ class Results extends ActiveRecord {
 				}
 				$rows = array_values($rows);
 			}
-			$rank = isset($rows[0]) ? $cmd2->select('COUNT(DISTINCT rs.personId) AS count')
-			->andWhere(sprintf('rs.%s<' . $rows[0]['best'], $field))
-			->queryScalar() : 0;
+			$rank = isset($rows[0]) ?
+				$cmd2
+				->select('COUNT(DISTINCT personId) AS count')
+				->andWhere('best<' . $rows[0]['best'])
+				->queryScalar()
+				: 0;
 			$data = array(
 				'count'=>$count,
 				'rows'=>$rows,
