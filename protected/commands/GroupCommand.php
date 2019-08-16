@@ -304,7 +304,7 @@ class GroupCommand extends CConsoleCommand {
 			if ($round === null) {
 				exit('Can not find such round in live result!');
 			}
-			$results = array_reverse($round->results);
+			$results = array_reverse($round->allResults);
 			$schedule = Schedule::model()->findByAttributes($attributes);
 			if ($round === null) {
 				exit('Can not find such round in schedule!');
