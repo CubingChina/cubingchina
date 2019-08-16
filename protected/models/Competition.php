@@ -1667,10 +1667,12 @@ class Competition extends ActiveRecord {
 		}
 		foreach ($this->podiumsEvents as $event) {
 			// females, children and new comers
+			$firstRound = $this->getFirstRound($event);
+			$roundIds = $firstRound ? $firstRound->round : ['1', 'd'];
 			$eventRound = LiveEventRound::model()->findByAttributes([
 				'competition_id'=>$this->id,
 				'event'=>$event,
-				'round'=>['1', 'd'],
+				'round'=>$roundIds,
 				'status'=>LiveEventRound::STATUS_FINISHED,
 			]);
 			if ($eventRound !== null) {

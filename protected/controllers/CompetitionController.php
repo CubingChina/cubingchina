@@ -463,7 +463,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-indigo',
 				),
-				'visible'=>$competition->tickets !== [] && ($competition->end_date ?: $competition->date) > time(),
+				'visible'=>$competition->tickets !== [] && ($competition->end_date ?: $competition->date) > time() - 86400,
 			),
 			array(
 				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),

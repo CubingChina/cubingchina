@@ -133,7 +133,9 @@ CREATE TABLE IF NOT EXISTS `RanksSum` (
   `worldRank` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `personId` (`personId`),
-  KEY `type` (`type`)
+  KEY `type` (`type`, `worldRank`),
+  KEY `type_country` (`type`, `countryId`, `countryRank`),
+  KEY `type_continent` (`type`, `continentId`, `continentRank`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
 DROP TABLE IF EXISTS `Results`;

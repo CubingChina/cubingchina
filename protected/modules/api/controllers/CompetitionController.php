@@ -124,7 +124,7 @@ class CompetitionController extends ApiController {
 				$model->signed_scan_code = Yii::app()->session->get('scan_code');
 				break;
 		}
-		if ($model->save()) {
+		if ($model->save(false)) {
 			$this->ajaxOK($model->getDataForSignin());
 		} else {
 			$this->ajaxError(Constant::STATUS_INTERNAL_ERROR);

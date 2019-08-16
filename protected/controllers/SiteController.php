@@ -58,7 +58,7 @@ class SiteController extends Controller {
 	public function actionIndex() {
 		$news = new News('search');
 		$news->status = News::STATUS_SHOW;
-		$upcomingCompetitions = Competition::getUpcomingCompetitions();
+		$upcomingCompetitions = Competition::getUpcomingCompetitions(8);
 		$this->render('index', array(
 			'news'=>$news,
 			'upcomingCompetitions'=>$upcomingCompetitions,
