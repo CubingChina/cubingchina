@@ -1,6 +1,6 @@
 <?php
 
-class PHPExcelDrawing extends PHPExcel_Worksheet_Drawing {
+class PHPExcelDrawing extends \PhpOffice\PhpSpreadsheet\Worksheet\Drawing {
 	private $_replacedImageIndex;
 
 	public function getImageIndex() {

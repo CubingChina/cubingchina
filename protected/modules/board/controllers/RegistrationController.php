@@ -1,4 +1,10 @@
 <?php
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Shared\Date as SharedDate;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+
 
 class RegistrationController extends AdminController {
 
@@ -153,8 +159,8 @@ class RegistrationController extends AdminController {
 
 	public function export($competition, $exportFormsts, $all = false, $xlsx = false, $extra = false, $order = 'date') {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
-		$export = new PHPExcel();
+		$template = IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
+		$export = new Spreadsheet();
 		$export->getProperties()
 			->setCreator(Yii::app()->params->author)
 			->setLastModifiedBy(Yii::app()->params->author)
@@ -165,25 +171,10 @@ class RegistrationController extends AdminController {
 		$sheet = $template->getSheet(0);
 		$sheet->setCellValue('A1', $competition->wca_competition_id ?: $competition->name);
 		$events = $competition->getRegistrationEvents();
-		$col = 'J';
-		$cubecompsEvents = array(
-			'333'=>'3x3',
-			'444'=>'4x4',
-			'555'=>'5x5',
-			'666'=>'6x6',
-			'777'=>'7x7',
-			'222'=>'2x2',
-			'333bf'=>'333bld',
-			'333fm'=>'fmc',
-			'minx'=>'mega',
-			'pyram'=>'pyra',
-			'444bf'=>'444bld',
-			'555bf'=>'555bld',
-			'333mbf'=>'333mlt',
-		);
+		$col = 'H';
 		foreach ($events as $event=>$data) {
 			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
-			$sheet->setCellValue($col . 3, isset($cubecompsEvents[$event]) ? $cubecompsEvents[$event] : $event);
+			$sheet->setCellValue($col . 3, $event);
 			$sheet->getColumnDimension($col)->setWidth(5.5);
 			$col++;
 		}
@@ -195,12 +186,12 @@ class RegistrationController extends AdminController {
 				->setCellValue('C' . $row, $user->country->name)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
-				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
+				->setCellValue('F' . $row, SharedDate::formattedPHPToExcel(
 					date('Y', $user->birthday),
 					date('m', $user->birthday),
 					date('d', $user->birthday)
 				));
-			$col = 'J';
+			$col = 'H';
 			foreach ($events as $event=>$data) {
 				if ($registration->hasRegistered($event)) {
 					$sheet->setCellValue($col . $row, 1);
@@ -215,7 +206,7 @@ class RegistrationController extends AdminController {
 				}
 				$sheet->setCellValue($col . $row, $fee);
 				$col++;
-				$sheet->setCellValueExplicit($col . $row, $user->mobile, PHPExcel_Cell_DataType::TYPE_STRING);
+				$sheet->setCellValueExplicit($col . $row, $user->mobile, DataType::TYPE_STRING);
 				$col++;
 				$sheet->setCellValue($col . $row, $user->email);
 				$col++;
@@ -237,7 +228,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValue($col . $row, $user->getPassportTypeText());
 					$col++;
-					$sheet->setCellValueExplicit($col . $row, $user->passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
+					$sheet->setCellValueExplicit($col . $row, $user->passport_number, DataType::TYPE_STRING);
 				}
 				if ($competition->entourage_limit && $registration->has_entourage) {
 					$col++;
@@ -246,7 +237,7 @@ class RegistrationController extends AdminController {
 					$col++;
 					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
 					$col++;
-					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
+					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, DataType::TYPE_STRING);
 					$col++;
 					$sheet->setCellValueExplicit($col . $row, $registration->guest_paid == Registration::YES ? '已支付' : '未支付');
 				}
@@ -254,7 +245,7 @@ class RegistrationController extends AdminController {
 			if (!$registration->isAccepted()) {
 				$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(
 					'fill'=>array(
-						'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+						'type'=>Fill::FILL_SOLID,
 						'color'=>array(
 							'argb'=>'FFFFFF00',
 						),
@@ -304,7 +295,7 @@ class RegistrationController extends AdminController {
 						if (!$registration->isAccepted()) {
 							$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(
 								'fill'=>array(
-									'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+									'type'=>Fill::FILL_SOLID,
 									'color'=>array(
 										'argb'=>'FFFFFF00',
 									),
@@ -370,8 +361,8 @@ class RegistrationController extends AdminController {
 			}
 			return $temp;
 		});
-		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
-		$export = new PHPExcel();
+		$template = IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xlsx');
+		$export = new Spreadsheet();
 		$export->getProperties()
 			->setCreator(Yii::app()->params->author)
 			->setLastModifiedBy(Yii::app()->params->author)
@@ -381,25 +372,10 @@ class RegistrationController extends AdminController {
 		//注册页
 		$sheet = $template->getSheet(0);
 		$sheet->setCellValue('A1', $competition->wca_competition_id ?: $competition->name);
-		$col = 'J';
-		$cubecompsEvents = array(
-			'333'=>'3x3',
-			'444'=>'4x4',
-			'555'=>'5x5',
-			'666'=>'6x6',
-			'777'=>'7x7',
-			'222'=>'2x2',
-			'333bf'=>'333bld',
-			'333fm'=>'fmc',
-			'minx'=>'mega',
-			'pyram'=>'pyra',
-			'444bf'=>'444bld',
-			'555bf'=>'555bld',
-			'333mbf'=>'333mlt',
-		);
+		$col = 'H';
 		foreach ($events as $event=>$value) {
 			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
-			$sheet->setCellValue($col . 3, $value['event'] ? (isset($cubecompsEvents[$value['event']->id]) ? $cubecompsEvents[$value['event']->id] : $value['event']->id) : $event);
+			$sheet->setCellValue($col . 3, $value['event'] ? $value['event']->id : $event);
 			$sheet->getColumnDimension($col)->setWidth(5.5);
 			$col++;
 		}
@@ -411,12 +387,12 @@ class RegistrationController extends AdminController {
 				->setCellValue('C' . $row, $user->country->name)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
-				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
+				->setCellValue('F' . $row, SharedDate::formattedPHPToExcel(
 					date('Y', $user->birthday),
 					date('m', $user->birthday),
 					date('d', $user->birthday)
 				));
-			$col = 'J';
+			$col = 'H';
 			foreach ($events as $event=>$value) {
 				if (in_array($event, $registration['events'])) {
 					$sheet->setCellValue($col . $row, 1);

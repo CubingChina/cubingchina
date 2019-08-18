@@ -1,14 +1,14 @@
 {
   "require": {
-    "cboden/ratchet": "^0.3.6",
+    "cboden/ratchet": "^0.3",
     "doctrine/cache": "^1.6",
-    "endroid/qrcode": "^1.9",
+    "endroid/qr-code": "^3.6",
     "jonnyw/php-phantomjs": "^4.5",
-    "overtrue/wechat": "^3.3",
-    "phpoffice/phpexcel": "^1.8",
-    "ramsey/uuid": "^3.5",
-    "suin/php-rss-writer": "^1.5",
-    "zhuzhichao/ip-location-zh": "^2.2",
+    "overtrue/wechat": "^4.2",
+    "phpoffice/phpspreadsheet": "^1.8",
+    "ramsey/uuid": "^3.8",
+    "suin/php-rss-writer": "^1.6",
+    "zhuzhichao/ip-location-zh": "^2.4",
     "predis/predis-async": "v0.3.x-dev",
     "yunpian/yunpian-php-sdk": "^1.0",
     "mpdf/mpdf": "^8.0"

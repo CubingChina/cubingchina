@@ -12,10 +12,9 @@
 class WechatUser extends ActiveRecord {
 
 	public static function getOrCreate($user) {
-		if ($wechatUser = self::model()->findByPk($user->id)) {
-			return $wechatUser;
+		if (($wechatUser = self::model()->findByPk($user->id)) === null) {
+			$wechatUser = new self();
 		}
-		$wechatUser = new self();
 		$wechatUser->id = $user->id;
 		$wechatUser->nickname = $user->nickname;
 		$wechatUser->avatar = $user->avatar;

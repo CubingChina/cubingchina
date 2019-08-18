@@ -1,6 +1,7 @@
 <?php
 
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\ErrorCorrectionLevel;
 
 class QrCodeController extends Controller {
 
@@ -28,34 +29,32 @@ class QrCodeController extends Controller {
 
 	public function actionSignin() {
 		$code = $this->sGet('code');
-		$qrCode = new QrCode();
-		$qrCode->setText($this->createUrl(
+		$qrCode = new QrCode($this->createUrl(
 			'/competition/signin',
 			array(
 				'code'=>$code,
 			)
-		))
-		->setSize(300)
-		->setPadding(10)
-		->setErrorCorrection('high')
-		->setLabelFontSize(16);
+		));
+		$qrCode->setSize(300);
+		$qrCode->setMargin(10);
+		$qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+		$qrCode->setLabelFontSize(16);
 		$this->send($qrCode, 'signin');
 	}
 
 	public function actionTicket() {
 		$code = $this->sGet('code');
-		$qrCode = new QrCode();
-		$qrCode->setText($this->createUrl(
+		$qrCode = new QrCode($this->createUrl(
 			'/competition/ticket',
 			[
 				'code'=>$code,
 			]
-		))
-		->setSize(300)
-		->setPadding(10)
-		->setErrorCorrection('high')
-		->setLabelFontSize(16);
-		$this->send($qrCode, 'signin');
+		));
+		$qrCode->setSize(300);
+		$qrCode->setMargin(10);
+		$qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+		$qrCode->setLabelFontSize(16);
+		$this->send($qrCode, 'ticket');
 	}
 
 	public function actionSigninAdmin() {
@@ -64,36 +63,34 @@ class QrCodeController extends Controller {
 		if ($auth === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		$qrCode = new QrCode();
-		$qrCode->setText($this->createUrl(
+		$qrCode = new QrCode($this->createUrl(
 			'/competition/scan',
 			[
 				'alias'=>$auth->competition->alias,
 				'scan_code'=>$code,
 			]
-		))
-		->setSize(300)
-		->setPadding(10)
-		->setErrorCorrection('high')
-		->setLabelFontSize(16);
+		));
+		$qrCode->setSize(300);
+		$qrCode->setMargin(10);
+		$qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+		$qrCode->setLabelFontSize(16);
 		$this->send($qrCode, 'signin');
 	}
 
 	public function actionBind() {
-		$qrCode = new QrCode();
-		$qrCode->setText($this->createUrl(
+		$qrCode = new QrCode($this->createUrl(
 			'/user/bind'
-		))
-		->setSize(300)
-		->setPadding(10)
-		->setErrorCorrection('high')
-		->setLabelFontSize(16);
+		));
+		$qrCode->setSize(300);
+		$qrCode->setMargin(10);
+		$qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+		$qrCode->setLabelFontSize(16);
 		$this->send($qrCode, 'bind');
 	}
 
 	private function send($qrCode, $name) {
-		header('Content-type: image/jpeg');
+		header('Content-type: ' .  $qrCode->getContentType());
 		header("Content-Disposition: attachment; filename='{$name}.jpg'");
-		$qrCode->render();
+		echo $qrCode->writeString();
 	}
 }
