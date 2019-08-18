@@ -1,5 +1,5 @@
 <?php
-use EasyWeChat\Foundation\Application;
+use EasyWeChat\Factory;
 
 /**
  * Controller is the customized base controller class.
@@ -68,16 +68,18 @@ class Controller extends CController {
 			'app_id'=>Env::get('WECHAT_APP_ID'),
 			'secret'=> Env::get('WECHAT_SECRET'),
 		];
-		$application = new Application($options);
+		$officialAccount = Factory::officialAccount($options);
 		$clientScript = Yii::app()->clientScript;
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
 		if (isset($config['js'])) {
 			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 		}
+
 		if (isset($config['jsConfig'])) {
-			$js = $application->js;
-			$js->setUrl(Yii::app()->request->getBaseUrl(true) . Yii::app()->request->url);
+			$jssdk = $officialAccount->jssdk;
+			$jssdk->setUrl($baseUrl . Yii::app()->request->url);
 			try {
-				$config = $js->config($config['jsConfig'], YII_DEBUG);
+				$config = $jssdk->buildConfig($config['jsConfig'], YII_DEBUG);
 			} catch (Exception $e) {
 				$config = '{}';
 			}
@@ -85,15 +87,16 @@ class Controller extends CController {
 		}
 		if (isset($config['oauth'])) {
 			$scopes = $config['oauth']['scopes'] ?? ['snsapi_base'];
-			$application->config->set('oauth.scopes', $scopes);
-			$application->config->set('oauth.callback', CHtml::normalizeUrl(['/site/wechatLogin']));
+			$oauth = $officialAccount->oauth;
+			$oauth->scopes($scopes);
 			$session = Yii::app()->session;
 			if ($this->action->id !== 'wechatLogin' && $session->get(Constant::WECHAT_SESSION_KEY) === null) {
 				$session->add(Constant::CURRENT_URL_KEY, Yii::app()->request->url);
-				$application->oauth->redirect()->send();
+				$oauth->redirect($baseUrl . CHtml::normalizeUrl(['/site/wechatLogin']))->send();
+				Yii::app()->end();
 			}
 		}
-		return $this->_wechatApplications[$key] = $application;
+		return $this->_wechatApplications[$key] = $officialAccount;
 	}
 
 	public function getIsInWechat() {

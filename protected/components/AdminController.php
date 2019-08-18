@@ -1,4 +1,6 @@
 <?php
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class AdminController extends Controller {
 	public $layout = '/layouts/main';
@@ -55,9 +57,9 @@ class AdminController extends Controller {
 		$excel->setActiveSheetIndex(0);
 		Yii::app()->controller->setIsAjaxRequest(true);
 		if ($xlsx) {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+			$writer = new Xlsx($excel);
 		} else {
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+			$writer = new Xls($excel);
 		}
 		if ($download) {
 			if ($xlsx) {

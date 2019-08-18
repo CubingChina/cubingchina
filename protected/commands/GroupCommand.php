@@ -32,7 +32,7 @@ class GroupCommand extends CConsoleCommand {
 			}
 			$registrations = Registration::getRegistrations($competition);
 			$associatedEvents = $competition->getAssociatedEvents();
-			$excel = new PHPExcel();
+			$excel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 			$excel->getProperties()
 				->setCreator(Yii::app()->params->author)
 				->setLastModifiedBy(Yii::app()->params->author)
@@ -89,7 +89,7 @@ class GroupCommand extends CConsoleCommand {
 				}
 				$row++;
 			}
-			$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+			$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($excel, 'Xlsx');
 			$writer->save($path);
 		}
 	}
