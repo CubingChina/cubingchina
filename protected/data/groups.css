@@ -1,0 +1,22 @@
+@page {
+  margin: 6mm;
+  font-family: 'Microsoft Yahei';
+}
+table {
+  font-size: 0.8rem;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  text-align: center;
+  border-bottom: 1px solid;
+  margin-bottom: 20px;
+}
+th, td {
+  border-top: 1px solid;
+  border-left: 1px solid;
+  text-align: center;
+  white-space: nowrap;
+}
+td.bdr, th.bdr {
+  border-right: 1px solid;
+}
