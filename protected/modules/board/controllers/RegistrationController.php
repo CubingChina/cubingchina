@@ -159,7 +159,7 @@ class RegistrationController extends AdminController {
 
 	public function export($competition, $exportFormsts, $all = false, $xlsx = false, $extra = false, $order = 'date') {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$template = IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
+		$template = IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xlsx');
 		$export = new Spreadsheet();
 		$export->getProperties()
 			->setCreator(Yii::app()->params->author)

@@ -46,7 +46,7 @@ class GroupCommand extends CConsoleCommand {
 				->setCellValue('C1', 'Staff');
 			$col = 'D';
 			$row = 1;
-			$staffs = include APP_PATH . '/protected/data/staff.php';
+			$staffs = $this->getStaffs($competition);
 			foreach ($associatedEvents as $event=>$value) {
 				$sheet->setCellValue($col . $row, $event);
 				$col++;
@@ -187,7 +187,7 @@ class GroupCommand extends CConsoleCommand {
 				]);
 			}
 			$registrations = Registration::getRegistrations($competition);
-			$staffs = include APP_PATH . '/protected/data/staff.php';
+			$staffs = $this->getStaffs($competition);
 			$eventRegistrations = [];
 			foreach ($registrations as $registration) {
 				$isStaff = $this->isStaff($registration, $staffs);
@@ -761,6 +761,9 @@ class GroupCommand extends CConsoleCommand {
 			if ($schedule->id == $userScheduleA->group_id) {
 				continue;
 			}
+			if (in_array($userScheduleA->schedule->event, $this->_fixedScheduleEvents)) {
+				continue;
+			}
 			// ignore any conflict groups
 			if ($this->isConflict($userScheduleB->schedule, $schedule, $strict)) {
 				continue;
@@ -853,5 +856,13 @@ class GroupCommand extends CConsoleCommand {
 			}
 		}
 		return $this->_stations[$stage];
+	}
+
+	private function getStaffs($competition) {
+		$file = APP_PATH . '/protected/data/staff.php';
+		if (is_file($file)) {
+			return include $file;
+		}
+		return [];
 	}
 }
