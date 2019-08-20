@@ -573,7 +573,7 @@ class GroupCommand extends CConsoleCommand {
 			foreach ($registrations as $registration) {
 				$mpdf->AddPage(
 				);
-				$mpdf->SetHTMLHeader(sprintf('<img src="%s" width="40%%" align="right" style="float:right" />', APP_PATH . '/protected/data/logo.png'), '', true);
+				// $mpdf->SetHTMLHeader(sprintf('<img src="%s" width="40%%" align="right" style="float:right" />', APP_PATH . '/protected/data/logo.png'), '', true);
 				$schedules = UserSchedule::model()->with('schedule')->findAllByAttributes([
 					'user_id'=>$registration->user_id,
 					'competition_id'=>$registration->competition_id,
