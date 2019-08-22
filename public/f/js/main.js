@@ -12,6 +12,7 @@ import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
 
 import '../components/person'
+import '../components/payment'
 
 window.jQuery = window.$ = jQuery
 window.CubingChina = {

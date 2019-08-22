@@ -14,37 +14,76 @@ class PayController extends Controller {
 		$channel = $this->sGet('channel');
 		unset($_GET['channel']);
 		switch ($channel) {
-			default:
-				$orderId = $this->sPost('out_trade_no');
+			case Pay::CHANNEL_BALIPAY:
+				$orderNo = $this->sPost('out_trade_no');
 				$params = $_POST;
+				$model = Pay::getByOrderNo($orderNo);
+				if ($model === null) {
+					echo Pay::notifyReturn($channel, false);
+					exit;
+				}
+				$result = $model->validateAlipayNotify($params);
+				Yii::log(json_encode([
+					'params'=>$params,
+					'result'=>$result,
+					'channel'=>$channel,
+				]), 'pay', 'notify');
+				echo Pay::notifyReturn($channel, $result);
+				break;
+			case Pay::CHANNEL_WECHAT:
+				$wechatPayment = Pay::getWechatPayment();
+				$response = $wechatPayment->handlePaidNotify(function ($message, $fail) use ($wechatPayment) {
+					$result = ($message['result_code'] ?? '') === 'SUCCESS';
+					$orderNo = $message['out_trade_no'] ?? '';
+					Yii::log(json_encode([
+						'message'=>$message,
+						'result'=>$result,
+						'channel'=>Pay::CHANNEL_WECHAT,
+					]), 'pay', 'notify');
+					$model = Pay::getByOrderNo($orderNo);
+					if ($model === null) {
+						return $fail('Unknown payment');
+					}
+					if ($result) {
+						$model->updateStatus(Pay::STATUS_PAID, $message['total_fee'] ?? 0);
+					} else {
+						$model->resetOrder();
+					}
+					return true;
+				});
+				$response->send();
 				break;
 		}
-		$model = Pay::getPayByOrderId($orderId);
-		if ($model === null) {
-			echo Pay::notifyReturn($channel, false);
-			exit;
+	}
+
+	public function actionRefundNotify() {
+		$channel = $this->sGet('channel');
+		unset($_GET['channel']);
+		switch ($channel) {
+			case Pay::CHANNEL_WECHAT:
+				$wechatPayment = Pay::getWechatPayment();
+				$response = $wechatPayment->handleRefundedNotify(function ($message, $reqInfo, $fail) use ($wechatPayment) {
+					Yii::log(json_encode([
+						'message'=>$message,
+						'reqInfo'=>$reqInfo,
+						'channel'=>Pay::CHANNEL_WECHAT,
+					]), 'pay', 'notify.refund');
+					return true;
+				});
+				$response->send();
+				break;
 		}
-		$result = $model->validateNotify($channel, $params);
-		Yii::log(json_encode([
-			'params'=>$params,
-			'result'=>$result,
-		]), 'pay', 'notify');
-		echo Pay::notifyReturn($channel, $result);
 	}
 
 	public function actionFrontNotify() {
 		$channel = $this->sGet('channel');
 		unset($_GET['channel']);
-		switch ($channel) {
-			default:
-				$orderId = $this->sGet('out_trade_no');
-				break;
-		}
-		$model = Pay::getPayByOrderId($orderId);
+		$orderNo = $this->sGet('out_trade_no');
+		$model = Pay::getByOrderNo($orderNo);
 		if ($model === null) {
 			throw new CHttpException(404, 'Not Found');
 		}
-		$result = $model->validateNotify($channel, $_GET);
+		$result = $model->validateAlipayNotify($_GET);
 		Yii::log(json_encode([
 			'params'=>$_GET,
 			'result'=>$result,
@@ -52,9 +91,9 @@ class PayController extends Controller {
 		if ($result) {
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
+				case Pay::TYPE_TICKET:
 					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
-					$competition = $model->competition;
-					$this->redirect($competition->getUrl('registration'));
+					$this->redirect($model->getUrl());
 					break;
 				case Pay::TYPE_APPLICATION:
 					$params = json_decode($model->params);
@@ -65,18 +104,27 @@ class PayController extends Controller {
 					$returnParams = $application->generateReturnParams($model);
 					$this->sendForm($params->return_url, $returnParams);
 					break;
-				case Pay::TYPE_TICKET:
-					Yii::app()->user->setFlash('success', Yii::t('common', 'Paid successfully'));
-					$ticket = $model->ticket;
-					$competition = $ticket->competition;
-					$this->redirect($competition->getUrl('ticket'));
-					break;
 			}
 		}
 		$this->render('result', array(
 			'model'=>$model,
 			'result'=>$result,
 		));
+	}
+
+	public function actionCheck() {
+		$this->setIsAjaxRequest(true);
+		$id = $this->iPost('id');
+		$model = Pay::model()->findByPk($id);
+		if ($model === null || $model->user_id !== Yii::app()->user->id) {
+			throw new CHttpException(401, 'Unauthorized Access');
+		}
+		if (!$model->isPaid()) {
+			$model->updateOrderStatus();
+		}
+		$this->ajaxOk([
+			'url'=>$model->url,
+		]);
 	}
 
 	public function actionParams() {
@@ -89,8 +137,9 @@ class PayController extends Controller {
 			throw new CHttpException(401, 'Unauthorized Access');
 		}
 		$model->reviseAmount();
-		$params = array();
+		$params = [];
 		if ($model->isPaid()) {
+			$params['type'] = 'paid';
 			switch ($model->type) {
 				case Pay::TYPE_REGISTRATION:
 					$competition = $model->competition;
@@ -103,7 +152,7 @@ class PayController extends Controller {
 					break;
 			}
 		} else {
-			$params = $model->generateParams($isMobile, $channel);
+			$params = $model->generateParams($channel, $isMobile, $this->isInWechat);
 		}
 		$this->ajaxOk($params);
 	}

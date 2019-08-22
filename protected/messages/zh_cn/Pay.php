@@ -17,21 +17,28 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'Have you successfully paid?' => '是否成功付款？',
   'ID' => '',
   'Sub Type' => '',
   'Now Pay Account' => '现在支付账号',
+  'Alipay' => '支付宝',
   'Amount' => '金额',
   'Channel' => '渠道',
   'Create Time' => '创建时间',
   'Device Type' => '设备类型',
+  'Not yet paid' => '支付失败',
   'Order Name' => '订单名',
   'Order No' => '订单号',
   'Paid Time' => '支付时间',
   'Pay Account' => '支付账号',
   'Pay Channel' => '支付渠道',
+  'Please scan the QR code to pay with Wechat' => '请使用微信扫描以下二维码',
   'Status' => '状态',
+  'Successfully paid' => '支付成功',
   'Trade No' => '渠道订单号',
   'Type' => '类型',
   'Update Time' => '更新时间',
   'User' => '用户',
+  'Wechat' => '微信',
+  'You are being redirected to {channel} in a few seconds.' => '正在为你跳转至{channel}支付。',
 );

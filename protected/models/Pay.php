@@ -1,6 +1,7 @@
 <?php
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
+use EasyWeChat\Factory;
 
 /**
  * This is the model class for table 'pay'.
@@ -27,6 +28,11 @@ class Pay extends ActiveRecord {
 	const CHANNEL_NOWPAY = 'nowPay';
 	const CHANNEL_ALIPAY = 'alipay';
 	const CHANNEL_BALIPAY = 'balipay';
+	const CHANNEL_WECHAT = 'wechat';
+
+	const WECHAT_NATIVE = 'NATIVE';
+	const WECHAT_MWEB = 'MWEB';
+	const WECHAT_JSAPI = 'JSAPI';
 
 	const TYPE_REGISTRATION = 0;
 	const TYPE_APPLICATION = 1;
@@ -55,6 +61,7 @@ class Pay extends ActiveRecord {
 	const SIGN_TYPE_RSA2 = 'RSA2';
 
 	private static $_criteria;
+	private static $_wechatPayment;
 
 	public static function notifyReturn($channel, $success) {
 		switch ($channel) {
@@ -65,10 +72,10 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public static function getPayByOrderId($orderId) {
-		return self::model()->findByAttributes(array(
-			'order_no'=>$orderId,
-		));
+	public static function getByOrderNo($orderNo) {
+		return self::model()->findByAttributes([
+			'order_no'=>$orderNo,
+		]);
 	}
 
 	public static function getAllStatus() {
@@ -78,6 +85,8 @@ class Pay extends ActiveRecord {
 			self::STATUS_WAIT_SEND=>'待发货',
 			self::STATUS_WAIT_CONFIRM=>'待收货',
 			self::STATUS_WAIT_PAY=>'待付款',
+			self::STATUS_CANCELLED=>'已取消',
+			self::STATUS_LOCKED=>'已锁定',
 		);
 	}
 
@@ -85,7 +94,8 @@ class Pay extends ActiveRecord {
 		return array(
 			self::CHANNEL_ALIPAY=>'支付宝-担保交易',
 			self::CHANNEL_NOWPAY=>'现在支付',
-			self::CHANNEL_BALIPAY=>'支付宝-即时到帐'
+			self::CHANNEL_BALIPAY=>Yii::t('Pay', 'Alipay'),
+			self::CHANNEL_WECHAT=>Yii::t('Pay', 'Wechat'),
 		);
 	}
 
@@ -94,6 +104,14 @@ class Pay extends ActiveRecord {
 			self::TYPE_REGISTRATION=>Yii::t('common', 'Registration'),
 			// self::TYPE_APPLICATION=>Yii::t('common', 'Application'),
 		);
+	}
+
+	public static function getWechatPayment() {
+		if (self::$_wechatPayment === null) {
+			$payment = Yii::app()->params->payments[self::CHANNEL_WECHAT];
+			self::$_wechatPayment = Factory::payment($payment);
+		}
+		return self::$_wechatPayment;
 	}
 
 	public function reviseAmount() {
@@ -138,56 +156,90 @@ class Pay extends ActiveRecord {
 		if ($amount >= $this->paid_amount) {
 			$amount = $this->paid_amount;
 		}
-		$bizParams = [
-			'out_trade_no'=>$this->order_no,
-			'refund_amount'=>number_format($amount / 100, 2, '.', ''),
-			// 'refund_reason'=>'退赛-' . $this->order_name,
-			//暂时没有多次退款的case，统一使用-1
-			'out_request_no'=>$this->order_no . '-1',
-		];
-		$response = $this->alipayRequest('alipay.trade.refund', $bizParams);
-		if ($response === false) {
-			return false;
+		//暂时没有多次退款的case，统一使用-1
+		$refundOrderNo = $this->order_no . '-1';
+		switch ($this->channel) {
+			case self::CHANNEL_BALIPAY:
+				$bizParams = [
+					'out_trade_no'=>$this->order_no,
+					'refund_amount'=>number_format($amount / 100, 2, '.', ''),
+					// 'refund_reason'=>'退赛-' . $this->order_name,
+					'out_request_no'=>$refundOrderNo,
+				];
+				$response = $this->alipayRequest('alipay.trade.refund', $bizParams);
+				if ($response === false) {
+					return false;
+				}
+				$refundAmount = $response['refund_fee'] * 100;
+				$refundTime = strtotime($response['gmt_refund_pay']);
+				break;
+			case self::CHANNEL_WECHAT:
+				$wechatPayment = self::getWechatPayment();
+				$result = $wechatPayment->refund->byOutTradeNumber($this->order_no, $refundOrderNo, $this->paid_amount, $amount, [
+					'notify_url'=>$this->getRefundNotifyUrl($this->channel),
+				]);
+				if (!isset($result['result_code']) || $result['result_code'] !== 'SUCCESS') {
+					return false;
+				}
+				$refundAmount = $result['refund_fee'];
+				$refundTime = time();
+				break;
+			default:
+				return false;
 		}
-		$this->refund_amount = $response['refund_fee'] * 100;
-		$this->refund_time = strtotime($response['gmt_refund_pay']);
+		$this->refund_amount = $refundAmount;
+		$this->refund_time = $refundTime;
 		$this->save();
 		return true;
 	}
 
 	public function close() {
-		$bizParams = [
-			'out_trade_no'=>$this->order_no,
-		];
-		$response = $this->alipayRequest('alipay.trade.close', $bizParams);
-		return $response !== false;
+		switch ($this->channel) {
+			case self::CHANNEL_BALIPAY:
+				$bizParams = [
+					'out_trade_no'=>$this->order_no,
+				];
+				$response = $this->alipayRequest('alipay.trade.close', $bizParams);
+				return $response !== false;
+			case self::CHANNEL_WECHAT:
+				$response = self::getWechatPayment()->order->close($this->order_no);
+				return $response !== false;
+		}
 	}
 
-	public function lock() {
+	public function lock($channel) {
+		$this->channel = $channel;
 		$this->status = self::STATUS_LOCKED;
 		$this->save();
 	}
 
 	public function resetOrder() {
-		if (!$this->isLocked()) {
-			return false;
-		}
-		$tradeStatus = $this->getTradeStatus();
-		switch ($tradeStatus) {
-			case 'WAIT_BUYER_PAY':
-				if($this->close()) {
-					$this->order_no = '';
-					$this->status = self::STATUS_UNPAID;
+		switch ($this->channel) {
+			case self::CHANNEL_BALIPAY:
+				$tradeStatus = $this->getTradeStatus();
+				switch ($tradeStatus) {
+					case 'WAIT_BUYER_PAY':
+						if($this->close()) {
+							$this->order_no = '';
+							$this->status = self::STATUS_UNPAID;
+						}
+						break;
+					case 'TRADE_CLOSED':
+						$this->order_no = '';
+						$this->status = self::STATUS_UNPAID;
+						break;
+					default:
+						$this->status = self::STATUS_UNPAID;
+						break;
 				}
 				break;
-			case 'TRADE_CLOSED':
+			case self::CHANNEL_WECHAT:
+				$this->params = '';
 				$this->order_no = '';
-				$this->status = self::STATUS_UNPAID;
-				break;
-			default:
-				$this->status = self::STATUS_UNPAID;
+				$this->close();
 				break;
 		}
+		$this->channel = '';
 		return $this->save();
 	}
 
@@ -208,6 +260,32 @@ class Pay extends ActiveRecord {
 			return false;
 		}
 		return $response;
+	}
+
+	public function updateOrderStatus() {
+		$paid = false;
+		switch ($this->channel) {
+			case self::CHANNEL_BALIPAY:
+				$order = $this->alipayQuery();
+				$tradeStatus = $order['trade_status'] ?? false;
+				if ($tradeStatus === self::TRADE_SUCCESS || $tradeStatus === self::ALIPAY_TRADE_STATUS_FINISHED) {
+					$paid = true;
+					$paidAmount = ($order['total_amount'] ?? 0) * 100;
+				}
+				break;
+			case self::CHANNEL_WECHAT:
+				$wechatPayment = self::getWechatPayment();
+				$order = $wechatPayment->order->queryByOutTradeNumber($this->order_no);
+				$tradeState = $order['trade_state'] ?? false;
+				if ($tradeState === 'SUCCESS') {
+					$paid = true;
+					$paidAmount = $order['total_fee'] ?? 0;
+				}
+				break;
+		}
+		if ($paid) {
+			$this->updateStatus(self::STATUS_PAID, $paidAmount);
+		}
 	}
 
 	public function cancel() {
@@ -258,7 +336,7 @@ class Pay extends ActiveRecord {
 
 	public function alipayRequest($method, $bizParams) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments[self::CHANNEL_BALIPAY];
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
 			'method'=>$method,
@@ -311,16 +389,9 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function validateNotify($channel, $params) {
-		switch ($channel) {
-			default:
-				return $this->validateAlipayNotify($params);
-		}
-	}
-
 	public function validateAlipayNotify($params) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments[self::CHANNEL_BALIPAY];
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
@@ -329,7 +400,7 @@ class Pay extends ActiveRecord {
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
-			$this->channel = 'balipay';
+			$this->channel = self::CHANNEL_BALIPAY;
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
 				case self::ALIPAY_TRADE_SUCCESS:
@@ -446,13 +517,99 @@ class Pay extends ActiveRecord {
 		$this->save();
 	}
 
-	public function generateParams($isMobile) {
-		return $this->generateAlipayParams($isMobile);
+	public function generateParams($channel, $isMobile, $inWechat = false) {
+		$payments = Yii::app()->params->payments;
+		if (!isset($payments[$channel])) {
+			throw new Exception('Unknown payment channel');
+		}
+		if ($this->isLocked()) {
+			$this->resetOrder();
+		}
+		$this->lock($channel);
+		switch ($channel) {
+			case self::CHANNEL_BALIPAY:
+				return $this->generateAlipayParams($isMobile);
+			case self::CHANNEL_WECHAT:
+				if ($inWechat) {
+					return $this->generateWechatJsAPIParams();
+				} else if ($isMobile) {
+					return $this->generateWechatH5Params();
+				} else {
+					return $this->generateWechatNativeParams();
+				}
+		}
+	}
+
+	public function generateWechatNativeParams() {
+		$order = $this->getWechatOrder(self::WECHAT_NATIVE);
+		return [
+			'type'=>'scan',
+			'order'=>$order,
+			'src'=>Yii::app()->createUrl('/qrCode/wechatPayment', [
+				'url'=>$order['code_url'],
+			]),
+		];
+	}
+
+	public function generateWechatH5Params() {
+		$order = $this->getWechatOrder(self::WECHAT_MWEB);
+		return [
+			'type'=>'redirect',
+			'order'=>$order,
+			'url'=>$order['mweb_url'],
+		];
+	}
+
+	public function generateWechatJsAPIParams() {
+		$wechatPayment = self::getWechatPayment();
+		$order = $this->getWechatOrder(self::WECHAT_JSAPI);
+		$config = $wechatPayment->jssdk->sdkConfig($order['prepay_id']);
+		return [
+			'type'=>'wx',
+			'order'=>$order,
+			'config'=>$config,
+		];
+	}
+
+	public function getWechatOrder($tradeType) {
+		$params = json_decode($this->params, true);
+		if ($params) {
+			if (!isset($params['trade_type']) || $params['trade_type'] !== $tradeType) {
+				$this->resetOrder();
+			} else {
+				return $params;
+			}
+		}
+		$options = [
+			'trade_type'=>$tradeType,
+			'product_id'=>$this->order_no,
+			'body'=>$this->order_name,
+			'out_trade_no'=>$this->order_no,
+			'total_fee'=>10,//$this->amount,
+			'notify_url'=>$this->getNotifyUrl(self::CHANNEL_WECHAT),
+		];
+		if ($tradeType === self::WECHAT_JSAPI) {
+			$user = Yii::app()->session->get(Constant::WECHAT_SESSION_KEY);
+			if (!$user) {
+				throw new Exception('Please open in Wechat built-in browser');
+			}
+			$options['openid'] = $user->id;
+		}
+		$wechatPayment = self::getWechatPayment();
+		$order = $wechatPayment->order->unify($options);
+		$this->params = json_encode($order);
+		$this->save();
+		return $order;
+	}
+
+	public function getWechatTradeType() {
+		$params = json_decode($this->params, true);
+		return $params['trade_type'] ?? '';
 	}
 
 	public function generateAlipayParams($isMobile) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments[self::CHANNEL_BALIPAY];
 		$baseUrl = $app->request->getBaseUrl(true);
 		$commonParams = [
 			'app_id'=>trim($alipay['app_id']),
@@ -461,17 +618,17 @@ class Pay extends ActiveRecord {
 			'version'=>'1.0',
 			'charset'=>self::CHARSET,
 			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_BALIPAY)),
-			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
+			'notify_url'=>$this->getNotifyUrl(self::CHANNEL_BALIPAY),
 		];
 		$bizParams = array(
 			'out_trade_no'=>$this->order_no,
 			'product_code'=>'FAST_INSTANT_TRADE_PAY',
 			'total_amount'=>number_format($this->amount / 100, 2, '.', ''),
-			'subject'=>'粗饼-' . $this->order_name,
+			'subject'=>$this->order_name,
 		);
 		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
-		$this->lock();
 		return array(
+			'type'=>'form',
 			'action'=>$alipay['gateway'],
 			'method'=>'post',
 			'params'=>$params,
@@ -501,11 +658,36 @@ class Pay extends ActiveRecord {
 		return $temp;
 	}
 
+	public function getNotifyUrl($channel) {
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
+		return $baseUrl . Yii::app()->createUrl('/pay/notify', ['channel'=>$channel]);
+	}
+
+	public function getFrontNotifyUrl($channel) {
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
+		return $baseUrl . Yii::app()->createUrl('/pay/frontNotify', ['channel'=>$channel]);
+	}
+
+	public function getRefundNotifyUrl($channel) {
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
+		return $baseUrl . Yii::app()->createUrl('/pay/refundNotify', ['channel'=>$channel]);
+	}
+
+	public function getRedirectUrl($channel) {
+		$baseUrl = Yii::app()->request->getBaseUrl(true);
+		return $baseUrl . Yii::app()->createUrl('/pay/redirect', [
+			'channel'=>$channel,
+			'order_no'=>$this->order_no
+		]);
+	}
+
 	public function getUrl() {
 		$baseUrl = Yii::app()->request->getBaseUrl(true);
 		switch ($this->type) {
 			case self::TYPE_REGISTRATION:
-				return $baseUrl . CHtml::normalizeUrl($this->competition->getUrl());
+				return $baseUrl . CHtml::normalizeUrl($this->competition->getUrl('registration'));
+			case self::TYPE_TICKET:
+				return $baseUrl . CHtml::normalizeUrl($this->ticket->competition->getUrl('ticket'));
 			default:
 				return $baseUrl;
 		}
@@ -539,6 +721,15 @@ class Pay extends ActiveRecord {
 	public function getTypeText() {
 		$types = self::getTypes();
 		return isset($types[$this->type]) ? $types[$this->type] : $this->type;
+	}
+
+	public function getChannelText() {
+		$channels = self::getChannels();
+		return $channels[$this->channel] ?? $this->channel;
+	}
+
+	public function getFormattedAmount() {
+		return Html::fontAwesome('cny') . number_format($this->amount / 100, 2);
 	}
 
 	public function getColumns() {
