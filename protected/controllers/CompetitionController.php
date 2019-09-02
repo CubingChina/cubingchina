@@ -107,8 +107,7 @@ class CompetitionController extends Controller {
 			}
 		}
 
-		$application = $this->getWechatApplication([
-			'js'=>true,
+		$this->getWechatOfficialAccount([
 			'jsConfig'=>[
 				'hideAllNonBaseMenuItem',
 				'scanQRCode',
@@ -225,6 +224,11 @@ class CompetitionController extends Controller {
 			if (($payment = $registration->getUnpaidPayment()) != null) {
 				$payment->reviseAmount();
 			}
+			$this->getWechatOfficialAccount([
+				'jsConfig'=>[
+					'chooseWXPay',
+				],
+			]);
 			$this->render('registrationDone', array(
 				'user'=>$user,
 				'competition'=>$competition,

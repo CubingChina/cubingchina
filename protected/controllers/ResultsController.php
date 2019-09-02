@@ -206,8 +206,7 @@ class ResultsController extends Controller {
 			$competition->getAttributeValue('name')=>$competition->getUrl(),
 			'Certificate',
 		);
-		$application = $this->getWechatApplication([
-			'js'=>true,
+		$this->getWechatOfficialAccount([
 			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
@@ -216,7 +215,6 @@ class ResultsController extends Controller {
 				'onMenuShareQZone',
 			],
 		]);
-		$js = $application->js;
 		$this->pageTitle = array($competition->getAttributeValue('name'), 'Certificate');
 		$this->title = $competition->getAttributeValue('name') . '-' . Yii::t('common', 'Certificate');
 		$this->render('cert', [

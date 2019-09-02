@@ -119,8 +119,8 @@ class SiteController extends Controller {
 
 	public function actionWechatLogin() {
 		try {
-			$application = $this->getWechatApplication(['oauth'=>[]]);
-			$user = $application->oauth->user();
+			$officialAccount = $this->getWechatOfficialAccount(['oauth'=>[]]);
+			$user = $officialAccount->oauth->user();
 			$wechatUser = WechatUser::getOrCreate($user);
 			$session = Yii::app()->session;
 			$session->add(Constant::WECHAT_SESSION_KEY, $user);

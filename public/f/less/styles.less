@@ -518,11 +518,15 @@ table {
   cursor: pointer;
   float: left;
   padding: 5px;
-}
-.pay-channel.active {
   img {
-    border: 3px solid #5CB85C;
+    border: 3px solid transparent;
     padding: 5px;
+    transition: border 0.3s ease-in;
+  }
+  &.active {
+    img {
+      border-color: #5cb85c;
+    }
   }
 }
 td.hover {

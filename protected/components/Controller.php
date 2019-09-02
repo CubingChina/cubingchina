@@ -29,7 +29,7 @@ class Controller extends CController {
 	private $_navibar;
 	private $_weiboShareDefaultText;
 	private $_weiboSharePic;
-	private $_wechatApplications = [];
+	private $_wechatOffcialAccount;
 
 	public function filters() {
 		return array(
@@ -58,24 +58,21 @@ class Controller extends CController {
 		}
 	}
 
-	public function getWechatApplication($config = []) {
-		$key = implode('_', array_keys($config));
-		if (isset($this->_wechatApplications[$key])) {
-			return $this->_wechatApplications[$key];
+	public function getWechatOfficialAccount($config = []) {
+		if (($officialAccount = $this->_wechatOffcialAccount) === null) {
+			$options = [
+				'debug'=>YII_DEBUG,
+				'app_id'=>Env::get('WECHAT_APP_ID'),
+				'secret'=> Env::get('WECHAT_SECRET'),
+			];
+			$officialAccount = Factory::officialAccount($options);
+			$this->_wechatOffcialAccount = $officialAccount;
 		}
-		$options = [
-			'debug'=>YII_DEBUG,
-			'app_id'=>Env::get('WECHAT_APP_ID'),
-			'secret'=> Env::get('WECHAT_SECRET'),
-		];
-		$officialAccount = Factory::officialAccount($options);
 		$clientScript = Yii::app()->clientScript;
 		$baseUrl = Yii::app()->request->getBaseUrl(true);
-		if (isset($config['js'])) {
-			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
-		}
 
 		if (isset($config['jsConfig'])) {
+			$clientScript->registerScriptFile('https://res.wx.qq.com/open/js/jweixin-1.0.0.js');
 			$jssdk = $officialAccount->jssdk;
 			$jssdk->setUrl($baseUrl . Yii::app()->request->url);
 			try {
@@ -92,11 +89,11 @@ class Controller extends CController {
 			$session = Yii::app()->session;
 			if ($this->action->id !== 'wechatLogin' && $session->get(Constant::WECHAT_SESSION_KEY) === null) {
 				$session->add(Constant::CURRENT_URL_KEY, Yii::app()->request->url);
-				$oauth->redirect($baseUrl . CHtml::normalizeUrl(['/site/wechatLogin']))->send();
+				$oauth->redirect(Yii::app()->params->baseUrl . '/site/wechatLogin/' . DEV)->send();
 				Yii::app()->end();
 			}
 		}
-		return $this->_wechatApplications[$key] = $officialAccount;
+		return $officialAccount;
 	}
 
 	public function getIsInWechat() {
@@ -456,7 +453,7 @@ class Controller extends CController {
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
 		if ($this->isInWechat) {
-			$this->getWechatApplication([
+			$this->getWechatOfficialAccount([
 				'oauth'=>[
 					'scopes'=>['snsapi_userinfo'],
 				]

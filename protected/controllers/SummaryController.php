@@ -32,8 +32,7 @@ class SummaryController extends Controller {
 		$this->breadcrumbs = [
 			$this->title,
 		];
-		$application = $this->getWechatApplication([
-			'js'=>true,
+		$application = $this->getWechatOfficialAccount([
 			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
@@ -68,8 +67,7 @@ class SummaryController extends Controller {
 			'Annual Summary',
 			$person->name,
 		];
-		$application = $this->getWechatApplication([
-			'js'=>true,
+		$application = $this->getWechatOfficialAccount([
 			'jsConfig'=>[
 				'onMenuShareTimeline',
 				'onMenuShareAppMessage',
