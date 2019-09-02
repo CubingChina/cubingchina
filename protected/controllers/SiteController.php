@@ -118,6 +118,10 @@ class SiteController extends Controller {
 	}
 
 	public function actionWechatLogin() {
+		$dev = $this->iGet('dev');
+		if ($dev) {
+			$this->redirect('https://staging.cubingchina.com/site/wechatLogin?' . http_build_query($_GET));
+		}
 		try {
 			$officialAccount = $this->getWechatOfficialAccount(['oauth'=>[]]);
 			$user = $officialAccount->oauth->user();

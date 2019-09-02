@@ -585,7 +585,7 @@ class Pay extends ActiveRecord {
 			'product_id'=>$this->order_no,
 			'body'=>$this->order_name,
 			'out_trade_no'=>$this->order_no,
-			'total_fee'=>10,//$this->amount,
+			'total_fee'=>$this->amount,
 			'notify_url'=>$this->getNotifyUrl(self::CHANNEL_WECHAT),
 		];
 		if ($tradeType === self::WECHAT_JSAPI) {
