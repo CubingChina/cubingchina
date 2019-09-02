@@ -437,6 +437,9 @@ class GroupCommand extends CConsoleCommand {
 	}
 
 	public function isStaff($registration, $staffs = []) {
+		if ($staffs === []) {
+			return false;
+		}
 		if ($registration->user->isWCADelegate()) {
 			return true;
 		}

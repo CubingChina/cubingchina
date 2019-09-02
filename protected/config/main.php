@@ -73,6 +73,7 @@ $config = [
 					'site/page',
 					'urlSuffix'=>'.html'
 				],
+				'site/wechatLogin/<dev:\d>'=>'site/wechatLogin',
 				'competition/<action:signin>'=>'competition/<action>',
 				'<controller:competition|post>/<alias:[-A-z0-9]+>'=>'<controller>/detail',
 				'competition/<alias:[-A-z0-9]+>/<action:\w+>'=>'competition/<action>',
