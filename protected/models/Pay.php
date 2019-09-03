@@ -203,6 +203,7 @@ class Pay extends ActiveRecord {
 				return $response !== false;
 			case self::CHANNEL_WECHAT:
 				$response = self::getWechatPayment()->order->close($this->order_no);
+				Yii::log(json_encode($response), 'pay', 'close.wechat.response');
 				return $response !== false;
 		}
 	}
@@ -219,7 +220,7 @@ class Pay extends ActiveRecord {
 				$tradeStatus = $this->getTradeStatus();
 				switch ($tradeStatus) {
 					case 'WAIT_BUYER_PAY':
-						if($this->close()) {
+						if ($this->close()) {
 							$this->order_no = '';
 							$this->status = self::STATUS_UNPAID;
 						}
@@ -234,9 +235,9 @@ class Pay extends ActiveRecord {
 				}
 				break;
 			case self::CHANNEL_WECHAT:
+				$ret = $this->close();
 				$this->params = '';
 				$this->order_no = '';
-				$this->close();
 				break;
 		}
 		$this->channel = '';
