@@ -61,7 +61,7 @@ class Summary {
 				$firstCompetition[$type] = $competition;
 				$competitionIds[] = $competition->id;
 				$competitionCount[$type]++;
-				if (!in_array($competition->countryId, ['XA', 'XE', 'XS', 'XM']) && !isset($tempRegion[$competition->id])) {
+				if (!$competition->countryId{0} !== 'X' && !isset($tempRegion[$competition->id])) {
 					$tempRegion[$competition->id] = true;
 					if (!isset($visitedRegionList[$competition->countryId])) {
 						$visitedRegionList[$competition->countryId] = [
