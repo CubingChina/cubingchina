@@ -119,11 +119,16 @@
 <h3>四、比赛颁奖</h3>
 <ol>
   <li>
-    比赛各项目前<b><?php echo $competition->podiums_num ;?></b>名获得奖状与奖品。
+    比赛将为各项目前<b><?php echo $competition->podiums_num ;?></b>名颁奖。
   </li>
   <?php if ($competition->attend_ceremory): ?>
   <li>
     赛事颁奖需本人出席方可领奖（奖状、奖品、奖牌、奖金），他人不可代领。未出席颁奖仪式的获奖者视为放弃领奖。
+  </li>
+  <?php endif; ?>
+  <?php if ($competition->podiums_greater_china): ?>
+  <li>
+    本次比赛将同时为中华组冠亚季军（中国大陆及港澳台地区项目前三）颁奖。
   </li>
   <?php endif; ?>
   <?php $groups = $competition->getUnofficialGroups(); ?>

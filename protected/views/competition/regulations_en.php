@@ -10,7 +10,7 @@
   <?php $phase = 1; ?>
   <?php $ordinals = ['', '', 'st', 'nd', 'rd']; ?>
   <li>
-    There are <b><?php echo 1 + $competition->hasSecondStage + $competition->hasThirdStage; ?></b>registration periods. The <?php
+    There are <b><?php echo 1 + $competition->hasSecondStage + $competition->hasThirdStage; ?></b> registration periods. The <?php
     echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo $competition->reg_start ? date('Y-m-d H:i:s', $competition->reg_start) : 'now'; ?> to <?php echo date('Y-m-d H:i:s', $competition->second_stage_date - 1); ?><?php if ($competition->hasThirdStage): ?>. The <?php
     echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo date('Y-m-d H:i:s', $competition->second_stage_date); ?> to <?php echo date('Y-m-d H:i:s', $competition->third_stage_date - 1); ?><?php endif; ?>. The <?php
     echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo date('Y-m-d H:i:s', $competition->hasThirdStage ? $competition->third_stage_date : $competition->second_stage_date); ?> to <?php echo date('Y-m-d H:i:s', $competition->reg_end); ?>. Registration fees are increased during the second registration period.
@@ -34,7 +34,7 @@
   </li>
   <?php endif; ?>
   <li>
-    Registered events cannot be exchanged for other events (for example, a competitor registered for 4x4 speedsolve cannot change their registration to 2x2 speedsolve.) Registrations cannot be exchanged among different people.
+    Registered events cannot be exchanged for other events (for example, a competitor registered for 4x4 speedsolve cannot change their registration to 2x2 speedsolve). Registrations cannot be exchanged among different people.
   </li>
   <li>
     No refunds for payments will be made<?php if ($competition->cancellation_end_time > 0 && $competition->refund_type !== Competition::REFUND_TYPE_NONE): ?>, aside from refunded fees for properly canceled registrations<?php endif; ?>.
@@ -120,11 +120,16 @@
 <h3>4. Competition awards</h3>
 <ol>
   <li>
-    The top <b><?php echo $competition->podiums_num ;?></b> competitors of each event will receive a certificate.
+    The top <b><?php echo $competition->podiums_num ;?></b> competitors of each event will be awarded.
   </li>
   <?php if ($competition->attend_ceremory): ?>
   <li>
     Competitors must accept any certificates, awards, or prizes in person. Competitors that do not appear in person will forfeit any prizes.
+  </li>
+  <?php endif; ?>
+  <?php if ($competition->podiums_greater_china): ?>
+  <li>
+    The greater China group will be awarded too.
   </li>
   <?php endif; ?>
   <?php $groups = $competition->getUnofficialGroups(); ?>
