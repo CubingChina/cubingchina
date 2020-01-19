@@ -10,7 +10,15 @@
     </dd>
     <?php endif; ?>
     <dt><?php echo Yii::t('Competition', 'Regulations'); ?></dt>
-    <dd><?php echo $competition->getAttributeValue('regulations'); ?></dd>
+    <dd>
+      <?php if (!$competition->automatic_regulations): ?>
+      <?php echo $competition->getAttributeValue('regulations'); ?>
+      <?php elseif ($this->isCN): ?>
+        <?php $this->renderPartial('regulations_cn', $_data_); ?>
+      <?php else: ?>
+        <?php $this->renderPartial('regulations_en', $_data_); ?>
+      <?php endif; ?>
+    </dd>
   </dl>
   <?php $this->renderPartial('disclaimer'); ?>
 </div>

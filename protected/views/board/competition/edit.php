@@ -463,6 +463,73 @@
               <div class="clearfix"></div>
             </div>
             <div role="tabpanel" class="tab-pane" id="regulation">
+              <div class="col-lg-12">
+                <p class="lead text-danger">
+                  请在编辑完之后务必看清楚规则页面，比赛公示后不可再次编辑！
+                </p>
+                <p class="lead text-danger">
+                  请在编辑完之后务必看清楚规则页面，比赛公示后不可再次编辑！
+                </p>
+                <p class="lead text-danger">
+                  请在编辑完之后务必看清楚规则页面，比赛公示后不可再次编辑！
+                </p>
+              </div>
+              <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
+              <?php if (isset($value['title'])): ?>
+              <div class="clearfix"></div>
+              <hr>
+              <div class="col-lg-12">
+                <h3>
+                  <?php echo $value['title']; ?>
+                </h3>
+                <?php if (isset($value['warning'])): ?>
+                <div class="text-danger">
+                  <?php echo $value['warning']; ?>
+                </div>
+                <?php endif; ?>
+              </div>
+              <?php endif; ?>
+              <?php echo Html::formGroup(
+                $model, $key, array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, $key, array(
+                  'label'=>$value['label'],
+                )),
+                !isset($value['type']) ? Html::activeSwitch($model, $key) : $form->textField($model, $key, [
+                  'class'=>'form-control',
+                ]),
+                $form->error($model, $key, array('class'=>'text-danger'))
+              );?>
+              <?php endforeach; ?>
+              <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'podiumsEvents', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiumsEvents', array(
+                  'label'=>'非官方领奖台项目',
+                )),
+                $form->listBox($model, 'podiumsEvents', $model->eventsNames, array(
+                  'class'=>'form-control',
+                  'size'=>count($model->associatedEvents),
+                  'multiple'=>true,
+                )),
+                $form->error($model, 'podiumsEvents', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
+                $model, 'podiums_num', array(
+                  'class'=>'col-md-3',
+                ),
+                $form->labelEx($model, 'podiums_num', array(
+                  'label'=>'领奖台人数',
+                )),
+                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
+                  'class'=>'form-control',
+                ]),
+                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
               <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
                 $model, 'regulations_zh', array(
@@ -541,33 +608,6 @@
                 $form->error($model, 'live_stream_url', array('class'=>'text-danger'))
               );?>
               <?php endif; ?>
-              <div class="col-lg-12">
-                <div class="text-danger">请注意，当你选择Ux时，少儿组将失效。Ux三组可以自由组合，系统自动匹配年龄。</div>
-              </div>
-              <?php echo Html::formGroup(
-                $model, 'podiums_num', array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, 'podiums_num', array(
-                  'label'=>'领奖台人数',
-                )),
-                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
-                  'class'=>'form-control',
-                ]),
-                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
-              );?>
-              <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
-              <?php echo Html::formGroup(
-                $model, $key, array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, $key, array(
-                  'label'=>$value['label'],
-                )),
-                Html::activeSwitch($model, $key),
-                $form->error($model, $key, array('class'=>'text-danger'))
-              );?>
-              <?php endforeach; ?>
               <?php echo Html::formGroup(
                 $model, 'local_type', array(
                   'class'=>'col-md-3',
@@ -579,21 +619,6 @@
                   'class'=>'form-control',
                 )),
                 $form->error($model, 'local_type', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'podiumsEvents', array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, 'podiumsEvents', array(
-                  'label'=>'非官方领奖台项目',
-                )),
-                $form->listBox($model, 'podiumsEvents', $model->eventsNames, array(
-                  'class'=>'form-control',
-                  'size'=>count($model->associatedEvents),
-                  'multiple'=>true,
-                )),
-                $form->error($model, 'podiumsEvents', array('class'=>'text-danger'))
               );?>
             </div>
             <?php endif; ?>
