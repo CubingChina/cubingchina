@@ -17,7 +17,7 @@
   <?php endif; ?>
   <li>
     报名费用：应付报名费=基础报名费+分项报名费。<?php if ($competition->hasSecondStage): ?>第1阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>元；第2阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>元<?php
-    if ($competition->hasThirdStage): ?>；第3阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>元<?php endif; ?><?php else: ?>基础报名费为<?php echo $competition->getEventFee('registration') ;?><?php endif; ?>。
+    if ($competition->hasThirdStage): ?>；第3阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>元<?php endif; ?><?php else: ?>基础报名费为<?php echo $competition->getEventFee('registration') ;?>元<?php endif; ?>。
   </li>
   <li>
     中国大陆选手须通过粗饼网的线上缴费功能缴纳报名费，不通过粗饼网付款的中国大陆选手报名一律无效。对于无法使用中国支付系统的非中国大陆选手<?php if ($competition->paypal_link): ?>，可通过PayPal支付报名费用，审核将有一定延迟<?php endif; ?>，有支付问题请邮件联系主办方。
@@ -49,40 +49,82 @@
 </ol>
 <h3>二、签到与入场</h3>
 <ol>
-  <li>选手需在指定时间段进行签到，必须选手本人签到，不可由他人代签。</li>
-  <li>请选手按指示标牌进行签到，非参赛人员禁止进入选手签到区，以免造成混乱，扰乱签到秩序。</li>
-  <li>选手本人需出示<?php if ($competition->show_qrcode): ?>报名成功二维码 （登录粗饼网后在<?php echo CHtml::link('报名页', $competition->getUrl('registration')); ?>查看）（电子版和打印的纸质版均可）及<?php endif; ?>选手本人身份证件（身份证、户口簿、护照、台胞证、回乡证）原件。</li>
-  <li>非中国大陆地区选手，因无法支付报名费的，需在签到时补缴报名费。</li>
-  <li>签到时，选手将会领取<b>参赛证</b><?php if ($competition->entry_ticket): ?>和<b>入场凭证</b><?php endif; ?>，请妥善保管。</li>
-  <li>选手在上台参赛的时候需佩戴参赛证，没有参赛证的选手将失去参赛资格。<?php if ($competition->name_card_fee > 0): ?>若参赛证遗失，可以凭报名二维码及选手本人身份证件在咨询台补办，补办费用为<b><?php echo $competition->name_card_fee; ?></b>元。<?php endif; ?></li>
+  <li>
+    选手需在指定时间段进行签到，必须选手本人签到，不可由他人代签。
+  </li>
+  <li>
+    请选手按指示标牌进行签到，非参赛人员禁止进入选手签到区，以免造成混乱，扰乱签到秩序。
+  </li>
+  <li>
+    选手本人需出示<?php if ($competition->show_qrcode): ?>报名成功二维码 （登录粗饼网后在<?php echo CHtml::link('报名页', $competition->getUrl('registration')); ?>查看）（电子版和打印的纸质版均可）及<?php endif; ?>选手本人身份证件（身份证、户口簿、护照、台胞证、回乡证）原件。
+  </li>
+  <li>
+    非中国大陆地区选手，因无法支付报名费的，需在签到时补缴报名费。
+  </li>
+  <li>
+    签到时，选手将会领取<b>参赛证</b><?php if ($competition->entry_ticket): ?>和<b>入场凭证</b><?php endif; ?>，请妥善保管。
+  </li>
+  <li>
+    选手在上台参赛的时候需佩戴参赛证，没有参赛证的选手将失去参赛资格。<?php if ($competition->name_card_fee > 0): ?>若参赛证遗失，可以凭报名二维码及选手本人身份证件在咨询台补办，补办费用为<b><?php echo $competition->name_card_fee; ?></b>元。<?php endif; ?>
+  </li>
   <?php if ($competition->entry_ticket): ?>
-  <li><b>比赛所有区域需佩戴比赛入场凭证方可进入</b>，请所有选手、比赛陪同与观众在完成签到后妥善保管自己的入场凭证。</li>
+  <li>
+    <b>比赛所有区域需佩戴比赛入场凭证方可进入</b>，请所有选手、比赛陪同与观众在完成签到后妥善保管自己的入场凭证。
+  </li>
+  <li>
+    入场凭证为选手进入比赛各功能区域的单独标识，一人一证切勿转让，转让带来后果由本人承担，如不能参加比赛等。
+  </li>
   <?php endif; ?>
-  <li>入场凭证为选手进入比赛各功能区域的单独标识，一人一证切勿转让，转让带来后果由本人承担，如不能参加比赛等。</li>
-  <li><?php if ($competition->guest_limit): ?>本次比赛有陪同人员限制，费用详见本页下面。<?php endif; ?>陪同人员仅可停留在观众区，不能进入选手候赛区和比赛区。</li>
+  <li>
+    <?php if ($competition->guest_limit): ?>本次比赛有陪同人员限制，费用详见本页下面。<?php endif; ?>陪同人员仅可停留在观众区，不能进入选手候赛区和比赛区。
+  </li>
 </ol>
 <h3>三、关于比赛</h3>
 <ol>
   <?php if ($competition->isWCACompetition()): ?>
-  <li>选手须确保所使用的魔方符合<a href="https://www.worldcubeassociation.org/regulations/translations/chinese/#article-3-puzzles" target="_blank">WCA规则要求</a>，并做好参赛准备，否则将被取消参与该项目的资格。</li>
+  <li>
+    选手须确保所使用的魔方符合<a href="https://www.worldcubeassociation.org/regulations/translations/chinese/#article-3-puzzles" target="_blank">WCA规则要求</a>，并做好参赛准备，否则将被取消参与该项目的资格。
+  </li>
   <?php endif ;?>
-  <li>请参加盲拧项目的选手<b>自备眼罩</b>，作为盲拧项目进行时选手的佩戴遮挡物。主办方不提供盲拧的眼罩借用。</li>
-  <li>粗饼网公布的赛程为比赛主办预计赛程，报名截止后可能会依据报名人数调整晋级人数或者赛程，同时比赛日也可能根据现场情况对赛程进行调整，请在比赛日注意现场通知以免耽误您的参赛。</li>
+  <li>
+    请参加盲拧项目的选手<b>自备眼罩</b>，作为盲拧项目进行时选手的佩戴遮挡物。主办方不提供盲拧的眼罩借用。
+  </li>
+  <li>
+    粗饼网公布的赛程为比赛主办预计赛程，报名截止后可能会依据报名人数调整晋级人数或者赛程，同时比赛日也可能根据现场情况对赛程进行调整，请在比赛日注意现场通知以免耽误您的参赛。
+  </li>
   <?php if (isset($competition->associatedEvents['clock']) && $competition->isWCACompetition()) :?>
-  <li>WCA代表可能会判定下列魔表违规并禁止在比赛中使用：对于磨损过于严重的Rubik's魔表或者制造质量一般的国产魔表，如果控制齿轮转动的按钮（pin、针）不能维持凸起的状态，即依靠重力针会松动自动下落或者部分按钮的功能失效无法控制其齿轮转动的；对于改造的魔表，如果用于固定魔表两面或侧面的胶带或贴纸粘贴不对称导致可以通过胶带或贴纸观察出12点钟方向的；。</li>
+  <li>
+    WCA代表可能会判定下列魔表违规并禁止在比赛中使用：对于磨损过于严重的Rubik's魔表或者制造质量一般的国产魔表，如果控制齿轮转动的按钮（pin、针）不能维持凸起的状态，即依靠重力针会松动自动下落或者部分按钮的功能失效无法控制其齿轮转动的；对于改造的魔表，如果用于固定魔表两面或侧面的胶带或贴纸粘贴不对称导致可以通过胶带或贴纸观察出12点钟方向的；。
+  </li>
   <?php endif; ?>
-  <li><b>还原时限</b>：若选手的单次还原时间达到或者超过该时限，当次还原将记为DNF，裁判将中止该次复原。</li>
-  <li><b>及格线</b>：对于5次还原项目（如四阶速拧等），选手的前2次还原中，需至少有1次的最终成绩低于及格线成绩，否则无后3次还原机会；对于3次还原项目（如六阶速拧和七阶速拧），选手第1次还原的最终成绩低于及格线成绩，否则无后2次还原机会。</li>
-  <li>选手在赛场内应自律并尊重比赛，不大声喧哗，不破坏公物，不影响他人。</li>
-  <li>进入赛场后请自觉将手机静音，并关闭相机等设备的闪光灯，文明观赛。</li>
-  <li>未经组委会许可的任何组织和个人，不可在赛场进行资料派发、物料张贴及视频直播等宣传行为。</li>
-  <li>任何政治符号（比如说国旗）不允许出现在赛场上。感谢所有选手、参赛陪同与观众能够配合。</li>
+  <li>
+    <b>还原时限</b>：若选手的单次还原时间达到或者超过该时限，当次还原将记为DNF，裁判将中止该次复原。
+  </li>
+  <li>
+    <b>及格线</b>：对于5次还原项目（如四阶速拧等），选手的前2次还原中，需至少有1次的最终成绩低于及格线成绩，否则无后3次还原机会；对于3次还原项目（如六阶速拧和七阶速拧），选手第1次还原的最终成绩低于及格线成绩，否则无后2次还原机会。
+  </li>
+  <li>
+    选手在赛场内应自律并尊重比赛，不大声喧哗，不破坏公物，不影响他人。
+  </li>
+  <li>
+    进入赛场后请自觉将手机静音，并关闭相机等设备的闪光灯，文明观赛。
+  </li>
+  <li>
+    未经组委会许可的任何组织和个人，不可在赛场进行资料派发、物料张贴及视频直播等宣传行为。
+  </li>
+  <li>
+    任何政治符号（比如说国旗）不允许出现在赛场上。感谢所有选手、参赛陪同与观众能够配合。
+  </li>
 </ol>
 <h3>四、比赛颁奖</h3>
 <ol>
-  <li>比赛各项目前<b><?php echo $competition->podiums_num ;?></b>名获得奖状与奖品。</li>
+  <li>
+    比赛各项目前<b><?php echo $competition->podiums_num ;?></b>名获得奖状与奖品。
+  </li>
   <?php if ($competition->attend_ceremory): ?>
-  <li>赛事颁奖需本人出席方可领奖（奖状、奖品、奖牌、奖金），他人不可代领。未出席颁奖仪式的获奖者视为放弃领奖。</li>
+  <li>
+    赛事颁奖需本人出席方可领奖（奖状、奖品、奖牌、奖金），他人不可代领。未出席颁奖仪式的获奖者视为放弃领奖。
+  </li>
   <?php endif; ?>
   <?php $groups = $competition->getUnofficialGroups(); ?>
   <?php if ($competition->podiumsEvents !== [] && $groups !== []): ?>
