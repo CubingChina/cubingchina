@@ -86,9 +86,11 @@
     选手须确保所使用的魔方符合<a href="https://www.worldcubeassociation.org/regulations/translations/chinese/#article-3-puzzles" target="_blank">WCA规则要求</a>，并做好参赛准备，否则将被取消参与该项目的资格。
   </li>
   <?php endif ;?>
+  <?php if (strpos(implode('', array_keys($competition->associatedEvents)), 'bf') !== false): ?>
   <li>
     请参加盲拧项目的选手<b>自备眼罩</b>，作为盲拧项目进行时选手的佩戴遮挡物。主办方不提供盲拧的眼罩借用。
   </li>
+  <?php endif ;?>
   <li>
     粗饼网公布的赛程为比赛主办预计赛程，报名截止后可能会依据报名人数调整晋级人数或者赛程，同时比赛日也可能根据现场情况对赛程进行调整，请在比赛日注意现场通知以免耽误您的参赛。
   </li>

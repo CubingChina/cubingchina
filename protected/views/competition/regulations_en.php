@@ -87,9 +87,11 @@
     Competitors must confirm that their cube is acceptable based on <a href="https://www.worldcubeassociation.org/regulations/#article-3-puzzles" target="_blank">WCA regulations</a>, otherwise results may not be accepted.
   </li>
   <?php endif ;?>
+  <?php if (strpos(implode('', array_keys($competition->associatedEvents)), 'bf') !== false): ?>
   <li>
     Competitors in blindfolded events must provide their own blindfold.
   </li>
+  <?php endif; ?>
   <li>
     The competition schedule shown on the competition website is an initial estimate. At the end of registration, the organizer may adjust the schedule, cutoffs, or time limits, based on the number of registered competitors. The schedule may be adjusted during the course of the competition. Competitors should be aware of notices made during the competition to avoid missing events.
   </li>
