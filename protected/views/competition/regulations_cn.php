@@ -53,7 +53,7 @@
   </li>
   <?php if ($competition->person_num > 0): ?>
   <li>
-    本次比赛限制参赛人数为<?php echo $competition->person_num; ?>人
+    本次比赛限制参赛人数为<?php echo $competition->person_num; ?>人。
   </li>
   <?php endif; ?>
 </ol>
@@ -158,7 +158,7 @@
       <li>
         <b>U<?php echo $age; ?>：</b>为<?php if ($lastAge): echo $lastAge; ?>岁（含）至<?php echo $age; ?>岁（不含）<?php else: echo $age; ?>岁（不含）以下<?php endif; ?>选手，即在<?php
         if ($lastAge): echo date('Y', $competition->date) - $age, date('年m月d日', $competition->date), '至', date('Y', $competition->date) - $lastAge, date('年m月d日', $competition->date - 86400);
-        else: echo date('Y', $competition->date) - $age, date('年m月d日', $competition->date - 86400), '及之前'; endif; ?>出生的选手。
+        else: echo date('Y', $competition->date) - $age, date('年m月d日', $competition->date - 86400), '及之后'; endif; ?>出生的选手。
       </li>
       <?php $lastAge = $age; ?>
       <?php endif; ?>

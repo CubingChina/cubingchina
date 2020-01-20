@@ -190,7 +190,11 @@ class Competition extends ActiveRecord {
 			'cancellation_end_time',
 			'reg_reopen_time',
 			'status',
-		], array_keys(self::getBaseOptions()));
+			'regulations',
+			'regulations_zh',
+			'information',
+			'information_zh',
+		], array_keys(self::getBaseOptions()), array_keys(self::getOtherOptions()));
 	}
 
 	public static function getAppliedCount($user) {

@@ -35,14 +35,16 @@
             <li role="presentation"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <?php endif; ?>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+            <?php if ($this->user->canEditCompetition($model)): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
+            <?php endif; ?>
             <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
             <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
-            <?php if ($this->user->canEditEvent($model)): ?>
+            <?php if ($this->user->canEditCompetition($model)): ?>
             <li><?php echo CHtml::link('项目', ['/board/competition/event', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
-            <?php endif; ?>
             <li><?php echo CHtml::link('赛程', ['/board/competition/schedule', 'id'=>$model->id], ['target'=>'_blank']); ?></li>
+            <?php endif; ?>
             <?php if ($model->isPublic()): ?>
             <li><?php echo CHtml::link('报名', ['/board/registration/index', 'Registration'=>['competition_id'=>$model->id]], ['target'=>'_blank']); ?></li>
             <li><?php echo CHtml::link('支付', ['/board/pay/index', 'Pay'=>['type_id'=>$model->id]], ['target'=>'_blank']); ?></li>
@@ -434,6 +436,7 @@
             </div>
             <?php endif; ?>
             <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+            <?php if ($this->user->canEditCompetition($model)): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
               <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
@@ -557,6 +560,7 @@
               );?>
               <div class="clearfix"></div>
             </div>
+            <?php endif; ?>
             <div role="tabpanel" class="tab-pane" id="transportation">
               <?php $this->renderPartial('editorTips'); ?>
               <?php echo Html::formGroup(
