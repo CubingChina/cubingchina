@@ -1610,6 +1610,15 @@ class Competition extends ActiveRecord {
 		return $groups;
 	}
 
+	public function getYearsAgosDate($year, $offset = 0) {
+		$lastDate = $this->end_date ?: $this->date;
+		$date = strtotime(date('Y-m-d', $lastDate + $offset) . " {$year} years ago");
+		if ($offset === 0 && date('m-d', $lastDate) === '02-29' && date('m-d', $date) === '03-01') {
+			$date -= 86400;
+		}
+		return $date;
+	}
+
 	public function getLivePodiums() {
 		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,

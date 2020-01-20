@@ -12,11 +12,11 @@
     报名期限分为<b><?php echo 1 + $competition->hasSecondStage + $competition->hasThirdStage; ?></b>个阶段：第<?php
     echo $phase++; ?>阶段为<?php echo $competition->reg_start ? date('Y年m月d日 H:i:s', $competition->reg_start) : '即日起'; ?>至<?php echo date('Y年m月d日 H:i:s', $competition->second_stage_date - 1); ?><?php if ($competition->hasThirdStage): ?>；第<?php
     echo $phase++; ?>阶段时间为<?php echo date('Y年m月d日 H:i:s', $competition->second_stage_date); ?>至<?php echo date('Y年m月d日 H:i:s', $competition->third_stage_date - 1); ?><?php endif; ?>；第<?php
-    echo $phase++; ?>阶段时间为<?php echo date('Y年m月d日 H:i:s', $competition->hasThirdStage ? $competition->third_stage_date : $competition->second_stage_date); ?>至<?php echo date('Y年m月d日 H:i:s', $competition->reg_end); ?>；第1阶阶段结束后报名费会有所上涨。
+    echo $phase++; ?>阶段时间为<?php echo date('Y年m月d日 H:i:s', $competition->hasThirdStage ? $competition->third_stage_date : $competition->second_stage_date); ?>至<?php echo date('Y年m月d日 H:i:s', $competition->reg_end); ?>；第1阶段结束后报名费会有所上涨。
   </li>
   <?php endif; ?>
   <li>
-    报名费用：应付报名费=基础报名费+分项报名费。<?php if ($competition->hasSecondStage): ?>第1阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>元；第2阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>元<?php
+    报名费用：应付报名费=基础报名费+<?php echo CHtml::link('分项报名费', $competition->getUrl('detail', ['#'=>'fees'])); ?>。<?php if ($competition->hasSecondStage): ?>第1阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>元；第2阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>元<?php
     if ($competition->hasThirdStage): ?>；第3阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>元<?php endif; ?><?php else: ?>基础报名费为<?php echo $competition->getEventFee('registration') ;?>元<?php endif; ?>。
   </li>
   <li>
@@ -34,7 +34,7 @@
   <?php endif; ?>
   <?php if ($competition->cancellation_end_time > 0) :?>
   <li>
-    选手<b>退赛</b>：比赛选手报名后可以在指定日期内进行比赛退赛，退赛的截止日期为<?php echo date('Y年m月d日 H:i:s', $competition->cancellation_end_time); ?>。<?php if ($competition->refund_type !== Competition::REFUND_TYPE_NONE): ?>选手在完成退赛后，<?php echo $competition->refund_type; ?>%报名费将退回。<?php endif; ?>选手完成退赛后将不能再次报名本次比赛。
+    选手<b>退赛</b>：比赛选手报名后可以在指定日期内进行比赛退赛，退赛的截止时间为<?php echo date('Y年m月d日 H:i:s', $competition->cancellation_end_time); ?>。<?php if ($competition->refund_type !== Competition::REFUND_TYPE_NONE): ?>选手在完成退赛后，<?php echo $competition->refund_type; ?>%报名费将退回。<?php endif; ?>选手完成退赛后将不能再次报名本次比赛。
   </li>
   <?php endif; ?>
   <?php if ($competition->allow_change_event) :?>
@@ -69,7 +69,7 @@
     选手本人需出示<?php if ($competition->show_qrcode): ?>报名成功二维码 （登录粗饼网后在<?php echo CHtml::link('报名页', $competition->getUrl('registration')); ?>查看）（电子版和打印的纸质版均可）及<?php endif; ?>选手本人身份证件（身份证、户口簿、护照、台胞证、回乡证）原件。
   </li>
   <li>
-    非中国大陆地区选手，因无法支付报名费的，需在签到时补缴报名费。
+    无法支付报名费的非中国大陆地区选手，需在签到时补缴报名费。
   </li>
   <li>
     签到时，选手将会领取<b>参赛证</b><?php if ($competition->entry_ticket): ?>和<b>入场凭证</b><?php endif; ?>，请妥善保管。
@@ -106,14 +106,14 @@
   </li>
   <?php if (isset($competition->associatedEvents['clock']) && $competition->isWCACompetition()) :?>
   <li>
-    WCA代表可能会判定下列魔表违规并禁止在比赛中使用：对于磨损过于严重的Rubik's魔表或者制造质量一般的国产魔表，如果控制齿轮转动的按钮（pin、针）不能维持凸起的状态，即依靠重力针会松动自动下落或者部分按钮的功能失效无法控制其齿轮转动的；对于改造的魔表，如果用于固定魔表两面或侧面的胶带或贴纸粘贴不对称导致可以通过胶带或贴纸观察出12点钟方向的；。
+    WCA代表可能会判定下列魔表违规并禁止在比赛中使用：对于磨损过于严重的Rubik's魔表或者制造质量一般的国产魔表，如果控制齿轮转动的按钮（pin、针）不能维持凸起的状态，即依靠重力针会松动自动下落或者部分按钮的功能失效无法控制其齿轮转动的；对于改造的魔表，如果用于固定魔表两面或侧面的胶带或贴纸粘贴不对称导致可以通过胶带或贴纸观察出12点钟方向的。
   </li>
   <?php endif; ?>
   <li>
-    <b>还原时限</b>：若选手的单次还原时间达到或者超过该时限，当次还原将记为DNF，裁判将中止该次复原。
+    <b>还原时限</b>：若选手的单次最终还原时间达到或者超过该时限，当次还原将记为DNF，裁判将中止该次复原。
   </li>
   <li>
-    <b>及格线</b>：对于5次还原项目（如四阶速拧等），选手的前2次还原中，需至少有1次的最终成绩低于及格线成绩，否则无后3次还原机会；对于3次还原项目（如六阶速拧和七阶速拧），选手第1次还原的最终成绩低于及格线成绩，否则无后2次还原机会。
+    <b>及格线</b>：对于5次还原项目（如四阶速拧等），选手的前2次还原中，需至少有1次的最终成绩低于及格线成绩，否则无后3次还原机会；对于3次还原项目（如六阶速拧和七阶速拧），选手第1次还原的最终成绩需低于及格线成绩，否则无后2次还原机会。
   </li>
   <li>
     选手在赛场内应自律并尊重比赛，不大声喧哗，不破坏公物，不影响他人。
@@ -157,8 +157,8 @@
       <?php if ($competition->{'podiums_u' . $age}): ?>
       <li>
         <b>U<?php echo $age; ?>：</b>为<?php if ($lastAge): echo $lastAge; ?>岁（含）至<?php echo $age; ?>岁（不含）<?php else: echo $age; ?>岁（不含）以下<?php endif; ?>选手，即在<?php
-        if ($lastAge): echo date('Y', $competition->date) - $age, date('年m月d日', $competition->date), '至', date('Y', $competition->date) - $lastAge, date('年m月d日', $competition->date - 86400);
-        else: echo date('Y', $competition->date) - $age, date('年m月d日', $competition->date - 86400), '及之后'; endif; ?>出生的选手。
+        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '至', date('Y年m月d日', $competition->getYearsAgosDate($lastAge));
+        else: echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '及之后'; endif; ?>出生的选手。
       </li>
       <?php $lastAge = $age; ?>
       <?php endif; ?>

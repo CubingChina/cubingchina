@@ -17,7 +17,7 @@
   </li>
   <?php endif; ?>
   <li>
-    Registration fees (in Chinese yuan) consist of a base fee and event fees. <?php if ($competition->hasSecondStage): ?>The base fee during the 1st registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>. The base fee during the 2nd registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>.<?php
+    Registration fees (in Chinese yuan) consist of a base fee and <?php echo CHtml::link('event fees', $competition->getUrl('detail', ['#'=>'fees'])); ?>. <?php if ($competition->hasSecondStage): ?>The base fee during the 1st registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>. The base fee during the 2nd registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>.<?php
     if ($competition->hasThirdStage): ?> The base fee during the 3rd registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>.<?php endif; ?><?php else: ?>The base fee is ¥<?php echo $competition->getEventFee('registration') ;?>.<?php endif; ?>
   </li>
   <li>
