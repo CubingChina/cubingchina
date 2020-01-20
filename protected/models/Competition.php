@@ -190,7 +190,11 @@ class Competition extends ActiveRecord {
 			'cancellation_end_time',
 			'reg_reopen_time',
 			'status',
-		], array_keys(self::getBaseOptions()));
+			'regulations',
+			'regulations_zh',
+			'information',
+			'information_zh',
+		], array_keys(self::getBaseOptions()), array_keys(self::getOtherOptions()));
 	}
 
 	public static function getAppliedCount($user) {
@@ -1604,6 +1608,15 @@ class Competition extends ActiveRecord {
 			$groups[] = Yii::t('live', 'New Comers');
 		}
 		return $groups;
+	}
+
+	public function getYearsAgosDate($year, $offset = 0) {
+		$lastDate = $this->end_date ?: $this->date;
+		$date = strtotime(date('Y-m-d', $lastDate + $offset) . " {$year} years ago");
+		if ($offset === 0 && date('m-d', $lastDate) === '02-29' && date('m-d', $date) === '03-01') {
+			$date -= 86400;
+		}
+		return $date;
 	}
 
 	public function getLivePodiums() {
