@@ -108,29 +108,40 @@ class Competition extends ActiveRecord {
 
 	public static function getBaseOptions() {
 		return [
-			'fill_passport'=>[
-				'label'=>'要求选手填写证件号',
-			],
 			'show_regulations'=>[
 				'label'=>'弹出报名规则提醒',
 			],
-			'show_qrcode'=>[
-				'label'=>'使用二维码签到',
-			],
-			't_shirt'=>[
-				'label'=>'询问T恤尺码',
-			],
-			'staff'=>[
-				'label'=>'询问工作人员报名',
-			],
-			'allow_change_event'=>[
-				'label'=>'允许选手自助编辑项目',
-			]
 		];
 	}
 
 	public static function getOtherOptions() {
 		$options = [
+			'allow_change_event'=>[
+				'label'=>'允许选手自助编辑项目',
+				'title'=>'关于报名',
+			],
+			'fill_passport'=>[
+				'label'=>'要求选手填写证件号',
+				'title'=>'签到与入场',
+			],
+			'show_qrcode'=>[
+				'label'=>'使用二维码签到',
+			],
+			'entry_ticket'=>[
+				'label'=>'是否有入场凭证',
+			],
+			'guest_limit'=>[
+				'label'=>'是否限制观众入场',
+			],
+			'name_card_fee'=>[
+				'label'=>'参赛证补办费用',
+				'type'=>'int',
+			],
+			'attend_ceremory'=>[
+				'title'=>'比赛颁奖',
+				'warning'=>'请注意，当你选择Ux时，少儿组将失效。Ux三组可以自由组合，系统自动匹配年龄。',
+				'label'=>'要求选手本人到场',
+			],
 			'podiums_children'=>[
 				'label'=>'少儿组',
 			],
@@ -1573,6 +1584,28 @@ class Competition extends ActiveRecord {
 		);
 	}
 
+	public function getUnofficialGroups() {
+		$groups = [];
+		$hasUGroups = false;
+		$ages = self::getPodiumAges();
+		foreach ($ages as $age) {
+			if ($this->{'podiums_u' . $age}) {
+				$hasUGroups = true;
+				$groups[] = 'U' . $age;
+			}
+		}
+		if (!$hasUGroups && $this->podiums_children) {
+			$groups[] = Yii::t('live', 'Children');
+		}
+		if ($this->podiums_females) {
+			$groups[] = Yii::t('live', 'Females');
+		}
+		if ($this->podiums_new_comers) {
+			$groups[] = Yii::t('live', 'New Comers');
+		}
+		return $groups;
+	}
+
 	public function getLivePodiums() {
 		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
@@ -2108,6 +2141,7 @@ class Competition extends ActiveRecord {
 				[
 					'id'=>1,
 					'name'=>trim($venue[0]),
+					'countryIso2'=>'CN',
 					'latitudeMicrodegrees'=>(int)($location->latitude * 1e6),
 					'longitudeMicrodegrees'=>(int)($location->longitude * 1e6),
 					'timezone'=>'Asia/Shanghai',
@@ -2833,7 +2867,8 @@ class Competition extends ActiveRecord {
 				podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
 				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,
 				podiums_u9, podiums_u10, podiums_u11, podiums_u12, podiums_u13, podiums_u14,
-				podiums_u15, podiums_u16, podiums_u17, podiums_u18', 'numerical', 'integerOnly'=>true],
+				podiums_u15, podiums_u16, podiums_u17, podiums_u18,
+				entry_ticket, guest_limit, attend_ceremory, name_card_fee', 'numerical', 'integerOnly'=>true],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
