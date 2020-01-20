@@ -23,6 +23,16 @@
   <li>
     Chinese mainland competitors must pay online to complete their registration. Unpaid registrations will not be accepted.<?php if ($competition->paypal_link): ?> International competitors may pay by PayPal.<?php endif; ?> International competitors that cannot pay online should contact the delegate or organizer by email.
   </li>
+  <?php if ($competition->has_qualifying_time): ?>
+  <li>
+    <b>Qualifying Times</b>
+    <ol>
+      <li>At the time of registration, the competitors can only choose the events passed the qualifying times. To register the competition, one needs at least one event that meets the qualifying time.</li>
+      <li>In order to register for any events you like, you must meet the qualifying times before <?php echo  date('Y-m-d H:i', $competition->qualifying_end_time); ?>. Qualifying times can be found <?php echo CHtml::link('here', $competition->getUrl('detail', ['#'=>'events'])) ?>.</li>
+      <li>All qualification results are based on <a href="https://www.worldcubeassociation.org/results/" target="_blank">WCA official results</a>.</li>
+    </ol>
+  </li>
+  <?php endif; ?>
   <?php if ($competition->cancellation_end_time > 0) :?>
   <li>
     Registration can be canceled through the competition page on CubingChina before the cancelation end time which is <?php echo date('Y-m-d H:i:s', $competition->cancellation_end_time); ?>.<?php if ($competition->refund_type !== Competition::REFUND_TYPE_NONE): ?> Canceled registrations can receive a <?php echo $competition->refund_type; ?>% refund of registration fees.<?php endif; ?> Competitors that have canceled their registration cannot register again for this competition.

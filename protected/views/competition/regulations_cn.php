@@ -22,6 +22,16 @@
   <li>
     中国大陆选手须通过粗饼网的线上缴费功能缴纳报名费，不通过粗饼网付款的中国大陆选手报名一律无效。对于无法使用中国支付系统的非中国大陆选手<?php if ($competition->paypal_link): ?>，可通过PayPal支付报名费用，审核将有一定延迟<?php endif; ?>，有支付问题请邮件联系主办方。
   </li>
+  <?php if ($competition->has_qualifying_time): ?>
+  <li>
+    <b>资格筛选：</b>
+    <ol>
+      <li>报名时选手只能选择已经达到资格线的项目，至少选择任意一个达到资格线的项目才可以完成报名；</li>
+      <li>未达到资格线的项目不可勾选报名，选手在<?php echo  date('Y年m月d日 H:i', $competition->qualifying_end_time); ?>之前达到资格线后可自行增补项目，资格线见<?php echo CHtml::link('详情页', $competition->getUrl('detail', ['#'=>'events'])) ?>；</li>
+      <li>项目成绩以<a href="https://www.worldcubeassociation.org/results/" target="_blank">WCA官方</a>公示的成绩为准。</li>
+    </ol>
+  </li>
+  <?php endif; ?>
   <?php if ($competition->cancellation_end_time > 0) :?>
   <li>
     选手<b>退赛</b>：比赛选手报名后可以在指定日期内进行比赛退赛，退赛的截止日期为<?php echo date('Y年m月d日 H:i:s', $competition->cancellation_end_time); ?>。<?php if ($competition->refund_type !== Competition::REFUND_TYPE_NONE): ?>选手在完成退赛后，<?php echo $competition->refund_type; ?>%报名费将退回。<?php endif; ?>选手完成退赛后将不能再次报名本次比赛。
