@@ -13,7 +13,7 @@
     There are <b><?php echo 1 + $competition->hasSecondStage + $competition->hasThirdStage; ?></b> registration periods. The <?php
     echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo $competition->reg_start ? date('Y-m-d H:i:s', $competition->reg_start) : 'now'; ?> to <?php echo date('Y-m-d H:i:s', $competition->second_stage_date - 1); ?><?php if ($competition->hasThirdStage): ?>. The <?php
     echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo date('Y-m-d H:i:s', $competition->second_stage_date); ?> to <?php echo date('Y-m-d H:i:s', $competition->third_stage_date - 1); ?><?php endif; ?>. The <?php
-    echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo date('Y-m-d H:i:s', $competition->hasThirdStage ? $competition->third_stage_date : $competition->second_stage_date); ?> to <?php echo date('Y-m-d H:i:s', $competition->reg_end); ?>. Registration fees are increased during the second registration period.
+    echo $phase++, $ordinals[$phase]; ?> registration period is from <?php echo date('Y-m-d H:i:s', $competition->hasThirdStage ? $competition->third_stage_date : $competition->second_stage_date); ?> to <?php echo date('Y-m-d H:i:s', $competition->reg_end); ?>. Registration fees are increased after the first registration period.
   </li>
   <?php endif; ?>
   <li>
