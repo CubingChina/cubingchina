@@ -3,6 +3,14 @@
 class AllEventsAchiever extends Statistics {
 	public static function build($statistic) {
 		$db = Yii::app()->wcaDb;
+		$sum = 0;
+		foreach (['single', 'average'] as $type) {
+			$num = $db->createCommand()
+				->select('count(distinct eventId)')
+				->from('Ranks' . ucfirst($type))
+				->queryScalar();
+			$sum += $num;
+		}
 		$cmd = $db->createCommand()
 			->select([
 				'rs.personId',
@@ -17,7 +25,7 @@ class AllEventsAchiever extends Statistics {
 			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
 			->leftJoin('Countries country', 'p.countryId=country.id')
 			->group('rs.personId')
-			->having('singles + averages = 35');
+			->having('singles + averages = ' . $sum);
 		ActiveRecord::applyRegionCondition($cmd, $statistic['region'] ?? 'China', 'p.countryId');
 		$persons = $cmd->queryAll();
 		$cmd = $db->createCommand()

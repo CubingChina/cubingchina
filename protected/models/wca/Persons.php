@@ -163,9 +163,11 @@ class Persons extends ActiveRecord {
 		->from('Results')
 		->where('personId=:personId', array(
 			':personId'=>$id,
-		))
-		->group('eventId');
-		foreach ($command->queryAll() as $row) {
+		));
+		$command2 = clone $command;
+		$overAllMedals = $command->queryRow();
+		$command2->group('eventId');
+		foreach ($command2->queryAll() as $row) {
 			if (isset($personRanks[$row['eventId']])) {
 				$personRanks[$row['eventId']]->medals = $row;
 			}
@@ -307,15 +309,9 @@ class Persons extends ActiveRecord {
 			'order'=>'competition.year DESC, competition.month DESC, competition.day DESC',
 		));
 		$overAll = array(
-			'gold'=>array_sum(array_map(function($result) {
-				return $result->medals['gold'];
-			}, $personRanks)),
-			'silver'=>array_sum(array_map(function($result) {
-				return $result->medals['silver'];
-			}, $personRanks)),
-			'bronze'=>array_sum(array_map(function($result) {
-				return $result->medals['bronze'];
-			}, $personRanks)),
+			'gold'=>$overAllMedals['gold'],
+			'silver'=>$overAllMedals['silver'],
+			'bronze'=>$overAllMedals['bronze'],
 			'WR'=>count(array_filter($historyWR, function($result) {
 				return $result->regionalSingleRecord == 'WR';
 			})) + count(array_filter($historyWR, function($result) {
