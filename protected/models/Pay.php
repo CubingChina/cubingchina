@@ -188,7 +188,7 @@ class Pay extends ActiveRecord {
 			default:
 				return false;
 		}
-		$this->refund_amount += $refundAmount;
+		$this->refund_amount = $refundAmount;
 		$this->refund_time = $refundTime;
 		$this->save();
 		return true;
