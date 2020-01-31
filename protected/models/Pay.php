@@ -149,15 +149,16 @@ class Pay extends ActiveRecord {
 		}
 	}
 
-	public function refund($amount) {
-		if ($this->refund_time > 0 || $amount <= 0) {
+	public function refund($amount, $force = false) {
+		if (!$force && ($this->refund_time > 0 || $amount <= 0)) {
 			return false;
 		}
-		if ($amount >= $this->paid_amount) {
-			$amount = $this->paid_amount;
+		if ($amount >= $this->paid_amount - $this->refund_amount) {
+			$amount = $this->paid_amount - $this->refund_amount;
 		}
 		//暂时没有多次退款的case，统一使用-1
-		$refundOrderNo = $this->order_no . '-1';
+		//多次的case目前仅限比赛取消，使用-2
+		$refundOrderNo = $this->order_no . ($this->refund_amount > 0 ? '-2' : '-1');
 		switch ($this->channel) {
 			case self::CHANNEL_BALIPAY:
 				$bizParams = [
@@ -187,7 +188,7 @@ class Pay extends ActiveRecord {
 			default:
 				return false;
 		}
-		$this->refund_amount = $refundAmount;
+		$this->refund_amount += $refundAmount;
 		$this->refund_time = $refundTime;
 		$this->save();
 		return true;
