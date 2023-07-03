@@ -243,6 +243,6 @@ return array (
   'North America' => '北美洲',
   'Oceania' => '大洋洲',
   'South America' => '南美洲',
-  'Taiwan' => '台灣',
+  'Taiwan' => '中華台北',
   'World' => '世界',
 );
