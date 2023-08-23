@@ -2752,7 +2752,7 @@ class Competition extends ActiveRecord {
 						$this->addError('locations.venue.' . $index, '首字母请大写');
 						break;
 					}
-					if ($k > 0 && $venue{0} !== ' ') {
+					if ($k > 0 && $venue[0] !== ' ') {
 						$this->addError('locations.venue.' . $index, '逗号之后请添加空格');
 						break;
 					}

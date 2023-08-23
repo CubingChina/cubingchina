@@ -42,7 +42,7 @@ class ActiveRecord extends CActiveRecord {
 	}
 
 	public static function getAttributeName($name = 'name') {
-		if (Yii::app()->language{0} == 'z' && Yii::app()->language{1} == 'h') {
+		if (Yii::app()->language[0] == 'z' && Yii::app()->language[1] == 'h') {
 			$name .= '_zh';
 		}
 		return $name;
