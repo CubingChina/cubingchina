@@ -66,7 +66,7 @@ class RegistrationCommand extends CConsoleCommand {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $competition->has_qualifying_time && $this->confirm($competition->name_zh)) {
 			$_SERVER['HTTPS'] = 1;
-			$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+			$_SERVER['HTTP_HOST'] = 'cubing.com';
 			$registrations = Registration::getRegistrations($competition);
 			foreach ($registrations as $registration) {
 				$unmetEvents = $registration->getUnmetEvents();
