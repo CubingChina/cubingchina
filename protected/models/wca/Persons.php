@@ -515,6 +515,7 @@ class Persons extends ActiveRecord {
 			return [];
 		}
 		$criteria = new CDbCriteria();
+		$criteria->compare('cancelled', 0);
 		$criteria->compare('wcaDelegate', $this->delegate->email, true);
 		$criteria->order = 'year DESC, month DESC, day DESC';
 		return Competitions::model()->findAll($criteria);

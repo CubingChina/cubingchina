@@ -68,7 +68,7 @@
       ),
       array(
         'name'=>Yii::t('common', 'Gender'),
-        'value'=>'Yii::t("common", strtolower($data["gender"]) == "f" ? "Female" : "Male")',
+        'value'=>'$data["gender"] && strtolower($data["gender"]) !== "o" ? (Yii::t("common", strtolower($data["gender"]) == "f" ? "Female" : "Male")) : ""',
         'type'=>'raw',
       ),
     ),

@@ -346,6 +346,11 @@ class CompetitionController extends Controller {
 						$this->redirect($competition->getUrl('ticket', ['id'=>$id]));
 					}
 				}
+				$this->getWechatOfficialAccount([
+					'jsConfig' => [
+						'chooseWXPay',
+					],
+				]);
 				$this->render('editTicket', [
 					'user'=>$user,
 					'competition'=>$competition,

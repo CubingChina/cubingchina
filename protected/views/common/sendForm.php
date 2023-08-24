@@ -1,5 +1,5 @@
 <div class="text-center">
-  <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
+  <?php echo CHtml::image('https://i.cubing.com/animatedcube.gif'); ?>
   <br>
   <?php echo Yii::t('common', 'You are being redirected, please wait patiently.'); ?>
 </div>

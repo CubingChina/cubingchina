@@ -77,8 +77,7 @@ $this->renderPartial('registerSide', $_data_);
       'class'=>'form-control',
       'prompt'=>'',
     )),
-    $form->error($model, 'gender', array('class'=>'text-danger')),
-    Yii::app()->language === 'zh_cn' ? '<div class="text-warning">请填写有效证件（身份证、户口簿等）上面的出生日期！</div>' : ''
+    $form->error($model, 'gender', array('class'=>'text-danger'))
   );?>
   <?php echo Html::formGroup(
     $model, 'birthday', array(),
@@ -88,7 +87,8 @@ $this->renderPartial('registerSide', $_data_);
       'data-date-format'=>'yyyy-mm-dd',
       'placeholder'=>Yii::t('common', 'The format is YYYY-MM-DD'),
     )),
-    $form->error($model, 'birthday', array('class'=>'text-danger'))
+    $form->error($model, 'birthday', array('class'=>'text-danger')),
+    Yii::app()->language === 'zh_cn' ? '<b class="text-danger">请填写有效证件（身份证、户口簿等）上面的出生日期！</b>' : ''
   );?>
   <?php echo Html::formGroup(
     $model, 'province_id', array(

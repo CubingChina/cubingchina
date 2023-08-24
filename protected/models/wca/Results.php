@@ -95,6 +95,7 @@ class Results extends ActiveRecord {
 			}
 			$rows = array();
 			$command
+				->group('personId')
 				->order('best ASC')
 				->limit(100, ($page - 1) * 100);
 			$eventBestPerson = array_map(function($row) {
