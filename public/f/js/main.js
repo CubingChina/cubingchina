@@ -252,12 +252,18 @@ $(function() {
       that.countdown(new Date(lastTime + that.data('remaining')))
     })
   }, 1000)
-  if (location.hostname.indexOf('cubingchina.com') > -1){
+  if (window.alertMessages && !jQuery.cookie('alerted')) {
+    utils.confirm(window.alertMessages.content, {
+      title: window.alertMessages.title,
+      type: 'type-danger',
+    }).then(function() { jQuery.cookie('alerted', 1, { expires: 0.5 })}, function() { jQuery.cookie('alerted', 1, { expires: 0.5 })})
+  }
+  if (location.hostname.indexOf('cubingchina.com') > -1 || location.hostname.indexOf('cubing.com') > -1){
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', 'UA-3512083-6', 'cubingchina.com');
+    ga('create', 'UA-3512083-6', 'cubing.com');
     ga('send', 'pageview');
     (function() {
       var hm = document.createElement("script");

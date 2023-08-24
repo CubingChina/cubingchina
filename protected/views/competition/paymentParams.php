@@ -18,7 +18,7 @@
   <button id="pay" class="btn btn-lg btn-primary"><?php echo Yii::t('common', 'Pay'); ?></button>
 </div>
 <div class="hide text-center" id="pay-tips">
-  <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
+  <?php echo CHtml::image('https://i.cubing.com/animatedcube.gif'); ?>
   <br>
   <?php echo Yii::t('common', 'You are being redirected to the payment, please wait patiently.'); ?>
 </div>

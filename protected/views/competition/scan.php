@@ -9,7 +9,7 @@
   </div>
   <div class="text-center" v-if="loading">
     Loading...<br>
-    <?php echo CHtml::image('https://i.cubingchina.com/animatedcube.gif'); ?>
+    <?php echo CHtml::image('https://i.cubing.com/animatedcube.gif'); ?>
   </div>
   <div class="pc-scan"
     v-if="mode = 'pc'"

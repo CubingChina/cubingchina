@@ -25,8 +25,10 @@
           <span class="info-value"><?php echo Persons::getWCAIconLinkByNameNId($person->name, $person->id); ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
+          <?php if ($person->gender && $person->gender !== 'o'): ?>
           <span class="info-title"><?php echo Yii::t('common', 'Gender'); ?>:</span>
           <span class="info-value"><?php echo strtolower($person->gender) == 'f' ? Yii::t('common', 'Female') : Yii::t('common', 'Male'); ?></span>
+          <?php endif; ?>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('Results', 'Career'); ?>:</span>

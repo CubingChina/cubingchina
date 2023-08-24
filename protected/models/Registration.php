@@ -1003,12 +1003,12 @@ class Registration extends ActiveRecord {
 						'data-name'=>$this->user->getCompetitionName(),
 					), '取消');
 					break;
-				case self::STATUS_WAITING:
-					$buttons[] = CHtml::tag('button', [
-						'class'=>'btn btn-xs btn-purple btn-square',
-					], '候选');
-					break;
 			}
+		}
+		if ($this->status == self::STATUS_WAITING) {
+			$buttons[] = CHtml::tag('button', [
+				'class'=>'btn btn-xs btn-purple btn-square',
+			], '候选');
 		}
 		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
 			'class'=>'tips' . ($canApprove ? ' toggle' : ''),

@@ -4,12 +4,15 @@ class RegistrationCommand extends CConsoleCommand {
 
 	public function actionCheckRefund() {
 		$_SERVER['HTTPS'] = 1;
-		$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
 		$registrations = Registration::model()->with([
 			'competition',
 			'payments'
 		])->findAllByAttributes([
-			'status'=>Registration::STATUS_CANCELLED,
+			'status'=>[
+				Registration::STATUS_CANCELLED,
+				Registration::STATUS_CANCELLED_TIME_END,
+			],
 		], [
 			'condition'=>'competition.refund_type!="none" and payments.paid_amount>0 and payments.refund_amount=0'
 		]);
@@ -45,7 +48,7 @@ class RegistrationCommand extends CConsoleCommand {
 			'condition'=>'reg_end<' . time() . ' AND reg_end>' . (time() - 7 * 86400),
 		]);
 		$_SERVER['HTTPS'] = 1;
-		$_SERVER['HTTP_HOST'] = 'cubingchina.com';
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
 		foreach ($competitions as $competition) {
 			$registrations = Registration::model()->findAllByAttributes([
 				'competition_id'=>$competition->id,

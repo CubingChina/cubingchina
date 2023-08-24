@@ -12,11 +12,12 @@ mysql_user='cubingchina'
 mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
-wget $wca_home/export/results.html || exit
+wget $wca_home/export/results -O export.htm || exit
 zipname=`grep -oP 'WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
 _log "zipname: $zipname"
-if [ $zipname = '' ]
+if [ "dummy"$zipname = 'dummy' ]
 then
+  rm export.html*
   exit
 fi
 #check version and date
@@ -51,7 +52,7 @@ fi
 echo $version >> last
 echo $date >> last
 
-lftp -c "pget -n 20 '$wca_home/export/results/$zipname' -o $zipname"
+lftp -c "set ssl:verify-certificate no; pget -n 20 '$wca_home/export/results/$zipname' -o $zipname"
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"

@@ -115,7 +115,7 @@ $config = [
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
 			'password'=>'',
-			'charset'=>'utf8',
+			'charset'=>'utf8mb4',
 			'enableParamLogging'=>YII_DEBUG,
 			'enableProfiling'=>YII_DEBUG,
 			'schemaCachingDuration'=>DEV ? 0 : 10800,
@@ -307,7 +307,7 @@ $config = [
 	'params'=>[
 		// this is used in contact page
 		'adminEmail'=>'admin@cubingchina.com',
-		'baseUrl'=>'https://cubingchina.com',
+		'baseUrl'=>'https://cubing.com',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
 		'author'=>'Baiqiang Dong',
 		'description'=>'The Chinese speedcubing website.',
@@ -318,9 +318,9 @@ $config = [
 			"Rubik's Cube",
 			'Speedcubing',
 		],
-		'weiboSharePic'=>'https://cubingchina.com/f/images/logo2x.png',
+		'weiboSharePic'=>'https://cubing.com/f/images/logo2x.png',
 		'staticPath'=>PUBLIC_PATH . '/static/',
-		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubingchina.com/',
+		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubing.com/',
 		'avatar'=>[
 			'size'=>2097152,
 			'height'=>1200,

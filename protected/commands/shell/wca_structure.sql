@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `Competitions` (
   `day` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `endMonth` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `endDay` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
+  `cancelled` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `eventSpecs` varchar(256) DEFAULT NULL,
   `wcaDelegate` text,
   `organiser` text,

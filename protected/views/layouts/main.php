@@ -3,8 +3,7 @@
   <header class="header">
     <div class="header-main container">
       <h1 class="logo col-md-4 col-sm-4">
-          <?php $is5Years = time() >= strtotime('2019-06-06') && time() <= strtotime('2019-06-20'); ?>
-          <a href="<?php echo $this->createUrl('/site/index'); ?>"><img id="logo" src="/f/images/<?php if ($is5Years) echo '5years/'; ?>logo<?php if (Yii::app()->language == 'en') echo '-en'; ?>.png" alt="Logo"></a>
+          <a href="<?php echo $this->createUrl('/site/index'); ?>"><img id="logo" src="/f/images/logo<?php if (Yii::app()->language == 'en') echo '-en'; ?>.png" alt="Logo" width="220"></a>
       </h1><!--//logo-->
       <div class="info col-md-8 col-sm-8 hidden-xs">
         <ul class="menu-top navbar-right">
@@ -60,7 +59,7 @@
   <div class="bottom-bar">
     <div class="container">
       <div class="row">
-        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> 京ICP备14025871号</small>
+        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备2021016168号</a></small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
           <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>
@@ -68,4 +67,5 @@
     </div><!--//container-->
   </div><!--//bottom-bar-->
 </footer><!--//footer-->
+<?php $news = News::model()->findByPk(1272); ?>
 <?php $this->endContent(); ?>

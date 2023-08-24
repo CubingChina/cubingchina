@@ -15,7 +15,8 @@ class OldestStandingRecords extends Statistics {
 			'c.day',
 		))
 		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
-		->where('r.countryRank=1 AND rs.personCountryId="China"');
+		->leftJoin('Events e', 'r.eventId=e.id')
+		->where('r.countryRank=1 AND rs.personCountryId="China" AND e.rank<900');
 		$rows = array();
 		foreach (Results::getRankingTypes() as $type) {
 			$cmd = clone $command;
