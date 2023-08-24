@@ -12,7 +12,7 @@ mysql_user='cubingchina'
 mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
-wget $wca_home/export/results -O export.htm || exit
+wget $wca_home/export/results -O export.html || exit
 zipname=`grep -oP 'WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
 _log "zipname: $zipname"
 if [ "dummy"$zipname = 'dummy' ]
