@@ -28,7 +28,7 @@ return array (
   'Third round' => '半決賽',
   'Combined qualification' => '組合制資格賽',
   'Final' => '決賽',
-  'Qualification' => '資格賽',
+  'Qualification round' => '資格賽',
   'Second round' => '復賽',
   'Semi Final' => '半決賽',
   'First round' => '初賽',

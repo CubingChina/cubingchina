@@ -28,7 +28,7 @@ return array (
   'Third round' => '半决赛',
   'Combined qualification' => '组合制资格赛',
   'Final' => '决赛',
-  'Qualification' => '资格赛',
+  'Qualification round' => '资格赛',
   'Second round' => '复赛',
   'Semi Final' => '半决赛',
   'First round' => '初赛',
