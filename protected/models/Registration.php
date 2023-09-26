@@ -480,10 +480,10 @@ class Registration extends ActiveRecord {
 				}
 				$sum = 0;
 				for ($i = 0; $i < 17; $i++) {
-					$sum += $this->entourage_passport_number{$i} * $this->coefficients[$i];
+					$sum += $this->entourage_passport_number[$i] * $this->coefficients[$i];
 				}
 				$mod = $sum % 11;
-				if (strtoupper($this->entourage_passport_number{17}) != $this->codes[$mod]) {
+				if (strtoupper($this->entourage_passport_number[17]) != $this->codes[$mod]) {
 					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}

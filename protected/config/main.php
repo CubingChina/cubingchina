@@ -111,7 +111,7 @@ $config = [
 		],
 		'db'=>[
 			'connectionString'=>'mysql:host=localhost;dbname=cubingchina' . (DEV ? '_dev' : ''),
-			'pdoClass'=>'QueryCheckPdo',
+			// 'pdoClass'=>'QueryCheckPdo',
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',
 			'password'=>'',
@@ -122,7 +122,7 @@ $config = [
 		],
 		'wcaDb'=>[
 			'class'=>'system.db.CDbConnection',
-			'pdoClass'=>'QueryCheckPdo',
+			// 'pdoClass'=>'QueryCheckPdo',
 			'connectionString'=>'mysql:host=localhost;dbname=wca_' . $wcaDb,
 			'emulatePrepare'=>true,
 			'username'=>'cubingchina',

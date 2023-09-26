@@ -2261,7 +2261,7 @@ class Competition extends ActiveRecord {
 			'competitionId'=>$this->wca_competition_id,
 		), array(
 			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
-			'order'=>'event.rank ASC, best ASC, average ASC',
+			'order'=>'event.`rank` ASC, best ASC, average ASC',
 		));
 		$records = array();
 		foreach ($recordResults as $record) {

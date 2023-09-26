@@ -20,8 +20,8 @@ class RoundTypes extends ActiveRecord {
 
 	public static function getAllRoundTypes() {
 		$rounds = self::model()->cache(86400 * 7)->findAll(array(
-			'condition'=>'rank<900',
-			'order'=>'rank',
+			'condition'=>'`rank`<900',
+			'order'=>'`rank`',
 		));
 		$rounds = CHtml::listData($rounds, 'id', 'cellName');
 		return $rounds;

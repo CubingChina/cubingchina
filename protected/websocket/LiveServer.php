@@ -1,10 +1,14 @@
 <?php
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use Ratchet\Http\HttpServerInterface;
 use Ratchet\Wamp\WampServerInterface;
+use React\EventLoop\StreamSelectLoop;
+use Psr\Http\Message\RequestInterface;
 
-class LiveServer implements MessageComponentInterface {
+class LiveServer implements HttpServerInterface {
 	protected $subscriber;
+	protected $loop;
 	protected $clients = array();
 
 	protected $channelCallbacks = [
@@ -14,14 +18,24 @@ class LiveServer implements MessageComponentInterface {
 	private $_onlineNumbers = array();
 	private $_maxOnlineNumbers = array();
 
-	public function initSubscriber($subscriber) {
-		$this->subscriber = $subscriber;
-		foreach ($this->channelCallbacks as $channel=>$method) {
-			$this->subscribe($channel, [$this, $method]);
-		}
+	public function __construct($loop) {
+		$this->loop = $loop;
 	}
 
-	public function onOpen(ConnectionInterface $conn) {
+	public function initSubscriber() {
+		$this->loop->addPeriodicTimer(0.2, function() {
+			$redis = Yii::app()->cache->redis;
+			foreach ($this->channelCallbacks as $channel=>$method) {
+				while (($message = $redis->lPop($channel)) !== false) {
+					var_dump($message);
+					$message = json_decode($message);
+					call_user_func(array($this, $method), $message);
+				}
+			}
+		});
+	}
+
+	public function onOpen(ConnectionInterface $conn, RequestInterface $request = null) {
 		$client = new LiveClient($this, $conn);
 		$conn->client = $client;
 		$this->clients[$conn->resourceId] = $client;

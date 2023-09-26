@@ -146,10 +146,10 @@ class UserTicket extends ActiveRecord {
 				}
 				$sum = 0;
 				for ($i = 0; $i < 17; $i++) {
-					$sum += $this->passport_number{$i} * $this->coefficients[$i];
+					$sum += $this->passport_number[$i] * $this->coefficients[$i];
 				}
 				$mod = $sum % 11;
-				if (strtoupper($this->passport_number{17}) != $this->codes[$mod]) {
+				if (strtoupper($this->passport_number[17]) != $this->codes[$mod]) {
 					$this->addError('passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}

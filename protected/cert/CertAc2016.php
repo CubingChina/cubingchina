@@ -26,7 +26,7 @@ class CertAc2016 extends ResultCert {
 			'competitionId'=>$this->competition->wca_competition_id,
 			'personId'=>$this->user->wcaid,
 		], [
-			'order'=>'event.rank, round.rank DESC',
+			'order'=>'event.`rank`, round.`rank` DESC',
 		]);
 		$lastEvent = '';
 		$normalRound = $lastRound = 0;

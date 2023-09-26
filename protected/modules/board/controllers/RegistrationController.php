@@ -551,7 +551,7 @@ class RegistrationController extends AdminController {
 			$mbfRound = $competition->getFirstRound('333mbf');
 			$format = $mbfRound->format ?? '3';
 			// deal with 1/3, 2/a
-			switch ($format{strlen($format) - 1}) {
+			switch ($format[strlen($format) - 1]) {
 				case '2/a':
 				case 'a':
 					$attempt = 5;
@@ -726,7 +726,7 @@ class RegistrationController extends AdminController {
 		}
 		$format = $round->format ?? 'a';
 		// deal with 1/3, 2/a
-		switch ($format{strlen($format) - 1}) {
+		switch ($format[strlen($format) - 1]) {
 			case '2/a':
 			case 'a':
 				$attempt = 5;

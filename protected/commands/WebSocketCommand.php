@@ -1,5 +1,5 @@
 <?php
-use Ratchet\Session\SessionProvider;
+// use Ratchet\Session\SessionProvider;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
@@ -19,14 +19,10 @@ class WebSocketCommand extends CConsoleCommand {
 		$cache = Yii::app()->cache;
 
 		$loop = new StreamSelectLoop();
-		$liveServer = new LiveServer();
-		//for record computer
-		$client = new Predis\Async\Client([
-			'host'=>$cache->hostname,
-			'port'=>$cache->port,
-		], $loop);
-		$client->connect([$liveServer, 'initSubscriber']);
+		$liveServer = new LiveServer($loop);
+		$liveServer->initSubscriber();
 
+		// the onOpen of Ratchet\Session\SessionProvider is not compitable with WsServer
 		$session = new SessionProvider(
 			$liveServer,
 			new PdoSessionHandler($pdo, array(
@@ -39,8 +35,7 @@ class WebSocketCommand extends CConsoleCommand {
 		Yii::getLogger()->autoDump = true;
 		Yii::getLogger()->autoFlush = 1;
 		$app = new HttpServer(new WsServer($session));
-		$socket = new Reactor($loop);
-		$socket->listen(DEV ? 8081 : 8080, self::ADDRESS);
+		$socket = new Reactor(sprintf("tcp://%s:%d", self::ADDRESS, DEV ? 8081 : 8080), $loop);
 		$server = new IoServer($app, $socket, $loop);
 		$server->run();
 	}
@@ -73,7 +68,7 @@ class WebSocketCommand extends CConsoleCommand {
 					}
 				}
 				if ($results != []) {
-					$redis->publish('record.computed', json_encode([
+					$redis->rPush('record.computed', json_encode([
 						'competitionId'=>$competition->id,
 						'results'=>$results,
 					]));

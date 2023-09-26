@@ -164,7 +164,7 @@ class Results extends ActiveRecord {
 			return null;
 		}
 		if ($date === null) {
-			return current($records[$type]);
+			return current($records[$type]) ?: null;
 		}
 		foreach ($records[$type] as $index=>$record) {
 			// check the date
@@ -172,7 +172,7 @@ class Results extends ActiveRecord {
 				return $record;
 			}
 		}
-		return current($records[$type]);
+		return current($records[$type]) ?: null;
 	}
 
 	public static function getRecords($type = 'current', $region = 'China', $event = '333', $merge = true) {
@@ -191,7 +191,7 @@ class Results extends ActiveRecord {
 			$cache->set($cacheKey, $data, $expire);
 		}
 		if ($merge) {
-			$data = call_user_func_array('array_merge', $data);
+			$data = call_user_func_array('array_merge', array_values($data));
 		}
 		return $data;
 	}
