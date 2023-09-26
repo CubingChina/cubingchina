@@ -70,7 +70,7 @@ $(function() {
     }
   });
   function updateFee() {
-    var totalFee = options.basicFee;
+    var totalFee = options.basicFee + options.wcaDuesFee;
     if (options.complexMultiLocation) {
       totalFee = $('#Registration_location_id option:selected').data('fee') || 0;
       $('#entry-fee').text(totalFee || '-')

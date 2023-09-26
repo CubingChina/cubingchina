@@ -7,7 +7,11 @@
   )); ?>
     <?php if (!$competition->multi_countries): ?>
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
-    <p><i class="fa fa-rmb"></i><span id="entry-fee"><?php echo $competition->getEventFee('entry'); ?></span></p>
+    <p><i class="fa fa-rmb"></i><span id="entry-fee"><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY); ?></span></p>
+    <?php if ($competition->isWCACompetition()): ?>
+    <p><b><?php echo Yii::t('Competition', 'WCA Dues'); ?></b><?php echo CHtml::link(Html::fontAwesome('question-circle', 'b'), 'https://www.worldcubeassociation.org/documents/policies/external/Dues%20System.pdf', ['target'=>'_blank']); ?></p>
+    <p><i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES); ?></p>
+    <?php endif;?>
     <?php endif; ?>
     <?php echo Html::formGroup(
       $model, 'events', array(),
@@ -230,7 +234,8 @@ $options = json_encode([
   'complexMultiLocation'=>!!$competition->complex_multi_location,
   'showRegulations'=>!!$competition->show_regulations,
   'regulationDesc'=>Yii::t('Competition', 'Please deeply remember the followings to avoid any inconveniences.'),
-  'basicFee' => $competition->getEventFee('entry'),
+  'basicFee' => $competition->getEventFee(Competition::EVENT_FEE_ENTRY),
+  'wcaDuesFee' => $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES),
   'entourageFee' => intval($competition->entourage_fee),
   'regulations'=>[
     'common'=>array_merge([
