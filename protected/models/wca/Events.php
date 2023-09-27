@@ -189,8 +189,8 @@ class Events extends ActiveRecord {
 			return self::$_normalEvents;
 		}
 		$events = self::model()->cache(86500 * 7)->findAll(array(
-			'condition'=>'rank<900',
-			'order'=>'rank',
+			'condition'=>'`rank`<900',
+			'order'=>'`rank`',
 		));
 		$events = CHtml::listData($events, 'id', 'cellName');
 		return self::$_normalEvents = $events;
@@ -209,8 +209,8 @@ class Events extends ActiveRecord {
 			return self::$_deprecatedEvents;
 		}
 		$events = self::model()->cache(86500 * 7)->findAll(array(
-			'condition'=>'rank>=900 AND rank<1000',
-			'order'=>'rank',
+			'condition'=>'`rank`>=900 AND `rank`<1000',
+			'order'=>'`rank`',
 		));
 		$events = CHtml::listData($events, 'id', 'cellName');
 		return self::$_deprecatedEvents = $events;

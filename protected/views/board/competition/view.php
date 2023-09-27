@@ -95,10 +95,10 @@
                         <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
                         <td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
                         <?php if ($competition->hasSecondStage): ?>
-                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
+                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_SECOND); ?></td>
                         <?php endif; ?>
                         <?php if ($competition->hasThirdStage): ?>
-                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
+                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_THIRD); ?></td>
                         <?php endif; ?>
                       </tr>
                       <?php foreach ($competition->associatedEvents as $key=>$value): ?>

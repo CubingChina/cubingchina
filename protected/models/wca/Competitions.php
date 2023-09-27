@@ -74,7 +74,7 @@ class Competitions extends ActiveRecord {
 			'roundTypeId'=>array('c', 'f'),
 		), array(
 			'condition'=>'best > 0',
-			'order'=>'event.rank, round.rank, t.pos'
+			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
 		$events = array();
 		foreach ($winners as $result) {
@@ -92,7 +92,7 @@ class Competitions extends ActiveRecord {
 			'roundTypeId'=>array('c', 'f'),
 		), array(
 			'condition'=>'best > 0',
-			'order'=>'event.rank, round.rank, t.pos'
+			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
 		$all = Results::model()->with(array(
 			'person',
@@ -103,7 +103,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 		), array(
-			'order'=>'event.rank, round.rank, t.pos'
+			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
 		$personIds = array_unique(array_map(function($result) {
 			return $result->personId;
@@ -169,7 +169,7 @@ class Competitions extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'competitionId'=>$id,
 		), array(
-			'order'=>'event.rank, round.rank, t.groupId, t.isExtra, t.scrambleNum',
+			'order'=>'event.`rank`, round.`rank`, t.groupId, t.isExtra, t.scrambleNum',
 		));
 		return array(
 			'winners'=>$winners,

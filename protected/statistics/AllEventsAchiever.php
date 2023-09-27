@@ -9,7 +9,7 @@ class AllEventsAchiever extends Statistics {
 				->select('count(distinct eventId)')
 				->from('Ranks' . ucfirst($type))
 				->leftJoin('Events e', 'e.id=eventId')
-				->where('e.rank<900')
+				->where('e.`rank`<900')
 				->queryScalar();
 			$sum += $num;
 		}
@@ -28,7 +28,7 @@ class AllEventsAchiever extends Statistics {
 			->leftJoin('Countries country', 'p.countryId=country.id')
 			->leftJoin('Events es', 'es.id=rs.eventId')
 			->leftJoin('Events ea', 'ea.id=rs.eventId')
-			->where('es.rank<900 and ea.rank<900')
+			->where('es.`rank`<900 and ea.`rank`<900')
 			->group('rs.personId')
 			->having('singles + averages = ' . $sum);
 		ActiveRecord::applyRegionCondition($cmd, $statistic['region'] ?? 'China', 'p.countryId');

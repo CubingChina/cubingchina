@@ -135,7 +135,7 @@ class Persons extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'personId'=>$id
 		), array(
-			'order'=>'event.rank ASC',
+			'order'=>'event.`rank` ASC',
 		));
 		$personRanks = array();
 		foreach ($ranks as $rank) {
@@ -188,7 +188,7 @@ class Persons extends ActiveRecord {
 		))->findAllByAttributes(array(
 			'personId'=>$id
 		), array(
-			'order'=>'event.rank, competition.year, competition.month, competition.day, round.rank'
+			'order'=>'event.`rank`, competition.year, competition.month, competition.day, round.`rank`'
 		));
 		$pbTemplate = [
 			'best'=>0,
@@ -269,7 +269,7 @@ class Persons extends ActiveRecord {
 			'personId'=>$id,
 		), array(
 			'condition'=>'regionalSingleRecord="WR" OR regionalAverageRecord="WR"',
-			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//CR们
 		$historyCR = Results::model()->with(array(
@@ -280,7 +280,7 @@ class Persons extends ActiveRecord {
 			'personId'=>$id,
 		), array(
 			'condition'=>'regionalSingleRecord NOT IN ("WR", "NR", "") OR regionalAverageRecord NOT IN ("WR", "NR", "")',
-			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//NR们
 		$historyNR = Results::model()->with(array(
@@ -291,7 +291,7 @@ class Persons extends ActiveRecord {
 			'personId'=>$id,
 		), array(
 			'condition'=>'regionalSingleRecord="NR" OR regionalAverageRecord="NR"',
-			'order'=>'event.rank ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.rank DESC',
+			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//
 		$firstCompetitionResult = Results::model()->with(array(
@@ -361,7 +361,7 @@ class Persons extends ActiveRecord {
 			'latitude'=>number_format($temp['latitude'] / $competitionCount, 6, '.', ''),
 		);
 		if ($byCompetition != array()) {
-			$byCompetition = call_user_func_array('array_merge', $byCompetition);
+			$byCompetition = call_user_func_array('array_merge', array_values($byCompetition));
 		}
 		usort($byCompetition, function($resultA, $resultB) {
 			$temp = $resultB->competition->year - $resultA->competition->year;
@@ -380,7 +380,7 @@ class Persons extends ActiveRecord {
 			return $temp;
 		});
 		if ($byEvent != array()) {
-			$byEvent = call_user_func_array('array_merge', array_map('array_reverse', $byEvent));
+			$byEvent = call_user_func_array('array_merge', array_values(array_map('array_reverse', $byEvent)));
 		}
 		//closest cubers and seen cubers
 		$allCubers = $db->createCommand()

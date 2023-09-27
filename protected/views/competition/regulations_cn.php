@@ -16,8 +16,8 @@
   </li>
   <?php endif; ?>
   <li>
-    报名费用：应付报名费=基础报名费+<?php echo CHtml::link('分项报名费', $competition->getUrl('detail', ['#'=>'fees'])); ?>。<?php if ($competition->hasSecondStage): ?>第1阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>元；第2阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>元<?php
-    if ($competition->hasThirdStage): ?>；第3阶段基础报名费为<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>元<?php endif; ?><?php else: ?>基础报名费为<?php echo $competition->getEventFee('registration') ;?>元<?php endif; ?>。
+    报名费用：应付报名费=基础报名费+<?php echo CHtml::link('分项报名费', $competition->getUrl('detail', ['#'=>'fees'])); ?>。<?php if ($competition->hasSecondStage): ?>第1阶段基础报名费为<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_FIRST) ;?>元；第2阶段基础报名费为<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_SECOND) ;?>元<?php
+    if ($competition->hasThirdStage): ?>；第3阶段基础报名费为<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_THIRD) ;?>元<?php endif; ?><?php else: ?>基础报名费为<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY) ;?>元<?php endif; ?>。
   </li>
   <li>
     中国大陆选手须通过粗饼网的线上缴费功能缴纳报名费，不通过粗饼网付款的中国大陆选手报名一律无效。对于无法使用中国支付系统的非中国大陆选手<?php if ($competition->paypal_link): ?>，可通过PayPal支付报名费用，审核将有一定延迟<?php endif; ?>，有支付问题请邮件联系主办方。

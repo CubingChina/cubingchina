@@ -52,7 +52,7 @@ class CompetitionLocation extends ActiveRecord {
 		if ($this->country_id > 1) {
 			return $this->fee;
 		}
-		$fee = $this->fee > 0 ? ceil($this->fee * $this->competition->getFeeRatio($stage)) : $this->competition->getEventFee('entry');
+		$fee = $this->fee > 0 ? ceil($this->fee * $this->competition->getFeeRatio($stage)) : $this->competition->getEventFee(Competition::EVENT_FEE_ENTRY);
 		return Html::fontAwesome('rmb') . $fee;
 	}
 
@@ -60,7 +60,7 @@ class CompetitionLocation extends ActiveRecord {
 		if ($this->country_id > 1) {
 			return $this->fee;
 		}
-		$fee = $this->fee > 0 ? ceil($this->fee * $this->competition->getFeeRatio($stage)) : $this->competition->getEventFee('entry');
+		$fee = $this->fee > 0 ? ceil($this->fee * $this->competition->getFeeRatio($stage)) : $this->competition->getEventFee(Competition::EVENT_FEE_ENTRY);
 		return $fee;
 	}
 

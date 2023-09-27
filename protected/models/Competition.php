@@ -56,6 +56,9 @@ class Competition extends ActiveRecord {
 	const REFUND_TYPE_50_PERCENT = '50';
 	const REFUND_TYPE_100_PERCENT = '100';
 
+	const EVENT_FEE_ENTRY = 'entry';
+	const EVENT_FEE_WCA_DUES = 'wca_dues';
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
@@ -887,11 +890,18 @@ class Competition extends ActiveRecord {
 
 	public function getEventFee($event, $stage = null, $entryFee = 0) {
 		$events = $this->associatedEvents;
-		$isBasic = !isset($events[$event]);
+		$isBasic = $event === self::EVENT_FEE_ENTRY;
+		$isWCADues = $event === self::EVENT_FEE_WCA_DUES;
 		if ($stage === null) {
 			$stage = $this->calculateStage();
 		}
 		$entryFee = $this->complex_multi_location && $entryFee > 0 ? $entryFee : $this->entry_fee;
+		if ($isWCADues) {
+			if (!$this->isWCACompetition()) {
+				return 0;
+			}
+			return ceil($this->entry_fee * 0.15);
+		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {
 			case self::STAGE_FIRST:
@@ -2040,9 +2050,9 @@ class Competition extends ActiveRecord {
 				'delegates'=>$this->delegate,
 				'base_entry_fee'=>$this->entry_fee,
 				'second_phase_time'=>$this->second_stage_date,
-				'second_phase_fee'=>$this->getEventFee('entry', self::STAGE_SECOND),
+				'second_phase_fee'=>$this->getEventFee(sefl::EVENT_FEE_ENTRY, self::STAGE_SECOND),
 				'third_phase_time'=>$this->third_stage_date,
-				'third_phase_fee'=>$this->getEventFee('entry', self::STAGE_THIRD),
+				'third_phase_fee'=>$this->getEventFee(sefl::EVENT_FEE_ENTRY, self::STAGE_THIRD),
 				'events'=>$this->allEvents,
 				'information'=>$this->getAttributeValue('information'),
 				'regulations'=>$this->getAttributeValue('regulations'),
@@ -2261,7 +2271,7 @@ class Competition extends ActiveRecord {
 			'competitionId'=>$this->wca_competition_id,
 		), array(
 			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
-			'order'=>'event.rank ASC, best ASC, average ASC',
+			'order'=>'event.`rank` ASC, best ASC, average ASC',
 		));
 		$records = array();
 		foreach ($recordResults as $record) {

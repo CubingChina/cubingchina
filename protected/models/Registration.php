@@ -366,9 +366,22 @@ class Registration extends ActiveRecord {
 		$this->cancel_time = time();
 		if ($this->save()) {
 			if ($refundPercent > 0) {
-				foreach ($this->payments as $payment) {
+				$wcaDuesFee = $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) * 100;
+				$payments = $this->payments;
+				usort($payments, function($a, $b) {
+					return $a->paid_time - $b->paid_time;
+				});
+				foreach ($payments as $payment) {
 					if ($payment->isPaid()) {
-						$payment->refund($payment->paid_amount * $refundPercent);
+						$paidAmount = $payment->paid_amount;
+						$refundAmount = $paidAmount * $refundPercent;
+						// check WCA dues and refund once
+						if ($wcaDuesFee > 0 && $paidAmount > $wcaDuesFee) {
+							$paidAmount -= $wcaDuesFee;
+							$refundAmount = $paidAmount * $refundPercent + $wcaDuesFee;
+							$wcaDuesFee = 0;
+						}
+						$payment->refund($refundAmount);
 					}
 				}
 			}
@@ -480,10 +493,10 @@ class Registration extends ActiveRecord {
 				}
 				$sum = 0;
 				for ($i = 0; $i < 17; $i++) {
-					$sum += $this->entourage_passport_number{$i} * $this->coefficients[$i];
+					$sum += $this->entourage_passport_number[$i] * $this->coefficients[$i];
 				}
 				$mod = $sum % 11;
-				if (strtoupper($this->entourage_passport_number{17}) != $this->codes[$mod]) {
+				if (strtoupper($this->entourage_passport_number[17]) != $this->codes[$mod]) {
 					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
 					return false;
 				}
@@ -640,8 +653,8 @@ class Registration extends ActiveRecord {
 			}
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
-		return $competition->getEventFee('entry', null, $this->location->fee) + $entourageFee + array_sum($fees);
-		return $competition->getEventFee('entry', $competition->calculateStage($this->accept_time)) + $entourageFee + array_sum($fees);
+		return $competition->getEventFee(Competition::EVENT_FEE_ENTRY, null, $this->location->fee) + $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) + $entourageFee + array_sum($fees);
+		return $competition->getEventFee(Competition::EVENT_FEE_ENTRY, $competition->calculateStage($this->accept_time)) + $entourageFee + array_sum($fees);
 	}
 
 	public function getFeeInfo() {
@@ -659,7 +672,8 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if (!$this->isAcceptedOrWaiting()) {
-			$fee += $this->competition->getEventFee('entry');
+			$fee += $this->competition->getEventFee(Competition::EVENT_FEE_ENTRY);
+			$fee += $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
 		}
 		return $fee * 100;
 	}
@@ -702,7 +716,11 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRefundAmount() {
-		return $this->getPaidAmount() * $this->getRefundPercent();
+		$paidAmount = $this->getPaidAmount();
+		// full refund WCA dues
+		$wcaDuesFee = $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) * 100;
+		$paidAmount -= $wcaDuesFee;
+		return $paidAmount * $this->getRefundPercent() + $wcaDuesFee;
 	}
 
 	public function getRefundFee() {

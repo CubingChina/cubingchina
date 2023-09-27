@@ -15,7 +15,7 @@ class UploadController extends AdminController {
 		$extension = image_type_to_extension($imagesize[2]);
 		$md5 = md5(file_get_contents($file->getTempName()));
 		$filename = $md5 . $extension;
-		$dirname = 'upload/' . $md5{0} . '/';
+		$dirname = 'upload/' . $md5[0]. '/';
 		$fullPath = $params->staticPath . $dirname . $filename;
 		$fullDir = dirname($fullPath);
 		if (!is_dir($fullDir)) {

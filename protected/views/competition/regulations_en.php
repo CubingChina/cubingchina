@@ -17,8 +17,8 @@
   </li>
   <?php endif; ?>
   <li>
-    Registration fees (in Chinese yuan) consist of a base fee and <?php echo CHtml::link('event fees', $competition->getUrl('detail', ['#'=>'fees'])); ?>. <?php if ($competition->hasSecondStage): ?>The base fee during the 1st registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_FIRST) ;?>. The base fee during the 2nd registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_SECOND) ;?>.<?php
-    if ($competition->hasThirdStage): ?> The base fee during the 3rd registration period is ¥<?php echo $competition->getEventFee('registration', Competition::STAGE_THIRD) ;?>.<?php endif; ?><?php else: ?>The base fee is ¥<?php echo $competition->getEventFee('registration') ;?>.<?php endif; ?>
+    Registration fees (in Chinese yuan) consist of a base fee and <?php echo CHtml::link('event fees', $competition->getUrl('detail', ['#'=>'fees'])); ?>. <?php if ($competition->hasSecondStage): ?>The base fee during the 1st registration period is ¥<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_FIRST) ;?>. The base fee during the 2nd registration period is ¥<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_SECOND) ;?>.<?php
+    if ($competition->hasThirdStage): ?> The base fee during the 3rd registration period is ¥<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_THIRD) ;?>.<?php endif; ?><?php else: ?>The base fee is ¥<?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY) ;?>.<?php endif; ?>
   </li>
   <li>
     Chinese mainland competitors must pay online to complete their registration. Unpaid registrations will not be accepted.<?php if ($competition->paypal_link): ?> International competitors may pay by PayPal.<?php endif; ?> International competitors that cannot pay online should contact the delegate or organizer by email.

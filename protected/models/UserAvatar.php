@@ -25,7 +25,7 @@ class UserAvatar extends ActiveRecord {
 	public function getFullUrl() {
 		return implode('/', array(
 			Yii::app()->params->staticUrlPrefix . 'upload',
-			$this->md5{0},
+			$this->md5[0],
 			$this->md5 . $this->extension,
 		));
 	}

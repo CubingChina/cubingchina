@@ -21,7 +21,7 @@ class CustomEvent extends ActiveRecord {
 		if (self::$_allEvents === null) {
 			self::$_allEvents = [];
 			foreach (self::model()->findAll([
-				'order'=>'rank',
+				'order'=>'`rank`',
 			]) as $customEvent) {
 				self::$_allEvents[$customEvent->id] = $customEvent;
 			}
