@@ -119,12 +119,12 @@ class SiteController extends Controller {
 
 	public function actionWechatLogin() {
 		$dev = $this->iGet('dev');
-		if ($dev) {
+		if ($dev && !DEV) {
 			$this->redirect('https://staging.cubingchina.com/site/wechatLogin?' . http_build_query($_GET));
 		}
 		try {
 			$officialAccount = $this->getWechatOfficialAccount(['oauth'=>[]]);
-			$user = $officialAccount->oauth->user();
+			$user = $officialAccount->oauth->userFromCode($this->sGet('code'));
 			$wechatUser = WechatUser::getOrCreate($user);
 			$session = Yii::app()->session;
 			$session->add(Constant::WECHAT_SESSION_KEY, $user);
