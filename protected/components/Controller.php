@@ -89,7 +89,8 @@ class Controller extends CController {
 			$session = Yii::app()->session;
 			if ($this->action->id !== 'wechatLogin' && $session->get(Constant::WECHAT_SESSION_KEY) === null) {
 				$session->add(Constant::CURRENT_URL_KEY, Yii::app()->request->url);
-				$oauth->redirect(Yii::app()->params->baseUrl . '/site/wechatLogin/' . DEV)->send();
+				$redirectUrl = $oauth->redirect(Yii::app()->params->baseUrl . '/site/wechatLogin/' . DEV);
+				$this->redirect($redirectUrl);
 				Yii::app()->end();
 			}
 		}

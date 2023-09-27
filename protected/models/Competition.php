@@ -2042,6 +2042,7 @@ class Competition extends ActiveRecord {
 			],
 			'competitor_limit'=>$this->person_num,
 			'registered_competitors'=>$this->registeredCompetitors,
+			'live'=>$this->live,
 		];
 		if ($full) {
 			$data += [
