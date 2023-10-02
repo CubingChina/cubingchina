@@ -258,4 +258,4 @@ echo <<<EOT
 </script>
 EOT
 ;
-Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20190221');
+Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20231002');

@@ -8,7 +8,7 @@ $this->widget('GroupRankGridView', [
   'groupKey'=>'personId',
   'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", [
     Persons::getLinkByNameNId($data->personName, $data->personId),
-    Region::getIconName($data->person->country->name, $data->person->country->iso2),
+    Region::getIconName($data->personCountry->name, $data->personCountry->iso2),
   ])',
   'rankKey'=>'eventId',
   'repeatHeader'=>true,
