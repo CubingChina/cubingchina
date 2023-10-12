@@ -52,5 +52,21 @@ class CompetitionHandler extends MsgHandler {
 				}
 			}
 		}
+		if ($this->competition == null) {
+			return;
+		}
+		$action = $this->getAction();
+		if ($action !== '') {
+			var_dump(2222);
+			$method = 'action' . ucfirst($action);
+			if (method_exists($this, $method)) {
+				return $this->$method();
+			}
+		}
+	}
+
+	public function actionEvents() {
+		$events = $this->competition->getEventsRounds();
+		$this->success('events', $events);
 	}
 }

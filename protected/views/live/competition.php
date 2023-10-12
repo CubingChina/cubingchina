@@ -311,7 +311,7 @@
           </select>
         </div>
       </div>
-      <div v-if="hasPermission">已录/未录/总数：{{ currentRound.en }} / {{ currentRound.tt - currentRound.en }} / {{ currentRound.tt }} </div>
+      <div v-if="hasPermission">已录/未录/总数：{{ currentRound.rn }} / {{ currentRound.tt - currentRound.rn }} / {{ currentRound.tt }} </div>
       <div class="table-responsive">
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>

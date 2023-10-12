@@ -20,6 +20,9 @@ class LiveServer implements HttpServerInterface {
 
 	public function __construct($loop) {
 		$this->loop = $loop;
+		set_error_handler(function($errno, $errstr) {
+			throw new Exception($errstr);
+		}, E_ALL ^ E_DEPRECATED);
 	}
 
 	public function initSubscriber() {

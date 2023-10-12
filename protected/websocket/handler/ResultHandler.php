@@ -2,13 +2,15 @@
 
 class ResultHandler extends MsgHandler {
 
+	private static $whiteListActions = ['fetch', 'user', 'record', 'roundtypes'];
+
 	public function process() {
 		if ($this->competition == null) {
 			return;
 		}
 		$action = $this->getAction();
 		if ($action !== '') {
-			if ($action != 'fetch' && $action != 'user' && !$this->checkAccess()) {
+			if (!in_array($action, self::$whiteListActions) && !$this->checkAccess()) {
 				return;
 			}
 			$method = 'action' . ucfirst($action);
@@ -16,6 +18,17 @@ class ResultHandler extends MsgHandler {
 				return $this->$method();
 			}
 		}
+	}
+
+	public function actionRecord() {
+		$records = LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$this->competition->id,
+		], [
+			'condition'=>'regional_single_record!="" OR regional_average_record!=""',
+		]);
+		$this->success('record.all', array_map(function($record) {
+			return $record->getShowAttributes();
+		}, $records));
 	}
 
 	public function actionFetch() {

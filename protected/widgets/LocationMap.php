@@ -21,10 +21,12 @@ class LocationMap extends Widget {
 $('.location-map').each(function() {
   var that = $(this);
   var data = that.data(),
-    tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      tileSize: 512,
+	  zoomOffset: -1,
       maxZoom: 18,
       attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a>',
-      id: 'baiqiang.22k7e3en',
+      id: 'mapbox/streets-v12',
       accessToken: 'pk.eyJ1IjoiYmFpcWlhbmciLCJhIjoiY2l2YjZ1cHoxMDBnMDJ4bG04dzdseHd6bSJ9.MsHNIxGXeC_w2BRpMUE4ng'
     });
     map = L.map(this, {
