@@ -62,9 +62,9 @@ class QueryCheckPdo extends PDO {
 		return $this->_pdo->prepare($statement, $driverOptions);
 	}
 
-	public function query($statement) {
+	public function query($statement, ?int $fetchMode = null, mixed ...$fetchModeArgs) {
 		$this->ping();
-		return $this->_pdo->query($statement);
+		return $this->_pdo->query($statement, $fetchMode, ...$fetchModeArgs);
 	}
 
 	public function quote($string, $parameterType = PDO::PARAM_STR) {
