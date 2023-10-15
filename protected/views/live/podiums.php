@@ -3,7 +3,7 @@
   <h3><?php echo Yii::t('common', 'Greater China'); ?></h3>
   <?php
   $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $greaterChinaPodiums ?: [[]]), [
+    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $greaterChinaPodiums ? array_values($greaterChinaPodiums) : [[]]), [
       'pagination'=>false,
       'sort'=>false,
     ]),
@@ -53,7 +53,7 @@
   <?php endif; ?>
   <?php
   $this->widget('GroupGridView', array(
-    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $podiums ?: [[]]), [
+    'dataProvider'=>new CArrayDataProvider(call_user_func_array('array_merge', $podiums ? array_values($podiums) : [[]]), [
       'pagination'=>false,
       'sort'=>false,
     ]),

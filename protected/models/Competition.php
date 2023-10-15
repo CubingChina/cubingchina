@@ -1798,7 +1798,7 @@ class Competition extends ActiveRecord {
 							break;
 						}
 						$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
-							'{round}'=>Yii::t('RoundTypes', 'First'),
+							'{round}'=>Yii::t('RoundTypes', 'First round'),
 						]);
 						if ($this->podiums_greater_china) {
 							$greaterChinaPodiums['unofficial'][] = $result;
