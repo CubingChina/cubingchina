@@ -391,7 +391,7 @@ class Competitions extends ActiveRecord {
 				break;
 		}
 		if ($this->event && in_array($this->event, array_keys(Events::getNormalEvents()))) {
-			$criteria->addCondition("eventSpecs REGEXP '[[:<:]]{$this->event}[[:>:]]'");
+			$criteria->addCondition("eventSpecs REGEXP '\\\\b{$this->event}\\\\b'");
 		}
 		if ($this->name) {
 			$names = explode(' ', $this->name);
