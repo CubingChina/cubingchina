@@ -102,7 +102,7 @@
       ), Html::fontAwesome('plus') . 'more'); ?>
       <?php endif; ?>
     </dt>
-    <dd style="height:104px;overflow:hidden">
+    <dd style="height:104px;overflow:hidden<?php if($competition->isWCACompetition()) echo ';min-height:135px'; ?>">
       <div class="row">
         <div class="col-md-6 col-sm-8">
           <div class="table-responsive">
@@ -132,6 +132,18 @@
                   <?php endif; ?>
                 </tr>
                 <?php endif; ?>
+                <?php if ($competition->isWCACompetition()): ?>
+                <tr>
+                  <td><?php echo Yii::t('Competition', 'WCA Dues'); ?></td>
+                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST); ?></td>
+                  <?php if ($competition->hasSecondStage): ?>
+                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST); ?></td>
+                  <?php endif; ?>
+                  <?php if ($competition->hasThirdStage): ?>
+                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST); ?></td>
+                  <?php endif; ?>
+                </tr>
+                <?php endif;?>
                 <?php foreach ($competition->associatedEvents as $key=>$value): ?>
                 <tr>
                   <td><?php echo Events::getFullEventNameWithIcon($key); ?></td>
