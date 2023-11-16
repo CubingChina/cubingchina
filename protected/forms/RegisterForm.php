@@ -60,7 +60,7 @@ class RegisterForm extends CFormModel {
 				$wcaid = $session->get(self::REGISTER_WCAID, '');
 				if ($wcaid !== '') {
 					$this->wcaid = $wcaid;
-					$person = Persons::model()->findByAttributes(array(
+					$person = Persons::model()->with('country')->findByAttributes(array(
 						'id'=>$wcaid,
 					));
 					preg_match('{^([^(]+)(.*\(([^)]+)\))?$}iu', $person->name, $matches);
@@ -76,7 +76,7 @@ class RegisterForm extends CFormModel {
 						'f'=>User::GENDER_FEMALE,
 					);
 					$this->gender = $genders[strtolower($person->gender)];
-					$this->country_id = Region::getRegionIdByName($person->countryId);
+					$this->country_id = Region::getRegionIdByName($person->country->name);
 				}
 				break;
 			case 3:
