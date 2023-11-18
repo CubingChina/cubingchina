@@ -179,7 +179,7 @@ class Region extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return [
-			'wcaCountry'=>[self::BELONGS_TO, 'Countries', ['name'=>'id']],
+			'wcaCountry'=>[self::BELONGS_TO, 'Countries', ['name'=>'name']],
 		];
 	}
 
