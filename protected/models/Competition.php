@@ -1863,17 +1863,18 @@ class Competition extends ActiveRecord {
 				$result = $results[0];
 				$value = $result->$type;
 				$user = $result->user;
-				$NR = Results::getRecord($user->country->name, $event, $type, $this->date);
+				$wcaCountry = $user->country->wcaCountry;
+				$NR = Results::getRecord($wcaCountry->id, $event, $type, $this->date);
 				if (DEV) {
 					Yii::log(json_encode($NR), 'debug', 'NR' . date('Y-m-d', $this->date));
 				}
 				if ($NR == null || $value <= $NR[$type]) {
-					$continent = $user->country->wcaCountry->continent;
+					$continent = $wcaCountry->continent;
 					$crName = $continent->recordName;
 					$$crName = Results::getRecord($continent->name, $event, $type, $this->date);
 					// check WR CR NR
 					$recordSet = false;
-					foreach (['WR', $crName, 'NR'=>$user->country->name] as $recordName=>$region) {
+					foreach (['WR', $crName, 'NR'=>$wcaCountry->id] as $recordName=>$region) {
 						if (is_numeric($recordName)) {
 							$recordName = $region;
 						}
