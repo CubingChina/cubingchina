@@ -183,7 +183,7 @@ class RegistrationController extends AdminController {
 			$row = $key + 4;
 			$sheet->setCellValue('A' . $row, $registration->number)
 				->setCellValue('B' . $row, $user->getCompetitionName())
-				->setCellValue('C' . $row, $user->country->name)
+				->setCellValue('C' . $row, $user->country->wcaCountry->id)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
 				->setCellValue('F' . $row, SharedDate::formattedPHPToExcel(
@@ -279,7 +279,7 @@ class RegistrationController extends AdminController {
 						}
 						$user = $registration->user;
 						$sheet->setCellValue('B' . $row, $user->getCompetitionName())
-							->setCellValue('C' . $row, $user->country->name)
+							->setCellValue('C' . $row, $user->country->wcaCountry->id)
 							->setCellValue('D' . $row, $user->wcaid);
 						if ($row > 5) {
 							$formula = $sheet->getCell('A' . ($row - 1))->getValue();
@@ -384,7 +384,7 @@ class RegistrationController extends AdminController {
 			$row = $key + 4;
 			$sheet->setCellValue('A' . $row, $registration['number'])
 				->setCellValue('B' . $row, $user->getCompetitionName())
-				->setCellValue('C' . $row, $user->country->name)
+				->setCellValue('C' . $row, $user->country->wcaCountry->id)
 				->setCellValue('D' . $row, $user->wcaid)
 				->setCellValue('E' . $row, $user->getWcaGender())
 				->setCellValue('F' . $row, SharedDate::formattedPHPToExcel(
@@ -441,7 +441,11 @@ class RegistrationController extends AdminController {
 				$sheet = clone $sheet;
 				$sheet->setTitle("{$event}-{$round['round']->id}");
 				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getEventName($event) . ' - ' . RoundTypes::getFullRoundName($round['round']->id));
+				$roundName = RoundTypes::getFullRoundName($round['round']->id);
+				if (in_array($round['round']->id, ['d', 'c', 'e', 'g'])) {
+					$roundName = 'Combined ' . $roundName;
+				}
+				$sheet->setCellValue('A1', Events::getEventName($event) . ' - ' . $roundName);
 				usort($round['results'], $compare);
 				$row = 5;
 				$num = Formats::getFormatNum($round['format']);
@@ -449,7 +453,7 @@ class RegistrationController extends AdminController {
 					//user info
 					$user = $result->user;
 					$sheet->setCellValue('B' . $row, $user->getCompetitionName())
-						->setCellValue('C' . $row, $user->country->name)
+						->setCellValue('C' . $row, $user->country->wcaCountry->id)
 						->setCellValue('D' . $row, $user->wcaid)
 						->setCellValue('Z' . $row, $result->number);
 					//result
