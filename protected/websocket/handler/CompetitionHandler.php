@@ -32,10 +32,9 @@ class CompetitionHandler extends MsgHandler {
 						}
 						$events = $competition->getAssociatedEvents();
 						$currentRecords = [];
-						$wcaRegions = array_flip(Countries::getUsedCountries());
 						foreach ($registrations as $registration) {
 							$region = $registration->user->country->name;
-							$wcaRegion = $wcaRegions[$region];
+							$wcaRegion = $registration->user->country->wcaCountry->id;
 							if (isset($currentRecords[$region])) {
 								continue;
 							}

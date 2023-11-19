@@ -158,7 +158,7 @@ class LiveResult extends ActiveRecord {
 	public function isProbablyRecord() {
 		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
-			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			$NR = Results::getRecord($this->user->country->wcaCountry->id, $this->event, $type, $date);
 			if ($this->$type <= $NR[$type]) {
 				return true;
 			}
@@ -169,7 +169,7 @@ class LiveResult extends ActiveRecord {
 	public function isNotProbablyRecord() {
 		$date = $this->competition->date;
 		foreach (['best', 'average'] as $type) {
-			$NR = Results::getRecord($this->user->country->name, $this->event, $type, $date);
+			$NR = Results::getRecord($this->user->country->wcaCountry->id, $this->event, $type, $date);
 			if ($this->$type > $NR[$type]) {
 				return true;
 			}
