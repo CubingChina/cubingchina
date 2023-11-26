@@ -863,12 +863,15 @@
                     }
                   }
                 }
-                if (result.a > 0 && result.a <= currentRecords[getUser(result.n).region][result.e].a
-                  || result.b > 0 && result.b <= currentRecords[getUser(result.n).region][result.e].b
-                ) {
-                  that.breakRecord = true;
-                  if (alertNotice && !confirm('该成绩可能打破纪录，确定是否正确输入了？')) {
-                    return false;
+                const currentRecord = currentRecords[getUser(result.n).region][result.e]
+                if (currentRecord) {
+                  if (result.a > 0 && result.a <= currentRecord.a
+                    || result.b > 0 && result.b <= currentRecord.b
+                  ) {
+                    that.breakRecord = true;
+                    if (alertNotice && !confirm('该成绩可能打破纪录，确定是否正确输入了？')) {
+                      return false;
+                    }
                   }
                 }
                 return true;
