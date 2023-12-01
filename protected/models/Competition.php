@@ -2366,7 +2366,7 @@ class Competition extends ActiveRecord {
 			}
 		}
 		if ($region === 'NR') {
-			$temp = call_user_func_array('array_merge', array_map('array_values', $temp));
+			$temp = call_user_func_array('array_merge', array_values(array_map('array_values', $temp)));
 		}
 		return $temp;
 	}
