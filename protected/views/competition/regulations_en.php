@@ -1,5 +1,21 @@
 <h3>1. About the registration</h3>
 <ol>
+  <?php if ($competition->series): ?>
+  <?php $otherCompetitions = implode(', ', array_map(function($series) {
+    $competition = $series->competition;
+    return CHtml::link($competition->getAttributeValue('name'), $competition->getUrl());
+  }, array_filter($competition->series->list, function($series) use ($competition) {
+    return $series->competition_id != $competition->id;
+  }))); ?>
+  <li>
+    Register for a Series:
+    <ol>
+      <li>Competitors can only register for one competition in a Series.</li>
+      <li>Successfully registered competitors can not register for <?php echo $otherCompetitions; ?>.</li>
+      <li>Registered competitors can only register for <?php echo $otherCompetitions; ?> if they cancel their registration for this competition.</li>
+    </ol>
+  </li>
+  <?php endif; ?>
   <li>
     Registration must be completed during the registration period (from <?php echo date('Y-m-d H:i:s', $competition->reg_start), ' to ', date('Y-m-d日 H:i:s', $competition->reg_end); ?>). Late registrations will not be accepted. Registration must be done online, competitors cannot register at the competition.
   </li>

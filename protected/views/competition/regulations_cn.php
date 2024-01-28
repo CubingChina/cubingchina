@@ -1,5 +1,21 @@
 <h3>一、关于报名</h3>
 <ol>
+  <?php if ($competition->series): ?>
+  <?php $otherCompetitions = implode('、', array_map(function($series) {
+    $competition = $series->competition;
+    return CHtml::link($competition->getAttributeValue('name'), $competition->getUrl());
+  }, array_filter($competition->series->list, function($series) use ($competition) {
+    return $series->competition_id != $competition->id;
+  }))); ?>
+  <li>
+    WCA系列赛报名要求：
+    <ol>
+      <li>比赛选手只能报名系列赛比赛中的一场。</li>
+      <li>选手成功报名本场比赛后，选手将不能再报名<?php echo $otherCompetitions; ?>。</li>
+      <li>如果想要报名<?php echo $otherCompetitions; ?>，需要先取消本场比赛的报名。</li>
+    </ol>
+  </li>
+  <?php endif; ?>
   <li>
     比赛报名需在比赛报名期间（<?php echo date('Y年m月d日 H:i:s', $competition->reg_start), date('至Y年m月d日 H:i:s', $competition->reg_end); ?>）完成，逾期不接受报名。比赛只接受网上报名，不接受现场报名。
   </li>
