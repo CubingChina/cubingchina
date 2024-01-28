@@ -2947,6 +2947,7 @@ class Competition extends ActiveRecord {
 			'allEvents'=>[self::HAS_MANY, 'CompetitionEvent', 'competition_id', 'order'=>'allEvents.id'],
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
 			'tickets'=>[self::HAS_MANY, 'Ticket', 'type_id', 'on'=>'type=' . Ticket::TYPE_COMPETITION],
+			'series'=>[self::HAS_ONE, 'CompetitionSeries', 'competition_id'],
 		];
 	}
 

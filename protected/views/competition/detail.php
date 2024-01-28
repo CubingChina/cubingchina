@@ -5,9 +5,22 @@
     <dt><?php echo Yii::t('Competition', 'WCA Competition'); ?></dt>
     <dd>
       <?php echo Yii::t('Competition', 'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.', array(
-      '{regulations}'=>Html::wcaRegulationLink(Yii::t('Competition', 'WCA regulations')),
-    ));?>
+        '{regulations}'=>Html::wcaRegulationLink(Yii::t('Competition', 'WCA regulations')),
+      ));?>
     </dd>
+    <?php if ($competition->series): ?>
+    <dt><?php echo Yii::t('Competition', 'WCA Series'); ?></dt>
+    <dd>
+      <?php echo Yii::t('Competition', 'This competition is part of a series along with {series}.', array(
+        '{series}'=>implode(Yii::t('common', ', '), array_map(function($series) {
+          $competition = $series->competition;
+          return CHtml::link($competition->getAttributeValue('name'), $competition->getUrl());
+        }, array_filter($competition->series->list, function($series) use ($competition) {
+          return $series->competition_id != $competition->id;
+        }))),
+      ));?>
+    </dd>
+    <?php endif; ?>
     <?php endif; ?>
     <?php if ($competition->wca_competition_id != ''): ?>
     <dt><?php echo Yii::t('Competition', 'WCA Official Page'); ?></dt>
