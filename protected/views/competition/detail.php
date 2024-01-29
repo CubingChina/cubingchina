@@ -115,7 +115,7 @@
       ), Html::fontAwesome('plus') . 'more'); ?>
       <?php endif; ?>
     </dt>
-    <dd style="height:104px;overflow:hidden<?php if($competition->isWCACompetition()) echo ';min-height:135px'; ?>">
+    <dd style="height:104px;overflow:hidden<?php if($competition->isWCACompetition()) echo ';min-height:125px'; ?>">
       <div class="row">
         <div class="col-md-6 col-sm-8">
           <div class="table-responsive">
