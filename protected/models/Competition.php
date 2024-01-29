@@ -905,7 +905,7 @@ class Competition extends ActiveRecord {
 			if (!$this->isWCACompetition()) {
 				return 0;
 			}
-			return ceil($this->entry_fee * 0.15);
+			return round($this->entry_fee * 0.15, 2);
 		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {
