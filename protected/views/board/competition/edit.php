@@ -122,6 +122,7 @@
                   'label'=>'基础报名费',
                 )),
                 Html::activeTextField($model, 'entry_fee'),
+                '<div id="fee-tip"></div>',
                 $form->error($model, 'entry_fee', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
@@ -711,11 +712,13 @@ Yii::app()->clientScript->registerScript('competition',
     } else {
       $('#delegates').hide().find('input').prop('checked', false);
     }
+    makeFeeTips()
   }).on('keydown', '.token-input', function(e) {
     if (e.which == 13) {
       e.preventDefault();
     }
   }).on('changeDate', '#Competition_date', function() {
+    makeFeeTips()
     var date = $(this).datetimepicker('getDate');
     $('#Competition_end_date').datetimepicker('setStartDate', date);
     date.setDate(date.getDate() - 1);
@@ -745,7 +748,23 @@ Yii::app()->clientScript->registerScript('competition',
     if (!confirm(this.dataset.message)) {
       e.preventDefault();
     }
+  }).on('input', '#Competition_entry_fee', function() {
+    makeFeeTips()
   });
+  function makeFeeTips() {
+    let fee = $('#Competition_entry_fee').val();
+    let type = $('#Competition_type').val();
+    let date = new Date($('#Competition_date').val());
+    let endDate = new Date($('#Competition_end_date').val() || $('#Competition_date').val());
+    let days = Math.ceil((endDate - date) / 86400000) + 1;
+    let cubingFee = days * 2;
+    let feeTips = `粗饼运营费：\${days}天x2元/天=\${cubingFee}元<br>`;
+    if (type === 'WCA') {
+      feeTips += `WCA运营费：\${fee}元x15%=\${(fee * 0.15).toFixed(2)}元<br>`;
+    }
+    feeTips += `主办实收约：\${fee - cubingFee - (type === 'WCA' ? (fee * 0.15).toFixed(2) : 0)}元（不含交易手续费）`;
+    $('#fee-tip').html(feeTips);
+  }
   $('#Competition_date').trigger('changeDate');
   $('#Competition_reg_start').trigger('changeDate');
   $('#Competition_reg_end').trigger('changeDate');
