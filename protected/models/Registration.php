@@ -366,7 +366,6 @@ class Registration extends ActiveRecord {
 		$this->cancel_time = time();
 		if ($this->save()) {
 			if ($refundPercent > 0) {
-				$wcaDuesFee = $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) * 100;
 				$payments = $this->payments;
 				usort($payments, function($a, $b) {
 					return $a->paid_time - $b->paid_time;
@@ -375,12 +374,6 @@ class Registration extends ActiveRecord {
 					if ($payment->isPaid()) {
 						$paidAmount = $payment->paid_amount;
 						$refundAmount = $paidAmount * $refundPercent;
-						// check WCA dues and refund once
-						if ($wcaDuesFee > 0 && $paidAmount > $wcaDuesFee) {
-							$paidAmount -= $wcaDuesFee;
-							$refundAmount = $paidAmount * $refundPercent + $wcaDuesFee;
-							$wcaDuesFee = 0;
-						}
 						$payment->refund($refundAmount);
 					}
 				}
@@ -653,8 +646,7 @@ class Registration extends ActiveRecord {
 			}
 		}
 		$entourageFee = $this->has_entourage ? $competition->entourage_fee : 0;
-		return $competition->getEventFee(Competition::EVENT_FEE_ENTRY, null, $this->location->fee) + $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) + $entourageFee + array_sum($fees);
-		return $competition->getEventFee(Competition::EVENT_FEE_ENTRY, $competition->calculateStage($this->accept_time)) + $entourageFee + array_sum($fees);
+		return $competition->getEventFee(Competition::EVENT_FEE_ENTRY, null, $this->location->fee)  + $entourageFee + array_sum($fees);
 	}
 
 	public function getFeeInfo() {
@@ -673,7 +665,6 @@ class Registration extends ActiveRecord {
 		}
 		if (!$this->isAcceptedOrWaiting()) {
 			$fee += $this->competition->getEventFee(Competition::EVENT_FEE_ENTRY);
-			$fee += $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
 		}
 		return $fee * 100;
 	}
@@ -716,11 +707,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRefundAmount() {
-		$paidAmount = $this->getPaidAmount();
-		// full refund WCA dues
-		$wcaDuesFee = $this->competition->getEventFee(Competition::EVENT_FEE_WCA_DUES) * 100;
-		$paidAmount -= $wcaDuesFee;
-		return $paidAmount * $this->getRefundPercent() + $wcaDuesFee;
+		return $this->getPaidAmount() * $this->getRefundPercent();
 	}
 
 	public function getRefundFee() {

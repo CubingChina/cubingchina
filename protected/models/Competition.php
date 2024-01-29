@@ -59,6 +59,11 @@ class Competition extends ActiveRecord {
 	const EVENT_FEE_ENTRY = 'entry';
 	const EVENT_FEE_WCA_DUES = 'wca_dues';
 
+	const OLD_WCA_DUES_START = 1389;
+	const OLD_WCA_DUES_END = 1408;
+
+	const WCA_DUES_START = 1409;
+
 	private $_organizers;
 	private $_delegates;
 	private $_locations;
