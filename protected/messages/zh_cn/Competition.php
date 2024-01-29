@@ -118,6 +118,8 @@ return array (
   'WCA regulations' => 'WCA比赛规则',
   'WCA Series' => 'WCA系列赛',
   'Wca Competition ID' => 'WCA比赛ID',
+  'WCA Dues' => 'WCA会费',
+  '(includes {dues} for WCA Dues)' => '（含{dues}WCA会费）',
   'Who\'s the ticket for' => '填写观众信息',
   'You can not register between {start} and {end}.' => '在{start}至{end}期间暂停报名。',
   'You don\'t have any certificate.' => '您尚未获得任何证书。',
