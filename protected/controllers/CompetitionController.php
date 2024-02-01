@@ -181,6 +181,24 @@ class CompetitionController extends Controller {
 		if ($competition->has_qualifying_time) {
 			$unmetEvents = $competition->getUserUnmetEvents($this->user);
 		}
+		$canRegister = true;
+		if ($competition->series) {
+			$otherRegistration = $this->user->getOtherSeriesRegistration($competition);
+			if ($otherRegistration) {
+				$canRegister = false;
+				Yii::app()->user->setFlash(
+					'danger',
+					Yii::t(
+						'Registration',
+						'You successfully registered for {otherCompetition}. You can only register for one competition among {thisCompetition} and {otherCompetition}. Please cancel your registration for {otherCompetition} to continue.',
+						[
+							'{otherCompetition}'=>CHtml::link($otherRegistration->competition->getAttributeValue('name'), $otherRegistration->competition->getUrl('registration')),
+							'{thisCompetition}'=>CHtml::link($competition->getAttributeValue('name'), $competition->url),
+						]
+					)
+				);
+			}
+		}
 		if ($registration !== null) {
 			$overseaUserVerifyForm = new OverseaUserVerifyForm();
 			if (isset($_POST['OverseaUserVerifyForm']) && $this->user->country_id > 1) {
@@ -235,6 +253,7 @@ class CompetitionController extends Controller {
 				'registration'=>$registration,
 				'overseaUserVerifyForm'=>$overseaUserVerifyForm,
 				'unmetEvents'=>$unmetEvents,
+				'canRegister'=>$canRegister,
 			));
 			Yii::app()->end();
 		}
@@ -249,7 +268,7 @@ class CompetitionController extends Controller {
 		if ($competition->isMultiLocation()) {
 			$model->location_id = null;
 		}
-		if (isset($_POST['Registration'])) {
+		if (isset($_POST['Registration']) && $canRegister) {
 			if (!$competition->fill_passport || $this->user->passport_type != User::NO) {
 				$model->attributes = $_POST['Registration'];
 				if (!isset($_POST['Registration']['events'])) {
@@ -284,6 +303,7 @@ class CompetitionController extends Controller {
 			'competition'=>$competition,
 			'model'=>$model,
 			'unmetEvents'=>$unmetEvents,
+			'canRegister'=>$canRegister,
 		));
 	}
 

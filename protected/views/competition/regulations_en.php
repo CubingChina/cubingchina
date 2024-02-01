@@ -8,7 +8,7 @@
     return $series->competition_id != $competition->id;
   }))); ?>
   <li>
-    Register for a Series:
+    Register for a <a href="https://cubing.com/faq#faq-12" target="_blank">Series</a>:
     <ol>
       <li>Competitors can only register for one competition in a Series.</li>
       <li>Successfully registered competitors can not register for <?php echo $otherCompetitions; ?>.</li>

@@ -1,4 +1,5 @@
 <?php $this->renderPartial('operation', $_data_); ?>
+<?php if ($canRegister): ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <?php $form = $this->beginWidget('ActiveForm', array(
     'id'=>'registration-form',
@@ -262,3 +263,4 @@ echo <<<EOT
 EOT
 ;
 Yii::app()->clientScript->registerScriptFile('/f/js/registration' . (DEV ? '' : '.min') . '.js?ver=20231002');
+endif;
