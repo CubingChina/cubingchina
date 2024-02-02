@@ -81,4 +81,5 @@ return array (
   'Your registration has some events in pending status. Please pay for them.' => '您有項目處於待支付狀態，請支付。',
   'Your registration is on the waiting list.' => '你當前在候補列表中。',
   'You successfully registered for {otherCompetition}. You can only register for one competition among {thisCompetition} and {otherCompetition}. Please cancel your registration for {otherCompetition} to continue.' => '你已成功報名{otherCompetition}。{thisCompetition}和{otherCompetition}是系列賽，你只能報名其中的一場比賽。請先取消{otherCompetition}的報名，才能繼續進行此次報名。',
+  'You are trying to pay for this competition in another device. Please don\'t use multiple devices to pay for the same competition.' => '你正在另一個設備中支付，請勿同時使用多個設備進行支付。',
 );

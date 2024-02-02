@@ -172,7 +172,26 @@ class PayController extends Controller {
 					break;
 			}
 			if (!isset($params['type'])) {
-				$params = $model->generateParams($channel, $isMobile, $this->isInWechat);
+				$redis = Yii::app()->cache->redis;
+				$session = Yii::app()->session;
+				$key = 'pay:params:' . $id;
+				$lockKey = $key . ':lock';
+				$expire = 300;
+				$expiredAt = time() + $expire + 1;
+				// prevent a params being feteched from different sessions
+				$lock = $redis->setNx($lockKey, $expiredAt);
+				$oldLock = $redis->getSet($lockKey, $expiredAt);
+				if ($lock || $redis->get($key) === $session->sessionID || $oldLock < time()) {
+					// expire in 5 minutes
+					$redis->expire($lockKey, $expire);
+					$redis->setEx($key, $expire, $session->sessionID);
+					$params = $model->generateParams($channel, $isMobile, $this->isInWechat);
+				} else {
+					$params = [
+						'type'=>'error',
+						'message'=>Yii::t('Registration', 'You are trying to pay for this competition in another device. Please don\'t use multiple devices to pay for the same competition.'),
+					];
+				}
 			}
 		}
 		$this->ajaxOk($params);
