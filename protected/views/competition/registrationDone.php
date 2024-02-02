@@ -1,4 +1,5 @@
 <?php $this->renderPartial('operation', $_data_); ?>
+<?php if ($canRegister): ?>
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>">
   <?php if ($registration->isPending()): ?>
   <div class="alert alert-success">
@@ -163,3 +164,4 @@ if ($registration->isCancellable()) {
 EOT
   );
 }
+endif;

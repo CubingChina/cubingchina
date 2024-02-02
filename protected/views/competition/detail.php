@@ -9,7 +9,12 @@
       ));?>
     </dd>
     <?php if ($competition->series): ?>
-    <dt><?php echo Yii::t('Competition', 'WCA Series'); ?></dt>
+    <dt>
+      <?php echo Yii::t('Competition', 'WCA Series'); ?>
+      <?php echo CHtml::link(Html::fontAwesome('question-circle'), 'https://cubing.com/faq#faq-12', array(
+        'target'=>'_blank',
+      )); ?>
+    </dt>
     <dd>
       <?php echo Yii::t('Competition', 'This competition is part of a series along with {series}.', array(
         '{series}'=>implode(Yii::t('common', ', '), array_map(function($series) {

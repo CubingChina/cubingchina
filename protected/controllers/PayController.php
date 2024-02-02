@@ -152,7 +152,28 @@ class PayController extends Controller {
 					break;
 			}
 		} else {
-			$params = $model->generateParams($channel, $isMobile, $this->isInWechat);
+			switch ($model->type) {
+				case Pay::TYPE_REGISTRATION:
+					$competition = $model->competition;
+					if ($competition->series) {
+						$otherRegistration = $this->user->getOtherSeriesRegistration($competition);
+						if ($otherRegistration) {
+							$params['type'] = 'error';
+							$params['message'] = Yii::t(
+								'Registration',
+								'You successfully registered for {otherCompetition}. You can only register for one competition among {thisCompetition} and {otherCompetition}. Please cancel your registration for {otherCompetition} to continue.',
+								[
+									'{otherCompetition}'=>$otherRegistration->competition->getAttributeValue('name'),
+									'{thisCompetition}'=>$competition->getAttributeValue('name'),
+								]
+							);
+						}
+					}
+					break;
+			}
+			if (!isset($params['type'])) {
+				$params = $model->generateParams($channel, $isMobile, $this->isInWechat);
+			}
 		}
 		$this->ajaxOk($params);
 	}

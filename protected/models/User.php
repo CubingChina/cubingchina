@@ -237,6 +237,23 @@ class User extends ActiveRecord {
 		return false;
 	}
 
+	public function getOtherSeriesRegistration($competition) {
+		$otherCompetitions = array_filter(
+			$competition->series->list,
+			function($series) use ($competition) {
+				return $series->competition_id != $competition->id;
+			}
+		);
+		$otherCompetitionIds = CHtml::listData($otherCompetitions, 'competition_id', 'competition_id');
+		// in theory, it can only has one registration amoung series competitions
+		$otherRegistration = Registration::model()->with('competition')->findByAttributes([
+			'competition_id'=>$otherCompetitionIds,
+			'user_id'=>$this->id,
+			'status'=>Registration::STATUS_ACCEPTED,
+		]);
+		return $otherRegistration;
+	}
+
 	public function isUnchecked() {
 		return $this->role == self::ROLE_UNCHECKED;
 	}

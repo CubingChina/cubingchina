@@ -19,13 +19,13 @@ if (paymentId) {
     $('.pay-channel').first().addClass('active')
     channel = $('.pay-channel.active').data('channel')
   }
-  $('.pay-channel').on('click', function() {
+  $('.pay-channel').on('click', function () {
     channel = $(this).data('channel')
     if (channel) {
       $(this).addClass('active').siblings().removeClass('active')
     }
   })
-  $('#pay').on('click', function() {
+  $('#pay').on('click', function () {
     $('#pay-tips').removeClass('hide')
     $(this).prop('disabled', true)
     $('.pay-channel').off('click')
@@ -37,7 +37,7 @@ if (paymentId) {
         channel: channel
       },
       dataType: 'json',
-      success: function(result) {
+      success: function (result) {
         const data = result.data
         switch (data.type) {
           case 'paid':
@@ -57,7 +57,7 @@ if (paymentId) {
             break
           case 'wx':
             const config = data.config
-            config.success = function(res) {
+            config.success = function (res) {
               if (res.errMsg === 'chooseWXPay:ok') {
                 checkStatus(paymentId)
               } else {
@@ -71,6 +71,9 @@ if (paymentId) {
             showOperations()
             window.name = 'redirected-' + paymentId
             submitForm(data)
+            break
+          case 'error':
+            alert(data.message)
             break
         }
       }
@@ -112,5 +115,3 @@ function showOperations() {
 function refresh() {
   location.href = location
 }
-
-

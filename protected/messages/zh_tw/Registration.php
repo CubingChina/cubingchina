@@ -80,4 +80,5 @@ return array (
   'Your registration has been updated successfully.' => '你的報名信息已更新成功。',
   'Your registration has some events in pending status. Please pay for them.' => '您有項目處於待支付狀態，請支付。',
   'Your registration is on the waiting list.' => '你當前在候補列表中。',
+  'You successfully registered for {otherCompetition}. You can only register for one competition among {thisCompetition} and {otherCompetition}. Please cancel your registration for {otherCompetition} to continue.' => '你已成功報名{otherCompetition}。{thisCompetition}和{otherCompetition}是系列賽，你只能報名其中的一場比賽。請先取消{otherCompetition}的報名，才能繼續進行此次報名。',
 );

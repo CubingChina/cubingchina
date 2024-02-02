@@ -345,12 +345,26 @@ class Registration extends ActiveRecord {
 	}
 
 	public function acceptNext() {
-		$nextRegistration = self::model()->findByAttributes([
+		$competition = $this->competition;
+		$waitingRegistrations = self::model()->findAllByAttributes([
 			'competition_id'=>$this->competition_id,
 			'status'=>self::STATUS_WAITING,
 		], [
 			'order'=>'accept_time ASC',
 		]);
+		$nextRegistration = null;
+		if ($competition->series) {
+			// check for series competitions
+			foreach ($waitingRegistrations as $nextRegistration) {
+				$otherRegistration = $nextRegistration->user->getOtherSeriesRegistration($competition);
+				if (!$otherRegistration) {
+					break;
+				}
+				$nextRegistration = null;
+			}
+		} else {
+			$nextRegistration = $waitingRegistrations[0];
+		}
 		if ($nextRegistration) {
 			$nextRegistration->accept();
 		}
@@ -362,6 +376,7 @@ class Registration extends ActiveRecord {
 		if ($this->isWaiting()) {
 			$status = self::STATUS_CANCELLED_TIME_END;
 		}
+		$isAccepted = $this->isAccepted();
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
@@ -379,8 +394,23 @@ class Registration extends ActiveRecord {
 				}
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
-			if (!$this->competition->isRegistrationFull()) {
+			$competition = $this->competition;
+			if (!$competition->isRegistrationFull()) {
 				$this->acceptNext();
+			}
+			// check for other series competitions' registrations
+			if ($isAccepted && $competition->series) {
+				$registrations = self::model()->with('competition')->findAllByAttributes([
+					'user_id'=>$this->user_id,
+					'competition_id'=>array_values(CHtml::listData($competition->series->list, 'competition_id', 'competition_id')),
+					'status'=>self::STATUS_WAITING,
+				]);
+				foreach ($registrations as $registration) {
+					if (!$registration->competition->isRegistrationFull()) {
+						$registration->accept();
+						break;
+					}
+				}
 			}
 			return true;
 		}

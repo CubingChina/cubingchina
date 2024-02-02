@@ -8,7 +8,7 @@
     return $series->competition_id != $competition->id;
   }))); ?>
   <li>
-    WCA系列赛报名要求：
+    <a href="https://cubing.com/faq#faq-12" target="_blank">WCA系列赛</a>报名要求：
     <ol>
       <li>比赛选手只能报名系列赛比赛中的一场。</li>
       <li>选手成功报名本场比赛后，选手将不能再报名<?php echo $otherCompetitions; ?>。</li>
