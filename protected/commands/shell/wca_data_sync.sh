@@ -1,5 +1,6 @@
 dir=`dirname "$0"`
 wca_home='https://www.worldcubeassociation.org'
+aws_home='https://s3.us-west-2.amazonaws.com/assets.worldcubeassociation.org'
 
 _log () {
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] $1"
@@ -52,7 +53,8 @@ fi
 echo $version >> last
 echo $date >> last
 
-lftp -c "set ssl:verify-certificate no; pget -n 20 '$wca_home/export/results/$zipname' -o $zipname"
+
+lftp -c "set ssl:verify-certificate no; pget -n 20 '$aws_home/export/results/$zipname' -o $zipname"
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"
