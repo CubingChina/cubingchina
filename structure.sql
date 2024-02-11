@@ -677,7 +677,7 @@ DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
   `sess_id` varbinary(128) NOT NULL,
   `sess_data` blob NOT NULL,
-  `sess_lifetime` mediumint(9) NOT NULL,
+  `sess_lifetime` int(10) NOT NULL,
   `sess_time` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -68,13 +68,13 @@ sed -ri 's/INSERT INTO `Results`/INSERT INTO `Results` (`competitionId`,`eventId
 sed -ri 's/INSERT INTO `RanksSingle`/INSERT INTO `RanksSingle` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 sed -ri 's/INSERT INTO `RanksAverage`/INSERT INTO `RanksAverage` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 _log "check for database"
-mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8"
+mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
 _log "import structure"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql
+mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql || exit
 _log "import data"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql
+mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql || exit
 _log "import additional"
-mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql
+mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql || exit
 rm -f export.html* WCA_export*
 _log "build some data and clean cache"
 echo -n $db_num > $db_config
