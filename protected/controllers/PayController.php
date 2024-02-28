@@ -180,8 +180,21 @@ class PayController extends Controller {
 				$expiredAt = time() + $expire + 1;
 				// prevent a params being feteched from different sessions
 				$lock = $redis->setNx($lockKey, $expiredAt);
-				$oldLock = $redis->set($lockKey, $expiredAt, ['NX', 'GET', 'ex'=>$expire]);
-				if ($lock || $redis->get($key) === $session->sessionID || $oldLock < time()) {
+				// if it is locked, check if it is locked by the current session
+				if (!$lock) {
+					// check session id
+					if ($redis->get($key) === $session->sessionID) {
+						$lock = true;
+					} else {
+						$oldLock = $redis->get($lockKey);
+						// if the lock is expired, try to get the lock
+						if ($oldLock && $oldLock < time()) {
+							$redis->del($lockKey);
+							$lock = $redis->setNx($lockKey, $expiredAt);
+						}
+					}
+				}
+				if ($lock) {
 					// expire in 5 minutes
 					$redis->expire($lockKey, $expire);
 					$redis->setEx($key, $expire, $session->sessionID);
