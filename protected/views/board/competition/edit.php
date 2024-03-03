@@ -718,7 +718,6 @@ Yii::app()->clientScript->registerScript('competition',
       e.preventDefault();
     }
   }).on('changeDate', '#Competition_date', function() {
-    makeFeeTips()
     var date = $(this).datetimepicker('getDate');
     $('#Competition_end_date').datetimepicker('setStartDate', date);
     date.setDate(date.getDate() - 1);
@@ -726,6 +725,7 @@ Yii::app()->clientScript->registerScript('competition',
     date.setMinutes(59);
     $('#Competition_reg_start, #Competition_qualifying_end_time').datetimepicker('setEndDate', date);
     $('#Competition_reg_end').datetimepicker('setEndDate', date);
+    makeFeeTips()
   }).on('changeDate', '#Competition_reg_start', function() {
     var date = $(this).datetimepicker('getDate');
     $('#Competition_second_stage_date, #Competition_qualifying_end_time, #Competition_cancellation_end_time').datetimepicker('setStartDate', new Date(+date + 86400000 * 7));
