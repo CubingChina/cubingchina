@@ -48,4 +48,7 @@ return array (
   'Sport Stacking'=>'竞技叠杯',
   'Funny Event'=>'趣味项目',
   '3x3x3 Multi-Blind Puzzle Submission'=>'多盲提交魔方',
+  '3x3x3 Blindfolded Check-in'=>'三盲检录',
+  '4x4x4 Blindfolded Check-in'=>'四盲检录',
+  '5x5x5 Blindfolded Check-in'=>'五盲检录',
 );
