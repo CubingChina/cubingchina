@@ -117,6 +117,21 @@
   <li>
     Competitors in blindfolded events must provide their own blindfold.
   </li>
+  <?php if ($competition->hasSchedule('333bfcheck')): ?>
+  <li>
+    Competitors in 3x3x3 Blindfolded must check-in and wait in the waiting area within the specified time. Then the competitors are divided into groups. Competitor who miss the check-in will be disqualified from the event.
+  </li>
+  <?php endif ;?>
+  <?php if ($competition->hasSchedule('444bfcheck')): ?>
+  <li>
+    Competitors in 4x4x4 Blindfolded must check-in and wait in the waiting area within the specified time. Then the competitors are divided into groups. Competitor who miss the check-in will be disqualified from the event.
+  </li>
+  <?php endif ;?>
+  <?php if ($competition->hasSchedule('555bfcheck')): ?>
+  <li>
+    Competitors in 5x5x5 Blindfolded must check-in and wait in the waiting area within the specified time. Then the competitors are divided into groups. Competitor who miss the check-in will be disqualified from the event.
+  </li>
+  <?php endif ;?>
   <?php endif; ?>
   <li>
     The competition schedule shown on the competition website is an initial estimate. At the end of registration, the organizer may adjust the schedule, cutoffs, or time limits, based on the number of registered competitors. The schedule may be adjusted during the course of the competition. Competitors should be aware of notices made during the competition to avoid missing events.

@@ -799,6 +799,12 @@ class Competition extends ActiveRecord {
 		)) > 0;
 	}
 
+	public function hasSchedule($event) {
+		return array_filter($this->schedule, function($item) use ($event) {
+			return $item['event'] === $event;
+		}) !== [];
+	}
+
 	public function getTicketIds() {
 		return array_map(function($ticket) {
 			return $ticket->id;

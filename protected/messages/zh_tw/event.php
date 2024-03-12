@@ -48,4 +48,7 @@ return array (
   'Sport Stacking'=>'競技疊杯',
   'Funny Event'=>'趣味項目',
   '3x3x3 Multi-Blind Puzzle Submission'=>'3x3x3多顆盲解提交方塊',
+  '3x3x3 Blindfolded Check-in'=>'三盲檢錄',
+  '4x4x4 Blindfolded Check-in'=>'四盲檢錄',
+  '5x5x5 Blindfolded Check-in'=>'五盲檢錄',
 );

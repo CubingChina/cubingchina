@@ -164,6 +164,9 @@ class Events extends ActiveRecord {
 			'lucky'=>'Lucky Draw',
 			'ceremony'=>'Award Ceremony',
 			'submission'=>'3x3x3 Multi-Blind Puzzle Submission',
+			'333bfcheck'=>'3x3x3 Blindfolded Check-in',
+			'444bfcheck'=>'4x4x4 Blindfolded Check-in',
+			'555bfcheck'=>'5x5x5 Blindfolded Check-in',
 		);
 	}
 
