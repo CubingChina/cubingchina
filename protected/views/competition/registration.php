@@ -10,7 +10,7 @@
     <p><b><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></b></p>
     <p>
       <i class="fa fa-rmb"></i><span id="entry-fee"><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY); ?></span>
-      <?php if ($competition->isWCACompetition() && $competition->id >= Competition::WCA_DUES_START): ?>
+      <?php if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START): ?>
       <?php echo Yii::t('Competition', '(includes {dues} for WCA Dues)', [
         '{dues}' => '<i class="fa fa-rmb"></i>' . $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST),
       ]); ?>

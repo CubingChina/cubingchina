@@ -143,7 +143,7 @@
                   <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
                   <td>
                     　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?>
-                    <?php if ($competition->isWCACompetition() && $competition->id >= Competition::WCA_DUES_START): ?>
+                    <?php if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START): ?>
                     <div>　<?php echo Yii::t('Competition', '(includes {dues} for WCA Dues)', [
                       '{dues}' => '<i class="fa fa-rmb"></i>' . $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST),
                     ]); ?></div>
@@ -152,7 +152,7 @@
                   <?php if ($competition->hasSecondStage): ?>
                   <td>
                     　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_SECOND); ?>
-                    <?php if ($competition->isWCACompetition() && $competition->id >= Competition::WCA_DUES_START): ?>
+                    <?php if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START): ?>
                     <div>　<?php echo Yii::t('Competition', '(includes {dues} for WCA Dues)', [
                       '{dues}' => '<i class="fa fa-rmb"></i>' . $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST),
                     ]); ?></div>
@@ -162,7 +162,7 @@
                   <?php if ($competition->hasThirdStage): ?>
                   <td>
                     　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_ENTRY, Competition::STAGE_THIRD); ?>
-                    <?php if ($competition->isWCACompetition() && $competition->id >= Competition::WCA_DUES_START): ?>
+                    <?php if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START): ?>
                     <div>　<?php echo Yii::t('Competition', '(includes {dues} for WCA Dues)', [
                       '{dues}' => '<i class="fa fa-rmb"></i>' . $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST),
                     ]); ?></div>
@@ -171,7 +171,7 @@
                   <?php endif; ?>
                 </tr>
                 <?php endif; ?>
-                <?php if ($competition->isWCACompetition() && $competition->id >= Competition::OLD_WCA_DUES_START && $competition->id <= Competition::OLD_WCA_DUES_END): ?>
+                <?php if ($competition->isWCACompetition() && $competition->date >= Competition::OLD_WCA_DUES_START && $competition->date <= Competition::OLD_WCA_DUES_END): ?>
                 <tr>
                   <td><?php echo Yii::t('Competition', 'WCA Dues'); ?></td>
                   <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES, Competition::STAGE_FIRST); ?></td>
