@@ -51,6 +51,7 @@
                 'value'=>$ticket->id,
                 'uncheckValue'=>null,
                 'disabled'=>!$ticket->isAvailable(),
+                'checked'=>$model->ticket_id == $ticket->id || count($tickets) == 1,
               ]); ?>
               <label for="ticket-<?php echo $ticket->id; ?>">
                 <h4><?php echo $ticket->getAttributeValue('name'); ?></h4>
