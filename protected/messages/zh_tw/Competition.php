@@ -133,4 +133,6 @@ return array (
   '{type} < {moves} moves' => '{type} < {moves}步',
   '{type} < {time}' => '{type} < {time}',
   '{type} > {points} point(s)' => '{type} > {points}分',
+  'Only competitors can buy tickets.' => '只有選手可以購買入場券。',
+  'You can only buy {num} tickets.' => '您最多只能購買{num}張入場券。',
 );

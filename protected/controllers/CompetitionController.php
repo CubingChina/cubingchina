@@ -350,6 +350,12 @@ class CompetitionController extends Controller {
 	public function actionTicket() {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
+		$registration = Registration::getUserRegistration($competition->id, $user->id);
+		$tickets = $competition->tickets;
+		if ($tickets !== [] && $tickets[0]->competitors_only && ($registration === null || !$registration->isAccepted())) {
+			Yii::app()->user->setFlash('danger', Yii::t('Competition', 'Only competitors can buy tickets.'));
+			$this->redirect($competition->getUrl());
+		}
 		$id = $this->iGet('id');
 		if ($id && ($userTicket = UserTicket::model()->findByPk($id)) !== null && $userTicket->isEditable()) {
 			if ($user->isAdministrator() || $userTicket->user_id == $user->id) {
@@ -389,6 +395,15 @@ class CompetitionController extends Controller {
 		if (isset($_POST['UserTicket'])) {
 			$model->attributes = $_POST['UserTicket'];
 			$model->calculateFee();
+			if ($model->ticket->purchase_limit > 0) {
+				$userTickets = $this->user->getTickets($competition, UserTicket::STATUS_PAID);
+				if (count($userTickets) >= $model->ticket->purchase_limit) {
+					Yii::app()->user->setFlash('danger', Yii::t('Competition', 'You can only buy {num} tickets.', [
+						'{num}'=>$model->ticket->purchase_limit,
+					]));
+					$this->redirect($competition->getUrl('ticket'));
+				}
+			}
 			if ($model->save()) {
 				$model->createPayment();
 				$this->redirect($competition->getUrl('ticket', ['id'=>$model->id]));
