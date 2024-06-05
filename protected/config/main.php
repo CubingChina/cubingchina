@@ -318,7 +318,7 @@ $config = [
 			"Rubik's Cube",
 			'Speedcubing',
 		],
-		'weiboSharePic'=>'https://cubing.com/f/images/logo2x.png',
+		'weiboSharePic'=>'https://cubing.com/f/images/logo@2x.png',
 		'staticPath'=>PUBLIC_PATH . '/static/',
 		'staticUrlPrefix'=>DEV ? '/static/' : 'https://i.cubing.com/',
 		'avatar'=>[
