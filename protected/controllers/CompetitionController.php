@@ -458,6 +458,7 @@ class CompetitionController extends Controller {
 	private function setCompetitionNavibar($competition) {
 		$showResults = $competition->hasResults && $this->id != 'live';
 		$showLive = $competition->live == Competition::YES && !$competition->canRegister();
+		$showOthers = !$competition->special;
 		$navibar = array(
 			array(
 				'label'=>Html::fontAwesome('home', 'a') . Yii::t('Competition', 'Cubing China'),
@@ -479,6 +480,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-orange',
 				),
+				'visible'=>$showOthers,
 			),
 			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
@@ -486,6 +488,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-yellow',
 				),
+				'visible'=>$showOthers,
 			),
 			array(
 				'label'=>Html::fontAwesome('taxi', 'a') . Yii::t('Competition', 'Travel'),
@@ -493,6 +496,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-green',
 				),
+				'visible'=>$showOthers,
 			),
 			array(
 				'label'=>Html::fontAwesome('users', 'a') . Yii::t('Competition', 'Competitors'),
