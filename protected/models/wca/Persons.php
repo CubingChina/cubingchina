@@ -372,6 +372,9 @@ class Persons extends ActiveRecord {
 				$temp = $resultB->competition->day - $resultA->competition->day;
 			}
 			if ($temp == 0) {
+				$temp = strcmp($resultA->competitionId, $resultB->competitionId);
+			}
+			if ($temp == 0) {
 				$temp = $resultA->event->rank - $resultB->event->rank;
 			}
 			if ($temp == 0) {
