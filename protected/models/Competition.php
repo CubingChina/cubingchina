@@ -2673,6 +2673,10 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkName() {
+		// don't check anything for special competitions
+		if ($this->special) {
+			return;
+		}
 		if (!preg_match('{^[\'.\-a-z0-9& ]+$}i', $this->name, $matches)) {
 			$this->addError('name', '英文名只能由字母、数字、空格、短杠-、点.和单引号\'组成');
 		}
@@ -2707,6 +2711,7 @@ class Competition extends ActiveRecord {
 
 	public function checkLocations() {
 		$locations = $this->locations;
+		$special = $this->special;
 		if (isset($locations[0]['province_id'])) {
 			return;
 		}
@@ -2729,53 +2734,53 @@ class Competition extends ActiveRecord {
 				if ($locations['country_id'][$key] != 1) {
 					$provinceId = 0;
 					$locations['city_id'][$key] = 0;
-					if (empty($locations['fee'][$key])) {
+					if (empty($locations['fee'][$key]) && !$special) {
 						$this->addError('locations.fee.' . $index, '非大陆地区请填写费用！');
 					}
 					if ($locations['country_id'][$key] > 4) {
-						if (empty($locations['city_name'][$key])) {
+						if (empty($locations['city_name'][$key]) && !$special) {
 							$this->addError('locations.city_name.' . $index, '非大陆及港澳台地区请填写英文城市！');
 						}
-						if (empty($locations['city_name_zh'][$key])) {
+						if (empty($locations['city_name_zh'][$key]) && !$special) {
 							$this->addError('locations.city_name_zh.' . $index, '非大陆及港澳台地区请填写中文城市！');
 						}
 					}
-				} elseif (!empty($locations['fee'][$key]) && !ctype_digit($locations['fee'][$key])) {
+				} elseif (!empty($locations['fee'][$key]) && !ctype_digit($locations['fee'][$key]) && !$special) {
 					$this->addError('locations.fee.' . $index, '大陆地区请填写整数费用！');
 				}
 				if (empty($locations['delegate_id'][$key])) {
-					if (empty($locations['delegate_name'][$key])) {
+					if (empty($locations['delegate_name'][$key]) && !$special) {
 						$this->addError('locations.delegate_name.' . $index, '必须选择一个代表或者手动填写！');
 					}
-					if (empty($locations['delegate_email'][$key])) {
+					if (empty($locations['delegate_email'][$key]) && !$special) {
 						$this->addError('locations.delegate_email.' . $index, '必须选择一个代表或者手动填写！');
 					}
 				}
 			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
-				if (empty($provinceId)) {
+				if (empty($provinceId) && !$special) {
 					$this->addError('locations.province_id.' . $index, '省份不能为空');
 				}
-				if (empty($locations['city_id'][$key])) {
+				if (empty($locations['city_id'][$key]) && !$special) {
 					$this->addError('locations.city_id.' . $index, '城市不能为空');
 				}
 			}
 			$locations['venue'][$key] = trim($locations['venue'][$key]);
-			if ($locations['venue'][$key] == '') {
+			if ($locations['venue'][$key] == '' && !$special) {
 				$this->addError('locations.venue.' . $index, '英文地址不能为空');
 			}
 			// check capitalization, comma and space
-			if (strpos($locations['venue'][$key], '，') !== false) {
+			if (strpos($locations['venue'][$key], '，') !== false && !$special) {
 				$this->addError('locations.venue.' . $index, '英文地址请使用半角逗号');
 			}
 			if (!$this->multi_countries) {
 				$venues = explode(',', $locations['venue'][$key]);
 				foreach ($venues as $k=>$venue) {
-					if (!preg_match('{^[0-9A-Z]}', trim($venue))) {
+					if (!preg_match('{^[0-9A-Z]}', trim($venue)) && !$special) {
 						$this->addError('locations.venue.' . $index, '首字母请大写');
 						break;
 					}
-					if ($k > 0 && $venue[0] !== ' ') {
+					if ($k > 0 && $venue[0] !== ' ' && !$special) {
 						$this->addError('locations.venue.' . $index, '逗号之后请添加空格');
 						break;
 					}
@@ -2783,13 +2788,13 @@ class Competition extends ActiveRecord {
 			}
 
 			$locations['venue_zh'][$key] = trim($locations['venue_zh'][$key]);
-			if ($locations['venue_zh'][$key] == '') {
+			if ($locations['venue_zh'][$key] == '' && !$special) {
 				$this->addError('locations.venue_zh.' . $index, '中文地址不能为空');
 			}
-			if ($locations['longitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['longitude'][$key])) {
+			if ($locations['longitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['longitude'][$key]) && !$special) {
 				$this->addError('locations.longitude.' . $index, '经度无效！');
 			}
-			if ($locations['latitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['latitude'][$key])) {
+			if ($locations['latitude'][$key] && !preg_match('{^-?\d+(\.\d+)?$}', $locations['latitude'][$key]) && !$special) {
 				$this->addError('locations.latitude.' . $index, '纬度无效！');
 			}
 			$temp[] = array(

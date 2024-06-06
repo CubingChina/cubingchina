@@ -34,10 +34,12 @@
     <?php if ($competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Date'); ?></dt>
     <dd><?php echo $competition->getDisplayDate(); ?></dd>
+    <?php if (!$competition->special): ?>
     <dt><?php echo Yii::t('Competition', 'Location'); ?></dt>
     <dd>
       <?php $this->renderPartial('locations', $_data_); ?>
     </dd>
+    <?php endif; ?>
     <?php endif; ?>
     <?php if (!$competition->complex_multi_location): ?>
     <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
