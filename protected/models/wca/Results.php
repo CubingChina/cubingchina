@@ -401,6 +401,9 @@ class Results extends ActiveRecord {
 			if ($time == 99999) {
 				return 'unknown';
 			}
+			if ($time > 3600) {
+				return floor($time / 60) . ':' . gmdate('s', $time);
+			}
 			if ($time == 3600) {
 				return '60:00';
 			}
