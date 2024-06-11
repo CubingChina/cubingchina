@@ -1185,7 +1185,7 @@ class Competition extends ActiveRecord {
 		}
 		$columns = array();
 		foreach ($schedules[0] as $key=>$value) {
-			if ($key == 'id' || $key == 'event' || $key == 'round' || !is_string($value)) {
+			if ($key == 'id' || $key == 'event' || $key == 'round' || gettype($value) === 'object') {
 				continue;
 			}
 			$width = $this->getScheduleColumnWidth($key);
