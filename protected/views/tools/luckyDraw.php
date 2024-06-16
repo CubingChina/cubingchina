@@ -3,7 +3,7 @@
     <div class="pull-right">
       <a href="/" class="pull-right"><?php echo Yii::t('common', 'Cubing China'); ?></a>
       <div class="text-right">
-        <button id="reset" class="btn btn-xs btn-danger"><?php echo Yii::t('common', 'Reset'); ?></button>
+        <button id="enter" class="btn btn-xs btn-success none">Enter</button>
         <button id="settings" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#drawModal"><?php echo Yii::t('common', 'Settings'); ?></button>
       </div>
     </div>
@@ -12,18 +12,6 @@
       <span id="title"><?php echo $this->pageTitle; ?></span>
     </h1>
     <div class="clearfix"></div>
-    <hr style="margin: 10px 0 0">
-    <div class="row">
-      <div class="col-sm-2 text-right">
-        <button id="draw" class="btn btn-success"><?php echo Yii::t('common', 'Lucky Draw'); ?></button>
-      </div>
-      <div class="col-sm-8">
-        <canvas id="canvas" width="600" height="600" class="center-block"></canvas>
-      </div>
-      <div class="col-sm-2">
-        <ul id="drawn" style="height:600px;overflow-y:auto;font-size:16px" class="list-unstyled"></ul>
-      </div>
-    </div>
   </div>
 </div>
 <div class="modal fade" id="drawModal" tabindex="-1" role="dialog" aria-labelledby="drawModalTitle" aria-hidden="true">
@@ -61,7 +49,28 @@
     </div>
   </div>
 </div>
+
+<div id="menu">
+  <div id="lotteryBar" class="none">
+    <div class="fixed-bar">
+      <button id="lottery" class="fixed-btn">Start</button>
+      <button id="reset" class="fixed-btn"><?php echo Yii::t('common', 'Reset'); ?></button>
+    </div>
+  </div>
+</div>
+<div id="luckydraw-container"></div>
+<div id="drawn-container">
+  <div class="title none">
+    已抽出名单
+  </div>
+  <div class="list"></div>
+</div>
 <?php
-Yii::app()->clientScript->registerScriptFile('/f/plugins/tagcanvas/tagcanvas.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/store+json2.min.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/three.min.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/tween.min.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/TrackballControls.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/CSS3DRenderer.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js?20240616');
+Yii::app()->clientScript->registerCssFile('/f/css/animate.min.css');
+Yii::app()->clientScript->registerCssFile('/f/css/luckyDraw.css?20240616');
