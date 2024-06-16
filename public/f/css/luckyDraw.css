@@ -24,6 +24,32 @@ a {
   margin: 0 15vh;
 }
 
+#drawn-container {
+  z-index: 30;
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  max-height: 300px;
+  color: white;
+  background-color: rgba(0, 127, 127, 0.7);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+  border: 1px solid rgba(127, 255, 255, 0.25);
+}
+
+#drawn-container .title {
+  font-weight: bold;
+  font-size: 20px;
+  padding: 5px 12px;
+}
+
+#drawn-container .user {
+  padding: 5px 12px;
+}
+
+#drawn-container .user:first-child {
+  font-size: 18px;
+}
+
 #menu {
   z-index: 4;
   margin-left: 15vh;
@@ -569,4 +595,12 @@ a {
     transform: scale(0.9);
     opacity: 0.8;
   }
+}
+
+h1 {
+  font-size: 26px;
+}
+
+#title {
+  color: white;
 }

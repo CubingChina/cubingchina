@@ -3,6 +3,7 @@
     <div class="pull-right">
       <a href="/" class="pull-right"><?php echo Yii::t('common', 'Cubing China'); ?></a>
       <div class="text-right">
+        <button id="enter" class="btn btn-xs btn-success none">Enter</button>
         <button id="settings" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#drawModal"><?php echo Yii::t('common', 'Settings'); ?></button>
       </div>
     </div>
@@ -49,23 +50,27 @@
   </div>
 </div>
 
-
 <div id="menu">
-  <button id="enter">Enter</button>
   <div id="lotteryBar" class="none">
     <div class="fixed-bar">
-      <button id="lottery" class="fixed-btn"><?php echo Yii::t('common', 'Lucky Draw'); ?></button>
+      <button id="lottery" class="fixed-btn">Start</button>
       <button id="reset" class="fixed-btn"><?php echo Yii::t('common', 'Reset'); ?></button>
     </div>
   </div>
 </div>
 <div id="luckydraw-container"></div>
+<div id="drawn-container">
+  <div class="title none">
+    已抽出名单
+  </div>
+  <div class="list"></div>
+</div>
 <?php
 Yii::app()->clientScript->registerScriptFile('/f/js/store+json2.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/three.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/tween.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/TrackballControls.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/CSS3DRenderer.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js');
+Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js?20240616');
 Yii::app()->clientScript->registerCssFile('/f/css/animate.min.css');
-Yii::app()->clientScript->registerCssFile('/f/css/luckyDraw.css');
+Yii::app()->clientScript->registerCssFile('/f/css/luckyDraw.css?20240616');

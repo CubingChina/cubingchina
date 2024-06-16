@@ -16,11 +16,11 @@
         store.set(this.ALL_USERS_KEY, this.allUsers);
       }
       const storedDrawnUsers = store.get(this.DRAWN_USERS_KEY) || [];
-      for (const name of this.allUsers) {
-        if (storedDrawnUsers.includes(name)) {
-          this.drawnUsers.push(name);
+      for (const user of this.allUsers) {
+        if (storedDrawnUsers.find(u => u.name === user.name)) {
+          this.drawnUsers.push(user);
         } else {
-          this.users.push(name);
+          this.users.push(user);
         }
       }
     }
@@ -60,55 +60,14 @@
       return this.drawnUsers;
     }
 
+    getLastDrawn() {
+      return this.drawnUsers[this.drawnUsers.length - 1];
+    }
+
     getAll() {
       return this.allUsers;
     }
   }
-  $(doc).on('click', '#settings', function () {
-    $('#luckyDrawNames').val(luckyDraw.getAll().map(user => {
-      return `${user.index ? user.index + ': ' : ''}${user.name}`
-    }).join('\n'));
-  }).on('click', '#save', function () {
-    var users = $('#luckyDrawNames').val().split('\n').filter(function (name) {
-      return $.trim(name) != '';
-    }).map(function (user) {
-      const [index, name] = user.split(':');
-      if (!name) {
-        return {
-          name: user.trim(),
-        }
-      }
-      return {
-        name: name.trim(),
-        index: index.trim(),
-        number: `No.${index.trim()}`,
-      }
-    });
-    const title = $('#luckyDrawTitle').val();
-    const logo = $('#luckyDrawLogo').val();
-    luckyDraw.update(users);
-    setTitle(title);
-    setLogo(logo);
-    $('#drawModal').modal('hide');
-    restart();
-  }).on('change', '#luckyDrawCompetition', function () {
-    var name = $(this).find('option:selected').text();
-    $('#luckyDrawTitle').val(name);
-    var id = $(this).val();
-    if (id) {
-      $.ajax({
-        type: 'get',
-        url: $(this).data('url'),
-        data: {
-          id: id,
-        },
-        dataType: 'json',
-        success: function (json) {
-          $('#luckyDrawNames').val(json.data.map((name, index) => `${index + 1}: ${name}`).join('\n'));
-        }
-      });
-    }
-  });
   const NUMBER_MATRIX = [
     [
       // 0
@@ -250,7 +209,7 @@
 
   const luckyDraw = new LuckyDraw();
   const container = $('#luckydraw-container')
-  let status = 0;
+  const drawnContainer = $('#drawn-container')
   const ROTATE_TIME = 3000;
   const ROTATE_LOOP = 1000;
 
@@ -280,10 +239,10 @@
 
   let selectedCardIndex = [],
     isLotting = false,
+    isTransforming = false,
     currentLuckys = [];
   setTitle(getTitle());
   setLogo(getLogo());
-  restart();
   if (luckyDraw.getAll().length === 0) {
     $('#drawModal').modal('show');
   }
@@ -301,6 +260,14 @@
     initCards();
     animate();
     shineCard();
+    initDrawn();
+  }
+
+  function initDrawn() {
+    console.log(luckyDraw.getDrawn())
+    for (const user of luckyDraw.getDrawn()) {
+      addDrawn(user);
+    }
   }
 
   function initCards() {
@@ -392,13 +359,63 @@
    * 事件绑定
    */
   function bindEvent() {
-    document.querySelector('#menu').addEventListener('click', function (e) {
+
+    $(doc).on('click', '#settings', function () {
+      $('#luckyDrawNames').val(luckyDraw.getAll().map(user => {
+        return `${user.index ? user.index + ': ' : ''}${user.name}`
+      }).join('\n'));
+    }).on('click', '#save', function () {
+      var users = $('#luckyDrawNames').val().split('\n').filter(function (name) {
+        return $.trim(name) != '';
+      }).map(function (user) {
+        const [index, name] = user.split(':');
+        if (!name) {
+          return {
+            name: user.trim(),
+          }
+        }
+        return {
+          name: name.trim(),
+          index: index.trim(),
+          number: `No.${index.trim()}`,
+        }
+      });
+      const title = $('#luckyDrawTitle').val();
+      const logo = $('#luckyDrawLogo').val();
+      luckyDraw.update(users);
+      setTitle(title);
+      setLogo(logo);
+      $('#drawModal').modal('hide');
+      restart();
+    }).on('change', '#luckyDrawCompetition', function () {
+      var name = $(this).find('option:selected').text();
+      $('#luckyDrawTitle').val(name);
+      var id = $(this).val();
+      if (id) {
+        $.ajax({
+          type: 'get',
+          url: $(this).data('url'),
+          data: {
+            id: id,
+          },
+          dataType: 'json',
+          success: function (json) {
+            $('#luckyDrawNames').val(json.data.map((name, index) => `${index + 1}: ${name}`).join('\n'));
+          }
+        });
+      }
+    });
+
+    document.addEventListener('click', function (e) {
       e.stopPropagation();
       // 如果正在抽奖，则禁止一切操作
       if (isLotting) {
         if (e.target.id === 'lottery') {
           rotateObj.stop();
         }
+        return false;
+      }
+      if (isTransforming) {
         return false;
       }
 
@@ -419,13 +436,14 @@
         // 重置
         case 'reset':
           let doREset = window.confirm(
-            '是否确认重置数据，重置后，当前已抽的奖项全部清空？'
+            '是否确认重置数据，重置后，当前已抽的名单全部清空？'
           );
           if (!doREset) {
             return;
           }
           addHighlight();
           resetCard();
+          resetDrawn();
           // 重置所有数据
           currentLuckys = [];
           luckyDraw.reset();
@@ -435,8 +453,6 @@
         // 抽奖
         case 'lottery':
           setLotteryStatus(true);
-          // 每次抽奖前先保存上一次的抽奖数据
-          saveData();
           //更新剩余抽奖数目的数据显示
           resetCard().then(res => {
             // 抽奖
@@ -448,7 +464,6 @@
           if (currentLuckys.length === 0) {
             return;
           }
-          setErrorData(currentLuckys);
           setLotteryStatus(true);
           // 重新抽奖则直接进行抽取，不对上一次的抽奖数据进行保存
           // 抽奖
@@ -466,14 +481,16 @@
   function switchScreen(type) {
     switch (type) {
       case 'enter':
-        btns.enter.classList.remove('none');
         btns.lotteryBar.classList.add('none');
-        transform(targets.table, 2000);
+        transform(targets.table, 2000).then(() => {
+          btns.enter.classList.remove('none');
+        });
         break;
       default:
         btns.enter.classList.add('none');
-        btns.lotteryBar.classList.remove('none');
-        transform(targets.sphere, 2000);
+        transform(targets.sphere, 2000).then(() => {
+          btns.lotteryBar.classList.remove('none');
+        });
         break;
     }
   }
@@ -528,6 +545,7 @@
    */
   function transform(targets, duration) {
     // TWEEN.removeAll();
+    isTransforming = true;
     for (var i = 0; i < threeDCards.length; i++) {
       var object = threeDCards[i];
       var target = targets[i];
@@ -557,13 +575,22 @@
         .start();
     }
 
-    new TWEEN.Tween(this)
-      .to({}, duration * 2)
-      .onUpdate(render)
-      .start();
+    const promise = new Promise((resolve) => {
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(render)
+        .start()
+        .onComplete(() => {
+          isTransforming = false;
+          resolve()
+        });
+    })
+
+    return promise
   }
 
   function rotateBall() {
+    isTransforming = true;
     return new Promise((resolve, reject) => {
       scene.rotation.x = 0;
       scene.rotation.y = 0;
@@ -589,6 +616,8 @@
           }, 1000)
             .onUpdate(render)
             .onComplete(() => {
+              isTransforming = false;
+              btns.lottery.innerHTML = 'Start';
               resolve();
             })
             .start();
@@ -701,9 +730,7 @@
       .onComplete(() => {
         // 动画结束后可以操作
         setLotteryStatus();
-        console.log(2222)
       });
-    console.log(111)
   }
 
   /**
@@ -758,10 +785,31 @@
     });
   }
 
+  function addDrawn(user) {
+    drawnContainer.find('.title').removeClass('none')
+    const list = drawnContainer.find('.list')
+    if (list.children().length === luckyDraw.getDrawn().length) {
+      return
+    }
+    const element = createElement('user')
+    element.appendChild(createElement('name', `${user.number ? user.number + ' ' : ''}${user.name}`));
+    list.prepend(element);
+  }
+
+  function resetDrawn() {
+    drawnContainer.find('.title').addClass('none')
+    drawnContainer.find('.list').empty();
+  }
+
   /**
    * 抽奖
    */
   function lottery() {
+    btns.lottery.innerHTML = 'Stop';
+    const lastDrawn = luckyDraw.getLastDrawn();
+    if (lastDrawn) {
+      addDrawn(lastDrawn);
+    }
     rotateBall().then(() => {
       // 将之前的记录置空
       currentLuckys = [];
@@ -816,7 +864,7 @@
   function shineCard() {
     let maxCard = ROW_COUNT * COLUMN_COUNT,
       maxUser;
-    let shineCard = Math.max(maxCard, 20 + random(maxCard / 10));
+    let shineCard = Math.min(maxCard, 20 + random(Math.sqrt(maxCard) | 0));
 
     setInterval(() => {
       // 正在抽奖停止闪烁
@@ -834,7 +882,7 @@
         shine(cardIndex);
         changeCard(cardIndex, luckyDraw.users[index]);
       }
-    }, 500);
+    }, 100);
   }
 
   function createHighlight() {
@@ -858,23 +906,8 @@
 
     return highlight;
   }
-  function processDraw() {
-    if (luckyDraw.getRemained().length == 0) {
-      return;
-    }
-    switch (status) {
-      case 0:
-        status = 1;
-        break;
-      case 1:
-        status = 2;
-        const next = luckyDraw.next();
-        status = 0;
-        break;
-    }
-  }
   function restart() {
-    status = 0;
+    window.location.reload();
   }
   function setTitle(title) {
     $('#title').text(title);
