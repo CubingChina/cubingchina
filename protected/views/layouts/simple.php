@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-siteapp">
   <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-  <link rel="icon" sizes="196x196" href="/f/images/10years/icon.png">
-  <link rel="apple-touch-icon" href="/f/images/10years/icon.png">
-  <link rel="apple-touch-icon-precomposed" sizes="128x128" href="/f/images/10years/icon.png">
+  <link rel="icon" sizes="196x196" href="/f/images/icon196.png">
+  <link rel="apple-touch-icon" href="/f/images/icon196.png">
+  <link rel="apple-touch-icon-precomposed" sizes="128x128" href="/f/images/icon196.png">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo CHtml::normalizeUrl(array('/feed/index')); ?>">
   <meta name="theme-color" content="#6091ba">
   <meta name="mobile-web-app-capable" content="yes">

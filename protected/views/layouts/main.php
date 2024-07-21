@@ -3,7 +3,7 @@
   <header class="header">
     <div class="header-main container">
       <h1 class="logo col-md-4 col-sm-4">
-        <a href="<?php echo $this->createUrl('/site/index'); ?>"><img id="logo" src="/f/images/10years/logo.png" alt="Cubing China 10th Anniversary" width="220"></a>
+        <a href="<?php echo $this->createUrl('/site/index'); ?>"><img id="logo" src="/f/images/logo<?php if (Yii::app()->language === 'en') echo '-en'; ?>.png" alt="Cubing China" width="220"></a>
       </h1><!--//logo-->
       <div class="info col-md-8 col-sm-8 hidden-xs">
         <ul class="menu-top navbar-right">
