@@ -95,8 +95,7 @@ class Results extends ActiveRecord {
 			}
 			$rows = array();
 			$command
-				->group('personId')
-				->order('best ASC')
+				->order('best ASC, personId ASC')
 				->limit(100, ($page - 1) * 100);
 			$eventBestPerson = array_map(function($row) {
 				return sprintf('("%s", %d, "%s")', $row['eventId'], $row['best'], $row['personId']);
@@ -124,14 +123,13 @@ class Results extends ActiveRecord {
 					'country.iso2',
 				))
 				->from('Results rs')
-				->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
 				->leftJoin('Competitions c', 'rs.competitionId=c.id')
 				->leftJoin('Countries country', 'rs.personCountryId=country.id')
 				->where(sprintf('(rs.eventId, rs.%s, rs.personId) IN (%s)',
 					$field,
 					implode(',', $eventBestPerson)
 				))
-				->order(sprintf('rs.%s ASC, p.name ASC', $field));
+				->order(sprintf('rs.%s ASC, rs.personId ASC', $field));
 				foreach ($command->queryAll() as $row) {
 					$row['type'] = $type;
 					$row = Statistics::getCompetition($row);
