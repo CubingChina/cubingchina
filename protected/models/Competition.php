@@ -2954,6 +2954,7 @@ class Competition extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return [
 			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
+			'organizerTeamMember'=>[self::HAS_MANY, 'CompetitionOrganizerTeamMember', 'competition_id'],
 			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
