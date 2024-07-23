@@ -364,6 +364,26 @@
                   )),
                   $form->error($model, 'organizers', array('class'=>'text-danger'))
                 );
+                echo Html::formGroup(
+                  $model, 'organizerTeamMembers', array(
+                    'class'=>'col-lg-12',
+                  ),
+                  $form->labelEx($model, 'organizerTeamMembers', array(
+                    'label'=>'主办团队成员',
+                  )),
+                  $form->listBox(
+                    $model,
+                    'organizerTeamMembers',
+                    CHtml::listData($model->organizerTeamMember, 'user_id', 'user.competitionName'),
+                    [
+                      'class'=>'organizer-team-members',
+                      'multiple'=>true,
+                      'placeholder'=>'输入名字或拼音',
+                    ]
+                  ),
+                  '<div>以上成员在比赛公示后即可进行优先报名，每场比赛主办团队成员不超过比赛人数/100向上取整，最多为5人。</div>',
+                  $form->error($model, 'organizerTeamMembers', array('class'=>'text-danger'))
+                );
               } ?>
               <?php echo Html::formGroup(
                 $model, 'delegates', array(
@@ -669,6 +689,7 @@
 $this->widget('Editor');
 Yii::app()->clientScript->registerPackage('datetimepicker');
 Yii::app()->clientScript->registerPackage('tokenfield');
+Yii::app()->clientScript->registerPackage('tagsinput');
 $allCities = json_encode($cities);
 $tokens = json_encode(array_map(function($organizer) {
   return array(
@@ -813,6 +834,42 @@ Yii::app()->clientScript->registerScript('competition',
   }).on('tokenfield:edittoken', function(e) {
     e.preventDefault();
   });
+
+  // organizer team members
+  const teamMemberInput = $('.organizer-team-members')
+  const [teamMemberTagsInput] = teamMemberInput.on('itemAdded', function() {
+    var that = $(this);
+    setTimeout(function() {
+      that.tagsinput('input').val('');
+    }, 0);
+  }).tagsinput({
+    itemValue: function(user) {
+      return user.id
+    },
+    itemText: function(user) {
+      return [user.id, user.display_name].join('-')
+    },
+    maxTags: 5,
+    freeInput: false,
+    typeahead: {
+      source: function(query) {
+        return $.ajax({
+          url: '/board/user/search',
+          data: {
+            query: query
+          },
+          dataType: 'json'
+        })
+      }
+    }
+  })
+  $.each(teamMemberInput.find('option'), function(index, option) {
+    teamMemberTagsInput.add({
+      id: parseInt($(this).val()),
+      display_name: $(this).text()
+    })
+  })
+  teamMemberTagsInput.\$container.css('display', 'block').find('input').attr('size', 20)
 EOT
 );
 if (!$model->isAccepted()) {
