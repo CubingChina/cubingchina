@@ -82,6 +82,7 @@ class UserController extends AdminController {
 
 	public function actionSearch() {
 		$query = $this->sRequest('query');
+		$organizer = $this->iRequest('organizer');
 		$criteria = new CDbCriteria();
 		if (ctype_digit($query)) {
 			$criteria->addSearchCondition('id', $query, false, 'OR', '=');
@@ -91,6 +92,9 @@ class UserController extends AdminController {
 		}
 		$criteria->addSearchCondition('email', $query, true, 'OR');
 		$criteria->addCondition('status!=2');
+		if ($organizer) {
+			$criteria->addCondition('role>=2');
+		}
 		$criteria->order = 'id';
 		$criteria->limit = 20;
 		$users = User::model()->findAll($criteria);

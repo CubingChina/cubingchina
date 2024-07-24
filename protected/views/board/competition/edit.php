@@ -348,20 +348,17 @@
                   $form->labelEx($model, 'organizers', array(
                     'label'=>'主办方',
                   )),
-                  $form->checkBoxList($model, 'organizers', CHtml::listData($organizers, 'id', 'name_zh'), array(
-                    'uncheckValue'=>'',
-                    'container'=>'div',
-                    'separator'=>'',
-                    'class'=>'form-control organizer',
-                    'labelOptions'=>array(
-                      'class'=>'checkbox-inline hidden',
-                    ),
-                    'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                  )),
-                  CHtml::textField('', '', array(
-                    'class'=>'form-control tokenfield',
-                    'placeholder'=>'输入名字或拼音',
-                  )),
+                  $form->listBox(
+                    $model,
+                    'organizers',
+                    $model->getOrganizerKeyValues($model->organizers),
+                    [
+                      'class'=>'organizer',
+                      'data-organizer'=>1,
+                      'multiple'=>true,
+                      'placeholder'=>'输入名字或拼音',
+                    ]
+                  ),
                   $form->error($model, 'organizers', array('class'=>'text-danger'))
                 );
                 echo Html::formGroup(
@@ -374,9 +371,9 @@
                   $form->listBox(
                     $model,
                     'organizerTeamMembers',
-                    CHtml::listData($model->organizerTeamMember, 'user_id', 'user.competitionName'),
+                    $model->getOrganizerKeyValues($model->organizerTeamMembers, 'user_id'),
                     [
-                      'class'=>'organizer-team-members',
+                      'class'=>'organizer',
                       'multiple'=>true,
                       'placeholder'=>'输入名字或拼音',
                     ]
@@ -688,23 +685,8 @@
 <?php
 $this->widget('Editor');
 Yii::app()->clientScript->registerPackage('datetimepicker');
-Yii::app()->clientScript->registerPackage('tokenfield');
 Yii::app()->clientScript->registerPackage('tagsinput');
 $allCities = json_encode($cities);
-$tokens = json_encode(array_map(function($organizer) {
-  return array(
-    'value'=>$organizer->user->id . '-' . $organizer->user->name_zh,
-    'label'=>$organizer->user->name_zh,
-  );
-}, $model->organizer));
-$datum = json_encode(array_map(function($user) {
-  return array(
-    'full'=>$user->getCompetitionName() . ' ' . $user->id,
-    'value'=>$user->id . '-' . $user->name_zh,
-    'label'=>$user->name_zh,
-  );
-}, $organizers));
-$organizerNames = json_encode(CHtml::listData($organizers, 'id', 'name_zh'));
 Yii::app()->clientScript->registerScript('competition',
 <<<EOT
   $('[role="presentation"] a').first().tab('show');
@@ -793,83 +775,46 @@ Yii::app()->clientScript->registerScript('competition',
   $('#Competition_reg_end').trigger('changeDate');
   $('#Competition_cancellation_end_time').trigger('changeDate');
   $('#Competition_type').trigger('change');
-  var organizers = {$organizerNames};
-  var engine = new Bloodhound({
-    local: {$datum},
-    datumTokenizer: function(d) {
-      return d.full.split('');
-    },
-    queryTokenizer: function(d) {
-      return d.split('');
-    }
-  });
-  engine.initialize();
-  $('.tokenfield').tokenfield({
-    tokens: {$tokens},
-    typeahead: [
-      null,
-      {
-        source: engine.ttAdapter()
-      }
-    ]
-  }).on('tokenfield:createtoken', function(e) {
-    var id = e.attrs.value.split('-')[0];
-    if (!organizers[id] || organizers[id] != e.attrs.value.split('-')[1]) {
-      e.preventDefault();
-    }
-    //防止重复的
-    $.each($(this).tokenfield('getTokens'), function(index, token) {
-      if (token.value === e.attrs.value) {
-        e.preventDefault();
-        return false;
-      }
-    });
-    if (e.attrs.value == e.attrs.label) {
-      e.attrs.label = e.attrs.value.split('-')[1];
-    }
-  }).on('tokenfield:createdtoken', function(e) {
-    $('input.organizer[value="' + e.attrs.value.split('-')[0] + '"]').prop('checked', true);
-  }).on('tokenfield:removedtoken', function(e) {
-    $('input.organizer[value="' + e.attrs.value.split('-')[0] + '"]').prop('checked', false);
-  }).on('tokenfield:edittoken', function(e) {
-    e.preventDefault();
-  });
 
   // organizer team members
-  const teamMemberInput = $('.organizer-team-members')
-  const [teamMemberTagsInput] = teamMemberInput.on('itemAdded', function() {
+  $('.organizer').each(function() {
     var that = $(this);
-    setTimeout(function() {
-      that.tagsinput('input').val('');
-    }, 0);
-  }).tagsinput({
-    itemValue: function(user) {
-      return user.id
-    },
-    itemText: function(user) {
-      return [user.id, user.display_name].join('-')
-    },
-    maxTags: 5,
-    freeInput: false,
-    typeahead: {
-      source: function(query) {
-        return $.ajax({
-          url: '/board/user/search',
-          data: {
-            query: query
-          },
-          dataType: 'json'
-        })
+    const isOrganizer = that.data('organizer');
+    const [tagsinput] = that.on('itemAdded', function() {
+      var that = $(this);
+      setTimeout(function() {
+        that.tagsinput('input').val('');
+      }, 0);
+    }).tagsinput({
+      itemValue: function(user) {
+        return user.id
+      },
+      itemText: function(user) {
+        return [user.id, user.display_name].join('-')
+      },
+      maxTags: isOrganizer ? 0 : 5,
+      freeInput: false,
+      typeahead: {
+        source: function(query) {
+          return $.ajax({
+            url: '/board/user/search',
+            data: {
+              query: query,
+              organizer: isOrganizer ? 1 : 0
+            },
+            dataType: 'json'
+          })
+        }
       }
-    }
-  })
-  $.each(teamMemberInput.find('option'), function(index, option) {
-    teamMemberTagsInput.add({
-      id: parseInt($(this).val()),
-      display_name: $(this).text()
     })
+    $.each(that.find('option'), function(index, option) {
+      tagsinput.add({
+        id: parseInt($(this).val()),
+        display_name: $(this).text()
+      })
+    })
+    tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
   })
-  teamMemberTagsInput.\$container.css('display', 'block').find('input').attr('size', 20)
 EOT
 );
 if (!$model->isAccepted()) {

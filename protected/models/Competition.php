@@ -991,6 +991,18 @@ class Competition extends ActiveRecord {
 		$this->_organizerTeamMembers = $organizerTeamMembers;
 	}
 
+	public function getOrganizerKeyValues($organizers, $key = 'organizer_id') {
+		$data = [];
+		foreach ($organizers as $organizer) {
+			$user = User::model()->findByPk($organizer);
+			if (!$user) {
+				continue;
+			}
+			$data[$user->id] = $user->getCompetitionName();
+		}
+		return $data;
+	}
+
 	public function getOldOrganizer() {
 		return $this->old->organizer;
 	}
