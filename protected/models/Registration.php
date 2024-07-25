@@ -350,7 +350,7 @@ class Registration extends ActiveRecord {
 			'competition_id'=>$this->competition_id,
 			'status'=>self::STATUS_WAITING,
 		], [
-			'order'=>'accept_time ASC',
+			'order'=>'accept_time ASC, id ASC',
 		]);
 		$nextRegistration = null;
 		if ($competition->series) {
@@ -1426,28 +1426,34 @@ class Registration extends ActiveRecord {
 	 * based on the search/filter conditions.
 	 */
 	public function search(&$columns = array(), $enableCache = true, $pagination = false, $showPending = false) {
-		// @todo Please modify the following code to remove attributes that should not be searched.
-		$cacheKey = 'competitors_' . $this->competition_id;
-		$cache = Yii::app()->cache;
-		if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
-			$criteria = new CDbCriteria;
-			$criteria->order = 't.accept_time>0 DESC, t.accept_time, t.id';
-			$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
+		// check if registration started
+		$competition = $this->competition;
+		if ($competition && !$competition->isRegistrationStarted() && !$showPending) {
+			$registrations = [];
+		} else {
+			// @todo Please modify the following code to remove attributes that should not be searched.
+			$cacheKey = 'competitors_' . $this->competition_id;
+			$cache = Yii::app()->cache;
+			if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
+				$criteria = new CDbCriteria;
+				$criteria->order = 't.accept_time>0 DESC, t.accept_time, t.id';
+				$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
 
-			$criteria->compare('t.id', $this->id,true);
-			$criteria->compare('t.competition_id', $this->competition_id);
-			$criteria->compare('t.user_id', $this->user_id);
-			$criteria->compare('t.comments', $this->comments, true);
-			$criteria->compare('t.date', $this->date,true);
-			$criteria->compare('t.status', $this->status);
-			$criteria->compare('user.status', User::STATUS_NORMAL);
-			$registrations = $this->findAll($criteria);
-			if ($enableCache) {
-				$cache->set($cacheKey, $registrations, 86400 * 7);
+				$criteria->compare('t.id', $this->id,true);
+				$criteria->compare('t.competition_id', $this->competition_id);
+				$criteria->compare('t.user_id', $this->user_id);
+				$criteria->compare('t.comments', $this->comments, true);
+				$criteria->compare('t.date', $this->date,true);
+				$criteria->compare('t.status', $this->status);
+				$criteria->compare('user.status', User::STATUS_NORMAL);
+				$registrations = $this->findAll($criteria);
+				if ($enableCache) {
+					$cache->set($cacheKey, $registrations, 86400 * 7);
+				}
 			}
 		}
 		$number = 1;
-		$localType = $this->competition ? $this->competition->local_type : Competition::LOCAL_TYPE_NONE;
+		$localType = $competition ? $competition->local_type : Competition::LOCAL_TYPE_NONE;
 		if (isset($competition->location[1])) {
 			$localType = Competition::LOCAL_TYPE_NONE;
 		}

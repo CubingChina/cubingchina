@@ -33,6 +33,7 @@ class CompetitionController extends Controller {
 		$model = new Registration('search');
 		$model->unsetAttributes();
 		$model->competition_id = $competition->id;
+		$model->competition = $competition;
 		$model->status = Registration::STATUS_ACCEPTED;
 		$this->render('competitors', array(
 			'model'=>$model,
@@ -127,7 +128,7 @@ class CompetitionController extends Controller {
 		$competition = $this->getCompetition();
 		$user = $this->getUser();
 		$registration = Registration::getUserRegistration($competition->id, $user->id);
-		if (!$competition->isPublic() || !$competition->isRegistrationStarted() || $competition->tba) {
+		if (!$competition->isPublic() || $competition->tba || (!$competition->isRegistrationStarted() && !$user->canPriorRegister($competition))) {
 			Yii::app()->user->setFlash('info', Yii::t('Competition', 'The registration is not open yet.'));
 			$this->redirect($competition->getUrl('detail'));
 		}

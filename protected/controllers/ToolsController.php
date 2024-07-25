@@ -22,7 +22,7 @@ class ToolsController extends Controller {
 			'competition_id'=>$this->iGet('id'),
 			'status'=>Registration::STATUS_ACCEPTED,
 		), array(
-			'order'=>'accept_time ASC',
+			'order'=>'accept_time ASC, id ASC',
 		));
 		$names = array();
 		foreach ($registrations as $registration) {

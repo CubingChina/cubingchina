@@ -309,6 +309,27 @@ class User extends ActiveRecord {
 		return $this->isAdministrator() && $competition->isLocked();
 	}
 
+	public function canPriorRegister($competition) {
+		if (!$competition->isWCACompetition()) {
+			return false;
+		}
+		// check delegate
+		if ($this->isWCADelegate()) {
+			foreach ($competition->delegate as $delegate) {
+				if ($delegate->delegate_id == $this->id) {
+					return true;
+				}
+			}
+		}
+		// check organizer team
+		foreach ($competition->organizerTeamMember as $organizer) {
+			if ($organizer->user_id == $this->id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function hasSuccessfulRegistration() {
 		return Registration::model()->countByAttributes([
 			'user_id'=>$this->id,

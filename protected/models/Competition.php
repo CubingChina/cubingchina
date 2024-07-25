@@ -65,6 +65,7 @@ class Competition extends ActiveRecord {
 	const WCA_DUES_START = 1706371201; // 2024-01-28
 
 	private $_organizers;
+	private $_organizerTeamMembers;
 	private $_delegates;
 	private $_locations;
 	private $_events;
@@ -192,6 +193,7 @@ class Competition extends ActiveRecord {
 			'reg_end',
 			'delegates',
 			'organizers',
+			'organizerTeamMembers',
 			'locations',
 			'qualifying_end_time',
 			'refund_type',
@@ -976,6 +978,29 @@ class Competition extends ActiveRecord {
 
 	public function setOrganizers($organizers) {
 		$this->_organizers = $organizers;
+	}
+
+	public function getOrganizerTeamMembers() {
+		if ($this->_organizerTeamMembers === null) {
+			$this->_organizerTeamMembers = CHtml::listData($this->organizerTeamMember, 'user_id', 'user_id');
+		}
+		return $this->_organizerTeamMembers;
+	}
+
+	public function setOrganizerTeamMembers($organizerTeamMembers) {
+		$this->_organizerTeamMembers = $organizerTeamMembers;
+	}
+
+	public function getOrganizerKeyValues($organizers, $key = 'organizer_id') {
+		$data = [];
+		foreach ($organizers as $organizer) {
+			$user = User::model()->findByPk($organizer);
+			if (!$user) {
+				continue;
+			}
+			$data[$user->id] = $user->getCompetitionName();
+		}
+		return $data;
 	}
 
 	public function getOldOrganizer() {
@@ -2483,6 +2508,29 @@ class Competition extends ActiveRecord {
 			return;
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE);
+		// organizer team members
+		$oldMembers = array_values(CHtml::listData($this->organizerTeamMember, 'user_id', 'user_id'));
+		$newMembers = array_values((array)$this->organizerTeamMembers);
+		sort($oldMembers);
+		sort($newMembers);
+		if ($oldMembers != $newMembers) {
+			foreach ($oldMembers as $value) {
+				if (!in_array($value, $newMembers) && (!$this->isAccepted() || $isAdmin)) {
+					CompetitionOrganizerTeamMember::model()->deleteAllByAttributes(array(
+						'competition_id'=>$this->id,
+						'user_id'=>$value,
+					));
+				}
+			}
+			foreach ($newMembers as $value) {
+				if (!in_array($value, $oldMembers)) {
+					$model = new CompetitionOrganizerTeamMember();
+					$model->competition_id = $this->id;
+					$model->user_id = $value;
+					$model->save();
+				}
+			}
+		}
 		//处理代表和主办
 		foreach (array('organizer', 'delegate') as $attribute) {
 			$attributeId = $attribute . '_id';
@@ -2824,6 +2872,15 @@ class Competition extends ActiveRecord {
 		$this->locations = $temp;
 	}
 
+	public function checkOrganizerTeamMembers() {
+		$organizerTeamMembers = $this->organizerTeamMembers;
+		$personNum = $this->person_num;
+		$max = min(ceil($personNum / 100), 5);
+		if (count($organizerTeamMembers) > $max) {
+			$this->addError('organizerTeamMembers', "主办团队人数不能超过${max}人！");
+		}
+	}
+
 	public function checkSchedules() {
 		$schedules = $this->schedules;
 		if (!empty($schedules['start_time'])) {
@@ -2915,6 +2972,7 @@ class Competition extends ActiveRecord {
 			['wca_competition_id', 'length', 'max'=>32],
 			['name_zh', 'length', 'max'=>50],
 			['name', 'length', 'max'=>128],
+			['locations', 'checkLocations', 'skipOnError'=>true],
 			['name', 'checkName', 'skipOnError'=>true],
 			['name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
 			['name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
@@ -2929,7 +2987,7 @@ class Competition extends ActiveRecord {
 			['second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true],
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
-			['locations', 'checkLocations', 'skipOnError'=>true],
+			['organizerTeamMembers', 'checkOrganizerTeamMembers', 'skipOnError'=>true],
 			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules,
 				regulations, regulations_zh, information, information_zh, travel, travel_zh, events, podiumsEvents', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
@@ -2954,6 +3012,7 @@ class Competition extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return [
 			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
+			'organizerTeamMember'=>[self::HAS_MANY, 'CompetitionOrganizerTeamMember', 'competition_id'],
 			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
