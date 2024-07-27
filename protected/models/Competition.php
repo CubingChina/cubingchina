@@ -64,6 +64,9 @@ class Competition extends ActiveRecord {
 
 	const WCA_DUES_START = 1706371201; // 2024-01-28
 
+	const COMPETITOR_LIMIT_BY_COMPETITION = 0;
+	const COMPETITOR_LIMIT_BY_EVENT = 1;
+
 	private $_organizers;
 	private $_organizerTeamMembers;
 	private $_delegates;
@@ -457,6 +460,10 @@ class Competition extends ActiveRecord {
 		return $this->isPublic() || $this->isLocked();
 	}
 
+	public function isLimitByEvent() {
+		return $this->competitor_limit_type == self::COMPETITOR_LIMIT_BY_EVENT;
+	}
+
 	public function isRegistrationStarted() {
 		return time() >= $this->getTimeInNumber('reg_start');
 	}
@@ -471,14 +478,30 @@ class Competition extends ActiveRecord {
 	}
 
 	public function isRegistrationFull() {
-		return $this->person_num > 0 && Registration::model()->with(array(
-			'user'=>array(
-				'condition'=>'user.status=' . User::STATUS_NORMAL,
-			),
-		))->countByAttributes(array(
-			'competition_id'=>$this->id,
-			'status'=>Registration::STATUS_ACCEPTED,
-		)) >= $this->person_num;
+		if (!$this->isLimitByEvent()) {
+			return $this->person_num > 0 && Registration::model()->with(array(
+				'user'=>array(
+					'condition'=>'user.status=' . User::STATUS_NORMAL,
+				),
+			))->countByAttributes(array(
+				'competition_id'=>$this->id,
+				'status'=>Registration::STATUS_ACCEPTED,
+			)) >= $this->person_num;
+		}
+		foreach ($this->getAssociatedEvents() as $event) {
+			if (!$this->isEventRegistrationFull($event)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public function isEventRegistrationFull($event) {
+		$competitors = RegistrationEvent::countByEvent($this->id, $event['event'], RegistrationEvent::STATUS_ACCEPTED);
+		if ($competitors < $event['competitor_limit']) {
+			return false;
+		}
+		return true;
 	}
 
 	public function canRegister() {

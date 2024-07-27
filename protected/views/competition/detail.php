@@ -206,7 +206,15 @@
     <?php endif; ?>
     <?php if ($competition->person_num > 0): ?>
     <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>
-    <dd><?php echo $competition->person_num; ?></dd>
+    <dd>
+      <?php if ($competition->isLimitByEvent()): ?>
+      <p><?php echo Yii::t('Competition', 'Each event has a limited number of competitors.'); ?></p>
+      <?php foreach ($competition->associatedEvents as $key=>$value): ?>
+        <?php echo Events::getFullEventNameWithIcon($key); ?>: <?php echo $value['competitor_limit']; ?><br>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <?php echo $competition->person_num; ?></dd>
+      <?php endif; ?>
     <?php endif; ?>
     <?php if ($competition->reg_start > 0 && $competition->tba == Competition::NO): ?>
     <dt><?php echo Yii::t('Competition', 'Registration Starting Time'); ?></dt>

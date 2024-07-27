@@ -52,6 +52,7 @@ return array (
   'Delegate' => '代表',
   'Delegates' => '代表',
   'Do you confirm this can be announced?' => '请确认该比赛可以公示了！',
+  'Each event has a limited number of competitors.' => '每个项目的报名人数有限。',
   'Edit Ticket' => '编辑入场券信息',
   'End Date' => '结束日期',
   'Entry Fee' => '报名费',

@@ -162,7 +162,7 @@ class CompetitionController extends Controller {
 					Yii::app()->user->setFlash($type, $message);
 				}
 			}
-			if ($competition->person_num > 0) {
+			if ($competition->person_num > 0 && !$competition->isLimitByEvent()) {
 				Yii::app()->user->setFlash('warning', Yii::t('Competition', 'Remaining place{s} for registration: {num}.', [
 					'{s}'=>$competition->getRemainedNumber() > 1 ? 's' : '',
 					'{num}'=>$competition->getRemainedNumber(),

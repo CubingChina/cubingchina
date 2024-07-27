@@ -23,6 +23,15 @@ class RegistrationEvent extends ActiveRecord {
 	const STATUS_DISQUALIFIED = 4;
 	const STATUS_WAITING = 5;
 
+	public static function countByEvent($competitionId, $event, $status) {
+		return self::model()->with('registration')->countByAttributes([
+			'event'=>$event,
+			'status'=>$status,
+		], 'registration.competition_id=:competitionId', [
+			':competitionId'=>$competitionId,
+		]);
+	}
+
 	public function isPending() {
 		return $this->status == self::STATUS_PENDING;
 	}
