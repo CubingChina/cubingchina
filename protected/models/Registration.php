@@ -328,16 +328,37 @@ class Registration extends ActiveRecord {
 		$registrationEventIds = $pay === null ? [] : array_map(function($payEvent) {
 			return $payEvent->registration_event_id;
 		}, $pay->events);
+		$isAccepted = $this->isAccepted();
+		$competition = $this->competition;
 		foreach ($this->allEvents as $registrationEvent) {
 			if ($registrationEvent->isCancelled()) {
 				continue;
 			}
 			if ($pay === null || in_array($registrationEvent->id, $registrationEventIds)) {
 				$registrationEvent->paid = $this->paid;
-				if ($this->isAccepted()) {
-					$registrationEvent->accept();
+				if ($isAccepted) {
+					if ($competition->isLimitByEvent()) {
+						$competitors = RegistrationEvent::countByEvent($competition->id, $registrationEvent->event, RegistrationEvent::STATUS_ACCEPTED);
+						if ($competitors >= $competition->associatedEvents[$registrationEvent->event]['competitor_limit']) {
+							$registrationEvent->status = RegistrationEvent::STATUS_WAITING;
+							if ($registrationEvent->accept_time == 0) {
+								$registrationEvent->accept_time = time();
+							}
+							$registrationEvent->save();
+						} else {
+							$registrationEvent->accept();
+						}
+					} else {
+						$registrationEvent->accept();
+					}
 				} elseif ($this->isWaiting()) {
 					$registrationEvent->status = RegistrationEvent::STATUS_WAITING;
+					if ($registrationEvent->accept_time == 0) {
+						$registrationEvent->accept_time = time();
+					}
+					$registrationEvent->save();
+				} else {
+					$registrationEvent->status == RegistrationEvent::STATUS_PENDING;
 					$registrationEvent->save();
 				}
 			}
@@ -346,6 +367,30 @@ class Registration extends ActiveRecord {
 
 	public function acceptNext() {
 		$competition = $this->competition;
+		// check for event limit competitions
+		if ($competition->isLimitByEvent()) {
+			foreach ($this->getAcceptedEvents() as $event) {
+				$nextRegistrationEvent = RegistrationEvent::model()->with('registration')->findByAttributes([
+					'event'=>$event->event,
+					'status'=>RegistrationEvent::STATUS_WAITING,
+				], [
+					'condition'=>'registration.competition_id=:competitionId AND registration.status IN (:statusAccepted, :statusWaiting)',
+					'params'=>[
+						':competitionId'=>$this->competition_id,
+						':statusAccepted'=>self::STATUS_ACCEPTED,
+						':statusWaiting'=>self::STATUS_WAITING,
+					],
+					'order'=>'t.accept_time ASC, t.id ASC',
+				]);
+				if ($nextRegistrationEvent) {
+					$nextRegistrationEvent->accept();
+					if (!$nextRegistrationEvent->registration->isAccepted()) {
+						$nextRegistrationEvent->registration->accept();
+					}
+				}
+			}
+			return;
+		}
 		$waitingRegistrations = self::model()->findAllByAttributes([
 			'competition_id'=>$this->competition_id,
 			'status'=>self::STATUS_WAITING,
@@ -372,7 +417,7 @@ class Registration extends ActiveRecord {
 
 	public function cancel($status = Registration::STATUS_CANCELLED) {
 		//calculate refund fee before change status
-		$refundPercent = $this->getRefundPercent();
+		$remainedRefundAmount = $this->getRefundAmount();
 		if ($this->isWaiting()) {
 			$status = self::STATUS_CANCELLED_TIME_END;
 		}
@@ -380,7 +425,7 @@ class Registration extends ActiveRecord {
 		$this->status = $status;
 		$this->cancel_time = time();
 		if ($this->save()) {
-			if ($refundPercent > 0) {
+			if ($remainedRefundAmount > 0) {
 				$payments = $this->payments;
 				usort($payments, function($a, $b) {
 					return $a->paid_time - $b->paid_time;
@@ -388,14 +433,18 @@ class Registration extends ActiveRecord {
 				foreach ($payments as $payment) {
 					if ($payment->isPaid()) {
 						$paidAmount = $payment->paid_amount;
-						$refundAmount = $paidAmount * $refundPercent;
+						$refundAmount = min($paidAmount, $remainedRefundAmount);
 						$payment->refund($refundAmount);
+						$remainedRefundAmount -= $refundAmount;
+						if ($remainedRefundAmount <= 0) {
+							break;
+						}
 					}
 				}
 			}
 			Yii::app()->mailer->sendRegistrationCancellation($this);
 			$competition = $this->competition;
-			if (!$competition->isRegistrationFull()) {
+			if (!$competition->isRegistrationFull() || $competition->isLimitByEvent()) {
 				$this->acceptNext();
 			}
 			// check for other series competitions' registrations
@@ -593,10 +642,10 @@ class Registration extends ActiveRecord {
 		foreach ($this->allEvents as $registrationEvent) {
 			$event = $registrationEvent->event;
 			if ($registrationEvent->isWaiting() && isset($competitionEvents[$event])) {
-				$events[] = Yii::t('event', $competitionEvents[$event]);
+				$events[] = $registrationEvent;
 			}
 		}
-		return implode(Yii::t('common', ', '), $events);
+		return $events;
 	}
 
 	public function getPendingEvents() {
@@ -640,7 +689,7 @@ class Registration extends ActiveRecord {
 	public function getEditableEvents() {
 		$events = $this->competition->getRegistrationEvents();
 		foreach ($this->allEvents as $registrationEvent) {
-			if ($registrationEvent->isAccepted()) {
+			if ($registrationEvent->isAccepted() || $registrationEvent->isWaiting()) {
 				unset($events[$registrationEvent->event]);
 			}
 		}
@@ -737,7 +786,16 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRefundAmount() {
-		return $this->getPaidAmount() * $this->getRefundPercent();
+		$competition = $this->competition;
+		$refundPercent = $this->getRefundPercent();
+		$refundAmount = $this->getPaidAmount() * $refundPercent;
+		// check if any waiting events
+		if ($competition->isLimitByEvent()) {
+			foreach ($this->getWaitingEvents() as $registrationEvent) {
+				$refundAmount += (1 - $refundPercent) * $registrationEvent->fee * 100;
+			}
+		}
+		return $refundAmount;
 	}
 
 	public function getRefundFee() {

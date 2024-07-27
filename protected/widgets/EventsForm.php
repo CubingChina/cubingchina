@@ -100,6 +100,7 @@ class EventsForm extends Widget {
 				$labelOptions['class'] .= ' text-right col-md-2 col-sm-4';
 			}
 			echo CHtml::openTag('div', $htmlOptions);
+			$limitByEvent = $model->isLimitByEvent();
 			foreach ($events as $event=>$value) {
 				echo CHtml::openTag('div', [
 					'class'=>'col-lg-12',
@@ -112,19 +113,37 @@ class EventsForm extends Widget {
 				echo CHtml::activeLabelEx($model, "{$name}[{$event}][round]", $labelOptions);
 				//round
 				echo CHtml::openTag('div', [
-					'class'=>'col-md-2 col-sm-8',
+					'class'=>'col-md-3 col-sm-8',
 				]);
 				echo CHtml::openTag('div', [
-					'class'=>'input-group',
+					'class'=>$limitByEvent ? 'col-xs-6' : '',
+				]);
+				echo CHtml::openTag('div', [
+					'class'=>'input-group row',
 				]);
 				echo CHtml::activeNumberField($model, "{$name}[{$event}][round]", $numberOptions);
 				echo CHtml::tag('span', ['class'=>'input-group-addon'], Yii::t('common', 'Rounds'));
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 
+				if ($limitByEvent) {
+					echo CHtml::openTag('div', [
+						'class'=>'col-xs-6',
+					]);
+					echo CHtml::openTag('div', [
+						'class'=>'input-group row',
+					]);
+					echo CHtml::activeNumberField($model, "{$name}[{$event}][competitor_limit]", $feeOptions);
+					echo CHtml::tag('span', ['class'=>'input-group-addon'], '人');
+					echo CHtml::closeTag('div');
+					echo CHtml::closeTag('div');
+				}
+
+				echo CHtml::closeTag('div');
+
 				//fee
 				echo CHtml::openTag('div', [
-					'class'=>'col-md-5 row',
+					'class'=>'col-md-5',
 				]);
 				//normal fee
 				echo CHtml::openTag('div', [
@@ -164,7 +183,7 @@ class EventsForm extends Widget {
 				//qualifying times
 				if ($model->has_qualifying_time) {
 					echo CHtml::openTag('div', [
-						'class'=>'col-md-3 row',
+						'class'=>'col-md-2 row',
 					]);
 					//normal fee
 					echo CHtml::openTag('div', [
