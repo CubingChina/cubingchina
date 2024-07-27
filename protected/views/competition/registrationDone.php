@@ -49,9 +49,11 @@
           <p><?php echo $registration->location->getCityName(); ?></p>
           <?php endif; ?>
           <?php if ($registration->isAcceptedOrWaiting()): ?>
+          <?php if ($registration->getAcceptedEvents() !== []): ?>
           <h4><?php echo Yii::t('Registration', 'Events'); ?></h4>
-          <p><?php echo $registration->isAccepted() ? $registration->getAcceptedEventsString() : $registration->getWaitingEventsString(); ?></p>
-          <?php if ($registration->isAccepted() && $registration->getWaitingEvents() !== []): ?>
+          <p><?php echo $registration->getAcceptedEventsString(); ?></p>
+          <?php endif; ?>
+          <?php if ($registration->getWaitingEvents() !== []): ?>
           <h4><?php echo Yii::t('Registration', 'Waiting Events'); ?></h4>
           <p><?php echo $registration->getWaitingEventsString(); ?></p>
           <?php endif; ?>

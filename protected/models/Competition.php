@@ -489,12 +489,17 @@ class Competition extends ActiveRecord {
 			)) >= $this->person_num;
 		}
 		foreach ($this->getAssociatedEvents() as $event) {
-			$competitors = RegistrationEvent::countByEvent($this->id, $event['event'], RegistrationEvent::STATUS_ACCEPTED);
-			Yii::log($competitors, 'error', 'reg');
-			Yii::log(json_encode($event), 'error', 'reg');
-			if ($competitors < $event['competitor_limit']) {
+			if (!$this->isEventRegistrationFull($event)) {
 				return false;
 			}
+		}
+		return true;
+	}
+
+	public function isEventRegistrationFull($event) {
+		$competitors = RegistrationEvent::countByEvent($this->id, $event['event'], RegistrationEvent::STATUS_ACCEPTED);
+		if ($competitors < $event['competitor_limit']) {
+			return false;
 		}
 		return true;
 	}

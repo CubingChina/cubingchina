@@ -299,8 +299,24 @@ class Registration extends ActiveRecord {
 		if ($this->accept_time == 0) {
 			$this->accept_time = time();
 		}
-		if (!$hasBeenAccepted && !$forceAccept && $this->competition->isRegistrationFull()) {
-			$this->status = self::STATUS_WAITING;
+		if (!$hasBeenAccepted && !$forceAccept) {
+			if ($this->competition->isRegistrationFull()) {
+				$this->status = self::STATUS_WAITING;
+			}
+			if ($this->competition->isLimitByEvent()) {
+				// set the status to waiting
+				$this->status = self::STATUS_WAITING;
+				foreach ($this->allEvents as $registrationEvent) {
+					if ($registrationEvent->isCancelled()) {
+						continue;
+					}
+					// if any event is not full, the status should be accepted
+					if (!$this->competition->isEventRegistrationFull($this->competition->associatedEvents[$registrationEvent->event])) {
+						$this->status = self::STATUS_ACCEPTED;
+						break;
+					}
+				}
+			}
 		}
 		$this->save();
 		if ($this->competition->isRegistrationFull()) {
@@ -338,8 +354,7 @@ class Registration extends ActiveRecord {
 				$registrationEvent->paid = $this->paid;
 				if ($isAccepted) {
 					if ($competition->isLimitByEvent()) {
-						$competitors = RegistrationEvent::countByEvent($competition->id, $registrationEvent->event, RegistrationEvent::STATUS_ACCEPTED);
-						if ($competitors >= $competition->associatedEvents[$registrationEvent->event]['competitor_limit']) {
+						if ($competition->isEventRegistrationFull($competition->associatedEvents[$registrationEvent->event])) {
 							$registrationEvent->status = RegistrationEvent::STATUS_WAITING;
 							if ($registrationEvent->accept_time == 0) {
 								$registrationEvent->accept_time = time();
