@@ -317,6 +317,12 @@ class Registration extends ActiveRecord {
 					}
 				}
 			}
+			if ($this->competition->series) {
+				$otherRegistration = $this->user->getOtherSeriesRegistration($this->competition);
+				if ($otherRegistration) {
+					$this->status = self::STATUS_WAITING;
+				}
+			}
 		}
 		$this->save();
 		if ($this->competition->isRegistrationFull()) {
