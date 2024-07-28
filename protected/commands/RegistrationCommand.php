@@ -2,6 +2,17 @@
 
 class RegistrationCommand extends CConsoleCommand {
 
+	public function actionCancel($id) {
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
+		$registration = Registration::model()->findByPk($id);
+		if ($registration !== null && $this->confirm($registration->user->getCompetitionName() . '-' . $registration->competition->name_zh)) {
+			// set registration status to waiting so it will get full refunded
+			$registration->status = Registration::STATUS_WAITING;
+			$registration->cancel();
+		}
+	}
+
 	public function actionCheckRefund() {
 		$_SERVER['HTTPS'] = 1;
 		$_SERVER['HTTP_HOST'] = 'cubing.com';
