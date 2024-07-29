@@ -271,6 +271,7 @@ class CompetitionController extends AdminController {
 			'organizers'=>$organizers,
 			'types'=>$types,
 			'isOrganizerEditable'=>!($this->user->isOrganizer() && $model->isPublic()),
+			'user'=>$this->user,
 		);
 	}
 
