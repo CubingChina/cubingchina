@@ -57,6 +57,9 @@ abstract class MsgHandler {
 		if ($this->user->isDelegate() && isset($this->competition->delegates[$this->user->id])) {
 			return true;
 		}
+		if ($this->user->isScoreTaker($this->competition)) {
+			return true;
+		}
 		return false;
 	}
 }

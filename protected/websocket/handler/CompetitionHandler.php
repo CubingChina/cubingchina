@@ -58,7 +58,6 @@ class CompetitionHandler extends MsgHandler {
 		}
 		$action = $this->getAction();
 		if ($action !== '') {
-			var_dump(2222);
 			$method = 'action' . ucfirst($action);
 			if (method_exists($this, $method)) {
 				return $this->$method();

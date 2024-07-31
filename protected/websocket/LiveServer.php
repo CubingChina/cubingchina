@@ -30,7 +30,6 @@ class LiveServer implements HttpServerInterface {
 			$redis = Yii::app()->cache->redis;
 			foreach ($this->channelCallbacks as $channel=>$method) {
 				while (($message = $redis->lPop($channel)) !== false) {
-					var_dump($message);
 					$message = json_decode($message);
 					call_user_func(array($this, $method), $message);
 				}
