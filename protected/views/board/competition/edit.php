@@ -641,6 +641,27 @@
                 CHtml::tag('div', ['class'=>'help-text'], '该链接会展示在成绩直播页面'),
                 $form->error($model, 'live_stream_url', array('class'=>'text-danger'))
               );?>
+              <?php echo Html::formGroup(
+                  $model, 'scoreTakers', array(
+                    'class'=>'col-lg-12',
+                  ),
+                  $form->labelEx($model, 'scoreTakers', array(
+                    'label'=>'成绩录入员',
+                  )),
+                  $form->listBox(
+                    $model,
+                    'scoreTakers',
+                    $model->getOrganizerKeyValues($model->scoreTakers, 'user_id'),
+                    [
+                      'class'=>'organizer',
+                      'multiple'=>true,
+                      'placeholder'=>'输入名字或拼音',
+                    ]
+                  ),
+                  '<div>仅限比赛期间录入成绩。</div>',
+                  $form->error($model, 'scoreTakers', array('class'=>'text-danger'))
+                );
+              ?>
               <?php endif; ?>
               <?php echo Html::formGroup(
                 $model, 'local_type', array(

@@ -152,6 +152,11 @@ class CompetitionController extends AdminController {
 				$protectedValues[$attribute] = $model->$attribute;
 			}
 			$model->attributes = $_POST['Competition'];
+			foreach (Competition::getNullableAttributes() as $attribute) {
+				if (!isset($_POST['Competition'][$attribute])) {
+					$model->$attribute = '';
+				}
+			}
 			if ($this->user->isOrganizer() && $model->isPublicVisible()) {
 				foreach ($protectedAttributes as $attribute) {
 					$model->$attribute = $protectedValues[$attribute];

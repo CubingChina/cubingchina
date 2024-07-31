@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
   if (!('WS' in global)) {
     alert('Your browser doesn\'t support, please upgrade!');
     return;
@@ -28,7 +28,7 @@
   //websocket
   var ws = new WS(wsUrl);
   ws.threshold = 55000;
-  ws.on('connect', function() {
+  ws.on('connect', function () {
     body.removeClass('disconnected');
     ws.send({
       type: 'competition',
@@ -47,37 +47,37 @@
         action: 'fetch'
       });
     }
-  }).on('disconnect', function() {
+  }).on('disconnect', function () {
     body.addClass('disconnected');
-  }).on('*', function(data, origin) {
+  }).on('*', function (data, origin) {
     if (origin && origin.onlineNumber) {
       store.dispatch('UPDATE_ONLINE_NUMBER', origin.onlineNumber);
     }
-  }).on('users', function(users) {
+  }).on('users', function (users) {
     allUsers = users;
-  }).on('result.new', function(result) {
+  }).on('result.new', function (result) {
     store.dispatch('NEW_RESULT', result);
     newMessageOnResult(result, 'new');
-  }).on('result.update', function(result) {
+  }).on('result.update', function (result) {
     store.dispatch('UPDATE_RESULT', result);
     newMessageOnResult(result, 'update');
-  }).on('result.all', function(results) {
+  }).on('result.all', function (results) {
     store.dispatch('UPDATE_RESULTS', results);
-  }).on('round.all', function(rounds) {
+  }).on('round.all', function (rounds) {
     store.dispatch('UPDATE_ROUNDS', rounds);
-  }).on('round.update', function(round) {
+  }).on('round.update', function (round) {
     store.dispatch('UPDATE_ROUND', round);
-  }).on('message.recent', function(messages) {
+  }).on('message.recent', function (messages) {
     if (options.showMessage) {
       store.dispatch('RECENT_MESSAGES', messages);
     }
-  }).on('message.new', function(message) {
+  }).on('message.new', function (message) {
     if (options.showMessage) {
       newMessage(message);
     }
-  }).on('message.disable', function(disableChat) {
+  }).on('message.disable', function (disableChat) {
     options.disableChat = disableChat;
-  }).on('record.current', function(records) {
+  }).on('record.current', function (records) {
     currentRecords = records;
   });
 
@@ -108,19 +108,19 @@
   var allUsers = {};
   var current = {};
   var mutations = {
-    CHANGE_PARAMS: function(state, params) {
+    CHANGE_PARAMS: function (state, params) {
       state.params = params;
     },
-    UPDATE_ROUNDS: function(state, rounds) {
-      rounds.forEach(function(round) {
+    UPDATE_ROUNDS: function (state, rounds) {
+      rounds.forEach(function (round) {
         $.extend(eventRounds[round.e][round.i], round);
       });
       lastFetchRoundsTime = Date.now();
     },
-    UPDATE_ROUND: function(state, round) {
+    UPDATE_ROUND: function (state, round) {
       $.extend(eventRounds[round.e][round.i], round);
     },
-    NEW_RESULT: function(state, result) {
+    NEW_RESULT: function (state, result) {
       if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
         result.p = '';
         result.isNew = true;
@@ -130,7 +130,7 @@
         calculatePos(results, result);
       }
     },
-    UPDATE_RESULT: function(state, result) {
+    UPDATE_RESULT: function (state, result) {
       if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
         var results = state.results;
         var i = 0, len = results.length;
@@ -147,40 +147,40 @@
         calculatePos(results, result);
       }
     },
-    UPDATE_RESULTS: function(state, results) {
+    UPDATE_RESULTS: function (state, results) {
       results.sort(compare);
       calculatePos(results, {});
       state.results = results;
       state.loading = false;
     },
-    UPDATE_USER_RESULTS: function(state, userResults) {
+    UPDATE_USER_RESULTS: function (state, userResults) {
       state.userResults = userResults;
       state.loadingUserResults = false;
     },
-    LOADING_RESULTS: function(state) {
+    LOADING_RESULTS: function (state) {
       state.loading = true;
       state.results = [];
     },
-    LOADING_USER_RESULTS: function(state) {
+    LOADING_USER_RESULTS: function (state) {
       state.loadingUserResults = true;
       state.userResults = [];
     },
-    RECENT_MESSAGES: function(state, messages) {
+    RECENT_MESSAGES: function (state, messages) {
       var ids = {};
-      state.messages.forEach(function(message) {
+      state.messages.forEach(function (message) {
         ids[message.id] = message.id;
       });
-      messages.forEach(function(message) {
+      messages.forEach(function (message) {
         message.type = 'normal';
         if (!ids[message.id]) {
           state.messages.push(message);
         }
       });
-      Vue.nextTick(function() {
+      Vue.nextTick(function () {
         newMessage({}, true);
       });
     },
-    NEW_MESSAGE: function(state, message) {
+    NEW_MESSAGE: function (state, message) {
       if (!message.id && !message.isSelf) {
         return;
       }
@@ -189,7 +189,7 @@
         state.messages.splice(0, 1);
       }
     },
-    UPDATE_ONLINE_NUMBER: function(state, onlineNumber) {
+    UPDATE_ONLINE_NUMBER: function (state, onlineNumber) {
       state.onlineNumber = onlineNumber;
     }
   };
@@ -217,10 +217,10 @@
     delete storedOptions.disableChat;
   }
   $.extend(options, storedOptions);
-  state.events.forEach(function(event) {
+  state.events.forEach(function (event) {
     events[event.i] = event;
     eventRounds[event.i] = {};
-    event.rs.forEach(function(round) {
+    event.rs.forEach(function (round) {
       eventRounds[event.i][round.i] = round;
       if (!current.e && round.s == 2) {
         current.e = event.i;
@@ -236,25 +236,25 @@
   }
   var mixin = {
     methods: {
-      getRecordClass: function(record) {
+      getRecordClass: function (record) {
         if (record == 'NR' || record == 'WR') {
           return 'record-' + record.toLowerCase();
         } else {
           return 'record-cr';
         }
       },
-      getEventName: function(result) {
+      getEventName: function (result) {
         var event = getEvent(result);
         return event && event.name;
       },
-      getRoundName: function(result) {
+      getRoundName: function (result) {
         var round = getRound(result);
         return round && round.name;
       },
-      getUser: function(number) {
+      getUser: function (number) {
         return getUser(number);
       },
-      getResultDetail: function(result) {
+      getResultDetail: function (result) {
         var detail = [];
         var i, value;
         for (i = 0; i < 5; i++) {
@@ -267,53 +267,53 @@
     },
     vuex: {
       getters: {
-        canChangeRoundSettings: function(state) {
+        canChangeRoundSettings: function (state) {
           return state.type != 'WCA' || state.user.isDelegate || state.user.isAdmin
         },
-        hasPermission: function(state) {
+        hasPermission: function (state) {
           var user = state.user;
-          return user.isOrganizer || user.isDelegate || user.isAdmin;
+          return user.isOrganizer || user.isDelegate || user.isAdmin || user.isScoreTaker;
         },
-        eventName: function(state) {
+        eventName: function (state) {
           var event = getEvent(state.params)
           return event && event.name;
         },
-        roundName: function(state) {
+        roundName: function (state) {
           var round = getRound(state.params);
           return round && round.name;
         },
-        events: function(state) {
+        events: function (state) {
           return state.events;
         },
-        e: function(state) {
+        e: function (state) {
           return state.params.e;
         },
-        r: function(state) {
+        r: function (state) {
           return state.params.r;
         },
-        currentRound: function(state) {
+        currentRound: function (state) {
           return getRound(state.params);
         },
-        isCurrentRoundOpen: function(state) {
+        isCurrentRoundOpen: function (state) {
           var round = getRound(state.params);
           return round.s != 1;
         },
-        results: function(state) {
+        results: function (state) {
           return state.results;
         },
-        loading: function(state) {
+        loading: function (state) {
           return state.loading;
         },
-        userResults: function(state) {
+        userResults: function (state) {
           return state.userResults;
         },
-        loadingUserResults: function(state) {
+        loadingUserResults: function (state) {
           return state.loadingUserResults;
         },
-        filters: function(state) {
+        filters: function (state) {
           return state.filters;
         },
-        onlineNumber: function(state) {
+        onlineNumber: function (state) {
           return state.onlineNumber;
         }
       }
@@ -330,41 +330,41 @@
   var vm = Vue.extend({
     template: '#live-container-template',
     store: store,
-    data: function() {
+    data: function () {
       return {
         options: options,
         currentUser: {}
       };
     },
     watch: {
-      'options.disableChat': function(disableChat) {
+      'options.disableChat': function (disableChat) {
         ws.send({
           type: 'chat',
           action: 'disable',
           disable_chat: disableChat
         });
       },
-      'options.enableEntry': function() {
+      'options.enableEntry': function () {
         window.store.set('live_options', this.options);
       },
-      'options.showMessage': function() {
+      'options.showMessage': function () {
         window.store.set('live_options', this.options);
       },
-      'options.alertResult': function() {
+      'options.alertResult': function () {
         window.store.set('live_options', this.options);
       },
-      'options.alertRecord': function() {
+      'options.alertRecord': function () {
         window.store.set('live_options', this.options);
       }
     },
     methods: {
-      showOptions: function() {
+      showOptions: function () {
         $('#options-modal').modal();
       },
-      checkRounds: function(e) {
+      checkRounds: function (e) {
         var allFinished = true;
-        this.events.forEach(function(event) {
-          event.rs.forEach(function(round) {
+        this.events.forEach(function (event) {
+          event.rs.forEach(function (round) {
             if (round.s != ROUNDSTATUS.FINISHED) {
               allFinished = false;
             }
@@ -379,24 +379,24 @@
     components: {
       chat: {
         props: ['options'],
-        data: function() {
+        data: function () {
           return {
             message: ''
           }
         },
         vuex: {
           getters: {
-            messages: function(state) {
+            messages: function (state) {
               return state.messages;
             },
-            staticMessages: function(state) {
+            staticMessages: function (state) {
               return state.staticMessages;
             }
           }
         },
         template: '#chat-template',
         methods: {
-          send: function(e) {
+          send: function (e) {
             var that = this;
             if (that.message.trim() == '') {
               return;
@@ -421,7 +421,7 @@
             props: ['message'],
             template: '#message-template',
             filters: {
-              formatTime: function(time) {
+              formatTime: function (time) {
                 return time ? moment(new Date(time * 1000)).format('MM-DD HH:mm:ss') : '';
               }
             },
@@ -444,7 +444,7 @@
       },
       result: {
         props: ['options'],
-        data: function() {
+        data: function () {
           return {
             eventRound: null,
             filter: 'all',
@@ -460,15 +460,15 @@
           }
         },
         computed: {
-          offset: function() {
+          offset: function () {
             return (this.page - 1) * this.limit;
           },
-          totalPage: function() {
+          totalPage: function () {
             return Math.ceil(this.results.length / this.limit);
           }
         },
         watch: {
-          '$store.state.params': function(params) {
+          '$store.state.params': function (params) {
             var that = this;
             that.eventRound = {
               e: params.e,
@@ -483,7 +483,7 @@
             that.f = round.f;
           }
         },
-        ready: function() {
+        ready: function () {
           var that = this;
           that.eventRound = {
             e: current.e,
@@ -497,14 +497,14 @@
         },
         template: '#result-template',
         methods: {
-          hasAverage: function(includeBlindFolded) {
+          hasAverage: function (includeBlindFolded) {
             var round = getRound(this);
             return round.f == 'a' || round.f == 'm' || (includeBlindFolded && isSingleBlindFolded(round.e) && round.f == '3');
           },
-          showRoundSettings: function() {
+          showRoundSettings: function () {
             $('#round-settings-modal').modal();
           },
-          saveRoundSettings: function() {
+          saveRoundSettings: function () {
             var that = this;
             var attrs = ['co', 'tl', 'n'];
             var i;
@@ -533,7 +533,7 @@
               }
             });
           },
-          closeRound: function() {
+          closeRound: function () {
             this.current = {
               v: []
             };
@@ -556,7 +556,7 @@
             fetchResults();
             $('#round-settings-modal').modal('hide');
           },
-          openRound: function() {
+          openRound: function () {
             ws.send({
               type: 'result',
               action: 'round',
@@ -569,13 +569,13 @@
             fetchResults();
             $('#round-settings-modal').modal('hide');
           },
-          exportScoreCard: function() {
+          exportScoreCard: function () {
             var form = $('#export-scord-card-form');
             form.find('.event').val(this.e);
             form.find('.round').val(this.r);
             form.submit();
           },
-          refreshCompetitors: function() {
+          refreshCompetitors: function () {
             ws.send({
               type: 'result',
               action: 'refresh',
@@ -585,7 +585,7 @@
               }
             });
           },
-          goToUser: function(user) {
+          goToUser: function (user) {
             this.$parent.currentUser = user;
             $('#user-results-modal').modal('show');
             store.dispatch('LOADING_USER_RESULTS');
@@ -595,22 +595,22 @@
                 user: user,
               },
               dataType: 'json',
-              success: function(result) {
+              success: function (result) {
                 if (result.status == 0) {
                   store.dispatch('UPDATE_USER_RESULTS', result.data);
                 }
               }
             });
           },
-          edit: function(result) {
+          edit: function (result) {
             if (this.hasPermission && options.enableEntry && this.isCurrentRoundOpen) {
               this.current = JSON.parse(JSON.stringify(result));
-              this.$nextTick(function() {
+              this.$nextTick(function () {
                 $('.input-panel-result input').eq(0).focus();
               });
             }
           },
-          changeParams: function() {
+          changeParams: function () {
             store.dispatch('CHANGE_PARAMS', {
               e: this.eventRound.e,
               r: this.eventRound.r,
@@ -623,7 +623,7 @@
               });
             }
           },
-          isAdvanced: function(result) {
+          isAdvanced: function (result) {
             if (this.filter != 'all') {
               return false;
             }
@@ -640,7 +640,7 @@
             }
             return false;
           },
-          checkEmptyResults: function() {
+          checkEmptyResults: function () {
             var that = this;
             var round = that.currentRound;
             var f = round.f;
@@ -679,7 +679,7 @@
             }
             return true;
           },
-          checkRepeatedResults: function() {
+          checkRepeatedResults: function () {
             var results = this.results;
             var i = 0, j, len = results.length;
             for (i = 0; i < len; i++) {
@@ -693,7 +693,7 @@
         components: {
           'input-panel': {
             props: ['result'],
-            data: function() {
+            data: function () {
               return {
                 hasError: false,
                 breakRecord: false,
@@ -712,10 +712,10 @@
               }
             },
             computed: {
-              competitors: function() {
+              competitors: function () {
                 var that = this;
                 var searchText = that.searchText.toLowerCase();
-                return that.results.filter(that.filterCompetitors.bind(that)).sort(function(resA, resB) {
+                return that.results.filter(that.filterCompetitors.bind(that)).sort(function (resA, resB) {
                   if (!/^\d+$/.test(searchText) && !/^\d{4}[A-Z]+\d*$/i.test(searchText)) {
                     var temp = getUser(resA.n).name.toLowerCase().indexOf(searchText) - getUser(resB.n).name.toLowerCase().indexOf(searchText);
                     if (temp == 0) {
@@ -728,19 +728,19 @@
               }
             },
             watch: {
-              round: function() {
+              round: function () {
                 this.searchText = '';
               },
-              event: function() {
+              event: function () {
                 this.searchText = '';
               },
-              result: function(result) {
+              result: function (result) {
                 var that = this;
                 that.competitor = getUser(result.n);
                 that.v = result.v;
                 that.searchText = result.n || '';
               },
-              searchText: function(searchText) {
+              searchText: function (searchText) {
                 this.selectedIndex = 0;
                 if (searchText == '') {
                   this.result = {
@@ -749,14 +749,14 @@
                 }
               }
             },
-            attached: function() {
+            attached: function () {
               var that = this;
-              $(window).on('resize', function() {
+              $(window).on('resize', function () {
                 that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
               }).trigger('resize');
             },
             methods: {
-              isDisabled: function(index) {
+              isDisabled: function (index) {
                 var that = this;
                 var result = that.result;
                 if (!result || !result.i || !this.$parent.isCurrentRoundOpen) {
@@ -777,7 +777,7 @@
                 }
                 return false;
               },
-              keydown: function(e) {
+              keydown: function (e) {
                 var code = e.which;
                 var that = this;
                 switch (code) {
@@ -796,10 +796,10 @@
                     break;
                 }
               },
-              save: function() {
+              save: function () {
                 var that = this;
                 var result = that.result;
-                result.v.forEach(function(value, index) {
+                result.v.forEach(function (value, index) {
                   if (that.isDisabled(index)) {
                     result.v[index] = 0;
                   }
@@ -827,14 +827,14 @@
                     v: []
                   };
                   $('#input-panel-name').focus();
-                  Vue.nextTick(function() {
+                  Vue.nextTick(function () {
                     ws.safeSend(data, 'result.update', data.result.id);
                   });
                   that.breakRecord = false;
                   that.hasError = false;
                 }
               },
-              checkResult: function(alertNotice) {
+              checkResult: function (alertNotice) {
                 var that = this;
                 var values = [];
                 var sum = 0;
@@ -842,7 +842,7 @@
                 calculateAverage(result);
                 that.hasError = false;
                 that.breakRecord = false;
-                result.v.forEach(function(value) {
+                result.v.forEach(function (value) {
                   if (value > 0) {
                     sum += value;
                     values.push(value);
@@ -850,9 +850,9 @@
                 });
                 if (values.length > 3) {
                   var average = sum / values.length;
-                  var standardDeviation = Math.sqrt(values.map(function(value) {
+                  var standardDeviation = Math.sqrt(values.map(function (value) {
                     return Math.pow(value - average, 2);
-                  }).reduce(function(sum, value) {
+                  }).reduce(function (sum, value) {
                     return sum + value;
                   }, 0) / values.length);
                   var maxStdPercent = eventMaxStdPercent[result.e] || eventMaxStdPercent.default
@@ -876,7 +876,7 @@
                 }
                 return true;
               },
-              filterCompetitors: function(result) {
+              filterCompetitors: function (result) {
                 var that = this;
                 var searchText = that.searchText.trim();
                 if (searchText == '') {
@@ -890,31 +890,31 @@
                 }
                 return !!getUser(result.n).name.match(new RegExp(searchText, 'i'));
               },
-              enter: function() {
+              enter: function () {
                 if (this.competitors[this.selectedIndex]) {
                   this.selectCompetitor(this.competitors[this.selectedIndex]);
                 }
               },
-              up: function() {
+              up: function () {
                 var length = this.competitors.length;
                 if (length) {
                   this.selectedIndex = (this.selectedIndex + length - 1) % length;
                 }
               },
-              down: function() {
+              down: function () {
                 var length = this.competitors.length;
                 if (length) {
                   this.selectedIndex = (this.selectedIndex + 1) % length;
                 }
               },
-              selectCompetitor: function(result) {
+              selectCompetitor: function (result) {
                 this.name = result.n;
                 this.$parent.edit(result);
               }
             },
             vuex: {
               getters: {
-                inputNum: function(state) {
+                inputNum: function (state) {
                   var params = state.params;
                   var round = getRound(params);
                   var f = round && round.f;
@@ -930,7 +930,7 @@
                       return 5;
                   }
                 },
-                minInputNum: function(state) {
+                minInputNum: function (state) {
                   var params = state.params;
                   var round = getRound(params);
                   var f = round && round.f;
@@ -953,7 +953,7 @@
             components: {
               'result-input': {
                 props: ['value', 'index'],
-                data: function() {
+                data: function () {
                   return {
                     subIndex: 2,
                     tried: '',
@@ -962,16 +962,16 @@
                   }
                 },
                 watch: {
-                  time: function() {
+                  time: function () {
                     this.calculateValue();
                   },
-                  tried: function() {
+                  tried: function () {
                     this.calculateValue();
                   },
-                  solved: function() {
+                  solved: function () {
                     this.calculateValue();
                   },
-                  '$parent.result.i': function() {
+                  '$parent.result.i': function () {
                     var that = this;
                     var time = decodeResult(that.value, that.e);
                     if (that.e === '333mbf') {
@@ -992,7 +992,7 @@
                   }
                 },
                 methods: {
-                  calculateValue: function() {
+                  calculateValue: function () {
                     var that = this;
                     var round = getRound(that);
                     that.value = encodeResult(that.formatTime(that.time), that.e, false, that.tried, that.solved);
@@ -1003,7 +1003,7 @@
                       that.time = 'DNF';
                     }
                   },
-                  formatTime: function(time) {
+                  formatTime: function (time) {
                     if (time == 'DNF' || time == 'DNS' || time == '' || this.e == '333fm') {
                       return time;
                     }
@@ -1024,16 +1024,16 @@
                       msecond
                     ].join('');
                   },
-                  focus: function(subIndex) {
+                  focus: function (subIndex) {
                     this.subIndex = subIndex;
                     this.$parent.currentIndex = this.index;
                   },
-                  blur: function(e) {
+                  blur: function (e) {
                     this.$parent.currentIndex = null;
                     this.$parent.lastIndex = null;
                     this.$parent.checkResult();
                   },
-                  keydown: function(e, attr) {
+                  keydown: function (e, attr) {
                     var code = e.which;
                     var that = this;
                     var value = that[attr];
@@ -1149,9 +1149,9 @@
       component: {}
     }
   });
-  store.watch(function(state) {
+  store.watch(function (state) {
     return state.params;
-  }, function(params) {
+  }, function (params) {
     router.go(['/event', params.e, params.r, params.filter].join('/'));
     fetchResults();
   }, {
@@ -1159,7 +1159,7 @@
     sync: true,
     // immediate: true
   });
-  router.afterEach(function(transition) {
+  router.afterEach(function (transition) {
     var params = transition.to.params;
     if (params.e == state.params.e && params.r == state.params.r && params.filter == state.params.filter) {
       return;
@@ -1171,10 +1171,10 @@
   });
   router.start(vm, liveContainer.get(0));
 
-  var newMessage = function() {
+  var newMessage = function () {
     var container = $('.message-container:not(.static-message-container)');
     var ul = container.find('ul');
-    return function(message, scroll) {
+    return function (message, scroll) {
       if (container.length == 0) {
         container = $('.message-container:not(.static-message-container)');
         ul = container.find('ul');
@@ -1182,7 +1182,7 @@
       message.type = message.type || 'normal';
       store.dispatch('NEW_MESSAGE', message);
       if (scroll || container.height() + container.scrollTop() > ul.height() - 30) {
-        Vue.nextTick(function() {
+        Vue.nextTick(function () {
           container.scrollTop(ul.height());
         });
       }

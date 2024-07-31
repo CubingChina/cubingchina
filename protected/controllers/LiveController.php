@@ -56,6 +56,7 @@ class LiveController extends CompetitionController {
 			]),
 			'data-user'=>json_encode([
 				'isGuest'=>Yii::app()->user->isGuest,
+				'isScoreTaker'=>!Yii::app()->user->isGuest && $this->user->isScoreTaker($competition),
 				'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
 				'isDelegate'=>!Yii::app()->user->isGuest && $this->user->isDelegate() && isset($competition->delegates[$this->user->id]),
 				'isAdmin'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),

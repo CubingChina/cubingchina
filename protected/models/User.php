@@ -274,6 +274,16 @@ class User extends ActiveRecord {
 		return $this->identity == self::IDENTITY_WCA_DELEGATE;
 	}
 
+	public function isScoreTaker($competition) {
+		if (!$competition->isInProgress()) {
+			return false;
+		}
+		return ScoreTaker::model()->countByAttributes([
+			'user_id'=>$this->id,
+			'competition_id'=>$competition->id,
+		]) > 0;
+	}
+
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
 	}

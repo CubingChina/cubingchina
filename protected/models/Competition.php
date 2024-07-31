@@ -69,6 +69,7 @@ class Competition extends ActiveRecord {
 
 	private $_organizers;
 	private $_organizerTeamMembers;
+	private $_scoreTakers;
 	private $_delegates;
 	private $_locations;
 	private $_events;
@@ -173,6 +174,13 @@ class Competition extends ActiveRecord {
 			];
 		}
 		return $options;
+	}
+
+	public static function getNullableAttributes() {
+		return [
+			'organizerTeamMembers',
+			'scoreTakers',
+		];
 	}
 
 	public static function getProtectedAttributes() {
@@ -1013,6 +1021,17 @@ class Competition extends ActiveRecord {
 
 	public function setOrganizerTeamMembers($organizerTeamMembers) {
 		$this->_organizerTeamMembers = $organizerTeamMembers;
+	}
+
+	public function getScoreTakers() {
+		if ($this->_scoreTakers === null) {
+			$this->_scoreTakers = CHtml::listData($this->scoreTaker, 'user_id', 'user_id');
+		}
+		return $this->_scoreTakers;
+	}
+
+	public function setScoreTakers($scoreTakers) {
+		$this->_scoreTakers = $scoreTakers;
 	}
 
 	public function getOrganizerKeyValues($organizers, $key = 'organizer_id') {
@@ -2532,26 +2551,28 @@ class Competition extends ActiveRecord {
 			return;
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE);
-		// organizer team members
-		$oldMembers = array_values(CHtml::listData($this->organizerTeamMember, 'user_id', 'user_id'));
-		$newMembers = array_values((array)$this->organizerTeamMembers);
-		sort($oldMembers);
-		sort($newMembers);
-		if ($oldMembers != $newMembers) {
-			foreach ($oldMembers as $value) {
-				if (!in_array($value, $newMembers) && (!$this->isAccepted() || $isAdmin)) {
-					CompetitionOrganizerTeamMember::model()->deleteAllByAttributes(array(
-						'competition_id'=>$this->id,
-						'user_id'=>$value,
-					));
+		// organizer team members and score takers
+		foreach (['organizerTeamMember'=>'CompetitionOrganizerTeamMember', 'scoreTaker'=>'ScoreTaker'] as $attribute=>$modelName) {
+			$oldMembers = array_values(CHtml::listData($this->$attribute, 'user_id', 'user_id'));
+			$newMembers = array_filter(array_values((array)$this->{$attribute . 's'}));
+			sort($oldMembers);
+			sort($newMembers);
+			if ($oldMembers != $newMembers) {
+				foreach ($oldMembers as $value) {
+					if (!in_array($value, $newMembers) && (!$this->isAccepted() || $isAdmin)) {
+						$modelName::model()->deleteAllByAttributes(array(
+							'competition_id'=>$this->id,
+							'user_id'=>$value,
+						));
+					}
 				}
-			}
-			foreach ($newMembers as $value) {
-				if (!in_array($value, $oldMembers)) {
-					$model = new CompetitionOrganizerTeamMember();
-					$model->competition_id = $this->id;
-					$model->user_id = $value;
-					$model->save();
+				foreach ($newMembers as $value) {
+					if (!in_array($value, $oldMembers)) {
+						$model = new $modelName();
+						$model->competition_id = $this->id;
+						$model->user_id = $value;
+						$model->save();
+					}
 				}
 			}
 		}
@@ -2897,7 +2918,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkOrganizerTeamMembers() {
-		$organizerTeamMembers = $this->organizerTeamMembers;
+		$organizerTeamMembers = array_filter((array)$this->organizerTeamMembers);
 		$personNum = $this->person_num;
 		$max = min(ceil($personNum / 100), 5);
 		if (count($organizerTeamMembers) > $max) {
@@ -3013,7 +3034,7 @@ class Competition extends ActiveRecord {
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['organizerTeamMembers', 'checkOrganizerTeamMembers', 'skipOnError'=>true],
 			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules,
-				regulations, regulations_zh, information, information_zh, travel, travel_zh, events, podiumsEvents', 'safe'],
+				regulations, regulations_zh, information, information_zh, travel, travel_zh, events, podiumsEvents, scoreTakers', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
 		];
@@ -3037,6 +3058,7 @@ class Competition extends ActiveRecord {
 		return [
 			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
 			'organizerTeamMember'=>[self::HAS_MANY, 'CompetitionOrganizerTeamMember', 'competition_id'],
+			'scoreTaker'=>[self::HAS_MANY, 'ScoreTaker', 'competition_id'],
 			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
