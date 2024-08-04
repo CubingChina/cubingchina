@@ -27,8 +27,9 @@ class RegistrationEvent extends ActiveRecord {
 		return self::model()->with('registration')->countByAttributes([
 			'event'=>$event,
 			'status'=>$status,
-		], 'registration.competition_id=:competitionId', [
+		], 'registration.competition_id=:competitionId AND registration.status=:status', [
 			':competitionId'=>$competitionId,
+			':status'=>Registration::STATUS_ACCEPTED,
 		]);
 	}
 

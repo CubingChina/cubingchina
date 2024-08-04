@@ -406,7 +406,8 @@ class Registration extends ActiveRecord {
 				if ($nextRegistrationEvent) {
 					$nextRegistrationEvent->accept();
 					if (!$nextRegistrationEvent->registration->isAccepted()) {
-						$nextRegistrationEvent->registration->accept();
+						$nextRegistrationEvent->registration->status = self::STATUS_ACCEPTED;
+						$nextRegistrationEvent->registration->save();
 					}
 				}
 			}
