@@ -11,6 +11,7 @@
         <div class="portlet-body">
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(),
+            'filter'=>$model,
             'columns'=>array(
               array(
                 'header'=>'操作',
@@ -21,22 +22,26 @@
               array(
                 'name'=>'user_id',
                 'value'=>'$data->user->name_zh',
+                'filter'=>News::getPublisherList(),
               ),
               'title_zh',
               array(
                 'name'=>'weight',
                 'type'=>'raw',
                 'value'=>'$data->getWeightText()',
+                'filter'=>News::getWeights(),
               ),
               array(
                 'name'=>'date',
                 'type'=>'raw',
                 'value'=>'date("Y-m-d H:i:s", $data->date)',
+                'filter'=>false,
               ),
               array(
                 'name'=>'status',
                 'type'=>'raw',
                 'value'=>'$data->getStatusText()',
+                'filter'=>News::getAllStatus(),
               ),
             ),
           )); ?>

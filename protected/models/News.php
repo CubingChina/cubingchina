@@ -40,6 +40,17 @@ class News extends ActiveRecord {
 		);
 	}
 
+	public static function getPublisherList() {
+		$newsByUser = self::model()->with('user')->findAll([
+			'group'=>'user_id',
+		]);
+		$list = array();
+		foreach ($newsByUser as $news) {
+			$list[$news->user_id] = $news->user->name_zh;
+		}
+		return $list;
+	}
+
 	public function getWeightText() {
 		$weights = self::getWeights();
 		return isset($weights[$this->weight]) ? $weights[$this->weight] : $this->weight;
@@ -176,12 +187,14 @@ class News extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 		$criteria->with = 'user';
+		if ($this->title_zh) {
+			$criteria->compare('t.title', $this->title_zh, true, 'OR');
+			$criteria->compare('t.content', $this->title_zh, true, 'OR');
+			$criteria->compare('t.title_zh', $this->title_zh, true, 'OR');
+			$criteria->compare('t.content_zh', $this->title_zh, true, 'OR');
+		}
 		$criteria->compare('t.id',$this->id,true);
 		$criteria->compare('t.user_id',$this->user_id);
-		$criteria->compare('t.title',$this->title,true);
-		$criteria->compare('t.title_zh',$this->title_zh,true);
-		$criteria->compare('t.content',$this->content,true);
-		$criteria->compare('t.content_zh',$this->content_zh,true);
 		$criteria->compare('t.date',$this->date,true);
 		$criteria->compare('t.status',$this->status);
 
