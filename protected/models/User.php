@@ -27,6 +27,7 @@ class User extends ActiveRecord {
 
 	const GENDER_MALE = 0;
 	const GENDER_FEMALE = 1;
+	const GENDER_OTHER = 2;
 
 	const ROLE_UNCHECKED = 0;
 	const ROLE_CHECKED = 1;
@@ -183,11 +184,15 @@ class User extends ActiveRecord {
 		);
 	}
 
-	public static function getGenders() {
-		return array(
+	public static function getGenders($gender = null) {
+		$genders = array(
 			self::GENDER_MALE=>Yii::t('common', 'Male'),
 			self::GENDER_FEMALE=>Yii::t('common', 'Female'),
 		);
+		if ($gender == self::GENDER_OTHER) {
+			$genders[self::GENDER_OTHER] = Yii::t('common', 'Other');
+		}
+		return $genders;
 	}
 
 	public static function getPassportTypes() {

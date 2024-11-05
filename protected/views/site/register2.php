@@ -73,9 +73,10 @@ $this->renderPartial('registerSide', $_data_);
   <?php echo Html::formGroup(
     $model, 'gender', array(),
     $form->labelEx($model, 'gender'),
-    $form->dropDownList($model, 'gender', User::getGenders(), array(
+    $form->dropDownList($model, 'gender', User::getGenders($model->gender), array(
       'class'=>'form-control',
       'prompt'=>'',
+      'readonly'=>$model->wcaid != '' && $model->gender,
     )),
     $form->error($model, 'gender', array('class'=>'text-danger'))
   );?>

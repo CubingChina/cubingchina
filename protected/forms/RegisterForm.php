@@ -74,6 +74,7 @@ class RegisterForm extends CFormModel {
 						''=>'',
 						'm'=>User::GENDER_MALE,
 						'f'=>User::GENDER_FEMALE,
+						'o'=>User::GENDER_OTHER,
 					);
 					$this->gender = $genders[strtolower($person->gender)];
 					$this->country_id = Region::getRegionIdByName($person->country->name);
@@ -169,7 +170,7 @@ class RegisterForm extends CFormModel {
 	}
 
 	public function checkGender() {
-		$genders = User::getGenders();
+		$genders = User::getGenders($this->gender);
 		if (!array_key_exists($this->gender, $genders)) {
 			$this->addError('gender', Yii::t('common', 'Invalid gender.'));
 		}
