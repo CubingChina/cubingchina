@@ -101,6 +101,79 @@ class RegistrationCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionClearWaitingEvents() {
+		$competitions = Competition::model()->findAllByAttributes([
+			'status'=>Competition::STATUS_SHOW,
+			'competitor_limit_type'=>Competition::COMPETITOR_LIMIT_BY_EVENT,
+		], [
+			'condition'=>'reg_end<' . time() . ' AND reg_end>' . (time() - 7 * 86400),
+		]);
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
+		$now = time();
+		foreach ($competitions as $competition) {
+			$registrationEvents = RegistrationEvent::model()->with('registration')->findAllByAttributes([
+				'status'=>RegistrationEvent::STATUS_WAITING,
+			], [
+				'condition'=>'registration.competition_id=:competition_id AND registration.status=:status',
+				'params'=>[
+					':status'=>Registration::STATUS_ACCEPTED,
+					':competition_id'=>$competition->id,
+				],
+			]);
+			$userRegistrations = [];
+			foreach ($registrationEvents as $registrationEvent) {
+				if (!isset($userRegistrations[$registrationEvent->registration->id])) {
+					$userRegistrations[$registrationEvent->registration->id] = [
+						'registration'=>$registrationEvent->registration,
+						'events'=>[],
+						'fee'=>0,
+					];
+				}
+				$userRegistrations[$registrationEvent->registration->id]['events'][] = $registrationEvent;
+				$userRegistrations[$registrationEvent->registration->id]['fee'] += $registrationEvent->fee;
+			}
+			foreach ($userRegistrations as $userRegistration) {
+				$payment = null;
+				$shouldRefund = $userRegistration['fee'] * 100;
+				$registration = $userRegistration['registration'];
+				foreach ($registration->payments as $p) {
+					if ($p->isPaid() && $p->paid_amount > $shouldRefund) {
+						$payment = $p;
+						break;
+					}
+				}
+				if ($payment === null) {
+					echo 'No payment: ', $registration->user->getCompetitionName(), PHP_EOL;
+					continue;
+				}
+				echo implode("\t", [
+					$registration->user->getCompetitionName(),
+					$registration->competition->name_zh,
+				]);
+				echo "\n";
+				echo implode("\n", array_map(function($event) {
+					return $event->event . ': ' . $event->fee;
+				}, $userRegistration['events']));
+				echo "\n";
+				echo "Paid: {$payment->paid_amount}\n";
+				echo "Should Refund: {$shouldRefund}\n";
+				// within 3 months
+				if ($this->confirm('refund?')) {
+					foreach ($userRegistration['events'] as $event) {
+						$event->cancel();
+					}
+					if ($now - $payment->paid_time < 3 * 30 * 86400) {
+						$payment->refund($shouldRefund);
+					} else {
+						$payment->transfer($shouldRefund);
+					}
+				}
+
+			}
+		}
+	}
+
 	private function logDisqualified($registration, $disqualifiedEvents, $disqualified) {
 		echo implode("\t", [$registration->user->getCompetitionName(), $registration->user->wcaid, $disqualified ? 'disqualified' : '', implode("\t", $disqualifiedEvents)]), "\n";
 	}

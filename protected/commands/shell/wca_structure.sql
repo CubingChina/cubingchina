@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `eligible_country_iso2s_for_championship` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `championship_type` varchar(191) NOT NULL,
   `eligible_country_iso2` varchar(191) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY `pk` (`id`, `championship_type`, `eligible_country_iso2`),
   KEY `championship_type` (`championship_type`),
   KEY `eligible_country_iso2` (`eligible_country_iso2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

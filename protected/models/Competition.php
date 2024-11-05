@@ -2319,7 +2319,7 @@ class Competition extends ActiveRecord {
 			'555bf',
 		);
 		foreach ($primaryEvents as $event) {
-			if (isset($events[$event])) {
+			if (isset($this->associatedEvents[$event])) {
 				$eventId = $event;
 				break;
 			}

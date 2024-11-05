@@ -1,10 +1,17 @@
 dir=`dirname "$0"`
 wca_home='https://www.worldcubeassociation.org'
-aws_home='https://s3.us-west-2.amazonaws.com/assets.worldcubeassociation.org'
 
 _log () {
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] $1"
 }
+
+# check if it's syncing
+process_num=`ps aux | grep wca_data_sync.sh | grep -v grep -c`
+if [ $process_num -gt 0 ]
+then
+  _log "syncing, exit"
+  exit
+fi
 
 cd $dir
 db_config="`dirname \`dirname \\\`pwd\\\`\``/config/wcaDb"
@@ -14,6 +21,7 @@ mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
 wget $wca_home/export/results -O export.html || exit
+ziplink=`grep -oP 'href="\K[^"]+WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
 zipname=`grep -oP 'WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
 _log "zipname: $zipname"
 if [ "dummy"$zipname = 'dummy' ]
@@ -22,8 +30,11 @@ then
   exit
 fi
 #check version and date
-version=`echo $zipname | grep -o '\(WCA_export[0-9]\+\)' | grep -o '[0-9]\+' | tail -1`
-date=`echo $zipname | grep -o '\([0-9]\{8\}\)' | tail -1`
+version=`echo $zipname | grep -oP 'WCA_export\K[0-9]+' | tail -1`
+date=`echo $zipname | grep -oP '[0-9]{8}' | tail -1`
+_log "version: $version"
+_log "date: $date"
+exit
 if [ -f last ]
 then
   last_version=`sed -n '1,1p' last`
@@ -54,7 +65,7 @@ echo $version >> last
 echo $date >> last
 
 
-lftp -c "set ssl:verify-certificate no; pget -n 20 '$aws_home/export/results/$zipname' -o $zipname"
+lftp -c "set ssl:verify-certificate no; pget -n 20 '$ziplink' -o $zipname"
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
 _log "replace charset to utf8_general_ci"
