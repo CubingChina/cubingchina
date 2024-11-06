@@ -2789,9 +2789,7 @@ class Competition extends ActiveRecord {
 			if (empty($this->delegates)) {
 				$this->addError('delegates', 'WCA比赛需至少选择一名代表！');
 			}
-			if (!$this->fill_passport) {
-				$this->addError('fill_passport', 'WCA比赛需填写证件信息！');
-			}
+			$this->fill_passport = self::YES;
 		}
 	}
 
