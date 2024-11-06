@@ -137,7 +137,11 @@ class Pay extends ActiveRecord {
 				}
 				// add base entry fee
 				if (!$registration->isAcceptedOrWaiting()) {
-					$fee += $competition->getEventFee(Competition::EVENT_FEE_ENTRY);
+					$entryFee = $competition->entry_fee;
+					if ($competition->multi_countries) {
+						$entryFee = $registration->location->fee;
+					}
+					$fee += $competition->getEventFee(Competition::EVENT_FEE_ENTRY, null, $entryFee);
 				}
 				$fee *= 100;
 				if ($this->amount != $fee) {

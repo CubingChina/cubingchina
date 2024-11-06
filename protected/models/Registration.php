@@ -323,6 +323,13 @@ class Registration extends ActiveRecord {
 					$this->status = self::STATUS_WAITING;
 				}
 			}
+			// check for multi location competitions
+			if (count($this->competition->location) > 1) {
+				$location = $this->location;
+				if ($location->competitor_limit > 0 && $location->competitor_limit <= $this->getLocationAcceptedCount()) {
+					$this->status = self::STATUS_WAITING;
+				}
+			}
 		}
 		$this->save();
 		if ($this->competition->isRegistrationFull()) {
@@ -419,6 +426,16 @@ class Registration extends ActiveRecord {
 		], [
 			'order'=>'accept_time ASC, id ASC',
 		]);
+		// check for multiple location competitions
+		if (count($this->competition->location) > 1) {
+			$waitingRegistrations = self::model()->findAllByAttributes([
+				'competition_id'=>$this->competition_id,
+				'location_id'=>$this->location_id,
+				'status'=>self::STATUS_WAITING,
+			], [
+				'order'=>'accept_time ASC, id ASC',
+			]);
+		}
 		$nextRegistration = null;
 		if ($competition->series) {
 			// check for series competitions
@@ -765,7 +782,12 @@ class Registration extends ActiveRecord {
 			}
 		}
 		if (!$this->isAcceptedOrWaiting()) {
-			$fee += $this->competition->getEventFee(Competition::EVENT_FEE_ENTRY);
+			$competition = $this->competition;
+			$entryFee = $competition->entry_fee;
+			if ($competition->multi_countries) {
+				$entryFee = $this->location->fee;
+			}
+			$fee += $competition->getEventFee(Competition::EVENT_FEE_ENTRY, null, $entryFee);
 		}
 		return $fee * 100;
 	}
@@ -862,6 +884,16 @@ class Registration extends ActiveRecord {
 			));
 		}
 		return $this->_location;
+	}
+
+	public function getLocationAcceptedCount() {
+		$location = $this->location;
+		$acceptedCount = self::model()->countByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'location_id'=>$location->location_id,
+			'status'=>self::STATUS_ACCEPTED,
+		));
+		return $acceptedCount;
 	}
 
 	public function getEvents() {

@@ -940,7 +940,7 @@ class Competition extends ActiveRecord {
 		if ($stage === null) {
 			$stage = $this->calculateStage();
 		}
-		$entryFee = $this->complex_multi_location && $entryFee > 0 ? $entryFee : $this->entry_fee;
+		$entryFee = ($this->complex_multi_location || $this->multi_countries) && $entryFee > 0 ? $entryFee : $this->entry_fee;
 		if ($isWCADues) {
 			if (!$this->isWCACompetition()) {
 				return 0;
@@ -1036,7 +1036,7 @@ class Competition extends ActiveRecord {
 
 	public function getOrganizerKeyValues($organizers, $key = 'organizer_id') {
 		$data = [];
-		foreach ($organizers as $organizer) {
+		foreach ((array)$organizers as $organizer) {
 			$user = User::model()->findByPk($organizer);
 			if (!$user) {
 				continue;
@@ -2785,8 +2785,13 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkType() {
-		if ($this->type == self::TYPE_WCA && empty($this->delegates)) {
-			$this->addError('delegates', 'WCA比赛需至少选择一名代表！');
+		if ($this->type == self::TYPE_WCA) {
+			if (empty($this->delegates)) {
+				$this->addError('delegates', 'WCA比赛需至少选择一名代表！');
+			}
+			if (!$this->fill_passport) {
+				$this->addError('fill_passport', 'WCA比赛需填写证件信息！');
+			}
 		}
 	}
 

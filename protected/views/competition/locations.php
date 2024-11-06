@@ -6,9 +6,13 @@
 <?php foreach ($competition->sortedLocations as $location): ?>
   <li>
   <?php if ($competition->multi_countries || $competition->complex_multi_location): ?>
+  <?php $showRegion = $competition->multi_countries; ?>
+  <?php if (array_map(function($location) { return $location->country_id; }, $competition->location) == array_fill(0, count($competition->location), $competition->location[0]->country_id)): ?>
+  <?php $showRegion = false; ?>
+  <?php endif; ?>
   <div class="competition-location">
     <div class="attribute"><?php echo Yii::t('common', 'City'); ?></div>
-    <div class="value"><?php echo $location->getCityName(true, true); ?></div>
+    <div class="value"><?php echo $location->getCityName(true, $showRegion); ?></div>
     <div class="attribute"><?php echo Yii::t('Competition', 'Address'); ?></div>
     <div class="value"><?php echo $location->getAttributeValue('venue'); ?></div>
     <?php if ($competition->multi_countries): ?>
