@@ -2848,9 +2848,9 @@ class Competition extends ActiveRecord {
 					if (empty($locations['delegate_name'][$key]) && !$special) {
 						$this->addError('locations.delegate_name.' . $index, '必须选择一个代表或者手动填写！');
 					}
-					if (empty($locations['delegate_email'][$key]) && !$special) {
-						$this->addError('locations.delegate_email.' . $index, '必须选择一个代表或者手动填写！');
-					}
+					// if (empty($locations['delegate_email'][$key]) && !$special) {
+					// 	$this->addError('locations.delegate_email.' . $index, '必须选择一个代表或者手动填写！');
+					// }
 				}
 			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
