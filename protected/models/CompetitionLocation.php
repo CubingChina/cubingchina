@@ -43,8 +43,10 @@ class CompetitionLocation extends ActiveRecord {
 	public function getDelegateInfo() {
 		if ($this->delegate) {
 			return CHtml::mailto(Html::fontAwesome('envelope', 'a') . $this->delegate->getAttributeValue('name', true), $this->delegate->email);
-		} else {
+		} elseif ($this->delegate_email) {
 			return CHtml::mailto(Html::fontAwesome('envelope', 'a') . $this->delegate_name, $this->delegate_email);
+		} else {
+			return $this->delegate_name;
 		}
 	}
 
