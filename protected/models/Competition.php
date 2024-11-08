@@ -1269,7 +1269,7 @@ class Competition extends ActiveRecord {
 				$column['type'] = 'raw';
 				$column['value'] = 'Events::getFullEventNameWithIcon($data["event"], $data["Event"])';
 			}
-			if ($this->multi_countries && ($key == 'Start Time' || $key == 'End Time')) {
+			if ($this->isMultiRegions && ($key == 'Start Time' || $key == 'End Time')) {
 				if ($key == 'End Time') {
 					continue;
 				}
@@ -1292,6 +1292,10 @@ class Competition extends ActiveRecord {
 			$columns[] = $column;
 		}
 		return $columns;
+	}
+
+	public function getIsMultiRegions() {
+		return array_map(function($location) { return $location->country_id; }, $this->location) != array_fill(0, count($this->location), $this->location[0]->country_id);
 	}
 
 	public function getTimezones() {
@@ -1473,7 +1477,7 @@ class Competition extends ActiveRecord {
 					'class'=>'header-location',
 				),
 				'type'=>'raw',
-				'value'=>'$data->location->getFullAddress(false)',
+				'value'=>"\$data->location->getFullAddress(false, {$this->isMultiRegions} + 0)",
 			);
 		}
 		$showPending = json_encode($showPending);

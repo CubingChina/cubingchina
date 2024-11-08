@@ -7,7 +7,8 @@ _log () {
 
 # check if it's syncing
 process_num=`ps aux | grep wca_data_sync.sh | grep -v grep -c`
-if [ $process_num -gt 0 ]
+_log "process_num: $process_num"
+if [ $process_num -gt 3 ]
 then
   _log "syncing, exit"
   exit
@@ -34,7 +35,6 @@ version=`echo $zipname | grep -oP 'WCA_export\K[0-9]+' | tail -1`
 date=`echo $zipname | grep -oP '[0-9]{8}' | tail -1`
 _log "version: $version"
 _log "date: $date"
-exit
 if [ -f last ]
 then
   last_version=`sed -n '1,1p' last`

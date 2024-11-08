@@ -1699,7 +1699,9 @@ class Registration extends ActiveRecord {
 			}
 			if ($this->competition->multi_countries) {
 				foreach ($temp as $key=>$value) {
-					$statistics['location_id'][] = CHtml::tag('b', [], Yii::t('Region', $value['location']->country->getAttributeValue('name')) . ': ');
+					if ($this->competition->isMultiRegions) {
+						$statistics['location_id'][] = CHtml::tag('b', [], Yii::t('Region', $value['location']->country->getAttributeValue('name')) . ': ');
+					}
 					$statistics['location_id'][] = implode('<br>', $value['statistics']);
 				}
 			} elseif (isset($temp[0])) {
