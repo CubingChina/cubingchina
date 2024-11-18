@@ -1694,7 +1694,11 @@ class Registration extends ActiveRecord {
 							'statistics'=>[],
 						];
 					}
-					$temp[$location->country_id]['statistics'][] = $location->getCityName() . ': ' . $statistics['location'][$location->location_id];
+					$locationStatistic = $location->getCityName() . ': ' . $statistics['location'][$location->location_id];
+					if ($location->competitor_limit > 0) {
+						$locationStatistic .= '/' . $location->competitor_limit;
+					}
+					$temp[$location->country_id]['statistics'][] = $locationStatistic;
 				}
 			}
 			if ($this->competition->multi_countries) {
