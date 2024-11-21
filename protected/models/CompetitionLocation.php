@@ -102,6 +102,7 @@ class CompetitionLocation extends ActiveRecord {
 			'venue'=>$this->getAttributeValue('venue'),
 			'longitude'=>$this->longitude,
 			'latitude'=>$this->latitude,
+			'competitor_limit'=>$this->competitor_limit,
 		];
 	}
 
