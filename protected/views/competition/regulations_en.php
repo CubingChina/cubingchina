@@ -184,6 +184,7 @@
   }, array_slice($competition->podiumsEvents, 0, -1))), count($competition->podiumsEvents) > 1 ? ' and ' : '', Events::getFullEventName($competition->podiumsEvents[count($competition->podiumsEvents) - 1]); ?> include<?php if (count($competition->podiumsEvents) === 1) echo 's'; ?> the following groups <?php echo implode(', ', $groups); ?>. Awards for the above groups are based on results of the first round.
     </p>
     <ol>
+<!--      U-->
       <?php $lastAge = 0; ?>
       <?php foreach (Competition::getPodiumAges() as $age): ?>
       <?php if ($competition->{'podiums_u' . $age}): ?>
@@ -195,6 +196,25 @@
       <?php $lastAge = $age; ?>
       <?php endif; ?>
       <?php endforeach; ?>
+
+      <!--      O-->
+      <?php
+      $oldAgeGroups = [];
+      $lastOAge = 0;
+
+      foreach ($competition->getPodiumOldAges('rsort') as $age) {
+        if ($lastOAge){
+          $oldAgeGroups[] = sprintf('<li><b>O%d：</b>between %d and %d years old</li>',  $age,  $age,$lastOAge);
+        } else{
+          $oldAgeGroups[] = sprintf('<li><b>O%d：</b>over %d years old</li>', $age, $age);
+        }
+        $lastOAge = $age;
+      }
+      foreach (array_reverse($oldAgeGroups) as $group) {
+        echo $group;
+      }
+      ?>
+
       <?php if ($competition->podiums_children && $lastAge === 0): ?>
       <li>
         <b>Children group</b>：Competitors under 12 years old.

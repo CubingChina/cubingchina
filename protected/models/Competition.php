@@ -152,11 +152,11 @@ class Competition extends ActiveRecord {
 			],
 			'attend_ceremory'=>[
 				'title'=>'比赛颁奖',
-				'warning'=>'请注意，当你选择Ux时，少儿组将失效。Ux三组可以自由组合，系统自动匹配年龄。',
 				'label'=>'要求选手本人到场',
 			],
 			'podiums_children'=>[
 				'label'=>'少儿组',
+				'subtitle'=>'角色分组',
 			],
 			'podiums_females'=>[
 				'label'=>'女子组',
@@ -168,11 +168,31 @@ class Competition extends ActiveRecord {
 				'label'=>'中华组',
 			],
 		];
-		for ($i = 3; $i <= 18; $i++) {
+
+		$options['podiums_u3'] = [
+			'label'=>'U3组',
+			'subtitle'=>'年龄-U组',
+			'warning'=>'请注意，当你选择Ux时，少儿组将失效。Ux三组可以自由组合，系统自动匹配年龄。',
+		];
+		for ($i = 4; $i <= 18; $i++) {
 			$options['podiums_u' . $i] = [
 				'label'=>'U' . $i . '组',
 			];
 		}
+
+		$options['podiums_o'] = [
+			'label'=>'O组自定义',
+			'subtitle'=>'年龄-O组',
+			'warning'=>'请注意，使用O组自定义时, 多个自定义年龄用英文 "," 分割输入如： "25,35"。',
+			'type'=>'raw',
+		];
+		$o_ages = [25, 30, 35, 45];
+		foreach ($o_ages as $age) {
+			$options['podiums_o' . $age] = [
+				'label'=>'O' . $age . '组',
+			];
+		}
+
 		return $options;
 	}
 
@@ -418,6 +438,34 @@ class Competition extends ActiveRecord {
 		return range(3, 18);
 	}
 
+	public function getPodiumOldAges($order = 'sort') {
+		$base = [25, 30, 35, 45];
+		$ages = [];
+
+		foreach ($base as $b){
+			if ($this->{'podiums_o' . $b}){
+				$ages[] = $b;
+			}
+		}
+
+		if ($this->podiums_o != "") {
+			$numbers = explode(',', str_replace('，', ',', $this->podiums_o));
+			$numbers = array_map('floatval', $numbers);
+			foreach ($numbers as $number){
+				$ages[] = $number;
+			}
+		}
+		$ages = array_unique($ages);
+		// sort an array from largest to smallest.
+		// because when you use it later, you need to start counting from the oldest group.
+		if ($order == 'sort') {
+			sort($ages);
+			return $ages;
+		}
+		rsort($ages);
+		return $ages;
+	}
+
 	public static function getAllStatus($actionId = 'index') {
 		switch ($actionId) {
 			case 'application':
@@ -489,13 +537,13 @@ class Competition extends ActiveRecord {
 	public function isRegistrationFull() {
 		if (!$this->isLimitByEvent()) {
 			return $this->person_num > 0 && Registration::model()->with(array(
-				'user'=>array(
-					'condition'=>'user.status=' . User::STATUS_NORMAL,
-				),
-			))->countByAttributes(array(
-				'competition_id'=>$this->id,
-				'status'=>Registration::STATUS_ACCEPTED,
-			)) >= $this->person_num;
+					'user'=>array(
+						'condition'=>'user.status=' . User::STATUS_NORMAL,
+					),
+				))->countByAttributes(array(
+					'competition_id'=>$this->id,
+					'status'=>Registration::STATUS_ACCEPTED,
+				)) >= $this->person_num;
 		}
 		foreach ($this->getAssociatedEvents() as $event) {
 			if (!$this->isEventRegistrationFull($event)) {
@@ -520,13 +568,13 @@ class Competition extends ActiveRecord {
 	public function getRemainedNumber() {
 		if ($this->_remainedNumber == null) {
 			$this->_remainedNumber = $this->person_num - Registration::model()->with(array(
-				'user'=>array(
-					'condition'=>'user.status=' . User::STATUS_NORMAL,
-				),
-			))->countByAttributes(array(
-				'competition_id'=>$this->id,
-				'status'=>Registration::STATUS_ACCEPTED,
-			));
+					'user'=>array(
+						'condition'=>'user.status=' . User::STATUS_NORMAL,
+					),
+				))->countByAttributes(array(
+					'competition_id'=>$this->id,
+					'status'=>Registration::STATUS_ACCEPTED,
+				));
 		}
 		return max($this->_remainedNumber, 0);
 	}
@@ -801,14 +849,14 @@ class Competition extends ActiveRecord {
 
 	public function getHasResults() {
 		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
-		)) > 0;
+				'competitionId'=>$this->wca_competition_id,
+			)) > 0;
 	}
 
 	public function getHasGroupSchedules() {
 		return GroupSchedule::model()->countByAttributes([
-			'competition_id'=>$this->id,
-		]) > 0;
+				'competition_id'=>$this->id,
+			]) > 0;
 	}
 
 	public function getCountdown($type = 'normal') {
@@ -828,15 +876,15 @@ class Competition extends ActiveRecord {
 
 	public function hasUserResults($wcaid) {
 		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
-			'personId'=>$wcaid,
-		)) > 0;
+				'competitionId'=>$this->wca_competition_id,
+				'personId'=>$wcaid,
+			)) > 0;
 	}
 
 	public function hasSchedule($event) {
 		return array_filter($this->schedule, function($item) use ($event) {
-			return $item['event'] === $event;
-		}) !== [];
+				return $item['event'] === $event;
+			}) !== [];
 	}
 
 	public function getTicketIds() {
@@ -1500,10 +1548,10 @@ class Competition extends ActiveRecord {
 
 	public function handleDate() {
 		foreach ([
-			'date', 'end_date', 'reg_start', 'reg_end',
-			'second_stage_date', 'third_stage_date', 'qualifying_end_time',
-			'cancellation_end_time', 'reg_reopen_time',
-		] as $attribute) {
+					 'date', 'end_date', 'reg_start', 'reg_end',
+					 'second_stage_date', 'third_stage_date', 'qualifying_end_time',
+					 'cancellation_end_time', 'reg_reopen_time',
+				 ] as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
 				if ($date !== false) {
@@ -1529,9 +1577,9 @@ class Competition extends ActiveRecord {
 			}
 		}
 		foreach ([
-			'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date',
-			'qualifying_end_time', 'cancellation_end_time', 'reg_reopen_time',
-		] as $attribute) {
+					 'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date',
+					 'qualifying_end_time', 'cancellation_end_time', 'reg_reopen_time',
+				 ] as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
 			} else {
@@ -1691,6 +1739,11 @@ class Competition extends ActiveRecord {
 				$groups[] = 'U' . $age;
 			}
 		}
+		$o_ages = self::getPodiumOldAges('sort');
+		foreach ($o_ages as $age) {
+			$groups[] = 'O'.$age;
+		}
+
 		if (!$hasUGroups && $this->podiums_children) {
 			$groups[] = Yii::t('live', 'Children');
 		}
@@ -1824,6 +1877,7 @@ class Competition extends ActiveRecord {
 					'order'=>'average > 0 DESC, average ASC, best ASC',
 				]);
 				$ages = self::getPodiumAges();
+				$o_ages = self::getPodiumOldAges('rsort');
 				$temp = [
 					Yii::t('live', 'Children')=>[],
 					Yii::t('live', 'Females')=>[],
@@ -1838,6 +1892,11 @@ class Competition extends ActiveRecord {
 					$podiumsChildren = $podiumsChildren && !($this->{'podiums_u' . $age});
 					$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
 				}
+				foreach ($o_ages as $age) {
+					$temp['O'.$age] = [];
+					$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
+				}
+
 				$u12 = strtotime(($year - 12) . $monthAndDay);
 				foreach ($results as $result) {
 					//ignore non greater chinese user
@@ -1857,6 +1916,13 @@ class Competition extends ActiveRecord {
 					foreach ($ages as $age) {
 						if ($birthday > $dobs[$age] && $this->{'podiums_u' . $age}) {
 							$temp['U' . $age][] = clone $result;
+							break;
+						}
+					}
+					// that logic here is different from U the above. GetPodiumOldAges has already filtered the data once.
+					foreach ($o_ages as $age) {
+						if ($birthday < $dobs[$age] ) {
+							$temp['O' . $age][] = clone $result;
 							break;
 						}
 					}
@@ -1881,8 +1947,8 @@ class Competition extends ActiveRecord {
 							break;
 						}
 						$result->subEventTitle = ' ' . $group . Yii::t('live', ' ({round})', [
-							'{round}'=>Yii::t('RoundTypes', 'First round'),
-						]);
+								'{round}'=>Yii::t('RoundTypes', 'First round'),
+							]);
 						if ($this->podiums_greater_china) {
 							$greaterChinaPodiums['unofficial'][] = $result;
 						} else {
@@ -2696,8 +2762,8 @@ class Competition extends ActiveRecord {
 	public function checkCancellationEnd() {
 		//之前的比赛ID到669
 		if ($this->person_num > 0 && (
-			$this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
-		)) {
+				$this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
+			)) {
 			if ($this->cancellation_end_time > $this->reg_end - 86400 && !$this->multi_countries) {
 				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
 			}
@@ -2714,8 +2780,8 @@ class Competition extends ActiveRecord {
 	public function checkRegistrationReopen() {
 		//之前的比赛ID到669
 		if ($this->person_num > 0 && (
-			$this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
-		)) {
+				$this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669
+			)) {
 			if ($this->reg_reopen_time > $this->reg_end - 43200) {
 				$this->addError('reg_reopen_time', '报名重开时间必须早于比赛开始至少半天');
 			}
@@ -3018,7 +3084,9 @@ class Competition extends ActiveRecord {
 				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,
 				podiums_u9, podiums_u10, podiums_u11, podiums_u12, podiums_u13, podiums_u14,
 				podiums_u15, podiums_u16, podiums_u17, podiums_u18,
+				podiums_o25, podiums_o30, podiums_o35, podiums_o45,
 				entry_ticket, guest_limit, attend_ceremory, name_card_fee', 'numerical', 'integerOnly'=>true],
+			['podiums_o', 'safe'],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
 			['wca_competition_id', 'length', 'max'=>32],
