@@ -183,7 +183,7 @@ class Competition extends ActiveRecord {
 		$options['podiums_o'] = [
 			'label'=>'O组自定义',
 			'subtitle'=>'年龄-O组',
-			'warning'=>'请注意，使用O组自定义时, 多个自定义年龄用英文`,`分割输入如： `25,35`。',
+			'warning'=>'请注意，使用O组自定义时, 多个自定义年龄用英文 "," 分割输入如： "25,35"。',
 			'type'=>'raw',
 		];
 		$o_ages = [25, 30, 35, 45];
@@ -443,7 +443,7 @@ class Competition extends ActiveRecord {
 		$ages = [];
 
 		foreach ($base as $b){
-			if ($this->{'podiums_o'.$b}){
+			if ($this->{'podiums_o' . $b}){
 				$ages[] = $b;
 			}
 		}
