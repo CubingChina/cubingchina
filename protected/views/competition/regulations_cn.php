@@ -183,6 +183,7 @@
   }, $competition->podiumsEvents)); ?>项目开设<?php echo implode('、', $groups); ?>共<?php echo count($groups); ?>个组别，以上各组别均以初赛成绩为统计依据。
     </p>
     <ol>
+      <!--      U group-->
       <?php $lastAge = 0; ?>
       <?php foreach (Competition::getPodiumAges() as $age): ?>
       <?php if ($competition->{'podiums_u' . $age}): ?>
@@ -194,6 +195,35 @@
       <?php $lastAge = $age; ?>
       <?php endif; ?>
       <?php endforeach; ?>
+
+
+      <!-- O group -->
+
+      <?php
+      $oldAgeGroups = [];
+      $lastOAge = 0;
+
+      foreach ($competition->getPodiumOldAges('asc') as $age) {
+        if ($lastOAge) {
+          $oldAgeGroups[] = sprintf(
+            '<li><b>O%d：</b>为%d岁（含）至%d岁（不含）选手，即在%s至%s出生的选手。</li>',
+            $age, $lastOAge, $age,
+            date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)),
+            date('Y年m月d日', $competition->getYearsAgosDate($lastOAge))
+          );
+        } else {
+          $oldAgeGroups[] = sprintf(
+            '<li><b>O%d：</b>为%d岁（不含）以上选手，即在%s及之前出生的选手。</li>',
+            $age, $age, date('Y年m月d日', $competition->getYearsAgosDate($age, 86400))
+          );
+        }
+        $lastOAge = $age;
+      }
+      foreach (array_reverse($oldAgeGroups) as $group) {
+        echo $group;
+      }
+      ?>
+
       <?php if ($competition->podiums_children && $lastAge === 0): ?>
       <li>
         <b>少儿组</b>：12岁（不含）以下选手。

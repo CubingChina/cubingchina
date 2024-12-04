@@ -508,21 +508,26 @@
                 </p>
               </div>
               <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
-              <?php if (isset($value['title'])): ?>
-              <div class="clearfix"></div>
-              <hr>
-              <div class="col-lg-12">
-                <h3>
-                  <?php echo $value['title']; ?>
-                </h3>
-                <?php if (isset($value['warning'])): ?>
-                <div class="text-danger">
-                  <?php echo $value['warning']; ?>
-                </div>
+              <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
+                <?php if (isset($value['title']) || isset($value['subtitle'])): ?>
+                  <div class="clearfix"></div>
+                  <hr>
+                  <div class="col-lg-12">
+                    <?php if (isset($value['title'])): ?>
+                      <h3><?php echo $value['title']; ?></h3>
+                    <?php endif; ?>
+                    <?php if (isset($value['subtitle'])): ?>
+                      <h4><strong><?php echo $value['subtitle'] ?></strong></h4>
+                    <?php endif; ?>
+                    <?php if (isset($value['warning'])): ?>
+                      <div class="text-danger">
+                        <?php echo $value['warning']; ?>
+                      </div>
+                    <?php endif; ?>
+                  </div>
                 <?php endif; ?>
-              </div>
-              <?php endif; ?>
-              <?php echo Html::formGroup(
+
+                <?php echo Html::formGroup(
                 $model, $key, array(
                   'class'=>'col-md-3',
                 ),
