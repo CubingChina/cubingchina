@@ -508,7 +508,6 @@
                 </p>
               </div>
               <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
-              <?php foreach (Competition::getOtherOptions() as $key=>$value):?>
                 <?php if (isset($value['title']) || isset($value['subtitle'])): ?>
                   <div class="clearfix"></div>
                   <hr>
