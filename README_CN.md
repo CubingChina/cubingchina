@@ -1,33 +1,27 @@
-<h1 align="center">Cubingchina</h1>
 
+<h1 align="center">Cubingchina</h1>
 <p align="center">
     <a href="https://github.com/CubingChina/cubingchina/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/badge/license-GPL2.0-blue"></a>
     <a href="https://cubing.com/"><img alt="Documentation" src="https://img.shields.io/badge/website-Cubingchina-green"></a>
-<br>
+    <br>
 <a href="https://cubing.com/"><img alt="Documentation" src="https://img.shields.io/badge/Code%20With%20PHP-grey?style=for-the-badge&logo=php&logoSize=samll"></a>
 </p>
 
-
-
 <h4 align="center">
     <p>
-        <a href="https://github.com/CubingChina/cubingchina/README_CN.md">简体中文</a> | <b>English</b>
+        <b>简体中文</b> | <a href="https://github.com/CubingChina/cubingchina/README.md">English</a>
     </p>
 </h4>
 
-
 ---
-The official website of Cubing China https://cubingchina.com.
+可查看粗饼网 https://cubing.com 或 https://cubingchina.com
 
-
-# Installation
-
-### Environments
+# 安装
+### 环境依赖
 1、[`Nginx`](http://nginx.org/) / [`Apache`](http://www.apache.org/)
 2、[`PHP7.0+`](http://php.net/)
-You can refer to the official tutorial for installing and deploying PHP.
-The subsequent deployment steps are provided for reference.
-###### Configuration `php-fpm`
+​	可参考官网教程安装部署`PHP,` 后续部署步骤供参考。
+###### 配置`php-fpm`
 ```bash
 sudo mkdir /usr/local/php
 sudo cp php.ini-development /usr/local/php-8.1.29/etc/php.ini
@@ -40,12 +34,12 @@ sudo useradd -g www-data www-data
 sudo mkdir /var/run/www/
 sudo chown -R www-data:www-data /var/run/www
 ```
-###### update ` /usr/local/php-8.1.29/etc/php-fpm.d/www.conf` config
+###### 修改` /usr/local/php-8.1.29/etc/php-fpm.d/www.conf`配置
 ```
 listen = /var/run/www/php-cgi.sock
 ```
-###### php-fpm System script
-write `/usr/lib/systemd/system/php-fpm.service`
+###### php-fpm系统脚本
+写入 `/usr/lib/systemd/system/php-fpm.service`
 ```systemverilog
 [Unit]
 Description=The PHP FastCGI Process Manager
@@ -74,48 +68,50 @@ sudo make
 sudo make install
 ```
 5、[`MySQL5.1+`](http://www.mysql.com/)
-- Port: 3306
-- Root password: empty
-- The host must have the mysql command installed. If deployed via Docker, you can install mysql-client.
-
+- 端口3306
+- root密码为空
+- 主机需要有`mysql`命令，如果为docker部署可安装`mysql-client`
 6、[`Yii Framework 1.1.20`](http://www.yiiframework.com/)
-- Note: Only this version is supported; otherwise, unexpected issues may occur.
+- 注意只能为该版本，否则可能出现意外
 7、[`Composer`](https://getcomposer.org/)
 8、[`Nodejs`](https://nodejs.org/)
 
 
 
-### Steps
-1. Clone this repo to `/path/to/cubingchina`.
-2. Put `framework` directory of `Yii` to `/path/to/cubingchina/../framework`.
-3. Create four databases.
+### 部署步骤
+
+1、下载本项目到`/path/to/cubingchina`.
+2、 拷贝`framework` 目录到  `Yii`所在工作目录 ， `/path/to/cubingchina/../framework`.
+3、创建数据库
+
 ```sql
 CREATE DATABASE cubingchina;
 CREATE DATABASE cubingchina_dev;
 CREATE DATABASE wca_0;
 CREATE DATABASE wca_1;
 ```
-4、Initialize the database
-- Open the `protected/config` directory in the Cubing project and create an identifier file named `wcaDb`.
-  - This file is used to switch to the corresponding database during the automatic update of WCA data.
-  - Simply write 0 in the file.
-- Execute the SQL scripts: `structure.sql` and `data.sql` in the databases `cubingchina` and `cubingchina_dev`.
-- Run the script `cubingchina/protected/commands/shell/wca_data_sync.sh` to synchronize WCA data.
-
-5、Install Composer
+4、初始化数据库
+- 打开粗饼项目中`protected/config`目录，创建一个`wcaDb`的标识文件
+  - 这个文件应该是用于自动更新wca数据的时候，切换对应的数据库。
+  - 写0即可
+- 执行`sql脚本 `： `structure.sql` 和`data.sql` 到`cubingchina`、 `cubingchina_dev`两个数据库
+  - 注意顺序
+- 执行`cubingchina/protected/commands/shell/wca_data_sync.sh`脚本以同步`wca`数据。
+5、安装composer依赖
 ```bash
 cd cubingchina/protected
 composer update
 composer install
 ```
-6、Install Node
+6、安装node依赖
 ```bash
 npm config set registry http://mirrors.cloud.tencent.com/npm/
 npm config set strict-ssl false
 cd cubingchina/public/f && npm i --verbose && npm run build
 ```
-7、Configuration Nginx
-- config like:
+7、配置`Nginx`
+- 参考配置如下
+
 ```bash
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -157,29 +153,29 @@ server {
     }
 }
 ```
-Possible permission issues include:
+可能存在的权限问题时：
 ```bash
 sudo chown www-data:www-data /var/run/www/php-cgi.sock
 sudo chmod 660 /var/run/www/php-cgi.sock
 ```
-8、Configure project read and write permissions
+8、配置项目读写权限
 ```bash
 chmod a+x cubingchina/public/assets
 chmod a+x cubingchina/protected/runtime
 ```
-9、Synchronize the database configuration
+9、同步数据库配置
 ```
 cubingchina/protected/yiic migrate
 ```
-10、If you need to enable live streaming functionality:
+10、如果需要开启直播功能时
 ```bash
 cubingchina/protected/yiic websocket
 ```
-11、If you need to switch to *dev mode*, set `ENV` of `php` to *dev*.
-12、Enjoy.
+11、如果需要切换开发模式，可通过`ENV`将`php`切换到`dev`
+12、结束
 
-### Suggestions or Possible mistakes
+### 建议或可能的错误
 
-1. Local server environment include Apache, Mysql, PHP such as [WAMP](http://www.wampserver.com/en/), [MAMP](https://www.mamp.info/en/) or [XAMMP](https://www.apachefriends.org/index.html) are recommanded
-2. `wca_data_sync.sh` include `grep`, `lftp`, `sed`commands,install them before run this script
-3. The rewrite rules of Apache must be configed to `index.php`
+1、本地服务器环境包括` Apache`、`Mysql`、`PHP`，例如建议使用 [`WAMP`](http://www.wampserver.com/en/)、[`MAMP`](https://www.mamp.info/en/) 或 [`XAMMP`](https://www.apachefriends.org/index.html)
+2、`wca_data_sync.sh` 包含 `grep`, `lftp`, `sed` 命令，请在运行此脚本之前安装它们。
+3、Apache 的重写规则必须配置到 `index.php`。
