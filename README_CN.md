@@ -89,7 +89,9 @@ sudo make install
 ### 部署步骤
 
 1、下载本项目到`/path/to/cubingchina`.
+
 2、 拷贝`framework` 目录到  `Yii`所在工作目录 ， `/path/to/cubingchina/../framework`.
+
 3、创建数据库
 
 ```sql
@@ -105,18 +107,21 @@ CREATE DATABASE wca_1;
 - 执行`sql脚本 `： `structure.sql` 和`data.sql` 到`cubingchina`、 `cubingchina_dev`两个数据库
   - 注意顺序
 - 执行`cubingchina/protected/commands/shell/wca_data_sync.sh`脚本以同步`wca`数据。
+
 5、安装composer依赖
 ```bash
 cd cubingchina/protected
 composer update
 composer install
 ```
+
 6、安装node依赖
 ```bash
 npm config set registry http://mirrors.cloud.tencent.com/npm/
 npm config set strict-ssl false
 cd cubingchina/public/f && npm i --verbose && npm run build
 ```
+
 7、配置`Nginx`
 - 参考配置如下
 
