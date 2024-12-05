@@ -1,4 +1,4 @@
-<h1 align="center">Cubingchina</h1>
+<h1 align="center">CubingChina</h1>
 
 <p align="center">
     <a href="https://github.com/CubingChina/cubingchina/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/badge/license-GPL2.0-blue"></a>
@@ -11,7 +11,7 @@
 
 <h4 align="center">
     <p>
-        <a href="https://github.com/CubingChina/cubingchina/README_CN.md">简体中文</a> | <b>English</b>
+        <a href="https://github.com/CubingChina/cubingchina/blob/master/README_CN.md">简体中文</a> | <b>English</b>
     </p>
 </h4>
 
@@ -24,6 +24,7 @@ The official website of Cubing China https://cubingchina.com.
 
 ### Environments
 1、[`Nginx`](http://nginx.org/) / [`Apache`](http://www.apache.org/)
+
 2、[`PHP7.0+`](http://php.net/)
 You can refer to the official tutorial for installing and deploying PHP.
 The subsequent deployment steps are provided for reference.
@@ -64,7 +65,9 @@ WantedBy=multi-user.target
 systemctl enable php-fpm.service
 systemctl restart php-fpm.service
 ```
+
 3、[`Redis`](https://redis.io/)
+
 4、 [`Redis Extension`](https://github.com/phpredis/phpredis)
 ```bash
 git clone https://github.com/phpredis/phpredis.git
@@ -73,6 +76,7 @@ phpize
 sudo make
 sudo make install
 ```
+
 5、[`MySQL5.1+`](http://www.mysql.com/)
 - Port: 3306
 - Root password: empty
@@ -80,21 +84,26 @@ sudo make install
 
 6、[`Yii Framework 1.1.20`](http://www.yiiframework.com/)
 - Note: Only this version is supported; otherwise, unexpected issues may occur.
+
 7、[`Composer`](https://getcomposer.org/)
+
 8、[`Nodejs`](https://nodejs.org/)
 
 
 
 ### Steps
-1. Clone this repo to `/path/to/cubingchina`.
-2. Put `framework` directory of `Yii` to `/path/to/cubingchina/../framework`.
-3. Create four databases.
+1、Clone this repo to `/path/to/cubingchina`.
+
+2、Put `framework` directory of `Yii` to `/path/to/cubingchina/../framework`.
+
+3、Create four databases.
 ```sql
 CREATE DATABASE cubingchina;
 CREATE DATABASE cubingchina_dev;
 CREATE DATABASE wca_0;
 CREATE DATABASE wca_1;
 ```
+
 4、Initialize the database
 - Open the `protected/config` directory in the Cubing project and create an identifier file named `wcaDb`.
   - This file is used to switch to the corresponding database during the automatic update of WCA data.
@@ -108,12 +117,14 @@ cd cubingchina/protected
 composer update
 composer install
 ```
+
 6、Install Node
 ```bash
 npm config set registry http://mirrors.cloud.tencent.com/npm/
 npm config set strict-ssl false
 cd cubingchina/public/f && npm i --verbose && npm run build
 ```
+
 7、Configuration Nginx
 - config like:
 ```bash
@@ -162,24 +173,31 @@ Possible permission issues include:
 sudo chown www-data:www-data /var/run/www/php-cgi.sock
 sudo chmod 660 /var/run/www/php-cgi.sock
 ```
+
 8、Configure project read and write permissions
 ```bash
 chmod a+x cubingchina/public/assets
 chmod a+x cubingchina/protected/runtime
 ```
+
 9、Synchronize the database configuration
 ```
 cubingchina/protected/yiic migrate
 ```
+
 10、If you need to enable live streaming functionality:
 ```bash
 cubingchina/protected/yiic websocket
 ```
+
 11、If you need to switch to *dev mode*, set `ENV` of `php` to *dev*.
+
 12、Enjoy.
 
 ### Suggestions or Possible mistakes
 
-1. Local server environment include Apache, Mysql, PHP such as [WAMP](http://www.wampserver.com/en/), [MAMP](https://www.mamp.info/en/) or [XAMMP](https://www.apachefriends.org/index.html) are recommanded
-2. `wca_data_sync.sh` include `grep`, `lftp`, `sed`commands,install them before run this script
-3. The rewrite rules of Apache must be configed to `index.php`
+1、Local server environment include Apache, Mysql, PHP such as [WAMP](http://www.wampserver.com/en/), [MAMP](https://www.mamp.info/en/) or [XAMMP](https://www.apachefriends.org/index.html) are recommanded
+
+2、`wca_data_sync.sh` include `grep`, `lftp`, `sed`commands,install them before run this script
+
+3、The rewrite rules of Apache must be configed to `index.php`
