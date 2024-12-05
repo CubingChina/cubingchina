@@ -1,5 +1,5 @@
 
-<h1 align="center">Cubingchina</h1>
+<h1 align="center">CubingChina</h1>
 <p align="center">
     <a href="https://github.com/CubingChina/cubingchina/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/badge/license-GPL2.0-blue"></a>
     <a href="https://cubing.com/"><img alt="Documentation" src="https://img.shields.io/badge/website-Cubingchina-green"></a>
@@ -9,7 +9,7 @@
 
 <h4 align="center">
     <p>
-        <b>简体中文</b> | <a href="https://github.com/guojia99/cubingchina/blob/master/README.md">English</a>
+        <b>简体中文</b> | <a href="https://github.com/CubingChina/cubingchina/blob/master/README.md">English</a>
     </p>
 </h4>
 

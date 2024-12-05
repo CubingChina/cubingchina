@@ -1,4 +1,4 @@
-<h1 align="center">Cubingchina</h1>
+<h1 align="center">CubingChina</h1>
 
 <p align="center">
     <a href="https://github.com/CubingChina/cubingchina/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/badge/license-GPL2.0-blue"></a>
