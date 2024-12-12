@@ -63,6 +63,7 @@ class Competition extends ActiveRecord {
 	const OLD_WCA_DUES_END = 1706371200; // 2024-01-28
 
 	const WCA_DUES_START = 1706371201; // 2024-01-28
+	const WCA_DUES_INCLUDING_LOWEST_START = 1733443200; // 2024-12-06
 
 	const COMPETITOR_LIMIT_BY_COMPETITION = 0;
 	const COMPETITOR_LIMIT_BY_EVENT = 1;
@@ -993,7 +994,22 @@ class Competition extends ActiveRecord {
 			if (!$this->isWCACompetition()) {
 				return 0;
 			}
-			return round($this->entry_fee * 0.15, 2);
+			$minFee = 0;
+			if ($this->date >= self::WCA_DUES_INCLUDING_LOWEST_START) {
+				// get minimal fee of each events
+				$minFee = PHP_INT_MAX;
+				$events = Events::getNormalEvents();
+				foreach ($this->associatedEvents as $event) {
+					if (!isset($events[$event['event']])) {
+						continue;
+					}
+					$fee = $this->getEventFee($event['event'], self::STAGE_FIRST);
+					if ($fee < $minFee) {
+						$minFee = $fee;
+					}
+				}
+			}
+			return round(($this->entry_fee + $minFee) * 0.15, 2);
 		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {
