@@ -370,8 +370,18 @@
       }).map(function (user) {
         const [index, name] = user.split(':');
         if (!name) {
+          const matches = user.match(/^(No\.)?(\d+)([^\d]+)$/);
+          if (!matches) {
+            return {
+              name: user.trim(),
+              index: '',
+              number: '',
+            }
+          }
           return {
-            name: user.trim(),
+            name: matches[3].trim(),
+            index: matches[2].trim(),
+            number: `No.${matches[2].trim()}`,
           }
         }
         return {

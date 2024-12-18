@@ -71,6 +71,6 @@ Yii::app()->clientScript->registerScriptFile('/f/js/three.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/tween.min.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/TrackballControls.js');
 Yii::app()->clientScript->registerScriptFile('/f/js/CSS3DRenderer.js');
-Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js?20240616');
+Yii::app()->clientScript->registerScriptFile('/f/js/luckyDraw.js?20241218');
 Yii::app()->clientScript->registerCssFile('/f/css/animate.min.css');
 Yii::app()->clientScript->registerCssFile('/f/css/luckyDraw.css?20240616');
