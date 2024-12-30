@@ -341,8 +341,8 @@ class Results extends ActiveRecord {
 			if ($data['improvement'] > 0) {
 				return $data['improvement'] . " ({$data['improvementPercent']}%)";
 			} else {
-				$lastYearsTime = substr($data['lastYearsBest']->best, 3, -2);
-				$thisYearsTime = substr($data['thisYearsBest']->best, 3, -2);
+				$lastYearsTime = substr($data['lastYearsBest']->best, 2, -2);
+				$thisYearsTime = substr($data['thisYearsBest']->best, 2, -2);
 				$deltaTime = $lastYearsTime - $thisYearsTime;
 				return self::formatTimeByEvent($deltaTime, '333mbf');
 			}
