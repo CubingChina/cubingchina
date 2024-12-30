@@ -344,7 +344,7 @@ class Results extends ActiveRecord {
 				$lastYearsTime = substr($data['lastYearsBest']->best, 3, -2);
 				$thisYearsTime = substr($data['thisYearsBest']->best, 3, -2);
 				$deltaTime = $lastYearsTime - $thisYearsTime;
-				return self::formatGMTime($deltaTime, true);
+				return self::formatTimeByEvent($deltaTime, '333mbf');
 			}
 		}
 	}
@@ -368,19 +368,19 @@ class Results extends ActiveRecord {
 		} elseif ($eventId === '333mbf' || ($eventId === '333mbo' && strlen($result) == 9)) {
 			$difference = 99 - substr($result, 0, 2);
 			$missed = intval(substr($result, -2));
-			$time = self::formatGMTime(substr($result, 3, -2), true);
+			$time = self::formatTimeByEvent(substr($result, 2, -2), $eventId);
 			$solved = $difference + $missed;
 			$attempted = $solved + $missed;
 			$time = $solved . '/' . $attempted . ' ' . $time;
 		} elseif ($eventId === '333mbo') {
 			$solved = 99 - substr($result, 1, 2);
 			$attempted = intval(substr($result, 3, 2));
-			$time = self::formatGMTime(substr($result, -5), true);
+			$time = self::formatTimeByEvent(substr($result, -5), $eventId);
 			$time = $solved . '/' . $attempted . ' ' . $time;
 		} else {
 			$msecond = str_pad(substr($result, -2), 2, '0', STR_PAD_LEFT);
 			$second = substr($result, 0, -2);
-			$time = self::formatGMTime(intval($second)) . '.' . $msecond;
+			$time = self::formatTimeByEvent(intval($second)) . '.' . $msecond;
 		}
 		if ($encode) {
 			$time = CHtml::encode($time);
@@ -391,27 +391,25 @@ class Results extends ActiveRecord {
 	/**
 	 *
 	 * @param int $time 要被格式化的时间
-	 * @param boolean $multi 是否是多盲
+	 * @param str $eventId 项目ID，用于对多盲时间格式化方式的判断
 	 */
-	private static function formatGMTime($time, $multi = false) {
+	private static function formatTimeByEvent($time, $eventId = '') {
 		$time = intval($time);
-		if ($multi) {
-			if ($time == 99999) {
-				return 'unknown';
-			}
-			if ($time > 3600) {
-				return floor($time / 60) . ':' . gmdate('s', $time);
-			}
-			if ($time == 3600) {
-				return '60:00';
-			}
-			if ($time < 60) {
-				return '0:' . $time;
-			}
-		} else if ($time == 0) {
+		if ($time === 99999 && substr($eventId, 0, -1) === '333mb') {
+			return 'unknown';
+		}
+		if ($time == 0) {
 			return '0';
 		}
-		return ltrim(gmdate('G:i:s', $time), '0:');
+
+		$seconds = $time % 60;
+		$minutes = intval($time / 60);
+		if ($eventId === '333mbf') {
+			return sprintf('%d:%02d', $minutes, $seconds);
+		}
+		$hours = intval($minutes / 60);
+		$minutes = $minutes % 60;
+		return ltrim(sprintf('%d:%02d:%02d', $hours, $minutes, $seconds), '0:');
 	}
 
 	public static function getDisplayDetail($data, $boldBest = false) {
