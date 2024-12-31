@@ -73,7 +73,7 @@ class MostNumber extends Statistics {
 		$rows = $command
 		->select($select)
 		->group($statistic['group'])
-		->order('count DESC')
+		->order(['count DESC', $statistic['group'] . ' ASC'])
 		->limit($limit)
 		->offset(($page - 1) * $limit)
 		->queryAll();
