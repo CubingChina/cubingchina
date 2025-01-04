@@ -33,7 +33,7 @@ return array (
   'Finished' => '已结束',
   'Input Panel' => '输入板',
   'Live' => '进行中',
-  'Live stream can be found here: {link}' => '点击此链接观看视频直播：{link}',
+  'Live stream can be found here: {link}' => '点击此链接观看图片/视频直播：{link}',
   'New Comers' => '新人组',
   'Online: ' => '在线人数：',
   'Open this round' => '开启本轮',
