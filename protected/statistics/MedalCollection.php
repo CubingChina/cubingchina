@@ -10,10 +10,28 @@ class MedalCollection extends Statistics {
 			'sum(CASE WHEN pos=2 THEN 1 ELSE 0 END) AS silver',
 			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
 		))
-		->from('Results')
-		->where('personCountryId="China" AND roundTypeId IN ("c", "f") AND best>0');
+		->from('Results rs')
+		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+		->leftJoin('Countries country', 'p.countryId=country.id')
+		->where('roundTypeId IN ("c", "f") AND best>0');
+		ActiveRecord::applyRegionCondition($command, $statistic['region'] ?? 'China', 'p.countryId');
 		if (!empty($statistic['eventIds'])) {
 			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
+		}
+		if (isset($statistic['gender'])) {
+			switch ($statistic['gender']) {
+				case 'female':
+					$command->andWhere('p.gender="f"');
+					break;
+				case 'male':
+					$command->andWhere('p.gender="m"');
+					break;
+			}
+		}
+		if (isset($statistic['year'])) {
+			$command->andWhere('competitionId LIKE :year', [
+				':year'=>'%' . $statistic['year'],
+			]);
 		}
 		$cmd = clone $command;
 		$command->group('personId')

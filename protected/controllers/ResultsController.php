@@ -1076,6 +1076,9 @@ class ResultsController extends Controller {
 	private function statMedalCollection() {
 		$page = $this->iGet('page', 1);
 		$eventIds = $this->aGet('event');
+		$region = $this->sGet('region', 'China');
+		$gender = $this->sGet('gender', 'all');
+		$year = $this->iGet('year', null);
 		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
 			$eventIds = array();
 		}
@@ -1083,6 +1086,9 @@ class ResultsController extends Controller {
 			'class'=>'MedalCollection',
 			'type'=>'all',
 			'eventIds'=>$eventIds,
+			'region'=>$region,
+			'gender'=>$gender,
+			'year'=>$year,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -1104,6 +1110,9 @@ class ResultsController extends Controller {
 			'time'=>$time,
 			'page'=>$page,
 			'eventIds'=>$eventIds,
+			'region'=>$region,
+			'gender'=>$gender,
+			'year'=>$year,
 		));
 	}
 
