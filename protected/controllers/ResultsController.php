@@ -1082,6 +1082,12 @@ class ResultsController extends Controller {
 		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
 			$eventIds = array();
 		}
+		if (!array_key_exists($gender, Persons::getGenders())) {
+			$gender = 'all';
+		}
+		if (!array_key_exists($year, Competitions::getYears(false))) {
+			$year = null;
+		}
 		$statistic = array(
 			'class'=>'MedalCollection',
 			'type'=>'all',
