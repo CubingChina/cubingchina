@@ -360,6 +360,7 @@ class Registration extends ActiveRecord {
 	public function acceptForNewcomer() {
 		// record the accept time in case of wrongly accepted
 		$this->cancel_time = $this->accept_time;
+		$this->accept_time = 0;
 		// force accept the registration
 		$this->accept(null, true);
 	}
