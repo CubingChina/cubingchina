@@ -1118,4 +1118,83 @@ class RegistrationController extends AdminController {
 			'value'=>$model->$attribute,
 		));
 	}
+
+	public function actionAcceptNewcomer() {
+		$id = $this->iRequest('id');
+		$model = Registration::model()->findByPk($id);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		$competition = $model->competition;
+		if ($competition === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		if ($this->user->isOrganizer()) {
+			throw new CHttpException(401, 'Unauthorized');
+		}
+		if ($this->user->role != User::ROLE_ADMINISTRATOR && !$competition->canRegister()) {
+			throw new CHttpException(400, '报名已截止，如需变更请联系代表或管理员');
+		}
+		if ($model->isCancelled()) {
+			throw new CHttpException(400, '已退赛选手不做任何变更');
+		}
+		// check status
+		if (!$model->isWaiting()) {
+			throw new CHttpException(400, '仅能通过已完成报名流程的选手');
+		}
+		// check for top 50% newcomer
+		$user = $model->user;
+		$currentYear = date('Y', $competition->date);
+		$registrations = Registration::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$competition->id,
+			'status'=>[Registration::STATUS_ACCEPTED, Registration::STATUS_WAITING],
+		]);
+		$otherWaitingRegistrations = array_filter($registrations, function($registration) use ($model) {
+			return $registration->isWaiting() && $registration->id != $model->id;
+		});
+		$otherWaitingNewcomers = array_filter($otherWaitingRegistrations, function($registration) use ($currentYear) {
+			return !$registration->user->wcaid || substr($registration->user->wcaid, 0, 4) == $currentYear;
+		});
+		$acceptedNewcomers = array_filter($registrations, function($registration) use ($currentYear) {
+			if ($registration->isAccepted()) {
+				return false;
+			}
+			return !$registration->user->wcaid || substr($registration->user->wcaid, 0, 4) == $currentYear;
+		});
+		$reached50Percent = count($acceptedNewcomers) >= $competition->person_num / 2;
+		$oneDayBeforeCancellationEnd = $competition->cancellation_end_time - 86400;
+		$now = time();
+		// if one of the following conditions is met, then accept by the order of registration
+		// 1. newcomers reached 50% of competitor limit
+		// 2. one day before cancellation end
+		// 3. registration ended and no waiting newcomers
+		// @todo how to handle this case: 100 limit, 200 registered but only 40 newcomers
+		if ($reached50Percent ||
+			($now > $oneDayBeforeCancellationEnd && $now < $competition->reg_reopen_time) ||
+			($now > $competition->reg_end && count($otherWaitingNewcomers) == 0)
+		) {
+			$priorRegistrations = array_filter($otherWaitingRegistrations, function($registration) use ($model) {
+				return $registration->accept_time < $model->accept_time || ($registration->accept_time == $model->accept_time && $registration->id < $model->id);
+			});
+			if ($priorRegistrations != []) {
+				throw new CHttpException(400, '请先通过更早完成报名流程的选手');
+			}
+		} else {
+			// only accept newcomer by the order of registration
+			if ($user->wcaid) {
+				throw new CHttpException(400, '请优先通过新人选手');
+			} else {
+				$priorRegistrations = array_filter($otherWaitingNewcomers, function($registration) use ($model) {
+					return $registration->accept_time < $model->accept_time || ($registration->accept_time == $model->accept_time && $registration->id < $model->id);
+				});
+				if ($priorRegistrations != []) {
+					throw new CHttpException(400, '请先通过更早完成报名流程的选手');
+				}
+			}
+		}
+		$model->acceptForNewcomer();
+		$this->ajaxOk(array(
+			'value'=>$model->status,
+		));
+	}
 }

@@ -118,6 +118,7 @@ return array (
   'WCA Official Page' => 'WCA官方頁面',
   'WCA regulations' => 'WCA比賽規則',
   'WCA Series' => 'WCA系列賽',
+  'WCA Newcomer Month' => 'WCA新人月賽',
   'Wca Competition ID' => 'WCA比賽ID',
   'WCA Dues' => 'WCA會費',
   '(includes {dues} for WCA Dues)' => '（含{dues}WCA會費）',
@@ -136,4 +137,6 @@ return array (
   '{type} > {points} point(s)' => '{type} > {points}分',
   'Only competitors can buy tickets.' => '只有選手可以購買入場券。',
   'You can only buy {num} tickets.' => '您最多只能購買{num}張入場券。',
+  'This competition is participating in the official WCA Newcomer Month.'=>'該比賽為WCA新人月賽。',
+  'This competition is participating in the official {newcomer}. Please wait in patience after completing the registration and payment.'=>'該比賽為{newcomer}，請在報名支付完成後耐心等待審核。',
 );

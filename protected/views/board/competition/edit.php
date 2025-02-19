@@ -89,7 +89,6 @@
                 Html::activeTextField($model, 'person_num'),
                 $form->error($model, 'person_num', array('class'=>'text-danger'))
               );?>
-              <?php if (!$user->isOrganizer()): ?>
               <?php echo Html::formGroup(
                 $model, 'competitor_limit_type', array(
                   'class'=>'col-md-2',
@@ -100,7 +99,16 @@
                 Html::activeSwitch($model, 'competitor_limit_type'),
                 $form->error($model, 'competitor_limit_type', array('class'=>'text-danger'))
               );?>
-              <?php endif; ?>
+              <?php echo Html::formGroup(
+                $model, 'newcomer', array(
+                  'class'=>'col-md-2',
+                ),
+                $form->labelEx($model, 'newcomer', array(
+                  'label'=>Html::link('WCA 新人月赛', 'https://cubing.com/faq#faq-14', ['target'=>'_blank']),
+                )),
+                Html::activeSwitch($model, 'newcomer'),
+                $form->error($model, 'newcomer', array('class'=>'text-danger'))
+              );?>
               <?php echo Html::formGroup(
                 $model, 'auto_accept', array(
                   'class'=>'col-md-2',
