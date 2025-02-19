@@ -1156,7 +1156,7 @@ class RegistrationController extends AdminController {
 			return !$registration->user->wcaid || substr($registration->user->wcaid, 0, 4) == $currentYear;
 		});
 		$acceptedNewcomers = array_filter($registrations, function($registration) use ($currentYear) {
-			if ($registration->isAccepted()) {
+			if (!$registration->isAccepted()) {
 				return false;
 			}
 			return !$registration->user->wcaid || substr($registration->user->wcaid, 0, 4) == $currentYear;
