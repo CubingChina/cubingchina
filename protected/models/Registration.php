@@ -330,6 +330,10 @@ class Registration extends ActiveRecord {
 					$this->status = self::STATUS_WAITING;
 				}
 			}
+			// check for newcomer comps
+			if ($this->competition->newcomer) {
+				$this->status = self::STATUS_WAITING;
+			}
 		}
 		$this->save();
 		if ($this->competition->isRegistrationFull()) {
@@ -351,6 +355,20 @@ class Registration extends ActiveRecord {
 			$payment = $this->getUnpaidPayment();
 			$payment->cancel();
 		}
+	}
+
+	public function acceptForNewcomer() {
+		// record the accept time in case of wrongly accepted
+		$this->cancel_time = $this->accept_time;
+		$this->accept_time = 0;
+		// force accept the registration
+		$this->accept(null, true);
+	}
+
+	public function cancelForNewcomer() {
+		$this->accept_time = $this->cancel_time;
+		$this->status = self::STATUS_CANCELLED;
+		$this->save();
 	}
 
 	public function updateEventsStatus($pay = null) {
@@ -1140,22 +1158,36 @@ class Registration extends ActiveRecord {
 					), '通过');
 					break;
 				case self::STATUS_ACCEPTED:
-					$buttons[] = CHtml::tag('button', array(
-						'class'=>'btn btn-xs btn-red btn-square toggle',
-						'data-id'=>$this->id,
-						'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
-						'data-attribute'=>'status',
-						'data-value'=>$this->status,
-						'data-text'=>'["通过","取消"]',
-						'data-name'=>$this->user->getCompetitionName(),
-					), '取消');
+					if (!$this->competition->newcomer) {
+						$buttons[] = CHtml::tag('button', array(
+							'class'=>'btn btn-xs btn-red btn-square toggle',
+							'data-id'=>$this->id,
+							'data-url'=>CHtml::normalizeUrl(array('/board/registration/toggle')),
+							'data-attribute'=>'status',
+							'data-value'=>$this->status,
+							'data-text'=>'["通过","取消"]',
+							'data-name'=>$this->user->getCompetitionName(),
+						), '取消');
+					}
 					break;
 			}
 		}
 		if ($this->status == self::STATUS_WAITING) {
-			$buttons[] = CHtml::tag('button', [
-				'class'=>'btn btn-xs btn-purple btn-square',
-			], '候选');
+			if ($this->competition->newcomer) {
+				$buttons[] = CHtml::tag('button', array(
+					'class'=>'btn btn-xs btn-green btn-square toggle',
+					'data-id'=>$this->id,
+					'data-url'=>CHtml::normalizeUrl(array('/board/registration/acceptNewcomer')),
+					'data-attribute'=>'status',
+					'data-value'=>$this->status,
+					'data-text'=>'["通过","取消"]',
+					'data-name'=>$this->user->getCompetitionName(),
+				), '通过');
+			} else {
+				$buttons[] = CHtml::tag('button', [
+					'class'=>'btn btn-xs btn-purple btn-square',
+				], '候选');
+			}
 		}
 		$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
 			'class'=>'tips' . ($canApprove ? ' toggle' : ''),

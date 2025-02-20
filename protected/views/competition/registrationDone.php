@@ -21,6 +21,13 @@
   <?php if ($registration->isWaiting()): ?>
   <div class="alert alert-warning">
     <?php echo Yii::t('Registration', 'Your registration is on the waiting list.'); ?>
+    <?php if ($competition->newcomer): ?>
+    <?php echo Yii::t('Competition', 'This competition is participating in the official {newcomer}. Please wait in patience after completing the registration and payment.', array(
+      '{newcomer}'=>CHtml::link(Yii::t('Competition', 'WCA Newcomer Month') . Html::fontAwesome('question-circle', 'a'), 'https://cubing.com/faq#faq-14', array(
+        'target'=>'_blank',
+      )),
+    )); ?>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
   <div class="row">

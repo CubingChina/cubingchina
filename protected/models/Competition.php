@@ -3094,7 +3094,7 @@ class Competition extends ActiveRecord {
 		]);
 		$rules = [
 			['name, name_zh, date, reg_end', 'required'],
-			['entry_fee, second_stage_all, online_pay, person_num, competitor_limit_type, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
+			['entry_fee, second_stage_all, online_pay, person_num, competitor_limit_type, auto_accept, fill_passport, local_type, live, status, newcomer', 'numerical', 'integerOnly'=>true],
 			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, allow_change_event,
 				podiums_children, podiums_females, podiums_new_comers, podiums_greater_china,
 				podiums_u3, podiums_u4, podiums_u5, podiums_u6, podiums_u7, podiums_u8,

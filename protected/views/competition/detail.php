@@ -26,6 +26,17 @@
       ));?>
     </dd>
     <?php endif; ?>
+    <?php if ($competition->newcomer): ?>
+    <dt>
+      <?php echo Yii::t('Competition', 'WCA Newcomer Month'); ?>
+      <?php echo CHtml::link(Html::fontAwesome('question-circle'), 'https://cubing.com/faq#faq-14', array(
+        'target'=>'_blank',
+      )); ?>
+    </dt>
+    <dd>
+      <?php echo Yii::t('Competition', 'This competition is participating in the official WCA Newcomer Month.');?>
+    </dd>
+    <?php endif; ?>
     <?php endif; ?>
     <?php if ($competition->wca_competition_id != ''): ?>
     <dt><?php echo Yii::t('Competition', 'WCA Official Page'); ?></dt>
