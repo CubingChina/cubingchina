@@ -1549,6 +1549,15 @@ class Registration extends ActiveRecord {
 			$temp = $rA->number - $rB->number;
 		}
 		if ($temp == 0) {
+			if ($rA->accept_time > 0 && $rB->accept_time == 0) {
+				$temp = -1;
+			} elseif ($rA->accept_time == 0 && $rB->accept_time > 0) {
+				$temp = 1;
+			} elseif ($rA->accept_time > 0 && $rB->accept_time > 0) {
+				$temp = $rA->accept_time - $rB->accept_time;
+			}
+		}
+		if ($temp == 0) {
 			$temp = $rA->date - $rB->date;
 		}
 		if ($temp == 0) {
