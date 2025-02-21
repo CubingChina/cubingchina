@@ -1170,7 +1170,7 @@ class RegistrationController extends AdminController {
 		// 3. registration ended and no waiting newcomers
 		// @todo how to handle this case: 100 limit, 200 registered but only 40 newcomers
 		if ($reached50Percent ||
-			($now > $oneDayBeforeCancellationEnd && $now < $competition->reg_reopen_time) ||
+			($now > $oneDayBeforeCancellationEnd && $now < $competition->reg_reopen_time && count($otherWaitingNewcomers) == 0) ||
 			($now > $competition->reg_end && count($otherWaitingNewcomers) == 0)
 		) {
 			$priorRegistrations = array_filter($otherWaitingRegistrations, function($registration) use ($model) {
