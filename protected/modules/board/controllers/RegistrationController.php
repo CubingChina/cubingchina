@@ -1181,7 +1181,7 @@ class RegistrationController extends AdminController {
 			}
 		} else {
 			// only accept newcomer by the order of registration
-			if ($user->wcaid) {
+			if ($user->wcaid && substr($user->wcaid, 0, 4) != $currentYear) {
 				throw new CHttpException(400, '请优先通过新人选手');
 			} else {
 				$priorRegistrations = array_filter($otherWaitingNewcomers, function($registration) use ($model) {
