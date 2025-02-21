@@ -1766,8 +1766,8 @@ class Registration extends ActiveRecord {
 			$column = array_splice($columns, $sortByEventColumnIndex, 1);
 			array_splice($columns, $firstEventColumnIndex, 0, $column);
 		}
+		usort($registrations, array($this, 'sortRegistration'));
 		if ($sort !== '') {
-			usort($registrations, array($this, 'sortRegistration'));
 			if (count($registrations) > 0 && self::$sortByEvent === true && self::$sortDesc !== true) {
 				$best = $registrations[0]->best;
 				$pos = 1;
