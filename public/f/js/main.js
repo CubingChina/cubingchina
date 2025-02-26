@@ -19,14 +19,14 @@ window.CubingChina = {
   utils
 }
 
-$(function() {
+$(function () {
   $('input, textarea').placeholder();
   $('.wrapper table:not(.table)').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
   if (!('ontouchstart' in window)) {
-    (function() {
+    (function () {
       var win = $(window);
       var winHeight = win.height();
-      $('.table-responsive table').each(function() {
+      $('.table-responsive table').each(function () {
         var table = $(this);
         var tableParent = table.parent();
         var scroll = $('<div>');
@@ -43,19 +43,19 @@ $(function() {
         });
         scrollParent.append(scroll).insertAfter(tableParent).css({
           position: 'fixed'
-        }).on('scroll', function() {
+        }).on('scroll', function () {
           tableParent[0].scrollLeft = this.scrollLeft;
         });
-        tableParent.on('scroll', function() {
+        tableParent.on('scroll', function () {
           scrollParent[0].scrollLeft = this.scrollLeft;
         });
-        win.on('scroll', function() {
+        win.on('scroll', function () {
           if (tableWidth <= tableParentWidth || tableHeight < winHeight * 2 || winHeight + win.scrollTop() > offset.top + tableParentHeight) {
             scrollParent.hide();
           } else {
             scrollParent.show().scrollLeft(tableParent.scrollLeft());
           }
-        }).on('resize', function() {
+        }).on('resize', function () {
           scrollParent.css({
             width: tableParentWidth,
             bottom: -parseInt(tableParent.css('margin-bottom'))
@@ -71,15 +71,15 @@ $(function() {
       });
     })();
   }
-  (function() {
+  (function () {
     var mouseEvent;
     var lastLength = 0;
     var battleControl = $('<div id="battle-control">').appendTo(document.body);
     var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
     var truncateButton = $('<button class="truncate button"><i class="fa fa-close"></i></button>').appendTo(battleControl);
     var battleButton = $('<a target="_blank" class="button go">GO</a>').appendTo(battleControl);
-    truncateButton.on('click', function() {
-      $.each($.cookie(), function(key, value) {
+    truncateButton.on('click', function () {
+      $.each($.cookie(), function (key, value) {
         if (key.indexOf('battle_') === 0) {
           removeBattlePerson(key.substr('7'));
         }
@@ -87,13 +87,13 @@ $(function() {
       updateBattleList();
     });
     $('<button class="rocket button"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
-    battleControl.find('button.rocket').on('focus', function() {
+    battleControl.find('button.rocket').on('focus', function () {
       battleControl.addClass('active');
-    }).on('blur', function() {
+    }).on('blur', function () {
       battleControl.removeClass('active');
     });
     updateBattleList();
-    $(document).on('click', 'input.battle-person', function(e) {
+    $(document).on('click', 'input.battle-person', function (e) {
       var id = $(this).data('id');
       var name = $(this).data('name');
       if (this.checked) {
@@ -127,16 +127,16 @@ $(function() {
     function updateBattleList() {
       var list = getBattleList();
       var ids = [];
-      if (list.length > 0){
+      if (list.length > 0) {
         listWrapper.empty();
-        list.forEach(function(person) {
+        list.forEach(function (person) {
           ids.push(person.id);
           $('<div class="battle-person">').append(
             $('<a>').attr({
               href: '/results/person/' + person.id,
               target: '_blank'
             }).text(person.name),
-            $('<i class="fa fa-close">').on('click', function() {
+            $('<i class="fa fa-close">').on('click', function () {
               removeBattlePerson(person.id);
             })
           ).appendTo(listWrapper);
@@ -163,7 +163,7 @@ $(function() {
     }
     function getBattleList() {
       var list = [];
-      $.each($.cookie(), function(key, value) {
+      $.each($.cookie(), function (key, value) {
         if (key.indexOf('battle_') === 0) {
           list.push({
             id: key.substr('7'),
@@ -174,7 +174,7 @@ $(function() {
       return list;
     }
   })();
-  $('#expand-fee').on('click', function() {
+  $('#expand-fee').on('click', function () {
     var that = $(this);
     var fa = that.find('i.fa');
     var dd = that.parent().next();
@@ -187,39 +187,39 @@ $(function() {
     }
   })
   var i = 0, lastTime = Date.now()
-  $('.countdown-timer').each(function() {
+  $('.countdown-timer').each(function () {
     var that = $(this), containers = [
       {
         key: 'days',
         total: that.data('totalDays') || 30,
         offsetKey: 'totalDays',
         progressOptions: {
-            color: '#d9534f',
-            trailColor: 'rgba(217, 83, 79, 0.5)'
+          color: '#d9534f',
+          trailColor: 'rgba(217, 83, 79, 0.5)'
         }
       },
       {
         key: 'hours',
         total: 24,
         progressOptions: {
-            color: '#f0ad4e',
-            trailColor: 'rgba(240, 164, 78, 0.5)'
+          color: '#f0ad4e',
+          trailColor: 'rgba(240, 164, 78, 0.5)'
         }
       },
       {
         key: 'minutes',
         total: 60,
         progressOptions: {
-            color: '#5cb85c',
-            trailColor: 'rgba(92, 184, 92, 0.5)'
+          color: '#5cb85c',
+          trailColor: 'rgba(92, 184, 92, 0.5)'
         }
       },
       {
         key: 'seconds',
         total: 60,
         progressOptions: {
-            color: '#5bc0de',
-            trailColor: 'rgba(91, 192, 222, 0.5)'
+          color: '#5bc0de',
+          trailColor: 'rgba(91, 192, 222, 0.5)'
         }
       }
     ]
@@ -247,7 +247,7 @@ $(function() {
     }
     i = 0
     lastTime = Date.now()
-    $('.countdown-timer').each(function() {
+    $('.countdown-timer').each(function () {
       var that = $(this)
       that.countdown(new Date(lastTime + that.data('remaining')))
     })
@@ -256,18 +256,20 @@ $(function() {
     utils.confirm(window.alertMessages.content, {
       title: window.alertMessages.title,
       type: 'type-danger',
-    }).then(function() { jQuery.cookie('alerted', 1, { expires: 0.5 })}, function() { jQuery.cookie('alerted', 1, { expires: 0.5 })})
+    }).then(function () { jQuery.cookie('alerted', 1, { expires: 0.5 }) }, function () { jQuery.cookie('alerted', 1, { expires: 0.5 }) })
   }
-  if (location.hostname.indexOf('cubingchina.com') > -1 || location.hostname.indexOf('cubing.com') > -1){
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  if (location.hostname.indexOf('cubingchina.com') > -1 || location.hostname.indexOf('cubing.com') > -1) {
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
     ga('create', 'UA-3512083-6', 'cubing.com');
     ga('send', 'pageview');
-    (function() {
+    (function () {
       var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?2ba93b9ebfb91795df4f4859b4ec9716";
+      hm.src = "//hm.baidu.com/hm.js?c70291163d20439858ae495f82c3c122";
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
