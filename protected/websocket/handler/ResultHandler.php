@@ -63,8 +63,10 @@ class ResultHandler extends MsgHandler {
 				});
 				break;
 			case 'newcomers':
-				$results = array_filter($results, function($result) {
-					return $result->user->wcaid == '';
+				$newcomer = $this->competition->newcomer;
+				$currentYear = date('Y', $this->competition->date);
+				$results = array_filter($results, function($result) use($newcomer, $currentYear) {
+					return $result->user->wcaid == '' || ($newcomer && substr($result->user->wcaid, 0, 4) == $currentYear);
 				});
 		}
 		$this->success('result.all', array_map(function($result) {
