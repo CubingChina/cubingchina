@@ -1149,10 +1149,10 @@ class RegistrationController extends AdminController {
 			'competition_id'=>$competition->id,
 			'status'=>[Registration::STATUS_ACCEPTED, Registration::STATUS_WAITING],
 		]);
-		$otherWaitingRegistrations = array_filter($registrations, function($registration) use ($model) {
-			return $registration->isWaiting() && $registration->id != $model->id;
+		$waitingRegistrations = array_filter($registrations, function($registration) use ($model) {
+			return $registration->isWaiting();
 		});
-		$otherWaitingNewcomers = array_filter($otherWaitingRegistrations, function($registration) use ($currentYear) {
+		$waitingNewcomers = array_filter($waitingRegistrations, function($registration) use ($currentYear) {
 			return !$registration->user->wcaid || substr($registration->user->wcaid, 0, 4) == $currentYear;
 		});
 		$acceptedNewcomers = array_filter($registrations, function($registration) use ($currentYear) {
@@ -1170,25 +1170,29 @@ class RegistrationController extends AdminController {
 		// 3. registration ended and no waiting newcomers
 		// @todo how to handle this case: 100 limit, 200 registered but only 40 newcomers
 		if ($reached50Percent ||
-			($now > $oneDayBeforeCancellationEnd && $now < $competition->reg_reopen_time && count($otherWaitingNewcomers) == 0) ||
-			($now > $competition->reg_end && count($otherWaitingNewcomers) == 0)
+			($now > $oneDayBeforeCancellationEnd && $now < $competition->reg_reopen_time && count($waitingNewcomers) == 0) ||
+			($now > $competition->reg_end && count($waitingNewcomers) == 0)
 		) {
-			$priorRegistrations = array_filter($otherWaitingRegistrations, function($registration) use ($model) {
+			$priorRegistrations = array_filter($waitingRegistrations, function($registration) use ($model) {
 				return $registration->accept_time < $model->accept_time || ($registration->accept_time == $model->accept_time && $registration->id < $model->id);
 			});
 			if ($priorRegistrations != []) {
-				throw new CHttpException(400, '请先通过更早完成报名流程的选手');
+				throw new CHttpException(400, "请先通过更早完成报名流程的选手\n" . implode("\n", array_map(function($registration) {
+						return $registration->user->getCompetitionName() . ' ' . $registration->user->wcaid;
+					}, $priorRegistrations)));
 			}
 		} else {
 			// only accept newcomer by the order of registration
 			if ($user->wcaid && substr($user->wcaid, 0, 4) != $currentYear) {
 				throw new CHttpException(400, '请优先通过新人选手');
 			} else {
-				$priorRegistrations = array_filter($otherWaitingNewcomers, function($registration) use ($model) {
+				$priorRegistrations = array_filter($waitingNewcomers, function($registration) use ($model) {
 					return $registration->accept_time < $model->accept_time || ($registration->accept_time == $model->accept_time && $registration->id < $model->id);
 				});
 				if ($priorRegistrations != []) {
-					throw new CHttpException(400, '请先通过更早完成报名流程的选手');
+					throw new CHttpException(400, "请先通过更早完成报名流程的选手\n" . implode("\n", array_map(function($registration) {
+						return $registration->user->getCompetitionName() . ' ' . $registration->user->wcaid;
+					}, $priorRegistrations)));
 				}
 			}
 		}
