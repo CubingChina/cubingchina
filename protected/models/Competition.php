@@ -1914,6 +1914,7 @@ class Competition extends ActiveRecord {
 				}
 
 				$u12 = strtotime(($year - 12) . $monthAndDay);
+				$currentYear = date('Y', $this->date);
 				foreach ($results as $result) {
 					//ignore non greater chinese user
 					if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
@@ -1926,7 +1927,7 @@ class Competition extends ActiveRecord {
 					if ($birthday > $u12 && $podiumsChildren) {
 						$temp[Yii::t('live', 'Children')][] = clone $result;
 					}
-					if ($result->user->wcaid === '' && $this->podiums_new_comers) {
+					if (($result->user->wcaid === '' || ($this->newcomer && substr($result->user->wcaid, 0, 4) == $currentYear)) && $this->podiums_new_comers) {
 						$temp[Yii::t('live', 'New Comers')][] = clone $result;
 					}
 					foreach ($ages as $age) {
