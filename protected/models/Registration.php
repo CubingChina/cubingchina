@@ -1590,7 +1590,10 @@ class Registration extends ActiveRecord {
 			if (!$enableCache || ($registrations = $cache->get($cacheKey)) === false) {
 				$criteria = new CDbCriteria;
 				$criteria->order = 't.accept_time>0 DESC, t.accept_time, t.id';
-				$criteria->with = array('user', 'user.country', 'user.province', 'user.city', 'competition');
+				$criteria->with = array('user', 'user.country', 'user.province', 'user.city');
+				if (!$competition) {
+					array_push($criteria->with, 'competition');
+				}
 
 				$criteria->compare('t.id', $this->id,true);
 				$criteria->compare('t.competition_id', $this->competition_id);
@@ -1600,6 +1603,11 @@ class Registration extends ActiveRecord {
 				$criteria->compare('t.status', $this->status);
 				$criteria->compare('user.status', User::STATUS_NORMAL);
 				$registrations = $this->findAll($criteria);
+				if ($competition) {
+					foreach ($registrations as $registration) {
+						$registration->competition = $competition;
+					}
+				}
 				if ($enableCache) {
 					$cache->set($cacheKey, $registrations, 86400 * 7);
 				}
