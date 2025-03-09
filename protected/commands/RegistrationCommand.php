@@ -50,7 +50,7 @@ class RegistrationCommand extends CConsoleCommand {
 				if ($amount == $competition->entry_fee * 100) {
 					$pay = Pay::model()->findByPk($ids[$i]);
 					if ($pay && $pay->refund_amount == 0 && $this->confirm($pay->user->getCompetitionName() . '-' . $pay->paid_amount)) {
-						$pay->refund($paid->paid_amount);
+						$pay->refund($pay->paid_amount);
 					}
 				}
 			}
