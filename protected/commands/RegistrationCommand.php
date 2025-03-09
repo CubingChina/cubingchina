@@ -13,6 +13,84 @@ class RegistrationCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionCheckOverPaid($id) {
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
+		$competition = Competition::model()->findByPk($id);
+		if (!$competition) {
+			return;
+		}
+		$overPaids = Yii::app()->db->createCommand()
+			->setText("SELECT user_id, GROUP_CONCAT(pay.paid_amount) as amounts, GROUP_CONCAT(pay.id) as ids FROM `pay` inner JOIN user on pay.user_id=user.id WHERE type_id=1477 and paid_amount>=:amount  group by user_id having count(pay.id)>1")
+			->query([
+				':amount'=>$competition->entry_fee * 100,
+			]);
+		foreach ($overPaids as $overPaid) {
+			$amounts = explode(',', $overPaid['amounts']);
+			$ids = explode(',', $overPaid['ids']);
+			$toRefund = false;
+			$registration = Registration::model()->findByAttributes([
+				'user_id'=>$overPaid['user_id'],
+				'competition_id'=>$competition->id,
+			]);
+			if (!$registration) {
+				continue;
+			}
+			foreach ($amounts as $amount) {
+				if ($amount == $registration->total_fee * 100) {
+					$toRefund = true;
+					break;
+				}
+			}
+			if (!$toRefund) {
+				echo "Not overpaid: ", $registration->user->getCompetitionName(), PHP_EOL;
+				continue;
+			}
+			foreach ($amounts as $i => $amount) {
+				if ($amount == $competition->entry_fee * 100) {
+					$pay = Pay::model()->findByPk($ids[$i]);
+					if ($pay && $pay->refund_amount == 0 && $this->confirm($pay->user->getCompetitionName() . '-' . $pay->paid_amount)) {
+						$pay->refund($paid->paid_amount);
+					}
+				}
+			}
+		}
+		// $registrations = Registration::model()->with([
+		// 	'competition',
+		// 	'payments'
+		// ])->findAllByAttributes([
+		// 	// 'status'=>[
+		// 	// 	Registration::STATUS_CANCELLED,
+		// 	// 	Registration::STATUS_CANCELLED_TIME_END,
+		// 	// ],
+		// ], [
+		// 	'condition'=>'payments.paid_amount>0 and payments.refund_amount=0'
+		// ]);
+		// $now = time();
+		// foreach ($registrations as $registration) {
+		// 	echo implode("\t", [
+		// 		$registration->user->getCompetitionName(),
+		// 		$registration->competition->name_zh,
+		// 	]);
+		// 	echo "\n";
+		// 	foreach ($registration->payments as $payment) {
+		// 		$refundPercent = $registration->refundPercent;
+		// 		$shouldRefund = $payment->paid_amount * $refundPercent;
+		// 		echo "Paid: {$payment->paid_amount}\n";
+		// 		echo "Refund Percent: {$refundPercent}\n";
+		// 		echo "Should Refund: {$shouldRefund}\n";
+		// 		// within 3 months
+		// 		if ($this->confirm('refund?')) {
+		// 			if ($now - $payment->paid_time < 3 * 30 * 86400) {
+		// 				$payment->refund($shouldRefund);
+		// 			} else {
+		// 				$payment->transfer($shouldRefund);
+		// 			}
+		// 		}
+		// 	}
+		// }
+	}
+
 	public function actionCheckRefund() {
 		$_SERVER['HTTPS'] = 1;
 		$_SERVER['HTTP_HOST'] = 'cubing.com';
