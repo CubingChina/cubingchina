@@ -13,6 +13,20 @@ class RegistrationCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionRefundOverpaid($id) {
+		$_SERVER['HTTPS'] = 1;
+		$_SERVER['HTTP_HOST'] = 'cubing.com';
+		$pay = Pay::model()->findByPk($id);
+		if (!$pay) {
+			return;
+		}
+		$registration = $pay->registration;
+		$competition = $pay->competition;
+		if ($registration && $competition && $this->confirm($registration->user->getCompetitionName() . '-' . $competition->name_zh . '-' . $pay->paid_amount)) {
+			$pay->refund($pay->paid_amount);
+		}
+	}
+
 	public function actionCheckOverPaid($id) {
 		$_SERVER['HTTPS'] = 1;
 		$_SERVER['HTTP_HOST'] = 'cubing.com';
