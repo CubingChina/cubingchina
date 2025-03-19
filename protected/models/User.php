@@ -307,6 +307,9 @@ class User extends ActiveRecord {
 	}
 
 	public function canLock($competition) {
+		if(strtotime($competition->date) - time() <= 31 * 86400){
+			return false;
+		}
 		if (!$competition->isHide()) {
 			return false;
 		}
