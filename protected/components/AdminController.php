@@ -5,6 +5,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 class AdminController extends Controller {
 	public $layout = '/layouts/main';
 	public $alerts = array();
+	public $lockAlerts = array();
 	protected $minIEVersion = '9.0';
 
 	public function beforeAction($action) {
@@ -27,6 +28,27 @@ class AdminController extends Controller {
 					);
 				}
 			}
+
+			$lockCriteria = new CDbCriteria();
+			$lockCriteria->with = array(
+				'organizer'=>array(
+					'together'=>true,
+				),
+			);
+			print_r($lockCriteria);
+			$lockCriteria->compare('t.id', '>370');
+			$lockCriteria->compare('t.status', Competition::STATUS_HIDE);
+			$lockCriteria->compare('organizer.organizer_id', Yii::app()->user->id);
+			$lockCompetitions = Competition::model()->findAll($lockCriteria);
+			foreach ($lockCompetitions as $competition) {
+				if (strtotime($competition->date) - time() <= 31 * 86400 + 7 * 86400 && strtotime($competition->date) - time() >= 31 * 86400) {
+					$this->lockAlerts[] = array(
+						'url'=>array('/board/competition/edit', 'id'=>$competition->id),
+						'label'=>sprintf('"%s"距离锁定还有"%n"天', $competition->name_zh, floor((strtotime($competition->date) - time()) / 86400)) - 31,
+					);
+				}
+			}
+
 			Yii::app()->language = 'zh_cn';
 			if (strpos($action->id, 'edit') !== false) {
 				$this->setReferrer();

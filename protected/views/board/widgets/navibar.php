@@ -28,6 +28,30 @@
     <!-- end LEFT SIDE WIDGETS -->
     <!-- begin MESSAGES/ALERTS/TASKS/USER ACTIONS DROPDOWNS -->
     <ul class="nav navbar-right">
+      <?php if ($this->controller->lockAlerts !== array()): ?>
+        <li class="dropdown">
+        <a data-toggle="dropdown" class="alerts-link dropdown-toggle" href="#">
+          <i class="fa fa-bell"></i> 
+          <span class="number"><?php echo count($this->controller->lockAlerts); ?></span><i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-scroll dropdown-alerts">
+          <!-- Alerts Dropdown Heading -->
+          <li class="dropdown-header">
+            <i class="fa fa-bell"></i> <?php echo count($this->controller->lockAlerts); ?>个未锁定提醒
+          </li>
+          <li>
+            <?php $this->widget('zii.widgets.CMenu', array(
+              'htmlOptions'=>array(
+                'class'=>'list-unstyled',
+              ),
+              'encodeLabel'=>false,
+              'items'=>$this->controller->lockAlerts,
+            ));?>
+          </li>
+        </ul>
+        <!-- /.dropdown-menu -->
+      </li>
+      <?php endif; ?>
       <?php if ($this->controller->alerts !== array()): ?>
       <li class="dropdown">
         <a data-toggle="dropdown" class="alerts-link dropdown-toggle" href="#">
