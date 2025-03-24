@@ -5,7 +5,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 class AdminController extends Controller {
 	public $layout = '/layouts/main';
 	public $alerts = array();
-	public $lockAlerts = array();
 	protected $minIEVersion = '9.0';
 
 	public function beforeAction($action) {
@@ -35,13 +34,12 @@ class AdminController extends Controller {
 					'together'=>true,
 				),
 			);
-			$lockCriteria->compare('t.id', '>370');
 			$lockCriteria->compare('t.status', Competition::STATUS_HIDE);
 			$lockCriteria->compare('delegate.delegate_id', Yii::app()->user->id);
 			$lockCompetitions = Competition::model()->findAll($lockCriteria);
 			foreach ($lockCompetitions as $competition) {
 				if ($competition->date - time() <= 38 * 86400 && $competition->date - time() >= 31 * 86400) {
-					$this->lockAlerts[] = array(
+					$this->alerts[] = array(
 						'url'=>array('/board/competition/edit', 'id'=>$competition->id),
 						'label'=>sprintf('"%s"距离锁定还有"%d"天', $competition->name_zh, floor(($competition->date - time()) / 86400)- 31) ,
 					);
