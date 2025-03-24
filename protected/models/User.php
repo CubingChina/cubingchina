@@ -307,13 +307,10 @@ class User extends ActiveRecord {
 	}
 
 	public function canLock($competition) {
-		if(strtotime($competition->date) - time() <= 31 * 86400){
-			return false;
-		}
 		if (!$competition->isHide()) {
 			return false;
 		}
-		return $this->isAdministrator() || $this->isWCADelegate() && $competition->checkPermission($this, 'ultra');
+		return $this->isAdministrator() || $this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && (strtotime($competition->date) - time() >= 31 * 86400);
 	}
 
 	public function canHide($competition) {
