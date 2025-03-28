@@ -50,15 +50,15 @@ class GroupCommand extends CConsoleCommand {
 			foreach ($associatedEvents as $event=>$value) {
 				$sheet->setCellValue($col . $row, $event);
 				$col++;
-				// $sheet->setCellValue($col . $row, '开始时间');
-				// $col++;
-				// $sheet->setCellValue($col . $row, '结束时间');
-				// $col++;
+				$sheet->setCellValue($col . $row, '开始时间');
+				$col++;
+				$sheet->setCellValue($col . $row, '结束时间');
+				$col++;
 			}
 			$row++;
 			foreach ($registrations as $registration) {
 				if (!$this->isStaff($registration, $staffs)) {
-					continue;
+					// continue;
 				}
 				$sheet->setCellValue('A' . $row, $registration->number)
 					->setCellValue('B' . $row, $registration->user->name_zh ?: $registration->user->name)
@@ -77,14 +77,14 @@ class GroupCommand extends CConsoleCommand {
 					if ($userSchedule != null) {
 						$sheet->setCellValue($col . $row, $userSchedule->schedule->group);
 						$col++;
-						// $sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->start_time));
-						// $col++;
-						// $sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->end_time));
-						// $col++;
+						$sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->start_time));
+						$col++;
+						$sheet->setCellValue($col . $row, date('H:i', $userSchedule->schedule->end_time));
+						$col++;
 					} else {
 						$col++;
-						// $col++;
-						// $col++;
+						$col++;
+						$col++;
 					}
 				}
 				$row++;
