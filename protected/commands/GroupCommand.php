@@ -526,6 +526,57 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionSwitchUserGroup($id, $event, $from, $to, $numbers) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition !== null && $this->confirm(sprintf('%s %s: %s - %s', $competition->name_zh, $event, $from, $to))) {
+			$fromSchedule = GroupSchedule::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+				'event'=>$event,
+				'group'=>$from,
+			]);
+			if ($fromSchedule == null) {
+				return;
+			}
+			$toSchedule = GroupSchedule::model()->findByAttributes([
+				'competition_id'=>$competition->id,
+				'event'=>$event,
+				'group'=>$to,
+			]);
+			if ($toSchedule == null) {
+				return;
+			}
+      $registrations = Registration::getRegistrations($competition);
+      $userSchedules = [];
+      $numbers = explode(',', $numbers);
+      $number1 = $numbers[0];
+      $number2 = $numbers[1];
+      $registration1 = $registrations[$number1 - 1];
+      $registration2 = $registrations[$number2 - 1];
+      if (!$this->confirm(sprintf('%s: No.%d %s %s <-> No.%d %s %s', $event, $registration1->number, $registration1->user->getCompetitionName(), $fromSchedule->group, $registration2->number, $registration2->user->getCompetitionName(), $toSchedule->group))) {
+        return;
+      }
+      $userSchedule1 = UserSchedule::model()->findByAttributes([
+        'user_id'=>$registration1->user_id,
+        'competition_id'=>$competition->id,
+        'group_id'=>$fromSchedule->id,
+      ]);
+      $userSchedule2 = UserSchedule::model()->findByAttributes([
+        'user_id'=>$registration2->user_id,
+        'competition_id'=>$competition->id,
+        'group_id'=>$toSchedule->id,
+      ]);
+      if ($userSchedule1 == null || $userSchedule2 == null) {
+        echo "User schedule not found\n";
+        return;
+      }
+      $userSchedule1->group_id = $toSchedule->id;
+      $userSchedule2->group_id = $fromSchedule->id;
+      $userSchedule1->save();
+      $userSchedule2->save();
+      printf("No.%d %s <-> No.%d %s\n", $registration1->number, $registration1->user->getCompetitionName(), $registration2->number, $registration2->user->getCompetitionName());
+		}
+	}
+
 	public function actionMoveGroup($id, $event, $from, $to, $num) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm(sprintf('%s %s: %s - %s', $competition->name_zh, $event, $from, $to))) {
