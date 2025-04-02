@@ -10,7 +10,7 @@
 <<<EOT
   <p>
     如果你想给我们网站以更多更好的意见和建议，欢迎通过以下邮件联系我们：
-    <br><i class="fa fa-envelope"></i> <a href="mailto:admin@cubingchina.com">admin@cubingchina.com</a>。
+    <br><i class="fa fa-envelope"></i> <a href="mailto:contact@cubing.com">contact@cubing.com</a>。
   </p>
   <p>
     如果你想在粗饼平台申请并公示一场魔方比赛，或提交与比赛相关的材料（如主办方申请文件、团队介绍等），请联系粗饼赛事审核组：
@@ -22,7 +22,7 @@
   </p>
   <p>
     如果你对于比赛成绩或比赛规则有疑问，可以联系中国的世界魔方协会代表(WCA Delegates)的公共邮箱：
-    <br><i class="fa fa-envelope"></i> <a href="mailto:wcadaibiao@gmail.com">wcadaibiao@gmail.com</a>。
+    <br><i class="fa fa-envelope"></i> <a href="mailto:delegates@cubing.com">delegates@cubing.com</a>。
     <br>或者你想直接具体和某位世界魔方协会代表取得联系，可以直接通过下面的联系方式：
   </p>
 
@@ -32,7 +32,7 @@ EOT
 ); ?>
   <?php else: ?>
   <p>
-    If you want to provide feedback and suggestions, feel free to contact the Cubing Administrator via admin@cubingchina.com. 
+    If you want to provide feedback and suggestions, feel free to contact the Cubing Administrator via contact@cubing.com. 
   </p>
   <p>
     If you would like to use our website to announce a speedcubing competition and generate a competition webpage or submit your organization team applications, please contact the Cubing Competition Team via competitions@cubing.com. 
@@ -41,7 +41,7 @@ EOT
     If you have questions regarding the World Cube Association, please contact the WCA Communication China team via wct-china@worldcubeassociation.org  
   </p>
   <p>
-    If you have questions regarding specific competitions or regulations, please contact the Chinese WCA Delegates via wcadaibiao@gmail.com. Alternatively, one can get in touch with one of the delegates directly via the contact info below:
+    If you have questions regarding specific competitions or regulations, please contact the Chinese WCA Delegates via delegates@cubing.com. Alternatively, one can get in touch with one of the delegates directly via the contact info below:
   </p>
   <p>
   </p>
