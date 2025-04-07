@@ -35,7 +35,7 @@ EOT
     If you want to provide feedback and suggestions, feel free to contact the Cubing Administrator via contact@cubing.com. 
   </p>
   <p>
-    If you would like to use our website to announce a speedcubing competition and generate a competition webpage or submit your organization team applications, please contact the Cubing Competition Team via competitions@cubing.com. 
+    If you would like to use our website to announce a speedcubing competition and generate a competition webpage or submit your organization team applications, please contact the Cubing Audit Quality Assurance Team via competitions@cubing.com. 
   </p>
   <p>
     If you have questions regarding the World Cube Association, please contact the WCA Communication China team via wct-china@worldcubeassociation.org  
