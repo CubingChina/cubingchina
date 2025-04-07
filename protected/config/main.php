@@ -306,7 +306,7 @@ $config = [
 	// using Yii::app()->params['paramName']
 	'params'=>[
 		// this is used in contact page
-		'adminEmail'=>'admin@cubingchina.com',
+		'adminEmail'=>'contact@cubing.com',
 		'caqaEmail'=>'competitions@cubing.com',
 		'baseUrl'=>'https://cubing.com',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
