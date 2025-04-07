@@ -13,7 +13,7 @@
     <br><i class="fa fa-envelope"></i> <a href="mailto:contact@cubing.com">contact@cubing.com</a>。
   </p>
   <p>
-    如果你想在粗饼平台申请并公示一场魔方比赛，或提交与比赛相关的材料（如主办方申请文件、团队介绍等），请联系粗饼赛事审核组：
+    如果你想在粗饼平台申请并公示一场魔方比赛，或提交与比赛相关的材料（如主办方申请文件、团队介绍等），请联系粗饼赛事审核与质量保证组：
     <br><i class="fa fa-envelope"></i> <a href="mailto:competitions@cubing.com">competitions@cubing.com</a>。
   </p>
   <p>
@@ -35,7 +35,7 @@ EOT
     If you want to provide feedback and suggestions, feel free to contact the Cubing Administrator via contact@cubing.com. 
   </p>
   <p>
-    If you would like to use our website to announce a speedcubing competition and generate a competition webpage or submit your organization team applications, please contact the Cubing Competition Team via competitions@cubing.com. 
+    If you would like to use our website to announce a speedcubing competition and generate a competition webpage or submit your organization team applications, please contact the Cubing Audit Quality Assurance Team via competitions@cubing.com. 
   </p>
   <p>
     If you have questions regarding the World Cube Association, please contact the WCA Communication China team via wct-china@worldcubeassociation.org  

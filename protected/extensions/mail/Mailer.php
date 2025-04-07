@@ -41,7 +41,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function sendCompetitionConfirmNotice($competition) {
-		$to = [Yii::app()->params->adminEmail];
+		$to = [Yii::app()->params->caqaEmail];
 		$subject = $this->makeTitle("【{$competition->name_zh}】已确认");
 		$message = $this->render('competitionConfirmNotice', array(
 			'user'=>Yii::app()->controller->user,
@@ -66,7 +66,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function sendCompetitionRejectNotice($competition) {
-		$to = [Yii::app()->params->adminEmail];
+		$to = [Yii::app()->params->caqaEmail];
 		$title = $competition->isRejected() ? '拒绝' : '驳回';
 		$subject = $this->makeTitle("【{$competition->name_zh}】已被{$title}");
 		$message = $this->render('competitionRejectNotice', array(
@@ -93,7 +93,7 @@ class Mailer extends CApplicationComponent {
 	}
 
 	public function sendCompetitionAcceptNotice($competition) {
-		$to = [Yii::app()->params->adminEmail];
+		$to = [Yii::app()->params->caqaEmail];
 		$subject = $this->makeTitle("【{$competition->name_zh}】审核通过");
 		$message = $this->render('competitionAcceptNotice', array(
 			'user'=>$competition->organizer[0]->user,
