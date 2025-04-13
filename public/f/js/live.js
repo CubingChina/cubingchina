@@ -1288,7 +1288,7 @@
         result.a = Math.round((sum - best - worst) / 3);
       }
       if (result.a / 100 >= 600) {
-        result.a = Math.round(result.a / 100) * 100;
+        result.a = Math.floor(result.a / 100) * 100;
       }
     } else if (f == 'm' || f == 'a') {
       result.a = zeroCount > 0 ? 0 : -1;
@@ -1335,7 +1335,7 @@
       var msecond = parseInt(match[3]);
       //above 10 minutes
       if (minute * 60 + second >= 600) {
-        second += msecond >= 50 ? 1 : 0;
+        // second += msecond >= 50 ? 1 : 0;
         msecond = 0;
       }
       return (minute * 60 + second) * 100 + msecond;
