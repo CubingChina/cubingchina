@@ -1288,7 +1288,7 @@
         result.a = Math.round((sum - best - worst) / 3);
       }
       if (result.a / 100 >= 600) {
-        result.a = Math.floor(result.a / 100) * 100;
+        result.a = Math.round(result.a / 100) * 100;
       }
     } else if (f == 'm' || f == 'a') {
       result.a = zeroCount > 0 ? 0 : -1;
