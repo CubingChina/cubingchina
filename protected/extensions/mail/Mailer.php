@@ -117,6 +117,22 @@ class Mailer extends CApplicationComponent {
 		return $this->add($to, $subject, $message, $cc[0], $cc);
 	}
 
+	public function sendCompetitionLockNotice($user, $competition) {
+		$to = [Yii::app()->params->caqaEmail];
+		$subject = $this->makeTitle("【{$competition->name_zh}】已锁定");
+		$message = $this->render('competitionLockNotice', array(
+			'user'=>$user,
+			'competition'=>$competition,
+			'url'=>$this->getUrl(Yii::app()->createUrl(
+				'/board/competition/view',
+				array(
+					'id'=>$competition->id,
+				)
+			)),
+		));
+		return $this->add($to, $subject, $message);
+	}
+
 	public function sendRegistrationNotice($registration) {
 		$subject = $this->makeTitle('选手报名通知');
 		$message = $this->render('registrationNotice', array(
