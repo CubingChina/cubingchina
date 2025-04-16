@@ -165,6 +165,9 @@ class CompetitionController extends AdminController {
 			}
 			if (isset($_POST['lock']) && $this->user->canLock($model)) {
 				$model->lock();
+				Yii::app()->mailer->sendCompetitionLockNotice($this->user, $model);
+				Yii::app()->user->setFlash('success', '锁定比赛成功');
+				$this->redirect(['/board/competition/index']);
 			}
 			if (isset($_POST['hide']) && $this->user->canHide($model)) {
 				$model->hide();
