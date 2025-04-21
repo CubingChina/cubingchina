@@ -17,6 +17,12 @@ class FaqController extends AdminController {
 				),
 			),
 			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'wct',
+				]
+			),
+			array(
 				'deny',
 				'users'=>array('*'),
 			),

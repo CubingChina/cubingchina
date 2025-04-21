@@ -328,7 +328,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public static function getRegistrationCompetitions() {
-		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
+		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && !Yii::app()->user->checkPermission('caqa')) {
 			return [];
 		}
 		$with = array();
@@ -3267,6 +3267,8 @@ class Competition extends ActiveRecord {
 			$user = Yii::app()->controller->user;
 			switch (true) {
 				case $user->isAdministrator():
+					break;
+				case Yii::app()->user->checkPermission('caqa_member'):
 					break;
 				case $user->isDelegate():
 					$criteria->with = array(

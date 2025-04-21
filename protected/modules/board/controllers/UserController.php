@@ -17,6 +17,33 @@ class UserController extends AdminController {
 				'actions'=>array('statistics'),
 			),
 			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'users_management'
+				],
+				'actions'=>[
+					'index', 'repeat', 'merge', 'statistics', 'sendEmails'
+				],
+			),
+			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'caqa'
+				],
+				'actions'=>[
+					'index', 'repeat', 'merge', 'statistics', 'sendEmails', 'edit', 'enable', 'disable', 'delete', 'search'
+				],
+			),
+			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'wct'
+				],
+				'actions'=>[
+					'statistics', 'sendEmails' 
+				]
+			),
+			array(
 				'deny',
 				'users'=>array('*'),
 			),

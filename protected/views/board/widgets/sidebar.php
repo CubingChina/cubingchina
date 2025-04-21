@@ -31,7 +31,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 比赛管理',
               'url'=>array('/board/competition/index'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa_member'),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 申请比赛',
@@ -47,7 +47,7 @@
           'label'=>'<i class="fa fa-group"></i> 报名 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'registration',
-          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -72,7 +72,7 @@
           'label'=>'<i class="fa fa-group"></i> 用户 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'user',
-          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa') || Yii::app()->user->checkPermission('wct'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -90,17 +90,17 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 用户管理',
               'url'=>array('/board/user/index'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa'),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 重复用户',
               'url'=>array('/board/user/repeat'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa'),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 合并用户',
               'url'=>array('/board/user/merge'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa'),
             ),
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
@@ -109,7 +109,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 群发邮件',
               'url'=>array('/board/user/sendEmails'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa') || Yii::app()->user->checkPermission('wct'),
             ),
             // array(
             //  'label'=>'<i class="fa fa-angle-double-right"></i> 新增用户',
@@ -121,7 +121,7 @@
           'label'=>'<i class="fa fa-money"></i> 财务 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'pay',
-          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',
@@ -139,7 +139,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 支付流水',
               'url'=>array('/board/pay/index'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa'),
             ),
             array(
              'label'=>'<i class="fa fa-angle-double-right"></i> 对账单',
@@ -152,7 +152,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 新闻 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'news',
-          'visible'=>Yii::app()->user->checkPermission('news'),
+          'visible'=>Yii::app()->user->checkPermission('news') || Yii::app()->user->checkPermission('caqa') || Yii::app()->user->checkPermission('wct'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',

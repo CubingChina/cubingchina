@@ -37,6 +37,26 @@ class RegistrationController extends AdminController {
 					'role'=>User::ROLE_ORGANIZER,
 				],
 			],
+			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'caqa'
+				],
+				'actions'=>[
+					'index', 
+					'cancel',
+					'exportLiveData', 
+					'export', 
+					'scoreCard', 
+					'previewNotice',
+					'sendNotice', 
+					'edit', 
+					'acceptNewcomer',
+					'toggle', 
+					'signin', 
+					'liveScoreCard', 
+				]
+			),
 			[
 				'deny',
 				'users'=>['*'],

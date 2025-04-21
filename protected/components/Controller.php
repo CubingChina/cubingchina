@@ -319,7 +319,7 @@ class Controller extends CController {
 					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
-						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || $applied,
+						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || $applied || Yii::app()->user->checkPermission('caqa_member') || Yii::app()->user->checkPermission('wct'),
 					),
 					array(
 						'label'=>Yii::t('common', 'Apply for Competition'),

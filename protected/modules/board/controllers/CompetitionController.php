@@ -22,6 +22,24 @@ class CompetitionController extends AdminController {
 			),
 			array(
 				'allow',
+				'roles'=>[
+					'permission'=>'caqa_member'
+				],
+				'actions'=>[
+					'index'
+				],
+			),
+			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'wct'
+				],
+				'actions'=>[
+					'index'
+				],			
+			),
+			array(
+				'allow',
 				'roles'=>array(
 					'role'=>User::ROLE_ADMINISTRATOR,
 				),
@@ -34,7 +52,7 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionIndex() {
-		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
+		if (!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && !Yii::app()->user->checkPermission('caqa_member')) {
 			$this->redirect(['/board/competition/application']);
 		}
 		$model = new Competition();
@@ -60,7 +78,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if (!$model->checkPermission($this->user)) {
+		if (!$model->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -138,7 +156,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if (!$model->checkPermission($this->user)) {
+		if (!$model->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -188,7 +206,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if (!$model->checkPermission($this->user)) {
+		if (!$model->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -213,7 +231,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if (!$model->checkPermission($this->user)) {
+		if (!$model->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}
@@ -235,7 +253,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if (!$this->user->isAdministrator() && !isset($model->organizers[$this->user->id])) {
+		if (!$this->user->isAdministrator() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect($this->getReferrer());
 		}

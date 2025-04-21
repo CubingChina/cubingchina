@@ -18,6 +18,24 @@ class NewsController extends AdminController {
 				],
 			],
 			[
+				'allow',
+				'roles'=>[
+					'permission'=>'caqa'
+				],
+				'actions'=>[
+					'index', 'add', 'edit'				
+				]
+			],
+			[
+				'allow',
+				'roles'=>[
+					'permission'=>'wct'
+				],
+				'actions'=>[
+					'index', 'add', 'edit'				
+				]
+			],
+			[
 				'deny',
 				'users'=>['*'],
 			],
