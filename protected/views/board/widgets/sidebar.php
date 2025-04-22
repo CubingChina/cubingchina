@@ -109,7 +109,7 @@
             array(
               'label'=>'<i class="fa fa-angle-double-right"></i> 群发邮件',
               'url'=>array('/board/user/sendEmails'),
-              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('caqa') || Yii::app()->user->checkPermission('wct'),
+              'visible'=>Yii::app()->user->checkPermission('users_management') || Yii::app()->user->checkPermission('wct'),
             ),
             // array(
             //  'label'=>'<i class="fa fa-angle-double-right"></i> 新增用户',
