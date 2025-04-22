@@ -49,7 +49,9 @@
             <li><?php echo CHtml::link('报名', ['/board/registration/index', 'Registration'=>['competition_id'=>$model->id]], ['target'=>'_blank']); ?></li>
             <li><?php echo CHtml::link('支付', ['/board/pay/index', 'Pay'=>['type_id'=>$model->id]], ['target'=>'_blank']); ?></li>
             <?php endif; ?>
+            <?php if ($model->isPublicVisible()): ?>
             <li><?php echo CHtml::link('预览', $model->getUrl(), ['target'=>'_blank']); ?></li>
+            <?php endif; ?>
             <?php endif; ?>
           </ul>
           <div class="tab-content">
@@ -157,7 +159,7 @@
                 )),
                 $form->error($model, 'type', array('class'=>'text-danger'))
               );?>
-              <?php if ($this->user->isAdministrator() || $this->user->isDelegate() || Yii::app()->user->checkPermission('caqa')): ?>
+              <?php if ($this->user->isAdministrator() || $this->user->isDelegate() || Yii::app()->user->checkPermission('caqa_member')): ?>
               <?php echo Html::formGroup(
                 $model, 'wca_competition_id', array(
                   'class'=>'col-md-4',
@@ -473,7 +475,7 @@
               <?php endif; ?>
             </div>
             <?php endif; ?>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa')): ?>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
             <?php if ($this->user->canEditCompetition($model)): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
               <?php $this->renderPartial('editorTips'); ?>

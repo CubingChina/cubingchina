@@ -1427,6 +1427,8 @@ class Competition extends ActiveRecord {
 		$isAdministrator = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		switch ($this->status) {
 			case self::STATUS_HIDE:
+				$buttons[] = CHtml::link('编辑', ['/board/competition/edit', 'id'=>$this->id], ['class'=>'btn btn-sm btn-blue btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'编辑']);
+				break;
 			case self::STATUS_SHOW:
 			case self::STATUS_LOCKED:
 				$buttons[] = CHtml::link('预览', $this->getUrl('detail'), ['class'=>'btn btn-sm btn-orange btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'预览', 'target'=>'_blank']);

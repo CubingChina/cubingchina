@@ -59,6 +59,15 @@ class UserController extends AdminController {
 			array(
 				'allow',
 				'roles'=>[
+					'permission'=>'caqa_member'
+				],
+				'actions'=>[
+					'search',
+				],
+			),
+			array(
+				'allow',
+				'roles'=>[
 					'permission'=>'wct'
 				],
 				'actions'=>[
