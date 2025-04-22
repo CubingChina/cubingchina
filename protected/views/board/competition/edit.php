@@ -362,7 +362,7 @@
                   Html::activeTextField($model, 'oldOrganizer'),
                   $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
                 );
-              } elseif ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa')) {
+              } elseif ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')) {
                 echo Html::formGroup(
                   $model, 'organizers', array(
                     'class'=>'col-lg-12',
@@ -454,7 +454,7 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
-              <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa')): ?>
+              <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
               <div class="clearfix"></div>
               <hr>
               <div class="col-lg-12">
