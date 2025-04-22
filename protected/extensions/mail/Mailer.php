@@ -10,7 +10,7 @@ class Mailer extends CApplicationComponent {
 	public $api;
 	public $baseUrl;
 
-	protected $titlePrefix = 'Cubing China (粗饼) - ';
+	protected $titlePrefix = 'Cubing China (粗饼)';
 	protected $viewPath;
 
 	public function init() {
@@ -309,11 +309,11 @@ class Mailer extends CApplicationComponent {
 	}
 
 	private function makeTitle($title) {
-		return $this->titlePrefix . $title;
+		return $this->titlePrefix . ' - ' . $title;
 	}
 
 	private function makeCaqaTitle($title) {
-		return $title . $this->titlePrefix;
+		return $title . ' - ' . $this->titlePrefix;
 	}
 
 	public function add($to, $subject, $message, $replyTo = '', $cc = '', $bcc = '') {
