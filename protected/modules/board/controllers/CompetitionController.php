@@ -26,7 +26,7 @@ class CompetitionController extends AdminController {
 					'permission'=>'caqa_member'
 				],
 				'actions'=>[
-					'index'
+					'index', 'application', 'event', 'schedule', 'apply', 'edit', 'editApplication', 'view', 'confirm'
 				],
 			),
 			array(
@@ -323,7 +323,7 @@ class CompetitionController extends AdminController {
 		if ($model === null) {
 			throw new CHttpException(404, 'Not found');
 		}
-		if (!$model->checkPermission($this->user)) {
+		if (!$model->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			throw new CHttpException(401, '未授权');
 		}
 		if ($model->application === null) {

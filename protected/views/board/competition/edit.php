@@ -34,7 +34,7 @@
             <?php if ($isOrganizerEditable): ?>
             <li role="presentation"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <?php endif; ?>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa')): ?>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
             <?php if ($this->user->canEditCompetition($model)): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>

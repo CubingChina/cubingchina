@@ -2637,7 +2637,7 @@ class Competition extends ActiveRecord {
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
-		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE);
+		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE) || Yii::app()->user->checkPermission('caqa_member');
 		// organizer team members and score takers
 		foreach (['organizerTeamMember'=>'CompetitionOrganizerTeamMember', 'scoreTaker'=>'ScoreTaker'] as $attribute=>$modelName) {
 			$oldMembers = array_values(CHtml::listData($this->$attribute, 'user_id', 'user_id'));
