@@ -59,7 +59,7 @@ class LiveController extends CompetitionController {
 				'isScoreTaker'=>!Yii::app()->user->isGuest && $this->user->isScoreTaker($competition),
 				'isOrganizer'=>!Yii::app()->user->isGuest && $this->user->isOrganizer() && isset($competition->organizers[$this->user->id]),
 				'isDelegate'=>!Yii::app()->user->isGuest && $this->user->isDelegate() && isset($competition->delegates[$this->user->id]),
-				'isAdmin'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+				'isAdmin'=>Yii::app()->user->checkPermission('caqa_member'),
 				'name'=>Yii::app()->user->isGuest ? '' : $this->user->getCompetitionName(),
 			]),
 			'data-static-messages'=>[],

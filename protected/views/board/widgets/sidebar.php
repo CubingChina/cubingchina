@@ -152,7 +152,7 @@
           'label'=>'<i class="fa fa-bullhorn"></i> 新闻 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'news',
-          'visible'=>Yii::app()->user->checkPermission('news') || Yii::app()->user->checkPermission('caqa') || Yii::app()->user->checkPermission('wct'),
+          'visible'=>Yii::app()->user->checkPermission('news'),
           'linkOptions'=>array(
             'data-parent'=>'#side',
             'data-toggle'=>'collapse',

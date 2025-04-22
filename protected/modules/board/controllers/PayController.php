@@ -13,7 +13,7 @@ class PayController extends AdminController {
 			array(
 				'allow',
 				'roles'=>[
-					'permission'=>'caqa'
+					'permission'=>'caqa_member'
 				],
 				'actions'=>[
 					'index'

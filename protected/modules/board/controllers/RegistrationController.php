@@ -40,7 +40,7 @@ class RegistrationController extends AdminController {
 			array(
 				'allow',
 				'roles'=>[
-					'permission'=>'caqa'
+					'permission'=>'caqa_member'
 				],
 				'actions'=>[
 					'index', 
@@ -56,7 +56,7 @@ class RegistrationController extends AdminController {
 					'signin', 
 					'liveScoreCard', 
 				]
-			),
+				),
 			[
 				'deny',
 				'users'=>['*'],
@@ -71,7 +71,7 @@ class RegistrationController extends AdminController {
 		if ($model->competition_id === null) {
 			$model->competition_id = 0;
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa_member')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 		}
 		$this->render('index', array(

@@ -22,7 +22,16 @@ class UserController extends AdminController {
 					'permission'=>'users_management'
 				],
 				'actions'=>[
-					'index', 'repeat', 'merge', 'statistics', 'sendEmails'
+					'index', 
+					'repeat', 
+					'merge', 
+					'statistics', 
+					'sendEmails', 
+					'search',
+					'registration', 
+					'loginHistory', 
+					'previewEmail', 
+					'sendToMyself'
 				],
 			),
 			array(
@@ -31,7 +40,20 @@ class UserController extends AdminController {
 					'permission'=>'caqa'
 				],
 				'actions'=>[
-					'index', 'repeat', 'merge', 'statistics', 'sendEmails', 'edit', 'enable', 'disable', 'delete', 'search'
+					'index', 
+					'repeat', 
+					'merge', 
+					'statistics', 
+					'sendEmails', 
+					'edit', 
+					'enable', 
+					'disable', 
+					'delete', 
+					'search',
+					'registration', 
+					'loginHistory', 
+					'previewEmail', 
+					'sendToMyself'
 				],
 			),
 			array(
@@ -40,7 +62,10 @@ class UserController extends AdminController {
 					'permission'=>'wct'
 				],
 				'actions'=>[
-					'statistics', 'sendEmails' 
+					'statistics', 
+					'sendEmails', 
+					'previewEmail', 
+					'sendToMyself'
 				]
 			),
 			array(
