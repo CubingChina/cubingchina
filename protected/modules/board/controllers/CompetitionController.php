@@ -175,7 +175,7 @@ class CompetitionController extends AdminController {
 					$model->$attribute = '';
 				}
 			}
-			if ($this->user->isOrganizer() && $model->isPublicVisible()) {
+			if ($this->user->isOrganizer() && $model->isPublicVisible() && !Yii::app()->user->checkPermission('caqa_member')) {
 				foreach ($protectedAttributes as $attribute) {
 					$model->$attribute = $protectedValues[$attribute];
 				}

@@ -31,7 +31,7 @@
             ], ['target'=>'_blank']); ?> ！</p>
           </div>
           <ul class="nav nav-tabs" role="tablist">
-            <?php if ($isOrganizerEditable): ?>
+            <?php if ($isOrganizerEditable || Yii::app()->user->checkPermission('caqa_member')): ?>
             <li role="presentation"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <?php endif; ?>
             <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
@@ -53,7 +53,7 @@
             <?php endif; ?>
           </ul>
           <div class="tab-content">
-            <?php if ($isOrganizerEditable): ?>
+            <?php if ($isOrganizerEditable || Yii::app()->user->checkPermission('caqa_member')): ?>
             <div role="tabpanel" class="tab-pane" id="baseinfo">
               <div class="col-lg-12">
                 <div class="text-danger">请参阅<?php echo CHtml::link('粗饼网比赛名称规范试行版', '/static/naming conventions.pdf', ['target'=>'_blank']); ?>填写比赛名称。</div>
