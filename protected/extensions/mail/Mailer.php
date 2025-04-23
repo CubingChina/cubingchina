@@ -10,7 +10,7 @@ class Mailer extends CApplicationComponent {
 	public $api;
 	public $baseUrl;
 
-	protected $titlePrefix = 'Cubing China (粗饼) - ';
+	protected $titlePrefix = 'Cubing China (粗饼)';
 	protected $viewPath;
 
 	public function init() {
@@ -42,7 +42,7 @@ class Mailer extends CApplicationComponent {
 
 	public function sendCompetitionConfirmNotice($competition) {
 		$to = [Yii::app()->params->caqaEmail];
-		$subject = $this->makeTitle("【{$competition->name_zh}】已确认");
+		$subject = $this->makeCaqaTitle("已确认【{$competition->name_zh}】");
 		$message = $this->render('competitionConfirmNotice', array(
 			'user'=>Yii::app()->controller->user,
 			'competition'=>$competition,
@@ -68,7 +68,7 @@ class Mailer extends CApplicationComponent {
 	public function sendCompetitionRejectNotice($competition) {
 		$to = [Yii::app()->params->caqaEmail];
 		$title = $competition->isRejected() ? '拒绝' : '驳回';
-		$subject = $this->makeTitle("【{$competition->name_zh}】已被{$title}");
+		$subject = $this->makeCaqaTitle("已{$title}【{$competition->name_zh}】");
 		$message = $this->render('competitionRejectNotice', array(
 			'user'=>$competition->organizer[0]->user,
 			'competition'=>$competition,
@@ -94,7 +94,7 @@ class Mailer extends CApplicationComponent {
 
 	public function sendCompetitionAcceptNotice($competition) {
 		$to = [Yii::app()->params->caqaEmail];
-		$subject = $this->makeTitle("【{$competition->name_zh}】审核通过");
+		$subject = $this->makeCaqaTitle("已通过【{$competition->name_zh}】");
 		$message = $this->render('competitionAcceptNotice', array(
 			'user'=>$competition->organizer[0]->user,
 			'competition'=>$competition,
@@ -119,7 +119,7 @@ class Mailer extends CApplicationComponent {
 
 	public function sendCompetitionLockNotice($user, $competition) {
 		$to = [Yii::app()->params->caqaEmail];
-		$subject = $this->makeTitle("【{$competition->name_zh}】已锁定");
+		$subject = $this->makeCaqaTitle("已锁定【{$competition->name_zh}】");
 		$message = $this->render('competitionLockNotice', array(
 			'user'=>$user,
 			'competition'=>$competition,
@@ -309,7 +309,11 @@ class Mailer extends CApplicationComponent {
 	}
 
 	private function makeTitle($title) {
-		return $this->titlePrefix . $title;
+		return $this->titlePrefix . ' - ' . $title;
+	}
+
+	private function makeCaqaTitle($title) {
+		return $title . ' - ' . $this->titlePrefix;
 	}
 
 	public function add($to, $subject, $message, $replyTo = '', $cc = '', $bcc = '') {

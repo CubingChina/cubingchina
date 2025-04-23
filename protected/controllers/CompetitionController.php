@@ -427,7 +427,7 @@ class CompetitionController extends Controller {
 		if ($competition === null || strtolower($alias) != strtolower($competition->getUrlName())) {
 			throw new CHttpException(404, 'Error');
 		}
-		if (!$competition->isPublicVisible() && !$competition->checkPermission($this->user)) {
+		if (!$competition->isPublicVisible() && !$competition->checkPermission($this->user) && !Yii::app()->user->checkPermission('caqa_member')) {
 			throw new CHttpException(404, 'Error');
 		}
 		$this->setCompetitionNavibar($competition);

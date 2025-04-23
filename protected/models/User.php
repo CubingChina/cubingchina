@@ -302,7 +302,7 @@ class User extends ActiveRecord {
 	}
 
 	public function canEditCompetition($competition) {
-		return $competition->isHide() || $this->isAdministrator()
+		return $competition->isHide() || $this->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')
 			|| $this->isWCADelegate() && $competition->checkPermission($this, 'ultra');
 	}
 
@@ -310,18 +310,20 @@ class User extends ActiveRecord {
 		if (!$competition->isHide()) {
 			return false;
 		}
-		return $this->isAdministrator() || ($this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && strtotime($competition->date) - time() >= 31 * 86400);
+		return $this->isAdministrator() || Yii::app()->user->checkPermission('caqa_member') 
+		|| ($this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && strtotime($competition->date) - time() >= 31 * 86400);
 	}
 
 	public function canHide($competition) {
 		if ($competition->isHide()) {
 			return false;
 		}
-		return $this->isAdministrator() || $this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && $competition->isLocked();
+		return $this->isAdministrator() || Yii::app()->user->checkPermission('caqa_member') 
+		|| ($this->isWCADelegate() && $competition->checkPermission($this, 'ultra') && $competition->isLocked());
 	}
 
 	public function canAnnounce($competition) {
-		return $this->isAdministrator() && $competition->isLocked();
+		return ($this->isAdministrator() || Yii::app()->user->checkPermission('caqa_member'))&& $competition->isLocked();
 	}
 
 	public function canPriorRegister($competition) {

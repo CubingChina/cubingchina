@@ -1143,7 +1143,7 @@ class Registration extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑', array('/board/registration/edit', 'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		$canApprove = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) || !$this->competition->isWCACompetition() || $this->user->country_id > 1;
+		$canApprove = Yii::app()->user->checkPermission('caqa') || !$this->competition->isWCACompetition() || $this->user->country_id > 1;
 		if ($canApprove) {
 			switch ($this->status) {
 				case self::STATUS_PENDING:

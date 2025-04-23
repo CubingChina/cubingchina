@@ -31,10 +31,10 @@
             ], ['target'=>'_blank']); ?> ！</p>
           </div>
           <ul class="nav nav-tabs" role="tablist">
-            <?php if ($isOrganizerEditable): ?>
+            <?php if ($isOrganizerEditable || Yii::app()->user->checkPermission('caqa_member')): ?>
             <li role="presentation"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
             <?php endif; ?>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
             <?php if ($this->user->canEditCompetition($model)): ?>
             <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
             <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
@@ -53,7 +53,7 @@
             <?php endif; ?>
           </ul>
           <div class="tab-content">
-            <?php if ($isOrganizerEditable): ?>
+            <?php if ($isOrganizerEditable || Yii::app()->user->checkPermission('caqa_member')): ?>
             <div role="tabpanel" class="tab-pane" id="baseinfo">
               <div class="col-lg-12">
                 <div class="text-danger">请参阅<?php echo CHtml::link('粗饼网比赛名称规范试行版', '/static/naming conventions.pdf', ['target'=>'_blank']); ?>填写比赛名称。</div>
@@ -157,7 +157,7 @@
                 )),
                 $form->error($model, 'type', array('class'=>'text-danger'))
               );?>
-              <?php if ($this->user->isAdministrator() || $this->user->isDelegate()): ?>
+              <?php if ($this->user->isAdministrator() || $this->user->isDelegate() || Yii::app()->user->checkPermission('caqa_member')): ?>
               <?php echo Html::formGroup(
                 $model, 'wca_competition_id', array(
                   'class'=>'col-md-4',
@@ -360,7 +360,7 @@
                   Html::activeTextField($model, 'oldOrganizer'),
                   $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
                 );
-              } elseif ($model->isAccepted() || $this->user->isAdministrator()) {
+              } elseif ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')) {
                 echo Html::formGroup(
                   $model, 'organizers', array(
                     'class'=>'col-lg-12',
@@ -452,7 +452,7 @@
                 ), true),
                 $form->error($model, 'locations', array('class'=>'text-danger'))
               );?>
-              <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+              <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
               <div class="clearfix"></div>
               <hr>
               <div class="col-lg-12">
@@ -473,7 +473,7 @@
               <?php endif; ?>
             </div>
             <?php endif; ?>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+            <?php if ($model->isAccepted() || $this->user->isAdministrator() || Yii::app()->user->checkPermission('caqa_member')): ?>
             <?php if ($this->user->canEditCompetition($model)): ?>
             <div role="tabpanel" class="tab-pane" id="detail">
               <?php $this->renderPartial('editorTips'); ?>
