@@ -20,6 +20,15 @@ class PayController extends AdminController {
 				]
 			),
 			array(
+				'allow',
+				'roles'=>[
+					'permission'=>'caqa'
+				],
+				'actions'=>[
+					'index'
+				]
+			),
+			array(
 				'deny',
 				'users'=>array('*'),
 			),

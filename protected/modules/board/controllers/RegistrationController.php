@@ -40,7 +40,7 @@ class RegistrationController extends AdminController {
 			array(
 				'allow',
 				'roles'=>[
-					'permission'=>'caqa_member'
+					'permission'=>'caqa'
 				],
 				'actions'=>[
 					'index', 
