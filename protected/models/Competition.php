@@ -340,6 +340,11 @@ class Competition extends ActiveRecord {
 				),
 			);
 		}
+		if (Yii::app()->user->checkPermission('caqa')) {
+			$with = array(
+				'organizer'=>array(),
+			);
+		}
 		$inProgress = self::model()->with($with)->findAllByAttributes(array(
 			'status'=>self::STATUS_SHOW,
 		), array(
