@@ -332,17 +332,12 @@ class Competition extends ActiveRecord {
 			return [];
 		}
 		$with = array();
-		if (Yii::app()->controller->user->isOrganizer()) {
+		if (Yii::app()->controller->user->isOrganizer() && !Yii::app()->user->checkPermission('caqa')) {
 			$with = array(
 				'organizer'=>array(
 					'together'=>true,
 					'condition'=>'organizer.organizer_id=' . Yii::app()->user->id,
 				),
-			);
-		}
-		if (Yii::app()->user->checkPermission('caqa')) {
-			$with = array(
-				'organizer'=>array(),
 			);
 		}
 		$inProgress = self::model()->with($with)->findAllByAttributes(array(

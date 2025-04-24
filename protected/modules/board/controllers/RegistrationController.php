@@ -71,7 +71,7 @@ class RegistrationController extends AdminController {
 		if ($model->competition_id === null) {
 			$model->competition_id = 0;
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa_member')) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 		}
 		$this->render('index', array(
@@ -86,7 +86,7 @@ class RegistrationController extends AdminController {
 		if ($model->competition === null || !$model->competition->show_qrcode) {
 			$this->redirect(array('/board/registration/index'));
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -103,7 +103,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -124,7 +124,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -143,7 +143,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -163,7 +163,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -997,7 +997,7 @@ class RegistrationController extends AdminController {
 		if ($competition === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -1025,7 +1025,7 @@ class RegistrationController extends AdminController {
 		if ($competition === null) {
 			throw new CHttpException(404, '未知比赛ID');
 		}
-		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			throw new CHttpException(403, '权限不足');
 		}
 		$registration = new Registration();
@@ -1044,7 +1044,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
@@ -1074,7 +1074,7 @@ class RegistrationController extends AdminController {
 		if ($model === null) {
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
