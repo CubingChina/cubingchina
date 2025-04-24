@@ -22,7 +22,8 @@ class UserController extends AdminController {
 					'permission'=>'users_management'
 				],
 				'actions'=>[
-					'index', 
+					'index',
+					'edit',
 					'repeat', 
 					'merge', 
 					'statistics', 

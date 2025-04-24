@@ -332,7 +332,7 @@ class Competition extends ActiveRecord {
 			return [];
 		}
 		$with = array();
-		if (Yii::app()->controller->user->isOrganizer()) {
+		if (Yii::app()->controller->user->isOrganizer() && !Yii::app()->user->checkPermission('caqa')) {
 			$with = array(
 				'organizer'=>array(
 					'together'=>true,
