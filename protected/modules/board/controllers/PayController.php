@@ -46,7 +46,7 @@ class PayController extends AdminController {
 				$model->type_id = 0;
 			}
 		}
-		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id])) {
+		if ($this->user->isOrganizer() && $model->competition && !isset($model->competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/pay/index'));
 		}
