@@ -181,7 +181,7 @@
               </dl>
             </div>
             <div role="tabpanel" class="tab-pane" id="admin">
-              <?php if ($nearbyCompetitions !== [] && ($this->user->isAdministrator() || $this->user->isWCADelegate())): ?>
+              <?php if ($nearbyCompetitions !== [] && ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa'))): ?>
               <p class="text-danger">请注意！该比赛与下列比赛（及申请）直线距离低于200KM，日期小于26天！</p>
               <?php $this->widget('GridView', [
                 'dataProvider'=>new CArrayDataProvider($nearbyCompetitions),
@@ -233,7 +233,7 @@
                 'data-value'=>$competition->status,
                 'data-name'=>$competition->name_zh,
               ], '确认无误，提交！') ;?>
-              <?php elseif ($competition->isConfirmed() && ($this->user->isAdministrator() || $this->user->isWCADelegate())): ?>
+              <?php elseif ($competition->isConfirmed() && ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa'))): ?>
               <?php $form = $this->beginWidget('ActiveForm', array(
                 'htmlOptions'=>array(
                   'class'=>'clearfix row',

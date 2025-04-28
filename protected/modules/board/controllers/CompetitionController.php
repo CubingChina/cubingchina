@@ -89,7 +89,7 @@ class CompetitionController extends AdminController {
 		if ($model->isAccepted()) {
 			// $this->redirect(['/board/competition/edit', 'id'=>$model->id]);
 		}
-		if (isset($_POST['Competition']) && ($this->user->isAdministrator() || $this->user->isWCADelegate())) {
+		if (isset($_POST['Competition']) && ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa'))) {
 			$status = $model->status;
 			$model->attributes = $_POST['Competition'];
 			$model->formatDate();
