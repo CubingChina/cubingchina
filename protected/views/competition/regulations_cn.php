@@ -213,7 +213,7 @@
           );
         } else {
           $oldAgeGroups[] = sprintf(
-            '<li><b>O%d：</b>为%d岁（不含）以上选手，即在%s及之前出生的选手。</li>',
+            '<li><b>O%d：</b>为%d岁（不含）以上选手，即在%s之前出生的选手。</li>',
             $age, $age, date('Y年m月d日', $competition->getYearsAgosDate($age, 86400))
           );
         }
