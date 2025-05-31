@@ -807,8 +807,8 @@ Yii::app()->clientScript->registerScript('competition',
     let date = new Date($('#Competition_date').val());
     let endDate = new Date($('#Competition_end_date').val() || $('#Competition_date').val());
     let days = Math.ceil((endDate - date) / 86400000) + 1;
-    let cubingFee = days * 2;
-    let feeTips = `粗饼运营费：\${days}天x2元/天=\${cubingFee}元<br>`;
+    let cubingFee = days * 3;
+    let feeTips = `粗饼运营费：\${days}天x3元/天=\${cubingFee}元<br>`;
     if (type === 'WCA') {
       feeTips += `WCA运营费：\${fee}元x15%=\${(fee * 0.15).toFixed(2)}元<br>`;
     }
