@@ -288,6 +288,18 @@
                 $form->error($model, 'reg_end', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
+              <?php echo Html::formGroup(
+                $model, 'wca_series_competition_name_arr', array(
+                  'class'=>'col-lg-6 col-md-6',
+                ),
+                $form->labelEx($model, 'wca_series_competition_name_arr', array(
+                  'label'=>Yii::t('Competition', 'WCA Series id'),
+                )),
+                '<div style="color: #888888;" >多场WCA系列赛关联，请用英文“，”分割输入如：“HangzhouOpen2025,DeqingOpen2025,ShaoxingOpen2025”</div><div style="color: #888888;" >注意需要审核通过后再填，填写的比赛也要是审核通过的</div>',
+                Html::activeTextField($model, 'wca_series_competition_name_arr'),
+                $form->error($model, 'wca_series_competition_name_arr', array('class'=>'text-danger'))
+              );?>
+              <div class="clearfix"></div>
               <?php if ($model->isAccepted()): ?>
               <?php echo Html::formGroup(
                 $model, 'refund_type', array(

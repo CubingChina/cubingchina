@@ -181,6 +181,10 @@ class CompetitionController extends AdminController {
 				}
 				$model->formatDate();
 			}
+			// 处理系列赛
+			if (isset($_POST['Competition']['wca_series_competition_name_arr'])){
+				$model->wca_series_competition_name_arr=$_POST['Competition']['wca_series_competition_name_arr'];
+			}
 			if (isset($_POST['lock']) && $this->user->canLock($model)) {
 				$model->lock();
 				Yii::app()->mailer->sendCompetitionLockNotice($this->user, $model);
@@ -287,6 +291,10 @@ class CompetitionController extends AdminController {
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$cities = Region::getAllCities();
+
+		// 查系列赛
+		$model->wca_series_competition_name_arr = implode(',',$this->getSeriesArrById(intval($model->id)));
+
 		return array(
 			'model'=>$model,
 			'cities'=>$cities,
@@ -297,6 +305,48 @@ class CompetitionController extends AdminController {
 			'isOrganizerEditable'=>!($this->user->isOrganizer() && $model->isPublic()),
 			'user'=>$this->user,
 		);
+	}
+
+	// 通过比赛id获取系列赛列表
+	public function getSeriesArrById($id){
+		// 获取系列赛id
+		$criteria = new CDbCriteria();
+		$criteria->select = 'series_id';
+		// 添加 WHERE 条件
+		$criteria->condition = 'competition_id = :aVal';
+		$criteria->params = [':aVal' => intval($id)];
+		$model = CompetitionSeries::model()->find($criteria);
+		if ($model == null) {
+			return [];
+		}
+		// 通过系列赛id查关联比赛
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'series_id = :aVal';
+		$criteria->params = [':aVal' => intval($model->series_id)];
+		$modelArr = CompetitionSeries::model()->findAll($criteria);
+		$tempArr = [];
+		if (is_array($modelArr) && count($modelArr)>0){
+			foreach($modelArr as $onceModel){
+				// 去除自己
+				if ($id == $onceModel->competition_id){
+					continue;
+				}
+				$tempArr[] = intval($onceModel->competition_id);
+			}
+		}
+		// 通过比赛id查比赛字符串类型id
+		$criteria = new CDbCriteria();
+		$criteria->select = 'wca_competition_id';
+		$criteria->addInCondition('id', $tempArr);
+		$modelArr = Competition::model()->findAll($criteria);
+		$tempresArr = [];
+		if (is_array($modelArr) && count($modelArr)>0){
+			foreach($modelArr as $onceModel){
+				$tempresArr[] = strval($onceModel->wca_competition_id);
+			}
+		}
+
+		return $tempresArr;
 	}
 
 	public function actionToggle() {

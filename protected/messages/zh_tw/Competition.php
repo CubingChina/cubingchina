@@ -118,6 +118,7 @@ return array (
   'WCA Official Page' => 'WCA官方頁面',
   'WCA regulations' => 'WCA比賽規則',
   'WCA Series' => 'WCA系列賽',
+  'WCA Series id' => 'WCA系列賽ID',
   'WCA Newcomer Month' => 'WCA新人月賽',
   'Wca Competition ID' => 'WCA比賽ID',
   'WCA Dues' => 'WCA會費',

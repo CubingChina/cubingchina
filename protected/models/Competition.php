@@ -85,6 +85,7 @@ class Competition extends ActiveRecord {
 	public $province;
 	public $event;
 	public $distance;
+	public $wca_series_competition_name_arr;
 
 	public static function formatTime($second, $event = '') {
 		$second = intval($second);
@@ -2708,6 +2709,61 @@ class Competition extends ActiveRecord {
 			$location->latitude = floatval($location->latitude);
 			$location->save(false);
 		}
+
+		// 处理系列赛
+		if (is_string($this->wca_series_competition_name_arr) && $this->wca_series_competition_name_arr!=""){
+			$wca_series_competition_name_arr = explode(',', $this->wca_series_competition_name_arr);
+			// 查比赛id
+			$criteria = new CDbCriteria();
+			$criteria->addInCondition('wca_competition_id', $wca_series_competition_name_arr);
+			$competitions = self::model()->findAll($criteria);
+			$tempIdArr = [];// 收集id
+			foreach ($competitions as $comp) {
+				$tempIdArr[] = intval($comp->id);
+			}
+			$tempIdArr[] = intval($this->id);
+			// 查系列赛id
+			$criteria = new CDbCriteria();
+			$criteria->addInCondition('competition_id', $tempIdArr);
+			$competitions = CompetitionSeries::model()->findAll($criteria);
+			$seriesId = 0;
+			if(is_array($competitions) && count($competitions)>0){
+				// 如果有 所有比赛都关联到这个系列赛  (不考虑单个比赛关联到多个系列赛的情况 人为处理)
+				$seriesId = intval($competitions[0]->series_id);
+			}else{
+				// 如果没有 查最大的系列赛id +1当作这次的
+				$criteria = new CDbCriteria();
+				$criteria->select = 'series_id';      
+				$criteria->order = 'series_id DESC';   
+				$criteria->limit = 1;                  
+				$model = CompetitionSeries::model()->find($criteria);
+				if ($model !== null) {
+    				$seriesId = intval($model->series_id)+1; // 先不考虑并发 考虑并发 在不加其他表的前提下 可以简单点 + 1-5随机数
+				}
+			}
+			if ($seriesId>0){
+				// 简单搞 直接清 正常应该只动增减
+				Yii::app()->db->createCommand("delete from competition_series where series_id=".$seriesId.";")->execute();
+				// 循环插入
+				foreach($tempIdArr as $tempId){
+					Yii::app()->db->createCommand("INSERT INTO `competition_series` (`series_id`, `competition_id`) VALUES ('".$seriesId."', '".$tempId."');")->execute(); // int就不用参数绑定了
+				}
+			}
+		}else{
+			// 清除这个比赛有关系列赛
+			// 先查系列赛id
+			$criteria = new CDbCriteria();
+			$criteria->select = 'series_id';
+			// 添加 WHERE 条件
+			$criteria->condition = 'competition_id = :aVal';
+			$criteria->params = [':aVal' => intval($this->id)];
+			$model = CompetitionSeries::model()->find($criteria);
+			if ($model !== null) {
+				// 清!
+				Yii::app()->db->createCommand("delete from competition_series where series_id=".intval($model->series_id).";")->execute();
+			}
+		}
+
 		if ($this->isOld()) {
 			$this->old->save(false);
 		}
@@ -3201,6 +3257,7 @@ class Competition extends ActiveRecord {
 			'status' => Yii::t('Competition', 'Status'),
 			'organizers' => Yii::t('Competition', 'Organizers'),
 			'delegates' => Yii::t('Competition', 'Delegates'),
+			'wca_series_id' => Yii::t('Competition', 'WCA Series id'),
 			'year' => Yii::t('common', 'Year'),
 			'event' => Yii::t('common', 'Event'),
 			'province' => Yii::t('common', 'Province'),
