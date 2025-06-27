@@ -36,7 +36,7 @@ class CompetitionController extends AdminController {
 				],
 				'actions'=>[
 					'index'
-				],			
+				],
 			),
 			array(
 				'allow',
@@ -128,7 +128,7 @@ class CompetitionController extends AdminController {
 
 	public function actionApply() {
 		$user = $this->user;
-		if (!$user->isAdministrator() && (Competition::getUnacceptedCount($user) + Competition::getCurrentMonthCount($user)) >= 2) {
+		if (!Yii::app()->user->checkPermission('caqa_member') && (Competition::getUnacceptedCount($user) + Competition::getCurrentMonthCount($user)) >= 2) {
 			Yii::app()->user->setFlash('danger', '如需申请更多比赛，请与管理员联系 admin@cubingchina.com');
 			$this->redirect(array('/board/competition/application'));
 		}
@@ -138,7 +138,7 @@ class CompetitionController extends AdminController {
 		if (isset($_POST['Competition'])) {
 			$model->attributes = $_POST['Competition'];
 			$model->status = Competition::STATUS_UNCONFIRMED;
-			if (!$user->isAdministrator()) {
+			if (!Yii::app()->user->checkPermission('caqa_member')) {
 				$model->organizers = [$user->id];
 			}
 			if ($model->save()) {
