@@ -289,15 +289,24 @@
               );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
-                $model, 'wca_series_competition_name_arr', array(
+                $model, 'wca_series_competition_id_arr', array(
                   'class'=>'col-lg-6 col-md-6',
                 ),
-                $form->labelEx($model, 'wca_series_competition_name_arr', array(
+                $form->labelEx($model, 'wca_series_competition_id_arr', array(
                   'label'=>Yii::t('Competition', 'WCA Series id'),
                 )),
-                '<div style="color: #888888;" >多场WCA系列赛关联，请用英文“，”分割输入如：“HangzhouOpen2025,DeqingOpen2025,ShaoxingOpen2025”</div><div style="color: #888888;" >注意需要审核通过后再填，填写的比赛也要是审核通过的</div>',
-                Html::activeTextField($model, 'wca_series_competition_name_arr'),
-                $form->error($model, 'wca_series_competition_name_arr', array('class'=>'text-danger'))
+                $form->listBox(
+                    $model,
+                    'wca_series_competition_id_arr',
+                    $model->getNamesByIds($model->wca_series_competition_id_arr),
+                    [
+                      'class'=>'competition-wca-search',
+                      'multiple'=>true,
+                      'placeholder'=>'输入比赛中文名称',
+                      'size'=>"20",
+                    ]
+                  ),
+                $form->error($model, 'wca_series_competition_id_arr', array('class'=>'text-danger'))
               );?>
               <div class="clearfix"></div>
               <?php if ($model->isAccepted()): ?>
@@ -871,6 +880,52 @@ Yii::app()->clientScript->registerScript('competition',
       })
     })
     tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
+  })
+
+  // competition wca search
+  $('.competition-wca-search').each(function() {
+    var that = $(this);
+    const [tagsinput] = that.on('itemAdded', function() {
+      var that = $(this);
+      setTimeout(function() {
+        that.tagsinput('input').val('');
+        that.tagsinput('input').attr('size', 20);
+      }, 0);
+    }).tagsinput({
+      itemValue: function(competition) {
+        return competition.id
+      },
+      itemText: function(competition) {
+        return competition.name_zh
+      },
+      maxTags: 0,
+      freeInput: false,
+      typeahead: {
+        source: function(query) {
+          return $.ajax({
+            url: '/board/Competition/search',
+            data: {
+              query: query,
+              is_wca: 1
+            },
+            dataType: 'json'
+          })
+        }
+      }
+    })
+    $.each(that.find('option'), function(index, option) {
+      tagsinput.add({
+        id: parseInt($(this).val()),
+        name_zh: $(this).text()
+      })
+    })
+    tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
+    
+    tagsinput.\$input.on('keyup keydown input', function() {
+      if ($(this).attr('size') != 20) {
+        $(this).attr('size', 20);
+      }
+    });
   })
 EOT
 );

@@ -85,7 +85,7 @@ class Competition extends ActiveRecord {
 	public $province;
 	public $event;
 	public $distance;
-	public $wca_series_competition_name_arr;
+	public $wca_series_competition_id_arr;
 
 	public static function formatTime($second, $event = '') {
 		$second = intval($second);
@@ -1109,6 +1109,19 @@ class Competition extends ActiveRecord {
 			$data[$user->id] = $user->getCompetitionName();
 		}
 		return $data;
+	}
+
+	// 通过比赛id获得比赛名称
+	public function getNamesByIds($ids) {
+		if (empty($ids)) {
+			return [];
+		}
+		$competitions = Competition::model()->findAllByPk($ids);
+		$names = [];
+		foreach ($competitions as $competition) {
+			$names[$competition->id] = $competition->name_zh;
+		}
+		return $names;
 	}
 
 	public function getOldOrganizer() {
@@ -2711,11 +2724,10 @@ class Competition extends ActiveRecord {
 		}
 
 		// 处理系列赛
-		if (is_string($this->wca_series_competition_name_arr) && $this->wca_series_competition_name_arr!=""){
-			$wca_series_competition_name_arr = explode(',', $this->wca_series_competition_name_arr);
+		if (is_array($this->wca_series_competition_id_arr) && count($this->wca_series_competition_id_arr)>0){
 			// 查比赛id
 			$criteria = new CDbCriteria();
-			$criteria->addInCondition('wca_competition_id', $wca_series_competition_name_arr);
+			$criteria->addInCondition('id', $this->wca_series_competition_id_arr); // 过一下数据库避免伪造请求乱传id 也可以过滤一些比赛
 			$competitions = self::model()->findAll($criteria);
 			$tempIdArr = [];// 收集id
 			foreach ($competitions as $comp) {
