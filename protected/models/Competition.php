@@ -85,6 +85,7 @@ class Competition extends ActiveRecord {
 	public $province;
 	public $event;
 	public $distance;
+	public $seriesCompetitions;
 
 	public static function formatTime($second, $event = '') {
 		$second = intval($second);
@@ -1112,6 +1113,20 @@ class Competition extends ActiveRecord {
 
 	public function getOldOrganizer() {
 		return $this->old->organizer;
+	}
+
+	public function getCompetitionSeriesKeyValues($series) {
+		$series_id = $this->series->series_id ?? $this->id;
+		$data = [];
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('t.series_id', (array)$series_id);
+		$competitions = CompetitionSeries::model()->with('competition')->findAll($criteria);
+		foreach ($competitions as $competition) {
+			if ($competition->competition) {
+				$data[$competition->competition->id] = $competition->competition->name_zh;
+			}
+		}
+    	return $data;
 	}
 
 	public function setOldOrganizerZh($organizerZh) {
@@ -2710,6 +2725,48 @@ class Competition extends ActiveRecord {
 		}
 		if ($this->isOld()) {
 			$this->old->save(false);
+		}
+
+		$series_id = $this->series->series_id ?? $this->id;
+		$oldSeriesIds = [];
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('t.series_id = :series_id');
+		$criteria->params = [':series_id' => $series_id];
+		$competitions = CompetitionSeries::model()->with('competition')->findAll($criteria);
+		foreach ($competitions as $competition) {
+			if ($competition->competition) {
+				$oldSeriesIds[] = (int)$competition->competition->id;
+			}
+		}
+		$oldSeriesIds = array_unique($oldSeriesIds);
+		$newSeriesIds = array_map('intval', array_filter((array)$this->seriesCompetitions));
+
+		$idsToDelete = array_diff($oldSeriesIds, $newSeriesIds);
+		$idsToAdd = array_diff($newSeriesIds, $oldSeriesIds);
+
+		if (!empty($idsToDelete) && (!$this->isAccepted() || $isAdmin)) {
+			$deleteCriteria = new CDbCriteria();
+			$deleteCriteria->addInCondition('competition_id', $idsToDelete);
+			$deleteCriteria->compare('series_id', $series_id);
+			CompetitionSeries::model()->deleteAll($deleteCriteria);
+		}
+
+		if (!empty($idsToAdd)) {
+			foreach ($idsToAdd as $competitionId) {
+				$exists = CompetitionSeries::model()->exists(
+					'competition_id = :competition_id AND series_id = :series_id',
+					[
+						':competition_id' => $competitionId,
+						':series_id' => $series_id,
+					]
+				);
+				if (!$exists) {
+					$model = new CompetitionSeries();
+					$model->competition_id = $competitionId;
+					$model->series_id = $series_id;
+					$model->save();
+				}
+			}
 		}
 	}
 

@@ -141,6 +141,11 @@ class CompetitionController extends AdminController {
 			if (!$user->isAdministrator()) {
 				$model->organizers = [$user->id];
 			}
+			if ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa_member')) {
+				if (isset($_POST['Competition']['series']) && is_array($_POST['Competition']['series'])) {
+					$model->seriesCompetitions = $_POST['Competition']['series'];
+				}
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '新加比赛成功');
 				$this->redirect(array('/board/competition/application'));
@@ -180,6 +185,12 @@ class CompetitionController extends AdminController {
 					$model->$attribute = $protectedValues[$attribute];
 				}
 				$model->formatDate();
+			}
+			// 处理系列赛
+			if ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa_member')) {
+				if (isset($_POST['Competition']['series']) && is_array($_POST['Competition']['series'])) {
+					$model->seriesCompetitions = $_POST['Competition']['series'];
+				}
 			}
 			if (isset($_POST['lock']) && $this->user->canLock($model)) {
 				$model->lock();
@@ -341,5 +352,23 @@ class CompetitionController extends AdminController {
 		} else {
 			throw new CHttpException(500, json_encode($model->errors));
 		}
+	}
+
+	public function actionSearch(){
+		$query = $this->sRequest('query');
+    	$criteria = new CDbCriteria();
+    	$criteria->addSearchCondition('name_zh', $query, true, 'OR');
+    	$criteria->addSearchCondition('name', $query, true, 'OR');
+		$criteria->addCondition('type="WCA"');
+		$criteria->order = 'id';
+		$criteria->limit = 20;
+		$competitions = Competition::model()->findAll($criteria);
+		echo CJSON::encode(array_map(function($competition) {
+			return [
+				'id'=>$competition->id,
+				'name'=>$competition->name,
+				'name_zh'=>$competition->name_zh,
+			];
+		}, $competitions));
 	}
 }

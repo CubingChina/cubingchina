@@ -403,6 +403,25 @@
                 );
               } ?>
               <?php echo Html::formGroup(
+                $model, 'series', array(
+                  'class'=>'col-lg-12',
+                ),
+                $form->labelEx($model, 'series', array(
+                  'label'=>Yii::t('Competition', 'WCA Series'),
+                )),
+                $form->listBox(
+                    $model,
+                    'series',
+                    $model->getCompetitionSeriesKeyValues($model->series, 'series_id'),
+                    [
+                      'class'=>'series',
+                      'multiple'=>true,
+                      'placeholder'=>'输入比赛中文名称',
+                    ]
+                  ),
+                $form->error($model, 'series', array('class'=>'text-danger'))
+              );?>
+              <?php echo Html::formGroup(
                 $model, 'delegates', array(
                   'class'=>'col-lg-12',
                   'id'=>'delegates',
@@ -860,6 +879,52 @@ Yii::app()->clientScript->registerScript('competition',
     })
     tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
   })
+
+  $('.series').each(function() {
+    var that = $(this);
+    const [tagsinput] = that.on('itemAdded', function() {
+      var that = $(this);
+      setTimeout(function() {
+        that.tagsinput('input').val('');
+        that.tagsinput('input').attr('size', 20);
+      }, 0);
+    }).tagsinput({
+      itemValue: function(competition) {
+        return competition.id
+      },
+      itemText: function(competition) {
+        return competition.name_zh
+      },
+      maxTags: 0,
+      freeInput: false,
+      typeahead: {
+        source: function(query) {
+          return $.ajax({
+            url: '/board/Competition/search',
+            data: {
+              query: query,
+              is_wca: 1
+            },
+            dataType: 'json'
+          })
+        }
+      }
+    })
+    $.each(that.find('option'), function(index, option) {
+      tagsinput.add({
+        id: parseInt($(this).val()),
+        name_zh: $(this).text()
+      })
+    })
+    tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
+    
+    tagsinput.\$input.on('keyup keydown input', function() {
+      if ($(this).attr('size') != 20) {
+        $(this).attr('size', 20);
+      }
+    });
+  })
+
 EOT
 );
 if (!$model->isAccepted()) {
