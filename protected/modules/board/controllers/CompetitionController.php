@@ -355,20 +355,22 @@ class CompetitionController extends AdminController {
 	}
 
 	public function actionSearch(){
-		$query = $this->sRequest('query');
-    	$criteria = new CDbCriteria();
-    	$criteria->addSearchCondition('name_zh', $query, true, 'OR');
-    	$criteria->addSearchCondition('name', $query, true, 'OR');
-		$criteria->addCondition('type="WCA"');
-		$criteria->order = 'id';
-		$criteria->limit = 20;
-		$competitions = Competition::model()->findAll($criteria);
-		echo CJSON::encode(array_map(function($competition) {
-			return [
-				'id'=>$competition->id,
-				'name'=>$competition->name,
-				'name_zh'=>$competition->name_zh,
-			];
-		}, $competitions));
+		if ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa_member')) {
+			$query = $this->sRequest('query');
+			$criteria = new CDbCriteria();
+			$criteria->addSearchCondition('name_zh', $query, true, 'OR');
+			$criteria->addSearchCondition('name', $query, true, 'OR');
+			$criteria->addCondition('type="WCA"');
+			$criteria->order = 'id';
+			$criteria->limit = 20;
+			$competitions = Competition::model()->findAll($criteria);
+			echo CJSON::encode(array_map(function($competition) {
+				return [
+					'id'=>$competition->id,
+					'name'=>$competition->name,
+					'name_zh'=>$competition->name_zh,
+				];
+			}, $competitions));
+		}
 	}
 }
