@@ -416,7 +416,7 @@
                     [
                       'class'=>'series',
                       'multiple'=>true,
-                      'placeholder'=>'输入比赛中文名称',
+                      'placeholder'=>'输入比赛名称',
                     ]
                   ),
                 $form->error($model, 'series', array('class'=>'text-danger'))

@@ -26,7 +26,7 @@ class CompetitionController extends AdminController {
 					'permission'=>'caqa_member'
 				],
 				'actions'=>[
-					'index', 'application', 'event', 'schedule', 'apply', 'edit', 'editApplication', 'view', 'confirm'
+					'index', 'application', 'event', 'schedule', 'apply', 'edit', 'editApplication', 'view', 'confirm', 'search'
 				],
 			),
 			array(

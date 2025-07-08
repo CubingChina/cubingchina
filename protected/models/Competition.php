@@ -2727,13 +2727,11 @@ class Competition extends ActiveRecord {
 			$this->old->save(false);
 		}
 
-		$series_id = $this->series->series_id ?? $this->id;
+		$seriesId = $this->series->series_id ?? $this->id;
 		$oldSeriesIds = [];
-		$criteria = new CDbCriteria;
-		$criteria->addCondition('t.series_id = :series_id');
-		$criteria->params = [':series_id' => $series_id];
-		$competitions = CompetitionSeries::model()->with('competition')->findAll($criteria);
-		foreach ($competitions as $competition) {
+		
+		$competitionSeries = CompetitionSeries::model()->with('competition')->findAll($seriesId);
+		foreach ($competitionSeries as $competition) {
 			if ($competition->competition) {
 				$oldSeriesIds[] = (int)$competition->competition->id;
 			}
@@ -2747,7 +2745,7 @@ class Competition extends ActiveRecord {
 		if (!empty($idsToDelete) && (!$this->isAccepted() || $isAdmin)) {
 			$deleteCriteria = new CDbCriteria();
 			$deleteCriteria->addInCondition('competition_id', $idsToDelete);
-			$deleteCriteria->compare('series_id', $series_id);
+			$deleteCriteria->compare('series_id', $seriesId);
 			CompetitionSeries::model()->deleteAll($deleteCriteria);
 		}
 
@@ -2757,13 +2755,13 @@ class Competition extends ActiveRecord {
 					'competition_id = :competition_id AND series_id = :series_id',
 					[
 						':competition_id' => $competitionId,
-						':series_id' => $series_id,
+						':series_id' => $seriesId,
 					]
 				);
 				if (!$exists) {
 					$model = new CompetitionSeries();
 					$model->competition_id = $competitionId;
-					$model->series_id = $series_id;
+					$model->series_id = $seriesId;
 					$model->save();
 				}
 			}
