@@ -1118,7 +1118,7 @@ class Competition extends ActiveRecord {
 	public function getCompetitionSeriesKeyValues($series) {
 		$seriesId = $this->series->series_id ?? $this->id;
 		$data = [];
-		$competitionSeries = CompetitionSeries::model()->with('competition')->findAll($seriesId);
+		$competitionSeries = CompetitionSeries::model()->with('competition')->findAllByAttributes(['series_id' => $seriesId]);
 		foreach ($competitionSeries as $competition) {
 			if ($competition->competition) {
 				$data[$competition->competition->id] = $competition->competition->name_zh;
@@ -2728,7 +2728,7 @@ class Competition extends ActiveRecord {
 		$seriesId = $this->series->series_id ?? $this->id;
 		$oldSeriesIds = [];
 		
-		$competitionSeries = CompetitionSeries::model()->with('competition')->findAll($seriesId);
+		$competitionSeries = CompetitionSeries::model()->with('competition')->findAllByAttributes(['series_id' => $seriesId]);
 		foreach ($competitionSeries as $competition) {
 			if ($competition->competition) {
 				$oldSeriesIds[] = (int)$competition->competition->id;
