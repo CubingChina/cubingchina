@@ -1116,12 +1116,10 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getCompetitionSeriesKeyValues($series) {
-		$series_id = $this->series->series_id ?? $this->id;
+		$seriesId = $this->series->series_id ?? $this->id;
 		$data = [];
-		$criteria = new CDbCriteria;
-		$criteria->addInCondition('t.series_id', (array)$series_id);
-		$competitions = CompetitionSeries::model()->with('competition')->findAll($criteria);
-		foreach ($competitions as $competition) {
+		$competitionSeries = CompetitionSeries::model()->with('competition')->findAll($seriesId);
+		foreach ($competitionSeries as $competition) {
 			if ($competition->competition) {
 				$data[$competition->competition->id] = $competition->competition->name_zh;
 			}
