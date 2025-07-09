@@ -24,6 +24,8 @@
           return $series->competition_id != $competition->id;
         }))),
       ));?>
+      <br>
+      <?php echo Yii::t('Competition', 'Competitors can only register for one in the WCA series. Please carefully review the competition rules regarding the WCA series before registering for this competition.'); ?>
     </dd>
     <?php endif; ?>
     <?php if ($competition->newcomer): ?>

@@ -108,6 +108,7 @@ return array (
   'Third Stage Ratio' => '第三阶段倍率',
   'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.' => '该比赛是世界魔方协会官方认证的比赛，所有选手需要熟知{regulations}。',
   'This competition is part of a series along with {series}.' => '该比赛与{series}比赛为系列赛。',
+  'Competitors can only register for one in the WCA series. Please carefully review the competition rules regarding the WCA series before registering for this competition.' => '选手只能报名WCA系列赛中的一场比赛，报名本比赛前请仔细查看比赛规则对WCA系列赛的说明。',
   'Ticket' => '入场券',
   'Travel' => '交通',
   'Travel Info' => '交通信息',
