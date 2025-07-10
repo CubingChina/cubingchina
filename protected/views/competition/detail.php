@@ -8,6 +8,22 @@
         '{regulations}'=>Html::wcaRegulationLink(Yii::t('Competition', 'WCA regulations')),
       ));?>
     </dd>
+    <?php if ($competition->explanation): ?>
+    <dt>
+      <?php echo Yii::t('Competition', 'Competition Explanation'); ?>
+      <?php echo CHtml::link(Html::fontAwesome('question-circle'), 'https://cubing.com/faq#faq-15', array(
+        'target'=>'_blank',
+      )); ?>
+    </dt>
+    <dd>
+      <?php foreach ($competition->explanation as $explanation): ?>
+        <?php if (isset(Competition::EXPLANATION_MAP[$explanation->label])): ?>
+          <?php echo Yii::t('Competition', Competition::EXPLANATION_MAP[$explanation->label]); ?>
+          <br>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    </dd>
+    <?php endif; ?>
     <?php if ($competition->series): ?>
     <dt>
       <?php echo Yii::t('Competition', 'WCA Series'); ?>

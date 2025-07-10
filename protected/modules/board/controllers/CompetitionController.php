@@ -287,6 +287,7 @@ class CompetitionController extends AdminController {
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$cities = Region::getAllCities();
+		$explanationLabels = Competition::getExplanationLabels();
 		return array(
 			'model'=>$model,
 			'cities'=>$cities,
@@ -296,6 +297,7 @@ class CompetitionController extends AdminController {
 			'types'=>$types,
 			'isOrganizerEditable'=>!($this->user->isOrganizer() && $model->isPublic()),
 			'user'=>$this->user,
+			'explanationLabels'=>$explanationLabels,
 		);
 	}
 

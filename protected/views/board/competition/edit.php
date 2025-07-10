@@ -168,6 +168,27 @@
                 Html::activeTextField($model, 'wca_competition_id'),
                 $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
               );?>
+               <?php echo Html::formGroup(
+                  $model, 'explanations', array(
+                      'class'=>'col-md-4',
+                      'id' => 'explanation',
+                  ),
+                  $form->labelEx($model, 'explanations', array(
+                      'label'=>'赛事说明',
+                  )),
+                  $form->checkBoxList($model, 'explanations', $explanationLabels, array(
+                    'uncheckValue'=>'',
+                    'container'=>'div',
+                    'baseID'=>'explanations',
+                    'separator'=>'',
+                    'class'=>'form-control',
+                    'labelOptions'=>array(
+                      'class'=>'checkbox-inline',
+                    ),
+                    'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
+                  )),
+                  $form->error($model, 'explanations', array('class'=>'text-danger')),
+              );?>
               <?php endif; ?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
