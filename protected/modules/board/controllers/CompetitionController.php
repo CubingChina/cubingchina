@@ -141,6 +141,13 @@ class CompetitionController extends AdminController {
 			if (!Yii::app()->user->checkPermission('caqa_member')) {
 				$model->organizers = [$user->id];
 			}
+			if ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa_member')) {
+				if (isset($_POST['Competition']['wca_series_competition_id_arr'])){
+					$model->wca_series_competition_id_arr=$_POST['Competition']['wca_series_competition_id_arr'];
+				}
+			}else{
+				$model->wca_series_competition_id_arr = [];
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '新加比赛成功');
 				$this->redirect(array('/board/competition/application'));
@@ -180,6 +187,14 @@ class CompetitionController extends AdminController {
 					$model->$attribute = $protectedValues[$attribute];
 				}
 				$model->formatDate();
+			}
+			// 处理系列赛
+			if ($this->user->isAdministrator() || $this->user->isWCADelegate() || Yii::app()->user->checkPermission('caqa_member')) {
+				if (isset($_POST['Competition']['wca_series_competition_id_arr'])){
+					$model->wca_series_competition_id_arr=$_POST['Competition']['wca_series_competition_id_arr'];
+				}
+			}else{
+				$model->wca_series_competition_id_arr = [];
 			}
 			if (isset($_POST['lock']) && $this->user->canLock($model)) {
 				$model->lock();
@@ -287,6 +302,10 @@ class CompetitionController extends AdminController {
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$cities = Region::getAllCities();
+
+		// 查系列赛
+		$model->wca_series_competition_id_arr = $this->getSeriesArrById(intval($model->id));
+
 		return array(
 			'model'=>$model,
 			'cities'=>$cities,
@@ -297,6 +316,36 @@ class CompetitionController extends AdminController {
 			'isOrganizerEditable'=>!($this->user->isOrganizer() && $model->isPublic()),
 			'user'=>$this->user,
 		);
+	}
+
+	// 通过比赛id获取系列赛列表
+	public function getSeriesArrById($id){
+		// 获取系列赛id
+		$criteria = new CDbCriteria();
+		$criteria->select = 'series_id';
+		// 添加 WHERE 条件
+		$criteria->condition = 'competition_id = :aVal';
+		$criteria->params = [':aVal' => intval($id)];
+		$model = CompetitionSeries::model()->find($criteria);
+		if ($model == null) {
+			return [];
+		}
+		// 通过系列赛id查关联比赛
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'series_id = :aVal';
+		$criteria->params = [':aVal' => intval($model->series_id)];
+		$modelArr = CompetitionSeries::model()->findAll($criteria);
+		$tempArr = [];
+		if (is_array($modelArr) && count($modelArr)>0){
+			foreach($modelArr as $onceModel){
+				// 去除自己
+				if ($id == $onceModel->competition_id){
+					continue;
+				}
+				$tempArr[] = intval($onceModel->competition_id);
+			}
+		}
+		return $tempArr;
 	}
 
 	public function actionToggle() {
@@ -341,5 +390,28 @@ class CompetitionController extends AdminController {
 		} else {
 			throw new CHttpException(500, json_encode($model->errors));
 		}
+	}
+
+	public function actionSearch()
+	{
+		$query = $this->sRequest('query');
+		$isWca = intval($this->iRequest('is_wca'));
+
+    	$criteria = new CDbCriteria();
+    	$criteria->addSearchCondition('name_zh', $query, true, 'OR');
+    	$criteria->addSearchCondition('name', $query, true, 'OR');
+		if ($isWca) {
+			$criteria->addCondition('type="WCA"');
+		}
+		$criteria->order = 'id';
+		$criteria->limit = 20;
+		$competitions = Competition::model()->findAll($criteria);
+		echo CJSON::encode(array_map(function($competition) {
+			return [
+				'id'=>$competition->id,
+				'name'=>$competition->name,
+				'name_zh'=>$competition->name_zh,
+			];
+		}, $competitions));
 	}
 }
