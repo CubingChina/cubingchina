@@ -68,6 +68,17 @@ class Competition extends ActiveRecord {
 	const COMPETITOR_LIMIT_BY_COMPETITION = 0;
 	const COMPETITOR_LIMIT_BY_EVENT = 1;
 
+	const EXPLANATION_OTHER = 0;
+	const EXPLANATION_TRIAL = 1;
+	const EXPLANATION_NEWER = 2;
+	const EXPLANATION_LARGE = 3;
+	const EXPLANATION_MAP = [
+		Competition::EXPLANATION_TRIAL => 'This is a trial competition, aiming to optimize and experiment with new competition formats. The procedures may differ from regular competitions. Please be aware before you register. Thank you for your understanding.',
+		Competition::EXPLANATION_NEWER => 'This competition is held by new organizers who are still gaining experience. The procedures and overall experience may differ from those held by experienced organizers and may get on-site adjustments. Please be aware before you register. Thank you for your understanding.',
+		Competition::EXPLANATION_LARGE => 'This is a large-scale competition, held by experienced organizers, aiming to provide the best experience for competitors.',
+		Competition::EXPLANATION_OTHER => 'Other',
+	];
+
 	private $_organizers;
 	private $_organizerTeamMembers;
 	private $_scoreTakers;
@@ -80,6 +91,7 @@ class Competition extends ActiveRecord {
 	private $_timezones;
 	private $_remainedNumber;
 	private $_podiumsEvents;
+	private $_explanations;
 
 	public $year;
 	public $province;
@@ -211,6 +223,7 @@ class Competition extends ActiveRecord {
 			'auto_accept',
 			'type',
 			'wca_competition_id',
+			'explanations',
 			'entry_fee',
 			'online_pay',
 			'person_num',
@@ -392,6 +405,15 @@ class Competition extends ActiveRecord {
 		return array(
 			self::TYPE_WCA=>self::TYPE_WCA,
 			self::TYPE_OTHER=>Yii::t('common', 'Other'),
+		);
+	}
+
+	public static function getExplanationLabels() {
+		return array(
+			self::EXPLANATION_OTHER=>Yii::t('competition', 'Other'),
+			self::EXPLANATION_TRIAL=>Yii::t('competition', 'Trial competition'),
+			self::EXPLANATION_NEWER=>Yii::t('competition', 'Competition with new organizers'),
+			self::EXPLANATION_LARGE=>Yii::t('competition', 'Large-scale competition'),
 		);
 	}
 
@@ -1151,6 +1173,17 @@ class Competition extends ActiveRecord {
 
 	public function setDelegates($delegates) {
 		$this->_delegates = $delegates;
+	}
+
+	public function getExplanations() {
+		if ($this->_explanations === null) {
+			$this->_explanations = CHtml::listData($this->explanation, 'id', 'label');
+		}
+		return $this->_explanations;
+	}
+
+	public function setExplanations($explanations) {
+		$this->_explanations = $explanations;
 	}
 
 	public function getLocations() {
@@ -2708,6 +2741,29 @@ class Competition extends ActiveRecord {
 			$location->latitude = floatval($location->latitude);
 			$location->save(false);
 		}
+		//处理赛事说明
+		$oldExplanations = array_values(CHtml::listData($this->explanation, 'id', 'label'));
+		$newExplanations = array_values((array)$this->explanations);
+		sort($oldExplanations);
+		sort($newExplanations);
+		if ($oldExplanations != $newExplanations) {
+			foreach ($oldExplanations as $value) {
+				if (!in_array($value, $newExplanations) && (!$this->isAccepted() || $isAdmin)) {
+					CompetitionExplanation::model()->deleteAllByAttributes(array(
+						'competition_id'=>$this->id,
+						'label'=>$value,
+					));
+				}
+			}
+			foreach ($newExplanations as $value) {
+				if (!in_array($value, $oldExplanations)) {
+					$model = new CompetitionExplanation();
+					$model->competition_id = $this->id;
+					$model->label = $value;
+					$model->save();
+				}
+			}
+		}
 		if ($this->isOld()) {
 			$this->old->save(false);
 		}
@@ -3125,7 +3181,7 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['organizerTeamMembers', 'checkOrganizerTeamMembers', 'skipOnError'=>true],
-			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules,
+			['refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, explanations,
 				regulations, regulations_zh, information, information_zh, travel, travel_zh, events, podiumsEvents, scoreTakers', 'safe'],
 			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
@@ -3161,6 +3217,7 @@ class Competition extends ActiveRecord {
 			'application'=>[self::HAS_ONE, 'CompetitionApplication', 'competition_id'],
 			'tickets'=>[self::HAS_MANY, 'Ticket', 'type_id', 'on'=>'type=' . Ticket::TYPE_COMPETITION],
 			'series'=>[self::HAS_ONE, 'CompetitionSeries', 'competition_id'],
+			'explanation'=>[self::HAS_MANY, 'CompetitionExplanation', 'competition_id'],
 		];
 	}
 
@@ -3172,6 +3229,7 @@ class Competition extends ActiveRecord {
 			'id' => Yii::t('Competition', 'ID'),
 			'type' => Yii::t('Competition', 'Type'),
 			'wca_competition_id' => Yii::t('Competition', 'Wca Competition ID'),
+			'explanation' => Yii::t('Competition', 'Explanation'),
 			'name' => Yii::t('Competition', 'Competition Name'),
 			'name_zh' => Yii::t('Competition', 'Competition Name'),
 			'date' => Yii::t('Competition', 'Date'),

@@ -37,6 +37,16 @@
         <div class="panel-body">
           <?php if ($registration->isAccepted()): ?>
           <p><?php echo Yii::t('Registration', 'You succeeded in registering for '), $competition->getAttributeValue('name'), Yii::t('common', '.'); ?></p>
+          <p>
+            <?php if ($competition->explanation): ?>
+              <?php foreach ($competition->explanation as $explanation): ?>
+                <?php if (isset(Competition::EXPLANATION_MAP[$explanation->label])): ?>
+                  <?php echo Yii::t('Competition', Competition::EXPLANATION_MAP[$explanation->label]); ?>
+                  <br>
+                <?php endif; ?>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </p>
           <hr>
           <?php elseif ($registration->isCancelled()): ?>
           <p><?php echo Yii::t('Registration', 'Your registration has been cancelled.'); ?></p>
