@@ -352,6 +352,7 @@ $config = [
 				'Please inform us by email before the competition if you will not be able to participate so we can cancel your registration.',
 				'Please pay attention to the schedule and be on time for your events. Competitors showing up late to events may be disqualified.',
 				'"Time limit" means, if you exceeds the time limit, your current attempt will be stopped and recorded as DNF. "Cut-off" means, you are allowed to finish all five attempts if at least one of your first two attempts fits in the cut-off, otherwise the remaining three attempts will be cancelled. (The first attempt has to be below the cut-off for 6x6, 7x7 and 3x3 with feet.)',
+				'Disclaimer: Should participants register and make payment without having fully reviewed and understood the competition information, event rules, refund policy, registration guidelines and other relevant contents, Cubing China and the organizing team shall not be liable for any resulting financial losses.'
 			],
 			'common_zh'=>[
 				'请所有参赛选手必须熟知WCA规则，详见<a href="https://www.worldcubeassociation.org/regulations/" target="_blank">https://www.worldcubeassociation.org/regulations/</a>',
@@ -359,6 +360,7 @@ $config = [
 				'若有故不能前来，请于比赛前发邮件联系主办方告知，否则将被主办方记录在案，影响以后的参赛资格',
 				'所有项目不得晚于指定时间检录，否则视为放弃该项目比赛资格',
 				'还原时限：指选手的单次还原超过该时限，WCA代表和主裁判有权利停止当次比赛并记DNF。及格线：指选手五次还原的前二次须至少有一次进入及格线，否则无后三次还原机会（对于六阶、七阶和脚拧，第一次还原为及格线）。',
+				'免责声明：选手若在未完全了解比赛信息、赛事规则、退费政策、报名须知等内容的情况下报名并付费，导致任何费用损失的，粗饼网及赛事主办方概不负责。'
 			],
 			'special'=>[
 				'333ft'=>'Competitors participating in 3x3 with feet must provide their own Speedstack timer and mat.',

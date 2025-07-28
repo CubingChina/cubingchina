@@ -134,9 +134,9 @@ class Competition extends ActiveRecord {
 
 	public static function getBaseOptions() {
 		return [
-			'show_regulations'=>[
-				'label'=>'弹出报名规则提醒',
-			],
+			// 'show_regulations'=>[
+			// 	'label'=>'弹出报名规则提醒',
+			// ],
 		];
 	}
 
