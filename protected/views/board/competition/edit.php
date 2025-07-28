@@ -479,7 +479,7 @@
               <div class="col-lg-12">
                 <h5>其他选项</h5>
               </div>
-              <?php foreach (Competition::getBaseOptions() as $key=>$value):?>
+              <!-- <?php foreach (Competition::getBaseOptions() as $key=>$value):?>
               <?php echo Html::formGroup(
                 $model, $key, array(
                   'class'=>'col-md-3',
@@ -490,7 +490,7 @@
                 Html::activeSwitch($model, $key),
                 $form->error($model, $key, array('class'=>'text-danger'))
               );?>
-              <?php endforeach; ?>
+              <?php endforeach; ?> -->
               <?php endif; ?>
             </div>
             <?php endif; ?>
