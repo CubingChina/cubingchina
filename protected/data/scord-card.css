@@ -53,10 +53,13 @@ td.penalty {
   width: 8%;
 }
 td.time {
-  width: 13.5%;
+  width: 11.5%;
+}
+td.scrambler{
+  width: 20%;
 }
 td.signature {
-  width: 12%;
+  width: 10%;
 }
 td.trial-no {
   font-size: 1.2rem;
