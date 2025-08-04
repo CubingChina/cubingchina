@@ -10,6 +10,7 @@ class RegistrationController extends AdminController {
 
 	const ROW_PER_CARD = 11;
 	const CARD_PER_PAGE = 3;
+	const DOUBLE_CHECK = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
 	const TIME_SLOT = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
 
 	private $pagePerStack = 50;
@@ -790,7 +791,25 @@ class RegistrationController extends AdminController {
 			'colspan'=>2,
 			'class'=>'no-bd'
 		]);
-		echo $user->wcaid;
+		$isWR100 = false;
+		if ($user->wcaid) {
+			$rankSingle = RanksSingle::model()->with()->findByAttributes([
+				'personId'=>$user->wcaid,
+				'eventId'=>$event,
+			]);
+			$rankAverage = RanksAverage::model()->with()->findByAttributes([
+				'personId'=>$user->wcaid,
+				'eventId'=>$event,
+			]);
+			if (($rankSingle && $rankSingle->worldRank <= 100) || ($rankAverage && $rankAverage->worldRank <= 100)) {
+				$isWR100 = true;
+			}
+		}
+		if ($isWR100) {
+			echo '** ' . $user->wcaid . ' **';
+		} else {
+			echo $user->wcaid;
+		}
 		echo CHtml::closeTag('td');
 		echo CHtml::closeTag('tr');
 
@@ -848,7 +867,7 @@ class RegistrationController extends AdminController {
 			'rowspan'=>2,
 		], '次序<br>Trial');
 		echo CHtml::tag('td', [
-			'class'=>'signature',
+			'class'=>'scrambler',
 			'rowspan'=>2,
 		], '打乱员<br>Scrambler');
 		echo CHtml::tag('td', [
@@ -908,11 +927,24 @@ class RegistrationController extends AdminController {
 		$start = $scoreCard['start'] ?? 0;
 		$attempt = $scoreCard['attempt'] ?? $attempt;
 		for ($i = $start; $i < $attempt; $i++) {
+			$class = 'bd2';
+			if ($i == $start) {
+				$class .= ' bd2-top';
+			}
+			if ($i == $attempt - 1) {
+				$class .= ' bd2-bottom';
+			}
 			echo CHtml::openTag('tr');
 			echo CHtml::tag('td', [
 				'class'=>'trial-no'
 			], $i + 1);
-			echo CHtml::tag('td', [], '');
+			if($isWR100){
+				echo CHtml::tag('td', [
+					'class'=>$class,
+				], self::DOUBLE_CHECK);
+			} else {
+				echo CHtml::tag('td', [], '');
+			}
 			echo CHtml::tag('td', [], self::TIME_SLOT);
 			if ($event === '333mbf') {
 				echo CHtml::tag('td', [
@@ -925,13 +957,6 @@ class RegistrationController extends AdminController {
 				echo CHtml::tag('td', [
 					'colspan'=>4,
 				]);
-			}
-			$class = 'bd2';
-			if ($i == $start) {
-				$class .= ' bd2-top';
-			}
-			if ($i == $attempt - 1) {
-				$class .= ' bd2-bottom';
 			}
 			echo CHtml::tag('td', [
 				'class'=>$class
