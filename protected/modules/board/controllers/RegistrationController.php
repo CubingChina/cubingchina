@@ -44,18 +44,18 @@ class RegistrationController extends AdminController {
 					'permission'=>'caqa'
 				],
 				'actions'=>[
-					'index', 
+					'index',
 					'cancel',
-					'exportLiveData', 
-					'export', 
-					'scoreCard', 
+					'exportLiveData',
+					'export',
+					'scoreCard',
 					'previewNotice',
-					'sendNotice', 
-					'edit', 
+					'sendNotice',
+					'edit',
 					'acceptNewcomer',
-					'toggle', 
-					'signin', 
-					'liveScoreCard', 
+					'toggle',
+					'signin',
+					'liveScoreCard',
 				]
 				),
 			[
@@ -590,6 +590,33 @@ class RegistrationController extends AdminController {
 					break;
 			}
 		}
+		// get WCA IDs
+		$wcaIds = [];
+		foreach ($registrations as $registration) {
+			$wcaIds[] = $registration->user->wcaid;
+		}
+		$wcaIds = array_values(array_unique(array_filter($wcaIds)));
+		$eventIds = array_keys($competition->associatedEvents);
+		$singleWR100s = RanksSingle::model()->findAllByAttributes([
+			'eventId'=>$eventIds,
+			'personId'=>$wcaIds,
+		], [
+			'condition'=>'worldRank <= 100',
+		]);
+		$singleWR100Map = [];
+		foreach ($singleWR100s as $singleWR100) {
+			$singleWR100Map[$singleWR100->personId][$singleWR100->eventId] = true;
+		}
+		$averageWR100s = RanksAverage::model()->findAllByAttributes([
+			'eventId'=>$eventIds,
+			'personId'=>$wcaIds,
+		], [
+			'condition'=>'worldRank <= 100',
+		]);
+		$averageWR100Map = [];
+		foreach ($averageWR100s as $averageWR100) {
+			$averageWR100Map[$averageWR100->personId][$averageWR100->eventId] = true;
+		}
 		$groupSchedules = GroupSchedule::model()->findAllByAttributes([
 			'competition_id'=>$competition->id,
 		], [
@@ -617,6 +644,7 @@ class RegistrationController extends AdminController {
 								'event'=>$event,
 								'start'=>$i,
 								'attempt'=>$i + 1,
+								'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 							];
 						}
 					}
@@ -638,6 +666,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
+									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						}
@@ -650,6 +679,7 @@ class RegistrationController extends AdminController {
 						$scoreCards[] = [
 							'registration'=>$registration,
 							'event'=>$event,
+							'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 						];
 					}
 				}
@@ -674,6 +704,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
+									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						}
@@ -692,12 +723,14 @@ class RegistrationController extends AdminController {
 									'event'=>$event,
 									'start'=>$i,
 									'attempt'=>$i + 1,
+									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						} else {
 							$scoreCards[] = [
 								'registration'=>$registration,
 								'event'=>$event,
+								'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
 							];
 						}
 					}
@@ -746,6 +779,7 @@ class RegistrationController extends AdminController {
 		$user = $registration->user;
 		$event = $scoreCard['event'];
 		$group = $scoreCard['group'] ?? '';
+		$isWR100 = $scoreCard['isWR100'] ?? false;
 		if ($round === null) {
 			$round = $competition->getFirstRound($scoreCard['event']);
 		}
@@ -791,22 +825,8 @@ class RegistrationController extends AdminController {
 			'colspan'=>2,
 			'class'=>'no-bd'
 		]);
-		$isWR100 = false;
-		if ($user->wcaid) {
-			$rankSingle = RanksSingle::model()->with()->findByAttributes([
-				'personId'=>$user->wcaid,
-				'eventId'=>$event,
-			]);
-			$rankAverage = RanksAverage::model()->with()->findByAttributes([
-				'personId'=>$user->wcaid,
-				'eventId'=>$event,
-			]);
-			if (($rankSingle && $rankSingle->worldRank <= 100) || ($rankAverage && $rankAverage->worldRank <= 100)) {
-				$isWR100 = true;
-			}
-		}
 		if ($isWR100) {
-			echo '** ' . $user->wcaid . ' **';
+			echo '<span style="font-family:dejavusans">★★</span> ' . $user->wcaid . ' <span style="font-family:dejavusans">★★</span>';
 		} else {
 			echo $user->wcaid;
 		}
