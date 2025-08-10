@@ -771,7 +771,7 @@ class RegistrationController extends AdminController {
 		if ($round !== null) {
 			$name .= Events::getFullEventName($round->event) . Yii::t('RoundTypes', RoundTypes::getFullRoundName($round->round));
 		}
-		$pdf->Output($name . '成绩条.pdf', 'D');
+		$pdf->Output($name . ($competition->isRegistrationEnded() ? '成绩条.pdf' : '成绩条-非完全版.pdf'), 'D');
 	}
 
 	private function fillScoreCard($pdf, $competition, $scoreCard, $round) {
