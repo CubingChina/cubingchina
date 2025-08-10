@@ -20,6 +20,11 @@
             ),
             'enableClientValidation'=>true,
           )); ?>
+          <?php if (!$competition->isRegistrationEnded()): ?>
+            <div class="alert alert-danger" style="font-size: 18px; font-weight: bold;">
+              <strong>比赛尚未结束报名，当前下载成绩条仅供参考，请勿用于最终比赛</strong>
+            </div>
+          <?php endif; ?>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
               <div class="text-danger">导出可能会持续2分钟甚至更长时间，请耐心等待，不要反复刷新！</div>
