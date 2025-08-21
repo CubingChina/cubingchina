@@ -45,7 +45,7 @@ $this->renderPartial('side', $_data_);
   <?php echo Html::formGroup(
     $model, 'passport_number', array(),
     $form->labelEx($model, 'passport_number'),
-    Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在粗饼网注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系admin@cubingchina.com。</div>' : '',
+    Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在粗饼网注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系contact@cubing.com。</div>' : '',
     Html::activeTextField($model, 'passport_number', array(
       'class'=>'form-control',
     )),
