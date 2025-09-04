@@ -65,6 +65,9 @@ class Competition extends ActiveRecord {
 	const WCA_DUES_START = 1706371201; // 2024-01-28
 	const WCA_DUES_INCLUDING_LOWEST_START = 1733443200; // 2024-12-06
 
+	const CUBING_FEE_BEFORE_202101 = 1609459200; // 2021-01-01
+	const CUBING_FEE_BEFORE_202507 = 1719763200; // 2025-07-01
+
 	const COMPETITOR_LIMIT_BY_COMPETITION = 0;
 	const COMPETITOR_LIMIT_BY_EVENT = 1;
 
@@ -1485,7 +1488,16 @@ class Competition extends ActiveRecord {
 		if ($this->id < 382) {
 			return '';
 		}
-		$fee = $this->registeredCompetitors * $this->days;
+
+		// 根据比赛日期确定每日费用
+		$dailyRate = 3;
+		if ($this->date < self::CUBING_FEE_BEFORE_202101) {
+			$dailyRate = 1;
+		} elseif ($this->date < self::CUBING_FEE_BEFORE_202507) {
+			$dailyRate = 2;
+		}
+
+		$fee = $this->registeredCompetitors * $this->days * $dailyRate;
 		$buttons = array();
 		if (Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$buttons[] = CHtml::checkBox('paid', $this->paid == self::PAID, array(
