@@ -295,7 +295,7 @@ class CompetitionController extends Controller {
 				}
 				if ($model->save()) {
 					$model->updateEvents($model->events);
-					Yii::app()->mailer->sendRegistrationNotice($model);
+					// Yii::app()->mailer->sendRegistrationNotice($model);
 					if ($model->isAccepted()) {
 						$model->accept();
 					}
