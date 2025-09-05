@@ -75,11 +75,13 @@ class Competition extends ActiveRecord {
 	const EXPLANATION_TRIAL = 1;
 	const EXPLANATION_NEWER = 2;
 	const EXPLANATION_LARGE = 3;
+	const EXPLANATION_RUNNER = 4;
 	const EXPLANATION_MAP = [
 		Competition::EXPLANATION_TRIAL => 'This is a trial competition, aiming to optimize and experiment with new competition formats. The procedures may differ from regular competitions. Please be aware before you register. Thank you for your understanding.',
 		Competition::EXPLANATION_NEWER => 'This competition is held by new organizers who are still gaining experience. The procedures and overall experience may differ from those held by experienced organizers and may get on-site adjustments. Please be aware before you register. Thank you for your understanding.',
 		Competition::EXPLANATION_LARGE => 'This is a large-scale competition, held by experienced organizers, aiming to provide the best experience for competitors.',
 		Competition::EXPLANATION_OTHER => 'Other',
+		COmpetition::EXPLANATION_RUNNER => 'This is a Runner competition, Runners will lead competitors to available stations for each attempt, after which the competitors will return to the waiting area. Competitors may leave the area after all attempts.'
 	];
 
 	private $_organizers;
@@ -417,6 +419,7 @@ class Competition extends ActiveRecord {
 			self::EXPLANATION_TRIAL=>Yii::t('competition', 'Trial competition'),
 			self::EXPLANATION_NEWER=>Yii::t('competition', 'Competition with new organizers'),
 			self::EXPLANATION_LARGE=>Yii::t('competition', 'Large-scale competition'),
+			self::EXPLANATION_RUNNER=>Yii::t('competition', 'Runner competition'),	
 		);
 	}
 
