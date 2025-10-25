@@ -1,8 +1,8 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" data-competition-id="<?php echo $competition->id; ?>" v-cloak>
   <?php echo CHtml::link(Yii::t('Competition', 'Signin List'), ['/board/registration/signin', 'Registration'=>['competition_id'=>$competition->id]], ['class'=>'btn btn-theme']); ?>
   <div>
-    已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES]) ?><br>
-    未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO]) ?>
+    已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?><br>
+    未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?>
   </div>
   <div class="text-center" v-if="mode == 'wx'">
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>

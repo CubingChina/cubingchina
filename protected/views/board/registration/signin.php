@@ -23,8 +23,8 @@
         <p>扫码枪请<?php echo CHtml::link('点击这里', $model->competition->getUrl('scan'), ['target'=>'_blank']); ?>进行签到。</p>
       </div>
       <div>
-        已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::YES]) ?><br>
-        未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::NO]) ?>
+        已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?><br>
+        未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$model->competition_id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?>
       </div>
       <?php endif; ?>
       <?php $columns = $model->getAdminColumns(); ?>
