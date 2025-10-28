@@ -16,12 +16,42 @@
           <?php $wait = $model->getTotal(Pay::STATUS_WAIT_CONFIRM); ?>
           <?php $fee = $model->getTotalFee(); ?>
           <?php $total = number_format($paid + $wait - $refund - $fee, 2, '.', ''); ?>
+          <?php
+          $wcaDues = 0;
+          $cubingFee = 0;
+          $organizerIncome = '';
+          $organizerIncomeText = '';
+          $competition = $model->competition;
+
+          if ($competition !== null && $model->type_id > 0) {
+            if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START) {
+              $wcaDuesPerPerson = $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
+              $wcaDues = number_format($wcaDuesPerPerson * $competition->registeredCompetitors, 2, '.', '');
+            }
+
+            if ($competition->id >= 382) {
+              $dailyRate = 3;
+              if ($competition->date < Competition::CUBING_FEE_BEFORE_202101) {
+                $dailyRate = 1;
+              } elseif ($competition->date < Competition::CUBING_FEE_BEFORE_202507) {
+                $dailyRate = 2;
+              }
+              $cubingFee = number_format($competition->registeredCompetitors * $competition->days * $dailyRate, 2, '.', '');
+            }
+
+            $organizerIncome = number_format(floatval($total) - floatval($wcaDues) - floatval($cubingFee), 2, '.', '');
+            $organizerIncomeText = "\n------------------------\nWCA会费：{$wcaDues}\n粗饼运营费:{$cubingFee}\n　实收： {$organizerIncome}";
+          }
+          ?>
           <?php $length = max(strlen($paid), strlen($wait)); ?>
           <?php $paid = str_pad($paid, $length, ' ', STR_PAD_LEFT); ?>
           <?php $refund = str_pad($refund, $length, ' ', STR_PAD_LEFT); ?>
           <?php $wait = str_pad($wait, $length, ' ', STR_PAD_LEFT); ?>
           <?php $fee = str_pad($fee, $length, ' ', STR_PAD_LEFT); ?>
           <?php $total = str_pad($total, $length, ' ', STR_PAD_LEFT); ?>
+          <?php $wcaDues = str_pad($wcaDues, $length, ' ', STR_PAD_LEFT); ?>
+          <?php $cubingFee = str_pad($cubingFee, $length, ' ', STR_PAD_LEFT); ?>
+          <?php $organizerIncome = str_pad($organizerIncome, $length, ' ', STR_PAD_LEFT); ?>
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(),
             'template'=>'{summary}{pager}{items}{pager}',
@@ -32,7 +62,7 @@
 退　款：<span class=\"text-danger\">-{$refund}</span>
 手续费：<span class=\"text-danger\">-{$fee}</span>
 ------------------------
-　合计： {$total}
+　合计： {$total}{$organizerIncomeText}
 </pre><div class=\"text-info\">此处显示的是实际支付金额，可能和订单金额有出入，请查看列表中高亮订单。</div>",
             'filter'=>$model,
             'rowCssClassExpression'=>'$data->amountMismatch() ? "danger" : ""',
