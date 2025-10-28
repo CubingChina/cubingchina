@@ -38,9 +38,9 @@
               }
               $cubingFee = number_format($competition->registeredCompetitors * $competition->days * $dailyRate, 2, '.', '');
             }
-
-            $organizerIncome = number_format(floatval($total) - floatval($wcaDues) - floatval($cubingFee), 2, '.', '');
-            $organizerIncomeText = "\n------------------------\nWCA会费：{$wcaDues}\n粗饼运营费：{$cubingFee}\n　实收： {$organizerIncome}";
+            $transformFee = number_format(9, 2, '.', '');
+            $organizerIncome = number_format(floatval($total) - floatval($wcaDues) - floatval($cubingFee) - floatval($transformFee), 2, '.', '');
+            $organizerIncomeText = "\n------------------------\nWCA 会费：{$wcaDues}\n粗饼运营费：{$cubingFee}\n转账手续费：  {$transformFee}\n   实收：{$organizerIncome}";
           }
           ?>
           <?php $length = max(strlen($paid), strlen($wait)); ?>
@@ -51,6 +51,7 @@
           <?php $total = str_pad($total, $length, ' ', STR_PAD_LEFT); ?>
           <?php $wcaDues = str_pad($wcaDues, $length, ' ', STR_PAD_LEFT); ?>
           <?php $cubingFee = str_pad($cubingFee, $length, ' ', STR_PAD_LEFT); ?>
+          <?php $transformFee = str_pad($transformFee, $length, ' ', STR_PAD_LEFT); ?>
           <?php $organizerIncome = str_pad($organizerIncome, $length, ' ', STR_PAD_LEFT); ?>
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(),
