@@ -19,6 +19,7 @@
           <?php
           $wcaDues = 0;
           $cubingFee = 0;
+          $transformFee = 9;
           $organizerIncome = '';
           $organizerIncomeText = '';
           $competition = $model->competition;
@@ -38,7 +39,7 @@
               }
               $cubingFee = number_format($competition->registeredCompetitors * $competition->days * $dailyRate, 2, '.', '');
             }
-            $transformFee = number_format(9, 2, '.', '');
+            $transformFee = number_format($transformFee, 2, '.', '');
             $organizerIncome = number_format(floatval($total) - floatval($wcaDues) - floatval($cubingFee) - floatval($transformFee), 2, '.', '');
             $organizerIncomeText = "\n------------------------\nWCA 会费：{$wcaDues}\n粗饼运营费：{$cubingFee}\n转账手续费：  {$transformFee}\n   实收：{$organizerIncome}";
           }
