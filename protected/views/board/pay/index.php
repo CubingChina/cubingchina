@@ -40,7 +40,7 @@
             }
 
             $organizerIncome = number_format(floatval($total) - floatval($wcaDues) - floatval($cubingFee), 2, '.', '');
-            $organizerIncomeText = "\n------------------------\nWCA会费：{$wcaDues}\n粗饼运营费:{$cubingFee}\n　实收： {$organizerIncome}";
+            $organizerIncomeText = "\n------------------------\nWCA会费：{$wcaDues}\n粗饼运营费：{$cubingFee}\n　实收： {$organizerIncome}";
           }
           ?>
           <?php $length = max(strlen($paid), strlen($wait)); ?>
