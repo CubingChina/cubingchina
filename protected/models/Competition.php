@@ -1181,6 +1181,18 @@ class Competition extends ActiveRecord {
 		$this->_delegates = $delegates;
 	}
 
+	public function getDelegateKeyValues($delegates) {
+		$data = [];
+		foreach ((array)$delegates as $delegateId) {
+			$user = User::model()->findByPk($delegateId);
+			if (!$user) {
+				continue;
+			}
+			$data[$user->id] = $user->getCompetitionName();
+		}
+		return $data;
+	}
+
 	public function getExplanations() {
 		if ($this->_explanations === null) {
 			$this->_explanations = CHtml::listData($this->explanation, 'id', 'label');

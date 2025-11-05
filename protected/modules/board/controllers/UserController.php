@@ -148,6 +148,7 @@ class UserController extends AdminController {
 	public function actionSearch() {
 		$query = $this->sRequest('query');
 		$organizer = $this->iRequest('organizer');
+		$delegate = $this->iRequest('delegate');
 		$criteria = new CDbCriteria();
 		if (ctype_digit($query)) {
 			$criteria->addSearchCondition('id', $query, false, 'OR', '=');
@@ -159,6 +160,9 @@ class UserController extends AdminController {
 		$criteria->addCondition('status!=2');
 		if ($organizer) {
 			$criteria->addCondition('role>=2');
+		}
+		if ($delegate) {
+			$criteria->addInCondition('identity', [User::IDENTITY_WCA_DELEGATE]);
 		}
 		$criteria->order = 'id';
 		$criteria->limit = 20;
