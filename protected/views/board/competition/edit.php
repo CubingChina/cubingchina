@@ -438,28 +438,16 @@
                   Html::activeTextField($model, 'oldDelegate'),
                   $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
                 )),
-                $form->checkBoxList($model, 'delegates', $wcaDelegates, array(
-                  'uncheckValue'=>'',
-                  'baseID'=>'wca_delegates',
-                  'container'=>'div',
-                  'separator'=>'',
-                  'class'=>'form-control',
-                  'labelOptions'=>array(
-                    'class'=>'checkbox-inline',
-                  ),
-                  'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                )),
-                $form->checkBoxList($model, 'delegates', $ccaDelegates, array(
-                  'uncheckValue'=>null,
-                  'container'=>'div',
-                  'baseID'=>'cca_delegates',
-                  'separator'=>'',
-                  'class'=>'form-control',
-                  'labelOptions'=>array(
-                    'class'=>'checkbox-inline hide',
-                  ),
-                  'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                )),
+                $form->listBox(
+                  $model,
+                  'delegates',
+                  $model->getDelegateKeyValues($model->delegates),
+                  [
+                    'class'=>'delegate-selector',
+                    'multiple'=>true,
+                    'placeholder'=>'输入代表名字或拼音搜索',
+                  ]
+                ),
                 $form->error($model, 'delegates', array('class'=>'text-danger'))
               );?>
               <?php echo Html::formGroup(
@@ -877,6 +865,44 @@ Yii::app()->clientScript->registerScript('competition',
             data: {
               query: query,
               organizer: isOrganizer ? 1 : 0
+            },
+            dataType: 'json'
+          })
+        }
+      }
+    })
+    $.each(that.find('option'), function(index, option) {
+      tagsinput.add({
+        id: parseInt($(this).val()),
+        display_name: $(this).text()
+      })
+    })
+    tagsinput.\$container.css('display', 'block').find('input').attr('size', 20)
+  })
+
+  // delegate selector
+  $('.delegate-selector').each(function() {
+    var that = $(this);
+    const [tagsinput] = that.on('itemAdded', function() {
+      var that = $(this);
+      setTimeout(function() {
+        that.tagsinput('input').val('');
+      }, 0);
+    }).tagsinput({
+      itemValue: function(user) {
+        return user.id
+      },
+      itemText: function(user) {
+        return [user.id, user.display_name].join('-')
+      },
+      freeInput: false,
+      typeahead: {
+        source: function(query) {
+          return $.ajax({
+            url: '/board/user/search',
+            data: {
+              query: query,
+              delegate: 1
             },
             dataType: 'json'
           })
