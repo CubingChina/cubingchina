@@ -2662,6 +2662,13 @@ class Competition extends ActiveRecord {
 		return $rec;
 	}
 
+	protected function afterConstruct() {
+		parent::afterConstruct();
+		if ($this->isNewRecord) {
+			$this->refund_type = self::REFUND_TYPE_50_PERCENT;
+		}
+	}
+
 	protected function beforeValidate() {
 		$this->handleDate();
 		return parent::beforeValidate();
