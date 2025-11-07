@@ -899,10 +899,9 @@ Yii::app()->clientScript->registerScript('competition',
       typeahead: {
         source: function(query) {
           return $.ajax({
-            url: '/board/user/search',
+            url: '/board/user/searchDelegate',
             data: {
-              query: query,
-              delegate: 1
+              query: query
             },
             dataType: 'json'
           })

@@ -82,6 +82,14 @@ class UserController extends AdminController {
 				]
 			),
 			array(
+				'allow',
+				'users'=>array('@'),
+				'roles'=>array(
+					'role'=>User::ROLE_CHECKED,
+				),
+				'actions'=>array('searchDelegate'),
+			),
+			array(
 				'deny',
 				'users'=>array('*'),
 			),
@@ -148,7 +156,6 @@ class UserController extends AdminController {
 	public function actionSearch() {
 		$query = $this->sRequest('query');
 		$organizer = $this->iRequest('organizer');
-		$delegate = $this->iRequest('delegate');
 		$criteria = new CDbCriteria();
 		if (ctype_digit($query)) {
 			$criteria->addSearchCondition('id', $query, false, 'OR', '=');
@@ -161,9 +168,34 @@ class UserController extends AdminController {
 		if ($organizer) {
 			$criteria->addCondition('role>=2');
 		}
-		if ($delegate) {
-			$criteria->addInCondition('identity', [User::IDENTITY_WCA_DELEGATE]);
+		$criteria->order = 'id';
+		$criteria->limit = 20;
+		$users = User::model()->findAll($criteria);
+		echo CJSON::encode(array_map(function($user) {
+			return [
+				'id'=>$user->id,
+				'name'=>$user->name,
+				'name_zh'=>$user->name_zh,
+				'display_name'=>$user->getCompetitionName(),
+				'birthday'=>$user->birthday,
+				'display_birthday'=>date('Y-m-d', $user->birthday),
+				'gender'=>$user->getGenderText(),
+			];
+		}, $users));
+	}
+
+	public function actionSearchDelegate() {
+		$query = $this->sRequest('query');
+		$criteria = new CDbCriteria();
+		if (ctype_digit($query)) {
+			$criteria->addSearchCondition('id', $query, false, 'OR', '=');
+		} else {
+			$criteria->addSearchCondition('name', $query, true, 'OR');
+			$criteria->addSearchCondition('name_zh', $query, true, 'OR');
 		}
+		$criteria->addSearchCondition('email', $query, true, 'OR');
+		$criteria->addCondition('status!=2');
+		$criteria->addInCondition('identity', [User::IDENTITY_WCA_DELEGATE]);
 		$criteria->order = 'id';
 		$criteria->limit = 20;
 		$users = User::model()->findAll($criteria);
