@@ -1,8 +1,8 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" data-competition-id="<?php echo $competition->id; ?>" v-cloak>
   <?php echo CHtml::link(Yii::t('Competition', 'Signin List'), ['/board/registration/signin', 'Registration'=>['competition_id'=>$competition->id]], ['class'=>'btn btn-theme']); ?>
   <div>
-    已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?><br>
-    未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?>
+    <span style="color: black;">已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?></span><br>
+    <span style="color: red;">未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?></span>
   </div>
   <div class="text-center" v-if="mode == 'wx'">
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
@@ -32,7 +32,6 @@
     <div v-if="registration.user.gender"><strong><?php echo Yii::t('common', 'Gender'); ?></strong>：{{registration.user.gender}}</div>
     <div v-if="registration.user.country"><strong><?php echo Yii::t('common', 'Regions'); ?></strong>：{{registration.user.country}}</div>
     <div v-if="registration.user.birthday"><strong><?php echo Yii::t('common', 'Birthday'); ?></strong>：{{registration.user.birthday}}</div>
-    <div v-if="registration.events"><strong><?php echo Yii::t('common', 'Event'); ?></strong>：{{registration.events}}</div>
     <div><strong><?php echo Yii::t('common', 'Fee'); ?></strong>：{{registration.fee}}
       (<span v-if="registration.paid">
         <?php echo Yii::t('common', 'Paid'); ?>
@@ -43,6 +42,7 @@
     </div>
     <div><strong><?php echo Yii::t('Competition', 'Status'); ?></strong>：{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</div>
     <div v-if="registration.signed_in"><strong><?php echo Yii::t('common', 'Signed in Date'); ?></strong>：{{registration.signed_date}}</div>
+    <div v-if="registration.events"><strong><?php echo Yii::t('common', 'Event'); ?></strong>：{{registration.events}}</div>
   </div>
   <div v-if="registration.t_shirt_size">
     <div><strong><?php echo Yii::t('Registration', 'T-shirt Size'); ?></strong>：{{registration.t_shirt_size}}</div>
