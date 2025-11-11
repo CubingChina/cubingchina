@@ -24,46 +24,37 @@
       @blur="endScan"
     >
   </div>
-  <dl class="dl-horizontal" v-if="registration.id">
-    <dt><?php echo Yii::t('common', 'Type'); ?></dt>
-    <dd>{{registration.title}}</dd>
-    <dt v-if="registration.number">No.</dt>
-    <dd v-if="registration.number">{{registration.number}}</dd>
-    <dt><?php echo Yii::t('Registration', 'Name'); ?></dt>
-    <dd>{{registration.user.name}}</dd>
-    <dt v-if="registration.passport"><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
-    <dd v-if="registration.passport">{{registration.passport}}</dd>
-    <dt><?php echo Yii::t('common', 'Fee'); ?></dt>
-    <dd>{{registration.fee}}
+  <div class="dl-horizontal" v-if="registration.id">
+    <div><strong><?php echo Yii::t('common', 'Type'); ?></strong>：{{registration.title}}</div>
+    <div v-if="registration.number"><strong>No.</strong>：{{registration.number}}</div>
+    <div><strong><?php echo Yii::t('Registration', 'Name'); ?></strong>：{{registration.user.name}}</div>
+    <div v-if="registration.passport"><strong><?php echo Yii::t('Registration', 'Identity Number'); ?></strong>：{{registration.passport}}</div>
+    <div v-if="registration.user.gender"><strong><?php echo Yii::t('common', 'Gender'); ?></strong>：{{registration.user.gender}}</div>
+    <div v-if="registration.user.country"><strong><?php echo Yii::t('common', 'Regions'); ?></strong>：{{registration.user.country}}</div>
+    <div v-if="registration.user.birthday"><strong><?php echo Yii::t('common', 'Birthday'); ?></strong>：{{registration.user.birthday}}</div>
+    <div v-if="registration.events"><strong><?php echo Yii::t('common', 'Event'); ?></strong>：{{registration.events}}</div>
+    <div><strong><?php echo Yii::t('common', 'Fee'); ?></strong>：{{registration.fee}}
       (<span v-if="registration.paid">
         <?php echo Yii::t('common', 'Paid'); ?>
       </span>
       <span v-else>
         <?php echo Yii::t('common', 'Unpaid'); ?>
       </span>)
-    </dd>
-    <dt><?php echo Yii::t('Competition', 'Status'); ?></dt>
-    <dd>{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</dd>
-    <dt v-if="registration.signed_in"><?php echo Yii::t('common', 'Signed in Date'); ?></dt>
-    <dd v-if="registration.signed_in">{{registration.signed_date}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal" v-if="registration.t_shirt_size">
-    <dt><?php echo Yii::t('Registration', 'T-shirt Size'); ?></dt>
-    <dd>{{registration.t_shirt_size}}</dd>
-  </dl>
-  <dl class="dl-horizontal" v-if="registration.staff_type">
-    <dt><?php echo Yii::t('Registration', 'Staff Type'); ?></dt>
-    <dd>{{registration.staff_type}}</dd>
-  </dl>
-  <dl class="dl-horizontal" v-if="registration.has_entourage">
-    <dt><?php echo Yii::t('Registration', 'Guest Name'); ?></dt>
-    <dd>{{registration.entourage_name}}</dd>
-    <dt><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
-    <dd>{{registration.entourage_passport_type_text}}</dd>
-    <dt><?php echo Yii::t('Registration', 'Identity Number'); ?></dt>
-    <dd>{{registration.entourage_passport_number}}</dd>
-  </dl>
+    </div>
+    <div><strong><?php echo Yii::t('Competition', 'Status'); ?></strong>：{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</div>
+    <div v-if="registration.signed_in"><strong><?php echo Yii::t('common', 'Signed in Date'); ?></strong>：{{registration.signed_date}}</div>
+  </div>
+  <div v-if="registration.t_shirt_size">
+    <div><strong><?php echo Yii::t('Registration', 'T-shirt Size'); ?></strong>：{{registration.t_shirt_size}}</div>
+  </div>
+  <div v-if="registration.staff_type">
+    <div><strong><?php echo Yii::t('Registration', 'Staff Type'); ?></strong>：{{registration.staff_type}}</div>
+  </div>
+  <div v-if="registration.has_entourage">
+    <div><strong><?php echo Yii::t('Registration', 'Guest Name'); ?></strong>：{{registration.entourage_name}}</div>
+    <div><strong><?php echo Yii::t('Registration', 'Type of Identity'); ?></strong>：{{registration.entourage_passport_type_text}}</div>
+    <div><strong><?php echo Yii::t('Registration', 'Identity Number'); ?></strong>：{{registration.entourage_passport_number}}</div>
+  </div>
   <dl class="dl-horizontal" v-if="registration.id">
     <dt v-if="!registration.paid"></dt>
     <dd v-if="!registration.paid">

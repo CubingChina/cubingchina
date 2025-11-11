@@ -222,6 +222,11 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getDataForSignin() {
+		$events = array_map(function($registrationEvent) {
+			return Events::getFullEventName($registrationEvent->event);
+		}, array_filter($this->allEvents, function($registrationEvent) {
+			return $registrationEvent->isAccepted();
+		}));
 		return [
 			'type'=>'registration',
 			'title'=>Yii::t('Competition', 'Competitor'),
@@ -230,7 +235,12 @@ class Registration extends ActiveRecord {
 			'passport'=>$this->user->passport_number,
 			'user'=>[
 				'name'=>$this->user->getCompetitionName(),
+				'wcaid'=>$this->user->wcaid,
+				'country'=>$this->user->country ? Yii::t('Region', $this->user->country->name) : '',
+				'birthday'=>$this->user->birthday ? date('Y-m-d', $this->user->birthday) : '',
+				'gender'=>$this->user->getGenderText(),
 			],
+			'events'=>implode('、', $events),
 			'fee'=>$this->getTotalFee(),
 			'paid'=>!!$this->paid,
 			'signed_in'=>!!$this->signed_in,
