@@ -1,8 +1,8 @@
 <div class="col-lg-12 competition-<?php echo strtolower($competition->type); ?>" id="scan-container" data-competition-id="<?php echo $competition->id; ?>" v-cloak>
   <?php echo CHtml::link(Yii::t('Competition', 'Signin List'), ['/board/registration/signin', 'Registration'=>['competition_id'=>$competition->id]], ['class'=>'btn btn-theme']); ?>
   <div>
-    <span style="color: black;">已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?></span><br>
-    <span style="color: red;">未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?></span>
+    已签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::YES, 'status'=>Registration::STATUS_ACCEPTED]) ?><br>
+    未签到：<?php echo Registration::model()->countByAttributes(['competition_id'=>$competition->id, 'signed_in'=>Registration::NO, 'status'=>Registration::STATUS_ACCEPTED]) ?>
   </div>
   <div class="text-center" v-if="mode == 'wx'">
     <button type="button" :disabled="loading" class="btn btn-theme btn-lg" @click="scan"><?php echo Yii::t('common', 'Scan'); ?></button>
@@ -40,7 +40,7 @@
         <?php echo Yii::t('common', 'Unpaid'); ?>
       </span>)
     </div>
-    <div><strong><?php echo Yii::t('Competition', 'Status'); ?></strong>：{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</div>
+    <div><strong><?php echo Yii::t('Competition', 'Status'); ?></strong>：<span :style="{color: registration.signed_in ? 'black' : 'red'}">{{registration.signed_in ? "<?php echo Yii::t('common', 'Has signed in'); ?>" : "<?php echo Yii::t('common', 'Hasn\'t signed in'); ?>"}}</span></div>
     <div v-if="registration.signed_in"><strong><?php echo Yii::t('common', 'Signed in Date'); ?></strong>：{{registration.signed_date}}</div>
     <div v-if="registration.events"><strong><?php echo Yii::t('common', 'Event'); ?></strong>：{{registration.events}}</div>
   </div>
