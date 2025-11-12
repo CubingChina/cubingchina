@@ -278,7 +278,7 @@ return array (
   'Show all information?' => '显示所有信息？',
   'Show full schedule?' => '显示完整赛程？',
   'Sign in' => '签到',
-  'Signed in Date' => '签到日期',
+  'Signed in Date' => '签到时间',
   'Single' => '单次',
   'Something goes wrong' => '啊呃，好像哪里不对劲的样子',
   'Statistics' => '统计',
