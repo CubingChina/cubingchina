@@ -11,7 +11,7 @@ class RegistrationController extends AdminController {
 	const ROW_PER_CARD = 11;
 	const CARD_PER_PAGE = 3;
 	const DOUBLE_CHECK = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
-	const TIME_SLOT = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
+	const TIME_SLOT = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>';
 
 	private $pagePerStack = 50;
 	private $imageStyle = array(
