@@ -65,6 +65,11 @@ class Competition extends ActiveRecord {
 	const WCA_DUES_START = 1706371201; // 2024-01-28
 	const WCA_DUES_INCLUDING_LOWEST_START = 1733443200; // 2024-12-06
 
+	const WCA_DUES_RATE = [
+		self::WCA_DUES_START => 0.15,
+		1767225600 => 0.10, // 2026-01-01
+	];
+
 	const CUBING_FEE_BEFORE_202101 = 1609459200; // 2021-01-01
 	const CUBING_FEE_BEFORE_202507 = 1719763200; // 2025-07-01
 
@@ -419,7 +424,7 @@ class Competition extends ActiveRecord {
 			self::EXPLANATION_TRIAL=>Yii::t('competition', 'Trial competition'),
 			self::EXPLANATION_NEWER=>Yii::t('competition', 'Competition with new organizers'),
 			self::EXPLANATION_LARGE=>Yii::t('competition', 'Large-scale competition'),
-			self::EXPLANATION_RUNNER=>Yii::t('competition', 'Runner competition'),	
+			self::EXPLANATION_RUNNER=>Yii::t('competition', 'Runner competition'),
 		);
 	}
 
@@ -1037,7 +1042,13 @@ class Competition extends ActiveRecord {
 					}
 				}
 			}
-			return round(($this->entry_fee + $minFee) * 0.15, 2);
+			$finalRate = 0;
+			foreach (self::WCA_DUES_RATE as $date=>$rate) {
+				if ($this->date >= $date) {
+					$finalRate = $rate;
+				}
+			}
+			return round(($this->entry_fee + $minFee) * $finalRate, 2);
 		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {

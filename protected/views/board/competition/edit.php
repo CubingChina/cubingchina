@@ -828,10 +828,14 @@ Yii::app()->clientScript->registerScript('competition',
     }
     let cubingFee = days * dailyRate;
     let feeTips = `粗饼运营费：\${days}天x\${rateDescription}=\${cubingFee}元<br>`;
-    if (type === 'WCA') {
-      feeTips += `WCA运营费：\${fee}元x15%=\${(fee * 0.15).toFixed(2)}元<br>`;
+    let wcaDues = fee * 0.15;
+    let wcaDuesRate = 15;
+    if (date >= new Date('2026-01-01')) {
+      wcaDues = fee * 0.10;
+      wcaDuesRate = 10;
     }
-    feeTips += `主办实收约：\${fee - cubingFee - (type === 'WCA' ? (fee * 0.15).toFixed(2) : 0)}元（不含交易手续费）`;
+    feeTips += `WCA运营费：\${fee}元x\${wcaDuesRate}%=\${wcaDues.toFixed(2)}元<br>`;
+    feeTips += `主办实收约：\${fee - cubingFee - wcaDues}元（不含交易手续费）`;
     $('#fee-tip').html(feeTips);
   }
   $('#Competition_date').trigger('changeDate');
