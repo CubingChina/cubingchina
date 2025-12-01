@@ -1027,6 +1027,22 @@ class Competition extends ActiveRecord {
 			if (!$this->isWCACompetition()) {
 				return 0;
 			}
+
+			// 对于多地址比赛，使用最低的地址报名费
+			$baseEntryFee = $this->entry_fee;
+			if ($this->isMultiLocation()) {
+				$minLocationFee = PHP_INT_MAX;
+				foreach ($this->sortedLocations as $location) {
+					$locationFee = $location->fee > 0 ? $location->fee : $this->entry_fee;
+					if ($locationFee < $minLocationFee) {
+						$minLocationFee = $locationFee;
+					}
+				}
+				if ($minLocationFee != PHP_INT_MAX) {
+					$baseEntryFee = $minLocationFee;
+				}
+			}
+
 			$minFee = 0;
 			if ($this->date >= self::WCA_DUES_INCLUDING_LOWEST_START) {
 				// get minimal fee of each events
@@ -1041,6 +1057,10 @@ class Competition extends ActiveRecord {
 						$minFee = $fee;
 					}
 				}
+				// 如果没有找到有效的项目费用，重置为0
+				if ($minFee == PHP_INT_MAX) {
+					$minFee = 0;
+				}
 			}
 			$finalRate = 0;
 			foreach (self::WCA_DUES_RATE as $date=>$rate) {
@@ -1048,7 +1068,7 @@ class Competition extends ActiveRecord {
 					$finalRate = $rate;
 				}
 			}
-			return round(($this->entry_fee + $minFee) * $finalRate, 2);
+			return round(($baseEntryFee + $minFee) * $finalRate, 2);
 		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {
