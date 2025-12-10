@@ -33,6 +33,8 @@ class Formats extends ActiveRecord {
 			'1/m'=>'Best of 1/Mean of 3',
 			'1'=>'Best of 1',
 			'2'=>'Best of 2',
+			'5'=>'Best of 5',
+			'h'=>'Head to Head'
 		);
 	}
 
