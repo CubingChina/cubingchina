@@ -106,7 +106,7 @@ return array (
   'The schedule is to be determined.' => '賽程正在緊張激烈地安排當中。',
   'Third Stage Date' => '第三階段時間',
   'Third Stage Ratio' => '第三階段倍率',
-  'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.' => '該比賽是世界魔方協會官方認證的比賽，所有選手需要熟知{regulations}。',
+  'This competition is recognized as an official World Cube Association (WCA) competition. Therefore, all competitors should be familiar with the {regulations}.<br/>Competitors are solely responsible for any penalties imposed due to unfamiliarity with the competition rules or failure to comply with on-site regulations. Such penalties shall not be attributed to Cubing China, the WCA, or the competition organizers.' => '該比賽是世界魔方協會（WCA）官方認證的比賽，所有選手需要熟知{regulations}。<br/>選手因不熟悉比賽規則或未遵守賽場規定而導致成績受到判罰，其責任由選手本人承擔，與粗餅網、世界魔方協會及賽事主辦方無關。',
   'This competition is part of a series along with {series}.' => '該比賽與{series}比賽為系列賽。',
   'Competitors can only register for one in the WCA series. Please carefully review the competition rules regarding the WCA series before registering for this competition.' => '選手只能報名WCA系列賽中的一場比賽，報名本比賽前請仔細查看比賽規則對WCA系列賽的說明。',
   'Ticket' => '入場券',
