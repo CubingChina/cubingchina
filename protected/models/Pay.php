@@ -892,6 +892,63 @@ class Pay extends ActiveRecord {
 		return $this->find($criteria)->paid_amount;
 	}
 
+	public function getTotalByLocation($status = self::STATUS_PAID, $attribute = 'paid_amount') {
+		if ($this->type != self::TYPE_REGISTRATION || !$this->competition || !$this->type_id) {
+			return [];
+		}
+
+		$sql = "SELECT r.location_id, SUM(p.{$attribute}) AS total
+				FROM pay p
+				INNER JOIN registration r ON p.sub_type_id = r.id
+				WHERE p.type = :type
+				AND p.type_id = :type_id
+				AND p.status = :status
+				GROUP BY r.location_id";
+
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':type', $this->type);
+		$command->bindValue(':type_id', $this->type_id);
+		$command->bindValue(':status', $status);
+
+		$results = $command->queryAll();
+
+		$locationTotals = [];
+		foreach ($results as $row) {
+			$locationId = $row['location_id'] ? intval($row['location_id']) : 0;
+			$locationTotals[$locationId] = number_format($row['total'] / 100, 2, '.', '');
+		}
+		return $locationTotals;
+	}
+
+	public function getTotalFeeByLocation() {
+		if ($this->type != self::TYPE_REGISTRATION || !$this->competition || !$this->type_id) {
+			return [];
+		}
+
+		$sql = "SELECT r.location_id, SUM(ROUND((CASE
+				WHEN p.status=0 OR p.status=5 THEN 0
+				WHEN p.channel='nowPay' AND p.device_type='02' THEN p.paid_amount*0.02
+				WHEN p.channel='nowPay' THEN p.paid_amount*0.06
+				ELSE p.paid_amount*0.012 END) / 100, 2)) AS fee
+				FROM pay p
+				INNER JOIN registration r ON p.sub_type_id = r.id
+				WHERE p.type = :type
+				AND p.type_id = :type_id
+				GROUP BY r.location_id";
+
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':type', $this->type);
+		$command->bindValue(':type_id', $this->type_id);
+
+		$results = $command->queryAll();
+		$locationFees = [];
+		foreach ($results as $row) {
+			$locationId = $row['location_id'] ? intval($row['location_id']) : 0;
+			$locationFees[$locationId] = $row['fee'];
+		}
+		return $locationFees;
+	}
+
 	public function getBillTotalFee() {
 		$criteria = new CDbCriteria;
 		$criteria->compare('channel', $this->channel);
