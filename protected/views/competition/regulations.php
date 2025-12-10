@@ -4,7 +4,7 @@
     <?php if ($competition->type == Competition::TYPE_WCA): ?>
     <dt><?php echo Yii::t('Competition', 'WCA Competition'); ?></dt>
     <dd>
-      <?php echo Yii::t('Competition', 'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.', array(
+      <?php echo Yii::t('Competition', 'This competition is recognized as an official World Cube Association (WCA) competition. Therefore, all competitors should be familiar with the {regulations}.<br/>Competitors are solely responsible for any penalties imposed due to unfamiliarity with the competition rules or failure to comply with on-site regulations. Such penalties shall not be attributed to Cubing China, the WCA, or the competition organizers.', array(
       '{regulations}'=>Html::wcaRegulationLink(Yii::t('Competition', 'WCA regulations')),
     ));?>
     </dd>
