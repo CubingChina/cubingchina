@@ -84,7 +84,7 @@ class Competition extends ActiveRecord {
 	const EXPLANATION_MAP = [
 		Competition::EXPLANATION_TRIAL => 'This is a trial competition, aiming to optimize and experiment with new competition formats. The procedures may differ from regular competitions. Please be aware before you register. Thank you for your understanding.',
 		Competition::EXPLANATION_NEWER => 'This competition is held by new organizers who are still gaining experience. The procedures and overall experience may differ from those held by experienced organizers and may get on-site adjustments. Please be aware before you register. Thank you for your understanding.',
-		Competition::EXPLANATION_LARGE => 'This is a large-scale competition, held by experienced organizers, aiming to provide the best experience for competitors.',
+		Competition::EXPLANATION_LARGE => 'This is a large-scale competition, organized by an experienced organizing team. To ensure a quality competition experience for participants, spectators and companions will be subject to certain restrictions. Please be aware of this when registering.',
 		Competition::EXPLANATION_OTHER => 'Other',
 		Competition::EXPLANATION_RUNNER => 'This is a Runner competition, Runners will lead competitors to available stations for each attempt, after which the competitors will return to the waiting area. Competitors may leave the area after all attempts.'
 	];

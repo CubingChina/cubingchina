@@ -129,7 +129,7 @@ return array (
   'Runner competition' => '<strong>Runner赛事</strong>',
   'This is a trial competition, aiming to optimize and experiment with new competition formats. The procedures may differ from regular competitions. Please be aware before you register. Thank you for your understanding.' => '该比赛为<strong>试点赛事</strong>。旨在探索优化流程，因此部分环节和体验不同于常规赛。请选手报名前知悉并理性预期。',
   'This competition is held by new organizers who are still gaining experience. The procedures and overall experience may differ from those held by experienced organizers and may get on-site adjustments. Please be aware before you register. Thank you for your understanding.' => '该比赛为<strong>新晋团队主办赛事</strong>。经验仍在积累。因此赛事体验与流程细节可能与成熟赛事有别，或有现场调整。请选手报名前知悉并理性预期。',
-  'This is a large-scale competition, held by experienced organizers, aiming to provide the best experience for competitors.' => '该比赛为<strong>大型赛事</strong>。拥有成熟的流程与专业的团队，力求为选手提供高质量的比赛体验。请选手报名前知悉并理性预期。',
+  'This is a large-scale competition, organized by an experienced organizing team. To ensure a quality competition experience for participants, spectators and companions will be subject to certain restrictions. Please be aware of this when registering.' => '该比赛为<strong>大型赛事</strong>，由经验丰富的主办团队运作。为了尽可能给选手提供完善的比赛体验，赛事将对观众及陪同人员入场进行相应限制，请选手在报名前知悉并理性预期。',
   'This is a Runner competition, Runners will lead competitors to available stations for each attempt, after which the competitors will return to the waiting area. Competitors may leave the area after all attempts.' => '该比赛为<strong>Runner赛事</strong>。引导员将随机引导选手至空闲赛桌进行比赛。选手每次复原后，需返回候赛区，直至该项目全部复原结束后方可离场。',
   'WCA Dues' => 'WCA会费',
   '(includes {dues} for WCA Dues)' => '（含{dues}WCA会费）',
