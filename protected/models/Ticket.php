@@ -21,7 +21,7 @@
 class Ticket extends ActiveRecord {
 
 	const TYPE_COMPETITION = 0;
-	const CHILDREN_DISCOUNT = 60;
+	const CHILDREN_DISCOUNT = 50;
 
 	private $_stock;
 

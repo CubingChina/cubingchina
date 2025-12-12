@@ -67,13 +67,12 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function hasDiscount($competition = null) {
-		return false;
 		$user = $this->user;
 		if ($competition === null) {
 			$competition = $this->ticket->competition;
 		}
 		$registration = Registration::getUserRegistration($competition->id, $user->id);
-		return $registration !== null && ($registration->isAccepted() || $registration->isDisqualified()) && $competition->date - $user->birthday <= 12 * 365.25 * 86400 && self::model()->countByAttributes([
+		return $registration !== null && ($registration->isAccepted() || $registration->isDisqualified()) && $competition->date - $user->birthday <= 14 * 365.25 * 86400 && self::model()->countByAttributes([
 			'ticket_id'=>$competition->getTicketIds(),
 			'user_id'=>$this->user_id,
 		], [
