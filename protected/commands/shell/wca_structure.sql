@@ -213,10 +213,10 @@ CREATE TABLE IF NOT EXISTS `championships` (
 
 DROP TABLE IF EXISTS `eligible_country_iso2s_for_championship`;
 CREATE TABLE IF NOT EXISTS `eligible_country_iso2s_for_championship` (
-  `id` bigint(20) NOT NULL DEFAULT '0',
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `championship_type` varchar(191) NOT NULL,
   `eligible_country_iso2` varchar(191) NOT NULL,
-  PRIMARY KEY `pk` (`id`, `championship_type`, `eligible_country_iso2`),
+  PRIMARY KEY `pk` (`id`),
   KEY `championship_type` (`championship_type`),
   KEY `eligible_country_iso2` (`eligible_country_iso2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
