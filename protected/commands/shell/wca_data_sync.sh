@@ -25,6 +25,7 @@ _log "get export data from wca"
 wget $wca_home/export/results -O export.html || exit
 ziplink=`grep -oP 'href="\K[^"]+WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
 zipname=`grep -oP 'WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
+ziplink="${ziplink/v2/v1}"
 zipname="${zipname/v2/v1}"
 _log "zipname: $zipname"
 if [ "dummy"$zipname = 'dummy' ]
@@ -81,7 +82,6 @@ _log "add columns for insert"
 sed -ri 's/INSERT INTO `Results`/INSERT INTO `Results` (`competitionId`,`eventId`,`roundTypeId`,`pos`,`best`,`average`,`personName`,`personId`,`personCountryId`,`formatId`,`value1`,`value2`,`value3`,`value4`,`value5`,`regionalSingleRecord`,`regionalAverageRecord`)/g' WCA_export.sql
 sed -ri 's/INSERT INTO `RanksSingle`/INSERT INTO `RanksSingle` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 sed -ri 's/INSERT INTO `RanksAverage`/INSERT INTO `RanksAverage` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
-sed -ri 's/INSERT INTO `eligible_country_iso2s_for_championship`/INSERT INTO `eligible_country_iso2s_for_championship` (`championship_type`,`eligible_country_iso2`)/g' WCA_export.sql
 _log "check for database"
 mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
 _log "import structure"
