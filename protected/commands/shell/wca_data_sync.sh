@@ -1,3 +1,4 @@
+#!/bin/bash
 dir=`dirname "$0"`
 wca_home='https://www.worldcubeassociation.org'
 
@@ -22,8 +23,9 @@ mysql_pass=''
 mysql_db="wca_$db_num"
 _log "get export data from wca"
 wget $wca_home/export/results -O export.html || exit
-ziplink=`grep -oP 'href="\K[^"]+WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
-zipname=`grep -oP 'WCA_export\d+_\w+\.sql\.zip' export.html | tail -1`
+ziplink=`grep -oP 'href="\K[^"]+WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
+zipname=`grep -oP 'WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
+zipname="${zipname/v2/v1}"
 _log "zipname: $zipname"
 if [ "dummy"$zipname = 'dummy' ]
 then
