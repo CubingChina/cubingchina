@@ -326,6 +326,13 @@ class User extends ActiveRecord {
 		return ($this->isAdministrator() || Yii::app()->user->checkPermission('caqa_member'))&& $competition->isLocked();
 	}
 
+	public function canPreNotice($competition) {
+		if ($competition->isWCACompetition()) {
+			return false;
+		}
+		return $competition->checkPermission($this) && $competition->isHide();
+	}
+
 	public function canPriorRegister($competition) {
 		if (!$competition->isWCACompetition()) {
 			return false;

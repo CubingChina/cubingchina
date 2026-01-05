@@ -125,12 +125,30 @@ class Mailer extends CApplicationComponent {
 			'competition'=>$competition,
 			'url'=>$this->getUrl(Yii::app()->createUrl(
 				'/board/competition/view',
+				array('id'=>$competition->id,)
+			)),
+		));
+		return $this->add($to, $subject, $message);
+	}
+
+	public function sendCompetitionPreNotice($competition) {
+		$to = [Yii::app()->params->caqaEmail];
+		$subject = $this->makeCaqaTitle("预公示【{$competition->name_zh}】");
+		$message = $this->render('competitionPreNotice', array(
+			'user'=>$competition->organizer[0]->user,
+			'competition'=>$competition,
+			'url'=>$this->getUrl(Yii::app()->createUrl(
+				'/board/competition/view',
 				array(
 					'id'=>$competition->id,
 				)
 			)),
 		));
-		return $this->add($to, $subject, $message);
+		$cc = [];
+		foreach ($competition->organizer as $organizer) {
+			$cc[] = $organizer->user->email;
+		}
+		return $this->add($to, $subject, $message, $cc[0], $cc);
 	}
 
 	public function sendRegistrationNotice($registration) {
