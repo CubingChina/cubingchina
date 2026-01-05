@@ -874,7 +874,15 @@ class RegistrationController extends AdminController {
 			'colspan'=>3,
 			'class'=>'bdld',
 		]);
-		echo $user->country_id <= 4 && $user->name_zh ? $user->name_zh : $user->name;
+		// 优先使用中文名，但如果包含CJK扩展B/C/D/E/F区罕见字则使用英文名
+		$displayName = $user->name;
+		if ($user->country_id <= 4 && $user->name_zh) {
+			// 检查是否包含罕见汉字 (CJK扩展B区及以上: U+20000-U+3FFFF)
+			if (!preg_match('/[\x{20000}-\x{3FFFF}]/u', $user->name_zh)) {
+				$displayName = $user->name_zh;
+			}
+		}
+		echo $displayName;
 		echo CHtml::closeTag('td');
 		echo CHtml::tag('td', [
 			'class'=>'bdr'
