@@ -729,6 +729,15 @@
               'data-message'=>Yii::t('Competition', 'Do you confirm this can be announced?'),
             ], Yii::t('common', 'Announce')); ?>
             <?php endif; ?>
+            <?php if ($this->user->canPreNotice($model)): ?>
+              <?php echo CHtml::tag('button', [
+              'type'=>'submit',
+              'name'=>'preNotice',
+              'value'=>1,
+              'class'=>'btn btn-info btn-square',
+              'data-message'=>'确认发送预公示邮件给CAQA？',
+            ], '预公示'); ?>
+            <?php endif; ?>
           </div>
           <?php $this->endWidget(); ?>
         </div>
