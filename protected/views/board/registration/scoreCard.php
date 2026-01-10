@@ -77,6 +77,11 @@
               以下选项仅限纵向分割有效
               <div class="radio">
                 <label>
+                  <input type="radio" value="1" name="stack"> 1张一摞
+                </label>
+              </div>
+              <div class="radio">
+                <label>
                   <input type="radio" value="10" name="stack"> 10张一摞
                 </label>
               </div>
