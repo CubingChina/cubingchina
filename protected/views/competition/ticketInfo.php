@@ -70,4 +70,3 @@ if ($userTicket->isCancellable()) {
 EOT
   );
 }
-endif;
