@@ -20,7 +20,8 @@
       ]), [
         'class'=>'btn btn-sm btn-success'
       ]); ?>
-      <?php elseif ($userTicket->isEditable()): ?>
+      <?php endif; ?>
+      <?php if ($userTicket->isEditable()): ?>
       <?php echo CHtml::link(Yii::t('common', 'Edit'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
       ]), [
