@@ -55,7 +55,7 @@
 </div>
 <?php
 $cancellationMessage = json_encode(Yii::t('Registration', 'Please double-confirm your cancellation.'));
-if ($userTicket->isCancellable()) {
+if ($userTicket->isEditable()) {
   Yii::app()->clientScript->registerScript('cancel',
 <<<EOT
   var cancellationMessage = {$cancellationMessage};
