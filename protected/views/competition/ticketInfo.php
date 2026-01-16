@@ -34,16 +34,12 @@
       )); ?>
       <input type="hidden" name="cancel" value="1">
       <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
-      <?php echo CHtml::tag('button', [
-        'type'=>'button',
-        'class'=>'btn btn-danger cancel',
-      ], Yii::t('common', 'Submit')); ?>
-      <?php $this->endWidget(); ?>
-      <?php echo CHtml::link(Yii::t('common', 'Cancel'), $competition->getUrl('ticket', [
+      <?php echo CHtml::link(Yii::t('UserTicket', 'Cancel'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
+      <?php $this->endWidget(); ?>
       <?php endif; ?>
     </p>
     <?php endif; ?>

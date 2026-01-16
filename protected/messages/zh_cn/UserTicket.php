@@ -33,4 +33,5 @@ return array (
   'Passport Type' => '',
   'Discount' => '折扣',
   'Name' => '姓名',
+  'Cancel' => '取消订单',
 );
