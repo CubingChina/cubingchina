@@ -36,7 +36,7 @@
       <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
       <?php echo CHtml::tag('button', [
         'type'=>'button',
-        'class'=>'btn btn-danger cancel',
+        'class'=>'btn btn-sm btn-danger cancel',
       ], Yii::t('UserTicket', 'Cancel')); ?>
       <?php $this->endWidget(); ?>
       <?php endif; ?>
