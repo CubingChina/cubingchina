@@ -14,6 +14,11 @@
     </dl>
     <?php if (!isset($showButton)): ?>
     <p>
+      <?php $form = $this->beginWidget('ActiveForm', array(
+        'id'=>'cancel-form-' . $userTicket->id,
+        'htmlOptions'=>array(
+        ),
+      )); ?>
       <?php if ($userTicket->isPayable()): ?>
       <?php echo CHtml::link(Yii::t('common', 'Pay'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
@@ -27,18 +32,12 @@
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
-      <?php $form = $this->beginWidget('ActiveForm', array(
-        'id'=>'cancel-form-' . $userTicket->id,
-        'htmlOptions'=>array(
-        ),
-      )); ?>
       <input type="hidden" name="cancel" value="1">
       <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
-      <?php echo CHtml::link(Yii::t('UserTicket', 'Cancel'), $competition->getUrl('ticket', [
-        'id'=>$userTicket->id,
-      ]), [
-        'class'=>'btn btn-sm btn-primary'
-      ]); ?>
+      <?php echo CHtml::tag('button', [
+        'type'=>'button',
+        'class'=>'btn btn-danger cancel',
+      ], Yii::t('UserTicket', 'Cancel')); ?>
       <?php $this->endWidget(); ?>
       <?php endif; ?>
     </p>
