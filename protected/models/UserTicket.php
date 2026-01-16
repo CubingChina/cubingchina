@@ -26,6 +26,7 @@ class UserTicket extends ActiveRecord {
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
+	const STATUS_CANCELLED = 2;
 
 	public $repeatPassportNumber;
 
@@ -126,6 +127,21 @@ class UserTicket extends ActiveRecord {
 		$this->paid_time = $this->payment->paid_time;
 		$this->code = substr(sprintf('ticket-%s-%s', Uuid::uuid1(), Uuid::uuid4()), 0, 64);
 		$this->save(false);
+	}
+
+	public function cancel() {
+		if (!$this->isEditable()) {
+			return false;
+		}
+		$needRefund = $this->status == self::STATUS_PAID;
+		$this->cancel_time = time();
+		$this->status = self::STATUS_CANCELLED;
+		$this->code = '';
+		$this->save(false);
+		// make a refund
+		if ($needRefund && $this->payment) {
+			$this->payment->refund($this->paid_amount);
+		}
 	}
 
 	public function checkPassportType() {

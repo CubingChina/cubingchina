@@ -26,6 +26,23 @@
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
+      <?php $form = $this->beginWidget('ActiveForm', array(
+        'id'=>'cancel-form-' . $userTicket->id,
+        'htmlOptions'=>array(
+        ),
+      )); ?>
+      <input type="hidden" name="cancel" value="1">
+      <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
+      <?php echo CHtml::tag('button', [
+        'type'=>'button',
+        'class'=>'btn btn-danger cancel',
+      ], Yii::t('common', 'Submit')); ?>
+      <?php $this->endWidget(); ?>
+      <?php echo CHtml::link(Yii::t('common', 'Cancel'), $competition->getUrl('ticket', [
+        'id'=>$userTicket->id,
+      ]), [
+        'class'=>'btn btn-sm btn-primary'
+      ]); ?>
       <?php endif; ?>
     </p>
     <?php endif; ?>
@@ -36,3 +53,21 @@
   </div>
   <?php endif; ?>
 </div>
+<?php
+$cancellationMessage = json_encode(Yii::t('Registration', 'Please double-confirm your cancellation.'));
+if ($userTicket->isCancellable()) {
+  Yii::app()->clientScript->registerScript('cancel',
+<<<EOT
+  var cancellationMessage = {$cancellationMessage};
+  $('.cancel').on('click', function() {
+    var that = $(this);
+    CubingChina.utils.confirm(cancellationMessage, {
+      type: 'type-warning'
+    }).then(function() {
+      that.parent().submit();
+    })
+  });
+EOT
+  );
+}
+endif;
