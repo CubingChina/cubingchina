@@ -77,7 +77,7 @@ class UserTicket extends ActiveRecord {
 			'ticket_id'=>$competition->getTicketIds(),
 			'user_id'=>$this->user_id,
 		], [
-			'condition'=>'discount > 0',
+			'condition'=>'discount > 0 AND status!=2',
 		]) == 0;
 	}
 
