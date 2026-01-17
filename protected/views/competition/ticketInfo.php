@@ -14,18 +14,31 @@
     </dl>
     <?php if (!isset($showButton)): ?>
     <p>
+      <?php $form = $this->beginWidget('ActiveForm', array(
+        'id'=>'cancel-form-' . $userTicket->id,
+        'htmlOptions'=>array(
+        ),
+      )); ?>
       <?php if ($userTicket->isPayable()): ?>
       <?php echo CHtml::link(Yii::t('common', 'Pay'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
       ]), [
         'class'=>'btn btn-sm btn-success'
       ]); ?>
-      <?php elseif ($userTicket->isEditable()): ?>
+      <?php endif; ?>
+      <?php if ($userTicket->isEditable()): ?>
       <?php echo CHtml::link(Yii::t('common', 'Edit'), $competition->getUrl('ticket', [
         'id'=>$userTicket->id,
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
+      <input type="hidden" name="cancel" value="1">
+      <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
+      <?php echo CHtml::tag('button', [
+        'type'=>'button',
+        'class'=>'btn btn-sm btn-danger cancel',
+      ], Yii::t('UserTicket', 'Cancel')); ?>
+      <?php $this->endWidget(); ?>
       <?php endif; ?>
     </p>
     <?php endif; ?>
@@ -36,3 +49,20 @@
   </div>
   <?php endif; ?>
 </div>
+<?php
+$cancellationMessage = json_encode(Yii::t('UserTicket', 'Please double-confirm your cancellation.'));
+if ($userTicket->isEditable()) {
+  Yii::app()->clientScript->registerScript('cancel',
+<<<EOT
+  var cancellationMessage = {$cancellationMessage};
+  $('.cancel').on('click', function() {
+    var that = $(this);
+    CubingChina.utils.confirm(cancellationMessage, {
+      type: 'type-warning'
+    }).then(function() {
+      that.parent().submit();
+    })
+  });
+EOT
+  );
+}

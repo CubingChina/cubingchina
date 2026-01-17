@@ -33,4 +33,6 @@ return array (
   'Passport Type' => '',
   'Discount' => '折扣',
   'Name' => '姓名',
+  'Cancel' => '取消订单',
+  'Please double-confirm your cancellation.' => '请再次确认你要取消订单！',
 );
