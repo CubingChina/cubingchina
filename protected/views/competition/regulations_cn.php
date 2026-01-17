@@ -166,7 +166,7 @@
   </li>
   <?php if ($competition->attend_ceremory): ?>
   <li>
-    赛事颁奖需本人出席方可领奖（奖状、奖品、奖牌、奖金），他人不可代领。未出席颁奖仪式的获奖者视为放弃领奖。
+    赛事颁奖需本人出席方可领奖（奖状、奖品、奖牌、奖金，具体颁奖以现场为准），他人不可代领。未出席颁奖仪式的获奖者视为放弃领奖。
   </li>
   <?php endif; ?>
   <?php if ($competition->podiums_greater_china): ?>
