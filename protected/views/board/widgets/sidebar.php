@@ -142,6 +142,11 @@
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa'),
             ),
             array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 入场券记录',
+              'url'=>array('/board/pay/ticket'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || Yii::app()->user->checkPermission('caqa'),
+            ),
+            array(
              'label'=>'<i class="fa fa-angle-double-right"></i> 对账单',
              'url'=>array('/board/pay/bill'),
              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),

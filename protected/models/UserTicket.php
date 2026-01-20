@@ -28,6 +28,9 @@ class UserTicket extends ActiveRecord {
 	const STATUS_PAID = 1;
 
 	public $repeatPassportNumber;
+	public $competition_id;
+	public $ticket_name;
+	public $buyer_name;
 
 	public $coefficients = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
 	public $codes = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];
@@ -203,7 +206,7 @@ class UserTicket extends ActiveRecord {
 			['ticket_id', 'required', 'message'=>Yii::t('Competition', 'Please choose a ticket!')],
 			['ticket_id', 'checkTicket'],
 			['name, passport_type, passport_number', 'required'],
-			['discount, passport_type, status', 'numerical', 'integerOnly'=>true],
+			['discount, passport_type, status, competition_id', 'numerical', 'integerOnly'=>true],
 			['id', 'length', 'max'=>32],
 			['ticket_id, user_id, total_amount, paid_amount, paid_time, create_time, update_time, cancel_time', 'length', 'max'=>11],
 			['name, passport_name', 'length', 'max'=>100],
@@ -215,7 +218,7 @@ class UserTicket extends ActiveRecord {
 			['code', 'length', 'max'=>64],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			['id, ticket_id, user_id, total_amount, paid_amount, paid_time, discount, name, passport_type, passport_name, passport_number, code, status, create_time, update_time, cancel_time', 'safe', 'on'=>'search'],
+			['id, ticket_id, user_id, total_amount, paid_amount, paid_time, discount, name, passport_type, passport_name, passport_number, code, status, create_time, update_time, cancel_time, competition_id, ticket_name, buyer_name', 'safe', 'on'=>'search'],
 		];
 	}
 
@@ -255,6 +258,9 @@ class UserTicket extends ActiveRecord {
 			'create_time'=>Yii::t('UserTicket', 'Create Time'),
 			'update_time'=>Yii::t('UserTicket', 'Update Time'),
 			'cancel_time'=>Yii::t('UserTicket', 'Cancel Time'),
+			'competition_id'=>Yii::t('Competition', 'Competition'),
+			'ticket_name'=>Yii::t('UserTicket', 'Ticket'),
+			'buyer_name'=>Yii::t('UserTicket', 'User'),
 		];
 	}
 
@@ -275,25 +281,47 @@ class UserTicket extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('ticket_id', $this->ticket_id, true);
-		$criteria->compare('user_id', $this->user_id, true);
-		$criteria->compare('total_amount', $this->total_amount, true);
-		$criteria->compare('paid_amount', $this->paid_amount, true);
-		$criteria->compare('paid_time', $this->paid_time, true);
-		$criteria->compare('discount', $this->discount);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('passport_type', $this->passport_type);
-		$criteria->compare('passport_name', $this->passport_name, true);
-		$criteria->compare('passport_number', $this->passport_number, true);
-		$criteria->compare('code', $this->code, true);
-		$criteria->compare('status', $this->status);
-		$criteria->compare('create_time', $this->create_time, true);
-		$criteria->compare('update_time', $this->update_time, true);
-		$criteria->compare('cancel_time', $this->cancel_time, true);
+		$criteria->with = [
+			'ticket',
+			'user',
+		];
+		$criteria->together = true;
+
+		$criteria->compare('t.id', $this->id, true);
+		$criteria->compare('t.ticket_id', $this->ticket_id, true);
+		$criteria->compare('t.user_id', $this->user_id, true);
+		$criteria->compare('t.total_amount', $this->total_amount, true);
+		$criteria->compare('t.paid_amount', $this->paid_amount, true);
+		$criteria->compare('t.paid_time', $this->paid_time, true);
+		$criteria->compare('t.discount', $this->discount);
+		$criteria->compare('t.name', $this->name, true);
+		$criteria->compare('t.passport_type', $this->passport_type);
+		$criteria->compare('t.passport_name', $this->passport_name, true);
+		$criteria->compare('t.passport_number', $this->passport_number, true);
+		$criteria->compare('t.code', $this->code, true);
+		$criteria->compare('t.status', $this->status);
+		$criteria->compare('t.create_time', $this->create_time, true);
+		$criteria->compare('t.update_time', $this->update_time, true);
+		$criteria->compare('t.cancel_time', $this->cancel_time, true);
+		if ($this->competition_id) {
+			$criteria->compare('ticket.type_id', $this->competition_id);
+		}
+		if ($this->ticket_name) {
+			$criteria->addSearchCondition('ticket.name_zh', $this->ticket_name, true, 'AND');
+		}
+		if ($this->buyer_name) {
+			$criteria->addSearchCondition('user.name', $this->buyer_name, true, 'OR');
+			$criteria->addSearchCondition('user.name_zh', $this->buyer_name, true, 'OR');
+		}
 
 		return new CActiveDataProvider($this, [
 			'criteria'=>$criteria,
+			'sort'=>[
+				'defaultOrder'=>'t.paid_time DESC',
+			],
+			'pagination'=>[
+				'pageSize'=>50,
+			],
 		]);
 	}
 

@@ -65,4 +65,27 @@ class PayController extends AdminController {
 			'model'=>$model,
 		]);
 	}
+
+	public function actionTicket() {
+		$model = new UserTicket('search');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('UserTicket');
+		// 默认只看已支付
+		if ($model->status === null) {
+			$model->status = UserTicket::STATUS_PAID;
+		}
+
+		// 主办方只能查看自己比赛的入场券
+		if ($this->user->isOrganizer() && $model->competition_id && !Yii::app()->user->checkPermission('caqa')) {
+			$competition = Competition::model()->findByPk($model->competition_id);
+			if ($competition && !isset($competition->organizers[$this->user->id])) {
+				Yii::app()->user->setFlash('danger', '权限不足！');
+				$this->redirect(['/board/pay/ticket']);
+			}
+		}
+
+		$this->render('ticket', [
+			'model'=>$model,
+		]);
+	}
 }
