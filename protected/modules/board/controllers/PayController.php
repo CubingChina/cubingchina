@@ -12,7 +12,8 @@ class PayController extends AdminController {
 				'actions'=>[
 					'index',
 					'ticket',
-					'exportTicket'
+					'exportTicket',
+					'toggleTicket'
 				],
 			),
 			array(
@@ -32,7 +33,8 @@ class PayController extends AdminController {
 				'actions'=>[
 					'index',
 					'ticket',
-					'exportTicket'
+					'exportTicket',
+					'toggleTicket'
 				]
 			),
 			array(
@@ -150,6 +152,8 @@ class PayController extends AdminController {
 			'支付金额',
 			'支付时间',
 			'状态',
+			'签到状态',
+			'签到时间',
 			'创建时间',
 		];
 		fputcsv($output, $headers);
@@ -167,6 +171,8 @@ class PayController extends AdminController {
 				$ticket->paid_amount ? number_format($ticket->paid_amount / 100, 2, '.', '') : '',
 				$ticket->paid_time ? date('Y-m-d H:i:s', $ticket->paid_time) : '',
 				$ticket->getStatusText(),
+				$ticket->signed_in ? '已签到' : '未签到',
+				$ticket->signed_date ? date('Y-m-d H:i:s', $ticket->signed_date) : '',
 				$ticket->create_time ? date('Y-m-d H:i:s', $ticket->create_time) : '',
 			];
 			fputcsv($output, $row);
@@ -174,5 +180,39 @@ class PayController extends AdminController {
 
 		fclose($output);
 		Yii::app()->end();
+	}
+
+	public function actionToggleTicket() {
+		$id = $this->iRequest('id');
+		$attribute = $this->sRequest('attribute');
+		$model = UserTicket::model()->findByPk($id);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		$competition = $model->ticket ? $model->ticket->competition : null;
+		if ($competition === null) {
+			throw new CHttpException(404, 'Not found');
+		}
+		// 主办方只能操作自己比赛的入场券
+		if ($this->user->isOrganizer() && !isset($competition->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
+			throw new CHttpException(401, 'Unauthorized');
+		}
+		if ($attribute == 'signed_in') {
+			$model->signed_in = 1 - $model->signed_in;
+			if ($model->signed_in) {
+				$model->signed_date = time();
+				$auth = ScanAuth::getCompetitionAuth($competition);
+				$model->signed_scan_code = $auth ? $auth->code : '';
+			} else {
+				$model->signed_date = 0;
+				$model->signed_scan_code = '';
+			}
+		} else {
+			$model->$attribute = 1 - $model->$attribute;
+		}
+		$model->save();
+		$this->ajaxOk(array(
+			'value'=>$model->$attribute,
+		));
 	}
 }

@@ -103,6 +103,29 @@
                   UserTicket::STATUS_CANCELLED=>Yii::t("common","Cancelled"),
                 ),
               ),
+              array(
+                'name'=>'signed_in',
+                'header'=>'签到状态',
+                'type'=>'raw',
+                'value'=>'$data->signed_in ? "<span class=\"text-success\">已签到</span>" . ($data->signed_date ? "<br><small>" . date("Y-m-d H:i:s", $data->signed_date) . "</small>" : "") : "<span class=\"text-muted\">未签到</span>"',
+                'filter'=>array(
+                  0=>'未签到',
+                  1=>'已签到',
+                ),
+              ),
+              array(
+                'header'=>'操作',
+                'type'=>'raw',
+                'value'=>'CHtml::tag("button", array(
+                  "class"=>"btn btn-xs btn-square toggle-ticket " . ($data->signed_in ? "btn-red" : "btn-green"),
+                  "data-id"=>$data->id,
+                  "data-url"=>CHtml::normalizeUrl(array("/board/pay/toggleTicket")),
+                  "data-attribute"=>"signed_in",
+                  "data-value"=>$data->signed_in,
+                  "data-text"=>\'["签到","签退"]\',
+                ), $data->signed_in ? "签退" : "签到")',
+                'filter'=>false,
+              ),
             ),
           )); ?>
         </div>
@@ -110,3 +133,56 @@
     </div>
   </div>
 </div>
+<?php
+Yii::app()->clientScript->registerScript('ticket-toggle',
+<<<EOT
+  $(document).on('click', '.toggle-ticket', function() {
+    var btn = $(this);
+    var id = btn.data('id');
+    var url = btn.data('url');
+    var attribute = btn.data('attribute');
+    var value = btn.data('value');
+    var text = btn.data('text');
+
+    if (!confirm('确认' + text[value] + '吗？')) {
+      return;
+    }
+
+    btn.prop('disabled', true);
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: {
+        id: id,
+        attribute: attribute
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.status == 0) {
+          var newValue = data.data.value;
+          btn.data('value', newValue);
+          btn.text(newValue ? text[1] : text[0]);
+          btn.removeClass('btn-green btn-red').addClass(newValue ? 'btn-red' : 'btn-green');
+          // 直接替换按钮和签到状态
+          // 更新按钮文字和样式上面已处理，继续更新表格中对应的签到状态显示
+          // 假设签到状态的单元格有 data-id 属性标识
+          var row = btn.closest('tr');
+          var signinCell = row.find('[data-signin]');
+          if (signinCell.length) {
+            signinCell.text(newValue ? '已签到' : '未签到');
+          }
+        } else {
+          alert(data.message || '操作失败');
+        }
+      },
+      error: function() {
+        alert('操作失败，请重试');
+      },
+      complete: function() {
+        btn.prop('disabled', false);
+      }
+    });
+  });
+EOT
+);
+?>
