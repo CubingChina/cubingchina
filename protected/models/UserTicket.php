@@ -330,6 +330,8 @@ class UserTicket extends ActiveRecord {
 		$criteria->compare('t.cancel_time', $this->cancel_time, true);
 		if ($this->competition_id) {
 			$criteria->compare('ticket.type_id', $this->competition_id);
+		} else if (Yii::app()->controller->user->isOrganizer()) {
+			$criteria->compare('ticket.type_id', 0);
 		}
 		if ($this->ticket_name) {
 			$criteria->addSearchCondition('ticket.name_zh', $this->ticket_name, true, 'AND');
