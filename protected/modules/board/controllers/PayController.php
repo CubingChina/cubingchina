@@ -9,6 +9,11 @@ class PayController extends AdminController {
 				'roles'=>array(
 					'role'=>User::ROLE_ORGANIZER,
 				),
+				'actions'=>[
+					'index',
+					'ticket',
+					'exportTicket'
+				],
 			),
 			array(
 				'allow',
@@ -25,7 +30,9 @@ class PayController extends AdminController {
 					'permission'=>'caqa'
 				],
 				'actions'=>[
-					'index'
+					'index',
+					'ticket',
+					'exportTicket'
 				]
 			),
 			array(
@@ -87,5 +94,85 @@ class PayController extends AdminController {
 		$this->render('ticket', [
 			'model'=>$model,
 		]);
+	}
+
+	public function actionExportTicket() {
+		$model = new UserTicket('search');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('UserTicket');
+
+		// 主办方只能查看自己比赛的入场券
+		if ($this->user->isOrganizer() && $model->competition_id && !Yii::app()->user->checkPermission('caqa')) {
+			$competition = Competition::model()->findByPk($model->competition_id);
+			if ($competition && !isset($competition->organizers[$this->user->id])) {
+				Yii::app()->user->setFlash('danger', '权限不足！');
+				$this->redirect(['/board/pay/ticket']);
+			}
+		}
+
+		// 获取所有数据（不分页）
+		$dataProvider = $model->search();
+		$dataProvider->pagination = false;
+		$tickets = $dataProvider->getData();
+
+		// 设置文件名
+		$competition = null;
+		if ($model->competition_id) {
+			$competition = Competition::model()->findByPk($model->competition_id);
+		}
+		$filename = '入场券购买记录';
+		if ($competition !== null) {
+			$filename .= '_' . $competition->name_zh;
+		}
+		$filename .= '_' . date('YmdHis') . '.csv';
+
+		// 输出CSV
+		header('Content-Type: text/csv; charset=UTF-8');
+		header('Content-Disposition: attachment; filename="' . $filename . '"');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Pragma: public');
+
+		// 输出UTF-8 BOM以便Excel正确显示中文
+		echo "\xEF\xBB\xBF";
+
+		// 打开输出流
+		$output = fopen('php://output', 'w');
+
+		// 输出表头
+		$headers = [
+			'ID',
+			'比赛',
+			'入场券',
+			'购买人',
+			'入场人',
+			'证件类型',
+			'证件号码',
+			'支付金额',
+			'支付时间',
+			'状态',
+			'创建时间',
+		];
+		fputcsv($output, $headers);
+
+		// 输出数据
+		foreach ($tickets as $ticket) {
+			$row = [
+				$ticket->id,
+				$ticket->ticket && $ticket->ticket->competition ? $ticket->ticket->competition->name_zh : '',
+				$ticket->ticket ? $ticket->ticket->name_zh : '',
+				$ticket->user ? $ticket->user->getCompetitionName() : '',
+				$ticket->name,
+				$ticket->getPassportTypeText(),
+				$ticket->passport_number,
+				$ticket->paid_amount ? number_format($ticket->paid_amount / 100, 2, '.', '') : '',
+				$ticket->paid_time ? date('Y-m-d H:i:s', $ticket->paid_time) : '',
+				$ticket->getStatusText(),
+				$ticket->create_time ? date('Y-m-d H:i:s', $ticket->create_time) : '',
+			];
+			fputcsv($output, $row);
+		}
+
+		fclose($output);
+		Yii::app()->end();
 	}
 }

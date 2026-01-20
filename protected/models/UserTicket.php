@@ -84,6 +84,15 @@ class UserTicket extends ActiveRecord {
 		]) == 0;
 	}
 
+	function getStatusText() {
+		$texts = [
+			self::STATUS_UNPAID=>Yii::t('common','Unpaid'),
+			self::STATUS_PAID=>Yii::t('common','Paid'),
+			self::STATUS_CANCELLED=>Yii::t('common','Cancelled'),
+		];
+		return $texts[$this->status] ?? $this->status;
+	}
+
 	public function getFee() {
 		return Html::fontAwesome('rmb') . ($this->total_amount * ($this->discount ?: 100) / 10000);
 	}

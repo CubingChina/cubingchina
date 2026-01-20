@@ -9,20 +9,7 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
-          <?php $form = $this->beginWidget('ActiveForm', array(
-            'action'=>array('/board/pay/ticket'),
-            'method'=>'get',
-            'id'=>'ticket-form',
-            'htmlOptions'=>array(),
-          )); ?>
-          <?php echo Html::formGroup(
-            $model, 'competition_id', array(),
-            $form->dropDownList($model, 'competition_id', Competition::getRegistrationCompetitions(), array(
-              'prompt'=>'',
-            ))
-          ); ?>
-          <?php $this->endWidget(); ?>
-
+          <?php echo CHtml::link('导出CSV', array('/board/pay/exportTicket', 'UserTicket'=>$_GET['UserTicket'] ?? []), array('class'=>'btn btn-square btn-large btn-green', 'style'=>'margin-bottom:10px;')); ?>
           <?php
           $dataProvider = $model->search();
           $criteria = $dataProvider->getCriteria();
@@ -32,12 +19,12 @@
           }
           $sum = function($criteria, $status) {
             $c = clone $criteria;
-            $c->select = 'SUM(t.paid_amount) AS paid_amount';
+            $c->select = 'SUM(case when t.status = ' . UserTicket::STATUS_PAID . ' then t.paid_amount else 0 end) AS paid_amount';
             $c->limit = -1;
             $c->offset = -1;
             $c->compare('t.status', $status);
             $model = UserTicket::model()->find($c);
-            return $model && $model->paid_amount ? number_format($model->paid_amount / 100, 2, '.', '') : '0.00';
+            return $model && $model->paid_amount ? $model->paid_amount / 100 : 0;
           };
           $paidTotal = $sum($criteria, UserTicket::STATUS_PAID);
           $feeTotal = $paidTotal * 0.012;
@@ -46,17 +33,22 @@
           if ($competition !== null) {
             $summaryTitle .= '（' . $competition->name_zh . '）';
           }
+          $paidText = number_format($paidTotal, 2, '.', '');
+          $feeText = number_format($feeTotal, 2, '.', '');
+          $unpaidText = number_format($unpaidTotal, 2, '.', '');
+          $incomeText = number_format($paidTotal - $feeTotal, 2, '.', '');
+          $summaryText = "<pre>{$summaryTitle}：
+总收入：<span class=\"text-success\">+{$paidText}</span>
+手续费：<span class=\"text-danger\">-{$feeText}</span>
+未付款：<span class=\"text-warning\">+{$unpaidText}</span>
+实收入：<span class=\"text-success\">+{$incomeText}</span>
+</pre>";
           ?>
-          <pre><?php echo $summaryTitle; ?>：
-总收入：<span class="text-success">+<?php echo $paidTotal; ?></span>
-手续费：<span class="text-danger">-<?php echo $feeTotal; ?></span>
-未付款：<span class="text-warning">+<?php echo $unpaidTotal; ?></span>
-实收入：<span class="text-success">+<?php echo $paidTotal - $feeTotal; ?></span>
-</pre>
           <?php $this->widget('GridView', array(
             'dataProvider'=>$dataProvider,
             'filter'=>$model,
             'template'=>'{summary}{pager}{items}{pager}',
+            'summaryText'=>$summaryText,
             'columns'=>array(
               array(
                 'name'=>'id',
@@ -66,12 +58,13 @@
                 'name'=>'competition_id',
                 'header'=>'比赛',
                 'value'=>'$data->ticket && $data->ticket->competition ? $data->ticket->competition->name_zh : ""',
-                'filter'=>false,
+                'filter'=>Competition::getRegistrationCompetitions(),
               ),
               array(
                 'name'=>'ticket_name',
                 'header'=>'入场券',
                 'value'=>'$data->ticket ? $data->ticket->name_zh : ""',
+                // 如需按入场券名称搜索，可取消下面一行的注释
                 // 'filter'=>CHtml::activeTextField($model, "ticket_name", array("class"=>"form-control")),
               ),
               array(
@@ -103,10 +96,11 @@
               array(
                 'name'=>'status',
                 'header'=>'状态',
-                'value'=>'$data->isPaid() ? Yii::t("common","Paid") : Yii::t("common","Unpaid")',
+                'value'=>'$data->getStatusText()',
                 'filter'=>array(
                   UserTicket::STATUS_UNPAID=>Yii::t("common","Unpaid"),
                   UserTicket::STATUS_PAID=>Yii::t("common","Paid"),
+                  UserTicket::STATUS_CANCELLED=>Yii::t("common","Cancelled"),
                 ),
               ),
             ),
@@ -116,12 +110,3 @@
     </div>
   </div>
 </div>
-
-<?php
-Yii::app()->clientScript->registerScript('ticket-filter',
-<<<EOT
-  $(document).on('change', '#UserTicket_competition_id', function() {
-    $('#ticket-form').submit();
-  });
-EOT
-);
