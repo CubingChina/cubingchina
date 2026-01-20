@@ -389,6 +389,14 @@ class CompetitionController extends Controller {
 				Yii::app()->end();
 			}
 		}
+		// check for cancel
+		if (isset($_POST['cancel'])) {
+			$id = $this->iPost('id');
+			$userTicket = UserTicket::model()->findByPk($id);
+			if ($userTicket !== null && $userTicket->cancel()) {
+				$this->redirect($competition->getUrl('ticket'));
+			}
+		}
 		$model = new UserTicket();
 		$model->unsetAttributes();
 		$model->user_id = $this->user->id;

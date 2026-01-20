@@ -191,6 +191,10 @@ class CompetitionController extends AdminController {
 			if (isset($_POST['announce']) && $this->user->canAnnounce($model)) {
 				$model->announce();
 			}
+			if (isset($_POST['preNotice']) && $this->user->canPreNotice($model)) {
+				Yii::app()->mailer->sendCompetitionPreNotice($model);
+				Yii::app()->user->setFlash('success', '预公示邮件已发送');
+			}
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', '更新比赛信息成功');
 				$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
