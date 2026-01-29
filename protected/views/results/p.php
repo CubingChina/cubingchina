@@ -1,4 +1,4 @@
-<div class="col-lg-12 results-person" data-person-id="<?php echo $person->id; ?>">
+<div class="col-lg-12 results-person" data-person-id="<?php echo $person->wca_id; ?>">
   <h1 class="text-center"><?php echo $user && $user->id === Yii::app()->user->id ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
   <?php if ($user && $user->avatar): ?>
   <div class="text-center"><?php echo $user->avatar->img; ?></div>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('common', 'WCA ID'); ?>:</span>
-          <span class="info-value"><?php echo Persons::getWCAIconLinkByNameNId($person->name, $person->id); ?></span>
+          <span class="info-value"><?php echo Persons::getWCAIconLinkByNameNId($person->name, $person->wca_id); ?></span>
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <?php if ($person->gender && $person->gender !== 'o'): ?>
@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-4 col-sm-6 col-xs-12 mt-10">
           <span class="info-title"><?php echo Yii::t('Results', 'Career'); ?>:</span>
-          <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, ($lastCompetition->endMonth < $lastCompetition->month || $lastCompetition->endDay < $lastCompetition->day ? $lastCompetition->year + 1 : $lastCompetition->year), $lastCompetition->endMonth, $lastCompetition->endDay); ?></span>
+          <span class="info-value"><?php echo sprintf('%d.%02d.%02d - %d.%02d.%02d', $firstCompetition->year, $firstCompetition->month, $firstCompetition->day, $lastCompetition->end_year, $lastCompetition->end_month, $lastCompetition->end_day); ?></span>
         </div>
       </div>
     </div>
@@ -42,11 +42,11 @@
   ]), [
     '/summary/person',
     'year'=>$year,
-    'id'=>$person->id
+    'id'=>$person->wca_id
   ], [
     'class'=>'btn btn-lg btn-theme',
   ]); ?>
-  <h2><?php echo Yii::t('Results', 'Current Personal Records') . Persons::getBattleCheckBox($person->name, $person->id, 'span', array('class'=>'small')); ?></h2>
+  <h2><?php echo Yii::t('Results', 'Current Personal Records') . Persons::getBattleCheckBox($person->name, $person->wca_id, 'span', array('class'=>'small')); ?></h2>
   <?php
   $this->widget('GridView', array(
     'dataProvider'=>new CArrayDataProvider(array_values($personRanks), array(
@@ -59,33 +59,33 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->eventId), "#" . $data->event->id)',
+        'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->event_id), "#" . $data->event->id)',
       ),
       array(
         'name'=>Yii::t('statistics', 'NR'),
         'type'=>'raw',
-        'value'=>'$data->getRank("countryRank")',
+        'value'=>'$data->getRank("country_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>Yii::t('statistics', 'CR'),
         'type'=>'raw',
-        'value'=>'$data->getRank("continentRank")',
+        'value'=>'$data->getRank("continent_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>Yii::t('statistics', 'WR'),
         'type'=>'raw',
-        'value'=>'$data->getRank("worldRank")',
+        'value'=>'$data->getRank("world_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>Yii::t('common', 'Single'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Results::formatTime($data->best, $data->eventId), array(
+        'value'=>'CHtml::link(Results::formatTime($data->best, $data->event_id), array(
           "/results/rankings",
-          "event"=>$data->eventId,
-          "region"=>$data->person->countryId,
+          "event"=>$data->event_id,
+          "region"=>$data->person->country_id,
         ))',
         // 'headerHtmlOptions'=>array('class'=>'best'),
       ),
@@ -98,19 +98,19 @@
       array(
         'name'=>Yii::t('statistics', 'WR'),
         'type'=>'raw',
-        'value'=>'$data->average("worldRank")',
+        'value'=>'$data->average("world_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>Yii::t('statistics', 'CR'),
         'type'=>'raw',
-        'value'=>'$data->average("continentRank")',
+        'value'=>'$data->average("continent_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
         'name'=>Yii::t('statistics', 'NR'),
         'type'=>'raw',
-        'value'=>'$data->average("countryRank")',
+        'value'=>'$data->average("country_rank")',
         'headerHtmlOptions'=>array('class'=>'record'),
       ),
       array(
@@ -148,11 +148,11 @@
       array(
         'name'=>Yii::t('statistics', 'Sum of NR'),
         'type'=>'raw',
-        'value'=>'CHtml::link($data->countryRank, array(
+        'value'=>'CHtml::link($data->country_rank, array(
           "/results/statistics",
           "name"=>"sum-of-ranks",
           "type"=>$data->type,
-          "region"=>"' . $person->countryId . '",
+          "region"=>"' . $person->country_id . '",
         ))',
       ),
       array(
@@ -163,11 +163,11 @@
       array(
         'name'=>Yii::t('statistics', 'Sum of CR'),
         'type'=>'raw',
-        'value'=>'CHtml::link($data->continentRank, array(
+        'value'=>'CHtml::link($data->continent_rank, array(
           "/results/statistics",
           "name"=>"sum-of-ranks",
           "type"=>$data->type,
-          "region"=>"' . $person->country->continentId . '",
+          "region"=>"' . $person->country->continent_id . '",
         ))',
       ),
       array(
@@ -178,7 +178,7 @@
       array(
         'name'=>Yii::t('statistics', 'Sum of WR'),
         'type'=>'raw',
-        'value'=>'CHtml::link($data->worldRank, array(
+        'value'=>'CHtml::link($data->world_rank, array(
           "/results/statistics",
           "name"=>"sum-of-ranks",
           "type"=>$data->type,
@@ -209,7 +209,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'value'=>'Events::getFullEventNameWithIcon($data->event_id)',
       ),
       array(
         'name'=>Yii::t('Results', 'Place'),
@@ -323,11 +323,11 @@
               'sort'=>false,
             )),
             'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-            'groupKey'=>'eventId',
+            'groupKey'=>'event_id',
             'groupHeader'=>'CHtml::openTag("a", array(
-                "name"=>$data->eventId,
-              )) . "</a>" . Events::getFullEventNameWithIcon($data->eventId)',
-            'rankKey'=>'competitionId',
+                "name"=>$data->event_id,
+              )) . "</a>" . Events::getFullEventNameWithIcon($data->event_id)',
+            'rankKey'=>'competition_id',
             'repeatHeader'=>true,
             'columns'=>array(
               array(
@@ -340,7 +340,7 @@
               array(
                 'name'=>Yii::t('common', 'Round'),
                 'type'=>'raw',
-                'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+                'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
                 'headerHtmlOptions'=>array('class'=>'round'),
               ),
               array(
@@ -379,26 +379,26 @@
               'sort'=>false,
             )),
             'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-            'groupKey'=>'competitionId',
+            'groupKey'=>'competition_id',
             'groupHeader'=>'$data->competitionLink',
-            'rankKey'=>'eventId',
+            'rankKey'=>'event_id',
             'repeatHeader'=>true,
             'columns'=>array(
               array(
                 'class'=>'RankColumn',
                 'name'=>Yii::t('common', 'Event'),
                 'type'=>'raw',
-                'value'=>'$displayRank ? CHtml::link(Events::getFullEventNameWithIcon($data->eventId), array(
+                'value'=>'$displayRank ? CHtml::link(Events::getFullEventNameWithIcon($data->event_id), array(
                   "/results/c",
-                  "id"=>$data->competitionId,
+                  "id"=>$data->competition_id,
                   "type"=>"all",
-                  "#"=>$data->eventId,
+                  "#"=>$data->event_id,
                 )) : ""',
               ),
               array(
                 'name'=>Yii::t('common', 'Round'),
                 'type'=>'raw',
-                'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+                'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
                 'headerHtmlOptions'=>array('class'=>'round'),
               ),
               array(
@@ -442,8 +442,8 @@
           'sort'=>false,
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-        'groupKey'=>'eventId',
-        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'groupKey'=>'event_id',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->event_id)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -453,12 +453,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord == "WR" ? $data->getTime("best", false, true) : ""',
+            'value'=>'$data->regional_single_record == "WR" ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord == "WR" ? $data->getTime("average", false, true): ""',
+            'value'=>'$data->regional_average_record == "WR" ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -469,7 +469,7 @@
           array(
             'name'=>Yii::t('common', 'Round'),
             'type'=>'raw',
-            'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+            'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
             'headerHtmlOptions'=>array('class'=>'round'),
           ),
           array(
@@ -489,8 +489,8 @@
           'sort'=>false,
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-        'groupKey'=>'eventId',
-        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'groupKey'=>'event_id',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->event_id)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -500,12 +500,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'!in_array($data->regionalSingleRecord, array("WR", "NR", "")) ? $data->getTime("best", false, true) : ""',
+            'value'=>'!in_array($data->regional_single_record, array("WR", "NR", "")) ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'!in_array($data->regionalAverageRecord, array("WR", "NR", "")) ? $data->getTime("average", false, true): ""',
+            'value'=>'!in_array($data->regional_average_record, array("WR", "NR", "")) ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -516,7 +516,7 @@
           array(
             'name'=>Yii::t('common', 'Round'),
             'type'=>'raw',
-            'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+            'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
             'headerHtmlOptions'=>array('class'=>'round'),
           ),
           array(
@@ -536,8 +536,8 @@
           'sort'=>false,
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-        'groupKey'=>'eventId',
-        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'groupKey'=>'event_id',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->event_id)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -547,12 +547,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord == "NR" ? $data->getTime("best", false, true) : ""',
+            'value'=>'$data->regional_single_record == "NR" ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord == "NR" ? $data->getTime("average", false, true): ""',
+            'value'=>'$data->regional_average_record == "NR" ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -563,7 +563,7 @@
           array(
             'name'=>Yii::t('common', 'Round'),
             'type'=>'raw',
-            'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+            'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
             'headerHtmlOptions'=>array('class'=>'round'),
           ),
           array(
@@ -644,7 +644,7 @@
               array(
                 'name'=>Yii::t('Results', 'Person'),
                 'type'=>'raw',
-                'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+                'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
               ),
               array(
                 'name'=>'count',

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is the model class for table "Formats".
+ * This is the model class for table "formats".
  *
- * The followings are the available columns in table 'Formats':
+ * The followings are the available columns in table 'formats':
  * @property string $id
  * @property string $name
  */
@@ -58,7 +58,7 @@ class Formats extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Formats';
+		return 'formats';
 	}
 
 	/**
@@ -91,8 +91,8 @@ class Formats extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Formats', 'ID'),
-			'name' => Yii::t('Formats', 'Name'),
+			'id' => Yii::t('formats', 'ID'),
+			'name' => Yii::t('formats', 'Name'),
 		);
 	}
 
@@ -132,7 +132,7 @@ class Formats extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Formats the static model class
+	 * @return formats the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

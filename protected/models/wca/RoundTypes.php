@@ -7,13 +7,13 @@
  * @property string $id
  * @property integer $rank
  * @property string $name
- * @property string $cellName
+ * @property string $cell_name
  */
 class RoundTypes extends ActiveRecord {
 	private static $_allRoundTypes;
 	public static function getFullRoundName($round) {
 		if (self::$_allRoundTypes === null) {
-			self::$_allRoundTypes = CHtml::listData(self::model()->cache(86400 * 7)->findAll(), 'id', 'cellName');
+			self::$_allRoundTypes = CHtml::listData(self::model()->cache(86400 * 7)->findAll(), 'id', 'cell_name');
 		}
 		return isset(self::$_allRoundTypes[$round]) ? self::$_allRoundTypes[$round] : $round;
 	}
@@ -23,7 +23,7 @@ class RoundTypes extends ActiveRecord {
 			'condition'=>'`rank`<900',
 			'order'=>'`rank`',
 		));
-		$rounds = CHtml::listData($rounds, 'id', 'cellName');
+		$rounds = CHtml::listData($rounds, 'id', 'cell_name');
 		return $rounds;
 	}
 
@@ -31,7 +31,7 @@ class RoundTypes extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'RoundTypes';
+		return 'round_types';
 	}
 
 	/**
@@ -44,10 +44,10 @@ class RoundTypes extends ActiveRecord {
 			array('rank', 'numerical', 'integerOnly'=>true),
 			array('id', 'length', 'max'=>1),
 			array('name', 'length', 'max'=>50),
-			array('cellName', 'length', 'max'=>45),
+			array('cell_name', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rank, name, cellName', 'safe', 'on'=>'search'),
+			array('id, rank, name, cell_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,10 +66,10 @@ class RoundTypes extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('RoundTypes', 'ID'),
-			'rank' => Yii::t('RoundTypes', 'Rank'),
-			'name' => Yii::t('RoundTypes', 'Name'),
-			'cellName' => Yii::t('RoundTypes', 'Cell Name'),
+			'id' => Yii::t('round_types', 'ID'),
+			'rank' => Yii::t('round_types', 'Rank'),
+			'name' => Yii::t('round_types', 'Name'),
+			'cell_name' => Yii::t('round_types', 'Cell Name'),
 		);
 	}
 
@@ -93,7 +93,7 @@ class RoundTypes extends ActiveRecord {
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('rank',$this->rank);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('cellName',$this->cellName,true);
+		$criteria->compare('cell_name',$this->cell_name,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -111,7 +111,7 @@ class RoundTypes extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return RoundTypes the static model class
+	 * @return round_types the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

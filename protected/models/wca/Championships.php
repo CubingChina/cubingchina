@@ -11,7 +11,12 @@
 class Championships extends ActiveRecord {
 
 	public static function buildChampionshipPodiums($type) {
-		$championships = self::model()->with('competition')->findAllByAttributes([
+		$championships = self::model()->with([
+			'competition',
+			'iso2s',
+			'country',
+			'continent',
+		])->findAllByAttributes([
 			'championship_type'=>$type,
 		], [
 			'order'=>'competition.year DESC',
@@ -59,14 +64,14 @@ class Championships extends ActiveRecord {
 		$countryIds = CHtml::listData($countries, 'id', 'id');
 		$podiums = [];
 		$events = Events::getNormalEvents() + Events::getDeprecatedEvents();
-		foreach ($events as $eventId=>$eventName) {
+		foreach ($events as $event_id=>$eventName) {
 			$attributes = [
-				'competitionId'=>$this->competition_id,
-				'eventId'=>"$eventId",
-				'roundTypeId'=>['c', 'f'],
+				'competition_id'=>$this->competition_id,
+				'event_id'=>"$event_id",
+				'round_type_id'=>['c', 'f'],
 			];
 			if (!$isWorld) {
-				$attributes['personCountryId'] = $countryIds;
+				$attributes['person_country_id'] = $countryIds;
 			}
 			//top 10 is enough
 			$top10 = Results::model()->findAllByAttributes($attributes, [
@@ -92,7 +97,7 @@ class Championships extends ActiveRecord {
 				}
 				//the official pos might not be the regional podiums pos
 				$result->pos = $pos;
-				$podiums[$result->personId][] = $result;
+				$podiums[$result->person_id][] = $result;
 			}
 		}
 		return $podiums;
@@ -182,7 +187,7 @@ class Championships extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Championships the static model class
+	 * @return championships the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

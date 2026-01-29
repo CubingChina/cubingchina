@@ -11,7 +11,7 @@ class SumOfCountryRanks extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["countryId"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["country_id"], $data["iso2"])',
 				'type'=>'raw',
 			),
 			array(
@@ -23,26 +23,26 @@ class SumOfCountryRanks extends Statistics {
 		//计算未参赛的项目应该排第几
 		$penalty = self::getPenalties($statistic['type']);
 		$allPenalties = 0;
-		foreach ($eventIds as $key=>$eventId) {
-			if (!isset($ranks[$eventId])) {
+		foreach ($eventIds as $key=>$event_id) {
+			if (!isset($ranks[$event_id])) {
 				unset($eventIds[$key]);
 				continue;
 			}
-			$allPenalties += $penalty[$eventId];
+			$allPenalties += $penalty[$event_id];
 		}
 		//计算每个人的排名
 		$rankSum = array();
-		foreach ($eventIds as $eventId) {
-			foreach ($ranks[$eventId] as $countryId=>$row) {
-				if(!isset($rankSum[$countryId])) {
-					$rankSum[$countryId] = $row;
-					$rankSum[$countryId]['sum'] = $allPenalties;
+		foreach ($eventIds as $event_id) {
+			foreach ($ranks[$event_id] as $country_id=>$row) {
+				if(!isset($rankSum[$country_id])) {
+					$rankSum[$country_id] = $row;
+					$rankSum[$country_id]['sum'] = $allPenalties;
 				}
-				$rankSum[$countryId]['sum'] += $row['worldRank'] - $penalty[$eventId];
+				$rankSum[$country_id]['sum'] += $row['world_rank'] - $penalty[$event_id];
 			}
 			$columns[] = array(
-				'header'=>"Events::getEventIcon('$eventId')",
-				'name'=>$eventId,
+				'header'=>"Events::getEventIcon('$event_id')",
+				'name'=>$event_id,
 				'type'=>'raw',
 			);
 		}
@@ -54,15 +54,15 @@ class SumOfCountryRanks extends Statistics {
 			$page = ceil($count / self::$limit);
 		}
 		$rows = array();
-		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $countryId=>$row) {
-			foreach ($eventIds as $eventId) {
-				$row[$eventId] = isset($ranks[$eventId][$countryId])
-								 ? $ranks[$eventId][$countryId]['worldRank']
-								 : $penalty[$eventId];
-				if (isset($ranks[$eventId][$countryId]) && $ranks[$eventId][$countryId]['worldRank'] <= 10) {
-					$row[$eventId] = CHtml::tag('span', array('class'=>'top10'), $row[$eventId]);
-				} elseif (!isset($ranks[$eventId][$countryId])) {
-					$row[$eventId] = CHtml::tag('span', array('class'=>'penalty'), $row[$eventId]);
+		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $country_id=>$row) {
+			foreach ($eventIds as $event_id) {
+				$row[$event_id] = isset($ranks[$event_id][$country_id])
+								 ? $ranks[$event_id][$country_id]['world_rank']
+								 : $penalty[$event_id];
+				if (isset($ranks[$event_id][$country_id]) && $ranks[$event_id][$country_id]['world_rank'] <= 10) {
+					$row[$event_id] = CHtml::tag('span', array('class'=>'top10'), $row[$event_id]);
+				} elseif (!isset($ranks[$event_id][$country_id])) {
+					$row[$event_id] = CHtml::tag('span', array('class'=>'penalty'), $row[$event_id]);
 				}
 			}
 			$rows[] = $row;
@@ -80,12 +80,12 @@ class SumOfCountryRanks extends Statistics {
 			return self::$_ranks[$type];
 		}
 		$command = Yii::app()->wcaDb->createCommand()
-		->select('eventId, c.name AS countryId, min(worldRank) AS worldRank, c.iso2')
-		->from('Ranks' . ucfirst($type) . ' r')
-		->leftJoin('Persons p', 'r.personId=p.id')
-		->leftJoin('Countries c', 'p.countryId=c.id')
-		->where('p.subid=1')
-		->group('eventId, countryId');
+		->select('event_id, c.name AS country_id, min(world_rank) AS world_rank, c.iso2')
+		->from(sprintf('ranks_%s r', $type))
+		->leftJoin('persons p', 'r.person_id=p.wca_id')
+		->leftJoin('countries c', 'p.country_id=c.id')
+		->where('p.sub_id=1')
+		->group('event_id, country_id');
 		switch ($gender) {
 			case 'female':
 				$command->andWhere('p.gender="f"');
@@ -96,19 +96,19 @@ class SumOfCountryRanks extends Statistics {
 		}
 		$ranks = array();
 		foreach ($command->queryAll() as $row) {
-			$ranks[$row['eventId']][$row['countryId']] = $row;
+			$ranks[$row['event_id']][$row['country_id']] = $row;
 		}
 		return self::$_ranks[$type] = $ranks;
 	}
 
 	public static function getPenalties($type) {
 		$command = Yii::app()->wcaDb->createCommand()
-		->select('eventId, max(worldRank) AS worldRank')
-		->from('Ranks' . ucfirst($type) . ' r')
-		->group('eventId');
+		->select('event_id, max(world_rank) AS world_rank')
+		->from(sprintf('ranks_%s r', $type))
+		->group('event_id');
 		$penalty = array();
 		foreach ($command->queryAll() as $row) {
-			$penalty[$row['eventId']] = $row['worldRank'] + 1;
+			$penalty[$row['event_id']] = $row['world_rank'] + 1;
 		}
 		return $penalty;
 	}

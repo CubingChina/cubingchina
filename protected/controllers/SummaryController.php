@@ -48,7 +48,7 @@ class SummaryController extends Controller {
 		$year = $this->iGet('year');
 		$id = strtoupper($this->sGet('id'));
 		$summary = new Summary($year);
-		$person = Persons::model()->with('country')->findByAttributes(['id' => $id]);
+		$person = Persons::model()->with('country')->findByAttributes(['wca_id' => $id, 'sub_id'=>1]);
 		if ($person == null) {
 			throw new CHttpException(404);
 		}
@@ -57,8 +57,8 @@ class SummaryController extends Controller {
 		}
 		$personData = Yii::app()->cache->getData(['Persons', 'getResults'], $id);
 		$data = Yii::app()->cache->getData([$summary, 'person'], [$person, $personData, $year]);
-		$this->title = Yii::t('common', '{personName}\'s {year} Annual Summary', [
-			'{personName}'=>$person->name,
+		$this->title = Yii::t('common', '{person_name}\'s {year} Annual Summary', [
+			'{person_name}'=>$person->name,
 			'{year}'=>$year,
 		]);
 		$this->pageTitle = [$this->title];

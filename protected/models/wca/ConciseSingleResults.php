@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This is the model class for table "ConciseSingleResults".
+ * This is the model class for table "concise_single_results".
  *
- * The followings are the available columns in table 'ConciseSingleResults':
+ * The followings are the available columns in table 'concise_single_results':
  * @property string $id
  * @property integer $best
- * @property string $valueAndId
- * @property string $personId
- * @property string $eventId
- * @property string $countryId
- * @property string $continentId
+ * @property string $value_and_id
+ * @property string $person_id
+ * @property string $event_id
+ * @property string $country_id
+ * @property string $continent_id
  * @property integer $year
  * @property integer $month
  * @property integer $day
@@ -20,7 +20,7 @@ class ConciseSingleResults extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'ConciseSingleResults';
+		return 'concise_single_results';
 	}
 
 	/**
@@ -31,13 +31,13 @@ class ConciseSingleResults extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('best, year, month, day', 'numerical', 'integerOnly'=>true),
-			array('id, personId', 'length', 'max'=>10),
-			array('valueAndId', 'length', 'max'=>21),
-			array('eventId', 'length', 'max'=>6),
-			array('countryId, continentId', 'length', 'max'=>50),
+			array('id, person_id', 'length', 'max'=>10),
+			array('value_and_id', 'length', 'max'=>21),
+			array('event_id', 'length', 'max'=>6),
+			array('country_id, continent_id', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, best, valueAndId, personId, eventId, countryId, continentId, year, month, day', 'safe', 'on'=>'search'),
+			array('id, best, value_and_id, person_id, event_id, country_id, continent_id, year, month, day', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,16 +56,16 @@ class ConciseSingleResults extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('ConciseSingleResults', 'ID'),
-			'best' => Yii::t('ConciseSingleResults', 'Best'),
-			'valueAndId' => Yii::t('ConciseSingleResults', 'Value And'),
-			'personId' => Yii::t('ConciseSingleResults', 'Person'),
-			'eventId' => Yii::t('ConciseSingleResults', 'Event'),
-			'countryId' => Yii::t('ConciseSingleResults', 'Country'),
-			'continentId' => Yii::t('ConciseSingleResults', 'Continent'),
-			'year' => Yii::t('ConciseSingleResults', 'Year'),
-			'month' => Yii::t('ConciseSingleResults', 'Month'),
-			'day' => Yii::t('ConciseSingleResults', 'Day'),
+			'id' => Yii::t('concise_single_results', 'ID'),
+			'best' => Yii::t('concise_single_results', 'Best'),
+			'value_and_id' => Yii::t('concise_single_results', 'Value And'),
+			'person_id' => Yii::t('concise_single_results', 'Person'),
+			'event_id' => Yii::t('concise_single_results', 'Event'),
+			'country_id' => Yii::t('concise_single_results', 'Country'),
+			'continent_id' => Yii::t('concise_single_results', 'Continent'),
+			'year' => Yii::t('concise_single_results', 'Year'),
+			'month' => Yii::t('concise_single_results', 'Month'),
+			'day' => Yii::t('concise_single_results', 'Day'),
 		);
 	}
 
@@ -88,11 +88,11 @@ class ConciseSingleResults extends ActiveRecord {
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('best',$this->best);
-		$criteria->compare('valueAndId',$this->valueAndId,true);
-		$criteria->compare('personId',$this->personId,true);
-		$criteria->compare('eventId',$this->eventId,true);
-		$criteria->compare('countryId',$this->countryId,true);
-		$criteria->compare('continentId',$this->continentId,true);
+		$criteria->compare('value_and_id',$this->value_and_id,true);
+		$criteria->compare('person_id',$this->person_id,true);
+		$criteria->compare('event_id',$this->event_id,true);
+		$criteria->compare('country_id',$this->country_id,true);
+		$criteria->compare('continent_id',$this->continent_id,true);
 		$criteria->compare('year',$this->year);
 		$criteria->compare('month',$this->month);
 		$criteria->compare('day',$this->day);
@@ -113,7 +113,7 @@ class ConciseSingleResults extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ConciseSingleResults the static model class
+	 * @return concise_single_results the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

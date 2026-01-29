@@ -5,30 +5,30 @@ $this->widget('GroupGridView', [
     'sort'=>false,
   ]),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-  'groupKey'=>'eventId',
-  'groupHeader'=>'CHtml::link(Events::getFullEventNameWithIcon($data->eventId), [
+  'groupKey'=>'event_id',
+  'groupHeader'=>'CHtml::link(Events::getFullEventNameWithIcon($data->event_id), [
     "/results/c",
-    "id"=>$data->competitionId,
+    "id"=>$data->competition_id,
     "type"=>"all",
-    "#"=>$data->eventId,
+    "#"=>$data->event_id,
   ])',
   'columns'=>[
     [
       'name'=>Yii::t('Results', 'Person'),
       'type'=>'raw',
-      'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
+      'value'=>'Persons::getLinkByNameNId($data->person_name, $data->person_id)',
     ],
     [
       'name'=>Yii::t('common', 'Best'),
       'type'=>'raw',
-      'value'=>'$data->regionalSingleRecord != "" ? $data->getTime("best", false, true) : ""',
+      'value'=>'$data->regional_single_record != "" ? $data->getTime("best", false, true) : ""',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],
     [
       'name'=>Yii::t('common', 'Average'),
       'type'=>'raw',
-      'value'=>'$data->regionalAverageRecord != "" ? $data->getTime("average", false, true) : ""',
+      'value'=>'$data->regional_average_record != "" ? $data->getTime("average", false, true) : ""',
       'headerHtmlOptions'=>['class'=>'result'],
       'htmlOptions'=>['class'=>'result'],
     ],

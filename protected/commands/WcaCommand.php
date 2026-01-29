@@ -37,11 +37,11 @@ class WcaCommand extends CConsoleCommand {
 		$sql = "UPDATE `user` `u`
 				INNER JOIN `registration` `r` ON `u`.`id`=`r`.`user_id`
 				LEFT JOIN `competition` `c` ON `r`.`competition_id`=`c`.`id`
-				LEFT JOIN `wca_{$wcaDb}`.`Results` `rs`
-					ON `c`.`wca_competition_id`=`rs`.`competitionId`
-					AND `rs`.`personName`=CASE WHEN `u`.`name_zh`='' THEN `u`.`name` ELSE CONCAT(`u`.`name`, ' (', `u`.`name_zh`, ')') END
-				SET `u`.`wcaid`=`rs`.`personId`
-				WHERE `u`.`wcaid`='' AND `rs`.`personId` IS NOT NULL AND `r`.`status`=1 AND `r`.`competition_id`=%id%";
+				LEFT JOIN `wca_{$wcaDb}`.`results` `rs`
+					ON `c`.`wca_competition_id`=`rs`.`competition_id`
+					AND `rs`.`person_name`=CASE WHEN `u`.`name_zh`='' THEN `u`.`name` ELSE CONCAT(`u`.`name`, ' (', `u`.`name_zh`, ')') END
+				SET `u`.`wcaid`=`rs`.`person_id`
+				WHERE `u`.`wcaid`='' AND `rs`.`person_id` IS NOT NULL AND `r`.`status`=1 AND `r`.`competition_id`=%id%";
 		$db = Yii::app()->db;
 		$num = [];
 		foreach ($competitions as $competition) {
@@ -78,28 +78,28 @@ class WcaCommand extends CConsoleCommand {
 		Yii::getLogger()->autoDump = true;
 		Yii::getLogger()->autoFlush = 1;
 		$events = Events::getNormalEvents();
-		$persons = Persons::model()->with('country')->findAllByAttributes(['subid'=>1]);
-		RanksSum::model()->getDbConnection()->createCommand()->truncateTable('RanksSum');
+		$persons = Persons::model()->with('country')->findAllByAttributes(['sub_id'=>1]);
+		RanksSum::model()->getDbConnection()->createCommand()->truncateTable('ranks_sum');
 		foreach (['single', 'average'] as $type) {
 			$className = 'Ranks' . ucfirst($type);
 			foreach ($persons as $person) {
 				$ranks = $className::model()->findAllByAttributes([
-					'personId'=>$person->id,
+					'person_id'=>$person->wca_id,
 				]);
 				$sum = $this->getPenlties($type, $person->country);
 				foreach ($ranks as $rank) {
-					$sum['worldRank'][$rank->eventId] = $rank->worldRank;
-					if ($rank->continentRank > 0) {
-						$sum['continentRank'][$rank->eventId] = $rank->continentRank;
+					$sum['worldRank'][$rank->event_id] = $rank->world_rank;
+					if ($rank->continent_rank > 0) {
+						$sum['continentRank'][$rank->event_id] = $rank->continent_rank;
 					}
-					if ($rank->countryRank > 0) {
-						$sum['countryRank'][$rank->eventId] = $rank->countryRank;
+					if ($rank->country_rank > 0) {
+						$sum['countryRank'][$rank->event_id] = $rank->country_rank;
 					}
 				}
 				$ranksSum = new RanksSum();
-				$ranksSum->personId = $person->id;
-				$ranksSum->countryId = $person->countryId;
-				$ranksSum->continentId = $person->country->continentId;
+				$ranksSum->person_id = $person->wca_id;
+				$ranksSum->country_id = $person->country_id;
+				$ranksSum->continent_id = $person->country->continent_id;
 				$ranksSum->type = $type;
 				foreach ($sum as $key=>$value) {
 					$ranksSum->$key = array_sum($value);
@@ -115,7 +115,7 @@ class WcaCommand extends CConsoleCommand {
 		}
 		return $this->_panalties[$type][$country->id] = [
 			'worldRank'=>RanksPenalty::getPenlties($type, 'World'),
-			'continentRank'=>RanksPenalty::getPenlties($type, $country->continentId),
+			'continentRank'=>RanksPenalty::getPenlties($type, $country->continent_id),
 			'countryRank'=>RanksPenalty::getPenlties($type, $country->id),
 		];
 	}

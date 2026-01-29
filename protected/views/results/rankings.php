@@ -55,7 +55,7 @@
         'class'=>'battle-checkbox',
       ),
       'header'=>Yii::t('common', 'Battle'),
-      'value'=>'Persons::getBattleCheckBox($data["personName"], $data["personId"])',
+      'value'=>'Persons::getBattleCheckBox($data["person_name"], $data["person_id"])',
       'type'=>'raw',
     ),
     array(
@@ -65,18 +65,18 @@
     ),
     array(
       'header'=>Yii::t('statistics', 'Person'),
-      'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+      'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
       'type'=>'raw',
     ),
     array(
       'header'=>Yii::t('common', 'Region'),
-      'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+      'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
       'type'=>'raw',
       'htmlOptions'=>array('class'=>'region'),
     ),
     array(
       'header'=>Yii::t('common', 'Result'),
-      'value'=>'Results::formatTime($data["best"], $data["eventId"])',
+      'value'=>'Results::formatTime($data["best"], $data["event_id"])',
       'type'=>'raw',
     ),
     array(

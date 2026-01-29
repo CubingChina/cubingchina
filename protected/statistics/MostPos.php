@@ -9,9 +9,9 @@ class MostPos extends Statistics {
 			$events = Events::getNormalEvents();
 			$temp = $statistic;
 			$temp['type'] = 'all';
-			foreach ($events as $eventId=>$name) {
-				$temp['eventIds'] = ["$eventId"];
-				$statistics[$eventId] = self::build($temp);
+			foreach ($events as $event_id=>$name) {
+				$temp['eventIds'] = ["$event_id"];
+				$statistics[$event_id] = self::build($temp);
 			}
 			return self::makeStatisticsData($statistic, array(
 				'statistic'=>$statistics,
@@ -24,20 +24,20 @@ class MostPos extends Statistics {
 		$cmd1 = $db->createCommand()
 			->select([
 				'count(pos) AS count',
-				'personId',
-				'personCountryId',
+				'person_id',
+				'person_country_id',
 				'iso2',
-				'personName',
+				'person_name',
 			])
-			->from('Results rs')
-			->leftJoin('Countries country', 'rs.personCountryId=country.id')
-			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
+			->from('results rs')
+			->leftJoin('countries country', 'rs.person_country_id=country.id')
+			->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1')
 			->where('pos = :pos', [':pos'=>$statistic['pos']]);
 		if (!isset($statistic['includeDNF']) || $statistic['includeDNF'] == 0) {
 			$cmd1->andWhere('best > 0');
 		}
 		if (!empty($statistic['eventIds'])) {
-			$cmd1->andWhere(['in', 'eventId', $statistic['eventIds']]);
+			$cmd1->andWhere(['in', 'event_id', $statistic['eventIds']]);
 		}
 		if (isset($statistic['gender'])) {
 			switch ($statistic['gender']) {
@@ -51,12 +51,12 @@ class MostPos extends Statistics {
 		}
 		ActiveRecord::applyRegionCondition($cmd1, $statistic['region'] ?? 'China');
 		$cmd2 = clone $cmd1;
-		$cmd1->group('rs.personId')
-			->order('count DESC, personName ASC')
+		$cmd1->group('rs.person_id')
+			->order('count DESC, person_name ASC')
 			->limit(self::$limit)
 			->offset(($page - 1) * self::$limit);
 		$rows = $cmd1->queryAll();
-		$statistic['count'] = $cmd2->select('count(DISTINCT rs.personId) AS count')->queryScalar();
+		$statistic['count'] = $cmd2->select('count(DISTINCT rs.person_id) AS count')->queryScalar();
 		$statistic['rank'] = ($page - 1) * self::$limit;
 		$statistic['rankKey'] = 'count';
 		if ($page > 1 && $rows !== array() && $recursive) {
@@ -72,7 +72,7 @@ class MostPos extends Statistics {
 		$columns = [
 			[
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			],
 			[
@@ -84,15 +84,15 @@ class MostPos extends Statistics {
 		if (isset($statistic['region'])) {
 			$columns[] = [
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["personCountryId"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["person_country_id"], $data["iso2"])',
 				'type'=>'raw',
 			];
 		}
 		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 
-	private static function getDefaultRankType($eventId) {
-		if (in_array("$eventId", ['333bf', '444bf', '555bf', '333mbf'])) {
+	private static function getDefaultRankType($event_id) {
+		if (in_array("$event_id", ['333bf', '444bf', '555bf', '333mbf'])) {
 			return 'single';
 		}
 		return 'average';

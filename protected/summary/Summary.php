@@ -39,7 +39,7 @@ class Summary {
 	public function person($person, $data) {
 		//competitions, cities
 		$competitionCount = [];
-		$competitionIds = [];
+		$competition_ids = [];
 		$visitedRegionList = [];
 		$visitedCityList = [];
 		$firstCompetition = [];
@@ -59,35 +59,35 @@ class Summary {
 					$lastCompetition[$type] = $competition;
 				}
 				$firstCompetition[$type] = $competition;
-				$competitionIds[] = $competition->id;
+				$competition_ids[] = $competition->id;
 				$competitionCount[$type]++;
-				if ($competition->countryId[0] !== 'X' && !isset($tempRegion[$competition->id])) {
+				if ($competition->country_id[0] !== 'X' && !isset($tempRegion[$competition->id])) {
 					$tempRegion[$competition->id] = true;
-					if (!isset($visitedRegionList[$competition->countryId])) {
-						$visitedRegionList[$competition->countryId] = [
-							'name'=>$competition->countryId,
-							'name_zh'=>$competition->countryId,
+					if (!isset($visitedRegionList[$competition->country_id])) {
+						$visitedRegionList[$competition->country_id] = [
+							'name'=>$competition->country_id,
+							'name_zh'=>$competition->country_id,
 							'iso2'=>$competition->country->iso2,
 							'count'=>0,
 						];
 					}
-					$visitedRegionList[$competition->countryId]['count']++;
+					$visitedRegionList[$competition->country_id]['count']++;
 				}
-				if (in_array($competition->countryId, ['Hong Kong', 'Macau']) && !isset($tempCity[$competition->id])) {
+				if (in_array($competition->country_id, ['Hong Kong', 'Macau']) && !isset($tempCity[$competition->id])) {
 					$tempCity[$competition->id] = true;
-					if (!isset($visitedCityList[$competition->countryId])) {
-						$visitedCityList[$competition->countryId] = [
-							'name'=>$competition->countryId,
-							'name_zh'=>$competition->countryId,
+					if (!isset($visitedCityList[$competition->country_id])) {
+						$visitedCityList[$competition->country_id] = [
+							'name'=>$competition->country_id,
+							'name_zh'=>$competition->country_id,
 							'count'=>0,
 						];
 					}
-					$visitedCityList[$competition->countryId]['count']++;
+					$visitedCityList[$competition->country_id]['count']++;
 				}
-				if ($competition->countryId === 'Taiwan' && !isset($tempCity[$competition->id])) {
+				if ($competition->country_id === 'Taiwan' && !isset($tempCity[$competition->id])) {
 					$tempCity[$competition->id] = true;
 					foreach (self::TAIWAN_CITIES as $city) {
-						if (strpos($competition->cityName, $city) !== false) {
+						if (strpos($competition->city_name, $city) !== false) {
 							if (!isset($visitedCityList[$city])) {
 								$visitedCityList[$city] = [
 									'name'=>$city,
@@ -102,8 +102,8 @@ class Summary {
 				}
 			}
 		}
-		$competitionIds = array_unique($competitionIds);
-		$totalCompetitionCount = count($competitionIds);
+		$competition_ids = array_unique($competition_ids);
+		$totalCompetitionCount = count($competition_ids);
 		if (array_sum($competitionCount) == 0) {
 			return [
 				'totalCompetitionCount'=>$totalCompetitionCount,
@@ -118,10 +118,10 @@ class Summary {
 			$firstDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->month, $competition->day));
 		}
 		foreach ($lastCompetition as $type=>$competition) {
-			$lastDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->year, $competition->endMonth, $competition->endDay));
+			$lastDate[$type] = strtotime(sprintf('%d-%d-%d', $competition->end_year, $competition->end_month, $competition->end_day));
 		}
 		$chineseCompetitions = Competition::model()->findAllByAttributes([
-			'wca_competition_id'=>$competitionIds,
+			'wca_competition_id'=>$competition_ids,
 			'status'=>Competition::STATUS_SHOW,
 		]);
 		foreach ($chineseCompetitions as $competition) {
@@ -181,33 +181,33 @@ class Summary {
 				continue;
 			}
 			$rounds++;
-			$events[$result->eventId] = 1;
-			if (!isset($solves['events'][$result->eventId])) {
-				$solves['events'][$result->eventId] = $solvesTemplate;
-				$solves['events'][$result->eventId]['event'] = $result->eventId;
+			$events[$result->event_id] = 1;
+			if (!isset($solves['events'][$result->event_id])) {
+				$solves['events'][$result->event_id] = $solvesTemplate;
+				$solves['events'][$result->event_id]['event'] = $result->event_id;
 			}
-			for ($i = 1; $i <= 5; $i++) {
-				$value = $result['value' . $i];
+			foreach ($result->attempts as $attempt) {
+				$value = $attempt->value;
 				if ($value != 0 && $value != -2) {
 					$solves['total']['attempt']++;
-					$solves['events'][$result->eventId]['attempt']++;
+					$solves['events'][$result->event_id]['attempt']++;
 					if ($value > 0) {
 						$solves['total']['solve']++;
-						$solves['events'][$result->eventId]['solve']++;
+						$solves['events'][$result->event_id]['solve']++;
 					}
 				}
 			}
 			if ($result->best > 0) {
-				if ($result->pos <= 3 && in_array($result->roundTypeId, ['c', 'f'])) {
+				if ($result->pos <= 3 && in_array($result->round_type_id, ['c', 'f'])) {
 					$medals[$medalKeys[$result->pos - 1]]++;
-					if (!isset($medalList[$result->eventId])) {
-						$medalList[$result->eventId] = $medalsTemplate;
-						$medalList[$result->eventId]['event'] = $result->eventId;
+					if (!isset($medalList[$result->event_id])) {
+						$medalList[$result->event_id] = $medalsTemplate;
+						$medalList[$result->event_id]['event'] = $result->event_id;
 					}
-					$medalList[$result->eventId][$medalKeys[$result->pos - 1]]++;
+					$medalList[$result->event_id][$medalKeys[$result->pos - 1]]++;
 				}
 				$hasRecord = false;
-				foreach (['regionalSingleRecord', 'regionalAverageRecord'] as $attribute) {
+				foreach (['regional_single_record', 'regional_average_record'] as $attribute) {
 					$record = strtoupper($result->$attribute);
 					if ($record != '') {
 						$hasRecord = true;
@@ -273,24 +273,24 @@ class Summary {
 		$db = Yii::app()->wcaDb;
 		$allCubers = $db->createCommand()
 			->select(array(
-				'personId',
-				'personName',
-				'count(DISTINCT competitionId) AS count',
+				'person_id',
+				'person_name',
+				'count(DISTINCT competition_id) AS count',
 			))
-			->from('Results')
-			->where(array('in', 'competitionId', $competitionIds))
-			->group('personId')
+			->from('results')
+			->where(array('in', 'competition_id', $competition_ids))
+			->group('person_id')
 			->having('count>1')
-			->order('count ASC, personName DESC')
+			->order('count ASC, person_name DESC')
 			// ->limit(21)
 			->queryAll();
 		$cuberRegions = $db->createCommand()
-			->select('count(DISTINCT personCountryId)')
-			->from('Results')
-			->where(array('in', 'competitionId', $competitionIds))
+			->select('count(DISTINCT person_country_id)')
+			->from('results')
+			->where(array('in', 'competition_id', $competition_ids))
 			->queryScalar();
 		$closestCubers = array_values(array_filter(array_slice(array_reverse($allCubers), 0, 11), function($cuber) use($person) {
-			return $cuber['personId'] != $person->id && $cuber['count'] > 1;
+			return $cuber['person_id'] != $person->wca_id && $cuber['count'] > 1;
 		}));
 		$onlyOne = [];
 		foreach ($closestCubers as $cuber) {
@@ -322,10 +322,10 @@ class Summary {
 		ksort($seenCubers);
 		$allSeenCubers = $db->createCommand()
 			->select(array(
-				'count(DISTINCT personId) AS count',
+				'count(DISTINCT person_id) AS count',
 			))
-			->from('Results')
-			->where(array('in', 'competitionId', $competitionIds))
+			->from('results')
+			->where(array('in', 'competition_id', $competition_ids))
 			->queryScalar();
 		$sum = array_sum(array_map(function($data) {
 			return $data['competitors'];

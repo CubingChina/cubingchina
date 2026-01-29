@@ -47,8 +47,8 @@ class EditProfileForm extends CFormModel {
 		$user = Yii::app()->controller->user;
 		if ($user->wcaid === '' && $this->wcaid !== '') {
 			$person = Persons::model()->findByAttributes(array(
-				'id' => $this->wcaid,
-				'subid' => 1,
+				'wca_id' => $this->wcaid,
+				'sub_id' => 1,
 			));
 			$existUser = User::model()->findByAttributes(array(
 				'wcaid'=>$this->wcaid,

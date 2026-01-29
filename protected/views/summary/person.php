@@ -15,7 +15,7 @@
   <p>
     <?php echo Yii::t('summary', 'In the past year ({year}), {personName}{competed}{delegated}.', [
       '{year}'=>$year,
-      '{personName}'=>Persons::getLinkByNameNId($person->name, $person->id),
+      '{personName}'=>Persons::getLinkByNameNId($person->name, $person->wca_id),
       '{competed}'=>$competitionCount['competed'] > 0 ? Yii::t('summary', ' competed in {competitions} competition{cs} and {rounds} round{rs} across {events} event{es}, {date}', [
         '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $competitionCount['competed']),
         '{rounds}'=>CHtml::tag('span', ['class'=>'num'], $rounds),
@@ -62,8 +62,8 @@
           'sort'=>false,
         )),
         'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-        'groupKey'=>'eventId',
-        'groupHeader'=>'Events::getFullEventNameWithIcon($data->eventId)',
+        'groupKey'=>'event_id',
+        'groupHeader'=>'Events::getFullEventNameWithIcon($data->event_id)',
         'columns'=>array(
           array(
             'name'=>Yii::t('common', 'Event'),
@@ -73,12 +73,12 @@
           array(
             'name'=>Yii::t('common', 'Single'),
             'type'=>'raw',
-            'value'=>'$data->regionalSingleRecord != "" ? $data->getTime("best", false, true) : ""',
+            'value'=>'$data->regional_single_record != "" ? $data->getTime("best", false, true) : ""',
           ),
           array(
             'name'=>Yii::t('common', 'Average'),
             'type'=>'raw',
-            'value'=>'$data->regionalAverageRecord != "" ? $data->getTime("average", false, true): ""',
+            'value'=>'$data->regional_average_record != "" ? $data->getTime("average", false, true): ""',
           ),
           array(
             'name'=>Yii::t('Results', 'Competition'),
@@ -89,7 +89,7 @@
           array(
             'name'=>Yii::t('common', 'Round'),
             'type'=>'raw',
-            'value'=>'Yii::t("RoundTypes", $data->round->cellName)',
+            'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
             'headerHtmlOptions'=>array('class'=>'round'),
           ),
           array(
@@ -324,7 +324,7 @@
         '{moreThanOne}'=>CHtml::tag('span', ['class'=>'num'], $cubers - $onceCubers),
       ]),
       '{onlyOne}'=>$onlyOne === false ? '' : Yii::t('summary', ' {cuber} was the only one who accompanied the whole {competitions} competitions.', [
-        '{cuber}'=>Persons::getLinkByNameNId($onlyOne["personName"], $onlyOne["personId"]),
+        '{cuber}'=>Persons::getLinkByNameNId($onlyOne["person_name"], $onlyOne["person_id"]),
        '{competitions}'=>CHtml::tag('span', ['class'=>'num'], $totalCompetitionCount),
       ]),
     ]); ?>
@@ -344,7 +344,7 @@
           array(
             'name'=>Yii::t('Results', 'Person'),
             'type'=>'raw',
-            'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+            'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
           ),
           array(
             'name'=>'count',

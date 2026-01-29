@@ -240,14 +240,14 @@ class GroupCommand extends CConsoleCommand {
 				}
 				//fetch result
 				$results = $modelName::model()->findAllByAttributes(array(
-					'eventId'=>"$event",
-					'personId'=>array_keys($wcaidRegistrations),
+					'event_id'=>"$event",
+					'person_id'=>array_keys($wcaidRegistrations),
 				));
 				array_walk($registrations, function($registration) {
 					$registration->best = 0;
 				});
 				foreach ($results as $result) {
-					$wcaidRegistrations[$result->personId]->best = $result->best;
+					$wcaidRegistrations[$result->person_id]->best = $result->best;
 				}
 				//sort by best desc
 				uasort($registrations, function($rA, $rB) {

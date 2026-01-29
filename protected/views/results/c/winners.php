@@ -9,17 +9,17 @@ $this->widget('GridView', [
     [
       'name'=>Yii::t('common', 'Event'),
       'type'=>'raw',
-      'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->eventId), [
+      'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->event_id), [
         "/results/c",
-        "id"=>$data->competitionId,
+        "id"=>$data->competition_id,
         "type"=>"all",
-        "#"=>$data->eventId,
+        "#"=>$data->event_id,
       ])',
     ],
     [
       'name'=>Yii::t('Results', 'Person'),
       'type'=>'raw',
-      'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
+      'value'=>'Persons::getLinkByNameNId($data->person_name, $data->person_id)',
     ],
     [
       'name'=>Yii::t('common', 'Best'),

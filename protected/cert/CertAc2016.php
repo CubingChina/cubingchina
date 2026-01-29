@@ -23,16 +23,16 @@ class CertAc2016 extends ResultCert {
 			return [];
 		}
 		$results = Results::model()->with('event', 'round')->findAllByAttributes([
-			'competitionId'=>$this->competition->wca_competition_id,
-			'personId'=>$this->user->wcaid,
+			'competition_id'=>$this->competition->wca_competition_id,
+			'person_id'=>$this->user->wcaid,
 		], [
 			'order'=>'event.`rank`, round.`rank` DESC',
 		]);
 		$lastEvent = '';
 		$normalRound = $lastRound = 0;
 		foreach ($results as $result) {
-			if ($result->eventId != $lastEvent) {
-				$lastEvent = $result->eventId;
+			if ($result->event_id != $lastEvent) {
+				$lastEvent = $result->event_id;
 				$lastRound++;
 			} else {
 				$normalRound++;
@@ -64,8 +64,8 @@ class CertAc2016 extends ResultCert {
 		$temp = [];
 		$count = count($results);
 		foreach ($results as $i=>$result) {
-			if ($result->eventId != $lastEvent) {
-				$lastEvent = $result->eventId;
+			if ($result->event_id != $lastEvent) {
+				$lastEvent = $result->event_id;
 				$heights[] = 66;
 				$height += 66;
 			} else {
@@ -79,7 +79,7 @@ class CertAc2016 extends ResultCert {
 		while (array_pop($heights) != 66) {
 			$i--;
 		}
-		while ($results[$i]->eventId == $lastEvent) {
+		while ($results[$i]->event_id == $lastEvent) {
 			$i++;
 			$heights[] = 34;
 		}
@@ -102,8 +102,8 @@ class CertAc2016 extends ResultCert {
 
 	public function getRoundClass($result) {
 		static $lastEvent;
-		if ($result->eventId != $lastEvent) {
-			$lastEvent = $result->eventId;
+		if ($result->event_id != $lastEvent) {
+			$lastEvent = $result->event_id;
 		} else {
 			return 'normal-round';
 		}

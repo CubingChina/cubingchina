@@ -153,14 +153,14 @@ class ResultsController extends Controller {
 
 	public function actionP() {
 		$id = strtoupper($this->sGet('id'));
-		$person = Persons::model()->with('country')->findByAttributes(array('id' => $id));
+		$person = Persons::model()->with('country')->findByAttributes(array('wca_id' => $id, 'sub_id'=>1));
 		if ($person == null) {
 			$this->redirect(array('/results/person'));
 		}
 		$data = Yii::app()->cache->getData(array('Persons', 'getResults'), $id);
 		$data['person'] = $person;
 		$data['user'] = $user = User::model()->findByAttributes(array(
-			'wcaid'=>$person->id,
+			'wcaid'=>$person->wca_id,
 			'status'=>User::STATUS_NORMAL,
 		));
 		$data['organizedCompetitions'] = [];
@@ -234,7 +234,7 @@ class ResultsController extends Controller {
 		$persons = array();
 		$names = array();
 		foreach ($ids as $id) {
-			$person = Persons::model()->findByAttributes(array('id' => $id));
+			$person = Persons::model()->findByAttributes(array('wca_id' => $id, 'sub_id'=>1));
 			if ($person !== null) {
 				$persons[] = array(
 					'person'=>$person,
@@ -243,8 +243,8 @@ class ResultsController extends Controller {
 				$names[] = $person->name;
 			}
 		}
-		if (count($persons) === 1 && !Yii::app()->user->isGuest && $this->user->wcaid != '' && $persons[0]['person']->id !== $this->user->wcaid) {
-			$person = Persons::model()->findByAttributes(array('id' => $this->user->wcaid));
+		if (count($persons) === 1 && !Yii::app()->user->isGuest && $this->user->wcaid != '' && $persons[0]['person']->wca_id !== $this->user->wcaid) {
+			$person = Persons::model()->findByAttributes(array('wca_id' => $this->user->wcaid, 'sub_id'=>1));
 			if ($person !== null) {
 				$persons[] = array(
 					'person'=>$person,
@@ -258,7 +258,7 @@ class ResultsController extends Controller {
 				$this->redirect(array('/results/person'));
 				break;
 			case 1:
-				$this->redirect(array('/results/p', 'id'=>$persons[0]['person']->id));
+				$this->redirect(array('/results/p', 'id'=>$persons[0]['person']->wca_id));
 				break;
 		}
 		$persons = array_slice($persons, 0, 4);
@@ -276,7 +276,7 @@ class ResultsController extends Controller {
 
 	private function handlePKPersons($persons) {
 		//id
-		$eventIds = array();
+		$event_ids = array();
 		$winners = array();
 		$bestData = array(
 			'competitions'=>array(
@@ -305,27 +305,27 @@ class ResultsController extends Controller {
 				'type'=>'max',
 			),
 			'singleSumOfNR'=>array(
-				'expression'=>'$results["sumOfRanks"][0]->countryRank',
+				'expression'=>'$results["sumOfRanks"][0]->country_rank',
 				'type'=>'min',
 			),
 			'singleSumOfCR'=>array(
-				'expression'=>'$results["sumOfRanks"][0]->continentRank',
+				'expression'=>'$results["sumOfRanks"][0]->continent_rank',
 				'type'=>'min',
 			),
 			'singleSumOfWR'=>array(
-				'expression'=>'$results["sumOfRanks"][0]->worldRank',
+				'expression'=>'$results["sumOfRanks"][0]->world_rank',
 				'type'=>'min',
 			),
 			'averageSumOfNR'=>array(
-				'expression'=>'$results["sumOfRanks"][1]->countryRank',
+				'expression'=>'$results["sumOfRanks"][1]->country_rank',
 				'type'=>'min',
 			),
 			'averageSumOfCR'=>array(
-				'expression'=>'$results["sumOfRanks"][1]->continentRank',
+				'expression'=>'$results["sumOfRanks"][1]->continent_rank',
 				'type'=>'min',
 			),
 			'averageSumOfWR'=>array(
-				'expression'=>'$results["sumOfRanks"][1]->worldRank',
+				'expression'=>'$results["sumOfRanks"][1]->world_rank',
 				'type'=>'min',
 			),
 		);
@@ -335,10 +335,10 @@ class ResultsController extends Controller {
 		$countries = $continents = array();
 		foreach ($persons as $person) {
 			$id = $person['person']->id;
-			$countries[$person['person']->countryId] = $person['person']->countryId;
-			$continents[$person['person']->country->continentId] = $person['person']->country->continentId;
-			foreach ($person['results']['personRanks'] as $eventId=>$ranks) {
-				$eventIds[$eventId] = true;
+			$countries[$person['person']->country_id] = $person['person']->country_id;
+			$continents[$person['person']->country->continent_id] = $person['person']->country->continent_id;
+			foreach ($person['results']['personRanks'] as $event_id=>$ranks) {
+				$event_ids[$event_id] = true;
 			}
 			foreach ($bestData as $key=>$value) {
 				if ($this->evaluateExpression($value['expression'], $person) === $value['value']) {
@@ -346,17 +346,17 @@ class ResultsController extends Controller {
 				}
 			}
 		}
-		foreach ($eventIds as $eventId=>$value) {
-			$singleExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->best : -1";
-			$averageExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->best : -1";
+		foreach ($event_ids as $event_id=>$value) {
+			$singleExpression = "isset(\$results['personRanks']['{$event_id}']) ? \$results['personRanks']['{$event_id}']->best : -1";
+			$averageExpression = "isset(\$results['personRanks']['{$event_id}']) && \$results['personRanks']['{$event_id}']->average !== null ? \$results['personRanks']['{$event_id}']->average->best : -1";
 			//single devide average
-			$sdaExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->best / \$results['personRanks']['{$eventId}']->average->best : -1";
-			$singleNRExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->countryRank : -1";
-			$averageNRExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->countryRank : -1";
-			$singleCRExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->continentRank : -1";
-			$averageCRExpression = "isset(\$results['personRanks']['{$eventId}']) && \$results['personRanks']['{$eventId}']->average !== null ? \$results['personRanks']['{$eventId}']->average->continentRank : -1";
-			$medalsExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['gold'] * 1e8 + \$results['personRanks']['{$eventId}']->medals['silver'] * 1e4 + \$results['personRanks']['{$eventId}']->medals['bronze'] : 0";
-			$solvesExpression = "isset(\$results['personRanks']['{$eventId}']) ? \$results['personRanks']['{$eventId}']->medals['solve'] * 10000000 - \$results['personRanks']['{$eventId}']->medals['attempt'] : -1";
+			$sdaExpression = "isset(\$results['personRanks']['{$event_id}']) && \$results['personRanks']['{$event_id}']->average !== null ? \$results['personRanks']['{$event_id}']->best / \$results['personRanks']['{$event_id}']->average->best : -1";
+			$singleNRExpression = "isset(\$results['personRanks']['{$event_id}']) ? \$results['personRanks']['{$event_id}']->country_rank : -1";
+			$averageNRExpression = "isset(\$results['personRanks']['{$event_id}']) && \$results['personRanks']['{$event_id}']->average !== null ? \$results['personRanks']['{$event_id}']->average->country_rank : -1";
+			$singleCRExpression = "isset(\$results['personRanks']['{$event_id}']) ? \$results['personRanks']['{$event_id}']->continent_rank : -1";
+			$averageCRExpression = "isset(\$results['personRanks']['{$event_id}']) && \$results['personRanks']['{$event_id}']->average !== null ? \$results['personRanks']['{$event_id}']->average->continent_rank : -1";
+			$medalsExpression = "isset(\$results['personRanks']['{$event_id}']) ? \$results['personRanks']['{$event_id}']->medals['gold'] * 1e8 + \$results['personRanks']['{$event_id}']->medals['silver'] * 1e4 + \$results['personRanks']['{$event_id}']->medals['bronze'] : 0";
+			$solvesExpression = "isset(\$results['personRanks']['{$event_id}']) ? \$results['personRanks']['{$event_id}']->medals['solve'] * 10000000 - \$results['personRanks']['{$event_id}']->medals['attempt'] : -1";
 			$bestSingle = $this->getBestData($persons, $singleExpression);
 			$bestAverage = $this->getBestData($persons, $averageExpression);
 			$bestSDA = $this->getBestData($persons, $sdaExpression);
@@ -366,7 +366,7 @@ class ResultsController extends Controller {
 			$bestAverageCR = $this->getBestData($persons, $averageCRExpression);
 			$bestMedals = $this->getBestData($persons, $medalsExpression, 'max');
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
-			$eventIds[$eventId] &= $bestAverage > 0;
+			$event_ids[$event_id] &= $bestAverage > 0;
 			foreach ($persons as $person) {
 				$id = $person['person']->id;
 				$single = $this->evaluateExpression($singleExpression, $person);
@@ -378,37 +378,37 @@ class ResultsController extends Controller {
 				$averageCR = $this->evaluateExpression($averageCRExpression, $person);
 				$medals = $this->evaluateExpression($medalsExpression, $person);
 				$solves = $this->evaluateExpression($solvesExpression, $person, 'max');
-				if (isset($person['results']['personRanks'][$eventId])) {
-					$person['results']['personRanks'][$eventId]->medals['sda'] = $sda > 0 ? number_format($eventId === '333fm' ? $sda * 100 : $sda, 4) : '-';
+				if (isset($person['results']['personRanks'][$event_id])) {
+					$person['results']['personRanks'][$event_id]->medals['sda'] = $sda > 0 ? number_format($event_id === '333fm' ? $sda * 100 : $sda, 4) : '-';
 				}
 				if ($single === $bestSingle) {
-					$winners[$id][$eventId . 'Single'] = true;
-					$winners[$id][$eventId . 'SingleWR'] = true;
+					$winners[$id][$event_id . 'Single'] = true;
+					$winners[$id][$event_id . 'SingleWR'] = true;
 				}
 				if ($singleNR === $bestSingleNR) {
-					$winners[$id][$eventId . 'SingleNR'] = true;
+					$winners[$id][$event_id . 'SingleNR'] = true;
 				}
 				if ($singleCR === $bestSingleCR) {
-					$winners[$id][$eventId . 'SingleCR'] = true;
+					$winners[$id][$event_id . 'SingleCR'] = true;
 				}
 				if ($average === $bestAverage && $bestAverage > 0) {
-					$winners[$id][$eventId . 'Average'] = true;
-					$winners[$id][$eventId . 'AverageWR'] = true;
+					$winners[$id][$event_id . 'Average'] = true;
+					$winners[$id][$event_id . 'AverageWR'] = true;
 				}
 				if ($averageNR === $bestAverageNR && $bestAverage > 0) {
-					$winners[$id][$eventId . 'AverageNR'] = true;
+					$winners[$id][$event_id . 'AverageNR'] = true;
 				}
 				if ($averageCR === $bestAverageCR && $bestAverage > 0) {
-					$winners[$id][$eventId . 'AverageCR'] = true;
+					$winners[$id][$event_id . 'AverageCR'] = true;
 				}
 				if ($medals === $bestMedals) {
-					$winners[$id][$eventId . 'Medals'] = true;
+					$winners[$id][$event_id . 'Medals'] = true;
 				}
 				if ($solves === $bestSolves) {
-					$winners[$id][$eventId . 'Solves'] = true;
+					$winners[$id][$event_id . 'Solves'] = true;
 				}
 				if ($sda === $bestSDA && $sda > 0) {
-					$winners[$id][$eventId . 'SDA'] = true;
+					$winners[$id][$event_id . 'SDA'] = true;
 				}
 			}
 		}
@@ -418,30 +418,30 @@ class ResultsController extends Controller {
 			$id1 = $persons[0]['person']->id;
 			$id2 = $persons[1]['person']->id;
 			foreach ($persons[0]['results']['byEvent'] as $result) {
-				$person1Results[$result->competitionId][$result->eventId][$result->roundTypeId] = $result->pos;
+				$person1Results[$result->competition_id][$result->event_id][$result->round_type_id] = $result->pos;
 			}
 			foreach ($persons[1]['results']['byEvent'] as $result) {
-				$eventId = $result->eventId;
-				$roundTypeId = $result->roundTypeId;
-				if (isset($person1Results[$result->competitionId][$eventId][$roundTypeId])) {
-					$pos = $person1Results[$result->competitionId][$eventId][$roundTypeId];
-					if (!isset($rivalries[$eventId][$id1]['overAll'])) {
-						$rivalries[$eventId][$id1]['overAll'] = array(
+				$event_id = $result->event_id;
+				$round_type_id = $result->round_type_id;
+				if (isset($person1Results[$result->competition_id][$event_id][$round_type_id])) {
+					$pos = $person1Results[$result->competition_id][$event_id][$round_type_id];
+					if (!isset($rivalries[$event_id][$id1]['overAll'])) {
+						$rivalries[$event_id][$id1]['overAll'] = array(
 							'wins'=>0,
 							'loses'=>0,
 							'ties'=>0,
 						);
-						$rivalries[$eventId][$id1]['final'] = array(
+						$rivalries[$event_id][$id1]['final'] = array(
 							'wins'=>0,
 							'loses'=>0,
 							'ties'=>0,
 						);
-						$rivalries[$eventId][$id2]['overAll'] = array(
+						$rivalries[$event_id][$id2]['overAll'] = array(
 							'wins'=>0,
 							'loses'=>0,
 							'ties'=>0,
 						);
-						$rivalries[$eventId][$id2]['final'] = array(
+						$rivalries[$event_id][$id2]['final'] = array(
 							'wins'=>0,
 							'loses'=>0,
 							'ties'=>0,
@@ -458,11 +458,11 @@ class ResultsController extends Controller {
 						$key1 = $key2 = 'ties';
 					}
 					if ($key1 !== '') {
-						$rivalries[$eventId][$id1]['overAll'][$key1]++;
-						$rivalries[$eventId][$id2]['overAll'][$key2]++;
-						if (in_array($roundTypeId, array('c', 'f'))) {
-							$rivalries[$eventId][$id1]['final'][$key1]++;
-							$rivalries[$eventId][$id2]['final'][$key2]++;
+						$rivalries[$event_id][$id1]['overAll'][$key1]++;
+						$rivalries[$event_id][$id2]['overAll'][$key2]++;
+						if (in_array($round_type_id, array('c', 'f'))) {
+							$rivalries[$event_id][$id1]['final'][$key1]++;
+							$rivalries[$event_id][$id2]['final'][$key2]++;
 						}
 					}
 				}
@@ -470,7 +470,7 @@ class ResultsController extends Controller {
 		}
 		return array(
 			'persons'=>$persons,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'bestData'=>$bestData,
 			'winners'=>$winners,
 			'sameCountry'=>count($countries) === 1,
@@ -504,8 +504,8 @@ class ResultsController extends Controller {
 		return '';
 	}
 
-	protected function getRivalryWinnerCSSClass($person, $eventId, $rivalries, $type) {
-		$rivalry = $rivalries[$eventId][$person['person']->id][$type];
+	protected function getRivalryWinnerCSSClass($person, $event_id, $rivalries, $type) {
+		$rivalry = $rivalries[$event_id][$person['person']->id][$type];
 		if ($rivalry['wins'] >= $rivalry['loses'] && array_sum($rivalry) > 0) {
 			return ' class="winner"';
 		}
@@ -538,11 +538,11 @@ class ResultsController extends Controller {
 		return implode(' ', $result);
 	}
 
-	protected function getPersonRankValue($results, $eventId, $attribute) {
-		if (!isset($results['personRanks'][$eventId])) {
+	protected function getPersonRankValue($results, $event_id, $attribute) {
+		if (!isset($results['personRanks'][$event_id])) {
 			return '-';
 		}
-		$model = $results['personRanks'][$eventId];
+		$model = $results['personRanks'][$event_id];
 		$attribute = explode('.', $attribute);
 		if (isset($attribute[1])) {
 			$model = $model->{$attribute[0]};
@@ -555,7 +555,7 @@ class ResultsController extends Controller {
 		}
 		$value = isset($model[$attribute]) ? $model[$attribute] : '-';
 		if ($attribute === 'best') {
-			$value = Results::formatTime($value, "$eventId");
+			$value = Results::formatTime($value, "$event_id");
 		}
 		if ($attribute === 'solve') {
 			$value .= '/' . $model['attempt'];
@@ -661,7 +661,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'MostNumber',
 			'region'=>$region,
-			'group'=>'competitionId',
+			'group'=>'competition_id',
 			'gender'=>$gender,
 		);
 		if ($page < 1) {
@@ -707,7 +707,7 @@ class ResultsController extends Controller {
 			'region'=>$region,
 			'gender'=>$gender,
 			'year'=>$year,
-			'group'=>'personId',
+			'group'=>'person_id',
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -738,7 +738,7 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$type = $this->sGet('type', 'single');
 		$gender = $this->sGet('gender', 'all');
-		$eventIds = $this->aGet('event');
+		$event_ids = $this->aGet('event');
 		$region = $this->sGet('region', 'China');
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
@@ -749,14 +749,14 @@ class ResultsController extends Controller {
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
-		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
-			$eventIds = array();
+		if (array_intersect($event_ids, array_keys(Events::getNormalEvents())) === array()) {
+			$event_ids = array();
 		}
 		$statistic = array(
 			'class'=>'SumOfRanks',
 			'type'=>$type,
 			'region'=>$region,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'gender'=>$gender,
 		);
 		if ($page < 1) {
@@ -781,7 +781,7 @@ class ResultsController extends Controller {
 			'type'=>$type,
 			'region'=>$region,
 			'gender'=>$gender,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 		));
 	}
 
@@ -789,20 +789,20 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$type = $this->sGet('type', 'single');
 		$gender = $this->sGet('gender', 'all');
-		$eventIds = $this->aGet('event');
+		$event_ids = $this->aGet('event');
 		if (!in_array($type, Results::getRankingTypes())) {
 			$type = 'single';
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
-		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
-			$eventIds = array();
+		if (array_intersect($event_ids, array_keys(Events::getNormalEvents())) === array()) {
+			$event_ids = array();
 		}
 		$statistic = array(
 			'class'=>'SumOfCountryRanks',
 			'type'=>$type,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'gender'=>$gender,
 		);
 		if ($page < 1) {
@@ -826,20 +826,20 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'type'=>$type,
 			'gender'=>$gender,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 		));
 	}
 
 	private function statBestPodiums() {
 		$page = $this->iGet('page', 1);
-		$eventId = $this->sGet('event');
-		if (!in_array($eventId, array_keys(Events::getNormalEvents()))) {
-			$eventId = '333';
+		$event_id = $this->sGet('event');
+		if (!in_array($event_id, array_keys(Events::getNormalEvents()))) {
+			$event_id = '333';
 		}
 		$statistic = array(
 			'class'=>'BestPodiums',
 			'type'=>'single',
-			'eventId'=>$eventId,
+			'event_id'=>$event_id,
 		);
 		if ($page < 1) {
 			$page = 1;
@@ -860,7 +860,7 @@ class ResultsController extends Controller {
 			'statistic'=>$statistic,
 			'time'=>$time,
 			'page'=>$page,
-			'event'=>$eventId,
+			'event'=>$event_id,
 		));
 	}
 
@@ -894,7 +894,7 @@ class ResultsController extends Controller {
 
 	private function statBestMissers($name, $statistic) {
 		$page = $this->iGet('page', 1);
-		$eventId = $this->sGet('event');
+		$event_id = $this->sGet('event');
 		$region = $this->sGet('region', 'China');
 		$gender = $this->sGet('gender', 'all');
 		$type = $this->sGet('type', 'single');
@@ -907,13 +907,13 @@ class ResultsController extends Controller {
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
 		}
-		if (!in_array($eventId, array_keys(Events::getNormalEvents()))) {
-			$eventId = '333';
+		if (!in_array($event_id, array_keys(Events::getNormalEvents()))) {
+			$event_id = '333';
 		}
 		$statistic = array_merge($statistic, [
 			'class'=>'BestMisser',
 			'type'=>'single',
-			'eventId'=>$eventId,
+			'event_id'=>$event_id,
 			'region'=>$region,
 			'gender'=>$gender,
 		]);
@@ -941,7 +941,7 @@ class ResultsController extends Controller {
 			'statistic'=>$statistic,
 			'time'=>$time,
 			'page'=>$page,
-			'event'=>$eventId,
+			'event'=>$event_id,
 			'gender'=>$gender,
 			'region'=>$region,
 			'type'=>$type,
@@ -982,7 +982,7 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$gender = $this->sGet('gender', 'all');
 		$year = $this->iGet('year', null);
-		$eventIds = $this->aGet('event');
+		$event_ids = $this->aGet('event');
 		$region = $this->sGet('region', 'China');
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
@@ -993,13 +993,13 @@ class ResultsController extends Controller {
 		if (!array_key_exists($year, Competitions::getYears(false))) {
 			$year = null;
 		}
-		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
-			$eventIds = array();
+		if (array_intersect($event_ids, array_keys(Events::getNormalEvents())) === array()) {
+			$event_ids = array();
 		}
 		$statistic = array(
 			'class'=>'MostSolves',
 			'type'=>'all',
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'gender'=>$gender,
 			'year'=>$year,
 			'region'=>$region,
@@ -1025,7 +1025,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'gender'=>$gender,
 			'year'=>$year,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'region'=>$region,
 		));
 	}
@@ -1075,12 +1075,12 @@ class ResultsController extends Controller {
 
 	private function statMedalCollection() {
 		$page = $this->iGet('page', 1);
-		$eventIds = $this->aGet('event');
+		$event_ids = $this->aGet('event');
 		$region = $this->sGet('region', 'China');
 		$gender = $this->sGet('gender', 'all');
 		$year = $this->iGet('year', null);
-		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
-			$eventIds = array();
+		if (array_intersect($event_ids, array_keys(Events::getNormalEvents())) === array()) {
+			$event_ids = array();
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
@@ -1091,7 +1091,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'MedalCollection',
 			'type'=>'all',
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'region'=>$region,
 			'gender'=>$gender,
 			'year'=>$year,
@@ -1115,7 +1115,7 @@ class ResultsController extends Controller {
 			'statistic'=>$statistic,
 			'time'=>$time,
 			'page'=>$page,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'region'=>$region,
 			'gender'=>$gender,
 			'year'=>$year,
@@ -1126,7 +1126,7 @@ class ResultsController extends Controller {
 		$page = $this->iGet('page', 1);
 		$pos = $this->iGet('pos', 2);
 		$region = $this->sGet('region', 'China');
-		$eventIds = $this->aGet('event');
+		$event_ids = $this->aGet('event');
 		$gender = $this->sGet('gender', 'all');
 		$includeDNF = $this->iGet('includeDNF', 0);
 		if (!in_array($pos, MostPos::$positions)) {
@@ -1135,8 +1135,8 @@ class ResultsController extends Controller {
 		if (!Region::isValidRegion($region)) {
 			$region = 'China';
 		}
-		if (array_intersect($eventIds, array_keys(Events::getNormalEvents())) === array()) {
-			$eventIds = array();
+		if (array_intersect($event_ids, array_keys(Events::getNormalEvents())) === array()) {
+			$event_ids = array();
 		}
 		if (!array_key_exists($gender, Persons::getGenders())) {
 			$gender = 'all';
@@ -1147,7 +1147,7 @@ class ResultsController extends Controller {
 			'region'=>$region,
 			'pos'=>$pos,
 			'region'=>$region,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'gender'=>$gender,
 			'includeDNF'=>$includeDNF,
 		);
@@ -1172,7 +1172,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'pos'=>$pos,
 			'region'=>$region,
-			'eventIds'=>$eventIds,
+			'event_ids'=>$event_ids,
 			'gender'=>$gender,
 			'includeDNF'=>$includeDNF,
 		));

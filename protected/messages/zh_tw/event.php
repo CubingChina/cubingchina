@@ -37,7 +37,7 @@ return array (
   '3x3x3 Blindfolded' => '3x3x3盲解',
   '3x3x3 Fewest Moves' => '最少步數解',
   '3x3x3 Multi-Blind' => '3x3x3多顆盲解',
-  '3x3x3 Cube: Multi blind old style' => '舊制3x3x3多顆盲解',
+  '3x3x3 Multi-Blind Old Style' => '舊制3x3x3多顆盲解',
   '3x3x3 One-Handed' => '單手解',
   '3x3x3 With Feet' => '腳解',
   'Other'=>'其它',

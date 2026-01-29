@@ -746,10 +746,10 @@ class Competition extends ActiveRecord {
 
 	public function getUserUnmetEvents($user) {
 		$ranks = RanksSingle::model()->with('average')->findAllByAttributes([
-			'personId'=>$user->wcaid,
+			'person_id'=>$user->wcaid,
 		]);
 		foreach ($ranks as $rank) {
-			$temp[$rank->eventId] = $rank;
+			$temp[$rank->event_id] = $rank;
 		}
 		$unmetEvents = [];
 		foreach ($this->allEvents as $event) {
@@ -883,7 +883,7 @@ class Competition extends ActiveRecord {
 
 	public function getHasResults() {
 		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-				'competitionId'=>$this->wca_competition_id,
+				'competition_id'=>$this->wca_competition_id,
 			)) > 0;
 	}
 
@@ -910,8 +910,8 @@ class Competition extends ActiveRecord {
 
 	public function hasUserResults($wcaid) {
 		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-				'competitionId'=>$this->wca_competition_id,
-				'personId'=>$wcaid,
+				'competition_id'=>$this->wca_competition_id,
+				'person_id'=>$wcaid,
 			)) > 0;
 	}
 
@@ -2093,18 +2093,18 @@ class Competition extends ActiveRecord {
 		$regionalWinners = [];
 		foreach ($results as $result) {
 			$user = $result->user;
-			$countryId = $user->country_id;
+			$country_id = $user->country_id;
 			$date = $this->getRoundDate($event, $result->round);
-			if (!isset($dateRegionalWinners[$date][$countryId])) {
-				if (isset($regionalWinners[$countryId]) && $regionalWinners[$countryId]->$type < $result->$type) {
+			if (!isset($dateRegionalWinners[$date][$country_id])) {
+				if (isset($regionalWinners[$country_id]) && $regionalWinners[$country_id]->$type < $result->$type) {
 					continue;
 				}
-				$regionalWinners[$countryId] = $result;
-				$dateRegionalWinners[$date][$countryId][] = $result;
+				$regionalWinners[$country_id] = $result;
+				$dateRegionalWinners[$date][$country_id][] = $result;
 			} else {
-				$winner = $dateRegionalWinners[$date][$countryId][0];
+				$winner = $dateRegionalWinners[$date][$country_id][0];
 				if ($winner->$type === $result->$type) {
-					$dateRegionalWinners[$date][$countryId][] = $result;
+					$dateRegionalWinners[$date][$country_id][] = $result;
 				}
 			}
 		}
@@ -2116,7 +2116,7 @@ class Competition extends ActiveRecord {
 		$records = [];
 		$attribute = sprintf('regional_%s_record', $type == 'best' ? 'single' : 'average');
 		foreach ($dateRegionalWinners as $dateWinners) {
-			foreach ($dateWinners as $countryId=>$results) {
+			foreach ($dateWinners as $country_id=>$results) {
 				$result = $results[0];
 				$value = $result->$type;
 				$user = $result->user;
@@ -2472,16 +2472,16 @@ class Competition extends ActiveRecord {
 			return $data;
 		}
 		$events = CHtml::listData(Results::model()->findAllByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
+			'competition_id'=>$this->wca_competition_id,
 		), array(
-			'group'=>'eventId',
-			'select'=>'eventId,COUNT(1) AS average'
-		)), 'eventId', 'average');
+			'group'=>'event_id',
+			'select'=>'event_id,COUNT(1) AS average'
+		)), 'event_id', 'average');
 		if ($events === array()) {
 			return $data;
 		}
 		arsort($events);
-		$eventId = array_keys($events)[0];
+		$event_id = array_keys($events)[0];
 		$primaryEvents = array(
 			'333',
 			'777',
@@ -2498,26 +2498,26 @@ class Competition extends ActiveRecord {
 		);
 		foreach ($primaryEvents as $event) {
 			if (isset($this->associatedEvents[$event])) {
-				$eventId = $event;
+				$event_id = $event;
 				break;
 			}
 		}
 		$results = Results::model()->findAllByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
-			'roundTypeId'=>array(
+			'competition_id'=>$this->wca_competition_id,
+			'round_type_id'=>array(
 				'c',
 				'f',
 			),
-			'eventId'=>$eventId,
+			'event_id'=>$event_id,
 			'pos'=>array(1, 2, 3),
 		), array(
-			'order'=>'eventId, pos',
+			'order'=>'event_id, pos',
 		));
 		if (count($results) < 3) {
 			return $data;
 		}
 		$event = new stdClass();
-		$event->name = Events::getEventName($eventId);
+		$event->name = Events::getEventName($event_id);
 		$event->name_zh = Yii::t('event', $event->name);
 		$data['event'] = $event;
 		$winners = array('winner', 'runnerUp', 'secondRunnerUp');
@@ -2527,18 +2527,18 @@ class Competition extends ActiveRecord {
 		$data['records'] = array();
 		$data['records_zh'] = array();
 		$recordResults = Results::model()->with('event')->findAllByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
+			'competition_id'=>$this->wca_competition_id,
 		), array(
-			'condition'=>'regionalSingleRecord !="" OR regionalAverageRecord !=""',
+			'condition'=>'regional_single_record !="" OR regional_average_record !=""',
 			'order'=>'event.`rank` ASC, best ASC, average ASC',
 		));
 		$records = array();
 		foreach ($recordResults as $record) {
-			if ($record->regionalSingleRecord) {
-				$records[$record->regionalSingleRecord]['single'][] = $record;
+			if ($record->regional_single_record) {
+				$records[$record->regional_single_record]['single'][] = $record;
 			}
-			if ($record->regionalAverageRecord) {
-				$records[$record->regionalAverageRecord]['average'][] = $record;
+			if ($record->regional_average_record) {
+				$records[$record->regional_average_record]['average'][] = $record;
 			}
 		}
 		foreach ($records as $region=>$record) {
@@ -2613,12 +2613,12 @@ class Competition extends ActiveRecord {
 		$region = strtoupper($region);
 		foreach ($records as $record) {
 			if ($region !== 'NR') {
-				if (!isset($temp[$record->eventId])) {
-					$temp[$record->eventId] = $record;
+				if (!isset($temp[$record->event_id])) {
+					$temp[$record->event_id] = $record;
 				}
 			} else {
-				if (!isset($temp[$record->personCountryId][$record->eventId])) {
-					$temp[$record->personCountryId][$record->eventId] = $record;
+				if (!isset($temp[$record->person_country_id][$record->event_id])) {
+					$temp[$record->person_country_id][$record->event_id] = $record;
 				}
 			}
 		}
@@ -2641,14 +2641,14 @@ class Competition extends ActiveRecord {
 				break;
 		}
 		$temp = new stdClass();
-		$temp->name = $result->personName;
-		$temp->name_zh = preg_match('{\((.*?)\)}i', $result->personName, $matches) ? $matches[1] : $result->personName;
-		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->personId), array());
-		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->personId), array());
-		$temp->score = Results::formatTime($score, $result->eventId);
+		$temp->name = $result->person_name;
+		$temp->name_zh = preg_match('{\((.*?)\)}i', $result->person_name, $matches) ? $matches[1] : $result->person_name;
+		$temp->link = CHtml::link($temp->name, array('/results/p', 'id'=>$result->person_id), array());
+		$temp->link_zh = CHtml::link($temp->name_zh, array('/results/p', 'id'=>$result->person_id), array());
+		$temp->score = Results::formatTime($score, $result->event_id);
 		$temp->score_zh = $temp->score;
 		if ($appendUnit && is_numeric($temp->score)) {
-			switch ($result->eventId) {
+			switch ($result->event_id) {
 				case '333fm':
 					$unit = array(
 						'en'=>' turns',
@@ -2675,7 +2675,7 @@ class Competition extends ActiveRecord {
 		);
 		foreach ($records as $type=>$recs) {
 			foreach ($recs as $result) {
-				$eventName = Events::getEventName($result->eventId);
+				$eventName = Events::getEventName($result->event_id);
 				$temp = $this->makePerson($result, true, $type);
 				$enRec = sprintf('%s %s %s (%s)',
 					$temp->link,
@@ -2690,8 +2690,8 @@ class Competition extends ActiveRecord {
 					$temp->link_zh
 				);
 				if ($isNR) {
-					$rec['en'][$result->personCountryId][] = $enRec;
-					$rec['zh'][$result->personCountryId][] = $zhRec;
+					$rec['en'][$result->person_country_id][] = $enRec;
+					$rec['zh'][$result->person_country_id][] = $zhRec;
 				} else {
 					$rec['en'][] = $enRec;
 					$rec['zh'][] = $zhRec;

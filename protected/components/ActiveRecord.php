@@ -8,7 +8,7 @@ class ActiveRecord extends CActiveRecord {
 		return self::getModelAttributeValue($this, $name, $forceValue);
 	}
 
-	public static function applyRegionCondition($command, $region, $countryField = 'rs.personCountryId', $continentField = 'country.continentId') {
+	public static function applyRegionCondition($command, $region, $countryField = 'rs.person_country_id', $continentField = 'country.continent_id') {
 		switch ($region) {
 			case 'World':
 				break;
