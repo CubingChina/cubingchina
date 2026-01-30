@@ -37,7 +37,7 @@ class WcaCommand extends CConsoleCommand {
 		$sql = "UPDATE `user` `u`
 				INNER JOIN `registration` `r` ON `u`.`id`=`r`.`user_id`
 				LEFT JOIN `competition` `c` ON `r`.`competition_id`=`c`.`id`
-				LEFT JOIN `wca_{$wcaDb}`.`results` `rs`
+				LEFT JOIN `wca_v2_{$wcaDb}`.`results` `rs`
 					ON `c`.`wca_competition_id`=`rs`.`competition_id`
 					AND `rs`.`person_name`=CASE WHEN `u`.`name_zh`='' THEN `u`.`name` ELSE CONCAT(`u`.`name`, ' (', `u`.`name_zh`, ')') END
 				SET `u`.`wcaid`=`rs`.`person_id`
