@@ -1,5 +1,38 @@
 ALTER TABLE `results` ADD COLUMN `solve` tinyint(1) UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `results` ADD COLUMN `attempt` tinyint(1) UNSIGNED NOT NULL DEFAULT '0';
+
+-- PRIMARY KEYS
+ALTER TABLE `eligible_country_iso2s_for_championship` ADD PRIMARY KEY (`championship_type`, `eligible_country_iso2`);
+ALTER TABLE `persons` ADD PRIMARY KEY (`wca_id`, `sub_id`);
+ALTER TABLE `ranks_single` ADD PRIMARY KEY (`person_id`, `event_id`);
+ALTER TABLE `ranks_average` ADD PRIMARY KEY (`person_id`, `event_id`);
+ALTER TABLE `result_attempts` ADD PRIMARY KEY (`result_id`, `attempt_number`);
+
+-- INDEXES
+ALTER TABLE `results` ADD INDEX `competition_id` (`competition_id`);
+ALTER TABLE `results` ADD INDEX `event_id` (`event_id`);
+ALTER TABLE `results` ADD INDEX `person_id` (`person_id`) USING BTREE;
+ALTER TABLE `results` ADD INDEX `person_country_id` (`person_country_id`);
+ALTER TABLE `results` ADD INDEX `regional_single_record` (`regional_single_record`);
+ALTER TABLE `results` ADD INDEX `regional_average_record` (`regional_average_record`);
+ALTER TABLE `results` ADD INDEX `event_round_pos` (`event_id`,`round_type_id`,`pos`);
+ALTER TABLE `results` ADD INDEX `event_best_person` (`event_id`,`best`,`person_id`,`person_country_id`);
+ALTER TABLE `results` ADD INDEX `event_avg_person` (`event_id`,`average`,`person_id`,`person_country_id`);
+ALTER TABLE `results` ADD INDEX `event_country_avg_person` (`event_id`, `person_country_id`, `average`, `person_id`);
+ALTER TABLE `results` ADD INDEX `event_country_single_person` (`event_id`, `person_country_id`, `best`, `person_id`);
+ALTER TABLE `competitions` ADD INDEX `country_id` (`country_id`);
+ALTER TABLE `competitions` ADD INDEX `year_month_day` (`year`, `month`, `day`);
+ALTER TABLE `countries` ADD INDEX `continent_id` (`continent_id`);
+ALTER TABLE `persons` ADD INDEX `wca_id` (`wca_id`);
+ALTER TABLE `persons` ADD INDEX `country_id` (`country_id`);
+ALTER TABLE `persons` ADD INDEX `name` (`name`);
+ALTER TABLE `persons` ADD INDEX `gender` (`gender`);
+ALTER TABLE `ranks_average` ADD INDEX `event_id` (`event_id`);
+ALTER TABLE `ranks_single` ADD INDEX `event_id` (`event_id`);
+ALTER TABLE `championships` ADD INDEX `competition_id` (`competition_id`);
+ALTER TABLE `scrambles` ADD INDEX `competition_id` (`competition_id`);
+ALTER TABLE `ranks_penalty` ADD INDEX `type_event_country` (`type`, `event_id`, `country_id`);
+
 UPDATE `results` r
 LEFT JOIN (
   SELECT
@@ -258,34 +291,3 @@ INSERT INTO `best_results` (`type`, `event_id`, `best`, `person_id`, `gender`, `
   WHERE `rs`.`average`>0
   GROUP BY `rs`.`event_id`, `rs`.`person_id`, `rs`.`person_country_id`
 );
-
--- INDEXES
--- PRIMARY KEYS
-ALTER TABLE `eligible_country_iso2s_for_championship` ADD PRIMARY KEY (`championship_type`, `eligible_country_iso2`);
-ALTER TABLE `persons` ADD PRIMARY KEY (`wca_id`, `sub_id`);
-ALTER TABLE `ranks_single` ADD PRIMARY KEY (`person_id`, `event_id`);
-ALTER TABLE `ranks_average` ADD PRIMARY KEY (`person_id`, `event_id`);
-ALTER TABLE `result_attempts` ADD PRIMARY KEY (`result_id`, `attempt_number`);
--- INDEXES
-ALTER TABLE `results` ADD INDEX `competition_id` (`competition_id`);
-ALTER TABLE `results` ADD INDEX `event_id` (`event_id`);
-ALTER TABLE `results` ADD INDEX `person_id` (`person_id`) USING BTREE;
-ALTER TABLE `results` ADD INDEX `person_country_id` (`person_country_id`);
-ALTER TABLE `results` ADD INDEX `regional_single_record` (`regional_single_record`);
-ALTER TABLE `results` ADD INDEX `regional_average_record` (`regional_average_record`);
-ALTER TABLE `results` ADD INDEX `event_round_pos` (`event_id`,`round_type_id`,`pos`);
-ALTER TABLE `results` ADD INDEX `event_best_person` (`event_id`,`best`,`person_id`,`person_country_id`);
-ALTER TABLE `results` ADD INDEX `event_avg_person` (`event_id`,`average`,`person_id`,`person_country_id`);
-ALTER TABLE `results` ADD INDEX `idx_event_country_avg_person` (`event_id`, `person_country_id`, `average`, `person_id`);
-ALTER TABLE `results` ADD INDEX `idx_event_country_single_person` (`event_id`, `person_country_id`, `best`, `person_id`);
-ALTER TABLE `competitions` ADD INDEX `country_id` (`country_id`);
-ALTER TABLE `competitions` ADD INDEX `year_month_day` (`year`, `month`, `day`);
-ALTER TABLE `countries` ADD INDEX `continent_id` (`continent_id`);
-ALTER TABLE `persons` ADD INDEX `wca_id` (`wca_id`);
-ALTER TABLE `persons` ADD INDEX `country_id` (`country_id`);
-ALTER TABLE `persons` ADD INDEX `name` (`name`);
-ALTER TABLE `persons` ADD INDEX `gender` (`gender`);
-ALTER TABLE `ranks_average` ADD INDEX `event_id` (`event_id`);
-ALTER TABLE `ranks_single` ADD INDEX `event_id` (`event_id`);
-ALTER TABLE `championships` ADD INDEX `competition_id` (`competition_id`);
-ALTER TABLE `scrambles` ADD INDEX `competition_id` (`competition_id`);

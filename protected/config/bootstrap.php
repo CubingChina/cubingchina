@@ -8,6 +8,17 @@ define('PUBLIC_PATH', APP_PATH . '/public');
 define('ENV', isset($_SERVER['ENV']) ? $_SERVER['ENV'] : 'production');
 define('DEV', ENV === 'dev');
 
+// mysql connection params
+if (!defined('DB_HOST')) {
+	define('DB_HOST', 'localhost');
+}
+if (!defined('DB_USER')) {
+	define('DB_USER', 'cubingchina');
+}
+if (!defined('DB_PASSWORD')) {
+	define('DB_PASSWORD', '');
+}
+
 if (is_file($autoload = BASE_PATH . '/vendor/autoload.php')) {
 	require $autoload;
 }

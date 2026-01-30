@@ -123,7 +123,9 @@ class Results extends ActiveRecord {
 				foreach ($command->queryAll() as $row) {
 					$row['type'] = $type;
 					$row = Statistics::getCompetition($row);
-					$rows[$row['person_id']] = $row;
+					if (!isset($rows[$row['person_id']])) {
+						$rows[$row['person_id']] = $row;
+					}
 				}
 				$rows = array_values($rows);
 			}
@@ -187,7 +189,7 @@ class Results extends ActiveRecord {
 	public static function getHistoryRecords($region = 'China', $event = '333') {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
-			'rs.id',
+
 			'rs.event_id',
 			'rs.best',
 			'rs.average',
