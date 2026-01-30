@@ -596,26 +596,26 @@ class RegistrationController extends AdminController {
 			$wcaIds[] = $registration->user->wcaid;
 		}
 		$wcaIds = array_values(array_unique(array_filter($wcaIds)));
-		$eventIds = array_keys($competition->associatedEvents);
+		$event_ids = array_keys($competition->associatedEvents);
 		$singleWR100s = RanksSingle::model()->findAllByAttributes([
-			'eventId'=>$eventIds,
-			'personId'=>$wcaIds,
+			'event_id'=>$event_ids,
+			'person_id'=>$wcaIds,
 		], [
-			'condition'=>'worldRank <= 100',
+			'condition'=>'world_rank <= 100',
 		]);
 		$singleWR100Map = [];
 		foreach ($singleWR100s as $singleWR100) {
-			$singleWR100Map[$singleWR100->personId][$singleWR100->eventId] = true;
+			$singleWR100Map[$singleWR100->person_id][$singleWR100->event_id] = true;
 		}
 		$averageWR100s = RanksAverage::model()->findAllByAttributes([
-			'eventId'=>$eventIds,
-			'personId'=>$wcaIds,
+			'event_id'=>$event_ids,
+			'person_id'=>$wcaIds,
 		], [
-			'condition'=>'worldRank <= 100',
+			'condition'=>'world_rank <= 100',
 		]);
 		$averageWR100Map = [];
 		foreach ($averageWR100s as $averageWR100) {
-			$averageWR100Map[$averageWR100->personId][$averageWR100->eventId] = true;
+			$averageWR100Map[$averageWR100->person_id][$averageWR100->event_id] = true;
 		}
 		$groupSchedules = GroupSchedule::model()->findAllByAttributes([
 			'competition_id'=>$competition->id,

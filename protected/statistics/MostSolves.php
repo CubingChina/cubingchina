@@ -8,25 +8,25 @@ class MostSolves extends Statistics {
 		->select(array(
 			'sum(solve) AS solve',
 			'sum(attempt) AS attempt',
-			'competitionId',
-			'personId',
-			'personName',
-			'cellName',
-			'cityName',
-			'p.countryId',
+			'competition_id',
+			'person_id',
+			'person_name',
+			'cell_name',
+			'city_name',
+			'p.country_id',
 			'country.iso2',
 		))
-		->from('Results rs')
-		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-		->leftJoin('Countries country', 'p.countryId=country.id')
-		->leftJoin('Competitions c', 'rs.competitionId=c.id');
+		->from('results rs')
+		->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1')
+		->leftJoin('countries country', 'p.country_id=country.id')
+		->leftJoin('competitions c', 'rs.competition_id=c.id');
 		if (isset($statistic['region'])) {
-			ActiveRecord::applyRegionCondition($command, $statistic['region'], 'p.countryId');
+			ActiveRecord::applyRegionCondition($command, $statistic['region'], 'p.country_id');
 		} else {
-			$command->where('p.countryId="China"');
+			$command->where('p.country_id="China"');
 		}
 		if (!empty($statistic['eventIds'])) {
-			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
+			$command->andWhere(array('in', 'event_id', $statistic['eventIds']));
 		}
 		if (isset($statistic['gender'])) {
 			switch ($statistic['gender']) {
@@ -39,19 +39,19 @@ class MostSolves extends Statistics {
 			}
 		}
 		if (isset($statistic['year'])) {
-			$command->andWhere('competitionId LIKE :year', [
+			$command->andWhere('competition_id LIKE :year', [
 				':year'=>'%' . $statistic['year'],
 			]);
 		}
 		$cmd = clone $command;
-		$command->group('personId')
+		$command->group('person_id')
 		->order('solve DESC, attempt ASC')
 		->limit($limit)
 		->offset(($page - 1) * $limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			),
 			array(
@@ -62,7 +62,7 @@ class MostSolves extends Statistics {
 		if (isset($statistic['region'])) {
 			$columns[] = array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["countryId"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["country_id"], $data["iso2"])',
 				'type'=>'raw',
 			);
 		}
@@ -73,17 +73,17 @@ class MostSolves extends Statistics {
 					'value'=>'CHtml::link(ActiveRecord::getModelAttributeValue($data, "name"), $data["url"])',
 					'type'=>'raw',
 				);
-				$rows = $command->where('c.countryId="China"')->group('competitionId')->queryAll();
+				$rows = $command->where('c.country_id="China"')->group('competition_id')->queryAll();
 				$rows = array_map(function($row) {
 					return self::getCompetition($row);
 				}, $rows);
 				return self::makeStatisticsData($statistic, $columns, $rows);
 			case 'person':
-				$rows = $command->group('competitionId, personId')->limit($limit + 50)->queryAll();
+				$rows = $command->group('competition_id, person_id')->limit($limit + 50)->queryAll();
 				$temp = array();
 				foreach ($rows as $row) {
-					if (!isset($temp[$row['personId']])) {
-						$temp[$row['personId']] = $row;
+					if (!isset($temp[$row['person_id']])) {
+						$temp[$row['person_id']] = $row;
 					}
 					if (count($temp) == $limit) {
 						break;
@@ -104,7 +104,7 @@ class MostSolves extends Statistics {
 					$row['rank'] = $row['solve'] . '_' . $row['attempt'];
 					$rows[] = $row;
 				}
-				$statistic['count'] = $cmd->select('count(DISTINCT personId) AS count')->queryScalar();
+				$statistic['count'] = $cmd->select('count(DISTINCT person_id) AS count')->queryScalar();
 				$statistic['rank'] = ($page - 1) * $limit;
 				$statistic['rankKey'] = 'rank';
 				if ($page > 1 && $rows !== array() && $recursive) {

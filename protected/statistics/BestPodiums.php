@@ -8,9 +8,9 @@ class BestPodiums extends Statistics {
 			$eventIds = array_keys(Events::getNormalEvents());
 			$temp = $statistic;
 			$temp['type'] = 'single';
-			foreach ($eventIds as $eventId) {
-				$temp['eventId'] = $eventId;
-				$bestPodiums[$eventId] = self::build($temp);
+			foreach ($eventIds as $event_id) {
+				$temp['event_id'] = $event_id;
+				$bestPodiums[$event_id] = self::build($temp);
 			}
 			return self::makeStatisticsData($statistic, array(
 				'statistic'=>$bestPodiums,
@@ -19,31 +19,31 @@ class BestPodiums extends Statistics {
 				'selectKey'=>'event',
 			));
 		}
-		$eventId = $statistic['eventId'];
-		$type = self::getType($eventId);
+		$event_id = $statistic['event_id'];
+		$type = self::getType($event_id);
 		$command = Yii::app()->wcaDb->createCommand();
 		$command->select(array(
-			'r.competitionId',
-			'r.eventId',
-			'r.roundTypeId',
-			self::getSelectSum($eventId, $type),
-			'c.cellName',
-			'c.cityName',
+			'r.competition_id',
+			'r.event_id',
+			'r.round_type_id',
+			self::getSelectSum($event_id, $type),
+			'c.cell_name',
+			'c.city_name',
 			'c.year',
 			'c.month',
 			'c.day',
 		))
-		->from('Results r')
-		->leftJoin('Competitions c', 'r.competitionId=c.id')
-		->where('r.eventId=:eventId', array(
-			':eventId'=>$eventId,
+		->from('results r')
+		->leftJoin('competitions c', 'r.competition_id=c.id')
+		->where('r.event_id=:event_id', array(
+			':event_id'=>$event_id,
 		))
-		->andWhere('r.roundTypeId IN ("c", "f")')
+		->andWhere('r.round_type_id IN ("c", "f")')
 		->andWhere('r.pos IN (1,2,3)')
-		->andWhere('c.countryId="China"')
+		->andWhere('c.country_id="China"')
 		->andWhere("r.{$type} > 0");
 		$cmd = clone $command;
-		$command->group('r.competitionId')
+		$command->group('r.competition_id')
 		->order('sum ASC')
 		->having('count(DISTINCT pos)<=3 AND count(pos)>=3')
 		->limit(self::$limit)
@@ -106,14 +106,14 @@ class BestPodiums extends Statistics {
 			$row['date'] = sprintf("%d-%02d-%02d", $row['year'], $row['month'], $row['day']);
 			$rows[] = $row;
 		}
-		$statistic['count'] = $cmd->select('count(DISTINCT r.competitionId) AS count')->queryScalar();
+		$statistic['count'] = $cmd->select('count(DISTINCT r.competition_id) AS count')->queryScalar();
 		$statistic['rank'] = ($page - 1) * self::$limit;
 		$statistic['rankKey'] = 'sum';
 		return self::makeStatisticsData($statistic, $columns, $rows);
 	}
 
-	private static function getSelectSum($eventId, $type) {
-		if ($eventId === '333fm') {
+	private static function getSelectSum($event_id, $type) {
+		if ($event_id === '333fm') {
 			$str = 'CASE WHEN c.year<2014 THEN best*100 ELSE (CASE WHEN average=0 THEN best*100 ELSE average END) END';
 		} else {
 			$str = $type;
@@ -122,7 +122,7 @@ class BestPodiums extends Statistics {
 	}
 
 	private static function formatAverage($row) {
-		switch ($row['eventId']) {
+		switch ($row['event_id']) {
 			case '333mbf':
 				return round(array_sum(array_map(function($row) {
 					$result = $row[0]['average'];
@@ -132,12 +132,12 @@ class BestPodiums extends Statistics {
 			case '333fm':
 				return round($row['sum'] / 300, 2);
 			default:
-				return Results::formatTime(round($row['sum'] / 3), $row['eventId']);
+				return Results::formatTime(round($row['sum'] / 3), $row['event_id']);
 		}
 	}
 
 	private static function formatSum($row) {
-		switch ($row['eventId']) {
+		switch ($row['event_id']) {
 			case '333mbf':
 				return array_sum(array_map(function($row) {
 					$result = $row[0]['average'];
@@ -147,39 +147,39 @@ class BestPodiums extends Statistics {
 			case '333fm':
 				return $row['sum'] / 100;
 			default:
-				return Results::formatTime($row['sum'], $row['eventId']);
+				return Results::formatTime($row['sum'], $row['event_id']);
 		}
 	}
 
 	private static function makePosValue($pos) {
 		return 'implode(" / ", array_map(function($row) {
-			return Persons::getLinkByNameNId($row["personName"], $row["personId"]);
+			return Persons::getLinkByNameNId($row["person_name"], $row["person_id"]);
 		}, $data["' . $pos . '"]))';
 	}
 
 	private static function makePosResultValue($pos) {
-		return sprintf('isset($data["%s"][0]) ? Results::formatTime($data["%s"][0]["average"], $data["eventId"]) : "-"', $pos, $pos);
+		return sprintf('isset($data["%s"][0]) ? Results::formatTime($data["%s"][0]["average"], $data["event_id"]) : "-"', $pos, $pos);
 	}
 
-	private static function getType($eventId) {
-		if (in_array("$eventId", array('333fm', '333bf', '444bf', '555bf', '333mbf'))) {
+	private static function getType($event_id) {
+		if (in_array("$event_id", array('333fm', '333bf', '444bf', '555bf', '333mbf'))) {
 			return 'best';
 		}
 		return 'average';
 	}
 
 	private static function setPodiumsResults(&$row, $type) {
-		if ($row['eventId'] === '333fm') {
+		if ($row['event_id'] === '333fm') {
 			$type = 'CASE WHEN year<2014 THEN best ELSE (CASE WHEN average=0 THEN best ELSE average END) END';
 		}
 		$results = Yii::app()->wcaDb->createCommand()
-		->select("personId, personName, {$type} AS average, pos")
-		->from('Results r')
-		->leftJoin('Competitions c', 'r.competitionId=c.id')
-		->where('competitionId=:competitionId AND eventId=:eventId AND roundTypeId=:roundTypeId AND pos IN (1,2,3)', array(
-			':competitionId'=>$row['competitionId'],
-			':eventId'=>$row['eventId'],
-			':roundTypeId'=>$row['roundTypeId'],
+		->select("person_id, person_name, {$type} AS average, pos")
+		->from('results r')
+		->leftJoin('competitions c', 'r.competition_id=c.id')
+		->where('competition_id=:competition_id AND event_id=:event_id AND round_type_id=:round_type_id AND pos IN (1,2,3)', array(
+			':competition_id'=>$row['competition_id'],
+			':event_id'=>$row['event_id'],
+			':round_type_id'=>$row['round_type_id'],
 		))
 		->queryAll();
 		$keys = array(

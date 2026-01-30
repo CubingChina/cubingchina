@@ -120,7 +120,7 @@ class Statistics {
 			[
 				'name'=>'Best podiums in Chinese competitions',
 				'class'=>'BestPodiums',
-				'eventId'=>'333',
+				'event_id'=>'333',
 				'type'=>'all',
 				'more'=>[
 					'/results/statistics',
@@ -130,13 +130,13 @@ class Statistics {
 			[
 				'name'=>'Records set by Chinese competitors',
 				'class'=>'RecordsSet',
-				'group'=>'personId',
+				'group'=>'person_id',
 				'width'=>6,
 			],
 			[
 				'name'=>'Records set in Chinese competitions',
 				'class'=>'RecordsSet',
-				'group'=>'competitionId',
+				'group'=>'competition_id',
 				'width'=>6,
 			],
 			[
@@ -148,7 +148,7 @@ class Statistics {
 			[
 				'name'=>'Most competitions by one person',
 				'class'=>'MostNumber',
-				'group'=>'personId',
+				'group'=>'person_id',
 				'width'=>6,
 				'more'=>[
 					'/results/statistics',
@@ -158,7 +158,7 @@ class Statistics {
 			[
 				'name'=>'Most persons in one competition',
 				'class'=>'MostNumber',
-				'group'=>'competitionId',
+				'group'=>'competition_id',
 				'width'=>6,
 				'more'=>[
 					'/results/statistics',
@@ -352,7 +352,7 @@ class Statistics {
 	}
 
 	public static function getCompetition($row) {
-		$cacheKey = 'results_competition_data_' . $row['competitionId'];
+		$cacheKey = 'results_competition_data_' . $row['competition_id'];
 		$cache = Yii::app()->cache;
 		if (self::$_competitions === array()) {
 			$competitions = Competition::model()->with('location', 'location.province', 'location.city')->cache(self::CACHE_EXPIRE)->findAllByAttributes([
@@ -371,14 +371,14 @@ class Statistics {
 				);
 			}
 		}
-		if (isset(self::$_competitions[$row['competitionId']])) {
-			$data = self::$_competitions[$row['competitionId']];
+		if (isset(self::$_competitions[$row['competition_id']])) {
+			$data = self::$_competitions[$row['competition_id']];
 		} elseif (($data = $cache->get($cacheKey)) === false) {
-			$data['name'] = $data['name_zh'] = $row['cellName'];
-			$data['city_name'] = $data['city_name_zh'] = $row['cityName'];
-			$data['url'] = array('/results/c', 'id'=>$row['competitionId']);
+			$data['name'] = $data['name_zh'] = $row['cell_name'];
+			$data['city_name'] = $data['city_name_zh'] = $row['city_name'];
+			$data['url'] = array('/results/c', 'id'=>$row['competition_id']);
 			$cache->set($cacheKey, $data, self::CACHE_EXPIRE);
-			self::$_competitions[$row['competitionId']] = $data;
+			self::$_competitions[$row['competition_id']] = $data;
 		}
 		return array_merge($row, $data);
 	}

@@ -3,13 +3,13 @@
 Yii::import('application.statistics.*');
 
 /**
- * This is the model class for table "Persons".
+ * This is the model class for table "persons".
  *
- * The followings are the available columns in table 'Persons':
- * @property string $id
- * @property integer $subid
+ * The followings are the available columns in table 'persons':
+ * @property string $wca_id
+ * @property integer $sub_id
  * @property string $name
- * @property string $countryId
+ * @property string $country_id
  * @property string $gender
  */
 class Persons extends ActiveRecord {
@@ -33,11 +33,11 @@ class Persons extends ActiveRecord {
 		->select(array(
 			'p.*',
 			'country.iso2',
-			'country.name AS countryName',
+			'country.name AS country_name',
 		))
-		->from('Persons p')
-		->leftJoin('Countries country', 'p.countryId=country.id')
-		->where('p.subid=1');
+		->from('persons p')
+		->leftJoin('countries country', 'p.country_id=country.id')
+		->where('p.sub_id=1');
 		switch ($gender) {
 			case 'female':
 				$command->andWhere('p.gender="f"');
@@ -46,7 +46,7 @@ class Persons extends ActiveRecord {
 				$command->andWhere('p.gender="m"');
 				break;
 		}
-		self::applyRegionCondition($command, $region, 'p.countryId');
+		self::applyRegionCondition($command, $region, 'p.country_id');
 		if ($name) {
 			$names = explode(' ', $name);
 			foreach ($names as $key=>$value) {
@@ -54,13 +54,13 @@ class Persons extends ActiveRecord {
 					continue;
 				}
 				$paramKey = ':name' . $key;
-				$command->andWhere("p.name LIKE {$paramKey} or p.id LIKE {$paramKey}", array(
+				$command->andWhere("p.name LIKE {$paramKey} or p.wca_id LIKE {$paramKey}", array(
 					$paramKey=>'%' . $value . '%',
 				));
 			}
 		}
 		$cmd1 = clone $command;
-		$count = $cmd1->select('COUNT(DISTINCT p.id) AS count')
+		$count = $cmd1->select('COUNT(DISTINCT p.wca_id) AS count')
 		->queryScalar();
 		if ($page > ceil($count / 100)) {
 			$page = ceil($count / 100);
@@ -84,8 +84,8 @@ class Persons extends ActiveRecord {
 
 	public static function getPersonNameById($id) {
 		$person = self::model()->findByAttributes(array(
-			'id'=>$id,
-			'subid'=>1,
+			'wca_id'=>$id,
+			'sub_id'=>1,
 		));
 		if ($person === null) {
 			return '';
@@ -95,8 +95,8 @@ class Persons extends ActiveRecord {
 
 	public static function getLinkById($id) {
 		$person = self::model()->findByAttributes(array(
-			'id'=>$id,
-			'subid'=>1,
+			'wca_id'=>$id,
+			'sub_id'=>1,
 		));
 		if ($person === null) {
 			return '';
@@ -133,17 +133,17 @@ class Persons extends ActiveRecord {
 				'together'=>true,
 			),
 		))->findAllByAttributes(array(
-			'personId'=>$id
+			'person_id'=>$id
 		), array(
 			'order'=>'event.`rank` ASC',
 		));
 		$personRanks = array();
 		foreach ($ranks as $rank) {
-			$personRanks[$rank->eventId] = $rank;
+			$personRanks[$rank->event_id] = $rank;
 		}
 		//sum of ranks
 		$sumOfRanks = RanksSum::model()->findAllByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
 			'order'=>'type DESC',
 		));
@@ -153,23 +153,23 @@ class Persons extends ActiveRecord {
 		//奖牌数量
 		$command = $db->createCommand();
 		$command->select(array(
-			'eventId',
-			'sum(CASE WHEN pos=1 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
-			'sum(CASE WHEN pos=2 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
-			'sum(CASE WHEN pos=3 AND roundTypeId IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
+			'event_id',
+			'sum(CASE WHEN pos=1 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
+			'sum(CASE WHEN pos=2 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
+			'sum(CASE WHEN pos=3 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
 			'sum(solve) AS solve',
 			'sum(attempt) AS attempt',
 		))
-		->from('Results')
-		->where('personId=:personId', array(
-			':personId'=>$id,
+		->from('results')
+		->where('person_id=:person_id', array(
+			':person_id'=>$id,
 		));
 		$command2 = clone $command;
 		$overAllMedals = $command->queryRow();
-		$command2->group('eventId');
+		$command2->group('event_id');
 		foreach ($command2->queryAll() as $row) {
-			if (isset($personRanks[$row['eventId']])) {
-				$personRanks[$row['eventId']]->medals = $row;
+			if (isset($personRanks[$row['event_id']])) {
+				$personRanks[$row['event_id']]->medals = $row;
 			}
 		}
 		//历史成绩
@@ -185,8 +185,9 @@ class Persons extends ActiveRecord {
 			'competition.country',
 			'round',
 			'event',
+			'attempts',
 		))->findAllByAttributes(array(
-			'personId'=>$id
+			'person_id'=>$id
 		), array(
 			'order'=>'event.`rank`, competition.year, competition.month, competition.day, round.`rank`'
 		));
@@ -202,11 +203,11 @@ class Persons extends ActiveRecord {
 		];
 		$personalBestResults = [];
 		foreach($results as $result) {
-			if ($eventId != $result->eventId) {
+			if ($eventId != $result->event_id) {
 				$personalBestResults[$year][$eventId]['best'] = $lastBest;
 				$personalBestResults[$year][$eventId]['average'] = $lastAverage;
 				//重置各值
-				$eventId = $result->eventId;
+				$eventId = $result->event_id;
 				$best = $average = PHP_INT_MAX;
 				$byEvent[$eventId] = array();
 				$year = 0;
@@ -229,32 +230,32 @@ class Persons extends ActiveRecord {
 			}
 			$key = $result->competition->year;
 			if ($result->newBest || $result->newAverage) {
-				if (!isset($personalBests['years'][$key][$result->eventId])) {
-					$personalBests['years'][$key][$result->eventId] = $pbTemplate;
+				if (!isset($personalBests['years'][$key][$result->event_id])) {
+					$personalBests['years'][$key][$result->event_id] = $pbTemplate;
 				}
-				if (!isset($personalBests['events'][$result->eventId])) {
-					$personalBests['events'][$result->eventId] = $pbTemplate;
+				if (!isset($personalBests['events'][$result->event_id])) {
+					$personalBests['events'][$result->event_id] = $pbTemplate;
 				}
 				if ($result->newBest) {
-					$personalBests['years'][$key][$result->eventId]['best']++;
-					$personalBests['years'][$key][$result->eventId]['total']++;
-					$personalBests['events'][$result->eventId]['best']++;
-					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['years'][$key][$result->event_id]['best']++;
+					$personalBests['years'][$key][$result->event_id]['total']++;
+					$personalBests['events'][$result->event_id]['best']++;
+					$personalBests['events'][$result->event_id]['total']++;
 					$personalBests['total']['best']++;
 					$personalBests['total']['total']++;
 				}
 				if ($result->newAverage) {
-					$personalBests['years'][$key][$result->eventId]['average']++;
-					$personalBests['years'][$key][$result->eventId]['total']++;
-					$personalBests['events'][$result->eventId]['average']++;
-					$personalBests['events'][$result->eventId]['total']++;
+					$personalBests['years'][$key][$result->event_id]['average']++;
+					$personalBests['years'][$key][$result->event_id]['total']++;
+					$personalBests['events'][$result->event_id]['average']++;
+					$personalBests['events'][$result->event_id]['total']++;
 					$personalBests['total']['average']++;
 					$personalBests['total']['total']++;
 				}
 			}
 			$byEvent[$eventId][] = $result;
-			$byCompetition[$result->competitionId][] = $result;
-			$competitions[$result->competitionId] = $result->competition;
+			$byCompetition[$result->competition_id][] = $result;
+			$competitions[$result->competition_id] = $result->competition;
 		}
 		$personalBestResults[$year][$eventId]['best'] = $lastBest;
 		$personalBestResults[$year][$eventId]['average'] = $lastAverage;
@@ -266,9 +267,9 @@ class Persons extends ActiveRecord {
 			'event',
 			'round',
 		))->findAllByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
-			'condition'=>'regionalSingleRecord="WR" OR regionalAverageRecord="WR"',
+			'condition'=>'regional_single_record="WR" OR regional_average_record="WR"',
 			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//CR们
@@ -277,9 +278,9 @@ class Persons extends ActiveRecord {
 			'event',
 			'round',
 		))->findAllByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
-			'condition'=>'regionalSingleRecord NOT IN ("WR", "NR", "") OR regionalAverageRecord NOT IN ("WR", "NR", "")',
+			'condition'=>'regional_single_record NOT IN ("WR", "NR", "") OR regional_average_record NOT IN ("WR", "NR", "")',
 			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//NR们
@@ -288,23 +289,23 @@ class Persons extends ActiveRecord {
 			'event',
 			'round',
 		))->findAllByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
-			'condition'=>'regionalSingleRecord="NR" OR regionalAverageRecord="NR"',
+			'condition'=>'regional_single_record="NR" OR regional_average_record="NR"',
 			'order'=>'event.`rank` ASC, competition.year DESC, competition.month DESC, competition.day DESC, round.`rank` DESC',
 		));
 		//
 		$firstCompetitionResult = Results::model()->with(array(
 			'competition',
 		))->findByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
 			'order'=>'competition.year ASC, competition.month ASC, competition.day ASC',
 		));
 		$lastCompetitionResult = Results::model()->with(array(
 			'competition',
 		))->findByAttributes(array(
-			'personId'=>$id,
+			'person_id'=>$id,
 		), array(
 			'order'=>'competition.year DESC, competition.month DESC, competition.day DESC',
 		));
@@ -313,19 +314,19 @@ class Persons extends ActiveRecord {
 			'silver'=>$overAllMedals['silver'],
 			'bronze'=>$overAllMedals['bronze'],
 			'WR'=>count(array_filter($historyWR, function($result) {
-				return $result->regionalSingleRecord == 'WR';
+				return $result->regional_single_record == 'WR';
 			})) + count(array_filter($historyWR, function($result) {
-				return $result->regionalAverageRecord == 'WR';
+				return $result->regional_average_record == 'WR';
 			})),
 			'CR'=>count(array_filter($historyCR, function($result) {
-				return !in_array($result->regionalSingleRecord, array('WR', 'NR', ''));
+				return !in_array($result->regional_single_record, array('WR', 'NR', ''));
 			})) + count(array_filter($historyCR, function($result) {
-				return !in_array($result->regionalAverageRecord, array('WR', 'NR', ''));
+				return !in_array($result->regional_average_record, array('WR', 'NR', ''));
 			})),
 			'NR'=>count(array_filter($historyNR, function($result) {
-				return $result->regionalSingleRecord == 'NR';
+				return $result->regional_single_record == 'NR';
 			})) + count(array_filter($historyNR, function($result) {
-				return $result->regionalAverageRecord == 'NR';
+				return $result->regional_average_record == 'NR';
 			})),
 		);
 		$competitionIds = array_keys($competitions);
@@ -345,11 +346,11 @@ class Persons extends ActiveRecord {
 		);
 		$mapData = array();
 		foreach ($competitions as $key=>$competition) {
-			$temp['longitude'] += $competition->longitude / 1e6;
-			$temp['latitude'] += $competition->latitude / 1e6;
+			$temp['longitude'] += $competition->latitude_microdegrees / 1e6;
+			$temp['latitude'] += $competition->latitude_microdegrees / 1e6;
 			$data = $competition->getExtraData();
-			$data['longitude'] = $competition->longitude / 1e6;
-			$data['latitude'] = $competition->latitude / 1e6;
+			$data['longitude'] = $competition->longitude_microdegrees / 1e6;
+			$data['latitude'] = $competition->latitude_microdegrees / 1e6;
 			$data['url'] = CHtml::normalizeUrl($data['url']);
 			$data['date'] = $competition->getDate();
 			$competition->number = $key + 1;
@@ -372,7 +373,7 @@ class Persons extends ActiveRecord {
 				$temp = $resultB->competition->day - $resultA->competition->day;
 			}
 			if ($temp == 0) {
-				$temp = strcmp($resultA->competitionId, $resultB->competitionId);
+				$temp = strcmp($resultA->competition_id, $resultB->competition_id);
 			}
 			if ($temp == 0) {
 				$temp = $resultA->event->rank - $resultB->event->rank;
@@ -388,19 +389,19 @@ class Persons extends ActiveRecord {
 		//closest cubers and seen cubers
 		$allCubers = $db->createCommand()
 		->select(array(
-			'personId',
-			'personName',
-			'count(DISTINCT competitionId) AS count',
+			'person_id',
+			'person_name',
+			'count(DISTINCT competition_id) AS count',
 		))
-		->from('Results')
-		->where(array('in', 'competitionId', $competitionIds))
-		->group('personId')
+		->from('results')
+		->where(array('in', 'competition_id', $competitionIds))
+		->group('person_id')
 		->having('count>1')
-		->order('count ASC, personName DESC')
+		->order('count ASC, person_name DESC')
 		// ->limit(21)
 		->queryAll();
 		$closestCubers = array_filter(array_slice(array_reverse($allCubers), 0, 21), function($cuber) use($id) {
-			return $cuber['personId'] != $id;
+			return $cuber['person_id'] != $id;
 		});
 		$seenCubers = [];
 		foreach ($allCubers as $cuber) {
@@ -419,10 +420,10 @@ class Persons extends ActiveRecord {
 		ksort($seenCubers);
 		$allSeenCubers = $db->createCommand()
 		->select(array(
-			'count(DISTINCT personId) AS count',
+			'count(DISTINCT person_id) AS count',
 		))
-		->from('Results')
-		->where(array('in', 'competitionId', $competitionIds))
+		->from('results')
+		->where(array('in', 'competition_id', $competitionIds))
 		->queryScalar();
 		$sum = array_sum(array_map(function($data) {
 			return $data['competitors'];
@@ -462,15 +463,15 @@ class Persons extends ActiveRecord {
 			}
 		}
 		foreach ($competitions as $competition) {
-			if (in_array($competition->countryId, ['Hong Kong', 'Taiwan', 'Macau'])) {
-				if (!isset($visitedProvinces[$competition->countryId])) {
-					$visitedProvinces[$competition->countryId] = [
-						'name'=>$competition->countryId,
-						'name_zh'=>$competition->countryId,
+			if (in_array($competition->country_id, ['Hong Kong', 'Taiwan', 'Macau'])) {
+				if (!isset($visitedProvinces[$competition->country_id])) {
+					$visitedProvinces[$competition->country_id] = [
+						'name'=>$competition->country_id,
+						'name_zh'=>$competition->country_id,
 						'count'=>0,
 					];
 				}
-				$visitedProvinces[$competition->countryId]['count']++;
+				$visitedProvinces[$competition->country_id]['count']++;
 			}
 		}
 		usort($visitedProvinces, function($dataA, $dataB) {
@@ -507,9 +508,9 @@ class Persons extends ActiveRecord {
 
 	public function getCompetitionNum() {
 		return Results::model()->countByAttributes(array(
-			'personId'=>$this->id,
+			'person_id'=>$this->wca_id,
 		), array(
-			'select'=>'COUNT(DISTINCT competitionId)',
+			'select'=>'COUNT(DISTINCT competition_id)',
 		));
 	}
 
@@ -532,7 +533,7 @@ class Persons extends ActiveRecord {
 	}
 
 	public function getStartYear() {
-		return substr($this->id, 0, 4);
+		return substr($this->wca_id, 0, 4);
 	}
 
 	public function getSummaryYears() {
@@ -549,7 +550,7 @@ class Persons extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Persons';
+		return 'persons';
 	}
 
 	/**
@@ -559,14 +560,14 @@ class Persons extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('subid', 'numerical', 'integerOnly'=>true),
-			array('id', 'length', 'max'=>10),
+			array('sub_id', 'numerical', 'integerOnly'=>true),
+			array('wca_id', 'length', 'max'=>10),
 			array('name', 'length', 'max'=>80),
-			array('countryId', 'length', 'max'=>50),
+			array('country_id', 'length', 'max'=>50),
 			array('gender', 'length', 'max'=>1),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, subid, name, countryId, gender', 'safe', 'on'=>'search'),
+			array('wca_id, sub_id, name, country_id, gender', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -575,8 +576,8 @@ class Persons extends ActiveRecord {
 	 */
 	public function relations() {
 		return [
-			'country'=>[self::BELONGS_TO, 'Countries', 'countryId'],
-			'delegate'=>[self::HAS_ONE, 'Delegates', ['wca_id'=>'id']],
+			'country'=>[self::BELONGS_TO, 'Countries', 'country_id'],
+			'delegate'=>[self::HAS_ONE, 'Delegates', ['wca_id'=>'wca_id']],
 		];
 	}
 
@@ -585,11 +586,11 @@ class Persons extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id'=>Yii::t('Persons', 'ID'),
-			'subid'=>Yii::t('Persons', 'Subid'),
-			'name'=>Yii::t('Persons', 'Name'),
-			'countryId'=>Yii::t('Persons', 'Country'),
-			'gender'=>Yii::t('Persons', 'Gender'),
+			'wca_id'=>Yii::t('persons', 'ID'),
+			'sub_id'=>Yii::t('persons', 'Subid'),
+			'name'=>Yii::t('persons', 'Name'),
+			'country_id'=>Yii::t('persons', 'Country'),
+			'gender'=>Yii::t('persons', 'Gender'),
 		);
 	}
 
@@ -610,10 +611,10 @@ class Persons extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('subid',$this->subid);
+		$criteria->compare('wca_id',$this->wca_id,true);
+		$criteria->compare('sub_id',$this->sub_id);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('countryId',$this->countryId,true);
+		$criteria->compare('country_id',$this->country_id,true);
 		$criteria->compare('gender',$this->gender,true);
 
 		return new CActiveDataProvider($this, array(
@@ -632,7 +633,7 @@ class Persons extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Persons the static model class
+	 * @return persons the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

@@ -61,7 +61,7 @@ class RegisterForm extends CFormModel {
 				if ($wcaid !== '') {
 					$this->wcaid = $wcaid;
 					$person = Persons::model()->with('country')->findByAttributes(array(
-						'id'=>$wcaid,
+						'wca_id'=>$wcaid,
 					));
 					preg_match('{^([^(]+)(.*\(([^)]+)\))?$}iu', $person->name, $matches);
 					if ($matches !== array()) {
@@ -106,7 +106,7 @@ class RegisterForm extends CFormModel {
 			switch ($this->step) {
 				case 1:
 					$person = Persons::model()->findByAttributes(array(
-						'id'=>$this->wcaid,
+					'wca_id'=>$this->wcaid,
 					));
 					if ($person === null) {
 						$this->addError('wcaid', Yii::t('common', 'Wrong WCA ID'));

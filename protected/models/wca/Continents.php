@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This is the model class for table "Continents".
+ * This is the model class for table "continents".
  *
- * The followings are the available columns in table 'Continents':
+ * The followings are the available columns in table 'continents':
  * @property string $id
  * @property string $name
- * @property string $recordName
+ * @property string $record_name
  * @property integer $latitude
  * @property integer $longitude
  * @property integer $zoom
@@ -16,7 +16,7 @@ class Continents extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Continents';
+		return 'continents';
 	}
 
 	/**
@@ -28,10 +28,10 @@ class Continents extends ActiveRecord {
 		return array(
 			array('latitude, longitude, zoom', 'numerical', 'integerOnly'=>true),
 			array('id, name', 'length', 'max'=>50),
-			array('recordName', 'length', 'max'=>3),
+			array('record_name', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, recordName, latitude, longitude, zoom', 'safe', 'on'=>'search'),
+			array('id, name, record_name, latitude, longitude, zoom', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -40,7 +40,7 @@ class Continents extends ActiveRecord {
 	 */
 	public function relations() {
 		return [
-			'countries'=>[self::HAS_MANY, 'Countries', 'continentId'],
+			'countries'=>[self::HAS_MANY, 'Countries', 'continent_id'],
 		];
 	}
 
@@ -49,12 +49,12 @@ class Continents extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Continents', 'ID'),
-			'name' => Yii::t('Continents', 'Name'),
-			'recordName' => Yii::t('Continents', 'Record Name'),
-			'latitude' => Yii::t('Continents', 'Latitude'),
-			'longitude' => Yii::t('Continents', 'Longitude'),
-			'zoom' => Yii::t('Continents', 'Zoom'),
+			'id' => Yii::t('continents', 'ID'),
+			'name' => Yii::t('continents', 'Name'),
+			'record_name' => Yii::t('continents', 'Record Name'),
+			'latitude' => Yii::t('continents', 'Latitude'),
+			'longitude' => Yii::t('continents', 'Longitude'),
+			'zoom' => Yii::t('continents', 'Zoom'),
 		);
 	}
 
@@ -77,7 +77,7 @@ class Continents extends ActiveRecord {
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('recordName',$this->recordName,true);
+		$criteria->compare('record_name',$this->record_name,true);
 		$criteria->compare('latitude',$this->latitude);
 		$criteria->compare('longitude',$this->longitude);
 		$criteria->compare('zoom',$this->zoom);
@@ -98,7 +98,7 @@ class Continents extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Continents the static model class
+	 * @return continents the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

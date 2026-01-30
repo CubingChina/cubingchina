@@ -1,29 +1,30 @@
 <?php
 
 /**
- * This is the model class for table "Competitions".
+ * This is the model class for table "competitions".
  *
- * The followings are the available columns in table 'Competitions':
+ * The followings are the available columns in table 'competitions':
  * @property string $id
  * @property string $name
- * @property string $cityName
- * @property string $countryId
+ * @property string $city_name
+ * @property string $country_id
  * @property string $information
  * @property integer $year
  * @property integer $month
  * @property integer $day
- * @property integer $endMonth
- * @property integer $endDay
- * @property string $eventSpecs
- * @property string $wcaDelegate
- * @property string $organiser
+ * @property integer $end_year
+ * @property integer $end_month
+ * @property integer $end_day
+ * @property string $event_specs
+ * @property string $delegates
+ * @property string $organizers
  * @property string $venue
- * @property string $venueAddress
- * @property string $venueDetails
+ * @property string $venue_address
+ * @property string $venue_details
  * @property string $external_website
- * @property string $cellName
- * @property integer $latitude
- * @property integer $longitude
+ * @property string $cell_name
+ * @property integer $latitude_microdegrees
+ * @property integer $longitude_microdegrees
  */
 class Competitions extends ActiveRecord {
 	//粗饼比赛
@@ -36,12 +37,12 @@ class Competitions extends ActiveRecord {
 
 	public static function getResultsTypes() {
 		return array(
-			'winners'=>Yii::t('Competitions', 'Winners'),
-			'top3'=>Yii::t('Competitions', 'Top 3'),
-			'all'=>Yii::t('Competitions', 'All Results'),
-			'byPerson'=>Yii::t('Competitions', 'By Person'),
+			'winners'=>Yii::t('competitions', 'Winners'),
+			'top3'=>Yii::t('competitions', 'Top 3'),
+			'all'=>Yii::t('competitions', 'All results'),
+			'byPerson'=>Yii::t('competitions', 'By Person'),
 			'records'=>Yii::t('common', 'Records'),
-			'scrambles'=>Yii::t('Competitions', 'Scrambles'),
+			'scrambles'=>Yii::t('competitions', 'scrambles'),
 		);
 	}
 
@@ -69,16 +70,16 @@ class Competitions extends ActiveRecord {
 			'event',
 			'format',
 		))->findAllByAttributes(array(
-			'competitionId'=>$id,
+			'competition_id'=>$id,
 			'pos'=>1,
-			'roundTypeId'=>array('c', 'f'),
+			'round_type_id'=>array('c', 'f'),
 		), array(
 			'condition'=>'best > 0',
 			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
 		$events = array();
 		foreach ($winners as $result) {
-			$events[$result->eventId] = $result->eventId;
+			$events[$result->event_id] = $result->event_id;
 		}
 		$top3 = Results::model()->with(array(
 			'person',
@@ -87,9 +88,9 @@ class Competitions extends ActiveRecord {
 			'event',
 			'format',
 		))->findAllByAttributes(array(
-			'competitionId'=>$id,
+			'competition_id'=>$id,
 			'pos'=>array(1, 2, 3),
-			'roundTypeId'=>array('c', 'f'),
+			'round_type_id'=>array('c', 'f'),
 		), array(
 			'condition'=>'best > 0',
 			'order'=>'event.`rank`, round.`rank`, t.pos'
@@ -100,37 +101,38 @@ class Competitions extends ActiveRecord {
 			'round',
 			'event',
 			'format',
+			'attempts',
 		))->findAllByAttributes(array(
-			'competitionId'=>$id,
+			'competition_id'=>$id,
 		), array(
 			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
 		$personIds = array_unique(array_map(function($result) {
-			return $result->personId;
+			return $result->person_id;
 		}, $all));
 		$previousPersonalRecords = [];
 		$command = Yii::app()->wcaDb->createCommand()
 			->select([
-				'personId',
-				'eventId',
+				'person_id',
+				'event_id',
 				'MIN(CASE WHEN best > 0 THEN best ELSE 999999999 END) AS best',
 				'MIN(CASE WHEN average > 0 THEN average ELSE 999999999 END) AS average',
 			])
-			->from('Results rs')
-			->leftJoin('Competitions c', 'rs.competitionId=c.id')
-			->where(['in', 'personId', $personIds])
+			->from('results rs')
+			->leftJoin('competitions c', 'rs.competition_id=c.id')
+			->where(['in', 'person_id', $personIds])
 			->andWhere('c.year<:year OR (c.year=:year AND c.month<:month) OR (c.year=:year AND c.month=:month AND c.day<:day)', [
 				':year'=>$this->year,
 				':month'=>$this->month,
 				':day'=>$this->day,
 			])
-			->group('personId, eventId');
+			->group('person_id, event_id');
 		foreach ($command->queryAll() as $result) {
-			$previousPersonalRecords[$result['personId']][$result['eventId']] = $result;
+			$previousPersonalRecords[$result['person_id']][$result['event_id']] = $result;
 		}
 		array_walk($all, function($result) use (&$previousPersonalRecords) {
-			$personId = $result->personId;
-			$eventId = $result->eventId;
+			$personId = $result->person_id;
+			$eventId = $result->event_id;
 			if ($result->best > 0 && (!isset($previousPersonalRecords[$personId][$eventId]['best'])
 				|| $previousPersonalRecords[$personId][$eventId]['best'] == 999999999
 				|| $previousPersonalRecords[$personId][$eventId]['best'] >= $result->best)
@@ -148,9 +150,9 @@ class Competitions extends ActiveRecord {
 		});
 		$byPerson = $all;
 		usort($byPerson, function($resultA, $resultB) {
-			$temp = $resultA->personName <=> $resultB->personName;
+			$temp = $resultA->person_name <=> $resultB->person_name;
 			if ($temp === 0) {
-				$temp = $resultA->personId <=> $resultB->personId;
+				$temp = $resultA->person_id <=> $resultB->person_id;
 			}
 			if ($temp === 0) {
 				$temp = $resultA->event->rank <=> $resultB->event->rank;
@@ -161,15 +163,15 @@ class Competitions extends ActiveRecord {
 			return $temp;
 		});
 		$records = array_filter($all, function($result) {
-			return $result->regionalSingleRecord != '' || $result->regionalAverageRecord != '';
+			return $result->regional_single_record != '' || $result->regional_average_record != '';
 		});
 		$scrambles = Scrambles::model()->with(array(
 			'round',
 			'event',
 		))->findAllByAttributes(array(
-			'competitionId'=>$id,
+			'competition_id'=>$id,
 		), array(
-			'order'=>'event.`rank`, round.`rank`, t.groupId, t.isExtra, t.scrambleNum',
+			'order'=>'event.`rank`, round.`rank`, t.group_id, t.is_extra, t.scramble_num',
 		));
 		return array(
 			'winners'=>$winners,
@@ -202,9 +204,9 @@ class Competitions extends ActiveRecord {
 
 	public function getCityInfo() {
 		$competition = Statistics::getCompetition(array(
-			'competitionId'=>$this->id,
-			'cellName'=>$this->cellName,
-			'cityName'=>$this->cityName,
+			'competition_id'=>$this->id,
+			'cell_name'=>$this->cell_name,
+			'city_name'=>$this->city_name,
 		));
 		return ActiveRecord::getModelAttributeValue($competition, 'city_name');
 	}
@@ -228,16 +230,16 @@ class Competitions extends ActiveRecord {
 
 	public function getExtraData() {
 		return Statistics::getCompetition(array(
-			'competitionId'=>$this->id,
-			'cellName'=>$this->cellName,
-			'cityName'=>$this->cityName,
+			'competition_id'=>$this->id,
+			'cell_name'=>$this->cell_name,
+			'city_name'=>$this->city_name,
 		));
 	}
 
 	public function getDate() {
 		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
-		if ($this->endMonth > 0) {
-			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		if ($this->end_month > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->end_month, $this->end_day));
 		} else {
 			$endDate = 0;
 		}
@@ -250,7 +252,7 @@ class Competitions extends ActiveRecord {
 
 	public function getLocation() {
 		if ($this->_location === null) {
-			$this->_location = $this->cityName;
+			$this->_location = $this->city_name;
 			if ($this->country) {
 				$this->_location .= ', ' . $this->country->name;
 			}
@@ -261,8 +263,8 @@ class Competitions extends ActiveRecord {
 	public function isInProgress() {
 		$now = time();
 		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
-		if ($this->endMonth > 0) {
-			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		if ($this->end_month > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->end_month, $this->end_day));
 		} else {
 			$endDate = 0;
 		}
@@ -271,8 +273,8 @@ class Competitions extends ActiveRecord {
 
 	public function isEnded() {
 		$date = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day));
-		if ($this->endMonth > 0) {
-			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->endMonth, $this->endDay));
+		if ($this->end_month > 0) {
+			$endDate = strtotime(sprintf('%04d-%02d-%02d', $this->year, $this->end_month, $this->end_day));
 		} else {
 			$endDate = 0;
 		}
@@ -283,7 +285,7 @@ class Competitions extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Competitions';
+		return 'competitions';
 	}
 
 	/**
@@ -293,18 +295,18 @@ class Competitions extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('eventSpecs', 'required'),
-			array('year, month, day, endMonth, endDay, latitude, longitude', 'numerical', 'integerOnly'=>true),
+			array('event_specs', 'required'),
+			array('year, month, day, end_year, end_month, end_day, latitude_microdegrees, longitude_microdegrees', 'numerical', 'integerOnly'=>true),
 			array('id', 'length', 'max'=>32),
-			array('name, cityName, countryId', 'length', 'max'=>50),
-			array('wcaDelegate, venue', 'length', 'max'=>240),
-			array('organiser', 'length', 'max'=>200),
-			array('venueAddress, venueDetails', 'length', 'max'=>120),
-			array('cellName', 'length', 'max'=>45),
+			array('name, city_name, country_id', 'length', 'max'=>50),
+			array('delegates, venue', 'length', 'max'=>240),
+			array('organizers', 'length', 'max'=>200),
+			array('venue_address, venue_details', 'length', 'max'=>120),
+			array('cell_name', 'length', 'max'=>45),
 			array('information', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, cityName, countryId, information, year, month, day, endMonth, endDay, eventSpecs, wcaDelegate, organiser, venue, venueAddress, venueDetails, external_website, cellName, latitude, longitude', 'safe', 'on'=>'search'),
+			array('id, name, city_name, country_id, information, year, month, day, end_year, end_month, end_day, event_specs, delegates, organizers, venue, venue_address, venue_details, external_website, cell_name, latitude_microdegrees, longitude_microdegrees', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -315,8 +317,8 @@ class Competitions extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'country'=>array(self::BELONGS_TO, 'Countries', 'countryId'),
-			'results'=>array(self::HAS_MANY, 'Results', 'competitionId'),
+			'country'=>array(self::BELONGS_TO, 'Countries', 'country_id'),
+			'results'=>array(self::HAS_MANY, 'Results', 'competition_id'),
 		);
 	}
 
@@ -325,26 +327,27 @@ class Competitions extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Competitions', 'ID'),
-			'name' => Yii::t('Competitions', 'Name'),
-			'cityName' => Yii::t('Competitions', 'City Name'),
-			'countryId' => Yii::t('Competitions', 'Country'),
-			'information' => Yii::t('Competitions', 'Information'),
-			'year' => Yii::t('Competitions', 'Year'),
-			'month' => Yii::t('Competitions', 'Month'),
-			'day' => Yii::t('Competitions', 'Day'),
-			'endMonth' => Yii::t('Competitions', 'End Month'),
-			'endDay' => Yii::t('Competitions', 'End Day'),
-			'eventSpecs' => Yii::t('Competitions', 'Event Specs'),
-			'wcaDelegate' => Yii::t('Competitions', 'Wca Delegate'),
-			'organiser' => Yii::t('Competitions', 'Organiser'),
-			'venue' => Yii::t('Competitions', 'Venue'),
-			'venueAddress' => Yii::t('Competitions', 'Venue Address'),
-			'venueDetails' => Yii::t('Competitions', 'Venue Details'),
-			'external_website' => Yii::t('Competitions', 'Website'),
-			'cellName' => Yii::t('Competitions', 'Cell Name'),
-			'latitude' => Yii::t('Competitions', 'Latitude'),
-			'longitude' => Yii::t('Competitions', 'Longitude'),
+			'id' => Yii::t('competitions', 'ID'),
+			'name' => Yii::t('competitions', 'Name'),
+			'city_name' => Yii::t('competitions', 'City Name'),
+			'country_id' => Yii::t('competitions', 'Country'),
+			'information' => Yii::t('competitions', 'Information'),
+			'year' => Yii::t('competitions', 'Year'),
+			'month' => Yii::t('competitions', 'Month'),
+			'day' => Yii::t('competitions', 'Day'),
+			'end_year' => Yii::t('competitions', 'End Year'),
+			'end_month' => Yii::t('competitions', 'End Month'),
+			'end_day' => Yii::t('competitions', 'End Day'),
+			'event_specs' => Yii::t('competitions', 'Event Specs'),
+			'delegates' => Yii::t('competitions', 'Wca Delegate'),
+			'organizers' => Yii::t('competitions', 'Organiser'),
+			'venue' => Yii::t('competitions', 'Venue'),
+			'venue_address' => Yii::t('competitions', 'Venue Address'),
+			'venue_details' => Yii::t('competitions', 'Venue Details'),
+			'external_website' => Yii::t('competitions', 'Website'),
+			'cell_name' => Yii::t('competitions', 'Cell Name'),
+			'latitude_microdegrees' => Yii::t('competitions', 'Latitude'),
+			'longitude_microdegrees' => Yii::t('competitions', 'Longitude'),
 		);
 	}
 
@@ -384,14 +387,14 @@ class Competitions extends ActiveRecord {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$criteria->compare('country.continentId', '_' . $this->region);
+				$criteria->compare('country.continent_id', '_' . $this->region);
 				break;
 			default:
-				$criteria->compare('t.countryId', $this->region);
+				$criteria->compare('t.country_id', $this->region);
 				break;
 		}
 		if ($this->event && in_array($this->event, array_keys(Events::getNormalEvents()))) {
-			$criteria->addCondition("eventSpecs REGEXP '\\\\b{$this->event}\\\\b'");
+			$criteria->addCondition("event_specs REGEXP '\\\\b{$this->event}\\\\b'");
 		}
 		if ($this->name) {
 			$names = explode(' ', $this->name);
@@ -400,7 +403,7 @@ class Competitions extends ActiveRecord {
 					continue;
 				}
 				$paramKey = ':name' . $key;
-				$criteria->addCondition("t.cellName LIKE {$paramKey} or t.cityName LIKE {$paramKey} or t.venue LIKE {$paramKey}");
+				$criteria->addCondition("t.cell_name LIKE {$paramKey} or t.city_name LIKE {$paramKey} or t.venue LIKE {$paramKey}");
 				$criteria->params[$paramKey] = '%' . $value . '%';
 			}
 		}
@@ -411,7 +414,7 @@ class Competitions extends ActiveRecord {
 				'pageSize'=>$pageSize,
 			),
 			'sort'=>array(
-				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.endMonth DESC, t.endDay DESC',
+				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.end_month DESC, t.end_day DESC',
 			),
 		));
 	}
@@ -427,7 +430,7 @@ class Competitions extends ActiveRecord {
 				'together'=>true,
 			),
 		);
-		$criteria->compare('results.personId', $personId);
+		$criteria->compare('results.person_id', $personId);
 
 		$criteria->group = 't.id';
 
@@ -437,7 +440,7 @@ class Competitions extends ActiveRecord {
 				'pageSize'=>100,
 			),
 			'sort'=>array(
-				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.endMonth DESC, t.endDay DESC',
+				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.end_month DESC, t.end_day DESC',
 			),
 		));
 	}
@@ -453,7 +456,7 @@ class Competitions extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Competitions the static model class
+	 * @return competitions the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

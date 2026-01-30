@@ -6,52 +6,52 @@ class AllEventsAchiever extends Statistics {
 		$sum = 0;
 		foreach (['single', 'average'] as $type) {
 			$num = $db->createCommand()
-				->select('count(distinct eventId)')
-				->from('Ranks' . ucfirst($type))
-				->leftJoin('Events e', 'e.id=eventId')
+				->select('count(distinct event_id)')
+				->from('ranks_' . $type)
+				->leftJoin('events e', 'e.id=event_id')
 				->where('e.`rank`<900')
 				->queryScalar();
 			$sum += $num;
 		}
 		$cmd = $db->createCommand()
 			->select([
-				'rs.personId',
-				'p.name AS personName',
-				'p.countryId',
+				'rs.person_id',
+				'p.name AS person_name',
+				'p.country_id',
 				'country.iso2',
-				'COUNT(DISTINCT rs.eventId) AS singles',
-				'COUNT(DISTINCT ra.eventId) AS averages',
+				'COUNT(DISTINCT rs.event_id) AS singles',
+				'COUNT(DISTINCT ra.event_id) AS averages',
 			])
-			->from('RanksSingle rs')
-			->leftJoin('RanksAverage ra', 'rs.personId=ra.personId AND rs.eventId=ra.eventId')
-			->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-			->leftJoin('Countries country', 'p.countryId=country.id')
-			->leftJoin('Events es', 'es.id=rs.eventId')
-			->leftJoin('Events ea', 'ea.id=rs.eventId')
+			->from('ranks_single rs')
+			->leftJoin('ranks_average ra', 'rs.person_id=ra.person_id AND rs.event_id=ra.event_id')
+			->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1')
+			->leftJoin('countries country', 'p.country_id=country.id')
+			->leftJoin('events es', 'es.id=rs.event_id')
+			->leftJoin('events ea', 'ea.id=rs.event_id')
 			->where('es.`rank`<900 and ea.`rank`<900')
-			->group('rs.personId')
+			->group('rs.person_id')
 			->having('singles + averages = ' . $sum);
-		ActiveRecord::applyRegionCondition($cmd, $statistic['region'] ?? 'China', 'p.countryId');
+		ActiveRecord::applyRegionCondition($cmd, $statistic['region'] ?? 'China', 'p.country_id');
 		$persons = $cmd->queryAll();
 		$cmd = $db->createCommand()
-			->from('Results rs')
-			->leftJoin('Competitions c', 'rs.competitionId=c.id')
-			->where('rs.personId=:personId');
+			->from('results rs')
+			->leftJoin('competitions c', 'rs.competition_id=c.id')
+			->where('rs.person_id=:person_id');
 		$cmd1 = (clone $cmd)->select([
-				'rs.eventId',
-				'MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.endMonth, "-", c.endDay))) AS time',
-			])->group('rs.eventId');
+				'rs.event_id',
+				'MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.end_month, "-", c.end_day))) AS time',
+			])->group('rs.event_id');
 		foreach ($persons as $key=>$person) {
-			$params = [':personId'=>$person['personId']];
+			$params = [':person_id'=>$person['person_id']];
 			$startDate = (clone $cmd)->select('MIN(UNIX_TIMESTAMP(CONCAT(c.year, "-", c.month, "-", c.day))) AS time')->queryScalar($params);
 			$singleDates = (clone $cmd1)->andWhere('rs.best>0')->queryAll(true, $params);
 			$averageDates = (clone $cmd1)->andWhere('rs.average>0')->queryAll(true, $params);
 			$finishDate = max(
-				max(CHtml::listData($singleDates, 'eventId', 'time')),
-				max(CHtml::listData($averageDates, 'eventId', 'time'))
+				max(CHtml::listData($singleDates, 'event_id', 'time')),
+				max(CHtml::listData($averageDates, 'event_id', 'time'))
 			);
-			$competitions = (clone $cmd)->select('COUNT(DISTINCT(competitionId)) as competitions')->andWhere(
-				'c.year<:year OR (c.year=:year AND c.endMonth<:month) OR (c.year=:year AND c.endMonth=:month AND c.endDay<=:day)',
+			$competitions = (clone $cmd)->select('COUNT(DISTINCT(competition_id)) as competitions')->andWhere(
+				'c.year<:year OR (c.year=:year AND c.end_month<:month) OR (c.year=:year AND c.end_month=:month AND c.end_day<=:day)',
 				[
 					':year'=>date('Y', $finishDate),
 					':month'=>date('n', $finishDate),
@@ -74,7 +74,7 @@ class AllEventsAchiever extends Statistics {
 		$columns = [
 			[
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			],
 			[
@@ -90,7 +90,7 @@ class AllEventsAchiever extends Statistics {
 		];
 		if (self::$limit > 10) {
 			$columns[] = [
-				'header'=>'Yii::t("statistics", "Competitions")',
+				'header'=>'Yii::t("statistics", "competitions")',
 				'value'=>'$data["competitions"]',
 				'type'=>'raw',
 			];
@@ -98,7 +98,7 @@ class AllEventsAchiever extends Statistics {
 		if (isset($statistic['region'])) {
 			$columns[] = [
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["countryId"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["country_id"], $data["iso2"])',
 				'type'=>'raw',
 			];
 		}

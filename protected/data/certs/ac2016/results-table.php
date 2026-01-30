@@ -28,8 +28,8 @@
     <tbody>
       <?php foreach ($results as $result): ?>
       <tr class="<?php echo $this->getRoundClass($result); ?>">
-        <td><?php echo $this->getEventImage($result->eventId); ?></td>
-        <td class="round"><?php echo $this->getRoundName($result->roundTypeId); ?></td>
+        <td><?php echo $this->getEventImage($result->event_id); ?></td>
+        <td class="round"><?php echo $this->getRoundName($result->round_type_id); ?></td>
         <td class="best"><?php echo $result->pos; ?></td>
         <td class="best"><?php echo $result->getTime('best'); ?></td>
         <td class="best"><?php echo $result->getTime('average'); ?></td>
@@ -66,8 +66,8 @@
     </thead>
     <tbody>
       <tr class="<?php echo $this->getRoundClass($result); ?>">
-        <td><?php echo $this->getEventImage($result->eventId); ?></td>
-        <td class="round"><?php echo $this->getRoundName($result->roundTypeId); ?></td>
+        <td><?php echo $this->getEventImage($result->event_id); ?></td>
+        <td class="round"><?php echo $this->getRoundName($result->round_type_id); ?></td>
         <td class="best"><?php echo $result->pos; ?></td>
         <td class="best"><?php echo $result->getTime('best'); ?></td>
         <td class="best"><?php echo $result->getTime('average'); ?></td>

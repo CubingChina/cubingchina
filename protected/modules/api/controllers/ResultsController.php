@@ -3,7 +3,7 @@
 class ResultsController extends ApiController {
 	public function actionPersonMap() {
 		$id = strtoupper($this->sGet('id'));
-		$person = Persons::model()->with('country')->findByAttributes(['id' => $id]);
+		$person = Persons::model()->with('country')->findByAttributes(['wca_id' => $id, 'sub_id'=>1]);
 		if ($person == null) {
 			$this->ajaxError(Constant::ERROR_NOT_FOUND);
 		}

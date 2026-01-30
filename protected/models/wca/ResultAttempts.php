@@ -1,34 +1,19 @@
 <?php
 
 /**
- * This is the model class for table "ranks_average".
+ * This is the model class for table "result_attempts".
  *
- * The followings are the available columns in table 'ranks_average':
- * @property integer $id
- * @property string $person_id
- * @property string $event_id
- * @property integer $best
- * @property integer $world_rank
- * @property integer $continent_rank
- * @property integer $country_rank
+ * The followings are the available columns in table 'result_attempts':
+ * @property integer $value
+ * @property integer $attempt_number
+ * @property integer $result_id
  */
-class RanksAverage extends ActiveRecord {
-
-	public function getRank($attribute) {
-		if ($this->$attribute <= 0) {
-			return '-';
-		}
-		if ($this->$attribute <= 10) {
-			return CHtml::tag('span', array('class'=>'top10'), $this->$attribute);
-		}
-		return $this->$attribute;
-	}
-
+class ResultAttempts extends ActiveRecord {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'ranks_average';
+		return 'result_attempts';
 	}
 
 	/**
@@ -38,12 +23,12 @@ class RanksAverage extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('best, world_rank, continent_rank, country_rank', 'numerical', 'integerOnly'=>true),
-			array('person_id', 'length', 'max'=>10),
-			array('event_id', 'length', 'max'=>6),
+			array('value, attempt_number, result_id', 'required'),
+			array('value, result_id', 'numerical', 'integerOnly'=>true),
+			array('attempt_number', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, person_id, event_id, best, world_rank, continent_rank, country_rank', 'safe', 'on'=>'search'),
+			array('value, attempt_number, result_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,7 +39,7 @@ class RanksAverage extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'person'=>array(self::BELONGS_TO, 'Persons', 'person_id', 'on'=>'person.sub_id=1'),
+			'result'=>array(self::BELONGS_TO, 'Results', 'result_id'),
 		);
 	}
 
@@ -63,13 +48,9 @@ class RanksAverage extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('ranks_average', 'ID'),
-			'person_id' => Yii::t('ranks_average', 'Person'),
-			'event_id' => Yii::t('ranks_average', 'Event'),
-			'best' => Yii::t('ranks_average', 'Best'),
-			'world_rank' => Yii::t('ranks_average', 'World Rank'),
-			'continent_rank' => Yii::t('ranks_average', 'Continent Rank'),
-			'country_rank' => Yii::t('ranks_average', 'Country Rank'),
+			'value' => Yii::t('result_attempts', 'Value'),
+			'attempt_number' => Yii::t('result_attempts', 'Attempt Number'),
+			'result_id' => Yii::t('result_attempts', 'Result'),
 		);
 	}
 
@@ -90,13 +71,9 @@ class RanksAverage extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('person_id',$this->person_id,true);
-		$criteria->compare('event_id',$this->event_id,true);
-		$criteria->compare('best',$this->best);
-		$criteria->compare('world_rank',$this->world_rank);
-		$criteria->compare('continent_rank',$this->continent_rank);
-		$criteria->compare('country_rank',$this->country_rank);
+		$criteria->compare('value',$this->value);
+		$criteria->compare('attempt_number',$this->attempt_number);
+		$criteria->compare('result_id',$this->result_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -114,7 +91,7 @@ class RanksAverage extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ranks_average the static model class
+	 * @return ResultAttempt the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

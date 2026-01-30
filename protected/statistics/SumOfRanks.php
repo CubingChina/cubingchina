@@ -12,14 +12,14 @@ class SumOfRanks extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			),
 		);
 		if (Region::isContinent($statistic['region']) || $statistic['region'] === 'World') {
 			$columns[] = array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
 				'type'=>'raw',
 				'htmlOptions'=>array('class'=>'region'),
 			);
@@ -31,8 +31,8 @@ class SumOfRanks extends Statistics {
 		);
 		//计算未参赛的项目应该排第几
 		$penalty = Yii::app()->cache->getData('RanksPenalty::getPenlties', array($statistic['type'], $statistic['region']));
-		foreach ($eventIds as $key=>$eventId) {
-			if (!isset($ranks[$eventId])) {
+		foreach ($eventIds as $key=>$event_id) {
+			if (!isset($ranks[$event_id])) {
 				unset($eventIds[$key]);
 				continue;
 			}
@@ -41,17 +41,17 @@ class SumOfRanks extends Statistics {
 		$allPenalties = array_sum($penalty);
 		//计算每个人的排名
 		$rankSum = array();
-		foreach ($eventIds as $eventId) {
-			foreach ($ranks[$eventId] as $personId=>$row) {
-				if(!isset($rankSum[$personId])) {
-					$rankSum[$personId] = $row;
-					$rankSum[$personId]['sum'] = $allPenalties;
+		foreach ($eventIds as $event_id) {
+			foreach ($ranks[$event_id] as $person_id=>$row) {
+				if(!isset($rankSum[$person_id])) {
+					$rankSum[$person_id] = $row;
+					$rankSum[$person_id]['sum'] = $allPenalties;
 				}
-				$rankSum[$personId]['sum'] += $row['rank'] - $penalty[$eventId];
+				$rankSum[$person_id]['sum'] += $row['rank'] - $penalty[$event_id];
 			}
 			$columns[] = array(
-				'header'=>"Events::getEventIcon('$eventId')",
-				'name'=>$eventId,
+				'header'=>"Events::getEventIcon('$event_id')",
+				'name'=>$event_id,
 				'type'=>'raw',
 			);
 		}
@@ -75,15 +75,15 @@ class SumOfRanks extends Statistics {
 			$page = ceil($count / self::$limit);
 		}
 		$rows = array();
-		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $personId=>$row) {
-			foreach ($eventIds as $eventId) {
-				$row[$eventId] = isset($ranks[$eventId][$personId])
-								 ? $ranks[$eventId][$personId]['rank']
-								 : $penalty[$eventId];
-				if (isset($ranks[$eventId][$personId]) && $ranks[$eventId][$personId]['rank'] <= 10) {
-					$row[$eventId] = CHtml::tag('span', array('class'=>'top10'), $row[$eventId]);
-				} elseif (!isset($ranks[$eventId][$personId])) {
-					$row[$eventId] = CHtml::tag('span', array('class'=>'penalty'), $row[$eventId]);
+		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $person_id=>$row) {
+			foreach ($eventIds as $event_id) {
+				$row[$event_id] = isset($ranks[$event_id][$person_id])
+								 ? $ranks[$event_id][$person_id]['rank']
+								 : $penalty[$event_id];
+				if (isset($ranks[$event_id][$person_id]) && $ranks[$event_id][$person_id]['rank'] <= 10) {
+					$row[$event_id] = CHtml::tag('span', array('class'=>'top10'), $row[$event_id]);
+				} elseif (!isset($ranks[$event_id][$person_id])) {
+					$row[$event_id] = CHtml::tag('span', array('class'=>'penalty'), $row[$event_id]);
 				}
 			}
 			$rows[] = $row;
@@ -101,17 +101,17 @@ class SumOfRanks extends Statistics {
 			return self::$_ranks[$type][$region];
 		}
 		$select = array(
-			'eventId',
-			'personId',
+			'event_id',
+			'person_id',
 			'p.gender',
-			'p.name AS personName',
-			'p.subid',
-			'country.name AS countryName',
+			'p.name AS person_name',
+			'p.sub_id',
+			'country.name AS country_name',
 			'country.iso2',
 		);
 		switch ($region) {
 			case 'World':
-				$field = 'worldRank';
+				$field = 'world_rank';
 				break;
 			case 'Africa':
 			case 'Asia':
@@ -119,25 +119,25 @@ class SumOfRanks extends Statistics {
 			case 'Europe':
 			case 'North America':
 			case 'South America':
-				$field = 'continentRank';
+				$field = 'continent_rank';
 				break;
 			default:
-				$field = 'countryRank';
+				$field = 'country_rank';
 				break;
 		}
 		$select[] = $field . ' AS rank';
 		$command = Yii::app()->wcaDb->createCommand()
 		->select($select)
-		->from('Ranks' . ucfirst($type) . ' r')
-		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
-		->leftJoin('Countries country', 'country.id=p.countryId');
-		if ($field !== 'worldRank') {
+		->from(sprintf('ranks_%s r', $type))
+		->leftJoin('persons p', 'r.person_id=p.wca_id AND p.sub_id=1')
+		->leftJoin('countries country', 'country.id=p.country_id');
+		if ($field !== 'world_rank') {
 			$command->where($field . '>0');
 		}
-		ActiveRecord::applyRegionCondition($command, $region, 'p.countryId');
+		ActiveRecord::applyRegionCondition($command, $region, 'p.country_id');
 		$ranks = array();
 		foreach ($command->queryAll() as $row) {
-			$ranks[$row['eventId']][$row['personId']] = $row;
+			$ranks[$row['event_id']][$row['person_id']] = $row;
 		}
 		return self::$_ranks[$type][$region] = $ranks;
 	}

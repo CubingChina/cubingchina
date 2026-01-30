@@ -7,12 +7,12 @@ class Top100 extends Statistics {
 	public static function build($statistic) {
 		$db = Yii::app()->wcaDb;
 		$command = $db->createCommand()
-		->from('Results rs')
-		->leftJoin('Countries country', 'rs.personCountryId=country.Id')
-		->leftJoin('Competitions c', 'rs.competitionId=c.id')
-		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-		->where('eventId=:eventId', array(
-			':eventId'=>$statistic['event'],
+		->from('results rs')
+		->leftJoin('countries country', 'rs.person_country_id=country.Id')
+		->leftJoin('competitions c', 'rs.competition_id=c.id')
+		->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1')
+		->where('event_id=:event_id', array(
+			':event_id'=>$statistic['event'],
 		))
 		->order('value ASC')
 		->limit(200);
@@ -29,50 +29,35 @@ class Top100 extends Statistics {
 		}
 		switch ($statistic['type']) {
 			case 'single':
-				$temp = array();
-				for ($i = 1; $i <= 5; $i++) {
-					$cmd = clone $command;
-					$temp[] = $cmd->select(array(
-						"value{$i} AS value",
-						'personId',
-						'personName',
-						'personCountryId',
-						'country.name AS countryName',
-						'iso2',
-						'competitionId',
-						'cellName',
-						'cityName',
-						'eventId',
-					))
-					->andWhere("value{$i}>0")
-					->queryAll();
-				}
-				$top200 = call_user_func_array('array_merge', $temp);
-				usort($top200, function($resultA, $resultB) {
-					$temp = $resultA['value'] - $resultB['value'];
-					if ($temp == 0) {
-						$temp = strcmp($resultA['personName'], $resultB['personName']);
-					}
-					return $temp;
-				});
+				// join result_attempts
+				$top200 = $command->leftJoin('result_attempts ra', 'rs.id=ra.result_id')
+				->select([
+					'person_id',
+					'person_name',
+					'person_country_id',
+					'country.name AS country_name',
+					'iso2',
+					'competition_id',
+					'cell_name',
+					'city_name',
+					'event_id',
+					'value'
+				])
+				->andWhere('value>0')
+				->queryAll();
 				break;
 			case 'average':
 				$top200 = $command->select(array(
-					'personId',
-					'personName',
-					'personCountryId',
-					'country.name AS countryName',
+					'person_id',
+					'person_name',
+					'person_country_id',
+					'country.name AS country_name',
 					'iso2',
-					'competitionId',
-					'cellName',
-					'cityName',
-					'eventId',
+					'competition_id',
+					'cell_name',
+					'city_name',
+					'event_id',
 					'average AS value',
-					'value1',
-					'value2',
-					'value3',
-					'value4',
-					'value5',
 				))
 				->andWhere('average>0')
 				->queryAll();
@@ -91,11 +76,11 @@ class Top100 extends Statistics {
 				break;
 			}
 			if (isset($statistic['count'])) {
-				if (!isset($top100[$result['personId']])) {
-					$top100[$result['personId']] = $result;
-					$top100[$result['personId']]['count'] = 0;
+				if (!isset($top100[$result['person_id']])) {
+					$top100[$result['person_id']] = $result;
+					$top100[$result['person_id']]['count'] = 0;
 				}
-				$top100[$result['personId']]['count']++;
+				$top100[$result['person_id']]['count']++;
 			} else {
 				$top100[] = $result;
 			}
@@ -107,7 +92,7 @@ class Top100 extends Statistics {
 			$columns = array(
 				array(
 					'header'=>'Yii::t("statistics", "Person")',
-					'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+					'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 					'type'=>'raw',
 				),
 				array(
@@ -119,12 +104,12 @@ class Top100 extends Statistics {
 			self::$top100s[$statistic['type']][$statistic['event']] = self::makeStatisticsData($statistic, $columns, array_slice($top100, 0, self::$limit));
 			$events = Events::getNormalEvents();
 			$eventIds = array_keys($events);
-			foreach ($eventIds as $eventId) {
-				if (isset(self::$top100s[$statistic['type']][$eventId])) {
+			foreach ($eventIds as $event_id) {
+				if (isset(self::$top100s[$statistic['type']][$event_id])) {
 					continue;
 				}
 				$temp = $statistic;
-				$temp['event'] = $eventId;
+				$temp['event'] = $event_id;
 				self::build($temp);
 			}
 			if ($statistic['type'] === 'average') {
@@ -143,17 +128,17 @@ class Top100 extends Statistics {
 			$columns = array(
 				array(
 					'header'=>'Yii::t("statistics", "Person")',
-					'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+					'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 					'type'=>'raw',
 				),
 				array(
 					'header'=>'Yii::t("common", "Result")',
-					'value'=>'Results::formatTime($data["value"], $data["eventId"])',
+					'value'=>'Results::formatTime($data["value"], $data["event_id"])',
 					'type'=>'raw',
 				),
 				// array(
 				// 	'header'=>'Yii::t("common", "Region")',
-				// 	'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+				// 	'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
 				// 	'type'=>'raw',
 				// 	'htmlOptions'=>array('class'=>'region'),
 				// ),

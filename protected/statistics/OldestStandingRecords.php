@@ -6,23 +6,23 @@ class OldestStandingRecords extends Statistics {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
 			'r.*',
-			'rs.personName',
-			'rs.competitionId',
-			'c.cellName',
-			'c.cityName',
+			'rs.person_name',
+			'rs.competition_id',
+			'c.cell_name',
+			'c.city_name',
 			'c.year',
 			'c.month',
 			'c.day',
 		))
-		->leftJoin('Persons p', 'r.personId=p.id AND p.subid=1')
-		->leftJoin('Events e', 'r.eventId=e.id')
-		->where('r.countryRank=1 AND rs.personCountryId="China" AND e.`rank`<900');
+		->leftJoin('persons p', 'r.person_id=p.wca_id AND p.sub_id=1')
+		->leftJoin('events e', 'r.event_id=e.id')
+		->where('r.country_rank=1 AND rs.person_country_id="China" AND e.`rank`<900');
 		$rows = array();
 		foreach (Results::getRankingTypes() as $type) {
 			$cmd = clone $command;
-			$cmd->from(sprintf('Ranks%s r', ucfirst($type)))
-			->leftJoin('Results rs', sprintf('r.best=rs.%s AND r.personId=rs.personId AND r.eventId=rs.eventId', $type == 'single' ? 'best' : $type))
-			->leftJoin('Competitions c', 'rs.competitionId=c.id');
+			$cmd->from(sprintf('ranks_%s r', $type))
+			->leftJoin('results rs', sprintf('r.best=rs.%s AND r.person_id=rs.person_id AND r.event_id=rs.event_id', $type == 'single' ? 'best' : $type))
+			->leftJoin('competitions c', 'rs.competition_id=c.id');
 			$rows[$type] = array();
 			foreach ($cmd->queryAll() as $row) {
 				$row['type'] = $type;
@@ -40,7 +40,7 @@ class OldestStandingRecords extends Statistics {
 				$temp = $rowA['day'] - $rowB['day'];
 			}
 			if ($temp == 0) {
-				$temp = strcmp($rowA['personName'], $rowB['personName']);
+				$temp = strcmp($rowA['person_name'], $rowB['person_name']);
 			}
 			return $temp;
 		});
@@ -60,7 +60,7 @@ class OldestStandingRecords extends Statistics {
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			),
 			array(
@@ -70,7 +70,7 @@ class OldestStandingRecords extends Statistics {
 			),
 			array(
 				'header'=>'Yii::t("common", "Event")',
-				'value'=>'Events::getFullEventName($data["eventId"])',
+				'value'=>'Events::getFullEventName($data["event_id"])',
 			),
 			array(
 				'header'=>'Yii::t("common", "Type")',
@@ -78,11 +78,11 @@ class OldestStandingRecords extends Statistics {
 			),
 			array(
 				'header'=>'Yii::t("common", "Result")',
-				'value'=>'Results::formatTime($data["best"], $data["eventId"])',
+				'value'=>'Results::formatTime($data["best"], $data["event_id"])',
 			),
 			array(
 				'header'=>'Yii::t("common", "Records")',
-				'value'=>'$data["worldRank"] == 1 ? "WR" : ($data["continentRank"] == 1 ? "AsR" : "NR")',
+				'value'=>'$data["world_rank"] == 1 ? "WR" : ($data["continent_rank"] == 1 ? "AsR" : "NR")',
 			),
 			array(
 				'header'=>'Yii::t("common", "Competition")',

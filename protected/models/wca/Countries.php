@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This is the model class for table "Countries".
+ * This is the model class for table "countries".
  *
- * The followings are the available columns in table 'Countries':
+ * The followings are the available columns in table 'countries':
  * @property string $id
  * @property string $name
- * @property string $continentId
+ * @property string $continent_id
  * @property integer $latitude
  * @property integer $longitude
  * @property integer $zoom
@@ -18,20 +18,20 @@ class Countries extends ActiveRecord {
 		$countries = $command = Yii::app()->wcaDb
 		->cache(86400)
 		->createCommand()
-		->select('rs.personCountryId, c.name')
-		->from('Results rs')
-		->leftJoin('Countries c', 'rs.personCountryId=c.id')
-		->group('rs.personCountryId')
-		->order('rs.personCountryId')
+		->select('rs.person_country_id, c.name')
+		->from('results rs')
+		->leftJoin('countries c', 'rs.person_country_id=c.id')
+		->group('rs.person_country_id')
+		->order('rs.person_country_id')
 		->queryAll();
-		return CHtml::listData($countries, 'personCountryId', 'name');
+		return CHtml::listData($countries, 'person_country_id', 'name');
 	}
 
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Countries';
+		return 'countries';
 	}
 
 	/**
@@ -42,11 +42,11 @@ class Countries extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('latitude, longitude, zoom', 'numerical', 'integerOnly'=>true),
-			array('id, name, continentId', 'length', 'max'=>50),
+			array('id, name, continent_id', 'length', 'max'=>50),
 			array('iso2', 'length', 'max'=>2),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, continentId, latitude, longitude, zoom, iso2', 'safe', 'on'=>'search'),
+			array('id, name, continent_id, latitude, longitude, zoom, iso2', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,7 +57,7 @@ class Countries extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'continent'=>array(self::BELONGS_TO, 'Continents', 'continentId'),
+			'continent'=>array(self::BELONGS_TO, 'Continents', 'continent_id'),
 		);
 	}
 
@@ -66,13 +66,13 @@ class Countries extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Countries', 'ID'),
-			'name' => Yii::t('Countries', 'Name'),
-			'continentId' => Yii::t('Countries', 'Continent'),
-			'latitude' => Yii::t('Countries', 'Latitude'),
-			'longitude' => Yii::t('Countries', 'Longitude'),
-			'zoom' => Yii::t('Countries', 'Zoom'),
-			'iso2' => Yii::t('Countries', 'Iso2'),
+			'id' => Yii::t('countries', 'ID'),
+			'name' => Yii::t('countries', 'Name'),
+			'continent_id' => Yii::t('countries', 'Continent'),
+			'latitude' => Yii::t('countries', 'Latitude'),
+			'longitude' => Yii::t('countries', 'Longitude'),
+			'zoom' => Yii::t('countries', 'Zoom'),
+			'iso2' => Yii::t('countries', 'Iso2'),
 		);
 	}
 
@@ -95,7 +95,7 @@ class Countries extends ActiveRecord {
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('continentId',$this->continentId,true);
+		$criteria->compare('continent_id',$this->continent_id,true);
 		$criteria->compare('latitude',$this->latitude);
 		$criteria->compare('longitude',$this->longitude);
 		$criteria->compare('zoom',$this->zoom);
@@ -117,7 +117,7 @@ class Countries extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Countries the static model class
+	 * @return countries the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

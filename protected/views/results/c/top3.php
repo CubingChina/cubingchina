@@ -5,12 +5,12 @@ $this->widget('GroupGridView', [
     'sort'=>false,
   ]),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-  'groupKey'=>'eventId',
-  'groupHeader'=>'CHtml::link(Events::getFullEventNameWithIcon($data->eventId), [
+  'groupKey'=>'event_id',
+  'groupHeader'=>'CHtml::link(Events::getFullEventNameWithIcon($data->event_id), [
     "/results/c",
-    "id"=>$data->competitionId,
+    "id"=>$data->competition_id,
     "type"=>"all",
-    "#"=>$data->eventId,
+    "#"=>$data->event_id,
   ])',
   'columns'=>[
     [
@@ -22,7 +22,7 @@ $this->widget('GroupGridView', [
     [
       'name'=>Yii::t('Results', 'Person'),
       'type'=>'raw',
-      'value'=>'Persons::getLinkByNameNId($data->personName, $data->personId)',
+      'value'=>'Persons::getLinkByNameNId($data->person_name, $data->person_id)',
     ],
     [
       'name'=>Yii::t('common', 'Best'),

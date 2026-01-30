@@ -6,21 +6,21 @@ $this->widget('GroupGridView', array(
     'sort'=>false,
   )),
   'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-  'groupKey'=>'eventId',
+  'groupKey'=>'event_id',
   'groupHeader'=>'implode("&nbsp;&nbsp;&nbsp;&nbsp;", array(
-    Events::getFullEventNameWithIcon($data->eventId),
-    Yii::t("RoundTypes", $data->round->cellName),
-    CHtml::tag("a", ["id"=>$data->eventId], ""),
+    Events::getFullEventNameWithIcon($data->event_id),
+    Yii::t("RoundTypes", $data->round->cell_name),
+    CHtml::tag("a", ["id"=>$data->event_id], ""),
   ))',
   'repeatHeader'=>true,
   'rowHtmlOptionsExpression'=>'array(
-    "data-event"=>$data->eventId,
-    "data-round"=>$data->roundTypeId,
+    "data-event"=>$data->event_id,
+    "data-round"=>$data->round_type_id,
   )',
   'columns'=>array(
     array(
       'name'=>Yii::t('Scrambles', 'Group'),
-      'value'=>'$data->groupId',
+      'value'=>'$data->group_id',
     ),
     array(
       'name'=>Yii::t('Scrambles', 'No.'),

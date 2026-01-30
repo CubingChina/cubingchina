@@ -18,15 +18,15 @@ fi
 cd $dir
 db_config="`dirname \`dirname \\\`pwd\\\`\``/config/wcaDb"
 db_num=`expr \( \`cat $db_config\` + 1 \) % 2`
-mysql_user='cubingchina'
-mysql_pass=''
-mysql_db="wca_$db_num"
+# read from system environment
+mysql_host=${DB_HOST:-localhost}
+mysql_user=${DB_USER:-cubingchina}
+mysql_pass=${DB_PASSWORD:-}
+mysql_db="wca_v2_$db_num"
 _log "get export data from wca"
 wget $wca_home/export/results -O export.html || exit
 ziplink=`grep -oP 'href="\K[^"]+WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
 zipname=`grep -oP 'WCA_export_v2_\d+_\w+\.sql\.zip' export.html | tail -1`
-ziplink="${ziplink/v2/v1}"
-zipname="${zipname/v2/v1}"
 _log "zipname: $zipname"
 if [ "dummy"$zipname = 'dummy' ]
 then
@@ -34,7 +34,7 @@ then
   exit
 fi
 #check version and date
-version=`echo $zipname | grep -oP 'WCA_export\K[0-9]+' | tail -1`
+version=`echo $zipname | grep -oP 'WCA_export_v2_\K[0-9]+' | tail -1`
 date=`echo $zipname | grep -oP '[0-9]{8}' | tail -1`
 _log "version: $version"
 _log "date: $date"
@@ -69,27 +69,27 @@ echo $date >> last
 
 
 lftp -c "set ssl:verify-certificate no; pget -n 20 '$ziplink' -o $zipname"
+# check file size
+zipfilesize=$(stat -c%s $zipname)
+if (( zipfilesize < 10000000 ))
+then
+  rm export.html*
+  rm $zipname
+  _log "file too small: $zipfilesize"
+  exit
+fi
 _log "unzip the export data"
 unzip -o $zipname WCA_export.sql
-_log "replace charset to utf8_general_ci"
-sed -ri 's/utf8mb4/utf8/g' WCA_export.sql
-sed -ri 's/unicode_ci/general_ci/g' WCA_export.sql
-_log "remove drop table, disable create table"
-sed -ri 's/DROP TABLE .+;//g' WCA_export.sql
 sed -ri '/enable the sandbox mode/d' WCA_export.sql
-sed -ri 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' WCA_export.sql
-_log "add columns for insert"
-sed -ri 's/INSERT INTO `Results`/INSERT INTO `Results` (`competitionId`,`eventId`,`roundTypeId`,`pos`,`best`,`average`,`personName`,`personId`,`personCountryId`,`formatId`,`value1`,`value2`,`value3`,`value4`,`value5`,`regionalSingleRecord`,`regionalAverageRecord`)/g' WCA_export.sql
-sed -ri 's/INSERT INTO `RanksSingle`/INSERT INTO `RanksSingle` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
-sed -ri 's/INSERT INTO `RanksAverage`/INSERT INTO `RanksAverage` (`personId`,`eventId`,`best`,`worldRank`,`continentRank`,`countryRank`)/g' WCA_export.sql
 _log "check for database"
-mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
+_log "mysql_db: $mysql_db"
+mysql --host=$mysql_host --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
 _log "import structure"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql || exit
+mysql --host=$mysql_host --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql || exit
 _log "import data"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql || exit
+mysql --host=$mysql_host --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql || exit
 _log "import additional"
-mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql || exit
+mysql --host=$mysql_host --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql || exit
 rm -f export.html* WCA_export*
 _log "build some data and clean cache"
 echo -n $db_num > $db_config

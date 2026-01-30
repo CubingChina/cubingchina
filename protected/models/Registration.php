@@ -128,9 +128,9 @@ class Registration extends ActiveRecord {
 		);
 	}
 
-	public static function getUserRegistration($competitionId, $userId) {
+	public static function getUserRegistration($competition_id, $userId) {
 		return self::model()->findByAttributes(array(
-			'competition_id'=>$competitionId,
+			'competition_id'=>$competition_id,
 			'user_id'=>$userId,
 		));
 	}
@@ -430,9 +430,9 @@ class Registration extends ActiveRecord {
 					'event'=>$event->event,
 					'status'=>RegistrationEvent::STATUS_WAITING,
 				], [
-					'condition'=>'registration.competition_id=:competitionId AND registration.status IN (:statusAccepted, :statusWaiting)',
+					'condition'=>'registration.competition_id=:competition_id AND registration.status IN (:statusAccepted, :statusWaiting)',
 					'params'=>[
-						':competitionId'=>$this->competition_id,
+						':competition_id'=>$this->competition_id,
 						':statusAccepted'=>self::STATUS_ACCEPTED,
 						':statusWaiting'=>self::STATUS_WAITING,
 					],
@@ -555,17 +555,17 @@ class Registration extends ActiveRecord {
 		$competition = $this->competition;
 		$user = $this->user;
 		$results = Results::model()->with('competition')->findAllByAttributes([
-			'personId'=>$user->wcaid,
+			'person_id'=>$user->wcaid,
 		], [
 			'condition'=>'competition.year<:year
-				OR (competition.year=:year AND competition.endMonth<:month)
-				OR (competition.year=:year AND competition.endMonth=:month AND competition.endDay<=:day)',
+				OR (competition.year=:year AND competition.end_month<:month)
+				OR (competition.year=:year AND competition.end_month=:month AND competition.end_day<=:day)',
 			'select'=>[
-				'eventId',
+				'event_id',
 				'min(CASE WHEN best>0 THEN best ELSE 9999999999 END) AS best',
 				'min(CASE WHEN average>0 THEN average ELSE 9999999999 END) AS average',
 			],
-			'group'=>'eventId',
+			'group'=>'event_id',
 			'params'=>[
 				':year'=>intval(date('Y', $competition->qualifying_end_time)),
 				':month'=>intval(date('n', $competition->qualifying_end_time)),
@@ -580,7 +580,7 @@ class Registration extends ActiveRecord {
 			$rank->best = $result->best;
 			$rank->average = new RanksAverage();
 			$rank->average->best = $result->average;
-			$temp[$result->eventId] = $rank;
+			$temp[$result->event_id] = $rank;
 		}
 		$unmetEvents = [];
 		foreach ($competition->allEvents as $event) {
@@ -1731,11 +1731,11 @@ class Registration extends ActiveRecord {
 					break;
 			}
 			$results = $modelName::model()->cache(86400)->findAllByAttributes(array(
-				'eventId'=>$sort,
-				'personId'=>array_keys($wcaIds),
+				'event_id'=>$sort,
+				'person_id'=>array_keys($wcaIds),
 			));
 			foreach ($results as $result) {
-				$wcaIds[$result->personId]->best = $result->best;
+				$wcaIds[$result->person_id]->best = $result->best;
 			}
 		}
 		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];

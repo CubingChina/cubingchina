@@ -5,18 +5,18 @@ class MedalCollection extends Statistics {
 	public static function build($statistic, $page = 1, $recursive = true) {
 		$command = Yii::app()->wcaDb->createCommand();
 		$command->select(array(
-			'personId', 'personName',
+			'person_id', 'person_name',
 			'sum(CASE WHEN pos=1 THEN 1 ELSE 0 END) AS gold',
 			'sum(CASE WHEN pos=2 THEN 1 ELSE 0 END) AS silver',
 			'sum(CASE WHEN pos=3 THEN 1 ELSE 0 END) AS bronze',
 		))
-		->from('Results rs')
-		->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1')
-		->leftJoin('Countries country', 'p.countryId=country.id')
-		->where('roundTypeId IN ("c", "f") AND best>0');
-		ActiveRecord::applyRegionCondition($command, $statistic['region'] ?? 'China', 'p.countryId');
+		->from('results rs')
+		->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1')
+		->leftJoin('countries country', 'p.country_id=country.id')
+		->where('round_type_id IN ("c", "f") AND best>0');
+		ActiveRecord::applyRegionCondition($command, $statistic['region'] ?? 'China', 'p.country_id');
 		if (!empty($statistic['eventIds'])) {
-			$command->andWhere(array('in', 'eventId', $statistic['eventIds']));
+			$command->andWhere(array('in', 'event_id', $statistic['eventIds']));
 		}
 		if (isset($statistic['gender'])) {
 			switch ($statistic['gender']) {
@@ -29,20 +29,20 @@ class MedalCollection extends Statistics {
 			}
 		}
 		if (isset($statistic['year'])) {
-			$command->andWhere('competitionId LIKE :year', [
+			$command->andWhere('competition_id LIKE :year', [
 				':year'=>'%' . $statistic['year'],
 			]);
 		}
 		$cmd = clone $command;
-		$command->group('personId')
-		->order('gold DESC, silver DESC, bronze DESC, personName ASC')
+		$command->group('person_id')
+		->order('gold DESC, silver DESC, bronze DESC, person_name ASC')
 		->having('gold + silver + bronze > 0')
 		->limit(self::$limit)
 		->offset(($page - 1) * self::$limit);
 		$columns = array(
 			array(
 				'header'=>'Yii::t("statistics", "Person")',
-				'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+				'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 				'type'=>'raw',
 			),
 			array(
@@ -69,7 +69,7 @@ class MedalCollection extends Statistics {
 				$row['rank'] = sprintf('%d_%d_%d', $row['gold'], $row['silver'], $row['bronze']);
 				$rows[] = $row;
 			}
-			$statistic['count'] = $cmd->select('count(DISTINCT personId) AS count')
+			$statistic['count'] = $cmd->select('count(DISTINCT person_id) AS count')
 			->andWhere('pos IN (1,2,3)')
 			->queryScalar();
 			$statistic['rank'] = ($page - 1) * self::$limit;
@@ -88,10 +88,10 @@ class MedalCollection extends Statistics {
 		} else {
 			$medals = array();
 			$eventIds = array_keys(Events::getNormalEvents());
-			foreach ($eventIds as $eventId) {
+			foreach ($eventIds as $event_id) {
 				$cmd = clone $command;
-				$rows = $cmd->andWhere("eventId='{$eventId}'")->queryAll();
-				$medals[$eventId] = self::makeStatisticsData($statistic, $columns, $rows);
+				$rows = $cmd->andWhere("event_id='{$event_id}'")->queryAll();
+				$medals[$event_id] = self::makeStatisticsData($statistic, $columns, $rows);
 			}
 			return self::makeStatisticsData($statistic, array(
 				'statistic'=>$medals,

@@ -1,27 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "Scrambles".
+ * This is the model class for table "scrambles".
  *
- * The followings are the available columns in table 'Scrambles':
+ * The followings are the available columns in table 'scrambles':
  * @property string $scrambleId
- * @property string $competitionId
- * @property string $eventId
- * @property string $roundTypeId
- * @property string $groupId
- * @property integer $isExtra
- * @property integer $scrambleNum
+ * @property string $competition_id
+ * @property string $event_id
+ * @property string $round_type_id
+ * @property string $group_id
+ * @property integer $is_extra
+ * @property integer $scramble_num
  * @property string $scramble
  */
 class Scrambles extends ActiveRecord {
 
 	public function getNum() {
-		return ($this->isExtra ? 'Ex' : '') . '#' . $this->scrambleNum;
+		return ($this->is_extra ? 'Ex' : '') . '#' . $this->scramble_num;
 	}
 
 	public function getFormattedScramble() {
 		$scramble = $this->scramble;
-		switch ($this->eventId) {
+		switch ($this->event_id) {
 			case '444':
 			case '444bf':
 			case '555':
@@ -30,13 +30,13 @@ class Scrambles extends ActiveRecord {
 			case '777':
 			case 'minx':
 				$scramble = preg_split('{\s+}', $scramble);
-				$num = substr($this->eventId, 0, 1);
+				$num = substr($this->event_id, 0, 1);
 				if ($num > 0) {
 					$scramble = array_map(function($scramble) use($num) {
 						return str_pad($scramble, $num > 5 ? 4 : 3, ' ');
 					}, $scramble);
 				}
-				$scramble = array_chunk($scramble, $this->eventId === 'minx' ? 11 : 10);
+				$scramble = array_chunk($scramble, $this->event_id === 'minx' ? 11 : 10);
 				$scramble = array_map(function($scramble) {
 					return implode(' ', $scramble);
 				}, $scramble);
@@ -100,7 +100,7 @@ class Scrambles extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Scrambles';
+		return 'scrambles';
 	}
 
 	/**
@@ -110,17 +110,17 @@ class Scrambles extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('competitionId, eventId, roundTypeId, groupId, isExtra, scrambleNum, scramble', 'required'),
-			array('isExtra, scrambleNum', 'numerical', 'integerOnly'=>true),
+			array('competition_id, event_id, round_type_id, group_id, is_extra, scramble_num, scramble', 'required'),
+			array('is_extra, scramble_num', 'numerical', 'integerOnly'=>true),
 			array('scrambleId', 'length', 'max'=>10),
-			array('competitionId', 'length', 'max'=>32),
-			array('eventId', 'length', 'max'=>6),
-			array('roundTypeId', 'length', 'max'=>1),
-			array('groupId', 'length', 'max'=>3),
+			array('competition_id', 'length', 'max'=>32),
+			array('event_id', 'length', 'max'=>6),
+			array('round_type_id', 'length', 'max'=>1),
+			array('group_id', 'length', 'max'=>3),
 			array('scramble', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('scrambleId, competitionId, eventId, roundTypeId, groupId, isExtra, scrambleNum, scramble', 'safe', 'on'=>'search'),
+			array('scrambleId, competition_id, event_id, round_type_id, group_id, is_extra, scramble_num, scramble', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -131,9 +131,9 @@ class Scrambles extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competitionId'),
-			'round'=>array(self::BELONGS_TO, 'RoundTypes', 'roundTypeId'),
-			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
+			'competition'=>array(self::BELONGS_TO, 'Competitions', 'competition_id'),
+			'round'=>array(self::BELONGS_TO, 'RoundTypes', 'round_type_id'),
+			'event'=>array(self::BELONGS_TO, 'Events', 'event_id'),
 		);
 	}
 
@@ -142,14 +142,14 @@ class Scrambles extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'scrambleId' => Yii::t('Scrambles', 'Scramble'),
-			'competitionId' => Yii::t('Scrambles', 'Competition'),
-			'eventId' => Yii::t('Scrambles', 'Event'),
-			'roundTypeId' => Yii::t('Scrambles', 'Round'),
-			'groupId' => Yii::t('Scrambles', 'Group'),
-			'isExtra' => Yii::t('Scrambles', 'Is Extra'),
-			'scrambleNum' => Yii::t('Scrambles', 'Scramble Num'),
-			'scramble' => Yii::t('Scrambles', 'Scramble'),
+			'scrambleId' => Yii::t('scrambles', 'Scramble'),
+			'competition_id' => Yii::t('scrambles', 'Competition'),
+			'event_id' => Yii::t('scrambles', 'Event'),
+			'round_type_id' => Yii::t('scrambles', 'Round'),
+			'group_id' => Yii::t('scrambles', 'Group'),
+			'is_extra' => Yii::t('scrambles', 'Is Extra'),
+			'scramble_num' => Yii::t('scrambles', 'Scramble Num'),
+			'scramble' => Yii::t('scrambles', 'Scramble'),
 		);
 	}
 
@@ -171,12 +171,12 @@ class Scrambles extends ActiveRecord {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('scrambleId', $this->scrambleId, true);
-		$criteria->compare('competitionId', $this->competitionId, true);
-		$criteria->compare('eventId', $this->eventId, true);
-		$criteria->compare('roundTypeId', $this->roundTypeId, true);
-		$criteria->compare('groupId', $this->groupId, true);
-		$criteria->compare('isExtra', $this->isExtra);
-		$criteria->compare('scrambleNum', $this->scrambleNum);
+		$criteria->compare('competition_id', $this->competition_id, true);
+		$criteria->compare('event_id', $this->event_id, true);
+		$criteria->compare('round_type_id', $this->round_type_id, true);
+		$criteria->compare('group_id', $this->group_id, true);
+		$criteria->compare('is_extra', $this->is_extra);
+		$criteria->compare('scramble_num', $this->scramble_num);
 		$criteria->compare('scramble', $this->scramble, true);
 
 		return new CActiveDataProvider($this, array(
@@ -195,7 +195,7 @@ class Scrambles extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Scrambles the static model class
+	 * @return scrambles the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

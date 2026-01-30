@@ -415,8 +415,8 @@ class User extends ActiveRecord {
 		}
 		$wcaIds = CHtml::listData($competitions, 'id', 'wca_competition_id');
 		return $this->_hasCerts = (Results::model()->countByAttributes([
-			'competitionId'=>$wcaIds,
-			'personId'=>$this->wcaid,
+			'competition_id'=>$wcaIds,
+			'person_id'=>$this->wcaid,
 		]) > 0);
 	}
 

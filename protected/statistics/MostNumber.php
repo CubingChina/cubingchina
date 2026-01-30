@@ -4,41 +4,41 @@ class MostNumber extends Statistics {
 
 	public static function build($statistic, $page = 1) {
 		$command = Yii::app()->wcaDb->createCommand()
-		->from('Results rs');
+		->from('results rs');
 		if (!isset($statistic['region'])) {
 			$statistic['region'] = 'China';
 		}
 		switch ($statistic['group']) {
-			case 'personId':
+			case 'person_id':
 				$select = array(
-					'personId',
-					'personName',
-					'count(DISTINCT competitionId) AS count',
+					'person_id',
+					'person_name',
+					'count(DISTINCT competition_id) AS count',
 				);
-				$command->leftJoin('Countries country', 'rs.personCountryId=country.id');
+				$command->leftJoin('countries country', 'rs.person_country_id=country.id');
 				Results::applyRegionCondition($command, $statistic['region']);
 				$columns = array(
 					array(
 						'header'=>'Yii::t("statistics", "Person")',
-						'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+						'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
 						'type'=>'raw',
 					),
 					array(
-						'header'=>'Yii::t("statistics", "Competitions")',
+						'header'=>'Yii::t("statistics", "competitions")',
 						'name'=>'count',
 					),
 				);
 				break;
-			case 'competitionId':
+			case 'competition_id':
 				$select = array(
-					'competitionId',
-					'c.cellName',
-					'c.cityName',
-					'count(DISTINCT personId) AS count',
+					'competition_id',
+					'c.cell_name',
+					'c.city_name',
+					'count(DISTINCT person_id) AS count',
 				);
-				$command->leftJoin('Competitions c', 'rs.competitionId=c.id');
-				$command->leftJoin('Countries country', 'c.countryId=country.id');
-				Results::applyRegionCondition($command, $statistic['region'], 'c.countryId');
+				$command->leftJoin('competitions c', 'rs.competition_id=c.id');
+				$command->leftJoin('countries country', 'c.country_id=country.id');
+				Results::applyRegionCondition($command, $statistic['region'], 'c.country_id');
 				$columns = array(
 					array(
 						'header'=>'Yii::t("common", "Competition")',
@@ -46,14 +46,14 @@ class MostNumber extends Statistics {
 						'type'=>'raw',
 					),
 					array(
-						'header'=>'Yii::t("statistics", "Persons")',
+						'header'=>'Yii::t("statistics", "persons")',
 						'name'=>'count',
 					),
 				);
 				break;
 		}
 		if (isset($statistic['gender'])) {
-			$command->leftJoin('Persons p', 'rs.personId=p.id AND p.subid=1');
+			$command->leftJoin('persons p', 'rs.person_id=p.wca_id AND p.sub_id=1');
 			switch ($statistic['gender']) {
 				case 'female':
 					$command->andWhere('p.gender="f"');
@@ -64,7 +64,7 @@ class MostNumber extends Statistics {
 			}
 		}
 		if (isset($statistic['year'])) {
-			$command->andWhere('competitionId LIKE :year', [
+			$command->andWhere('competition_id LIKE :year', [
 				':year'=>'%' . $statistic['year'],
 			]);
 		}
@@ -77,7 +77,7 @@ class MostNumber extends Statistics {
 		->limit($limit)
 		->offset(($page - 1) * $limit)
 		->queryAll();
-		if ($statistic['group'] === 'competitionId') {
+		if ($statistic['group'] === 'competition_id') {
 			$rows = array_map(function($row) {
 				return self::getCompetition($row);
 			}, $rows);

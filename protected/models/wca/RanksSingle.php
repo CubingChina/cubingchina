@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This is the model class for table "RanksSingle".
+ * This is the model class for table "ranks_single".
  *
- * The followings are the available columns in table 'RanksSingle':
+ * The followings are the available columns in table 'ranks_single':
  * @property integer $id
- * @property string $personId
- * @property string $eventId
+ * @property string $person_id
+ * @property string $event_id
  * @property integer $best
- * @property integer $worldRank
- * @property integer $continentRank
- * @property integer $countryRank
+ * @property integer $world_rank
+ * @property integer $continent_rank
+ * @property integer $country_rank
  */
 class RanksSingle extends ActiveRecord {
 	public $medals = array(
@@ -25,11 +25,11 @@ class RanksSingle extends ActiveRecord {
 			return '';
 		}
 		if($attribute == 'best') {
-			return CHtml::link(Results::formatTime($this->average->$attribute, $this->eventId), array(
+			return CHtml::link(Results::formatTime($this->average->$attribute, $this->event_id), array(
 				'/results/rankings',
-				'event'=>$this->eventId,
+				'event'=>$this->event_id,
 				'type'=>'average',
-				'region'=>$this->person->countryId,
+				'region'=>$this->person->country_id,
 			));
 		}
 		return $this->average->getRank($attribute);
@@ -49,7 +49,7 @@ class RanksSingle extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'RanksSingle';
+		return 'ranks_single';
 	}
 
 	/**
@@ -59,12 +59,12 @@ class RanksSingle extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('best, worldRank, continentRank, countryRank', 'numerical', 'integerOnly'=>true),
-			array('personId', 'length', 'max'=>10),
-			array('eventId', 'length', 'max'=>6),
+			array('best, world_rank, continent_rank, country_rank', 'numerical', 'integerOnly'=>true),
+			array('person_id', 'length', 'max'=>10),
+			array('event_id', 'length', 'max'=>6),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, personId, eventId, best, worldRank, continentRank, countryRank', 'safe', 'on'=>'search'),
+			array('id, person_id, event_id, best, world_rank, continent_rank, country_rank', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,11 +75,11 @@ class RanksSingle extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'person'=>array(self::BELONGS_TO, 'Persons', 'personId', 'on'=>'person.subid=1'),
-			'event'=>array(self::BELONGS_TO, 'Events', 'eventId'),
+			'person'=>array(self::BELONGS_TO, 'Persons', 'person_id', 'on'=>'person.sub_id=1'),
+			'event'=>array(self::BELONGS_TO, 'Events', 'event_id'),
 			'average'=>array(self::BELONGS_TO, 'RanksAverage', array(
-				'personId'=>'personId',
-				'eventId'=>'eventId',
+				'person_id'=>'person_id',
+				'event_id'=>'event_id',
 			)),
 		);
 	}
@@ -89,13 +89,13 @@ class RanksSingle extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('RanksSingle', 'ID'),
-			'personId' => Yii::t('RanksSingle', 'Person'),
-			'eventId' => Yii::t('RanksSingle', 'Event'),
-			'best' => Yii::t('RanksSingle', 'Best'),
-			'worldRank' => Yii::t('RanksSingle', 'World Rank'),
-			'continentRank' => Yii::t('RanksSingle', 'Continent Rank'),
-			'countryRank' => Yii::t('RanksSingle', 'Country Rank'),
+			'id' => Yii::t('ranks_single', 'ID'),
+			'person_id' => Yii::t('ranks_single', 'Person'),
+			'event_id' => Yii::t('ranks_single', 'Event'),
+			'best' => Yii::t('ranks_single', 'Best'),
+			'world_rank' => Yii::t('ranks_single', 'World Rank'),
+			'continent_rank' => Yii::t('ranks_single', 'Continent Rank'),
+			'country_rank' => Yii::t('ranks_single', 'Country Rank'),
 		);
 	}
 
@@ -117,12 +117,12 @@ class RanksSingle extends ActiveRecord {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('personId',$this->personId,true);
-		$criteria->compare('eventId',$this->eventId,true);
+		$criteria->compare('person_id',$this->person_id,true);
+		$criteria->compare('event_id',$this->event_id,true);
 		$criteria->compare('best',$this->best);
-		$criteria->compare('worldRank',$this->worldRank);
-		$criteria->compare('continentRank',$this->continentRank);
-		$criteria->compare('countryRank',$this->countryRank);
+		$criteria->compare('world_rank',$this->world_rank);
+		$criteria->compare('continent_rank',$this->continent_rank);
+		$criteria->compare('country_rank',$this->country_rank);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -140,7 +140,7 @@ class RanksSingle extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return RanksSingle the static model class
+	 * @return ranks_single the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);

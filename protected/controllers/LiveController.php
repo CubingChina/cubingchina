@@ -128,19 +128,19 @@ class LiveController extends CompetitionController {
 		if ($wcaid != '') {
 			$personResults = Persons::getResults($wcaid);
 			foreach ($personResults['personRanks'] as $rank) {
-				$events[$rank->eventId] = $rank->eventId;
-				if (!isset($temp[$rank->eventId])) {
+				$events[$rank->event_id] = $rank->event_id;
+				if (!isset($temp[$rank->event_id])) {
 					continue;
 				}
 				$best = $rank->best;
 				$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
-				foreach ($temp[$rank->eventId]['results'] as $key=>$result) {
+				foreach ($temp[$rank->event_id]['results'] as $key=>$result) {
 					if ($result['b'] > 0 && $result['b'] <= $best) {
-						$temp[$rank->eventId]['results'][$key]['nb'] = true;
+						$temp[$rank->event_id]['results'][$key]['nb'] = true;
 						$best = $result['b'];
 					}
 					if ($result['a'] > 0 && $result['a'] <= $average) {
-						$temp[$rank->eventId]['results'][$key]['na'] = true;
+						$temp[$rank->event_id]['results'][$key]['na'] = true;
 						$average = $result['a'];
 					}
 				}

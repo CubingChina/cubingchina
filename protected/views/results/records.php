@@ -41,31 +41,31 @@
     )),
     'enableSorting'=>false,
     'front'=>true,
-    'groupKey'=>'eventId',
-    'groupHeader'=>'Events::getFullEventNameWithIcon($data["eventId"])',
+    'groupKey'=>'event_id',
+    'groupHeader'=>'Events::getFullEventNameWithIcon($data["event_id"])',
     'columns'=>array(
       array(
         'header'=>Yii::t('common', 'Records'),
-        'value'=>'isset($data["record"]) ? $data["record"] : $data["regional" . ucfirst($data["type"]) . "Record"]',
+        'value'=>'isset($data["record"]) ? $data["record"] : $data["regional_" . $data["type"] . "_record"]',
       ),
       array(
         'header'=>Yii::t('common', 'Single'),
-        'value'=>'$data["type"] === "single" ? Results::formatTime($data["best"], $data["eventId"]) : ""',
+        'value'=>'$data["type"] === "single" ? Results::formatTime($data["best"], $data["event_id"]) : ""',
         'type'=>'raw',
       ),
       array(
         'header'=>Yii::t('common', 'Average'),
-        'value'=>'$data["type"] === "average" ? Results::formatTime($data["average"], $data["eventId"]) : ""',
+        'value'=>'$data["type"] === "average" ? Results::formatTime($data["average"], $data["event_id"]) : ""',
         'type'=>'raw',
       ),
       array(
         'header'=>Yii::t('statistics', 'Person'),
-        'value'=>'Persons::getLinkByNameNId($data["personName"], $data["personId"])',
+        'value'=>'Persons::getLinkByNameNId($data["person_name"], $data["person_id"])',
         'type'=>'raw',
       ),
       array(
         'header'=>Yii::t('common', 'Region'),
-        'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+        'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
         'type'=>'raw',
         'htmlOptions'=>array('class'=>'region'),
       ),

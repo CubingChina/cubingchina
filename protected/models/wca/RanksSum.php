@@ -5,13 +5,13 @@
  *
  * The followings are the available columns in table 'SumOfRanks':
  * @property string $id
- * @property string $personId
- * @property string $countryId
- * @property string $continentId
+ * @property string $person_id
+ * @property string $country_id
+ * @property string $continent_id
  * @property string $type
- * @property integer $countryRank
- * @property integer $continentRank
- * @property integer $worldRank
+ * @property integer $country_rank
+ * @property integer $continent_rank
+ * @property integer $world_rank
  */
 class RanksSum extends ActiveRecord {
 	private $_ranks;
@@ -23,20 +23,20 @@ class RanksSum extends ActiveRecord {
 		$this->_ranks = array();
 		$this->_ranks['NR'] = self::model()->countByAttributes(array(
 			'type'=>$this->type,
-			'countryId'=>$this->countryId,
+			'country_id'=>$this->country_id,
 		), array(
-			'condition'=>'countryRank<' . $this->countryRank,
+			'condition'=>'country_rank<' . $this->country_rank,
 		)) + 1;
 		$this->_ranks['CR'] = self::model()->countByAttributes(array(
 			'type'=>$this->type,
-			'continentId'=>$this->continentId,
+			'continent_id'=>$this->continent_id,
 		), array(
-			'condition'=>'continentRank<' . $this->continentRank,
+			'condition'=>'continent_rank<' . $this->continent_rank,
 		)) + 1;
 		$this->_ranks['WR'] = self::model()->countByAttributes(array(
 			'type'=>$this->type,
 		), array(
-			'condition'=>'worldRank<' . $this->worldRank,
+			'condition'=>'world_rank<' . $this->world_rank,
 		)) + 1;
 		return $this->_ranks;
 	}
@@ -54,7 +54,7 @@ class RanksSum extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'RanksSum';
+		return 'ranks_sum';
 	}
 
 	/**
@@ -65,12 +65,12 @@ class RanksSum extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('type', 'required'),
-			array('countryRank, continentRank, worldRank', 'numerical', 'integerOnly'=>true),
-			array('personId, type', 'length', 'max'=>10),
-			array('countryId, continentId', 'length', 'max'=>50),
+			array('country_rank, continent_rank, world_rank', 'numerical', 'integerOnly'=>true),
+			array('person_id, type', 'length', 'max'=>10),
+			array('country_id, continent_id', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, personId, countryId, continentId, type, countryRank, continentRank, worldRank', 'safe', 'on'=>'search'),
+			array('id, person_id, country_id, continent_id, type, country_rank, continent_rank, world_rank', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -90,13 +90,13 @@ class RanksSum extends ActiveRecord {
 	public function attributeLabels() {
 		return array(
 			'id' => 'ID',
-			'personId' => 'Person',
-			'countryId' => 'Country',
-			'continentId' => 'Continent',
+			'person_id' => 'Person',
+			'country_id' => 'Country',
+			'continent_id' => 'Continent',
 			'type' => 'Type',
-			'countryRank' => 'Country Rank',
-			'continentRank' => 'Continent Rank',
-			'worldRank' => 'World Rank',
+			'country_rank' => 'Country Rank',
+			'continent_rank' => 'Continent Rank',
+			'world_rank' => 'World Rank',
 		);
 	}
 
@@ -118,13 +118,13 @@ class RanksSum extends ActiveRecord {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('personId', $this->personId, true);
-		$criteria->compare('countryId', $this->countryId, true);
-		$criteria->compare('continentId', $this->continentId, true);
+		$criteria->compare('person_id', $this->person_id, true);
+		$criteria->compare('country_id', $this->country_id, true);
+		$criteria->compare('continent_id', $this->continent_id, true);
 		$criteria->compare('type', $this->type, true);
-		$criteria->compare('countryRank', $this->countryRank);
-		$criteria->compare('continentRank', $this->continentRank);
-		$criteria->compare('worldRank', $this->worldRank);
+		$criteria->compare('country_rank', $this->country_rank);
+		$criteria->compare('continent_rank', $this->continent_rank);
+		$criteria->compare('world_rank', $this->world_rank);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

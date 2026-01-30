@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This is the model class for table "Events".
+ * This is the model class for table "events".
  *
- * The followings are the available columns in table 'Events':
+ * The followings are the available columns in table 'events':
  * @property string $id
  * @property string $name
  * @property integer $rank
  * @property string $format
- * @property string $cellName
+ * @property string $cell_name
  */
 class Events extends ActiveRecord {
 	private static $_allEvents;
@@ -195,14 +195,14 @@ class Events extends ActiveRecord {
 			'condition'=>'`rank`<900',
 			'order'=>'`rank`',
 		));
-		$events = CHtml::listData($events, 'id', 'cellName');
+		$events = CHtml::listData($events, 'id', 'name');
 		return self::$_normalEvents = $events;
 	}
 
 	public static function getNormalTranslatedEvents() {
 		$events = self::getNormalEvents();
-		foreach ($events as $eventId=>$eventName) {
-			$events[$eventId] = Yii::t('event', $eventName);
+		foreach ($events as $event_id=>$eventName) {
+			$events[$event_id] = Yii::t('event', $eventName);
 		}
 		return $events;
 	}
@@ -215,7 +215,7 @@ class Events extends ActiveRecord {
 			'condition'=>'`rank`>=900 AND `rank`<1000',
 			'order'=>'`rank`',
 		));
-		$events = CHtml::listData($events, 'id', 'cellName');
+		$events = CHtml::listData($events, 'id', 'name');
 		return self::$_deprecatedEvents = $events;
 	}
 
@@ -227,7 +227,7 @@ class Events extends ActiveRecord {
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return 'Events';
+		return 'events';
 	}
 
 	/**
@@ -241,10 +241,10 @@ class Events extends ActiveRecord {
 			array('id', 'length', 'max'=>6),
 			array('name', 'length', 'max'=>54),
 			array('format', 'length', 'max'=>10),
-			array('cellName', 'length', 'max'=>45),
+			array('cell_name', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, rank, format, cellName', 'safe', 'on'=>'search'),
+			array('id, name, rank, format, cell_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -263,11 +263,11 @@ class Events extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('Events', 'ID'),
-			'name' => Yii::t('Events', 'Name'),
-			'rank' => Yii::t('Events', 'Rank'),
-			'format' => Yii::t('Events', 'Format'),
-			'cellName' => Yii::t('Events', 'Cell Name'),
+			'id' => Yii::t('events', 'ID'),
+			'name' => Yii::t('events', 'Name'),
+			'rank' => Yii::t('events', 'Rank'),
+			'format' => Yii::t('events', 'Format'),
+			'cell_name' => Yii::t('events', 'Cell Name'),
 		);
 	}
 
@@ -292,7 +292,7 @@ class Events extends ActiveRecord {
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('rank',$this->rank);
 		$criteria->compare('format',$this->format,true);
-		$criteria->compare('cellName',$this->cellName,true);
+		$criteria->compare('cell_name',$this->cell_name,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -310,7 +310,7 @@ class Events extends ActiveRecord {
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Events the static model class
+	 * @return events the static model class
 	 */
 	public static function model($className = __CLASS__) {
 		return parent::model($className);
