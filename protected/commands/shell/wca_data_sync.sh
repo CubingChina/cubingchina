@@ -18,8 +18,10 @@ fi
 cd $dir
 db_config="`dirname \`dirname \\\`pwd\\\`\``/config/wcaDb"
 db_num=`expr \( \`cat $db_config\` + 1 \) % 2`
-mysql_user='cubingchina'
-mysql_pass=''
+# read from system environment
+mysql_host=${DB_HOST:-localhost}
+mysql_user=${DB_USER:-cubingchina}
+mysql_pass=${DB_PASSWORD:-}
 mysql_db="wca_v2_$db_num"
 _log "get export data from wca"
 wget $wca_home/export/results -O export.html || exit
@@ -81,13 +83,13 @@ unzip -o $zipname WCA_export.sql
 sed -ri '/enable the sandbox mode/d' WCA_export.sql
 _log "check for database"
 _log "mysql_db: $mysql_db"
-mysql --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
+mysql --host=$mysql_host --user=$mysql_user --password=$mysql_pass -e "CREATE DATABASE IF NOT EXISTS $mysql_db CHARSET utf8" || exit
 _log "import structure"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql || exit
+mysql --host=$mysql_host --force --user=$mysql_user --password=$mysql_pass $mysql_db < wca_structure.sql || exit
 _log "import data"
-mysql --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql || exit
+mysql --host=$mysql_host --force --user=$mysql_user --password=$mysql_pass $mysql_db < WCA_export.sql || exit
 _log "import additional"
-mysql --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql || exit
+mysql --host=$mysql_host --user=$mysql_user --password=$mysql_pass $mysql_db < additional.sql || exit
 rm -f export.html* WCA_export*
 _log "build some data and clean cache"
 echo -n $db_num > $db_config

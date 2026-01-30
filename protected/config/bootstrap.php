@@ -10,13 +10,13 @@ define('DEV', ENV === 'dev');
 
 // mysql connection params
 if (!defined('DB_HOST')) {
-	define('DB_HOST', 'localhost');
+	define('DB_HOST', getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost');
 }
 if (!defined('DB_USER')) {
-	define('DB_USER', 'cubingchina');
+	define('DB_USER', getenv('DB_USER') !== false ? getenv('DB_USER') : 'cubingchina');
 }
 if (!defined('DB_PASSWORD')) {
-	define('DB_PASSWORD', '');
+	define('DB_PASSWORD', getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '');
 }
 
 if (is_file($autoload = BASE_PATH . '/vendor/autoload.php')) {
