@@ -155,11 +155,11 @@
           "region"=>"' . $person->country_id . '",
         ))',
       ),
-      array(
-        'name'=>Yii::t('statistics', 'NR'),
-        'type'=>'raw',
-        'value'=>'$data->getRank("NR")',
-      ),
+      // array(
+      //   'name'=>Yii::t('statistics', 'NR'),
+      //   'type'=>'raw',
+      //   'value'=>'$data->getRank("NR")',
+      // ),
       array(
         'name'=>Yii::t('statistics', 'Sum of CR'),
         'type'=>'raw',
@@ -170,11 +170,11 @@
           "region"=>"' . $person->country->continent_id . '",
         ))',
       ),
-      array(
-        'name'=>Yii::t('statistics', 'CR'),
-        'type'=>'raw',
-        'value'=>'$data->getRank("CR")',
-      ),
+      // array(
+      //   'name'=>Yii::t('statistics', 'CR'),
+      //   'type'=>'raw',
+      //   'value'=>'$data->getRank("CR")',
+      // ),
       array(
         'name'=>Yii::t('statistics', 'Sum of WR'),
         'type'=>'raw',
@@ -185,11 +185,11 @@
           "region"=>"World",
         ))',
       ),
-      array(
-        'name'=>Yii::t('statistics', 'WR'),
-        'type'=>'raw',
-        'value'=>'$data->getRank("WR")',
-      ),
+      // array(
+      //   'name'=>Yii::t('statistics', 'WR'),
+      //   'type'=>'raw',
+      //   'value'=>'$data->getRank("WR")',
+      // ),
     ),
   )); ?>
   <?php foreach ($podiums as $name=>$data): ?>

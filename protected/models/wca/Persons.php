@@ -148,7 +148,7 @@ class Persons extends ActiveRecord {
 			'order'=>'type DESC',
 		));
 		foreach ($sumOfRanks as $key=>$sumOfRank) {
-			$sumOfRank->getRanks();
+			// $sumOfRank->getRanks();
 		}
 		//奖牌数量
 		$command = $db->createCommand();
