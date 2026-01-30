@@ -19,7 +19,7 @@ class SumOfRanks extends Statistics {
 		if (Region::isContinent($statistic['region']) || $statistic['region'] === 'World') {
 			$columns[] = array(
 				'header'=>'Yii::t("common", "Region")',
-				'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+				'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
 				'type'=>'raw',
 				'htmlOptions'=>array('class'=>'region'),
 			);

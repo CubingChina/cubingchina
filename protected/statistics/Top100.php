@@ -138,7 +138,7 @@ class Top100 extends Statistics {
 				),
 				// array(
 				// 	'header'=>'Yii::t("common", "Region")',
-				// 	'value'=>'Region::getIconName($data["countryName"], $data["iso2"])',
+				// 	'value'=>'Region::getIconName($data["country_name"], $data["iso2"])',
 				// 	'type'=>'raw',
 				// 	'htmlOptions'=>array('class'=>'region'),
 				// ),
