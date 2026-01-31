@@ -207,6 +207,10 @@ class GroupCommand extends CConsoleCommand {
 							$groupSchedule->stage = $stage;
 							$groupSchedule->save();
 							$activityMap[$activityId] = $groupSchedule;
+							// map 333fm and 333mbf to parent id
+							if ($event === '333fm' || $event === '333mbf') {
+								$activityMap[$activity['id']] = $groupSchedule;
+							}
 							$groupSchedules[] = $groupSchedule;
 						}
 					}
@@ -214,7 +218,7 @@ class GroupCommand extends CConsoleCommand {
 			}
 		}
 		foreach ($activityMap as $activityId => $groupSchedule) {
-			echo "GroupSchedule[{$groupSchedule->id}]: event={$groupSchedule->event}, round={$groupSchedule->round}, group={$groupSchedule->group}, stage={$groupSchedule->stage}, start_time=" . date('H:i', $groupSchedule->start_time) . ", end_time=" . date('H:i', $groupSchedule->end_time) . "\n";
+			echo "{$activityId}: {GroupSchedule[{$groupSchedule->id}]: event={$groupSchedule->event}, round={$groupSchedule->round}, group={$groupSchedule->group}, stage={$groupSchedule->stage}, start_time=" . date('H:i', $groupSchedule->start_time) . ", end_time=" . date('H:i', $groupSchedule->end_time) . "\n";
 		}
 		echo "Created " . count($groupSchedules) . " group schedules\n";
 		// Parse persons data and create UserSchedule
@@ -243,15 +247,13 @@ class GroupCommand extends CConsoleCommand {
 				}
 				$groupSchedule = $activityMap[$activityId];
 				// Check if already exists
-				$existing = UserSchedule::model()->findByAttributes([
-					'user_id'=>$registration->user_id,
-					'competition_id'=>$competition->id,
-					'group_id'=>$groupSchedule->id,
-				]);
-				if ($existing === null) {
-					$this->addUserSchedule($groupSchedule, $registration);
-					$userScheduleCount++;
-				}
+				// $existing = UserSchedule::model()->findByAttributes([
+				// 	'user_id'=>$registration->user_id,
+				// 	'competition_id'=>$competition->id,
+				// 	'group_id'=>$groupSchedule->id,
+				// ]);
+				$this->addUserSchedule($groupSchedule, $registration);
+				$userScheduleCount++;
 			}
 		}
 		echo "Created {$userScheduleCount} user schedules\n";
