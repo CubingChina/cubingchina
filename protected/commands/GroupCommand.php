@@ -106,6 +106,157 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionImport($id, $file) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			echo "Competition not found\n";
+			return;
+		}
+		if (!$this->confirm($competition->name_zh)) {
+			return;
+		}
+		if (!is_file($file)) {
+			echo "File not found: {$file}\n";
+			return;
+		}
+		$json = json_decode(file_get_contents($file), true);
+		if ($json === null) {
+			echo "Invalid JSON file\n";
+			return;
+		}
+		$scheduleExists = GroupSchedule::model()->countByAttributes([
+			'competition_id'=>$competition->id,
+		]) > 0;
+		if ($scheduleExists && !$this->confirm('regenerate?')) {
+			return;
+		}
+		if ($scheduleExists) {
+			GroupSchedule::model()->deleteAllByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+			UserSchedule::model()->deleteAllByAttributes([
+				'competition_id'=>$competition->id,
+			]);
+		}
+		// Parse schedule data
+		$scheduleData = $json['schedule'] ?? [];
+		$venues = $scheduleData['venues'] ?? [];
+		$startDate = $scheduleData['startDate'] ?? date('Y-m-d', $competition->date);
+		$startTimestamp = strtotime($startDate . ' 00:00:00');
+		// Map room names to stages
+		$stageMap = [
+			'main'=>['主赛区', 'main', 'main stage'],
+			'side'=>['副赛区', 'side', 'side stage'],
+			'long'=>['长项目', 'long', 'long-time'],
+			'room'=>['教室', 'room', 'classroom'],
+		];
+		// Build activity map: activityId => childActivity
+		$activityMap = [];
+		$groupSchedules = [];
+		$allSchecules = $competition->getAllScheduleRounds();
+		foreach ($venues as $venue) {
+			$rooms = $venue['rooms'] ?? [];
+			foreach ($rooms as $room) {
+				$roomName = strtolower($room['name'] ?? '');
+				$stage = 'main'; // default
+				foreach ($stageMap as $stageKey => $keywords) {
+					foreach ($keywords as $keyword) {
+						if (strpos($roomName, strtolower($keyword)) !== false) {
+							$stage = $stageKey;
+							break 2;
+						}
+					}
+				}
+				$activities = $room['activities'] ?? [];
+				foreach ($activities as $activity) {
+					$childActivities = $activity['childActivities'] ?? [];
+					foreach ($childActivities as $childActivity) {
+						$activityId = $childActivity['id'];
+						$activityCode = $childActivity['activityCode'] ?? '';
+						// Parse activityCode: "event-round-group" (e.g., "777-r1-g1")
+						if (preg_match('/^([^-]+)-r(\d+)-g(\d+)(?:-a(\d+))?$/', $activityCode, $matches)) {
+							$event = $matches[1];
+							$round = $matches[2];
+							$group = $matches[3];
+							$attempt = $matches[4] ?? 1;
+							// Parse UTC time and convert to local (assuming China timezone UTC+8)
+							$startTime = strtotime($childActivity['startTime']);
+							$endTime = strtotime($childActivity['endTime']);
+							// Find base schedule
+							$eventSchedules = array_values($allSchecules[$event]);
+							$baseSchedule = $eventSchedules[$round - 1] ?? null;
+							if ($baseSchedule === null) {
+								echo "Warning: Base schedule not found for {$event} round {$round}\n";
+								continue;
+							}
+							// Calculate day based on competition date
+							$competitionDateStart = strtotime(date('Y-m-d', $competition->date) . ' 00:00:00');
+							$activityDateStart = strtotime(date('Y-m-d', $startTime) . ' 00:00:00');
+							$day = floor(($activityDateStart - $competitionDateStart) / 86400) + 1;
+							if ($day < 1) {
+								$day = 1;
+							}
+							// Create GroupSchedule
+							$groupSchedule = new GroupSchedule();
+							$groupSchedule->attributes = $baseSchedule->attributes;
+							$groupSchedule->start_time = $startTime;
+							$groupSchedule->end_time = $endTime;
+							// $groupSchedule->group = chr(64 + intval($group)); // Convert 1->A, 2->B, etc.
+							$groupSchedule->group = $group;
+							$groupSchedule->day = $day;
+							$groupSchedule->stage = $stage;
+							$groupSchedule->save();
+							$activityMap[$activityId] = $groupSchedule;
+							$groupSchedules[] = $groupSchedule;
+						}
+					}
+				}
+			}
+		}
+		foreach ($activityMap as $activityId => $groupSchedule) {
+			echo "GroupSchedule[{$groupSchedule->id}]: event={$groupSchedule->event}, round={$groupSchedule->round}, group={$groupSchedule->group}, stage={$groupSchedule->stage}, start_time=" . date('H:i', $groupSchedule->start_time) . ", end_time=" . date('H:i', $groupSchedule->end_time) . "\n";
+		}
+		echo "Created " . count($groupSchedules) . " group schedules\n";
+		// Parse persons data and create UserSchedule
+		$persons = $json['persons'] ?? [];
+		$userScheduleCount = 0;
+		$registrations = Registration::getRegistrations($competition);
+		// Build registration map by number
+		$registrationMap = [];
+		foreach ($registrations as $registration) {
+			if ($registration->number) {
+				$registrationMap[$registration->number] = $registration;
+			}
+		}
+		foreach ($persons as $person) {
+			$registrantId = $person['registrantId'] ?? null;
+			if (!$registrantId || !isset($registrationMap[$registrantId])) {
+				continue;
+			}
+			$registration = $registrationMap[$registrantId];
+			$assignments = $person['assignments'] ?? [];
+			foreach ($assignments as $assignment) {
+				$activityId = $assignment['activityId'] ?? null;
+				$assignmentCode = $assignment['assignmentCode'] ?? '';
+				if ($assignmentCode !== 'competitor' || !isset($activityMap[$activityId])) {
+					continue;
+				}
+				$groupSchedule = $activityMap[$activityId];
+				// Check if already exists
+				$existing = UserSchedule::model()->findByAttributes([
+					'user_id'=>$registration->user_id,
+					'competition_id'=>$competition->id,
+					'group_id'=>$groupSchedule->id,
+				]);
+				if ($existing === null) {
+					$this->addUserSchedule($groupSchedule, $registration);
+					$userScheduleCount++;
+				}
+			}
+		}
+		echo "Created {$userScheduleCount} user schedules\n";
+	}
+
 	public function actionMake($id) {
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
@@ -497,7 +648,7 @@ class GroupCommand extends CConsoleCommand {
 				'competition_id'=>$competition->id,
 			]);
 			$distribution = [];
-			$maxGroup = 'A';
+			$maxGroup = '1';
 			$eventRounds = [];
 			foreach ($groupSchedules as $groupSchedule) {
 				$eventRounds[$groupSchedule->event][$groupSchedule->round] = $groupSchedule->round;
@@ -513,7 +664,7 @@ class GroupCommand extends CConsoleCommand {
 				}
 			}
 			echo "\n";
-			for ($group = 'A'; $group <= $maxGroup; $group++) {
+			for ($group = '1'; $group <= $maxGroup; $group++) {
 				echo "{$group}\t";
 				foreach ($eventRounds as $event=>$rounds) {
 					foreach ($rounds as $round) {

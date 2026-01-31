@@ -23,6 +23,9 @@ class ConciseSchedule extends Widget {
 			}
 			$headColSpans[$stage] = 0;
 		}
+		// Round down startTime and round up endTime to nearest 5-minute boundary
+		$this->startTime = floor($this->startTime / $this->timeSpan) * $this->timeSpan;
+		$this->endTime = ceil($this->endTime / $this->timeSpan) * $this->timeSpan;
 		$this->processSchedules();
 		$stageKeys = array();
 		$colSpans = array();
@@ -52,21 +55,29 @@ class ConciseSchedule extends Widget {
 		//table
 		echo CHtml::openTag('tbody');
 		for ($time = $this->startTime; $time < $this->endTime; $time += $this->timeSpan) {
-			$hasEventStartOrEnd = false;
+			$eventTime = null;
+			// First pass: look for start times
 			foreach ($this->schedules as $key=>$schedules) {
-				if (isset($schedules[$stageKeys[$key]]) && $schedules[$stageKeys[$key]]['schedule']->start_time == $time) {
-					$hasEventStartOrEnd = true;
-					break;
+				if (isset($schedules[$stageKeys[$key]]) && $schedules[$stageKeys[$key]]['schedule']->start_time >= $time && $schedules[$stageKeys[$key]]['schedule']->start_time < $time + $this->timeSpan) {
+					if ($eventTime === null || $schedules[$stageKeys[$key]]['schedule']->start_time < $eventTime) {
+						$eventTime = $schedules[$stageKeys[$key]]['schedule']->start_time;
+					}
 				}
-				if (isset($schedules[$stageKeys[$key] - 1]) && $schedules[$stageKeys[$key] - 1]['schedule']->end_time == $time) {
-					$hasEventStartOrEnd = true;
-					break;
+			}
+			// Second pass: look for end times if no start time found
+			if ($eventTime === null) {
+				foreach ($this->schedules as $key=>$schedules) {
+					if (isset($schedules[$stageKeys[$key] - 1]) && $schedules[$stageKeys[$key] - 1]['schedule']->end_time > $time && $schedules[$stageKeys[$key] - 1]['schedule']->end_time <= $time + $this->timeSpan) {
+						if ($eventTime === null || $schedules[$stageKeys[$key] - 1]['schedule']->end_time < $eventTime) {
+							$eventTime = $schedules[$stageKeys[$key] - 1]['schedule']->end_time;
+						}
+					}
 				}
 			}
 			echo CHtml::openTag('tr');
 			echo CHtml::tag('td', array(
-				'class'=>'time' . ($hasEventStartOrEnd ? ' has-time' : ''),
-			), $hasEventStartOrEnd ? CHtml::tag('span', array(), date('H:i', $time)) : '');
+				'class'=>'time' . ($eventTime !== null ? ' has-time' : ''),
+			), $eventTime !== null ? CHtml::tag('span', array(), date('H:i', $eventTime)) : '');
 			foreach ($this->schedules as $key=>$schedules) {
 				if (!isset($schedules[$stageKeys[$key]])) {
 					if (!isset($stageKeys[$key - 1]) || !isset($this->schedules[$key - 1][$stageKeys[$key - 1]]) || $colSpans[$key - 1] == 1) {
@@ -75,11 +86,11 @@ class ConciseSchedule extends Widget {
 					continue;
 				}
 				$current = $schedules[$stageKeys[$key]];
-				if ($current['schedule']->end_time == $time + $this->timeSpan) {
+				if ($current['schedule']->end_time > $time && $current['schedule']->end_time <= $time + $this->timeSpan) {
 					$stageKeys[$key]++;
 					$colSpans[$key] = 1;
 				}
-				if ($current['schedule']->start_time == $time) {
+				if ($current['schedule']->start_time >= $time && $current['schedule']->start_time < $time + $this->timeSpan) {
 					if (isset($stageKeys[$key + 1]) && $this->schedules[$key + 1][0]['schedule']->stage == $current['schedule']->stage
 						&& (!isset($this->schedules[$key + 1][$stageKeys[$key + 1]])
 						|| $this->schedules[$key + 1][$stageKeys[$key + 1]]['schedule']->start_time >= $current['schedule']->end_time)
@@ -94,10 +105,10 @@ class ConciseSchedule extends Widget {
 				}
 			}
 			echo CHtml::openTag('td', array(
-				'class'=>'time' . ($hasEventStartOrEnd ? ' has-time' : ''),
+				'class'=>'time' . ($eventTime !== null ? ' has-time' : ''),
 			));
-			if ($hasEventStartOrEnd) {
-				echo CHtml::tag('span', array(), date('H:i', $time));
+			if ($eventTime !== null) {
+				echo CHtml::tag('span', array(), date('H:i', $eventTime));
 			}
 			echo CHtml::closeTag('td');
 			echo CHtml::closeTag('tr');
@@ -170,7 +181,7 @@ class ConciseSchedule extends Widget {
 		echo CHtml::tag('td', array(
 			'class'=>implode(' ', $tdClass),
 			'colspan'=>$colSpan,
-			'rowspan'=>($schedule['schedule']->end_time - $schedule['schedule']->start_time) / $this->timeSpan,
+			'rowspan'=>max(1, ceil(($schedule['schedule']->end_time - $schedule['schedule']->start_time) / $this->timeSpan)),
 		), CHtml::tag('div', ['class'=>'show-on-small'], Events::getShortNameWithIcon($schedule['event'])) . CHtml::tag('div', ['class'=>'show-on-full'], implode('<br>', $text)));
 	}
 }
