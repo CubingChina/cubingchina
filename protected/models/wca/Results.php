@@ -98,6 +98,7 @@ class Results extends ActiveRecord {
 			if ($eventBestPerson !== array()) {
 				$command = Yii::app()->wcaDb->createCommand()
 				->select(array(
+					'rs.id',
 					'rs.event_id',
 					sprintf('rs.%s AS best', $field),
 					'rs.person_id',
