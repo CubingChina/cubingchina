@@ -39,10 +39,10 @@ class Competitions extends ActiveRecord {
 		return array(
 			'winners'=>Yii::t('competitions', 'Winners'),
 			'top3'=>Yii::t('competitions', 'Top 3'),
-			'all'=>Yii::t('competitions', 'All results'),
+			'all'=>Yii::t('competitions', 'All Results'),
 			'byPerson'=>Yii::t('competitions', 'By Person'),
 			'records'=>Yii::t('common', 'Records'),
-			'scrambles'=>Yii::t('competitions', 'scrambles'),
+			'scrambles'=>Yii::t('competitions', 'Scrambles'),
 		);
 	}
 
