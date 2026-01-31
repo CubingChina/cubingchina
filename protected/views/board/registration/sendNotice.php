@@ -65,6 +65,7 @@
               <button type="button" class="btn btn-orange btn-square select" data-type="accepted">已审核</button>
               <button type="button" class="btn btn-purple btn-square select" data-type="unaccepted">未审核</button>
               <button type="button" class="btn btn-primary btn-square select" data-type="oversea">海外及港澳台</button>
+              <button type="button" class="btn btn-info btn-square select" data-type="newcomer">新人选手</button>
               <?php if ($competition->staff): ?>
               <button type="button" class="btn btn-theme btn-square select" data-type="staff">工作人员</button>
               <?php endif; ?>
@@ -131,6 +132,13 @@ Yii::app()->clientScript->registerScript('sendNotice',
       case 'oversea':
         $('.competitor').prop('checked', false).each(function() {
           if ($(this).data('country-id') > 1 && $(this).data('accepted')) {
+            this.checked = true;
+          }
+        });
+        break;
+      case 'newcomer':
+        $('.competitor').prop('checked', false).each(function() {
+          if ($(this).data('accepted') && !$(this).data('wca-id')) {
             this.checked = true;
           }
         });
