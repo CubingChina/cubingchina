@@ -4,7 +4,7 @@
       <tr class="persons-<?php echo count($persons); ?>">
         <th colspan="2" class="pk-attribute"><?php echo Yii::t('Results', 'Name'); ?></th>
         <?php foreach ($persons as $person): ?>
-        <th><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->id); ?></th>
+        <th><?php echo Persons::getLinkByNameNId($person['person']->name, $person['person']->wca_id); ?></th>
         <?php endforeach; ?>
       </tr>
     </thead>
@@ -12,7 +12,7 @@
       <tr>
         <td colspan="2"><?php echo Yii::t('common', 'WCA ID'); ?></td>
         <?php foreach ($persons as $person): ?>
-        <td><?php echo Persons::getWCAIconLinkByNameNId($person['person']->name, $person['person']->id); ?></td>
+        <td><?php echo Persons::getWCAIconLinkByNameNId($person['person']->name, $person['person']->wca_id); ?></td>
         <?php endforeach; ?>
       </tr>
       <tr>
@@ -393,7 +393,7 @@
         <td><?php echo Yii::t('common', 'Overall'); ?></td>
         <?php foreach ($persons as $key=>$person): ?>
         <td<?php echo $this->getRivalryWinnerCSSClass($person, $eventId, $rivalries, 'overAll'); ?>>
-          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->id]['overAll']); ?>
+          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->wca_id]['overAll']); ?>
         </td>
         <?php endforeach; ?>
       </tr>
@@ -401,7 +401,7 @@
         <td><?php echo Yii::t('common', 'Finals'); ?></td>
         <?php foreach ($persons as $key=>$person): ?>
         <td<?php echo $this->getRivalryWinnerCSSClass($person, $eventId, $rivalries, 'final'); ?>>
-          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->id]['final']); ?>
+          <?php echo $this->getRivalryResult($rivalries[$eventId][$person['person']->wca_id]['final']); ?>
         </td>
         <?php endforeach; ?>
       </tr>

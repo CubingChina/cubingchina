@@ -334,7 +334,7 @@ class ResultsController extends Controller {
 		}
 		$countries = $continents = array();
 		foreach ($persons as $person) {
-			$id = $person['person']->id;
+			$id = $person['person']->wca_id;
 			$countries[$person['person']->country_id] = $person['person']->country_id;
 			$continents[$person['person']->country->continent_id] = $person['person']->country->continent_id;
 			foreach ($person['results']['personRanks'] as $event_id=>$ranks) {
@@ -368,7 +368,7 @@ class ResultsController extends Controller {
 			$bestSolves = $this->getBestData($persons, $solvesExpression, 'max');
 			$event_ids[$event_id] &= $bestAverage > 0;
 			foreach ($persons as $person) {
-				$id = $person['person']->id;
+				$id = $person['person']->wca_id;
 				$single = $this->evaluateExpression($singleExpression, $person);
 				$average = $this->evaluateExpression($averageExpression, $person);
 				$sda = $this->evaluateExpression($sdaExpression, $person);
@@ -415,8 +415,8 @@ class ResultsController extends Controller {
 		$rivalries = array();
 		if (count($persons) === 2) {
 			$person1Results = array();
-			$id1 = $persons[0]['person']->id;
-			$id2 = $persons[1]['person']->id;
+			$id1 = $persons[0]['person']->wca_id;
+			$id2 = $persons[1]['person']->wca_id;
 			foreach ($persons[0]['results']['byEvent'] as $result) {
 				$person1Results[$result->competition_id][$result->event_id][$result->round_type_id] = $result->pos;
 			}
@@ -470,7 +470,7 @@ class ResultsController extends Controller {
 		}
 		return array(
 			'persons'=>$persons,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids, //for some reason, i only change the data key to eventId
 			'bestData'=>$bestData,
 			'winners'=>$winners,
 			'sameCountry'=>count($countries) === 1,
@@ -498,14 +498,14 @@ class ResultsController extends Controller {
 	}
 
 	protected function getWinnerCSSClass($winners, $person, $attribute) {
-		if (isset($winners[$person['person']->id][$attribute])) {
+		if (isset($winners[$person['person']->wca_id][$attribute])) {
 			return ' class="winner"';
 		}
 		return '';
 	}
 
 	protected function getRivalryWinnerCSSClass($person, $event_id, $rivalries, $type) {
-		$rivalry = $rivalries[$event_id][$person['person']->id][$type];
+		$rivalry = $rivalries[$event_id][$person['person']->wca_id][$type];
 		if ($rivalry['wins'] >= $rivalry['loses'] && array_sum($rivalry) > 0) {
 			return ' class="winner"';
 		}
