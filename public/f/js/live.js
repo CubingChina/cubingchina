@@ -3,7 +3,7 @@
     alert('Your browser doesn\'t support, please upgrade!');
     return;
   }
-  // Vue.config.debug = true;
+  Vue.config.debug = true;
 
   var body = $('body');
   var liveContainer = $('#live-container');
@@ -79,6 +79,18 @@
     options.disableChat = disableChat;
   }).on('record.current', function (records) {
     currentRecords = records;
+  }).on('h2h.fetch', function (data) {
+    store.dispatch('UPDATE_H2H_DATA', data);
+  }).on('h2h.rounds', function (rounds) {
+    store.dispatch('UPDATE_H2H_ROUNDS', rounds);
+  }).on('h2h.round.update', function (round) {
+    store.dispatch('UPDATE_H2H_ROUND', round);
+  }).on('h2h.match.update', function (match) {
+    store.dispatch('UPDATE_H2H_MATCH', match);
+  }).on('h2h.set.update', function (set) {
+    store.dispatch('UPDATE_H2H_SET', set);
+  }).on('h2h.point.update', function (point) {
+    store.dispatch('UPDATE_H2H_POINT', point);
   });
 
   Vue.use(VueRouter);
@@ -100,7 +112,10 @@
     results: [],
     userResults: [],
     messages: [],
-    staticMessages: []
+    staticMessages: [],
+    h2hData: null,
+    h2hRounds: [],
+    h2hLoading: false
   };
   var lastFetchRoundsTime = Date.now();
   var events = {};
@@ -191,6 +206,72 @@
     },
     UPDATE_ONLINE_NUMBER: function (state, onlineNumber) {
       state.onlineNumber = onlineNumber;
+    },
+    UPDATE_H2H_DATA: function (state, data) {
+      state.h2hData = data;
+      state.h2hLoading = false;
+    },
+    UPDATE_H2H_ROUNDS: function (state, rounds) {
+      state.h2hRounds = rounds;
+    },
+    UPDATE_H2H_ROUND: function (state, round) {
+      if (!state.h2hRounds) {
+        state.h2hRounds = [];
+      }
+      var index = state.h2hRounds.findIndex(function (r) {
+        return r.i == round.i;
+      });
+      if (index >= 0) {
+        state.h2hRounds[index] = round;
+      } else {
+        state.h2hRounds.push(round);
+      }
+    },
+    UPDATE_H2H_MATCH: function (state, match) {
+      if (state.h2hData && state.h2hData.matches) {
+        var index = state.h2hData.matches.findIndex(function (m) {
+          return m.i == match.i;
+        });
+        if (index >= 0) {
+          state.h2hData.matches[index] = match;
+        }
+      }
+    },
+    UPDATE_H2H_SET: function (state, set) {
+      if (state.h2hData && state.h2hData.matches) {
+        state.h2hData.matches.forEach(function (match) {
+          if (match.sets) {
+            var index = match.sets.findIndex(function (s) {
+              return s.i == set.i;
+            });
+            if (index >= 0) {
+              match.sets[index] = set;
+            }
+          }
+        });
+      }
+    },
+    UPDATE_H2H_POINT: function (state, point) {
+      if (state.h2hData && state.h2hData.matches) {
+        state.h2hData.matches.forEach(function (match) {
+          if (match.sets) {
+            match.sets.forEach(function (set) {
+              if (set.points) {
+                var index = set.points.findIndex(function (p) {
+                  return p.i == point.i;
+                });
+                if (index >= 0) {
+                  set.points[index] = point;
+                }
+              }
+            });
+          }
+        });
+      }
+    },
+    LOADING_H2H: function (state) {
+      state.h2hLoading = true;
+      state.h2hData = null;
     }
   };
   $.extend(state, data);
@@ -315,6 +396,18 @@
         },
         onlineNumber: function (state) {
           return state.onlineNumber;
+        },
+        isH2HRound: function (state) {
+          var round = getRound(state.params);
+          return round && round.h2h;
+        },
+        isLastRound: function (state) {
+          var round = getRound(state.params);
+          if (!round) {
+            return false;
+          }
+          var allRounds = Object.values(eventRounds[round.e]);
+          return round === allRounds[allRounds.length - 1];
         }
       }
     },
@@ -440,6 +533,254 @@
               }
             }
           }
+        }
+      },
+      'h2h-result': {
+        props: ['options'],
+        computed: {
+          h2hData: function () {
+            // Access directly from state instead of getter to avoid read-only issue
+            return this.$store.state.h2hData;
+          },
+          h2hLoading: function () {
+            return this.$store.state.h2hLoading;
+          },
+          h2hRounds: function () {
+            return this.$store.state.h2hRounds;
+          },
+          h2hRound: function () {
+            if (!this.h2hRounds || !this.$store.state.params) {
+              return null;
+            }
+            var params = this.$store.state.params;
+            return this.h2hRounds.find(function (r) {
+              return r.e == params.e && r.r == params.r;
+            });
+          },
+          eventName: function () {
+            var event = getEvent(this.$store.state.params);
+            return event && event.name;
+          },
+          roundName: function () {
+            var round = getRound(this.$store.state.params);
+            return round && round.name;
+          }
+        },
+        computed: {
+          hasPermission: function () {
+            var user = this.$store.state.user;
+            return user.isOrganizer || user.isDelegate || user.isAdmin || user.isScoreTaker;
+          },
+          options: function () {
+            return this.$parent.options || {};
+          },
+          eventName: function () {
+            return this.$store.state.params.e;
+          }
+        },
+        watch: {
+          '$store.state.params': function (params) {
+            var that = this;
+            if (that.isH2HRound) {
+              that.fetchH2HData();
+            }
+          }
+        },
+        ready: function () {
+          var that = this;
+          if (that.isH2HRound) {
+            that.fetchH2HData();
+          }
+        },
+        template: '#h2h-result-template',
+        components: {
+          'h2h-point-input': {
+            props: ['value', 'point', 'competitor', 'eventName'],
+            data: function () {
+              return {
+                isActive: false,
+                time: '',
+                isUpdatingFromProp: false
+              }
+            },
+            watch: {
+              value: function (newVal) {
+                var that = this;
+                // Only update time if not currently updating from user input
+                if (!that.isUpdatingFromProp) {
+                  that.isUpdatingFromProp = true;
+                  var time = decodeResult(newVal, that.eventName);
+                  that.time = time.replace(/[:\.]/g, '');
+                  that.$nextTick(function () {
+                    that.isUpdatingFromProp = false;
+                  });
+                }
+              }
+            },
+            ready: function () {
+              var that = this;
+              var time = decodeResult(that.value, that.eventName);
+              that.time = time.replace(/[:\.]/g, '');
+            },
+            methods: {
+              calculateValue: function () {
+                var that = this;
+                // Don't calculate if updating from prop
+                if (that.isUpdatingFromProp) {
+                  return;
+                }
+
+                var encodedValue = 0;
+
+                if (that.time === '' || that.time === '0') {
+                  encodedValue = 0;
+                } else if (that.time.toUpperCase() === 'DNF') {
+                  encodedValue = -1;
+                } else if (that.time.toUpperCase() === 'DNS') {
+                  encodedValue = -2;
+                } else {
+                  // Try to encode the time string
+                  encodedValue = encodeResult(that.formatTime(that.time), that.eventName, false);
+                  if (encodedValue === 0 || encodedValue === undefined) {
+                    // Invalid input, restore original value
+                    var time = decodeResult(that.value, that.eventName);
+                    that.time = time.replace(/[:\.]/g, '');
+                    return;
+                  }
+                }
+
+                // Notify parent to save (don't try to update value directly as it's from Vuex)
+                that.$parent.updatePointResult(that.point, that.competitor, encodedValue);
+              },
+              formatTime: function (time) {
+                if (time == 'DNF' || time == 'DNS' || time == '' || this.eventName == '333fm') {
+                  return time;
+                }
+                var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
+                var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
+                var msecond = parseInt(time.slice(-2));
+                return [
+                  minute ? minute + ':' : '',
+                  second + '.',
+                  msecond
+                ].join('');
+              },
+              focus: function () {
+                this.isActive = true;
+              },
+              blur: function () {
+                this.isActive = false;
+                // Calculate value when user finishes input
+                this.calculateValue();
+              },
+              keydown: function (e) {
+                var code = e.which;
+                var that = this;
+                var value = that.time;
+
+                switch (code) {
+                  //D,/ pressed
+                  case 68:
+                  case 111:
+                    that.time = 'DNF';
+                    break;
+                  //S,* pressed
+                  case 106:
+                  case 83:
+                    that.time = 'DNS';
+                    break;
+                  case 8:
+                  case 109:
+                    if (that.time === 'DNF' || that.time === 'DNS') {
+                      that.time = '';
+                    } else {
+                      that.time = value.slice(0, -1);
+                    }
+                    break;
+                  case 107:
+                  case 38:
+                  case 9:
+                    e.preventDefault();
+                    var input = $(e.target);
+                    var inputs = $('.result-input:not([disabled])');
+                    var index = inputs.index(input);
+                    if (index > 0) {
+                      inputs.eq(index - 1).focus();
+                    }
+                    break;
+                  case 13:
+                  case 40:
+                  case 109:
+                    e.preventDefault();
+                    var input = $(e.target);
+                    var inputs = $('.result-input:not([disabled])');
+                    var index = inputs.index(input);
+                    if (index < inputs.length - 1) {
+                      inputs.eq(index + 1).focus();
+                    }
+                    break;
+                  default:
+                    if (code >= 48 && code <= 57) {
+                      // Number key
+                      if (that.time === 'DNF' || that.time === 'DNS') {
+                        that.time = '';
+                      }
+                      that.time += String.fromCharCode(code);
+                      // Don't calculate immediately on number input, wait for blur
+                    }
+                    break;
+                }
+              }
+            },
+            template: '#h2h-point-input-template'
+          }
+        },
+        methods: {
+          fetchH2HData: function () {
+            var that = this;
+            var params = that.$store.state.params;
+            that.$store.dispatch('LOADING_H2H');
+            ws.send({
+              type: 'h2h',
+              action: 'fetch',
+              params: {
+                event: params.e,
+                round: params.r
+              }
+            });
+          },
+          getUserById: function (userId) {
+            if (!userId) {
+              return { name: '-' };
+            }
+            // Try to find in h2h data
+            const h2hData = this.$store.state.h2hData;
+            if (h2hData && h2hData.matches) {
+              for (const match of h2hData.matches) {
+                if (match.c1 && match.c1.id == userId && match.c1.name) {
+                  return { name: match.c1.name };
+                } else if (match.c2 && match.c2.id == userId && match.c2.name) {
+                  return { name: match.c2.name };
+                }
+              }
+            }
+            return { name: 'User-' + userId };
+          },
+          formatResult: function (result, event) {
+            return decodeResult(result, event);
+          },
+          updatePointResult: function (point, competitor, encodedValue) {
+            var pointData = {
+              id: point.i,
+            };
+            pointData[competitor] = encodedValue;
+
+            ws.send({
+              type: 'h2h',
+              action: 'updatePoint',
+              point: pointData
+            });
+          },
         }
       },
       result: {
@@ -623,6 +964,14 @@
               });
             }
           },
+          checkRounds: function () {
+            if (Date.now() - lastFetchRoundsTime > 300000) {
+              ws.send({
+                type: 'result',
+                action: 'rounds',
+              });
+            }
+          },
           isAdvanced: function (result) {
             if (this.filter != 'all') {
               return false;
@@ -688,6 +1037,51 @@
               }
             }
             return true;
+          },
+          initializeH2H: function () {
+            var that = this;
+            var round = getRound(that.$store.state.params);
+            if (!that.isLastRound) {
+              alert('只能为最后一轮初始化 Head to Head 轮次！');
+              return;
+            }
+            if (!confirm('确定要初始化 Head to Head 轮次吗？这将根据上一轮的结果创建对战匹配。')) {
+              return;
+            }
+            // Use current round's number of competitors
+            var places = round.n || 8;
+            // Round to nearest valid H2H places (4, 8, 12, 16)
+            if (![4, 8, 12, 16].includes(places)) {
+              places = Math.min(16, Math.max(4, Math.pow(2, Math.ceil(Math.log2(places)))));
+            }
+            ws.send({
+              type: 'h2h',
+              action: 'initialize',
+              round: {
+                event: round.e,
+                round: round.i,
+                places: places,
+                sets_to_win: round.i === 'f' ? 2 : 1
+              }
+            });
+          },
+          convertH2HToNormal: function () {
+            var that = this;
+            var round = getRound(that.$store.state.params);
+            if (!confirm('确定要将 Head to Head 轮次转换回普通轮次吗？这将删除所有 H2H 相关的数据（matches, sets, points）。此操作不可撤销！')) {
+              return;
+            }
+            if (!confirm('请再次确认：这将永久删除所有 H2H 数据！')) {
+              return;
+            }
+            ws.send({
+              type: 'h2h',
+              action: 'convertToNormal',
+              round: {
+                event: round.e,
+                round: round.i
+              }
+            });
           }
         },
         components: {
@@ -750,10 +1144,11 @@
               }
             },
             attached: function () {
-              var that = this;
-              $(window).on('resize', function () {
-                that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
-              }).trigger('resize');
+              // var that = this;
+              // $(window).on('resize', function () {
+              //   console.log(that.$el)
+              //   that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
+              // }).trigger('resize');
             },
             methods: {
               isDisabled: function (index) {

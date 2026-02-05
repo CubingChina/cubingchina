@@ -14,6 +14,7 @@
  * @property string $number
  * @property string $operator_id
  * @property integer $status
+ * @property integer $is_h2h
  * @property string $create_time
  * @property string $update_time
  */
@@ -46,6 +47,26 @@ class LiveEventRound extends ActiveRecord {
 		}
 	}
 
+	public function getNextRound() {
+		$rounds = self::model()->findAllByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+		));
+		usort($rounds, function($roundA, $roundB) {
+			return $roundA->wcaRound->rank - $roundB->wcaRound->rank;
+		});
+		foreach ($rounds as $key=>$round) {
+			if ($round->id == $this->id && isset($rounds[$key + 1])) {
+				return $rounds[$key + 1];
+			}
+		}
+		return null;
+	}
+
+	public function isLastRound() {
+		return $this->getNextRound() === null;
+	}
+
 	public function removeResults() {
 		LiveResult::model()->deleteAllByAttributes(array(
 			'competition_id'=>$this->competition_id,
@@ -70,6 +91,7 @@ class LiveEventRound extends ActiveRecord {
 			's'=>intval($this->status),
 			'rn'=>intval($this->resultsNumber),
 			'tt'=>$total,
+			'h2h'=>!!$this->is_h2h,
 		);
 	}
 
@@ -131,13 +153,13 @@ class LiveEventRound extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('competition_id', 'required'),
-			array('status', 'numerical', 'integerOnly'=>true),
+			array('status, is_h2h', 'numerical', 'integerOnly'=>true),
 			array('competition_id, cut_off, time_limit, number, operator_id, create_time, update_time', 'length', 'max'=>10),
 			array('event', 'length', 'max'=>32),
 			array('round, format', 'length', 'max'=>1),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, event, round, format, cut_off, time_limit, number, operator_id, status, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, competition_id, event, round, format, cut_off, time_limit, number, operator_id, status, is_h2h, create_time, update_time', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -150,6 +172,11 @@ class LiveEventRound extends ActiveRecord {
 		return array(
 			'wcaEvent'=>array(self::BELONGS_TO, 'Events', 'event'),
 			'wcaRound'=>array(self::BELONGS_TO, 'RoundTypes', 'round'),
+			'h2hRound'=>array(self::HAS_ONE, 'LiveH2HRound', array(
+				'competition_id'=>'competition_id',
+				'event'=>'event',
+				'round'=>'round',
+			)),
 		);
 	}
 
@@ -168,6 +195,7 @@ class LiveEventRound extends ActiveRecord {
 			'number' => 'Number',
 			'operator_id' => 'Operator',
 			'status' => 'Status',
+			'is_h2h' => 'Is H2H',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
 		);
@@ -200,6 +228,7 @@ class LiveEventRound extends ActiveRecord {
 		$criteria->compare('number', $this->number, true);
 		$criteria->compare('operator_id', $this->operator_id, true);
 		$criteria->compare('status', $this->status);
+		$criteria->compare('is_h2h', $this->is_h2h);
 		$criteria->compare('create_time', $this->create_time, true);
 		$criteria->compare('update_time', $this->update_time, true);
 

@@ -19,7 +19,7 @@ class LiveController extends CompetitionController {
 			$this->redirect($competition->getUrl());
 		}
 		$competition->initLiveData();
-		$min = DEV ? '.min' : '.min';
+		$min = DEV ? '' : '.min';
 		$clientScript = Yii::app()->clientScript;
 		$clientScript->registerScriptFile('/f/js/store.min.js');
 		$clientScript->registerScriptFile('/f/js/websocket' . $min . '.js?ver=20181223');

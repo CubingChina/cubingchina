@@ -46,6 +46,7 @@ class LiveClient {
 		}
 		if (is_object($msg) && isset($msg->type)) {
 			$handlerClass = ucfirst($msg->type) . 'Handler';
+			var_dump($handlerClass);
 			try {
 				$handler = new $handlerClass($this, $msg);
 				$handler->process();

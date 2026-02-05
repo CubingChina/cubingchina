@@ -246,6 +246,10 @@ class ResultHandler extends MsgHandler {
 			'round'=>"{$this->msg->round->id}",
 		));
 		if ($round != null) {
+			// Don't refresh H2H rounds to avoid conflicts
+			if ($round->format === 'h') {
+				return;
+			}
 			$competition = $this->competition;
 			$oldResults = [];
 			$advancedNumbers = [];

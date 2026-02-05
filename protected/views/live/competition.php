@@ -129,6 +129,7 @@
     </div>
     <chat :options="options" v-if="options.showMessage || options.alertResult || options.alertRecord"></chat>
     <result :options="options"></result>
+    <h2h-result :options="options"></h2h-result>
   </div>
 </template>
 
@@ -203,7 +204,7 @@
 </template>
 
 <template id="result-template">
-  <div class="row">
+  <div class="row" v-if="!isH2HRound">
     <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}">
       <input-panel :result.sync="current"></input-panel>
     </div>
@@ -245,7 +246,7 @@
                   <i class="fa fa-times"></i><?php echo Yii::t('live', 'Close this round'); ?>
                 </button>
               </div>
-              <div class="form-group">
+              <div class="form-group" v-if="!isH2hRound">
                 <button type="button"
                   class="btn btn-sm btn-warning"
                   v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"
@@ -270,6 +271,24 @@
                   @click="exportScoreCard"
                 >
                   <i class="fa fa-share-square-o"></i><?php echo Yii::t('live', 'Export score card'); ?>
+                </button>
+              </div>
+              <div class="form-group" v-if="!isH2hRound && isLastRound">
+                <button type="button"
+                  class="btn btn-sm btn-primary"
+                  v-if="hasPermission && options.enableEntry"
+                  @click="initializeH2H"
+                >
+                  <i class="fa fa-play"></i><?php echo Yii::t('live', 'Initialize H2H Round'); ?>
+                </button>
+              </div>
+              <div class="form-group" v-if="isH2HRound">
+                <button type="button"
+                  class="btn btn-sm btn-danger"
+                  v-if="hasPermission && options.enableEntry"
+                  @click="convertH2HToNormal"
+                >
+                  <i class="fa fa-undo"></i><?php echo Yii::t('live', 'Convert to Normal Round'); ?>
                 </button>
               </div>
             </div>
@@ -502,6 +521,131 @@
         </span>
         <span class="penalty" v-else>{{time}}</span>
       </label>
+    </div>
+  </div>
+</template>
+
+<template id="h2h-point-input-template">
+  <div class="result-input-wrapper form-control"
+    :class="{active: isActive, disabled: false}"
+  >
+    <input class="result-input" type="tel"
+      :id="'h2h-input-' + point.i + '-' + competitor"
+      v-model="time"
+      @focus="focus"
+      @blur="blur"
+      @keydown.prevent="keydown($event)"
+    >
+    <label :for="'h2h-input-' + point.i + '-' + competitor">
+      <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
+        <span class="number" :class="{active: time.length > 5}" v-if="eventName != '333fm' && eventName != '333mbf'">{{time.charAt(time.length - 6) || 0}}</span>
+        <span class="number" :class="{active: time.length > 4}" v-if="eventName != '333fm' && eventName != '333mbf'">{{time.charAt(time.length - 5) || 0}}</span>
+        <span class="number" :class="{active: time.length > 4}" v-if="eventName != '333fm' && eventName != '333mbf'">:</span>
+        <span class="number" :class="{active: time.length > 3}" v-if="eventName != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
+        <span class="number" :class="{active: time.length > 2}" v-if="eventName != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
+        <span class="number" :class="{active: time.length > 2}" v-if="eventName != '333fm'">.</span>
+        <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
+        <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
+      </span>
+      <span class="penalty" v-else>{{time}}</span>
+    </label>
+  </div>
+</template>
+
+<template id="h2h-result-template">
+  <div class="row" v-if="isH2HRound">
+    <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            Head to Head - {{eventName}} {{roundName}}
+            <span class="badge" v-if="h2hRound">{{h2hRound.s}}</span>
+          </h3>
+        </div>
+        <div class="panel-body" v-if="h2hLoading">
+          <div class="text-center">Loading...</div>
+        </div>
+        <div class="panel-body" v-if="!h2hLoading && h2hData">
+          <div v-for="match in h2hData.matches" class="h2h-match" :class="{'match-finished': match.st == 2}">
+            <div class="match-header">
+              <h4>{{match.s}} - Match {{match.mn}}</h4>
+            </div>
+            <div class="match-competitors">
+              <div class="competitor competitor1" :class="{'winner': match.w == match.c1.id}">
+                <div class="competitor-info">
+                  <span class="seed">#{{match.c1.seed}}</span>
+                  <span class="name">{{getUserById(match.c1.id).name}}</span>
+                </div>
+                <div class="sets-score">
+                  <span class="sets-won">{{match.s1}}</span>
+                </div>
+              </div>
+              <div class="vs">VS</div>
+              <div class="competitor competitor2" :class="{'winner': match.w == match.c2.id}">
+                <div class="competitor-info">
+                  <span class="seed">#{{match.c2.seed}}</span>
+                  <span class="name">{{getUserById(match.c2.id).name}}</span>
+                </div>
+                <div class="sets-score">
+                  <span class="sets-won">{{match.s2}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="sets-container" v-if="match.sets">
+              <div v-for="set in match.sets" class="h2h-set" :class="{'set-finished': set.st == 2}">
+                <div class="set-header">
+                  <strong>Set {{set.sn}}</strong>
+                  <span class="set-score">{{set.p1}} - {{set.p2}}</span>
+                  <span v-if="set.w" class="set-winner">Winner: {{getUserById(set.w).name}}</span>
+                </div>
+                <div class="points-container" v-if="set.points">
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <th>Point</th>
+                        <th>{{getUserById(match.c1.id).name}}</th>
+                        <th>{{getUserById(match.c2.id).name}}</th>
+                        <th>Winner</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="point in set.points">
+                        <td>{{point.pn}}</td>
+                        <td>
+                          <span v-if="hasPermission && options.enableEntry && !point.w">
+                            <h2h-point-input
+                              :value="point.c1.r"
+                              :point="point"
+                              competitor="competitor1_result"
+                              :event-name="eventName"
+                            ></h2h-point-input>
+                          </span>
+                          <span v-else>{{formatResult(point.c1.r, eventName)}}</span>
+                        </td>
+                        <td>
+                          <span v-if="hasPermission && options.enableEntry && !point.w">
+                            <h2h-point-input
+                              :value="point.c2.r"
+                              :point="point"
+                              competitor="competitor2_result"
+                              :event-name="eventName"
+                            ></h2h-point-input>
+                          </span>
+                          <span v-else>{{formatResult(point.c2.r, eventName)}}</span>
+                        </td>
+                        <td>
+                          <span v-if="point.w">{{getUserById(point.w).name}}</span>
+                          <span v-else class="text-muted">-</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
