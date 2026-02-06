@@ -2127,7 +2127,7 @@ class Competition extends ActiveRecord {
 				}
 				if ($NR == null || $value <= $NR[$type]) {
 					$continent = $wcaCountry->continent;
-					$crName = $continent->recordName;
+					$crName = $continent->record_name;
 					$$crName = Results::getRecord($continent->name, $event, $type, $this->date);
 					// check WR CR NR
 					$recordSet = false;

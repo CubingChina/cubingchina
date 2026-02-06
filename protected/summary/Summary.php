@@ -462,7 +462,7 @@ class Summary {
 			return $record;
 		}
 		$continent = $person->country->continent;
-		return $continent->recordName;
+		return $continent->record_name;
 	}
 
 	public static function getMedalsDetail($medals, $person) {
