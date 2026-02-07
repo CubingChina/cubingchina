@@ -190,7 +190,7 @@ class Results extends ActiveRecord {
 	public static function getHistoryRecords($region = 'China', $event = '333') {
 		$command = Yii::app()->wcaDb->createCommand()
 		->select(array(
-
+			'rs.id',
 			'rs.event_id',
 			'rs.best',
 			'rs.average',

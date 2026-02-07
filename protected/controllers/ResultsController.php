@@ -756,7 +756,7 @@ class ResultsController extends Controller {
 			'class'=>'SumOfRanks',
 			'type'=>$type,
 			'region'=>$region,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'gender'=>$gender,
 		);
 		if ($page < 1) {
@@ -781,7 +781,7 @@ class ResultsController extends Controller {
 			'type'=>$type,
 			'region'=>$region,
 			'gender'=>$gender,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 		));
 	}
 
@@ -802,7 +802,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'SumOfCountryRanks',
 			'type'=>$type,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'gender'=>$gender,
 		);
 		if ($page < 1) {
@@ -826,7 +826,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'type'=>$type,
 			'gender'=>$gender,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 		));
 	}
 
@@ -999,7 +999,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'MostSolves',
 			'type'=>'all',
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'gender'=>$gender,
 			'year'=>$year,
 			'region'=>$region,
@@ -1025,7 +1025,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'gender'=>$gender,
 			'year'=>$year,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'region'=>$region,
 		));
 	}
@@ -1091,7 +1091,7 @@ class ResultsController extends Controller {
 		$statistic = array(
 			'class'=>'MedalCollection',
 			'type'=>'all',
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'region'=>$region,
 			'gender'=>$gender,
 			'year'=>$year,
@@ -1115,7 +1115,7 @@ class ResultsController extends Controller {
 			'statistic'=>$statistic,
 			'time'=>$time,
 			'page'=>$page,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'region'=>$region,
 			'gender'=>$gender,
 			'year'=>$year,
@@ -1147,7 +1147,7 @@ class ResultsController extends Controller {
 			'region'=>$region,
 			'pos'=>$pos,
 			'region'=>$region,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'gender'=>$gender,
 			'includeDNF'=>$includeDNF,
 		);
@@ -1172,7 +1172,7 @@ class ResultsController extends Controller {
 			'page'=>$page,
 			'pos'=>$pos,
 			'region'=>$region,
-			'event_ids'=>$event_ids,
+			'eventIds'=>$event_ids,
 			'gender'=>$gender,
 			'includeDNF'=>$includeDNF,
 		));
