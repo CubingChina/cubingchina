@@ -32,12 +32,14 @@
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
+      <?php if ($userTicket->signed_date == 0): ?>
       <input type="hidden" name="cancel" value="1">
       <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
       <?php echo CHtml::tag('button', [
         'type'=>'button',
         'class'=>'btn btn-sm btn-danger cancel',
       ], Yii::t('UserTicket', 'Cancel')); ?>
+      <?php endif; ?>
       <?php endif; ?>
       <?php $this->endWidget(); ?>
     </p>
