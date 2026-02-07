@@ -38,8 +38,8 @@
         'type'=>'button',
         'class'=>'btn btn-sm btn-danger cancel',
       ], Yii::t('UserTicket', 'Cancel')); ?>
-      <?php $this->endWidget(); ?>
       <?php endif; ?>
+      <?php $this->endWidget(); ?>
     </p>
     <?php endif; ?>
   </div>

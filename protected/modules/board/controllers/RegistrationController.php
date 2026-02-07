@@ -556,10 +556,14 @@ class RegistrationController extends AdminController {
 		], [
 			'order'=>'number'
 		]);
-		$byGroup = GroupSchedule::model()->countByAttributes([
+		$byGroup = UserSchedule::model()->with('schedule')->countByAttributes([
 			'competition_id'=>$competition->id,
-			'event'=>$event,
-			'round'=>$round,
+		], [
+			'condition'=>'`event`=:event AND `round`=:round',
+			'params'=>[
+				'event'=>$event,
+				'round'=>$round,
+			],
 		]) > 0;
 		$this->exportScoreCard($competition, $liveResults, 'user', 'vertical', $competition->getScheduledRound($event, $round), $byGroup);
 	}
