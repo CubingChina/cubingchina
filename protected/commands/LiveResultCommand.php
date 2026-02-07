@@ -254,6 +254,9 @@ class LiveResultCommand extends CConsoleCommand {
 				continue;
 			}
 			foreach ($values as $v) {
+				if ($v == 0) {
+					break;
+				}
 				$attempts[] = ['result' => (int) $v];
 			}
 			$resultsPayload[] = [

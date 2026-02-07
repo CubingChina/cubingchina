@@ -194,6 +194,9 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function checkTicket() {
+		if ($this->isEditable()) {
+			return true;
+		}
 		if ($this->ticket && !$this->ticket->isAvailable()) {
 			$this->addError('ticket_id', Yii::t('Ticket', 'The ticket you chose is not available.'));
 			return false;
