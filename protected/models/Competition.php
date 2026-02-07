@@ -1887,6 +1887,7 @@ class Competition extends ActiveRecord {
 				case '1':
 				case '2':
 				case '3':
+				case '5':
 					$order = 'best ASC';
 					$format = 'b';
 					break;

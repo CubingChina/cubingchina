@@ -209,6 +209,7 @@ class LiveResult extends ActiveRecord {
 			case '1':
 			case '2':
 			case '3':
+			case '5':
 				return 'sort-by-best';
 			default:
 				return 'sort-by-average';
