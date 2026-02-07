@@ -142,7 +142,7 @@ class UserTicket extends ActiveRecord {
 	}
 
 	public function cancel() {
-		if (!$this->isEditable()) {
+		if (!$this->isEditable() || $this->signed_date != 0) {
 			return false;
 		}
 		$needRefund = $this->status == self::STATUS_PAID;
