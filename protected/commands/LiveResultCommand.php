@@ -10,6 +10,105 @@
  * exportToLive: Export round results to WCA Live. Requires live/wca_live_key file with the auth key.
  */
 class LiveResultCommand extends CConsoleCommand {
+	public function actionCheckPR($id) {
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			$this->log("Error: Competition not found");
+			return;
+		}
+		$registrations = Registration::getRegistrations($competition);
+		$pbs = [];
+		foreach ($registrations as $registration) {
+			$number = $registration->number;
+			$user = $registration->user;
+			$wcaid = $user->wcaid;
+			$pbs[$number] = [
+				'user'=>$user,
+				'pb'=>0,
+			];
+			$results = LiveResult::model()->findAllByAttributes(array(
+				'competition_id'=>$competition->id,
+				'number'=>$number,
+			));
+			usort($results, function($resA, $resB) {
+				if ($resA->wcaEvent === null) {
+					return 1;
+				}
+				if ($resB->wcaEvent === null) {
+					return -1;
+				}
+				$temp = $resA->wcaEvent->rank - $resB->wcaEvent->rank;
+				if ($temp == 0) {
+					$temp = $resA->wcaRound->rank - $resB->wcaRound->rank;
+				}
+				return $temp;
+			});
+			$temp = array();
+			foreach ($results as $result) {
+				if ($result->best == 0) {
+					continue;
+				}
+				if (!isset($temp[$result->event])) {
+					$temp[$result->event] = array(
+						'event'=>$result->event,
+						'results'=>array(),
+					);
+				}
+				$temp[$result->event]['results'][] = $result->getShowAttributes(true);
+			}
+			$events = array();
+			if ($wcaid != '') {
+				$personResults = Persons::getResults($wcaid);
+				foreach ($personResults['personRanks'] as $rank) {
+					$events[$rank->event_id] = $rank->event_id;
+					if (!isset($temp[$rank->event_id])) {
+						continue;
+					}
+					$best = $rank->best;
+					$average = $rank->average == null ? PHP_INT_MAX : $rank->average->best;
+					foreach ($temp[$rank->event_id]['results'] as $key=>$result) {
+						if ($result['b'] > 0 && $result['b'] <= $best) {
+							$temp[$rank->event_id]['results'][$key]['nb'] = true;
+							$pbs[$number]['pb']++;
+							$best = $result['b'];
+						}
+						if ($result['a'] > 0 && $result['a'] <= $average) {
+							$temp[$rank->event_id]['results'][$key]['na'] = true;
+							$pbs[$number]['pb']++;
+							$average = $result['a'];
+						}
+					}
+				}
+			}
+			foreach ($temp as $event=>$results) {
+				//event didn't attend before
+				if (!isset($events[$event])) {
+					$best = $average = PHP_INT_MAX;
+					foreach ($results['results'] as $key=>$result) {
+						if ($result['b'] > 0 && $result['b'] <= $best) {
+							$results['results'][$key]['nb'] = true;
+							$pbs[$number]['pb']++;
+							$best = $result['b'];
+						}
+						if ($result['a'] > 0 && $result['a'] <= $average) {
+							$results['results'][$key]['na'] = true;
+							$pbs[$number]['pb']++;
+							$average = $result['a'];
+						}
+					}
+				}
+				$temp[$event]['results'] = array_reverse($results['results']);
+			}
+			echo "No.{$number}: {$user->getCompetitionName()} {$user->wcaid} {$pbs[$number]['pb']} PB\n";
+		}
+		// sort by pbs desc
+		usort($pbs, function($a, $b) {
+			return $b['pb'] - $a['pb'];
+		});
+		foreach (array_slice($pbs, 0, 20) as $number=>$pb) {
+			$this->log("{$pb['user']->name} ({$pb['user']->wcaid}): {$pb['pb']} PB");
+		}
+	}
 
 	/**
 	 * Populate live_result with WCA data for a specific round
