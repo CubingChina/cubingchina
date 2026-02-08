@@ -23,6 +23,7 @@ class LiveResultCommand extends CConsoleCommand {
 			$user = $registration->user;
 			$wcaid = $user->wcaid;
 			$pbs[$number] = [
+				'number'=>$number,
 				'user'=>$user,
 				'pb'=>0,
 			];
@@ -105,8 +106,9 @@ class LiveResultCommand extends CConsoleCommand {
 		usort($pbs, function($a, $b) {
 			return $b['pb'] - $a['pb'];
 		});
-		foreach (array_slice($pbs, 0, 20) as $number=>$pb) {
-			$this->log("{$pb['user']->name} ({$pb['user']->wcaid}): {$pb['pb']} PB");
+		echo "Top 20:\n";
+		foreach (array_slice($pbs, 0, 20) as $pb) {
+			echo "No.{$pb['number']}: {$pb['user']->getCompetitionName()} ({$pb['user']->wcaid}): {$pb['pb']} PB\n";
 		}
 	}
 
