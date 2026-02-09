@@ -26,8 +26,8 @@ class H2hHandler extends MsgHandler {
 	public function actionFetch() {
 		$h2hRound = LiveH2HRound::model()->findByAttributes(array(
 			'competition_id'=>$this->competition->id,
-			'event'=>"{$this->msg->params->event}",
-			'round'=>"{$this->msg->params->round}",
+			'event'=>"{$this->msg->round->event}",
+			'round'=>"{$this->msg->round->round}",
 		));
 		if ($h2hRound === null) {
 			return;
@@ -90,7 +90,6 @@ class H2hHandler extends MsgHandler {
 		$point->operator_id = $this->user->id;
 		$point->update_time = time();
 		$point->updatePointWinner();
-		$point->save();
 
 		// Broadcast updates
 		$this->broadcastSuccess('h2h.point.update', $point->getBroadcastAttributes(), $this->competition);
@@ -163,7 +162,11 @@ class H2hHandler extends MsgHandler {
 		// Validate places
 		$places = isset($data->places) ? intval($data->places) : count($competitors);
 		if (!in_array($places, array(4, 8, 12, 16))) {
-			$places = min(16, max(4, pow(2, ceil(log(count($competitors), 2)))));
+			if (count($competitors) > 8 && count($competitors) <= 12) {
+				$places = 12;
+			} else {
+				$places = min(16, max(4, pow(2, ceil(log(count($competitors), 2)))));
+			}
 		}
 		if (count($competitors) < $places) {
 			return; // Not enough competitors
@@ -207,22 +210,17 @@ class H2hHandler extends MsgHandler {
 			$match->delete();
 		}
 
-		// Create matches for first stage based on seeding
-		// Highest seed vs lowest seed, second highest vs second lowest, etc.
-		// Exception: for 12 places, top 4 seeded competitors skip Stage of 12
+		// Create matches for first stage based on bracket seeding order
+		// 16: 1-16, 8-9, 5-12, 4-13, 6-11, 3-14, 7-10, 2-15
+		// 8: 1-8, 4-5, 2-7, 3-6
+		// 12: 1-4 轮空, 5-12 阶段: 5-12, 8-9, 6-11, 7-10
 		$matchNumber = 1;
 		$stage = $h2hRound->stage;
-		$competitorsForStage = $competitors;
+		$pairs = $this->getBracketPairs($places);
 
-		if ($places == 12) {
-			// Top 4 skip Stage of 12, only create matches for seeds 5-12
-			$competitorsForStage = array_slice($competitors, 4);
-		}
-
-		$numMatches = count($competitorsForStage) / 2;
-		for ($i = 0; $i < $numMatches; $i++) {
-			$competitor1 = $competitorsForStage[$i];
-			$competitor2 = $competitorsForStage[count($competitorsForStage) - 1 - $i];
+		foreach ($pairs as $pair) {
+			$competitor1 = $competitors[$pair[0] - 1]; // seed is 1-based
+			$competitor2 = $competitors[$pair[1] - 1];
 
 			$match = new LiveH2HMatch();
 			$match->h2h_round_id = $h2hRound->id;
@@ -267,6 +265,11 @@ class H2hHandler extends MsgHandler {
 
 		$this->broadcastSuccess('h2h.round.update', $h2hRound->getBroadcastAttributes(), $this->competition);
 		$this->actionFetch(); // Return full data
+		if ($eventRound->status == LiveEventRound::STATUS_OPEN) {
+			$eventRound->status = LiveEventRound::STATUS_LIVE;
+			$eventRound->save();
+			$this->broadcastSuccess('round.update', $eventRound->getBroadcastAttributes(), $this->competition);
+		}
 	}
 
 	/**
@@ -284,6 +287,31 @@ class H2hHandler extends MsgHandler {
 				return 'Stage of 16';
 			default:
 				return 'First Stage';
+		}
+	}
+
+	/**
+	 * Get bracket pairs (seed numbers) for first stage matches.
+	 * Returns array of [seed1, seed2] pairs in match order.
+	 */
+	private function getBracketPairs($places) {
+		switch ($places) {
+			case 16:
+				return [[1, 16], [8, 9], [5, 12], [4, 13], [6, 11], [3, 14], [7, 10], [2, 15]];
+			case 8:
+				return [[1, 8], [4, 5], [2, 7], [3, 6]];
+			case 12:
+				// 1-4 轮空, 5-12 阶段对阵
+				return [[8, 9], [5, 12], [6, 11], [7, 10]];
+			case 4:
+				return [[1, 4], [2, 3]];
+			default:
+				// Fallback: 1 vs N, 2 vs N-1, ...
+				$pairs = array();
+				for ($i = 1; $i <= $places / 2; $i++) {
+					$pairs[] = [$i, $places - $i + 1];
+				}
+				return $pairs;
 		}
 	}
 

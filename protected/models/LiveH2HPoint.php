@@ -122,25 +122,16 @@ class LiveH2HPoint extends ActiveRecord {
 	}
 
 	/**
-	 * Update point winner and set points
+	 * Update point winner and recalculate set points from all points
 	 */
 	public function updatePointWinner() {
 		$winnerId = $this->determineWinner();
 		$this->winner_id = $winnerId;
 
 		if ($this->save()) {
-			// Update set points
 			$set = $this->set;
 			if ($set) {
-				if ($winnerId == $this->competitor1_id) {
-					$set->competitor1_points++;
-				} elseif ($winnerId == $this->competitor2_id) {
-					$set->competitor2_points++;
-				}
-				$set->save();
-
-				// Check if set is finished
-				$set->checkSetFinished();
+				$set->recalculatePoints();
 			}
 		}
 	}

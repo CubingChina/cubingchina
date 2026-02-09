@@ -89,6 +89,33 @@
     store.dispatch('UPDATE_H2H_MATCH', match);
   }).on('h2h.set.update', function (set) {
     store.dispatch('UPDATE_H2H_SET', set);
+    var pointsToWin = 3;
+    if (set.st != 2 && set.p1 < pointsToWin && set.p2 < pointsToWin) {
+      var state = store.state;
+      var lastPointHasWinner = false;
+      if (state.h2hData && state.h2hData.matches) {
+        state.h2hData.matches.forEach(function (match) {
+          if (match.sets) {
+            match.sets.forEach(function (s) {
+              if (s.i == set.i && s.points && s.points.length > 0) {
+                var lastPoint = s.points[s.points.length - 1];
+                lastPointHasWinner = !!lastPoint.w;
+              }
+            });
+          }
+        });
+      }
+      if (lastPointHasWinner) {
+        ws.send({
+          type: 'h2h',
+          action: 'createPoint',
+          point: {
+            set_id: set.i,
+            match_id: set.m
+          }
+        });
+      }
+    }
   }).on('h2h.point.update', function (point) {
     store.dispatch('UPDATE_H2H_POINT', point);
   });
@@ -115,7 +142,8 @@
     staticMessages: [],
     h2hData: null,
     h2hRounds: [],
-    h2hLoading: false
+    h2hLoading: false,
+    h2hEditingPoint: null
   };
   var lastFetchRoundsTime = Date.now();
   var events = {};
@@ -245,7 +273,7 @@
               return s.i == set.i;
             });
             if (index >= 0) {
-              match.sets[index] = set;
+              $.extend(match.sets[index], set);
             }
           }
         });
@@ -261,7 +289,10 @@
                   return p.i == point.i;
                 });
                 if (index >= 0) {
+                  console.log(set.points[index])
                   set.points[index] = point;
+                } else if (set.i == point.s) {
+                  set.points.push(point);
                 }
               }
             });
@@ -272,6 +303,9 @@
     LOADING_H2H: function (state) {
       state.h2hLoading = true;
       state.h2hData = null;
+    },
+    SET_H2H_EDITING_POINT: function (state, pointInfo) {
+      state.h2hEditingPoint = pointInfo;
     }
   };
   $.extend(state, data);
@@ -411,6 +445,257 @@
         }
       }
     },
+    components: {
+      'result-input': {
+        props: ['value', 'index'],
+        data: function () {
+          return {
+            subIndex: 2,
+            tried: '',
+            solved: '',
+            time: ''
+          }
+        },
+        watch: {
+          time: function () {
+            this.calculateValue();
+          },
+          tried: function () {
+            this.calculateValue();
+          },
+          solved: function () {
+            this.calculateValue();
+          },
+          '$parent.result.i': function () {
+            var that = this;
+            var time = decodeResult(that.value, that.e);
+            if (that.e === '333mbf') {
+              that.subIndex = 0;
+              if (time.indexOf('/') > -1) {
+                var match = time.match(/^(\d+)\/(\d+) (.+)$/);
+                that.solved = match[1];
+                that.tried = match[2];
+                that.time = match[3].replace(/[:\.]/g, '');
+              } else {
+                that.solved = that.tried = '';
+                that.time = time;
+              }
+            } else {
+              that.time = time.replace(/[:\.]/g, '');
+              that.subIndex = 2;
+            }
+          }
+        },
+        methods: {
+          calculateValue: function () {
+            var that = this;
+            var round = getRound(that);
+            that.value = encodeResult(that.formatTime(that.time), that.e, false, that.tried, that.solved);
+            if (round.tl > 0 && that.e != '333mbf' && that.e != '333fm' && that.value / 100 >= round.tl) {
+              that.time = 'DNF';
+            }
+            if (that.e === '333fm' && that.value > 80) {
+              that.time = 'DNF';
+            }
+          },
+          formatTime: function (time) {
+            if (time == 'DNF' || time == 'DNS' || time == '' || this.e == '333fm') {
+              return time;
+            }
+            var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
+            var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
+            var msecond = parseInt(time.slice(-2));
+            if (this.e === '333mbf') {
+              if (this.solved == '' || this.tried == '') {
+                return '';
+              }
+              minute = second;
+              second = msecond;
+              msecond = 0;
+            }
+            return [
+              minute ? minute + ':' : '',
+              second + '.',
+              msecond
+            ].join('');
+          },
+          focus: function (subIndex) {
+            this.subIndex = subIndex;
+            this.$parent.currentIndex = this.index;
+          },
+          blur: function (e) {
+            this.$parent.currentIndex = null;
+            this.$parent.lastIndex = null;
+            this.$parent.checkResult();
+          },
+          keydown: function (e, attr) {
+            var code = e.which;
+            var that = this;
+            var value = that[attr];
+            var isSameInput = that.$parent.lastIndex == that.$parent.currentIndex;
+            switch (code) {
+              //D,/ pressed
+              case 68:
+              case 111:
+                that.time = 'DNF';
+                break;
+              //S,* pressed
+              case 106:
+              case 83:
+                that.time = 'DNS';
+                break;
+              case 8:
+              case 109:
+                if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
+                  if (that.time === 'DNF' || that.time === 'DNS') {
+                    that.solved = that.tried = that.time = '';
+                  }
+                  value = '';
+                }
+                that.$parent.lastIndex = that.$parent.currentIndex;
+                that[attr] = value.slice(0, -1);
+                break;
+              case 107:
+              case 38:
+              case 9:
+                if (e.shiftKey || code == 107 || code == 38) {
+                  var input = $(e.target);
+                  var inputs = $('.result-input:not([disabled])');
+                  var index = inputs.index(input);
+                  if (index > 0) {
+                    inputs.eq(index - 1).focus();
+                  }
+                  break;
+                }
+              case 40:
+              case 13:
+                var input = $(e.target);
+                var inputs = $('.result-input:not([disabled])');
+                var index = inputs.index(input);
+                if (index < inputs.length - 1) {
+                  inputs.eq(index + 1).focus();
+                } else {
+                  $('#save').focus();
+                }
+                break;
+              //small keyboard
+              case 96:
+              case 97:
+              case 98:
+              case 99:
+              case 100:
+              case 101:
+              case 102:
+              case 103:
+              case 104:
+              case 105:
+                code -= 48;
+              //num
+              case 48:
+              case 49:
+              case 50:
+              case 51:
+              case 52:
+              case 53:
+              case 54:
+              case 55:
+              case 56:
+              case 57:
+                if (value.length >= 6 && isSameInput) {
+                  break;
+                }
+                if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
+                  if (that.time === 'DNF' || that.time === 'DNS') {
+                    that.solved = that.tried = that.time = '';
+                  }
+                  value = '';
+                }
+                if ((that.e === '333fm' || that.subIndex < 2) && value.length >= 2) {
+                  break;
+                }
+                if (that.e === '333mbf' && value.length >= 4) {
+                  break;
+                }
+                value += code - 48;
+                that[attr] = value;
+                if (!isSameInput) {
+                  that.$parent.lastIndex = that.$parent.currentIndex;
+                }
+                break;
+              default:
+                e.preventDefault();
+                break;
+            }
+          }
+        },
+        template: '#result-input-template',
+        vuex: {
+          getters: {
+            canChangeRoundSettings: function (state) {
+              return state.type != 'WCA' || state.user.isDelegate || state.user.isAdmin
+            },
+            hasPermission: function (state) {
+              var user = state.user;
+              return user.isOrganizer || user.isDelegate || user.isAdmin || user.isScoreTaker;
+            },
+            eventName: function (state) {
+              var event = getEvent(state.params)
+              return event && event.name;
+            },
+            roundName: function (state) {
+              var round = getRound(state.params);
+              return round && round.name;
+            },
+            events: function (state) {
+              return state.events;
+            },
+            e: function (state) {
+              return state.params.e;
+            },
+            r: function (state) {
+              return state.params.r;
+            },
+            currentRound: function (state) {
+              return getRound(state.params);
+            },
+            isCurrentRoundOpen: function (state) {
+              var round = getRound(state.params);
+              return round.s != 1;
+            },
+            results: function (state) {
+              return state.results;
+            },
+            loading: function (state) {
+              return state.loading;
+            },
+            userResults: function (state) {
+              return state.userResults;
+            },
+            loadingUserResults: function (state) {
+              return state.loadingUserResults;
+            },
+            filters: function (state) {
+              return state.filters;
+            },
+            onlineNumber: function (state) {
+              return state.onlineNumber;
+            },
+            isH2HRound: function (state) {
+              var round = getRound(state.params);
+              return round && round.h2h;
+            },
+            isLastRound: function (state) {
+              var round = getRound(state.params);
+              if (!round) {
+                return false;
+              }
+              var allRounds = Object.values(eventRounds[round.e]);
+              return round === allRounds[allRounds.length - 1];
+            }
+          }
+        },
+      }
+    }
   };
   //vuex
   var store = new Vuex.Store({
@@ -533,254 +818,6 @@
               }
             }
           }
-        }
-      },
-      'h2h-result': {
-        props: ['options'],
-        computed: {
-          h2hData: function () {
-            // Access directly from state instead of getter to avoid read-only issue
-            return this.$store.state.h2hData;
-          },
-          h2hLoading: function () {
-            return this.$store.state.h2hLoading;
-          },
-          h2hRounds: function () {
-            return this.$store.state.h2hRounds;
-          },
-          h2hRound: function () {
-            if (!this.h2hRounds || !this.$store.state.params) {
-              return null;
-            }
-            var params = this.$store.state.params;
-            return this.h2hRounds.find(function (r) {
-              return r.e == params.e && r.r == params.r;
-            });
-          },
-          eventName: function () {
-            var event = getEvent(this.$store.state.params);
-            return event && event.name;
-          },
-          roundName: function () {
-            var round = getRound(this.$store.state.params);
-            return round && round.name;
-          }
-        },
-        computed: {
-          hasPermission: function () {
-            var user = this.$store.state.user;
-            return user.isOrganizer || user.isDelegate || user.isAdmin || user.isScoreTaker;
-          },
-          options: function () {
-            return this.$parent.options || {};
-          },
-          eventName: function () {
-            return this.$store.state.params.e;
-          }
-        },
-        watch: {
-          '$store.state.params': function (params) {
-            var that = this;
-            if (that.isH2HRound) {
-              that.fetchH2HData();
-            }
-          }
-        },
-        ready: function () {
-          var that = this;
-          if (that.isH2HRound) {
-            that.fetchH2HData();
-          }
-        },
-        template: '#h2h-result-template',
-        components: {
-          'h2h-point-input': {
-            props: ['value', 'point', 'competitor', 'eventName'],
-            data: function () {
-              return {
-                isActive: false,
-                time: '',
-                isUpdatingFromProp: false
-              }
-            },
-            watch: {
-              value: function (newVal) {
-                var that = this;
-                // Only update time if not currently updating from user input
-                if (!that.isUpdatingFromProp) {
-                  that.isUpdatingFromProp = true;
-                  var time = decodeResult(newVal, that.eventName);
-                  that.time = time.replace(/[:\.]/g, '');
-                  that.$nextTick(function () {
-                    that.isUpdatingFromProp = false;
-                  });
-                }
-              }
-            },
-            ready: function () {
-              var that = this;
-              var time = decodeResult(that.value, that.eventName);
-              that.time = time.replace(/[:\.]/g, '');
-            },
-            methods: {
-              calculateValue: function () {
-                var that = this;
-                // Don't calculate if updating from prop
-                if (that.isUpdatingFromProp) {
-                  return;
-                }
-
-                var encodedValue = 0;
-
-                if (that.time === '' || that.time === '0') {
-                  encodedValue = 0;
-                } else if (that.time.toUpperCase() === 'DNF') {
-                  encodedValue = -1;
-                } else if (that.time.toUpperCase() === 'DNS') {
-                  encodedValue = -2;
-                } else {
-                  // Try to encode the time string
-                  encodedValue = encodeResult(that.formatTime(that.time), that.eventName, false);
-                  if (encodedValue === 0 || encodedValue === undefined) {
-                    // Invalid input, restore original value
-                    var time = decodeResult(that.value, that.eventName);
-                    that.time = time.replace(/[:\.]/g, '');
-                    return;
-                  }
-                }
-
-                // Notify parent to save (don't try to update value directly as it's from Vuex)
-                that.$parent.updatePointResult(that.point, that.competitor, encodedValue);
-              },
-              formatTime: function (time) {
-                if (time == 'DNF' || time == 'DNS' || time == '' || this.eventName == '333fm') {
-                  return time;
-                }
-                var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
-                var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
-                var msecond = parseInt(time.slice(-2));
-                return [
-                  minute ? minute + ':' : '',
-                  second + '.',
-                  msecond
-                ].join('');
-              },
-              focus: function () {
-                this.isActive = true;
-              },
-              blur: function () {
-                this.isActive = false;
-                // Calculate value when user finishes input
-                this.calculateValue();
-              },
-              keydown: function (e) {
-                var code = e.which;
-                var that = this;
-                var value = that.time;
-
-                switch (code) {
-                  //D,/ pressed
-                  case 68:
-                  case 111:
-                    that.time = 'DNF';
-                    break;
-                  //S,* pressed
-                  case 106:
-                  case 83:
-                    that.time = 'DNS';
-                    break;
-                  case 8:
-                  case 109:
-                    if (that.time === 'DNF' || that.time === 'DNS') {
-                      that.time = '';
-                    } else {
-                      that.time = value.slice(0, -1);
-                    }
-                    break;
-                  case 107:
-                  case 38:
-                  case 9:
-                    e.preventDefault();
-                    var input = $(e.target);
-                    var inputs = $('.result-input:not([disabled])');
-                    var index = inputs.index(input);
-                    if (index > 0) {
-                      inputs.eq(index - 1).focus();
-                    }
-                    break;
-                  case 13:
-                  case 40:
-                  case 109:
-                    e.preventDefault();
-                    var input = $(e.target);
-                    var inputs = $('.result-input:not([disabled])');
-                    var index = inputs.index(input);
-                    if (index < inputs.length - 1) {
-                      inputs.eq(index + 1).focus();
-                    }
-                    break;
-                  default:
-                    if (code >= 48 && code <= 57) {
-                      // Number key
-                      if (that.time === 'DNF' || that.time === 'DNS') {
-                        that.time = '';
-                      }
-                      that.time += String.fromCharCode(code);
-                      // Don't calculate immediately on number input, wait for blur
-                    }
-                    break;
-                }
-              }
-            },
-            template: '#h2h-point-input-template'
-          }
-        },
-        methods: {
-          fetchH2HData: function () {
-            var that = this;
-            var params = that.$store.state.params;
-            that.$store.dispatch('LOADING_H2H');
-            ws.send({
-              type: 'h2h',
-              action: 'fetch',
-              params: {
-                event: params.e,
-                round: params.r
-              }
-            });
-          },
-          getUserById: function (userId) {
-            if (!userId) {
-              return { name: '-' };
-            }
-            // Try to find in h2h data
-            const h2hData = this.$store.state.h2hData;
-            if (h2hData && h2hData.matches) {
-              for (const match of h2hData.matches) {
-                if (match.c1 && match.c1.id == userId && match.c1.name) {
-                  return { name: match.c1.name };
-                } else if (match.c2 && match.c2.id == userId && match.c2.name) {
-                  return { name: match.c2.name };
-                }
-              }
-            }
-            return { name: 'User-' + userId };
-          },
-          formatResult: function (result, event) {
-            return decodeResult(result, event);
-          },
-          updatePointResult: function (point, competitor, encodedValue) {
-            var pointData = {
-              id: point.i,
-            };
-            pointData[competitor] = encodedValue;
-
-            ws.send({
-              type: 'h2h',
-              action: 'updatePoint',
-              point: pointData
-            });
-          },
         }
       },
       result: {
@@ -1050,10 +1087,6 @@
             }
             // Use current round's number of competitors
             var places = round.n || 8;
-            // Round to nearest valid H2H places (4, 8, 12, 16)
-            if (![4, 8, 12, 16].includes(places)) {
-              places = Math.min(16, Math.max(4, Math.pow(2, Math.ceil(Math.log2(places)))));
-            }
             ws.send({
               type: 'h2h',
               action: 'initialize',
@@ -1061,7 +1094,7 @@
                 event: round.e,
                 round: round.i,
                 places: places,
-                sets_to_win: round.i === 'f' ? 2 : 1
+                sets_to_win: prompt('Sets to win? (1, 2 or 3)', 1),
               }
             });
           },
@@ -1085,6 +1118,99 @@
           }
         },
         components: {
+          'h2h-result': {
+            props: ['options'],
+            computed: {
+              h2hData: function () {
+                // Access directly from state instead of getter to avoid read-only issue
+                return this.$store.state.h2hData;
+              },
+              h2hLoading: function () {
+                return this.$store.state.h2hLoading;
+              },
+              h2hRounds: function () {
+                return this.$store.state.h2hRounds;
+              },
+              h2hRound: function () {
+                if (!this.h2hRounds || !this.$store.state.params) {
+                  return null;
+                }
+                var params = this.$store.state.params;
+                return this.h2hRounds.find(function (r) {
+                  return r.e == params.e && r.r == params.r;
+                });
+              },
+            },
+            watch: {
+              '$store.state.params': function (params) {
+                var that = this;
+                if (that.isH2HRound) {
+                  that.fetchH2HData();
+                }
+                that.$store.dispatch('SET_H2H_EDITING_POINT', null);
+              }
+            },
+            ready: function () {
+              var that = this;
+              if (that.isH2HRound) {
+                that.fetchH2HData();
+              }
+            },
+            template: '#h2h-result-template',
+            methods: {
+              editPoint: function (point, match, set) {
+                this.$store.dispatch('SET_H2H_EDITING_POINT', { point: point, match: match, set: set });
+                this.$nextTick(function () {
+                  $('.h2h-point-input input').eq(0).focus();
+                });
+              },
+              fetchH2HData: function () {
+                var that = this;
+                var params = that.$store.state.params;
+                that.$store.dispatch('LOADING_H2H');
+                ws.send({
+                  type: 'h2h',
+                  action: 'fetch',
+                  round: {
+                    event: params.e,
+                    round: params.r
+                  }
+                });
+              },
+              getUserById: function (userId) {
+                if (!userId) {
+                  return { name: '-' };
+                }
+                // Try to find in h2h data
+                const h2hData = this.$store.state.h2hData;
+                if (h2hData && h2hData.matches) {
+                  for (const match of h2hData.matches) {
+                    if (match.c1 && match.c1.id == userId && match.c1.name) {
+                      return { name: match.c1.name };
+                    } else if (match.c2 && match.c2.id == userId && match.c2.name) {
+                      return { name: match.c2.name };
+                    }
+                  }
+                }
+                return { name: 'User-' + userId };
+              },
+              formatResult: function (result, event) {
+                return decodeResult(result, event);
+              },
+              updatePointResult: function (pointId, competitor, encodedValue) {
+                var pointData = {
+                  id: pointId,
+                };
+                pointData[competitor] = encodedValue;
+
+                ws.send({
+                  type: 'h2h',
+                  action: 'updatePoint',
+                  point: pointData
+                });
+              },
+            }
+          },
           'input-panel': {
             props: ['result'],
             data: function () {
@@ -1132,7 +1258,7 @@
                 var that = this;
                 that.competitor = getUser(result.n);
                 that.v = result.v;
-                that.searchText = result.n || '';
+                that.searchText = result.n?.toString() || '';
               },
               searchText: function (searchText) {
                 this.selectedIndex = 0;
@@ -1144,11 +1270,12 @@
               }
             },
             attached: function () {
-              // var that = this;
-              // $(window).on('resize', function () {
-              //   console.log(that.$el)
-              //   that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
-              // }).trigger('resize');
+              var that = this;
+              $(window).on('resize', function () {
+                if (that.$el) {
+                  that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
+                }
+              }).trigger('resize');
             },
             methods: {
               isDisabled: function (index) {
@@ -1346,191 +1473,87 @@
             },
             template: '#input-panel-template',
             components: {
-              'result-input': {
-                props: ['value', 'index'],
-                data: function () {
-                  return {
-                    subIndex: 2,
-                    tried: '',
-                    solved: '',
-                    time: ''
-                  }
-                },
-                watch: {
-                  time: function () {
-                    this.calculateValue();
-                  },
-                  tried: function () {
-                    this.calculateValue();
-                  },
-                  solved: function () {
-                    this.calculateValue();
-                  },
-                  '$parent.result.i': function () {
-                    var that = this;
-                    var time = decodeResult(that.value, that.e);
-                    if (that.e === '333mbf') {
-                      that.subIndex = 0;
-                      if (time.indexOf('/') > -1) {
-                        var match = time.match(/^(\d+)\/(\d+) (.+)$/);
-                        that.solved = match[1];
-                        that.tried = match[2];
-                        that.time = match[3].replace(/[:\.]/g, '');
-                      } else {
-                        that.solved = that.tried = '';
-                        that.time = time;
-                      }
-                    } else {
-                      that.time = time.replace(/[:\.]/g, '');
-                      that.subIndex = 2;
-                    }
-                  }
-                },
-                methods: {
-                  calculateValue: function () {
-                    var that = this;
-                    var round = getRound(that);
-                    that.value = encodeResult(that.formatTime(that.time), that.e, false, that.tried, that.solved);
-                    if (round.tl > 0 && that.e != '333mbf' && that.e != '333fm' && that.value / 100 >= round.tl) {
-                      that.time = 'DNF';
-                    }
-                    if (that.e === '333fm' && that.value > 80) {
-                      that.time = 'DNF';
-                    }
-                  },
-                  formatTime: function (time) {
-                    if (time == 'DNF' || time == 'DNS' || time == '' || this.e == '333fm') {
-                      return time;
-                    }
-                    var minute = time.length > 4 ? parseInt(time.slice(0, -4)) : 0;
-                    var second = time.length > 2 ? parseInt(time.slice(0, -2).slice(-2)) : 0;
-                    var msecond = parseInt(time.slice(-2));
-                    if (this.e === '333mbf') {
-                      if (this.solved == '' || this.tried == '') {
-                        return '';
-                      }
-                      minute = second;
-                      second = msecond;
-                      msecond = 0;
-                    }
-                    return [
-                      minute ? minute + ':' : '',
-                      second + '.',
-                      msecond
-                    ].join('');
-                  },
-                  focus: function (subIndex) {
-                    this.subIndex = subIndex;
-                    this.$parent.currentIndex = this.index;
-                  },
-                  blur: function (e) {
-                    this.$parent.currentIndex = null;
-                    this.$parent.lastIndex = null;
-                    this.$parent.checkResult();
-                  },
-                  keydown: function (e, attr) {
-                    var code = e.which;
-                    var that = this;
-                    var value = that[attr];
-                    var isSameInput = that.$parent.lastIndex == that.$parent.currentIndex;
-                    switch (code) {
-                      //D,/ pressed
-                      case 68:
-                      case 111:
-                        that.time = 'DNF';
-                        break;
-                      //S,* pressed
-                      case 106:
-                      case 83:
-                        that.time = 'DNS';
-                        break;
-                      case 8:
-                      case 109:
-                        if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
-                          if (that.time === 'DNF' || that.time === 'DNS') {
-                            that.solved = that.tried = that.time = '';
-                          }
-                          value = '';
-                        }
-                        that.$parent.lastIndex = that.$parent.currentIndex;
-                        that[attr] = value.slice(0, -1);
-                        break;
-                      case 107:
-                      case 38:
-                      case 9:
-                        if (e.shiftKey || code == 107 || code == 38) {
-                          var input = $(e.target);
-                          var inputs = $('.result-input:not([disabled])');
-                          var index = inputs.index(input);
-                          if (index > 0) {
-                            inputs.eq(index - 1).focus();
-                          }
-                          break;
-                        }
-                      case 40:
-                      case 13:
-                        var input = $(e.target);
-                        var inputs = $('.result-input:not([disabled])');
-                        var index = inputs.index(input);
-                        if (index < inputs.length - 1) {
-                          inputs.eq(index + 1).focus();
-                        } else {
-                          $('#save').focus();
-                        }
-                        break;
-                      //small keyboard
-                      case 96:
-                      case 97:
-                      case 98:
-                      case 99:
-                      case 100:
-                      case 101:
-                      case 102:
-                      case 103:
-                      case 104:
-                      case 105:
-                        code -= 48;
-                      //num
-                      case 48:
-                      case 49:
-                      case 50:
-                      case 51:
-                      case 52:
-                      case 53:
-                      case 54:
-                      case 55:
-                      case 56:
-                      case 57:
-                        if (value.length >= 6 && isSameInput) {
-                          break;
-                        }
-                        if (!isSameInput || that.time == 'DNF' || that.time == 'DNS') {
-                          if (that.time === 'DNF' || that.time === 'DNS') {
-                            that.solved = that.tried = that.time = '';
-                          }
-                          value = '';
-                        }
-                        if ((that.e === '333fm' || that.subIndex < 2) && value.length >= 2) {
-                          break;
-                        }
-                        if (that.e === '333mbf' && value.length >= 4) {
-                          break;
-                        }
-                        value += code - 48;
-                        that[attr] = value;
-                        if (!isSameInput) {
-                          that.$parent.lastIndex = that.$parent.currentIndex;
-                        }
-                        break;
-                      default:
-                        e.preventDefault();
-                        break;
-                    }
-                  }
-                },
-                template: '#result-input-template'
-              }
             }
+          },
+          'h2h-point-input': {
+            data: function () {
+              return {
+                pointResult: {
+                  v: [0, 0],
+                  i: 0
+                },
+                currentIndex: null,
+                lastIndex: null
+              };
+            },
+            attached: function () {
+              var that = this;
+              $(window).on('resize', function () {
+                if (that.$el) {
+                  that.$el.style.width = that.$el.parentNode.clientWidth - 30 + 'px';
+                }
+              }).trigger('resize');
+            },
+            watch: {
+              'editingPoint': {
+                handler: function (val) {
+                  if (val && val.point) {
+                    var point = val.point;
+                    this.pointResult.v = [
+                      point.c1.r || 0,
+                      point.c2.r || 0,
+                    ]
+                    this.pointResult.i = point.i;
+                  } else {
+                    this.pointResult.v = [0, 0];
+                  }
+                },
+                immediate: true,
+                deep: true
+              }
+            },
+            vuex: {
+              getters: {
+                editingPoint: function (state) {
+                  return state.h2hEditingPoint;
+                }
+              }
+            },
+            computed: {
+              result: function () {
+                return this.pointResult;
+              },
+              canSave: function () {
+                var v = this.pointResult.v;
+                return v[0] != null && v[0] !== undefined && v[1] != null && v[1] !== undefined &&
+                  v[0] != 0 && v[1] != 0;
+              }
+            },
+            methods: {
+              isDisabled: function () {
+                return false;
+              },
+              checkResult: function () { },
+              savePoint: function () {
+                var that = this;
+                var editing = that.editingPoint;
+                if (!editing || !editing.point) return;
+                var v = that.pointResult.v;
+                if (v[0] === 0 || v[0] === undefined || v[1] === 0 || v[1] === undefined) return;
+                ws.send({
+                  type: 'h2h',
+                  action: 'updatePoint',
+                  point: {
+                    id: editing.point.i,
+                    competitor1_result: v[0],
+                    competitor2_result: v[1]
+                  }
+                });
+                that.$store.dispatch('SET_H2H_EDITING_POINT', null);
+              }
+            },
+            template: '#h2h-point-input-template',
+            components: {}
           }
         }
       }

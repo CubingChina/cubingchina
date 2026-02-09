@@ -56,6 +56,8 @@ class LiveServer implements HttpServerInterface {
 	}
 
 	public function onError(ConnectionInterface $conn, \Exception $e) {
+		var_dump($e);
+		exit;
 		Yii::log($e->getMessage(), 'ws', 'error');
 		$conn->close();
 	}

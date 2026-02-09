@@ -62,8 +62,19 @@ class LiveResultCommand extends CConsoleCommand {
 		]);
 
 		if (empty($existingResults)) {
-			$this->log("No existing live_result records found for this round");
-			return;
+			$this->log("No existing live_result records found for this round, seeding from previous round/registrations");
+			$seeded = $this->seedLiveResultsForRound($competition, $eventRound);
+			$this->log("Seeded {$seeded} live_result records");
+
+			$existingResults = LiveResult::model()->with('user')->findAllByAttributes([
+				'competition_id' => $competition->id,
+				'event' => $eventRound->event,
+				'round' => $eventRound->round,
+			]);
+			if (empty($existingResults)) {
+				$this->log("Still no live_result records found after seeding, aborting");
+				return;
+			}
 		}
 
 		$this->log("Found " . count($existingResults) . " existing live_result records");
@@ -123,6 +134,84 @@ class LiveResultCommand extends CConsoleCommand {
 		}
 
 		$this->log("Updated: {$updated}, Skipped: {$skipped}");
+	}
+
+	/**
+	 * Seed live_result rows for a round when they don't exist yet.
+	 * Uses previous round's advanced competitors (top N), or registrations for first rounds.
+	 *
+	 * Mirrors ResultHandler::actionRefresh() behavior.
+	 *
+	 * @return int number of seeded/updated rows
+	 */
+	private function seedLiveResultsForRound($competition, $eventRound) {
+		$seeded = 0;
+
+		$lastRound = $eventRound->lastRound;
+		if ($lastRound !== null) {
+			$limit = intval($eventRound->number);
+			$sourceResults = $lastRound->results; // best>0, ordered by rank
+			if ($limit <= 0) {
+				$limit = count($sourceResults);
+			}
+			foreach (array_slice($sourceResults, 0, $limit) as $source) {
+				if ($this->createOrUpdateSeededResult($source, $eventRound)) {
+					$seeded++;
+				}
+			}
+			return $seeded;
+		}
+
+		// First round: seed from registrations
+		$registrations = Registration::getRegistrations($competition);
+		foreach ($registrations as $registration) {
+			if (!in_array($eventRound->event, $registration->events)) {
+				continue;
+			}
+			if ($this->createOrUpdateSeededResult($registration, $eventRound)) {
+				$seeded++;
+			}
+		}
+		return $seeded;
+	}
+
+	/**
+	 * @param object $source LiveResult from last round OR Registration
+	 * @return bool true if row was created/updated
+	 */
+	private function createOrUpdateSeededResult($source, $eventRound) {
+		if (!isset($source->number) || !isset($source->user_id)) {
+			return false;
+		}
+
+		$model = LiveResult::model()->findByAttributes([
+			'competition_id' => $eventRound->competition_id,
+			'event' => $eventRound->event,
+			'round' => $eventRound->round,
+			'number' => $source->number,
+		]);
+
+		if ($model === null) {
+			$model = new LiveResult();
+			$model->competition_id = $eventRound->competition_id;
+			$model->user_id = $source->user_id;
+			$model->number = $source->number;
+			$model->event = $eventRound->event;
+			$model->round = $eventRound->round;
+			$model->format = $eventRound->format;
+			return (bool)$model->save();
+		}
+
+		$changed = false;
+		if ($model->user_id != $source->user_id) {
+			$model->user_id = $source->user_id;
+			$changed = true;
+		}
+		if ($model->format != $eventRound->format) {
+			$model->format = $eventRound->format;
+			$changed = true;
+		}
+		return $changed ? (bool)$model->save() : false;
 	}
 
 	/**

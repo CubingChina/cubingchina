@@ -76,6 +76,47 @@ class LiveH2HSet extends ActiveRecord {
 		);
 	}
 
+	/**
+	 * Recalculate set points from all points (for editing support)
+	 */
+	public function recalculatePoints() {
+		$match = $this->match;
+		if (!$match) {
+			return;
+		}
+		$oldWinnerId = $this->winner_id;
+		$oldStatus = $this->status;
+
+		$p1 = 0;
+		$p2 = 0;
+		$points = LiveH2HPoint::model()->findAllByAttributes(array('set_id' => $this->id), array('order' => 'point_number ASC'));
+		foreach ($points as $point) {
+			$winnerId = $point->determineWinner();
+			if ($winnerId == $match->competitor1_id) {
+				$p1++;
+			} elseif ($winnerId == $match->competitor2_id) {
+				$p2++;
+			}
+		}
+
+		$this->competitor1_points = $p1;
+		$this->competitor2_points = $p2;
+		$this->winner_id = null;
+		$this->status = self::STATUS_IN_PROGRESS;
+
+		if ($oldStatus == self::STATUS_FINISHED && $oldWinnerId) {
+			if ($oldWinnerId == $match->competitor1_id) {
+				$match->competitor1_sets_won = max(0, $match->competitor1_sets_won - 1);
+			} elseif ($oldWinnerId == $match->competitor2_id) {
+				$match->competitor2_sets_won = max(0, $match->competitor2_sets_won - 1);
+			}
+			$match->save();
+		}
+
+		$this->save();
+		$this->checkSetFinished();
+	}
+
 	public function checkSetFinished() {
 		$match = $this->match;
 		if (!$match) {

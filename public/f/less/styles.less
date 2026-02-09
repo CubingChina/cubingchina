@@ -1364,3 +1364,231 @@ body.live.disconnected {
     }
   }
 }
+
+// Head to Head result template
+.h2h-result-container {
+  .h2h-match {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    &.match-finished {
+      .competitor.winner .competitor-info .name {
+        font-weight: bold;
+        color: #5cb85c;
+      }
+    }
+  }
+  .match-header {
+    margin-bottom: 12px;
+    h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+  .match-competitors {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+  .competitor {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+  }
+  .competitor-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    .seed {
+      flex-shrink: 0;
+      color: #999;
+      font-size: 12px;
+    }
+    .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+  }
+  .sets-score {
+    flex-shrink: 0;
+    margin-left: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    min-width: 24px;
+    text-align: right;
+  }
+  .vs {
+    flex-shrink: 0;
+    padding: 0 8px;
+    font-weight: bold;
+    color: #999;
+    font-size: 14px;
+  }
+  .sets-container {
+    margin-top: 12px;
+  }
+  .h2h-set {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &.set-finished {
+      border-color: #e0e0e0;
+    }
+  }
+  .set-header {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    strong {
+      min-width: 60px;
+    }
+    .set-score {
+      font-weight: bold;
+      color: #337ab7;
+    }
+    .set-winner {
+      color: #5cb85c;
+      font-size: 13px;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .h2h-point-input-panel {
+    .h2h-point-input {
+      margin-top: 10px;
+    }
+  }
+  .h2h-point-input {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    .h2h-point-input-group {
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      .h2h-point-input-label {
+        font-size: 12px;
+        color: #777;
+        margin: 0;
+        font-weight: normal;
+      }
+      .result-input-wrapper {
+        flex: 1;
+      }
+    }
+  }
+  .points-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    .table {
+      margin-bottom: 0;
+      table-layout: fixed;
+      width: 100%;
+      th, td {
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      th:first-child,
+      td:first-child {
+        width: 5%;
+        max-width: 50px;
+        min-width: 50px;
+        text-align: center;
+      }
+      th:nth-child(2),
+      th:nth-child(3),
+      td:nth-child(2),
+      td:nth-child(3) {
+        width: 22%;
+        text-align: center;
+      }
+      th:last-child,
+      td:last-child {
+        width: 16%;
+        text-align: center;
+      }
+    }
+  }
+  @media (max-width: 767px) {
+    .match-competitors {
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+    }
+    .competitor {
+      width: 100%;
+    }
+    .competitor-info .name {
+      max-width: none;
+    }
+    .vs {
+      font-size: 12px;
+      padding: 2px 0;
+      align-self: center;
+    }
+    .sets-score {
+      font-size: 16px;
+      min-width: 20px;
+    }
+    .set-winner {
+      max-width: 80px;
+    }
+    .match-header {
+      margin-bottom: 8px;
+    }
+    .match-header h4 {
+      font-size: 15px;
+    }
+    .h2h-match {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+    }
+    .sets-container {
+      margin-top: 8px;
+    }
+    .h2h-set {
+      margin-bottom: 12px;
+      padding: 10px;
+    }
+    .points-container .table {
+      th:last-child,
+      td:last-child {
+        width: 14%;
+      }
+      th:nth-child(2),
+      th:nth-child(3) {
+        font-size: 12px;
+      }
+    }
+  }
+}

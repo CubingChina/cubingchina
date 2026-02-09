@@ -129,7 +129,6 @@
     </div>
     <chat :options="options" v-if="options.showMessage || options.alertResult || options.alertRecord"></chat>
     <result :options="options"></result>
-    <h2h-result :options="options"></h2h-result>
   </div>
 </template>
 
@@ -204,9 +203,12 @@
 </template>
 
 <template id="result-template">
-  <div class="row" v-if="!isH2HRound">
-    <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}">
+  <div class="row">
+    <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}" v-if="!isH2HRound">
       <input-panel :result.sync="current"></input-panel>
+    </div>
+    <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}" v-if="isH2HRound">
+      <h2h-point-input></h2h-point-input>
     </div>
     <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}} col-sm-{{hasPermission && options.enableEntry ? 8 : 12}}">
       <div tabindex="-1" id="round-settings-modal" class="modal fade">
@@ -323,15 +325,15 @@
               </option>
             </optgroup>
           </select>
-          <select @change="changeParams" v-model="filter">
+          <select @change="changeParams" v-model="filter" v-if="!isH2HRound">
             <option v-for="filter in filters" :value="filter.value">
               {{filter.label}}
             </option>
           </select>
         </div>
       </div>
-      <div v-if="hasPermission">已录/未录/总数：{{ currentRound.rn }} / {{ currentRound.tt - currentRound.rn }} / {{ currentRound.tt }} </div>
-      <div class="table-responsive">
+      <div v-if="hasPermission && !isH2HRound">已录/未录/总数：{{ currentRound.rn }} / {{ currentRound.tt - currentRound.rn }} / {{ currentRound.tt }} </div>
+      <div class="table-responsive" v-if="!isH2HRound">
         <table class="table table-bordered table-condensed table-hover table-boxed">
           <thead>
             <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
@@ -385,11 +387,12 @@
           </tbody>
         </table>
       </div>
-      <ul class="pagination" v-if="totalPage > 1">
+      <ul class="pagination" v-if="totalPage > 1" v-if="!isH2HRound">
         <li v-for="i in totalPage" class="page" :class="{active: i == page - 1}">
           <a href="javascript: void(0);" @click="page = i + 1">{{i + 1}}</a>
         </li>
       </ul>
+      <h2h-result :options="options" v-if="isH2HRound"></h2h-result>
     </div>
   </div>
 </template>
@@ -526,34 +529,35 @@
 </template>
 
 <template id="h2h-point-input-template">
-  <div class="result-input-wrapper form-control"
-    :class="{active: isActive, disabled: false}"
-  >
-    <input class="result-input" type="tel"
-      :id="'h2h-input-' + point.i + '-' + competitor"
-      v-model="time"
-      @focus="focus"
-      @blur="blur"
-      @keydown.prevent="keydown($event)"
-    >
-    <label :for="'h2h-input-' + point.i + '-' + competitor">
-      <span class="number-group" v-if="time != 'DNF' && time != 'DNS'">
-        <span class="number" :class="{active: time.length > 5}" v-if="eventName != '333fm' && eventName != '333mbf'">{{time.charAt(time.length - 6) || 0}}</span>
-        <span class="number" :class="{active: time.length > 4}" v-if="eventName != '333fm' && eventName != '333mbf'">{{time.charAt(time.length - 5) || 0}}</span>
-        <span class="number" :class="{active: time.length > 4}" v-if="eventName != '333fm' && eventName != '333mbf'">:</span>
-        <span class="number" :class="{active: time.length > 3}" v-if="eventName != '333fm'">{{time.charAt(time.length - 4) || 0}}</span>
-        <span class="number" :class="{active: time.length > 2}" v-if="eventName != '333fm'">{{time.charAt(time.length - 3) || 0}}</span>
-        <span class="number" :class="{active: time.length > 2}" v-if="eventName != '333fm'">.</span>
-        <span class="number" :class="{active: time.length > 1}">{{time.charAt(time.length - 2) || 0}}</span>
-        <span class="number" :class="{active: time.length > 0}">{{time.charAt(time.length - 1) || 0}}</span>
-      </span>
-      <span class="penalty" v-else>{{time}}</span>
-    </label>
+  <div data-spy="affix" data-offset-top="550" style="top:20px;z-index:999">
+    <div class="panel panel-theme input-panel h2h-point-input-panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">H2H Point <?php echo Yii::t('live', 'Input Panel'); ?></h3>
+      </div>
+      <div class="panel-body">
+        <template v-if="editingPoint">
+          <label>Point {{editingPoint.point.pn}}</label>
+          <span class="text-muted"> - {{editingPoint.match.s}} Match {{editingPoint.match.mn}}, Set {{editingPoint.set.sn}}</span>
+          <div class="h2h-point-input">
+            <div class="h2h-point-input-group">
+              <label class="h2h-point-input-label">{{editingPoint.match.c1.name}}</label>
+              <result-input :value.sync="pointResult.v[0]" :index="0"></result-input>
+            </div>
+            <div class="h2h-point-input-group">
+              <label class="h2h-point-input-label">{{editingPoint.match.c2.name}}</label>
+              <result-input :value.sync="pointResult.v[1]" :index="1"></result-input>
+            </div>
+            <button type="button" id="h2h-point-save" class="btn btn-md btn-theme" @click="savePoint" :disabled="!canSave"><?php echo Yii::t('live', 'Save'); ?></button>
+          </div>
+        </template>
+        <p v-else class="text-muted">点击右侧编辑按钮选择要录入的 Point</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <template id="h2h-result-template">
-  <div class="row" v-if="isH2HRound">
+  <div class="row h2h-result-container">
     <div class="col-md-12">
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -602,6 +606,7 @@
                   <table class="table table-condensed">
                     <thead>
                       <tr>
+                        <th v-if="hasPermission"></th>
                         <th>Point</th>
                         <th>{{getUserById(match.c1.id).name}}</th>
                         <th>{{getUserById(match.c2.id).name}}</th>
@@ -609,29 +614,16 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="point in set.points">
+                      <tr v-for="point in set.points" @dblclick="editPoint(point, match, set)">
+                        <td v-if="hasPermission">
+                          <button type="button" class="btn btn-xs btn-theme no-mr" @click="editPoint(point, match, set)"><i class="fa fa-edit"></i></button>
+                        </td>
                         <td>{{point.pn}}</td>
                         <td>
-                          <span v-if="hasPermission && options.enableEntry && !point.w">
-                            <h2h-point-input
-                              :value="point.c1.r"
-                              :point="point"
-                              competitor="competitor1_result"
-                              :event-name="eventName"
-                            ></h2h-point-input>
-                          </span>
-                          <span v-else>{{formatResult(point.c1.r, eventName)}}</span>
+                          <span>{{formatResult(point.c1.r, e)}}</span>
                         </td>
                         <td>
-                          <span v-if="hasPermission && options.enableEntry && !point.w">
-                            <h2h-point-input
-                              :value="point.c2.r"
-                              :point="point"
-                              competitor="competitor2_result"
-                              :event-name="eventName"
-                            ></h2h-point-input>
-                          </span>
-                          <span v-else>{{formatResult(point.c2.r, eventName)}}</span>
+                          <span>{{formatResult(point.c2.r, e)}}</span>
                         </td>
                         <td>
                           <span v-if="point.w">{{getUserById(point.w).name}}</span>
