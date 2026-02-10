@@ -32,7 +32,7 @@
       ]), [
         'class'=>'btn btn-sm btn-primary'
       ]); ?>
-      <?php if ($userTicket->signed_date == 0): ?>
+      <?php if ($userTicket->isCancellable()): ?>
       <input type="hidden" name="cancel" value="1">
       <?php echo CHtml::hiddenField('id', $userTicket->id); ?>
       <?php echo CHtml::tag('button', [
