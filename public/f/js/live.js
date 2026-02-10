@@ -499,7 +499,7 @@
         methods: {
           hasAverage: function (includeBlindFolded) {
             var round = getRound(this);
-            return round.f == 'a' || round.f == 'm' || (includeBlindFolded && isSingleBlindFolded(round.e) && round.f == '3');
+            return round.f == 'a' || round.f == 'm' || (includeBlindFolded && isSingleBlindFolded(round.e) && ['3', '5'].includes(round.f));
           },
           showRoundSettings: function () {
             $('#round-settings-modal').modal();
@@ -1266,7 +1266,7 @@
       hasAverage = false;
     }
     //
-    if ((f == 'a' || f == 'm') && zeroCount > 0) {
+    if ((f == 'a' || f == 'm' || f == '5') && zeroCount > 0) {
       hasAverage = false;
     }
     if (DNFCount > 1 || (DNFCount == 1 && (f == 'm' || f == '3'))) {
