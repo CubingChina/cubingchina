@@ -8,7 +8,7 @@ class ApiModule extends CWebModule {
 		// $this->setViewPath(Yii::getPathOfAlias('application.views.api'));
 		Yii::app()->errorHandler->errorAction = 'api/default/error';
 		header('Access-Control-Allow-Origin: *');
-		header('Content-Type: json');
+		header('Content-Type: application/json');
 	}
 
 	public function beforeControllerAction($controller, $action) {
