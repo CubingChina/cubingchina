@@ -492,7 +492,7 @@ class Competition extends ActiveRecord {
 		$ages = array_unique($ages);
 		// sort an array from largest to smallest.
 		// because when you use it later, you need to start counting from the oldest group.
-		if ($order == 'sort') {
+		if ($order == 'sort' || $order == 'asc') {
 			sort($ages);
 			return $ages;
 		}
