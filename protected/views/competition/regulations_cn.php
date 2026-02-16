@@ -201,25 +201,27 @@
 
       <?php
       $oldAgeGroups = [];
-      $lastOAge = 0;
+      $ages = $competition->getPodiumOldAges('asc');
+      $isYoungest = true;
 
-      foreach ($competition->getPodiumOldAges('asc') as $age) {
-        if ($lastOAge) {
+      for ($i = count($ages) - 1; $i >= 0; $i--) {
+        $age = $ages[$i];
+        if ($i == count($ages) - 1) {
           $oldAgeGroups[] = sprintf(
-            '<li><b>O%d：</b>为%d岁（含）至%d岁（不含）选手，即在%s至%s出生的选手。</li>',
-            $age, $lastOAge, $age,
-            date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)),
-            date('Y年m月d日', $competition->getYearsAgosDate($lastOAge))
+            '<li><b>O%d：</b>%s之前出生。</li>',
+            $age, date('Y年m月d日', $competition->getYearsAgosDate($age, 86400))
           );
         } else {
+          $nextAge = $ages[$i + 1];
           $oldAgeGroups[] = sprintf(
-            '<li><b>O%d：</b>为%d岁（不含）以上选手，即在%s之前出生的选手。</li>',
-            $age, $age, date('Y年m月d日', $competition->getYearsAgosDate($age, 86400))
+            '<li><b>O%d：</b>%s至%s出生。</li>',
+            $age,
+            date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)),
+            date('Y年m月d日', $competition->getYearsAgosDate($nextAge))
           );
         }
-        $lastOAge = $age;
       }
-      foreach (array_reverse($oldAgeGroups) as $group) {
+      foreach ($oldAgeGroups as $group) {
         echo $group;
       }
       ?>
