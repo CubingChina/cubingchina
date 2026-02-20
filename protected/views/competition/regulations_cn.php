@@ -198,14 +198,17 @@
 
 
       <!-- O group -->
-      <?php $lastOAge = 0; ?>
-      <?php foreach (array_reverse($competition->getPodiumOldAges('asc')) as $age): ?>
+      <?php
+      $oldAges = $competition->getPodiumOldAges('asc');
+      $total = count($oldAges);
+      foreach ($oldAges as $index => $age):
+        $lastAge = $oldAges[$index + 1] ?? 0;
+      ?>
       <li>
-        <b>O<?php echo $age; ?>：</b>为<?php echo $age; ?>岁（含）<?php if ($lastOAge): ?>至<?php echo $lastOAge; ?>岁（不含）<?php else: ?>以上<?php endif; ?>选手，即在<?php
-        if ($lastOAge): echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '至', date('Y年m月d日', $competition->getYearsAgosDate($lastOAge));
+        <b>O<?php echo $age; ?>：</b>为<?php echo $age; ?>岁（含）<?php if ($lastAge): ?>至<?php echo $lastAge; ?>岁（不含）<?php else: ?>以上<?php endif; ?>选手，即在<?php
+        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($lastAge)), '至', date('Y年m月d日', $competition->getYearsAgosDate($age, 86400));
         else: echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '之前'; endif; ?>出生的选手。
       </li>
-      <?php $lastOAge = $age; ?>
       <?php endforeach; ?>
 
       <?php if ($competition->podiums_children && $lastAge === 0): ?>
