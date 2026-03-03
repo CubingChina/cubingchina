@@ -134,6 +134,9 @@
 
 <template id="chat-template">
   <div class="panel panel-info">
+    <div class="panel-heading chat-notice">
+      <i class="fa fa-bullhorn"></i> 请大家文明发言，友好交流，共同维护良好的比赛环境
+    </div>
     <div class="panel-body">
       <div class="message-container static-message-container">
         <ul class="unstyled static-messages">
