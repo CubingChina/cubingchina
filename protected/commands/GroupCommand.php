@@ -415,20 +415,11 @@ class GroupCommand extends CConsoleCommand {
 					}
 					return -$temp;
 				});
-				$count = count($registrations);
+				$groupNum = count($groupSchedules[$event]);
 				$i = 0;
-				$groupCount = 0;
-				$groupKey = 0;
-				$groupNum = $count / count($groupSchedules[$event]);
 				foreach ($registrations as $registration) {
-					$schedule = $groupSchedules[$event][$groupKey];
+					$schedule = $groupSchedules[$event][$i++ % $groupNum];
 					$this->addUserSchedule($schedule, $registration);
-					$i++;
-					$groupCount++;
-					if ($groupCount >= $groupNum) {
-						$groupCount = 0;
-						$groupKey++;
-					}
 				}
 			}
 		}
