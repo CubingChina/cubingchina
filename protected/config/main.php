@@ -351,7 +351,7 @@ $config = [
 				'Competitors are required to carry their competitor ID with them.',
 				'Please inform us by email before the competition if you will not be able to participate so we can cancel your registration.',
 				'Please pay attention to the schedule and be on time for your events. Competitors showing up late to events may be disqualified.',
-				'"Time limit" means, if you exceeds the time limit, your current attempt will be stopped and recorded as DNF. "Cut-off" means, you are allowed to finish all five attempts if at least one of your first two attempts fits in the cut-off, otherwise the remaining three attempts will be cancelled. (The first attempt has to be below the cut-off for 6x6, 7x7 and 3x3 with feet.)',
+				'"Time limit" means, if you exceeds the time limit, your current attempt will be stopped and recorded as DNF. "Cut-off" means, you are allowed to finish all five attempts if at least one of your first two attempts fits in the cut-off, otherwise the remaining three attempts will be cancelled. (The first attempt has to be below the cut-off for 6x6 and 7x7.)',
 				'Disclaimer: Should participants register and make payment without having fully reviewed and understood the competition information, event rules, refund policy, registration guidelines and other relevant contents, Cubing China and the organizing team shall not be liable for any resulting financial losses.'
 			],
 			'common_zh'=>[

@@ -56,7 +56,7 @@ $style = 'padding-top:13px;padding-left:39px;padding-right:13px;padding-bottom:1
       <li>Competitors are required to carry their competitor ID with them.</li>
       <li>Please inform us by email before the competition if you will not be able to participate so we can cancel your registration.</li>
       <li>Please pay attention to the schedule and be on time for your events. Competitors showing up late to events may be disqualified.</li>
-      <li>"Time limit" means, if you exceeds the time limit, your current attempt will be stopped and recorded as DNF. "Cut-off" means, you are allowed to finish all five attempts if at least one of your first two attempts fits in the cut-off, otherwise the remaining three attempts will be cancelled. (The first attempt has to be below the cut-off for 6x6, 7x7 and 3x3 with feet.)</li>
+      <li>"Time limit" means, if you exceeds the time limit, your current attempt will be stopped and recorded as DNF. "Cut-off" means, you are allowed to finish all five attempts if at least one of your first two attempts fits in the cut-off, otherwise the remaining three attempts will be cancelled. (The first attempt has to be below the cut-off for 6x6 and 7x7.)</li>
       <?php if ($registration->hasRegisteredOneOf(['333bf', '333mbf', '444bf', '555bf'])): ?>
       <li>Competitors participating in all blindfolded events must provide their own blindfold.</li>
       <?php endif; ?>
