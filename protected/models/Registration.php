@@ -675,6 +675,14 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function checkWCAEvents() {
+		$normalEventIds = array_keys(Events::getNormalEvents());
+		$selected = is_array($this->events) ? $this->events : [];
+		if (array_intersect($selected, $normalEventIds) === []) {
+			$this->addError('events', Yii::t('Registration', 'You must select at least one WCA event.'));
+		}
+	}
+
 	public function getEventString($event, $showPending = false) {
 		$registrationEvent = $this->getRegistrationEvent($event);
 		if ($registrationEvent === null) {
@@ -1430,6 +1438,9 @@ class Registration extends ActiveRecord {
 		);
 		if ($this->competition_id > 0) {
 			$competition = $this->competition;
+			if ($competition->isWCACompetition()) {
+				$rules[] = array('events', 'checkWCAEvents', 'on'=>'register');
+			}
 			if ($competition->entourage_limit) {
 				$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
 				$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');

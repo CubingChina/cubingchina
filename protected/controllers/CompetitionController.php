@@ -229,7 +229,14 @@ class CompetitionController extends Controller {
 			if (isset($_POST['update']) && $registration->isEditable()) {
 				$locationId = isset($_POST['Registration']['location_id']) ? $_POST['Registration']['location_id'] : null;
 				$events = $_POST['Registration']['events'] ?? [];
-				if ($registration->isAcceptedOrWaiting() || $events !== []) {
+				if ($competition->isWCACompetition()) {
+					$normalEventIds = array_keys(Events::getNormalEvents());
+					if (array_intersect($events, $normalEventIds) === []) {
+						$registration->addError('events', Yii::t('Registration', 'You must select at least one WCA event.'));
+						Yii::app()->user->setFlash('danger', Yii::t('Registration', 'You must select at least one WCA event.'));
+					}
+				}
+				if (!$registration->hasErrors() && ($registration->isAcceptedOrWaiting() || $events !== [])) {
 					$registration->location_id = $locationId ?? $registration->location_id;
 					$registration->updateEvents($events);
 					$registration->save();

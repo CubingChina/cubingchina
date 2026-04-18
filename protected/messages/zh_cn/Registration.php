@@ -84,4 +84,5 @@ return array (
   'Your registration is on the waiting list.' => '你当前在候补列表中。',
   'You successfully registered for {otherCompetition}. You can only register for one competition among {thisCompetition} and {otherCompetition}. Please cancel your registration for {otherCompetition} to continue.' => '你已成功报名{otherCompetition}。{thisCompetition}和{otherCompetition}是系列赛，你只能报名其中的一场比赛。请先取消{otherCompetition}的报名，才能继续进行此次报名。',
   'You are trying to pay for this competition in another device. Please don\'t use multiple devices to pay for the same competition.' => '你正在另一个设备中支付，请勿同时使用多个设备进行支付。',
+  'You must select at least one WCA event.' => '你必须至少选择一个WCA官方项目。',
 );
