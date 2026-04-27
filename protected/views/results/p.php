@@ -1,3 +1,56 @@
+<?php Yii::app()->clientScript->registerCss('results-person-event-pagination', '
+.results-person .event-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0 12px;
+}
+.results-person .event-pagination > li {
+  display: block;
+}
+.results-person .event-pagination > li > a {
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  width: 34px;
+}
+.results-person .event-pagination > li > a .event-icon {
+  color: #6091ba;
+  font-size: 23px;
+  margin: 0;
+}
+.results-person .event-pagination > li.active > a,
+.results-person .event-pagination > li.active > a:hover,
+.results-person .event-pagination > li.active > a:focus {
+  background-color: #6091ba;
+  box-shadow: 0 2px 6px rgba(96, 145, 186, 0.25);
+}
+.results-person .event-pagination > li.active > a .event-icon,
+.results-person .event-pagination > li.active > a:hover .event-icon,
+.results-person .event-pagination > li.active > a:focus .event-icon {
+  color: #fff;
+}
+@media (max-width: 767px) {
+  .results-person .event-pagination {
+    gap: 3px;
+  }
+  .results-person .event-pagination > li {
+    flex: 0 0 calc((100% - 27px) / 10);
+  }
+  .results-person .event-pagination > li > a {
+    height: 28px;
+    margin: 0 auto;
+    width: 28px;
+  }
+  .results-person .event-pagination > li > a .event-icon {
+    font-size: 20px;
+  }
+}
+'); ?>
 <div class="col-lg-12 results-person" data-person-id="<?php echo $person->wca_id; ?>">
   <h1 class="text-center"><?php echo $user && $user->id === Yii::app()->user->id ? CHtml::link($person->name, array('/user/profile')) : $person->name; ?></h1>
   <?php if ($user && $user->avatar): ?>
@@ -59,7 +112,7 @@
       array(
         'name'=>Yii::t('common', 'Event'),
         'type'=>'raw',
-        'value'=>'CHtml::link(Events::getFullEventNameWithIcon($data->event_id), "#" . $data->event->id)',
+        'value'=>'Events::getFullEventNameWithIcon($data->event_id)',
       ),
       array(
         'name'=>Yii::t('statistics', 'NR'),
@@ -297,6 +350,12 @@
   </div>
   <?php endif; ?>
   <?php $hasRecords = !empty($historyWR) || !empty($historyCR) || !empty($historyNR); ?>
+  <?php
+  $byEventGroups = array();
+  foreach ($byEvent as $result) {
+    $byEventGroups[$result->event_id][] = $result;
+  }
+  ?>
   <ul class="nav nav-tabs">
     <li class="active"><a href="#history" data-toggle="tab"><?php echo Yii::t('common', 'Results'); ?></a></li>
     <?php if ($hasRecords): ?>
@@ -316,60 +375,78 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane active" id="by-event">
-          <?php
-          $this->widget('GroupRankGridView', array(
-            'dataProvider'=>new CArrayDataProvider($byEvent, array(
-              'pagination'=>false,
-              'sort'=>false,
-            )),
-            'itemsCssClass'=>'table table-condensed table-hover table-boxed',
-            'groupKey'=>'event_id',
-            'groupHeader'=>'CHtml::openTag("a", array(
-                "name"=>$data->event_id,
-              )) . "</a>" . Events::getFullEventNameWithIcon($data->event_id)',
-            'rankKey'=>'competition_id',
-            'repeatHeader'=>true,
-            'columns'=>array(
-              array(
-                'class'=>'RankColumn',
-                'name'=>Yii::t('Results', 'Competition'),
-                'type'=>'raw',
-                'value'=>'$displayRank ? $data->competitionLink : ""',
-                'headerHtmlOptions'=>array('class'=>'competition_name'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Round'),
-                'type'=>'raw',
-                'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
-                'headerHtmlOptions'=>array('class'=>'round'),
-              ),
-              array(
-                'name'=>Yii::t('Results', 'Place'),
-                'type'=>'raw',
-                'value'=>'$data->pos',
-                'headerHtmlOptions'=>array('class'=>'place'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Best'),
-                'type'=>'raw',
-                'value'=>'$data->getTime("best", true, true)',
-                'headerHtmlOptions'=>array('class'=>'result'),
-                'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Average'),
-                'type'=>'raw',
-                'value'=>'$data->getTime("average", true, true)',
-                'headerHtmlOptions'=>array('class'=>'result'),
-                'htmlOptions'=>array('class'=>'result'),
-              ),
-              array(
-                'name'=>Yii::t('common', 'Detail'),
-                'type'=>'raw',
-                'value'=>'$data->detail',
-              ),
-            ),
-          )); ?>
+          <?php if ($byEventGroups !== array()): ?>
+          <ul class="pagination event-pagination">
+            <?php $index = 0; ?>
+            <?php foreach ($byEventGroups as $eventId=>$eventResults): ?>
+            <li<?php if ($index === 0) echo ' class="active"'; ?>>
+              <?php echo CHtml::link(Events::getEventIcon($eventId), '#event-' . $eventId, array(
+                'data-toggle'=>'tab',
+                'title'=>Events::getFullEventName($eventId),
+                'aria-label'=>Events::getFullEventName($eventId),
+              )); ?>
+            </li>
+            <?php $index++; ?>
+            <?php endforeach; ?>
+          </ul>
+          <div class="tab-content">
+            <?php $index = 0; ?>
+            <?php foreach ($byEventGroups as $eventId=>$eventResults): ?>
+            <div class="tab-pane<?php if ($index === 0) echo ' active'; ?>" id="event-<?php echo $eventId; ?>">
+              <?php
+              $this->widget('RankGridView', array(
+                'dataProvider'=>new CArrayDataProvider($eventResults, array(
+                  'pagination'=>false,
+                  'sort'=>false,
+                )),
+                'itemsCssClass'=>'table table-condensed table-hover table-boxed',
+                'rankKey'=>'competition_id',
+                'columns'=>array(
+                  array(
+                    'class'=>'RankColumn',
+                    'name'=>Yii::t('Results', 'Competition'),
+                    'type'=>'raw',
+                    'value'=>'$displayRank ? $data->competitionLink : ""',
+                    'headerHtmlOptions'=>array('class'=>'competition_name'),
+                  ),
+                  array(
+                    'name'=>Yii::t('common', 'Round'),
+                    'type'=>'raw',
+                    'value'=>'Yii::t("RoundTypes", $data->round->cell_name)',
+                    'headerHtmlOptions'=>array('class'=>'round'),
+                  ),
+                  array(
+                    'name'=>Yii::t('Results', 'Place'),
+                    'type'=>'raw',
+                    'value'=>'$data->pos',
+                    'headerHtmlOptions'=>array('class'=>'place'),
+                  ),
+                  array(
+                    'name'=>Yii::t('common', 'Best'),
+                    'type'=>'raw',
+                    'value'=>'$data->getTime("best", true, true)',
+                    'headerHtmlOptions'=>array('class'=>'result'),
+                    'htmlOptions'=>array('class'=>'result'),
+                  ),
+                  array(
+                    'name'=>Yii::t('common', 'Average'),
+                    'type'=>'raw',
+                    'value'=>'$data->getTime("average", true, true)',
+                    'headerHtmlOptions'=>array('class'=>'result'),
+                    'htmlOptions'=>array('class'=>'result'),
+                  ),
+                  array(
+                    'name'=>Yii::t('common', 'Detail'),
+                    'type'=>'raw',
+                    'value'=>'$data->detail',
+                  ),
+                ),
+              )); ?>
+            </div>
+            <?php $index++; ?>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
         </div>
         <div class="tab-pane" id="by-competition">
           <?php

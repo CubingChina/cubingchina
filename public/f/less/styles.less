@@ -1,15 +1,14 @@
-@import '../css/styles.css';
-@import '../plugins/event-icon/style.css';
+@import "../css/styles.css";
+@import "../plugins/event-icon/style.css";
 
 @baseSize: 14px;
-@conciseEventColors: #00a6ac, #76becc, #2a5caa, #2585a6, #00ae9d, #009ad6, #b2d235,
-  #dea32c, #f58220, #decb00, #f69c9f, #7fb80e, #78a355, #a3cf62,
-  #585eaa, #6f599c, #8552a1, #867892, #9b95c9, #faa755, #deab8a,
-  #f3715c, #d64f44, #f05b72, #d9d6c3, #d1c8b7, #f2eada, #d3d7d4, #f05b72;
-@conciseEvents: registration, intro, lunch, break, lucky, ceremony,
-333, 444, 555, 222, 333bf, 333oh, 333fm, 333ft, minx,
-pyram, sq1, clock, skewb, 666, 777, 444bf, 555bf, 333mbf,
-magic, mmagic, stack, funny, submission;
+@conciseEventColors: #00a6ac, #76becc, #2a5caa, #2585a6, #00ae9d, #009ad6,
+  #b2d235, #dea32c, #f58220, #decb00, #f69c9f, #7fb80e, #78a355, #a3cf62,
+  #585eaa, #6f599c, #8552a1, #867892, #9b95c9, #faa755, #deab8a, #f3715c,
+  #d64f44, #f05b72, #d9d6c3, #d1c8b7, #f2eada, #d3d7d4, #f05b72;
+@conciseEvents: registration, intro, lunch, break, lucky, ceremony, 333, 444,
+  555, 222, 333bf, 333oh, 333fm, 333ft, minx, pyram, sq1, clock, skewb, 666, 777,
+  444bf, 555bf, 333mbf, magic, mmagic, stack, funny, submission;
 
 .main-nav.colorful {
   .cube-red > a {
@@ -19,7 +18,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #d2322d;
   }
   .cube-red {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #d2322d;
     }
   }
@@ -31,7 +31,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #ed9c28;
   }
   .cube-orange {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #ed9c28;
     }
   }
@@ -43,7 +44,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #47a447;
   }
   .cube-green {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #47a447;
     }
   }
@@ -55,7 +57,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #39b3d7;
   }
   .cube-blue {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #39b3d7;
     }
   }
@@ -68,7 +71,8 @@ magic, mmagic, stack, funny, submission;
     color: #999999;
   }
   .cube-white {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #e9e9e9;
       color: #999999;
     }
@@ -82,21 +86,23 @@ magic, mmagic, stack, funny, submission;
     color: #888888;
   }
   .cube-yellow {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #ffea00;
       color: #888888;
     }
   }
   .cube-purple > a {
-    background-color: #C222BA;
+    background-color: #c222ba;
     color: #ffffff;
   }
   .cube-purple.active > a {
-    background-color: #CD3BC6;
+    background-color: #cd3bc6;
   }
   .cube-purple {
-    &:hover > a, > a:focus {
-      background-color: #CD3BC6;
+    &:hover > a,
+    > a:focus {
+      background-color: #cd3bc6;
     }
   }
   .cube-pink > a {
@@ -107,7 +113,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #f7adbd;
   }
   .cube-pink {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #f7adbd;
     }
   }
@@ -119,7 +126,8 @@ magic, mmagic, stack, funny, submission;
     background-color: #6993fd;
   }
   .cube-indigo {
-    &:hover > a, > a:focus {
+    &:hover > a,
+    > a:focus {
       background-color: #6993fd;
     }
   }
@@ -133,7 +141,7 @@ magic, mmagic, stack, funny, submission;
   top: 0;
   bottom: 0;
   position: absolute;
-  content:" ";
+  content: " ";
   width: 3px;
   background-color: #eeeeee;
   left: 50%;
@@ -144,15 +152,17 @@ magic, mmagic, stack, funny, submission;
   min-height: 50px;
   position: relative;
 }
-.timeline > li:before, .timeline > li:after {
-  content:" ";
+.timeline > li:before,
+.timeline > li:after {
+  content: " ";
   display: table;
 }
 .timeline > li:after {
   clear: both;
 }
-.timeline > li:before, .timeline > li:after {
-  content:" ";
+.timeline > li:before,
+.timeline > li:after {
+  content: " ";
   display: table;
 }
 .timeline > li:after {
@@ -177,7 +187,7 @@ magic, mmagic, stack, funny, submission;
   border-left: 15px solid #ccc;
   border-right: 0 solid #ccc;
   border-bottom: 15px solid transparent;
-  content:" ";
+  content: " ";
 }
 .timeline > li > .timeline-panel:after {
   position: absolute;
@@ -188,7 +198,7 @@ magic, mmagic, stack, funny, submission;
   border-left: 14px solid #fff;
   border-right: 0 solid #fff;
   border-bottom: 14px solid transparent;
-  content:" ";
+  content: " ";
 }
 .timeline > li > .timeline-badge {
   color: #fff;
@@ -243,7 +253,8 @@ magic, mmagic, stack, funny, submission;
   margin-bottom: 0;
   color: inherit;
 }
-.timeline-body > p, .timeline-body > ul {
+.timeline-body > p,
+.timeline-body > ul {
   margin-bottom: 0;
 }
 .timeline-body > p + p {
@@ -287,7 +298,7 @@ magic, mmagic, stack, funny, submission;
   word-break: break-word;
   word-wrap: break-word;
   &:before {
-    background: url('../images/wca-large.png') right top no-repeat transparent;
+    background: url("../images/wca-large.png") right top no-repeat transparent;
     bottom: 0;
     content: "";
     left: 0;
@@ -363,15 +374,15 @@ td {
 table.table {
   th {
     a.sort-link {
-      background: url('../images/sort_both.png') no-repeat center right;
+      background: url("../images/sort_both.png") no-repeat center right;
       padding-right: 20px;
     }
     a.asc {
-      background: url('../images/sort_asc.png') no-repeat center right;
+      background: url("../images/sort_asc.png") no-repeat center right;
       padding-right: 20px;
     }
     a.desc {
-      background: url('../images/sort_desc.png') no-repeat center right;
+      background: url("../images/sort_desc.png") no-repeat center right;
       padding-right: 20px;
     }
   }
@@ -415,16 +426,16 @@ table.table {
   }
 }
 .competition-competitors table tbody .event-icon-custom {
-  font-family: 'FontAwesome' !important;
+  font-family: "FontAwesome" !important;
   &:before {
     content: "\F00C";
   }
 }
 span.top10 {
-  color: #00B700;
+  color: #00b700;
 }
 span.penalty {
-  color: #9F0000;
+  color: #9f0000;
 }
 .stat-select {
   font-size: 16px;
@@ -434,14 +445,14 @@ span.penalty {
 .results-statistics {
   div {
     &:target {
-      -webkit-box-shadow: inset 0 0 1px 1px #6091BA;
-      box-shadow: inset 0 0 1px 1px #6091BA;
+      -webkit-box-shadow: inset 0 0 1px 1px #6091ba;
+      box-shadow: inset 0 0 1px 1px #6091ba;
     }
   }
 }
 .results-rankings {
   .event-title {
-    border: 1px solid #6091BA;
+    border: 1px solid #6091ba;
     margin-bottom: 10px;
     margin-top: 10px;
     padding: 10px;
@@ -474,7 +485,8 @@ table {
       // padding-right: 20px;
     }
   }
-  tr.sort-by-best td.result-best, tr.sort-by-average td.result-average {
+  tr.sort-by-best td.result-best,
+  tr.sort-by-average td.result-average {
     font-weight: bold;
   }
 }
@@ -487,6 +499,53 @@ table {
   }
   .person-detail {
     line-height: 1.8;
+  }
+  .event-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 8px 0 12px;
+    > li {
+      display: block;
+      > a {
+        align-items: center;
+        background-color: transparent;
+        border: none;
+        display: flex;
+        height: 34px;
+        justify-content: center;
+        padding: 0;
+        width: 34px;
+        .event-icon {
+          color: #6091ba;
+          font-size: 23px;
+          margin: 0;
+        }
+      }
+      &.active > a,
+      &.active > a:hover,
+      &.active > a:focus {
+        background-color: #6091ba;
+        box-shadow: 0 2px 6px rgba(96, 145, 186, 0.25);
+        .event-icon {
+          color: #fff;
+        }
+      }
+    }
+    @media (max-width: 767px) {
+      gap: 3px;
+      > li {
+        flex: 0 0 calc((100% - 27px) / 10);
+        > a {
+          height: 28px;
+          margin: 0 auto;
+          width: 28px;
+          .event-icon {
+            font-size: 20px;
+          }
+        }
+      }
+    }
   }
 }
 .results-competition {
@@ -530,7 +589,7 @@ table {
   }
 }
 td.hover {
-  background: #E6F4E6;
+  background: #e6f4e6;
 }
 table.pk-table {
   tbody {
@@ -568,7 +627,7 @@ table.pk-table {
     }
   }
   td.winner {
-    background-color: #E6F4E6;
+    background-color: #e6f4e6;
     color: #ff6600;
   }
   thead {
@@ -687,7 +746,8 @@ tr {
     -moz-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
     -ms-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
     -o-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
-    -webkit-transition: opacity 0.4s ease-in-out 0.3s, left 0.4s ease-in-out 0.4s;
+    -webkit-transition: opacity 0.4s ease-in-out 0.3s,
+      left 0.4s ease-in-out 0.4s;
     bottom: 40px;
     left: 40px;
     opacity: 0;
@@ -764,7 +824,7 @@ table.concise-schedule {
 .concise-schedule > tbody > tr > td[rowspan] {
   -o-transition: -o-transform 0.3s ease-in-out;
   -webkit-transition: -webkit-transform 0.3s ease-in-out;
-  background-color: #68C8C1;
+  background-color: #68c8c1;
   padding: 5px;
   transition: transform 0.3s ease-in-out;
   &:hover {
@@ -850,21 +910,29 @@ table.concise-schedule {
 }
 #competitors {
   @media (max-width: 560px) {
-    th:nth-child(1), td:nth-child(1),
-    th:nth-child(3), td:nth-child(3),
-    th:nth-child(4), td:nth-child(4) {
+    th:nth-child(1),
+    td:nth-child(1),
+    th:nth-child(3),
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4) {
       display: none;
     }
   }
   &.show-all {
-    th:nth-child(1), td:nth-child(1),
-    th:nth-child(3), td:nth-child(3),
-    th:nth-child(4), td:nth-child(4) {
+    th:nth-child(1),
+    td:nth-child(1),
+    th:nth-child(3),
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4) {
       display: table-cell;
     }
   }
 }
-.loop-concise-schedule-event(@index: 1) when (iscolor(extract(@conciseEventColors, @index))) {
+.loop-concise-schedule-event(@index: 1)
+  when
+  (iscolor(extract(@conciseEventColors, @index))) {
   @color: extract(@conciseEventColors, @index);
   @event: extract(@conciseEvents, @index);
   &.event-@{event} {
@@ -1213,7 +1281,7 @@ table.concise-schedule {
     position: relative;
 
     &.scanning:after {
-      content: '';
+      content: "";
       display: block;
       width: 100%;
       height: 100%;
@@ -1223,17 +1291,17 @@ table.concise-schedule {
       /* and sit in front */
       z-index: 1;
       /* gradient with a radar like fade */
-      background:
-        linear-gradient(90deg,
-          rgba(255, 255, 255, 0),
-          rgba(255, 255, 255, 0) 50%,
-          rgba(96, 155, 186, .5) 55%,
-          rgba(255, 255, 255, 0) 60%,
-          rgba(255, 255, 255, 0)
-        );
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0) 50%,
+        rgba(96, 155, 186, 0.5) 55%,
+        rgba(255, 255, 255, 0) 60%,
+        rgba(255, 255, 255, 0)
+      );
       /* make it big enough so when we slide it around still covers whole image */
-      background-size:     300% 100%;
-      background-repeat:   no-repeat;
+      background-size: 300% 100%;
+      background-repeat: no-repeat;
       /* start with the scan bar just off the left side */
       background-position: 84% center;
       animation: scan 3s infinite ease;
@@ -1243,8 +1311,12 @@ table.concise-schedule {
 
 @keyframes scan {
   /* finish with the scan bar just off the right side */
-  50% { background-position: 25% center; }
-  100% { background-position: 84% center; }
+  50% {
+    background-position: 25% center;
+  }
+  100% {
+    background-position: 84% center;
+  }
 }
 
 .sticky {
@@ -1256,7 +1328,7 @@ body.live.disconnected {
   position: relative;
 
   &:after {
-    content: 'Connecting...';
+    content: "Connecting...";
     position: fixed;
     z-index: 9999;
     top: 0;
@@ -1279,7 +1351,7 @@ body.live.disconnected {
   .page-sidebar .nav {
     @media (min-width: 768px) {
       border: 1px solid #e5e5e5;
-      box-shadow: 0 1px 4px rgba(0,0,0,.065);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
       border-radius: 4px;
     }
   }
