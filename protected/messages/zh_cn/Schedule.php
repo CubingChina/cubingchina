@@ -41,7 +41,7 @@ return array (
   'Side<span class="show-on-full"> Stage</span>' => '分赛台',
   'Stage' => '赛台',
   'Start Time' => '开始时间',
-  'The number of advancing competitors will not exceed 75% (see Regulation {9p2}).' => '每轮的晋级人数不会超过上一轮参赛人数的75%（参阅规则{9p2}）。',
+  'The number of advancing competitors will not exceed 75% (see Regulation {9p1}).' => '每轮的晋级人数不会超过上一轮参赛人数的75%（参阅规则{9p1}）。',
   'The result to beat to proceed to the second phase of a combined round (see Regulation {9g}).' => '在组合制轮次中，取得小于及格线的成绩，以获得后面的还原机会（参阅规则{9g}）。',
   'The time limit for 3x3x3 multi-blindfolded is 10 minutes per cube, up to 60 minutes (see Regulation {H1b}).' => '三阶多盲的还原时限是每个魔方10分钟，上限60分钟（参阅规则{H1b}）。',
   'Time Limit' => '还原时限',

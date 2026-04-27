@@ -164,8 +164,8 @@
         ]); ?>
       </li>
       <li>
-        <b><?php echo Yii::t('Schedule', 'Competitors'); ?></b>: <?php echo Yii::t('Schedule', 'The number of advancing competitors will not exceed 75% (see Regulation {9p2}).', [
-          '{9p2}'=>Html::wcaRegulationLink('9p2', 'p92'),
+        <b><?php echo Yii::t('Schedule', 'Competitors'); ?></b>: <?php echo Yii::t('Schedule', 'The number of advancing competitors will not exceed 75% (see Regulation {9p1}).', [
+          '{9p1}'=>Html::wcaRegulationLink('9p1', '9p1'),
         ]); ?>
       </li>
       <li>
