@@ -325,7 +325,13 @@ class GroupCommand extends CConsoleCommand {
 		}
 	}
 
-	public function actionCompetitor($id) {
+	public function actionCompetitor($id, $mode = 'even', $order = 'desc') {
+		$mode = $this->normalizeMode($mode);
+		$order = strtolower($order);
+		if ($mode === null || !in_array($order, ['asc', 'desc'])) {
+			echo "Usage: group competitor <id> [even|result] [asc|desc]\n";
+			return;
+		}
 		$competition = Competition::model()->findByPk($id);
 		if ($competition !== null && $this->confirm($competition->name_zh)) {
 			$scheduleExists = UserSchedule::model()->countByAttributes([
@@ -402,24 +408,21 @@ class GroupCommand extends CConsoleCommand {
 				foreach ($results as $result) {
 					$wcaidRegistrations[$result->person_id]->best = $result->best;
 				}
-				//sort by best desc
-				uasort($registrations, function($rA, $rB) {
-					if ($rA->best > 0 && $rB->best > 0) {
-						$temp = $rA->best - $rB->best;
-					} elseif ($rA->best > 0) {
-						$temp = -1;
-					} elseif ($rB->best > 0) {
-						$temp = 1;
-					} else {
-						$temp = 0;
-					}
-					return -$temp;
-				});
+				$this->sortRegistrationsByBest($registrations, $order);
 				$groupNum = count($groupSchedules[$event]);
-				$i = 0;
-				foreach ($registrations as $registration) {
-					$schedule = $groupSchedules[$event][$i++ % $groupNum];
-					$this->addUserSchedule($schedule, $registration);
+				if ($mode === 'result') {
+					$chunks = array_chunk($registrations, ceil(count($registrations) / $groupNum));
+					foreach ($chunks as $i=>$chunk) {
+						foreach ($chunk as $registration) {
+							$this->addUserSchedule($groupSchedules[$event][$i], $registration);
+						}
+					}
+				} else {
+					$i = 0;
+					foreach ($registrations as $registration) {
+						$schedule = $groupSchedules[$event][$i++ % $groupNum];
+						$this->addUserSchedule($schedule, $registration);
+					}
 				}
 			}
 		}
@@ -557,6 +560,32 @@ class GroupCommand extends CConsoleCommand {
 		$userSchedule->user_id = $registration->user_id;
 		$userSchedule->save();
 		return $userSchedule;
+	}
+
+	private function normalizeMode($mode) {
+		$mode = strtolower($mode);
+		if (in_array($mode, ['even', 'uniform', 'balanced', 'symmetric'])) {
+			return 'even';
+		}
+		if (in_array($mode, ['result', 'score', 'best', 'ranking'])) {
+			return 'result';
+		}
+		return null;
+	}
+
+	private function sortRegistrationsByBest(&$registrations, $order) {
+		uasort($registrations, function($rA, $rB) use ($order) {
+			if ($rA->best == $rB->best) {
+				return 0;
+			}
+			if ($rA->best == 0) {
+				return $order === 'asc' ? 1 : -1;
+			}
+			if ($rB->best == 0) {
+				return $order === 'asc' ? -1 : 1;
+			}
+			return $order === 'asc' ? $rA->best - $rB->best : $rB->best - $rA->best;
+		});
 	}
 
 	public function actionStaffs($id) {
