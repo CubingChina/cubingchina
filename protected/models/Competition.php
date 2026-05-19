@@ -63,6 +63,7 @@ class Competition extends ActiveRecord {
 	const OLD_WCA_DUES_END = 1706371200; // 2024-01-28
 
 	const WCA_DUES_START = 1706371201; // 2024-01-28
+	const WCA_DUES_MIN = 6.9; // 每人最低 WCA 会费
 	const WCA_DUES_INCLUDING_LOWEST_START = 1733443200; // 2024-12-06
 
 	const WCA_DUES_RATE = [
@@ -1068,7 +1069,11 @@ class Competition extends ActiveRecord {
 					$finalRate = $rate;
 				}
 			}
-			return round(($baseEntryFee + $minFee) * $finalRate, 2);
+			$dues = round(($baseEntryFee + $minFee) * $finalRate, 2);
+			if ($this->date >= self::WCA_DUES_START) {
+				$dues = max($dues, self::WCA_DUES_MIN);
+			}
+			return $dues;
 		}
 		$basicFee = intval($isBasic ? $entryFee : $events[$event]['fee']);
 		switch ($stage) {

@@ -231,7 +231,7 @@ class CompetitionController extends Controller {
 				$events = $_POST['Registration']['events'] ?? [];
 				if ($competition->isWCACompetition()) {
 					$normalEventIds = array_keys(Events::getNormalEvents());
-					if (array_intersect($events, $normalEventIds) === []) {
+					if (array_intersect($registration->getKeptEventsForUpdate($events), $normalEventIds) === []) {
 						$registration->addError('events', Yii::t('Registration', 'You must select at least one WCA event.'));
 						Yii::app()->user->setFlash('danger', Yii::t('Registration', 'You must select at least one WCA event.'));
 					}
@@ -538,7 +538,7 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item cube-white',
 				),
-				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
+				'visible'=>($competition->canRegister() && !$showLive) || ((!$showResults && !$showLive) || $competition->show_qrcode),
 			),
 			array(
 				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),

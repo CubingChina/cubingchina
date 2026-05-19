@@ -675,6 +675,16 @@ class Registration extends ActiveRecord {
 		}
 	}
 
+	public function getKeptEventsForUpdate($newEvents) {
+		$kept = [];
+		foreach ($this->allEvents as $registrationEvent) {
+			if ($registrationEvent->isAccepted() || $registrationEvent->isWaiting()) {
+				$kept[] = $registrationEvent->event;
+			}
+		}
+		return array_unique(array_merge($kept, is_array($newEvents) ? $newEvents : []));
+	}
+
 	public function checkWCAEvents() {
 		$normalEventIds = array_keys(Events::getNormalEvents());
 		$selected = is_array($this->events) ? $this->events : [];
