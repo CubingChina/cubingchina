@@ -23,6 +23,10 @@
           $organizerIncome = '';
           $organizerIncomeText = '';
           $competition = $model->competition;
+          $wcaDuesPerPerson = 0;
+          if ($competition !== null && $competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START) {
+            $wcaDuesPerPerson = $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
+          }
 
           // 多地址收款统计
           $locationStats = [];
@@ -33,12 +37,8 @@
             $locationRefund = $model->getTotalByLocation(Pay::STATUS_PAID, 'refund_amount');
             $locationFee = $model->getTotalFeeByLocation();
 
-            // 计算各地址的 WCA 会费和粗饼运营费
-            $wcaDuesPerPerson = 0;
+            // 计算各地址的粗饼运营费
             $cubingFeePerPerson = 0;
-            if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START) {
-              $wcaDuesPerPerson = $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
-            }
             if ($competition->id >= 382) {
               $dailyRate = 3;
               if ($competition->date < Competition::CUBING_FEE_BEFORE_202101) {
@@ -86,8 +86,7 @@
           }
 
           if ($competition !== null && $model->type_id > 0) {
-            if ($competition->isWCACompetition() && $competition->date >= Competition::WCA_DUES_START) {
-              $wcaDuesPerPerson = $competition->getEventFee(Competition::EVENT_FEE_WCA_DUES);
+            if ($wcaDuesPerPerson > 0) {
               $wcaDues = number_format($wcaDuesPerPerson * $competition->registeredCompetitors, 2, '.', '');
             }
 
