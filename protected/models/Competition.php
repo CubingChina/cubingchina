@@ -1778,6 +1778,46 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function getLiveGroupFilters() {
+		$filters = array();
+		if ($this->podiums_females) {
+			$filters[] = array(
+				'label'=>Yii::t('live', 'Females'),
+				'value'=>'females',
+			);
+		}
+		if ($this->podiums_children) {
+			$filters[] = array(
+				'label'=>Yii::t('live', 'Children'),
+				'value'=>'children',
+			);
+		}
+		if ($this->podiums_new_comers) {
+			$filters[] = array(
+				'label'=>Yii::t('live', 'New Comers'),
+				'value'=>'newcomers',
+			);
+		}
+		return $filters;
+	}
+
+	public function getLiveEventFilters($event, $allFilter = null, $groupFilters = null) {
+		if ($allFilter === null) {
+			$allFilter = array(
+				'label'=>Yii::t('common', 'All'),
+				'value'=>'all',
+			);
+		}
+		$filters = array($allFilter);
+		if (in_array($event, $this->podiumsEvents)) {
+			if ($groupFilters === null) {
+				$groupFilters = $this->getLiveGroupFilters();
+			}
+			$filters = array_merge($filters, $groupFilters);
+		}
+		return $filters;
+	}
+
 	public function getEventsRounds() {
 		$eventRounds = LiveEventRound::model()->findAllByAttributes(array(
 			'competition_id'=>$this->id,
@@ -1786,11 +1826,19 @@ class Competition extends ActiveRecord {
 		));
 		$events = array();
 		$ranks = [];
+		$allFilter = array(
+			'label'=>Yii::t('common', 'All'),
+			'value'=>'all',
+		);
+		$groupFilters = $this->getLiveGroupFilters();
 		foreach ($eventRounds as $eventRound) {
 			if (!isset($events[$eventRound->event])) {
+				$associatedEvents = $this->associatedEvents;
 				$events[$eventRound->event] = array(
 					'i'=>$eventRound->event,
 					'name'=>Events::getFullEventName($eventRound->event),
+					'dual'=>!empty($associatedEvents[$eventRound->event]['dual']),
+					'filters'=>$this->getLiveEventFilters($eventRound->event, $allFilter, $groupFilters),
 					'rs'=>array(),
 				);
 			}

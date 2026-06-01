@@ -5,6 +5,7 @@
  *
  * Usage:
  *   php protected/yiic LiveResult populate --id=123 --event=333 --round=f
+ *   php protected/yiic LiveResult fillRandom --id=123 --event=333 --round=f
  *   php protected/yiic LiveResult exportToLive --id=123 --event=333 --round=f --roundId=129186 [--roundInfo=live/roundinfo.json]
  *
  * exportToLive: Export round results to WCA Live. Requires live/wca_live_key file with the auth key.
@@ -150,6 +151,137 @@ class LiveResultCommand extends CConsoleCommand {
 
 		$this->populateRound($competition, $eventRound);
 		$this->log("Finished populating live_result");
+	}
+
+	/**
+	 * Fill random results for competitors in a round that have no data yet.
+	 *
+	 * For 333fm singles random move counts in [20, 40] are generated; for any
+	 * other event random centiseconds in [500, 3000] are generated. The number
+	 * of attempts, the best and the average are derived from the round format.
+	 *
+	 * @param int $id Competition ID
+	 * @param string $event Event ID (required)
+	 * @param string $round Round ID (required)
+	 */
+	public function actionFillRandom($id, $event, $round) {
+		$this->log("Filling random results for competition ID: {$id}, event: {$event}, round: {$round}");
+
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			$this->log("Error: Competition not found");
+			return;
+		}
+
+		$eventRound = LiveEventRound::model()->findByAttributes([
+			'competition_id' => $id,
+			'event' => $event,
+			'round' => $round,
+		]);
+		if ($eventRound === null) {
+			$this->log("Error: Event round not found");
+			return;
+		}
+
+		$results = LiveResult::model()->findAllByAttributes([
+			'competition_id' => $id,
+			'event' => $event,
+			'round' => $round,
+		]);
+		if (empty($results)) {
+			$this->log("No live_result records found for this round");
+			return;
+		}
+
+		$this->log("Found " . count($results) . " live_result records, format: {$eventRound->format}");
+
+		$filled = 0;
+		$skipped = 0;
+		foreach ($results as $liveResult) {
+			// Already has data, leave untouched.
+			if ($liveResult->best != 0) {
+				$skipped++;
+				continue;
+			}
+
+			$values = $this->generateRandomValues($event, $eventRound->format);
+			for ($i = 1; $i <= 5; $i++) {
+				$liveResult->{'value' . $i} = isset($values[$i - 1]) ? $values[$i - 1] : 0;
+			}
+			$liveResult->best = $this->calcBest($values);
+			$liveResult->average = $this->calcAverage($values, $event, $eventRound->format);
+			$liveResult->regional_single_record = '';
+			$liveResult->regional_average_record = '';
+			$liveResult->update_time = time();
+			$liveResult->save();
+			$filled++;
+		}
+
+		$this->log("Filled: {$filled}, Skipped (already had data): {$skipped}");
+	}
+
+	/**
+	 * Number of attempts implied by a round format.
+	 */
+	private function getAttemptCount($format) {
+		switch ($format) {
+			case '1':
+			case '2':
+			case '3':
+				return intval($format);
+			case 'm':
+				return 3;
+			case 'a':
+			default:
+				return 5;
+		}
+	}
+
+	/**
+	 * Generate random attempt values for one competitor.
+	 *
+	 * @return int[] list of attempt values
+	 */
+	private function generateRandomValues($event, $format) {
+		$count = $this->getAttemptCount($format);
+		$values = [];
+		for ($i = 0; $i < $count; $i++) {
+			$values[] = $event === '333fm' ? mt_rand(20, 40) : mt_rand(500, 3000);
+		}
+		return $values;
+	}
+
+	/**
+	 * Best (single) is the minimum of the attempts.
+	 */
+	private function calcBest($values) {
+		$valid = array_filter($values, function($v) { return $v > 0; });
+		return empty($valid) ? 0 : min($valid);
+	}
+
+	/**
+	 * Compute the average/mean from attempts following WCA rules.
+	 * Best-of-N formats have no average. For 333fm the mean is stored as
+	 * the mean of moves multiplied by 100.
+	 */
+	private function calcAverage($values, $event, $format) {
+		if ($format === 'a') {
+			// Average of 5: drop best and worst, mean of the middle three.
+			sort($values);
+			$middle = array_slice($values, 1, 3);
+			$mean = array_sum($middle) / count($middle);
+			return (int) round($mean);
+		}
+		if ($format === 'm') {
+			// Mean of 3: mean of all attempts.
+			$mean = array_sum($values) / count($values);
+			if ($event === '333fm') {
+				return (int) round($mean * 100);
+			}
+			return (int) round($mean);
+		}
+		// Best-of-N formats have no average.
+		return 0;
 	}
 
 	/**

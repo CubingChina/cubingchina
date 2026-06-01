@@ -25,9 +25,9 @@ class CustomCache extends CCache {
 		if (!Yii::app() instanceof CConsoleApplication) {
 			$chain[] = new ArrayCache();
 		}
-		if (!DEV || Yii::app() instanceof CConsoleApplication) {
+		// if (!DEV || Yii::app() instanceof CConsoleApplication) {
 			$chain[] = $fileCache;
-		}
+		// }
 		$chainCache = new ChainCache($chain);
 		$this->_cache = $chainCache;
 	}

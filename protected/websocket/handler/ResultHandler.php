@@ -37,6 +37,10 @@ class ResultHandler extends MsgHandler {
 			'event'=>"{$this->msg->params->event}",
 			'round'=>"{$this->msg->params->round}",
 		));
+		$combine = isset($this->msg->params->combine) && $this->msg->params->combine;
+		if ($combine && $round !== null && $this->isDualRound($round)) {
+			return $this->fetchCombined($round);
+		}
 		$results = LiveResult::model()->with('user')->findAllByAttributes(array(
 			'competition_id'=>$this->competition->id,
 			'event'=>"{$this->msg->params->event}",
@@ -72,6 +76,100 @@ class ResultHandler extends MsgHandler {
 		$this->success('result.all', array_map(function($result) {
 			return $result->getShowAttributes();
 		}, array_values($results)), $this->competition);
+	}
+
+	private function isDualRound($round) {
+		$dualRounds = $round->dualRounds;
+		if ($dualRounds === array()) {
+			return false;
+		}
+		foreach ($dualRounds as $dualRound) {
+			if ($dualRound->id == $round->id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function fetchCombined($round) {
+		$dualRounds = $round->dualRounds;
+		$round1 = $dualRounds[0];
+		$round2 = $dualRounds[1];
+		$rows = LiveEventRound::getCombinedRanking($round1, $round2);
+		$bothClosed = $round1->isClosed && $round2->isClosed;
+		$filter = $this->msg->params->filter;
+		$competition = $this->competition;
+		$birthday = $competition->date - (365 * 12 + 3) * 86400;
+		$newcomer = $competition->newcomer;
+		$currentYear = date('Y', $competition->date);
+		$results = array();
+		foreach ($rows as $row) {
+			$better = $row['better'];
+			if ($bothClosed && $better->best == 0) {
+				continue;
+			}
+			$user = $better->user;
+			switch ($filter) {
+				case 'females':
+					if ($user->gender != User::GENDER_FEMALE) {
+						continue 2;
+					}
+					break;
+				case 'children':
+					if ($user->birthday < $birthday) {
+						continue 2;
+					}
+					break;
+				case 'newcomers':
+					if (!($user->wcaid == '' || ($newcomer && substr($user->wcaid, 0, 4) == $currentYear))) {
+						continue 2;
+					}
+					break;
+			}
+			$results[] = array(
+				'n'=>intval($row['number']),
+				'e'=>$round->event,
+				'r'=>$round->round,
+				'f'=>$round->format,
+				'b'=>intval($better->best),
+				'a'=>intval($better->average),
+				'v'=>$this->dualValues($better),
+				'sr'=>$better->regional_single_record,
+				'ar'=>$better->regional_average_record,
+				'dual'=>true,
+				'rr'=>$row['betterRound'],
+				'r1id'=>$round1->round,
+				'r2id'=>$round2->round,
+				'd1'=>$this->dualSubResult($row['r1']),
+				'd2'=>$this->dualSubResult($row['r2']),
+			);
+		}
+		$this->success('result.all', $results, $this->competition);
+	}
+
+	private function dualValues($result) {
+		return array(
+			intval($result->value1),
+			intval($result->value2),
+			intval($result->value3),
+			intval($result->value4),
+			intval($result->value5),
+		);
+	}
+
+	private function dualSubResult($result) {
+		if ($result === null) {
+			return null;
+		}
+		return array(
+			'i'=>$result->id,
+			'r'=>$result->round,
+			'b'=>intval($result->best),
+			'a'=>intval($result->average),
+			'v'=>$this->dualValues($result),
+			'sr'=>$result->regional_single_record,
+			'ar'=>$result->regional_average_record,
+		);
 	}
 
 	public function actionUpdate() {
@@ -253,8 +351,28 @@ class ResultHandler extends MsgHandler {
 				$oldResults[$result->number] = $result;
 			}
 			$results = array();
-			//check if it has last round
-			if (($lastRound = $round->lastRound) !== null) {
+			$dualRounds = $round->dualRounds;
+			$roundIndex = $round->roundIndex;
+			if ($dualRounds !== array() && $roundIndex === 1) {
+				//second of the Dual Rounds: advance every competitor of the first
+				//round, no eliminations regardless of the advancement number (Reg 9v5)
+				foreach ($dualRounds[0]->allResults as $result) {
+					$results[] = $this->addResult($result, $oldResults, $round);
+					$advancedNumbers[] = $result->number;
+				}
+			} elseif ($dualRounds !== array() && $roundIndex === 2) {
+				//round after the Dual Rounds: rank by the better of the two dual
+				//rounds and take the top N (Reg 9v4)
+				$ranking = LiveEventRound::getCombinedRanking($dualRounds[0], $dualRounds[1]);
+				$ranking = array_values(array_filter($ranking, function($row) {
+					return $row['better']->best > 0;
+				}));
+				foreach (array_slice($ranking, 0, $round->number) as $row) {
+					$results[] = $this->addResult($row['better'], $oldResults, $round);
+					$advancedNumbers[] = $row['number'];
+				}
+			} elseif (($lastRound = $round->lastRound) !== null) {
+				//check if it has last round
 				foreach (array_slice($lastRound->results, 0, $round->number) as $result) {
 					$results[] = $this->addResult($result, $oldResults, $round);
 					$advancedNumbers[] = $result->number;

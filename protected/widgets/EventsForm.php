@@ -210,6 +210,24 @@ class EventsForm extends Widget {
 					echo CHtml::closeTag('div');
 				}
 
+				//dual rounds: the first two rounds are ranked together (WCA Reg 9v)
+				echo CHtml::openTag('div', [
+					'class'=>'col-md-10 col-md-offset-2 col-sm-8 col-sm-offset-4',
+				]);
+				echo CHtml::openTag('div', [
+					'class'=>'checkbox',
+					'style'=>'margin:0 0 10px;',
+				]);
+				echo CHtml::openTag('label', []);
+				echo CHtml::activeCheckBox($model, "{$name}[{$event}][dual]", [
+					'value'=>1,
+					'uncheckValue'=>0,
+				]);
+				echo Yii::t('Schedule', 'Dual Rounds');
+				echo CHtml::closeTag('label');
+				echo CHtml::closeTag('div');
+				echo CHtml::closeTag('div');
+
 				echo CHtml::closeTag('div');
 				echo CHtml::closeTag('div');
 			}

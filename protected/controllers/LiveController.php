@@ -27,7 +27,7 @@ class LiveController extends CompetitionController {
 		$clientScript->registerScriptFile('/f/plugins/vue-router/vue-router' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/vuex/vuex' . $min . '.js');
 		$clientScript->registerScriptFile('/f/plugins/moment/moment' . $min . '.js');
-		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20260210');
+		$clientScript->registerScriptFile('/f/js/live' . $min . '.js?ver=20260601');
 		$events = $competition->getEventsRounds();
 		$params = $competition->getLastActiveEventRound($events);
 		$htmlOptions = [
@@ -36,24 +36,6 @@ class LiveController extends CompetitionController {
 			'data-type'=>$competition->type,
 			'data-events'=>json_encode($events),
 			'data-params'=>json_encode($params),
-			'data-filters'=>json_encode([
-				[
-					'label'=>Yii::t('common', 'All'),
-					'value'=>'all',
-				],
-				[
-					'label'=>Yii::t('live', 'Females'),
-					'value'=>'females',
-				],
-				[
-					'label'=>Yii::t('live', 'Children'),
-					'value'=>'children',
-				],
-				[
-					'label'=>Yii::t('live', 'New Comers'),
-					'value'=>'newcomers',
-				],
-			]),
 			'data-user'=>json_encode([
 				'isGuest'=>Yii::app()->user->isGuest,
 				'isScoreTaker'=>!Yii::app()->user->isGuest && $this->user->isScoreTaker($competition),

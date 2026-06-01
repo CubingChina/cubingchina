@@ -97,6 +97,7 @@
     },
     loading: false,
     loadingUserResults: false,
+    combine: true,
     results: [],
     userResults: [],
     messages: [],
@@ -111,6 +112,9 @@
     CHANGE_PARAMS: function (state, params) {
       state.params = params;
     },
+    SET_COMBINE: function (state, combine) {
+      state.combine = combine;
+    },
     UPDATE_ROUNDS: function (state, rounds) {
       rounds.forEach(function (round) {
         $.extend(eventRounds[round.e][round.i], round);
@@ -121,7 +125,14 @@
       $.extend(eventRounds[round.e][round.i], round);
     },
     NEW_RESULT: function (state, result) {
-      if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
+      if (result.c != state.c || result.e != state.params.e) {
+        return;
+      }
+      if (isDualCombinedParams(state)) {
+        patchDual(state, result);
+        return;
+      }
+      if (result.r == state.params.r) {
         result.p = '';
         result.isNew = true;
         var results = state.results;
@@ -131,7 +142,14 @@
       }
     },
     UPDATE_RESULT: function (state, result) {
-      if (result.c == state.c && result.e == state.params.e && result.r == state.params.r) {
+      if (result.c != state.c || result.e != state.params.e) {
+        return;
+      }
+      if (isDualCombinedParams(state)) {
+        patchDual(state, result);
+        return;
+      }
+      if (result.r == state.params.r) {
         var results = state.results;
         var i = 0, len = results.length;
         result.p = '';
@@ -194,6 +212,10 @@
     }
   };
   $.extend(state, data);
+  var storedCombine = window.store.get('live_combine');
+  if (storedCombine !== undefined && storedCombine !== null) {
+    state.combine = !!storedCombine;
+  }
   if (data.liveStreamUrl) {
     state.staticMessages.push({
       id: +new Date(),
@@ -465,6 +487,61 @@
           },
           totalPage: function () {
             return Math.ceil(this.results.length / this.limit);
+          },
+          eventFilters: function () {
+            return getEventFilters(this.eventRound && this.eventRound.e);
+          },
+          isDual: function () {
+            return isDualRound(this.$store.state.params);
+          },
+          isDualCombined: function () {
+            return this.isDual && this.$store.state.combine;
+          },
+          showInput: function () {
+            return this.hasPermission && this.options.enableEntry && !this.isDualCombined;
+          },
+          combineModel: {
+            get: function () {
+              return this.$store.state.combine;
+            },
+            set: function (combine) {
+              store.dispatch('SET_COMBINE', combine);
+              window.store.set('live_combine', combine);
+              fetchResults();
+            }
+          },
+          fmcAttemptStats: function () {
+            var round = this.currentRound;
+            if (!round || round.e !== '333fm') {
+              return null;
+            }
+            var f = round.f;
+            var num = f == 'a' || f == '' ? 5 : (f == 'm' ? 3 : parseInt(f));
+            if (!num || num < 1) {
+              return null;
+            }
+            var recorded = [];
+            for (var i = 0; i < num; i++) {
+              recorded.push(0);
+            }
+            var results = this.results;
+            for (var j = 0; j < results.length; j++) {
+              var v = results[j].v || [];
+              for (var k = 0; k < num; k++) {
+                if (v[k] != 0) {
+                  recorded[k]++;
+                }
+              }
+            }
+            var total = results.length;
+            return recorded.map(function (count, index) {
+              return {
+                index: index + 1,
+                recorded: count,
+                pending: total - count,
+                total: total
+              };
+            });
           }
         },
         watch: {
@@ -474,7 +551,7 @@
               e: params.e,
               r: params.r
             }
-            that.filter = params.filter;
+            that.filter = isValidFilter(params.e, params.filter) ? params.filter : 'all';
             that.page = 1;
             var round = getRound(params);
             that.co = round.co;
@@ -500,6 +577,28 @@
           hasAverage: function (includeBlindFolded) {
             var round = getRound(this);
             return round.f == 'a' || round.f == 'm' || (includeBlindFolded && isSingleBlindFolded(round.e) && ['3', '5'].includes(round.f));
+          },
+          dualWorse: function (result) {
+            if (!result.dual) {
+              return null;
+            }
+            return result.rr == 'r1' ? result.d2 : result.d1;
+          },
+          dualRoundName: function (result, which) {
+            var event = events[result.e];
+            if (!event || event.rs.length < 2) {
+              return '';
+            }
+            var betterIsR1 = result.rr == 'r1';
+            var index = which == 'worse' ? (betterIsR1 ? 1 : 0) : (betterIsR1 ? 0 : 1);
+            return event.rs[index].name;
+          },
+          dualWorseDetail: function (result) {
+            var worse = this.dualWorse(result);
+            if (!worse) {
+              return '';
+            }
+            return this.getResultDetail({ v: worse.v, e: result.e });
           },
           showRoundSettings: function () {
             $('#round-settings-modal').modal();
@@ -611,6 +710,9 @@
             }
           },
           changeParams: function () {
+            if (!isValidFilter(this.eventRound.e, this.filter)) {
+              this.filter = 'all';
+            }
             store.dispatch('CHANGE_PARAMS', {
               e: this.eventRound.e,
               r: this.eventRound.r,
@@ -630,11 +732,22 @@
             if (result.r == 'c' || result.r == 'f') {
               return result.b > 0 && result.p <= 3;
             }
+            var rs = events[result.e].rs;
+            //dual rounds: the first two rounds are ranked together and nobody is
+            //eliminated between them (Reg 9v5). Advancement out of the dual rounds
+            //is decided by the combined ranking and goes to the round after them.
+            if (isDualRound({ e: result.e, r: result.r })) {
+              if (!this.isDualCombined) {
+                return false;
+              }
+              var afterDual = rs[2];
+              return !!afterDual && result.b > 0 && result.p <= afterDual.n;
+            }
             var i;
-            for (i = 0; i < events[result.e].rs.length; i++) {
-              if (events[result.e].rs[i].i == result.r) {
-                if (events[result.e].rs[i + 1]) {
-                  return result.b > 0 && result.p <= events[result.e].rs[i + 1].n;
+            for (i = 0; i < rs.length; i++) {
+              if (rs[i].i == result.r) {
+                if (rs[i + 1]) {
+                  return result.b > 0 && result.p <= rs[i + 1].n;
                 }
               }
             }
@@ -1220,18 +1333,152 @@
       params: {
         event: state.params.e,
         round: state.params.r,
-        filter: state.params.filter
+        filter: state.params.filter,
+        combine: state.combine && isDualRound(state.params)
       }
     });
   }
   function getEvent(result) {
     return events[result.e];
   }
+  function getEventFilters(e) {
+    var event = events[e];
+    if (event && event.filters && event.filters.length) {
+      return event.filters;
+    }
+    return [{ label: 'All', value: 'all' }];
+  }
+  function isValidFilter(e, filter) {
+    return getEventFilters(e).some(function (item) {
+      return item.value === filter;
+    });
+  }
   function getRound(result) {
     return eventRounds[result.e][result.r];
   }
   function getUser(number) {
     return allUsers[number] || {};
+  }
+  //dual rounds: the first two rounds of an event are ranked together (WCA Reg 9v)
+  function isDualRound(params) {
+    var event = events[params.e];
+    if (!event || !event.dual) {
+      return false;
+    }
+    var rs = event.rs;
+    if (rs.length < 2) {
+      return false;
+    }
+    return params.r == rs[0].i || params.r == rs[1].i;
+  }
+  function dualRoundIds(e) {
+    var event = events[e];
+    if (!event || event.rs.length < 2) {
+      return [null, null];
+    }
+    return [event.rs[0].i, event.rs[1].i];
+  }
+  function isDualCombinedParams(state) {
+    return state.combine && isDualRound(state.params);
+  }
+  function compareBA(a, b, f) {
+    var temp = 0;
+    if (f == 'm' || f == 'a') {
+      if (a.a > 0 && b.a <= 0) {
+        return -1;
+      }
+      if (b.a > 0 && a.a <= 0) {
+        return 1;
+      }
+      temp = a.a - b.a;
+    }
+    if (temp == 0) {
+      if (a.b > 0 && b.b <= 0) {
+        return -1;
+      }
+      if (b.b > 0 && a.b <= 0) {
+        return 1;
+      }
+      temp = a.b - b.b;
+    }
+    return temp;
+  }
+  function recombineRow(row) {
+    var d1 = row.d1, d2 = row.d2, better, rr;
+    if (!d1 && !d2) {
+      better = { b: 0, a: 0, v: [], sr: '', ar: '' };
+      rr = '';
+    } else if (!d1) {
+      better = d2;
+      rr = 'r2';
+    } else if (!d2) {
+      better = d1;
+      rr = 'r1';
+    } else if (compareBA(d1, d2, row.f) <= 0) {
+      better = d1;
+      rr = 'r1';
+    } else {
+      better = d2;
+      rr = 'r2';
+    }
+    row.b = better.b;
+    row.a = better.a;
+    row.v = better.v;
+    row.sr = better.sr;
+    row.ar = better.ar;
+    row.rr = rr;
+  }
+  function patchDual(state, result) {
+    var results = state.results;
+    var ids = dualRoundIds(result.e);
+    if (result.r != ids[0] && result.r != ids[1]) {
+      return;
+    }
+    var row = null, i;
+    for (i = 0; i < results.length; i++) {
+      if (results[i].n == result.n) {
+        row = results[i];
+        break;
+      }
+    }
+    var sub = {
+      i: result.i,
+      r: result.r,
+      b: result.b,
+      a: result.a,
+      v: result.v,
+      sr: result.sr,
+      ar: result.ar
+    };
+    if (row == null) {
+      row = {
+        n: result.n,
+        e: result.e,
+        r: state.params.r,
+        f: getRound(state.params).f,
+        dual: true,
+        rr: '',
+        r1id: ids[0],
+        r2id: ids[1],
+        d1: null,
+        d2: null,
+        b: 0,
+        a: 0,
+        v: [],
+        sr: '',
+        ar: ''
+      };
+      results.push(row);
+    }
+    if (result.r == row.r1id) {
+      row.d1 = sub;
+    } else if (result.r == row.r2id) {
+      row.d2 = sub;
+    }
+    recombineRow(row);
+    row.isNew = true;
+    results.sort(compare);
+    calculatePos(results, row);
   }
   function calculateAverage(result) {
     var best = 999999999;

@@ -32,6 +32,15 @@ class LiveEventRound extends ActiveRecord {
 	}
 
 	public function getLastRound() {
+		$rounds = $this->sortedRounds;
+		foreach ($rounds as $key=>$round) {
+			if ($round->id == $this->id && isset($rounds[$key - 1])) {
+				return $rounds[$key - 1];
+			}
+		}
+	}
+
+	public function getSortedRounds() {
 		$rounds = self::model()->findAllByAttributes(array(
 			'competition_id'=>$this->competition_id,
 			'event'=>$this->event,
@@ -39,11 +48,94 @@ class LiveEventRound extends ActiveRecord {
 		usort($rounds, function($roundA, $roundB) {
 			return $roundA->wcaRound->rank - $roundB->wcaRound->rank;
 		});
-		foreach ($rounds as $key=>$round) {
-			if ($round->id == $this->id && isset($rounds[$key - 1])) {
-				return $rounds[$key - 1];
+		return $rounds;
+	}
+
+	public function getRoundIndex() {
+		foreach ($this->sortedRounds as $key=>$round) {
+			if ($round->id == $this->id) {
+				return $key;
 			}
 		}
+		return -1;
+	}
+
+	public function getIsDual() {
+		$competitionEvent = CompetitionEvent::model()->findByAttributes(array(
+			'competition_id'=>$this->competition_id,
+			'event'=>$this->event,
+		));
+		return $competitionEvent !== null && $competitionEvent->dual;
+	}
+
+	/**
+	 * The two rounds that form the Dual Rounds (the first two rounds of the event).
+	 * Returns an empty array when the event is not dual or has fewer than two rounds.
+	 * @return LiveEventRound[]
+	 */
+	public function getDualRounds() {
+		if (!$this->isDual) {
+			return array();
+		}
+		$rounds = $this->sortedRounds;
+		if (count($rounds) < 2) {
+			return array();
+		}
+		return array($rounds[0], $rounds[1]);
+	}
+
+	/**
+	 * Combine the results of two Dual Rounds, keyed by competitor number.
+	 * Each entry contains both rounds' results and the round that holds the
+	 * better (ranking) result for that competitor (WCA Reg 9v4).
+	 * The returned list is sorted from best to worst by the better result.
+	 * @return array
+	 */
+	public static function getCombinedRanking($round1, $round2) {
+		$format = $round1->format;
+		$byNumber = array();
+		foreach ($round1->allResults as $result) {
+			$byNumber[$result->number]['r1'] = $result;
+		}
+		foreach ($round2->allResults as $result) {
+			$byNumber[$result->number]['r2'] = $result;
+		}
+		$rows = array();
+		foreach ($byNumber as $number=>$pair) {
+			$r1 = isset($pair['r1']) ? $pair['r1'] : null;
+			$r2 = isset($pair['r2']) ? $pair['r2'] : null;
+			if ($r1 === null && $r2 === null) {
+				continue;
+			}
+			if ($r1 === null) {
+				$better = $r2;
+				$betterRound = 'r2';
+			} elseif ($r2 === null) {
+				$better = $r1;
+				$betterRound = 'r1';
+			} elseif (LiveResult::compareResults($r1, $r2, $format) <= 0) {
+				$better = $r1;
+				$betterRound = 'r1';
+			} else {
+				$better = $r2;
+				$betterRound = 'r2';
+			}
+			$rows[] = array(
+				'number'=>$number,
+				'r1'=>$r1,
+				'r2'=>$r2,
+				'better'=>$better,
+				'betterRound'=>$betterRound,
+			);
+		}
+		usort($rows, function($a, $b) use($format) {
+			$temp = LiveResult::compareResults($a['better'], $b['better'], $format);
+			if ($temp == 0) {
+				$temp = $a['number'] - $b['number'];
+			}
+			return $temp;
+		});
+		return $rows;
 	}
 
 	public function removeResults() {

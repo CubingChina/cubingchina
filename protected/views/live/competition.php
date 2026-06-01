@@ -1,4 +1,50 @@
 <?php echo CHtml::tag('div', $htmlOptions, ''); ?>
+<style>
+.dual-combined-table > tbody > tr > td {
+  vertical-align: middle;
+}
+.combine-switch {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+  font-weight: normal;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.combine-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.combine-slider {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  margin-right: 6px;
+  background: #ccc;
+  border-radius: 20px;
+  transition: background .2s;
+}
+.combine-slider:before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s;
+}
+.combine-switch input:checked + .combine-slider {
+  background: #5cb85c;
+}
+.combine-switch input:checked + .combine-slider:before {
+  transform: translateX(20px);
+}
+</style>
 <?php $form = $this->beginWidget('ActiveForm', array(
   'htmlOptions'=>array(
     'class'=>'hide',
@@ -207,10 +253,10 @@
 
 <template id="result-template">
   <div class="row">
-    <div class="col-md-3 col-sm-4" :class="{hide: !hasPermission || !options.enableEntry}">
+    <div class="col-md-3 col-sm-4" :class="{hide: !showInput}">
       <input-panel :result.sync="current"></input-panel>
     </div>
-    <div class="col-md-{{hasPermission && options.enableEntry ? 9 : 12}} col-sm-{{hasPermission && options.enableEntry ? 8 : 12}}">
+    <div class="col-md-{{showInput ? 9 : 12}} col-sm-{{showInput ? 8 : 12}}">
       <div tabindex="-1" id="round-settings-modal" class="modal fade">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -299,6 +345,11 @@
           </button>
         </h4>
         <div class="pull-right event-round-area">
+          <label class="combine-switch" v-if="isDual">
+            <input type="checkbox" v-model="combineModel">
+            <span class="combine-slider"></span>
+            <span class="combine-text"><?php echo Yii::t('live', 'Combine'); ?></span>
+          </label>
           <select @change="changeParams" v-model="eventRound">
             <optgroup v-for="event in events" :label="event.name">
               <option v-for="round in event.rs" :value="{e: event.i, r: round.i}">
@@ -307,21 +358,26 @@
               </option>
             </optgroup>
           </select>
-          <select @change="changeParams" v-model="filter">
-            <option v-for="filter in filters" :value="filter.value">
+          <select @change="changeParams" v-model="filter" v-if="eventFilters.length > 1">
+            <option v-for="filter in eventFilters" :value="filter.value">
               {{filter.label}}
             </option>
           </select>
         </div>
       </div>
-      <div v-if="hasPermission">已录/未录/总数：{{ currentRound.rn }} / {{ currentRound.tt - currentRound.rn }} / {{ currentRound.tt }} </div>
+      <div v-if="hasPermission && !fmcAttemptStats">已录/未录/总数：{{ currentRound.rn }} / {{ currentRound.tt - currentRound.rn }} / {{ currentRound.tt }} </div>
+      <div v-if="hasPermission && fmcAttemptStats">
+        已录/未录/总数：
+        <span v-for="stat in fmcAttemptStats">第 {{ stat.index }} 把 {{ stat.recorded }} / {{ stat.pending }} / {{ stat.total }}{{ $index < fmcAttemptStats.length - 1 ? '，' : '' }}</span>
+      </div>
       <div class="table-responsive">
-        <table class="table table-bordered table-condensed table-hover table-boxed">
+        <table class="table table-bordered table-condensed table-hover table-boxed" :class="{'dual-combined-table': isDualCombined}">
           <thead>
-            <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
+            <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'No.'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
+            <th v-if="isDualCombined"><?php echo Yii::t('Results', 'Round'); ?></th>
             <th class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage()}"><?php echo Yii::t('common', 'Average'); ?></th>
             <th class="text-right" :class="{'sorting-column': !hasAverage()}"><?php echo Yii::t('common', 'Best'); ?></th>
             <th class="text-right" v-if="!hasAverage() && hasAverage(true)"><?php echo Yii::t('common', 'Average'); ?></th>
@@ -330,12 +386,12 @@
           </thead>
           <tbody>
             <tr v-if="loading" class="loading">
-              <td colspan="{{hasPermission && options.enableEntry && isCurrentRoundOpen ? 9 : 8}}">
+              <td colspan="{{(hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined ? 9 : 8) + (isDualCombined ? 1 : 0)}}">
                 Loading...
               </td>
             </tr>
             <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result), warning: hasPermission && result.isRepeated}" @dblclick="edit(result)">
-              <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen">
+              <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.p}}</td>
@@ -343,27 +399,45 @@
               <td>
                 <a href="javascript:void(0)" @click="goToUser(getUser(result.n))">{{getUser(result.n).name}}</a>
               </td>
+              <td v-if="isDualCombined">
+                {{dualRoundName(result, 'better')}}
+                <div class="text-muted" v-if="dualWorse(result)">
+                  {{dualRoundName(result, 'worse')}}
+                </div>
+              </td>
               <td class="text-right" v-if="hasAverage()" :class="{'sorting-column': hasAverage()}">
                 <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
                   {{result.ar}}
                 </span>
                 {{result.a | decodeResult result.e}}
+                <div class="text-muted" v-if="isDualCombined && dualWorse(result)">
+                  {{dualWorse(result).a | decodeResult result.e}}
+                </div>
               </td>
               <td class="text-right" :class="{'sorting-column': !hasAverage()}">
                 <span class="record" v-if="result.sr" :class="getRecordClass(result.sr)">
                   {{result.sr}}
                 </span>
                 {{result.b | decodeResult result.e}}
+                <div class="text-muted" v-if="isDualCombined && dualWorse(result)">
+                  {{dualWorse(result).b | decodeResult result.e}}
+                </div>
               </td>
               <td class="text-right" v-if="!hasAverage() && hasAverage(true)">
                 <span class="record" v-if="result.ar" :class="getRecordClass(result.ar)">
                   {{result.ar}}
                 </span>
                 {{result.a | decodeResult result.e}}
+                <div class="text-muted" v-if="isDualCombined && dualWorse(result)">
+                  {{dualWorse(result).a | decodeResult result.e}}
+                </div>
               </td>
               <td>{{{getUser(result.n).region}}}</td>
               <td>
                 {{{getResultDetail(result)}}}
+                <div class="text-muted" v-if="isDualCombined && dualWorse(result)">
+                  {{{dualWorseDetail(result)}}}
+                </div>
               </td>
             </tr>
           </tbody>

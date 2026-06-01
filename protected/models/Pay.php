@@ -222,7 +222,7 @@ class Pay extends ActiveRecord {
 	public function resetOrder() {
 		switch ($this->channel) {
 			case self::CHANNEL_BALIPAY:
-				$tradeStatus = $this->getTradeStatus();
+				$tradeStatus = '';//$this->getTradeStatus();
 				switch ($tradeStatus) {
 					case 'WAIT_BUYER_PAY':
 						if ($this->close()) {

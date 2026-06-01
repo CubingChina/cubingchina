@@ -121,12 +121,12 @@ class CompetitionEvent extends ActiveRecord {
 		// will receive user inputs.
 		return [
 			array('competition_id', 'required'),
-			array('round, fee, fee_second, fee_third, qualifying_best, qualifying_average, competitor_limit', 'numerical', 'integerOnly'=>true),
+			array('round, fee, fee_second, fee_third, qualifying_best, qualifying_average, competitor_limit, dual', 'numerical', 'integerOnly'=>true),
 			array('competition_id, create_time, update_time', 'length', 'max'=>11),
 			array('event', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, competition_id, event, round, fee, fee_second, fee_third, qualifying_best, qualifying_average, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, competition_id, event, round, fee, fee_second, fee_third, qualifying_best, qualifying_average, dual, create_time, update_time', 'safe', 'on'=>'search'),
 		];
 	}
 
@@ -156,6 +156,7 @@ class CompetitionEvent extends ActiveRecord {
 			'fee_third'=>'Fee Third',
 			'qualifying_best'=>'Qualifying Best',
 			'qualifying_average'=>'Qualifying Average',
+			'dual'=>'Dual Rounds',
 			'create_time'=>'Create Time',
 			'update_time'=>'Update Time',
 		];

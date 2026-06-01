@@ -103,6 +103,34 @@ class LiveResult extends ActiveRecord {
 		return [$this->event];
 	}
 
+	/**
+	 * Compare two results for ranking purposes. Returns a negative number when
+	 * $a ranks ahead of $b, positive when behind, 0 when tied.
+	 * $a and $b expose integer `best` and `average` properties.
+	 */
+	public static function compareResults($a, $b, $format) {
+		$temp = 0;
+		if ($format == 'a' || $format == 'm') {
+			if ($a->average > 0 && $b->average <= 0) {
+				return -1;
+			}
+			if ($b->average > 0 && $a->average <= 0) {
+				return 1;
+			}
+			$temp = $a->average - $b->average;
+		}
+		if ($temp == 0) {
+			if ($a->best > 0 && $b->best <= 0) {
+				return -1;
+			}
+			if ($b->best > 0 && $a->best <= 0) {
+				return 1;
+			}
+			$temp = $a->best - $b->best;
+		}
+		return $temp;
+	}
+
 	public function getCalculatedPos() {
 		if ($this->best == 0) {
 			return '-';

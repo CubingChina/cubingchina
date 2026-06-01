@@ -13,6 +13,37 @@ class RegistrationCommand extends CConsoleCommand {
 		}
 	}
 
+	public function actionUpdateWaitingList($id, $event, $number) {
+		$competition = Competition::model()->findByPk($id);
+		if (!$competition) {
+			return;
+		}
+		// mock a controller
+		$model = new Registration('search');
+		$model->unsetAttributes();
+		$model->competition_id = $competition->id;
+		$model->competition = $competition;
+		$model->status = Registration::STATUS_ACCEPTED;
+		$columns = [];
+		$provider = $model->search($columns, true, false, false, $event);
+		$registrations = $provider->getData();
+		$i = 0;
+		$sqls = [];
+		foreach ($registrations as $registration) {
+			if (!$registration->hasRegistered($event)) {
+				continue;
+			}
+			$i++;
+			echo  'No.' . $i . ': ';
+			if ($i <= $number) {
+				echo 'Accepted: ', $registration->user->getCompetitionName(), PHP_EOL;
+			} else {
+				echo 'To be pending: ', $registration->user->getCompetitionName(), PHP_EOL;
+				$sqls[] = 'UPDATE registration_event SET status = ' . RegistrationEvent::STATUS_WAITING . ' WHERE registration_id = ' . $registration->id . ' AND event = "' . $event . '";';
+			}
+		}
+		echo implode("\n", $sqls);
+	}
 	public function actionRefundOverpaid($id) {
 		$_SERVER['HTTPS'] = 1;
 		$_SERVER['HTTP_HOST'] = 'cubing.com';
@@ -196,9 +227,9 @@ class RegistrationCommand extends CConsoleCommand {
 	public function actionClearWaitingEvents() {
 		$competitions = Competition::model()->findAllByAttributes([
 			'status'=>Competition::STATUS_SHOW,
-			'competitor_limit_type'=>Competition::COMPETITOR_LIMIT_BY_EVENT,
+			// 'competitor_limit_type'=>Competition::COMPETITOR_LIMIT_BY_EVENT,
 		], [
-			'condition'=>'reg_end<' . time() . ' AND reg_end>' . (time() - 7 * 86400),
+			'condition'=>'reg_end<' . time() . ' AND reg_end>' . (time() - 17 * 86400),
 		]);
 		$_SERVER['HTTPS'] = 1;
 		$_SERVER['HTTP_HOST'] = 'cubing.com';

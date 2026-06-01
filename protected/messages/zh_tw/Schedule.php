@@ -27,6 +27,7 @@ return array (
   'Competitors' => '人數',
   'Cutoff' => '及格線',
   'Day' => '第幾天',
+  'Dual Rounds' => '雙輪賽',
   'End Time' => '結束時間',
   'Event' => '項目',
   'Format' => '賽制',

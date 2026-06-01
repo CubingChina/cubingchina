@@ -25,6 +25,7 @@ return array (
   ' ({round})' => '（{round}）',
   'Children' => '少儿组',
   'Close this round' => '结束本轮',
+  'Combine' => '合并',
   'Disable User Chatting' => '开启全员禁言',
   'Enable Data Entry' => '开启成绩输入板',
   'Export' => '导出',

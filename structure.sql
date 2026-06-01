@@ -163,6 +163,7 @@ CREATE TABLE `competition_event` (
   `fee_third` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
   `qualifying_best` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
   `qualifying_average` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
+  `dual` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
