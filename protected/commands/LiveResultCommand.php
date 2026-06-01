@@ -157,8 +157,9 @@ class LiveResultCommand extends CConsoleCommand {
 	 * Fill random results for competitors in a round that have no data yet.
 	 *
 	 * For 333fm singles random move counts in [20, 40] are generated; for any
-	 * other event random centiseconds in [500, 3000] are generated. The number
-	 * of attempts, the best and the average are derived from the round format.
+	 * other event random centiseconds in [500, 3000] are generated. Each attempt
+	 * has a 1/3 chance of being a DNF. The number of attempts, the best and the
+	 * average are derived from the round format.
 	 *
 	 * @param int $id Competition ID
 	 * @param string $event Event ID (required)
@@ -196,14 +197,7 @@ class LiveResultCommand extends CConsoleCommand {
 		$this->log("Found " . count($results) . " live_result records, format: {$eventRound->format}");
 
 		$filled = 0;
-		$skipped = 0;
 		foreach ($results as $liveResult) {
-			// Already has data, leave untouched.
-			if ($liveResult->best != 0) {
-				$skipped++;
-				continue;
-			}
-
 			$values = $this->generateRandomValues($event, $eventRound->format);
 			for ($i = 1; $i <= 5; $i++) {
 				$liveResult->{'value' . $i} = isset($values[$i - 1]) ? $values[$i - 1] : 0;
@@ -217,7 +211,7 @@ class LiveResultCommand extends CConsoleCommand {
 			$filled++;
 		}
 
-		$this->log("Filled: {$filled}, Skipped (already had data): {$skipped}");
+		$this->log("Filled: {$filled}");
 	}
 
 	/**
@@ -238,7 +232,8 @@ class LiveResultCommand extends CConsoleCommand {
 	}
 
 	/**
-	 * Generate random attempt values for one competitor.
+	 * Generate random attempt values for one competitor. Each attempt has a 1/3
+	 * chance of being a DNF (-1).
 	 *
 	 * @return int[] list of attempt values
 	 */
@@ -246,34 +241,65 @@ class LiveResultCommand extends CConsoleCommand {
 		$count = $this->getAttemptCount($format);
 		$values = [];
 		for ($i = 0; $i < $count; $i++) {
+			if (mt_rand(1, 3) === 1) {
+				$values[] = -1; // DNF
+				continue;
+			}
 			$values[] = $event === '333fm' ? mt_rand(20, 40) : mt_rand(500, 3000);
 		}
 		return $values;
 	}
 
 	/**
-	 * Best (single) is the minimum of the attempts.
+	 * Best (single) is the minimum of the successful attempts, or DNF (-1) when
+	 * every attempt is a DNF.
 	 */
 	private function calcBest($values) {
 		$valid = array_filter($values, function($v) { return $v > 0; });
-		return empty($valid) ? 0 : min($valid);
+		return empty($valid) ? -1 : min($valid);
 	}
 
 	/**
-	 * Compute the average/mean from attempts following WCA rules.
-	 * Best-of-N formats have no average. For 333fm the mean is stored as
-	 * the mean of moves multiplied by 100.
+	 * Compute the average/mean from attempts following WCA rules. DNF attempts
+	 * sort to the end; a mean is DNF (-1) once too many attempts are DNFs.
+	 * Best-of-N formats have no average. For 333fm the mean is stored as the
+	 * mean of moves multiplied by 100.
 	 */
 	private function calcAverage($values, $event, $format) {
+		// Sort ascending with DNF (-1) treated as the worst result.
+		$sorted = $values;
+		usort($sorted, function($a, $b) {
+			if ($a <= 0 && $b <= 0) {
+				return 0;
+			}
+			if ($a <= 0) {
+				return 1;
+			}
+			if ($b <= 0) {
+				return -1;
+			}
+			return $a - $b;
+		});
+
 		if ($format === 'a') {
 			// Average of 5: drop best and worst, mean of the middle three.
-			sort($values);
-			$middle = array_slice($values, 1, 3);
+			// One DNF is tolerated (dropped as worst); two or more is DNF.
+			$middle = array_slice($sorted, 1, 3);
+			foreach ($middle as $v) {
+				if ($v <= 0) {
+					return -1;
+				}
+			}
 			$mean = array_sum($middle) / count($middle);
 			return (int) round($mean);
 		}
 		if ($format === 'm') {
-			// Mean of 3: mean of all attempts.
+			// Mean of 3: every attempt counts, any DNF makes the mean DNF.
+			foreach ($values as $v) {
+				if ($v <= 0) {
+					return -1;
+				}
+			}
 			$mean = array_sum($values) / count($values);
 			if ($event === '333fm') {
 				return (int) round($mean * 100);

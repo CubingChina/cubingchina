@@ -498,7 +498,7 @@
             return this.isDual && this.$store.state.combine;
           },
           showInput: function () {
-            return this.hasPermission && this.options.enableEntry && !this.isDualCombined;
+            return this.hasPermission && this.options.enableEntry;
           },
           combineModel: {
             get: function () {
@@ -703,7 +703,24 @@
           },
           edit: function (result) {
             if (this.hasPermission && options.enableEntry && this.isCurrentRoundOpen) {
-              this.current = JSON.parse(JSON.stringify(result));
+              var data = result;
+              //in the combined view a row aggregates both dual rounds; edit only
+              //the sub-result of the currently selected round to avoid mixing them
+              if (this.isDualCombined && result.dual) {
+                var sub = state.params.r == result.r1id ? result.d1 : result.d2;
+                data = {
+                  i: sub ? sub.i : null,
+                  n: result.n,
+                  e: result.e,
+                  r: state.params.r,
+                  b: sub ? sub.b : 0,
+                  a: sub ? sub.a : 0,
+                  v: sub ? sub.v : [],
+                  sr: sub ? sub.sr : '',
+                  ar: sub ? sub.ar : ''
+                };
+              }
+              this.current = JSON.parse(JSON.stringify(data));
               this.$nextTick(function () {
                 $('.input-panel-result input').eq(0).focus();
               });

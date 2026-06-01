@@ -373,7 +373,7 @@
       <div class="table-responsive">
         <table class="table table-bordered table-condensed table-hover table-boxed" :class="{'dual-combined-table': isDualCombined}">
           <thead>
-            <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined"></th>
+            <th v-if="hasPermission && options.enableEntry && isCurrentRoundOpen"></th>
             <th><?php echo Yii::t('Results', 'Place'); ?></th>
             <th><?php echo Yii::t('Results', 'No.'); ?></th>
             <th><?php echo Yii::t('Results', 'Person'); ?></th>
@@ -386,12 +386,12 @@
           </thead>
           <tbody>
             <tr v-if="loading" class="loading">
-              <td colspan="{{(hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined ? 9 : 8) + (isDualCombined ? 1 : 0)}}">
+              <td colspan="{{(hasPermission && options.enableEntry && isCurrentRoundOpen ? 9 : 8) + (isDualCombined ? 1 : 0)}}">
                 Loading...
               </td>
             </tr>
             <tr v-for="result in results | limitBy limit offset" :class="{danger: result.isNew, success: isAdvanced(result), warning: hasPermission && result.isRepeated}" @dblclick="edit(result)">
-              <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen && !isDualCombined">
+              <td v-if="hasPermission && options.enableEntry && isCurrentRoundOpen">
                 <button class="btn btn-xs btn-theme no-mr" @click="edit(result)"><i class="fa fa-edit"></i></button>
               </td>
               <td>{{result.p}}</td>
