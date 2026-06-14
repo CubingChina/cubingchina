@@ -601,25 +601,25 @@ class RegistrationController extends AdminController {
 		}
 		$wcaIds = array_values(array_unique(array_filter($wcaIds)));
 		$event_ids = array_keys($competition->associatedEvents);
-		$singleWR100s = RanksSingle::model()->findAllByAttributes([
+		$singleWR50s = RanksSingle::model()->findAllByAttributes([
 			'event_id'=>$event_ids,
 			'person_id'=>$wcaIds,
 		], [
-			'condition'=>'world_rank <= 100',
+			'condition'=>'world_rank <= 50',
 		]);
-		$singleWR100Map = [];
-		foreach ($singleWR100s as $singleWR100) {
-			$singleWR100Map[$singleWR100->person_id][$singleWR100->event_id] = true;
+		$singleWR50Map = [];
+		foreach ($singleWR50s as $singleWR50) {
+			$singleWR50Map[$singleWR50->person_id][$singleWR50->event_id] = true;
 		}
-		$averageWR100s = RanksAverage::model()->findAllByAttributes([
+		$averageWR50s = RanksAverage::model()->findAllByAttributes([
 			'event_id'=>$event_ids,
 			'person_id'=>$wcaIds,
 		], [
-			'condition'=>'world_rank <= 100',
+			'condition'=>'world_rank <= 50',
 		]);
-		$averageWR100Map = [];
-		foreach ($averageWR100s as $averageWR100) {
-			$averageWR100Map[$averageWR100->person_id][$averageWR100->event_id] = true;
+		$averageWR50Map = [];
+		foreach ($averageWR50s as $averageWR50) {
+			$averageWR50Map[$averageWR50->person_id][$averageWR50->event_id] = true;
 		}
 		$groupSchedules = GroupSchedule::model()->findAllByAttributes([
 			'competition_id'=>$competition->id,
@@ -648,7 +648,7 @@ class RegistrationController extends AdminController {
 								'event'=>$event,
 								'start'=>$i,
 								'attempt'=>$i + 1,
-								'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+								'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 							];
 						}
 					}
@@ -670,7 +670,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
-									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						}
@@ -683,7 +683,7 @@ class RegistrationController extends AdminController {
 						$scoreCards[] = [
 							'registration'=>$registration,
 							'event'=>$event,
-							'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+							'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 						];
 					}
 				}
@@ -708,7 +708,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
-									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						}
@@ -727,14 +727,14 @@ class RegistrationController extends AdminController {
 									'event'=>$event,
 									'start'=>$i,
 									'attempt'=>$i + 1,
-									'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 								];
 							}
 						} else {
 							$scoreCards[] = [
 								'registration'=>$registration,
 								'event'=>$event,
-								'isWR100'=>$singleWR100Map[$registration->user->wcaid][$event] ?? $averageWR100Map[$registration->user->wcaid][$event] ?? false,
+								'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
 							];
 						}
 					}
@@ -783,7 +783,7 @@ class RegistrationController extends AdminController {
 		$user = $registration->user;
 		$event = $scoreCard['event'];
 		$group = $scoreCard['group'] ?? '';
-		$isWR100 = $scoreCard['isWR100'] ?? false;
+		$isWR50 = $scoreCard['isWR50'] ?? false;
 		if ($round === null) {
 			$round = $competition->getFirstRound($scoreCard['event']);
 		}
@@ -829,7 +829,7 @@ class RegistrationController extends AdminController {
 			'colspan'=>2,
 			'class'=>'no-bd'
 		]);
-		if ($isWR100) {
+		if ($isWR50) {
 			echo '<span style="font-family:dejavusans">★★</span> ' . $user->wcaid . ' <span style="font-family:dejavusans">★★</span>';
 		} else {
 			echo $user->wcaid;
@@ -970,7 +970,7 @@ class RegistrationController extends AdminController {
 			echo CHtml::tag('td', [
 				'class'=>'trial-no'
 			], $i + 1);
-			if($isWR100){
+			if($isWR50){
 				echo CHtml::tag('td', [
 					'class'=>$class,
 				], self::DOUBLE_CHECK);
