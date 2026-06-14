@@ -621,6 +621,16 @@ class RegistrationController extends AdminController {
 		foreach ($averageWR50s as $averageWR50) {
 			$averageWR50Map[$averageWR50->person_id][$averageWR50->event_id] = true;
 		}
+		$averageNR15s = RanksAverage::model()->findAllByAttributes([
+			'event_id'=>$event_ids,
+			'person_id'=>$wcaIds,
+		], [
+			'condition'=>'country_rank <= 15',
+		]);
+		$averageNR15Map = [];
+		foreach ($averageNR15s as $averageNR15) {
+			$averageNR15Map[$averageNR15->person_id][$averageNR15->event_id] = true;
+		}
 		$groupSchedules = GroupSchedule::model()->findAllByAttributes([
 			'competition_id'=>$competition->id,
 		], [
@@ -648,7 +658,7 @@ class RegistrationController extends AdminController {
 								'event'=>$event,
 								'start'=>$i,
 								'attempt'=>$i + 1,
-								'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+								'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 							];
 						}
 					}
@@ -670,7 +680,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
-									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+									'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 								];
 							}
 						}
@@ -683,7 +693,7 @@ class RegistrationController extends AdminController {
 						$scoreCards[] = [
 							'registration'=>$registration,
 							'event'=>$event,
-							'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+							'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 						];
 					}
 				}
@@ -708,7 +718,7 @@ class RegistrationController extends AdminController {
 									'registration'=>$registration,
 									'event'=>$event,
 									'group'=>$group,
-									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+									'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 								];
 							}
 						}
@@ -727,14 +737,14 @@ class RegistrationController extends AdminController {
 									'event'=>$event,
 									'start'=>$i,
 									'attempt'=>$i + 1,
-									'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+									'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 								];
 							}
 						} else {
 							$scoreCards[] = [
 								'registration'=>$registration,
 								'event'=>$event,
-								'isWR50'=>$singleWR50Map[$registration->user->wcaid][$event] ?? $averageWR50Map[$registration->user->wcaid][$event] ?? false,
+								'needsDoubleCheck'=>$this->needsDoubleCheck($registration->user->wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map),
 							];
 						}
 					}
@@ -783,7 +793,7 @@ class RegistrationController extends AdminController {
 		$user = $registration->user;
 		$event = $scoreCard['event'];
 		$group = $scoreCard['group'] ?? '';
-		$isWR50 = $scoreCard['isWR50'] ?? false;
+		$needsDoubleCheck = $scoreCard['needsDoubleCheck'] ?? false;
 		if ($round === null) {
 			$round = $competition->getFirstRound($scoreCard['event']);
 		}
@@ -829,7 +839,7 @@ class RegistrationController extends AdminController {
 			'colspan'=>2,
 			'class'=>'no-bd'
 		]);
-		if ($isWR50) {
+		if ($needsDoubleCheck) {
 			echo '<span style="font-family:dejavusans">★★</span> ' . $user->wcaid . ' <span style="font-family:dejavusans">★★</span>';
 		} else {
 			echo $user->wcaid;
@@ -970,7 +980,7 @@ class RegistrationController extends AdminController {
 			echo CHtml::tag('td', [
 				'class'=>'trial-no'
 			], $i + 1);
-			if($isWR50){
+			if ($needsDoubleCheck) {
 				echo CHtml::tag('td', [
 					'class'=>$class,
 				], self::DOUBLE_CHECK);
@@ -1277,5 +1287,20 @@ class RegistrationController extends AdminController {
 		$this->ajaxOk(array(
 			'value'=>$model->status,
 		));
+	}
+
+	private function needsDoubleCheck($wcaid, $event, $singleWR50Map, $averageWR50Map, $averageNR15Map) {
+		if (!$wcaid) {
+			return false;
+		}
+		switch ($event) {
+			case '333bf':
+			case '444bf':
+			case '555bf':
+			case '333mbf':
+				return !empty($singleWR50Map[$wcaid][$event]);
+			default:
+				return !empty($averageWR50Map[$wcaid][$event]) || !empty($averageNR15Map[$wcaid][$event]);
+		}
 	}
 }
