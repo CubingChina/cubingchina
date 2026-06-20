@@ -7,8 +7,10 @@
  *   php protected/yiic LiveResult populate --id=123 --event=333 --round=f
  *   php protected/yiic LiveResult fillRandom --id=123 --event=333 --round=f
  *   php protected/yiic LiveResult exportToLive --id=123 --event=333 --round=f --roundId=129186 [--roundInfo=live/roundinfo.json]
+ *   php protected/yiic LiveResult exportToNewLive --id=123 --event=333fm --round=1 [--liveRoundId=333fm-r1]
  *
  * exportToLive: Export round results to WCA Live. Requires live/wca_live_key file with the auth key.
+ * exportToNewLive: Export round results to the new WCA Live API. Requires live/wca_live_key with a bearer token.
  */
 class LiveResultCommand extends CConsoleCommand {
 	public function actionCheckPR($id) {
@@ -533,6 +535,202 @@ class LiveResultCommand extends CConsoleCommand {
 		$this->log("Exporting " . count($resultsPayload) . " results to WCA Live");
 		$success = $this->enterResults($roundId, $resultsPayload, $wcaLiveKey);
 		$this->log($success ? "Export completed successfully" : "Export failed");
+	}
+
+	/**
+	 * Export round results to the new WCA Live API.
+	 *
+	 * The new endpoint accepts one competitor's result per PATCH request.
+	 *
+	 * @param int $id Competition ID
+	 * @param string $event Event ID
+	 * @param string $round CubingChina round ID
+	 * @param string $liveRoundId Optional WCA Live round ID in the REST URL (e.g. 333fm-r1)
+	 */
+	public function actionExportToNewLive($id, $event, $round, $liveRoundId = '') {
+		$this->log("Exporting to new WCA Live: competition={$id}, event={$event}, round={$round}");
+
+		$keyFile = Yii::getPathOfAlias('application') . '/../live/wca_live_key';
+		if (!file_exists($keyFile)) {
+			$this->log("Error: wca_live_key file not found at live/wca_live_key");
+			return;
+		}
+		$wcaLiveKey = trim(file_get_contents($keyFile));
+		if ($wcaLiveKey === '') {
+			$this->log("Error: wca_live_key is empty");
+			return;
+		}
+
+		$competition = Competition::model()->findByPk($id);
+		if ($competition === null) {
+			$this->log("Error: Competition not found");
+			return;
+		}
+		if ($competition->wca_competition_id == '') {
+			$this->log("Error: Competition does not have WCA competition ID");
+			return;
+		}
+		if (!$this->confirm($competition->name_zh)) {
+			return;
+		}
+
+		$eventRound = LiveEventRound::model()->findByAttributes([
+			'competition_id' => $id,
+			'event' => $event,
+			'round' => $round,
+		]);
+		if ($eventRound === null) {
+			$this->log("Error: Event round not found");
+			return;
+		}
+		if ($liveRoundId === '') {
+			$liveRoundId = $this->buildNewLiveRoundId($eventRound);
+		}
+		if ($liveRoundId === null) {
+			$this->log("Error: Failed to build WCA Live round ID");
+			return;
+		}
+		$this->log("WCA Live round ID: {$liveRoundId}");
+
+		$registrantIdToRegistrationId = $this->fetchNewLiveRegistrationMap($competition->wca_competition_id);
+		if ($registrantIdToRegistrationId === null) {
+			$this->log("Error: Failed to fetch registrations from WCA API");
+			return;
+		}
+		$this->log("Fetched " . count($registrantIdToRegistrationId) . " registrations from WCA API");
+
+		$liveResults = LiveResult::model()->findAllByAttributes([
+			'competition_id' => $id,
+			'event' => $event,
+			'round' => $round,
+		], ['condition' => 'best != 0']);
+		if (empty($liveResults)) {
+			$this->log("No live_result records found for this round");
+			return;
+		}
+
+		$attemptCount = $this->getAttemptCount($eventRound->format);
+		$exported = 0;
+		$failed = 0;
+		$skipped = 0;
+		foreach ($liveResults as $lr) {
+			$registrantId = (int) $lr->number;
+			$registrationId = isset($registrantIdToRegistrationId[$registrantId]) ? $registrantIdToRegistrationId[$registrantId] : null;
+			if ($registrationId === null) {
+				$this->log("Skip No.{$registrantId}: registration_id not found");
+				$skipped++;
+				continue;
+			}
+			$attempts = $this->buildNewLiveAttempts($lr, $attemptCount);
+			if (empty($attempts)) {
+				$this->log("Skip No.{$registrantId}: no attempts to export");
+				$skipped++;
+				continue;
+			}
+			$success = $this->patchNewLiveResult($competition->wca_competition_id, $liveRoundId, $registrationId, $attempts, $wcaLiveKey);
+			if ($success) {
+				$this->log("Exported No.{$registrantId} as registration_id={$registrationId}");
+				$exported++;
+			} else {
+				$this->log("Failed No.{$registrantId} as registration_id={$registrationId}");
+				$failed++;
+			}
+		}
+
+		$this->log("Export finished: exported={$exported}, skipped={$skipped}, failed={$failed}");
+	}
+
+	private function buildNewLiveRoundId($eventRound) {
+		$roundIndex = $eventRound->roundIndex;
+		if ($roundIndex < 0) {
+			return null;
+		}
+		return $eventRound->event . '-r' . ($roundIndex + 1);
+	}
+
+	private function fetchNewLiveRegistrationMap($competitionId) {
+		$url = 'https://www.worldcubeassociation.org/api/v1/competitions/' . rawurlencode($competitionId) . '/registrations';
+		$ctx = stream_context_create([
+			'http' => [
+				'method' => 'GET',
+				'header' => "Accept: application/json\r\n",
+				'ignore_errors' => true,
+			],
+		]);
+		$resp = @file_get_contents($url, false, $ctx);
+		if ($resp === false) {
+			return null;
+		}
+		$data = json_decode($resp, true);
+		if (!is_array($data)) {
+			return null;
+		}
+		$registrations = isset($data['registrations']) && is_array($data['registrations']) ? $data['registrations'] : $data;
+		$map = [];
+		foreach ($registrations as $registration) {
+			if (!is_array($registration) || !isset($registration['registrant_id'], $registration['id'])) {
+				continue;
+			}
+			$map[(int) $registration['registrant_id']] = (int) $registration['id'];
+		}
+		return $map;
+	}
+
+	private function buildNewLiveAttempts($liveResult, $attemptCount) {
+		$attempts = [];
+		for ($i = 1; $i <= $attemptCount; $i++) {
+			$value = (int) $liveResult->{'value' . $i};
+			if ($value === 0) {
+				break;
+			}
+			$attempts[] = [
+				'value' => $value,
+				'attempt_number' => $i,
+			];
+		}
+		if (empty($attempts)) {
+			return [];
+		}
+		$hasNonDns = false;
+		foreach ($attempts as $attempt) {
+			if ($attempt['value'] !== -2) {
+				$hasNonDns = true;
+				break;
+			}
+		}
+		return $hasNonDns ? $attempts : [];
+	}
+
+	private function patchNewLiveResult($competitionId, $liveRoundId, $registrationId, $attempts, $wcaLiveKey) {
+		$url = 'https://www.worldcubeassociation.org/api/v1/competitions/' . rawurlencode($competitionId) . '/live/rounds/' . rawurlencode($liveRoundId);
+		$payload = json_encode([
+			'attempts' => $attempts,
+			'registration_id' => (int) $registrationId,
+		]);
+		$ctx = stream_context_create([
+			'http' => [
+				'method' => 'PATCH',
+				'header' => "Authorization: Bearer {$wcaLiveKey}\r\nContent-Type: application/json\r\nAccept: application/json\r\n",
+				'content' => $payload,
+				'ignore_errors' => true,
+			],
+		]);
+		$resp = @file_get_contents($url, false, $ctx);
+		$status = $this->getHttpStatusCode(isset($http_response_header) ? $http_response_header : []);
+		if ($resp === false || $status < 200 || $status >= 300) {
+			$this->log("New WCA Live API error: status={$status}, response={$resp}");
+			return false;
+		}
+		return true;
+	}
+
+	private function getHttpStatusCode($headers) {
+		foreach ($headers as $header) {
+			if (preg_match('/^HTTP\/\S+\s+(\d+)/', $header, $matches)) {
+				return (int) $matches[1];
+			}
+		}
+		return 0;
 	}
 
 	private function loadRoundInfoFromFile($path) {
