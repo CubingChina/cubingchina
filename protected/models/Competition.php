@@ -2029,14 +2029,38 @@ class Competition extends ActiveRecord {
 				'status'=>LiveEventRound::STATUS_FINISHED,
 			]);
 			if ($eventRound !== null) {
-				$results = LiveResult::model()->with('user')->findAllByAttributes([
-					'competition_id'=>$this->id,
-					'event'=>$event,
-					'round'=>$eventRound->round,
-				], [
-					'condition'=>'best > 0',
-					'order'=>'average > 0 DESC, average ASC, best ASC',
-				]);
+				$dualRounds = $eventRound->dualRounds;
+				if ($dualRounds !== array() && $dualRounds[0]->isClosed && $dualRounds[1]->isClosed) {
+					$ranking = LiveEventRound::getCombinedRanking($dualRounds[0], $dualRounds[1]);
+					$ids = array();
+					foreach ($ranking as $row) {
+						if ($row['better']->best > 0) {
+							$ids[] = $row['better']->id;
+						}
+					}
+					$byId = array();
+					if ($ids !== array()) {
+						foreach (LiveResult::model()->with('user')->findAllByPk($ids) as $result) {
+							$byId[$result->id] = $result;
+						}
+					}
+					$results = array();
+					foreach ($ranking as $row) {
+						if ($row['better']->best <= 0 || !isset($byId[$row['better']->id])) {
+							continue;
+						}
+						$results[] = $byId[$row['better']->id];
+					}
+				} else {
+					$results = LiveResult::model()->with('user')->findAllByAttributes([
+						'competition_id'=>$this->id,
+						'event'=>$event,
+						'round'=>$eventRound->round,
+					], [
+						'condition'=>'best > 0',
+						'order'=>'average > 0 DESC, average ASC, best ASC',
+					]);
+				}
 				$ages = self::getPodiumAges();
 				$o_ages = self::getPodiumOldAges('rsort');
 				$temp = [

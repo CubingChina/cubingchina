@@ -1351,7 +1351,7 @@
         event: state.params.e,
         round: state.params.r,
         filter: state.params.filter,
-        combine: state.combine && isDualRound(state.params)
+        combine: useDualCombined(state)
       }
     });
   }
@@ -1395,8 +1395,11 @@
     }
     return [event.rs[0].i, event.rs[1].i];
   }
-  function isDualCombinedParams(state) {
+  function useDualCombined(state) {
     return state.combine && isDualRound(state.params);
+  }
+  function isDualCombinedParams(state) {
+    return useDualCombined(state);
   }
   function compareBA(a, b, f) {
     var temp = 0;
