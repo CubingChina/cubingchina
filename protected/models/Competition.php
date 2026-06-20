@@ -1936,55 +1936,10 @@ class Competition extends ActiveRecord {
 		$podiums = [];
 		$greaterChinaPodiums = [];
 		foreach ($eventRounds as $eventRound) {
-			switch ($eventRound->format) {
-				case '1':
-				case '2':
-				case '3':
-				case '5':
-					$order = 'best ASC';
-					$format = 'b';
-					break;
-				case 'a':
-				case 'm':
-				default:
-					$format = 'a';
-					$order = 'average > 0 DESC, average ASC, best ASC';
-					break;
-			}
-			$results = LiveResult::model()->findAllByAttributes([
-				'competition_id'=>$this->id,
-				'event'=>$eventRound->event,
-				'round'=>$eventRound->round,
-			], [
-				'condition'=>'best > 0',
-				'order'=>$order,
-			]);
-			$count = 0;
-			$lastBest = 0;
-			$lastAverage = 0;
-			foreach ($results as $i=>$result) {
-				if ($format == 'a') {
-					if ($result->average != $lastAverage) {
-						$lastAverage = $result->average;
-						$lastBest = $result->best;
-						$result->pos = $i + 1;
-						$count = $i;
-					} elseif ($result->best != $lastBest) {
-						$lastBest = $result->best;
-						$result->pos = $i + 1;
-						$count = $i;
-					} else {
-						$result->pos = $count + 1;
-					}
-				} else {
-					if ($result->best != $lastBest) {
-						$lastBest = $result->best;
-						$result->pos = $i + 1;
-						$count = $i;
-					} else {
-						$result->pos = $count + 1;
-					}
-				}
+			$format = $this->getPodiumResultFormat($eventRound);
+			$results = $this->getLivePodiumRoundResults($eventRound);
+			$this->assignPodiumPositions($results, $format);
+			foreach ($results as $result) {
 				if ($result->pos <= $this->podiums_num) {
 					$podiums[$eventRound->event][] = clone $result;
 				}
@@ -1994,23 +1949,9 @@ class Competition extends ActiveRecord {
 			}
 		}
 		foreach ($greaterChinaPodiums as $event=>$results) {
-			$count = 0;
-			$lastBest = 0;
-			$lastAverage = 0;
+			$this->assignPodiumPositions($results, 'a');
 			$temp = [];
-			foreach ($results as $i=>$result) {
-				if ($result->average != $lastAverage) {
-					$lastAverage = $result->average;
-					$lastBest = $result->best;
-					$result->pos = $i + 1;
-					$count = $i;
-				} elseif ($result->best != $lastBest) {
-					$lastBest = $result->best;
-					$result->pos = $i + 1;
-					$count = $i;
-				} else {
-					$result->pos = $count + 1;
-				}
+			foreach ($results as $result) {
 				if ($result->pos > $this->podiums_num) {
 					break;
 				}
@@ -2029,14 +1970,7 @@ class Competition extends ActiveRecord {
 				'status'=>LiveEventRound::STATUS_FINISHED,
 			]);
 			if ($eventRound !== null) {
-				$results = LiveResult::model()->with('user')->findAllByAttributes([
-					'competition_id'=>$this->id,
-					'event'=>$event,
-					'round'=>$eventRound->round,
-				], [
-					'condition'=>'best > 0',
-					'order'=>'average > 0 DESC, average ASC, best ASC',
-				]);
+				$results = $this->getLivePodiumGroupResults($eventRound);
 				$ages = self::getPodiumAges();
 				$o_ages = self::getPodiumOldAges('rsort');
 				$temp = [
@@ -2090,21 +2024,8 @@ class Competition extends ActiveRecord {
 					}
 				}
 				foreach ($temp as $group=>$results) {
-					$count = 0;
-					$lastBest = 0;
-					$lastAverage = 0;
-					foreach ($results as $i=>$result) {
-						if ($result->average != $lastAverage) {
-							$lastAverage = $result->average;
-							$result->pos = $i + 1;
-							$count = $i;
-						} elseif ($result->best != $lastBest) {
-							$lastBest = $result->best;
-							$result->pos = $i + 1;
-							$count = $i;
-						} else {
-							$result->pos = $count + 1;
-						}
+					$this->assignPodiumPositions($results, 'a');
+					foreach ($results as $result) {
 						if ($result->pos > $this->podiums_num) {
 							break;
 						}
@@ -2124,6 +2045,113 @@ class Competition extends ActiveRecord {
 			'podiums'=>$podiums,
 			'greaterChinaPodiums'=>$greaterChinaPodiums,
 		];
+	}
+
+	private function getPodiumResultFormat($eventRound) {
+		switch ($eventRound->format) {
+			case '1':
+			case '2':
+			case '3':
+			case '5':
+				return 'b';
+			case 'a':
+			case 'm':
+			default:
+				return 'a';
+		}
+	}
+
+	private function getCombinedPodiumResultModels($round1, $round2) {
+		$ranking = LiveEventRound::getCombinedRanking($round1, $round2);
+		$ids = array();
+		foreach ($ranking as $row) {
+			if ($row['better']->best > 0) {
+				$ids[] = $row['better']->id;
+			}
+		}
+		$byId = array();
+		if ($ids !== array()) {
+			foreach (LiveResult::model()->with('user')->findAllByPk($ids) as $result) {
+				$byId[$result->id] = $result;
+			}
+		}
+		$results = array();
+		foreach ($ranking as $row) {
+			if ($row['better']->best <= 0 || !isset($byId[$row['better']->id])) {
+				continue;
+			}
+			$results[] = $byId[$row['better']->id];
+		}
+		return $results;
+	}
+
+	/**
+	 * Official podiums from a finished final/consolation round. For dual events
+	 * whose second dual round is that c/f round, rank by combined dual results.
+	 */
+	private function getLivePodiumRoundResults($eventRound) {
+		$dualRounds = $eventRound->dualRounds;
+		if ($dualRounds !== array()
+			&& $dualRounds[0]->isClosed
+			&& $dualRounds[1]->isClosed
+			&& $eventRound->id == $dualRounds[1]->id) {
+			return $this->getCombinedPodiumResultModels($dualRounds[0], $dualRounds[1]);
+		}
+		$format = $this->getPodiumResultFormat($eventRound);
+		$order = $format == 'b' ? 'best ASC' : 'average > 0 DESC, average ASC, best ASC';
+		return LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$this->id,
+			'event'=>$eventRound->event,
+			'round'=>$eventRound->round,
+		], [
+			'condition'=>'best > 0',
+			'order'=>$order,
+		]);
+	}
+
+	private function getLivePodiumGroupResults($eventRound) {
+		$dualRounds = $eventRound->dualRounds;
+		if ($dualRounds !== array() && $dualRounds[0]->isClosed && $dualRounds[1]->isClosed) {
+			return $this->getCombinedPodiumResultModels($dualRounds[0], $dualRounds[1]);
+		}
+		return LiveResult::model()->with('user')->findAllByAttributes([
+			'competition_id'=>$this->id,
+			'event'=>$eventRound->event,
+			'round'=>$eventRound->round,
+		], [
+			'condition'=>'best > 0',
+			'order'=>'average > 0 DESC, average ASC, best ASC',
+		]);
+	}
+
+	private function assignPodiumPositions(&$results, $format) {
+		$count = 0;
+		$lastBest = 0;
+		$lastAverage = 0;
+		foreach ($results as $i=>&$result) {
+			if ($format == 'a') {
+				if ($result->average != $lastAverage) {
+					$lastAverage = $result->average;
+					$lastBest = $result->best;
+					$result->pos = $i + 1;
+					$count = $i;
+				} elseif ($result->best != $lastBest) {
+					$lastBest = $result->best;
+					$result->pos = $i + 1;
+					$count = $i;
+				} else {
+					$result->pos = $count + 1;
+				}
+			} else {
+				if ($result->best != $lastBest) {
+					$lastBest = $result->best;
+					$result->pos = $i + 1;
+					$count = $i;
+				} else {
+					$result->pos = $count + 1;
+				}
+			}
+		}
 	}
 
 	public function computeRecords($event, $type = 'best') {
