@@ -29,7 +29,6 @@ $(function() {
         var that = $(this);
         var event = that.val();
         switch (event) {
-          case '333ft':
           case 'clock':
             specialRegulations[event] = true;
             break;

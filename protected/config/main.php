@@ -359,18 +359,16 @@ $config = [
 				'请妥善保管参赛证，如若丢失，将失去比赛资格',
 				'若有故不能前来，请于比赛前发邮件联系主办方告知，否则将被主办方记录在案，影响以后的参赛资格',
 				'所有项目不得晚于指定时间检录，否则视为放弃该项目比赛资格',
-				'还原时限：指选手的单次还原超过该时限，WCA代表和主裁判有权利停止当次比赛并记DNF。及格线：指选手五次还原的前二次须至少有一次进入及格线，否则无后三次还原机会（对于六阶、七阶和脚拧，第一次还原为及格线）。',
+				'还原时限：指选手的单次还原超过该时限，WCA代表和主裁判有权利停止当次比赛并记DNF。及格线：指选手五次还原的前二次须至少有一次进入及格线，否则无后三次还原机会（对于六阶、七阶，第一次还原为及格线）。',
 				'免责声明：选手若在未完全了解比赛信息、赛事规则、退费政策、报名须知等内容的情况下报名并付费，导致任何费用损失的，粗饼网及赛事主办方概不负责。'
 			],
 			'special'=>[
-				'333ft'=>'Competitors participating in 3x3 with feet must provide their own Speedstack timer and mat.',
 				'bf'=>'Competitors participating in all blindfolded events must provide their own blindfold.',
 				'lbf'=>'For 4x4 blindfolded, 5x5 blindfolded and 3x3 multiple blindfolded events, cubes must be provided for scrambling when requested by the organizers.',
 				'bbf'=>'For 4x4 blindfolded and 5x5 blindfolded, “cumulative time limit” means that the total solving time of N attempts (N≤3) mustn’t exceeds the given time limit. If your total time exceeds the time limit, your current attempt will be stopped and recorded as DNF and any remaining attempts will be recorded as DNS. Attempt time for incomplete solves will be still recorded and added to the cumulative time.',
 				'clock'=>"For the Clock event, clocks will be disqualified if the four pins can't stay upright, such that the pins fall down if the clock is held horizontal or the pins fail to control the rotation of gears.",
 			],
 			'special_zh'=>[
-				'333ft'=>'参加脚拧项目自备垫子及Speedstacks计时器，否则将被取消该项目参赛资格',
 				'bf'=>'参加盲拧项目自备眼罩，否则将被取消该项目参赛资格',
 				'lbf'=>'请参加高盲、多盲项目的选手于指定时间内上交比赛用魔方，否则视为放弃该项目本次比赛资格',
 				'bbf'=>'高盲累计时限：在一轮中，N次(N≤3)还原的累计时间不能超过规定的时限。当选手累计时间到达时限时，裁判可以直接叫停选手的复原，本次复原将被记为DNF，之后复原将被记为DNS。对于成绩为DNF的复原，裁判也将记录所用时间并计入累计时间内',
