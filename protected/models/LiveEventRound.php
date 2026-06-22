@@ -92,7 +92,6 @@ class LiveEventRound extends ActiveRecord {
 	 * @return array
 	 */
 	public static function getCombinedRanking($round1, $round2) {
-		$format = $round1->format;
 		$byNumber = array();
 		foreach ($round1->allResults as $result) {
 			$byNumber[$result->number]['r1'] = $result;
@@ -100,42 +99,16 @@ class LiveEventRound extends ActiveRecord {
 		foreach ($round2->allResults as $result) {
 			$byNumber[$result->number]['r2'] = $result;
 		}
-		$rows = array();
-		foreach ($byNumber as $number=>$pair) {
-			$r1 = isset($pair['r1']) ? $pair['r1'] : null;
-			$r2 = isset($pair['r2']) ? $pair['r2'] : null;
-			if ($r1 === null && $r2 === null) {
-				continue;
-			}
-			if ($r1 === null) {
-				$better = $r2;
-				$betterRound = 'r2';
-			} elseif ($r2 === null) {
-				$better = $r1;
-				$betterRound = 'r1';
-			} elseif (LiveResult::compareResults($r1, $r2, $format) <= 0) {
-				$better = $r1;
-				$betterRound = 'r1';
-			} else {
-				$better = $r2;
-				$betterRound = 'r2';
-			}
-			$rows[] = array(
-				'number'=>$number,
-				'r1'=>$r1,
-				'r2'=>$r2,
-				'better'=>$better,
-				'betterRound'=>$betterRound,
+		$ranked = LiveResult::rankCombinedPairs($byNumber, $round1->format, array('LiveResult', 'tieBreakByNumberKey'), false);
+		return array_map(function($row) {
+			return array(
+				'number'=>$row['key'],
+				'r1'=>$row['r1'],
+				'r2'=>$row['r2'],
+				'better'=>$row['better'],
+				'betterRound'=>$row['betterRound'],
 			);
-		}
-		usort($rows, function($a, $b) use($format) {
-			$temp = LiveResult::compareResults($a['better'], $b['better'], $format);
-			if ($temp == 0) {
-				$temp = $a['number'] - $b['number'];
-			}
-			return $temp;
-		});
-		return $rows;
+		}, $ranked);
 	}
 
 	public function removeResults() {

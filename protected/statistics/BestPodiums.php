@@ -271,44 +271,17 @@ class BestPodiums extends Statistics {
 		return $results;
 	}
 
-	private static function compare333fmResults($a, $b) {
-		return LiveResult::compareResults(
-			(object) array('best'=>(int) $a['best'], 'average'=>(int) $a['average']),
-			(object) array('best'=>(int) $b['best'], 'average'=>(int) $b['average']),
-			'm'
-		);
-	}
-
 	private static function buildCombined333fmPodium($round1, $roundf) {
 		$byPerson = array();
 		foreach ($round1 as $result) {
 			$byPerson[$result['person_id']]['r1'] = $result;
 		}
 		foreach ($roundf as $result) {
-			$byPerson[$result['person_id']]['f'] = $result;
+			$byPerson[$result['person_id']]['r2'] = $result;
 		}
-		$combined = array();
-		foreach ($byPerson as $pair) {
-			$r1 = isset($pair['r1']) ? $pair['r1'] : null;
-			$rf = isset($pair['f']) ? $pair['f'] : null;
-			if ($r1 === null) {
-				$combined[] = $rf;
-			} elseif ($rf === null) {
-				$combined[] = $r1;
-			} elseif (self::compare333fmResults($r1, $rf) <= 0) {
-				$combined[] = $r1;
-			} else {
-				$combined[] = $rf;
-			}
-		}
-		usort($combined, function($a, $b) {
-			$temp = self::compare333fmResults($a, $b);
-			if ($temp != 0) {
-				return $temp;
-			}
-			return strcmp($a['person_id'], $b['person_id']);
-		});
-		self::assign333fmPositions($combined);
+		$ranked = LiveResult::rankCombinedPairs($byPerson, 'm', array('LiveResult', 'tieBreakByCompetitorKey'), false);
+		$combined = array_column($ranked, 'better');
+		LiveResult::assignPositions($combined, 'm');
 		return self::make333fmPodiumFromRanked($combined);
 	}
 
@@ -450,16 +423,6 @@ class BestPodiums extends Statistics {
 
 	private static function get333fmAttemptValues($result) {
 		return isset($result['attempt_values']) ? $result['attempt_values'] : array();
-	}
-
-	private static function assign333fmPositions(&$results) {
-		foreach ($results as $i=>&$result) {
-			if ($i > 0 && self::compare333fmResults($result, $results[$i - 1]) === 0) {
-				$result['pos'] = $results[$i - 1]['pos'];
-			} else {
-				$result['pos'] = $i + 1;
-			}
-		}
 	}
 
 	private static function getSelectSum($type) {
