@@ -29,9 +29,12 @@ class Championships extends ActiveRecord {
 	}
 
 	public static function getAllTypes() {
-		return CHtml::listData(self::model()->findAll([
-			'group'=>'championship_type',
-		]), 'championship_type', 'championship_type');
+		$types = Yii::app()->wcaDb->createCommand()
+			->selectDistinct('championship_type')
+			->from('championships')
+			->order('championship_type')
+			->queryColumn();
+		return $types ? array_combine($types, $types) : array();
 	}
 
 	public static function getRegionName($name, $person) {
