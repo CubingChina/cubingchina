@@ -131,6 +131,176 @@ class LiveResult extends ActiveRecord {
 		return $temp;
 	}
 
+	public static function getRankingFormat($formatId) {
+		switch ($formatId) {
+			case '1':
+			case '2':
+			case '3':
+			case '5':
+				return 'b';
+			default:
+				return 'a';
+		}
+	}
+
+	public static function assignPositions(&$results, $format) {
+		$format = self::getRankingFormat($format);
+		$count = 0;
+		$lastBest = 0;
+		$lastAverage = 0;
+		foreach ($results as $i=>&$result) {
+			$average = is_array($result) ? $result['average'] : $result->average;
+			$best = is_array($result) ? $result['best'] : $result->best;
+			if ($format == 'a') {
+				if ($average != $lastAverage) {
+					$lastAverage = $average;
+					$lastBest = $best;
+					$pos = $i + 1;
+					$count = $i;
+				} elseif ($best != $lastBest) {
+					$lastBest = $best;
+					$pos = $i + 1;
+					$count = $i;
+				} else {
+					$pos = $count + 1;
+				}
+			} else {
+				if ($best != $lastBest) {
+					$lastBest = $best;
+					$pos = $i + 1;
+					$count = $i;
+				} else {
+					$pos = $count + 1;
+				}
+			}
+			if (is_array($result)) {
+				$result['pos'] = $pos;
+			} else {
+				$result->pos = $pos;
+			}
+		}
+	}
+
+	/**
+	 * Live path: combined dual podiums when the official c/f round is the
+	 * second dual round and both dual rounds are closed.
+	 */
+	public static function isLiveCombinedDualPodiumRound($eventRound, $dualRounds = null) {
+		if ($dualRounds === null) {
+			$dualRounds = $eventRound->dualRounds;
+		}
+		return count($dualRounds) >= 2
+			&& $dualRounds[0]->isClosed
+			&& $dualRounds[1]->isClosed
+			&& $eventRound->id == $dualRounds[1]->id;
+	}
+
+	/**
+	 * WCA path: combined dual podiums when the second dual round is c/f and no
+	 * separate c/f round follows (e.g. 333fm 1+f yes, 1+2+f no).
+	 *
+	 * @param array $roundRanks map roundTypeId => rank
+	 */
+	public static function isWcaCombinedDualPodium($roundRanks, $dualRound2) {
+		if (!in_array($dualRound2, array('c', 'f'), true) || !isset($roundRanks[$dualRound2])) {
+			return false;
+		}
+		$dualRound2Rank = $roundRanks[$dualRound2];
+		foreach ($roundRanks as $roundTypeId=>$rank) {
+			if (in_array($roundTypeId, array('c', 'f'), true)
+				&& $roundTypeId !== $dualRound2
+				&& $rank > $dualRound2Rank) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Pick the better of two dual-round results (WCA Reg 9v4).
+	 * @return array{better:mixed,betterRound:string}|null
+	 */
+	private static function pickBetterDualResult($r1, $r2, $format) {
+		if ($r1 === null && $r2 === null) {
+			return null;
+		}
+		if ($r1 === null) {
+			return array('better'=>$r2, 'betterRound'=>'r2');
+		}
+		if ($r2 === null) {
+			return array('better'=>$r1, 'betterRound'=>'r1');
+		}
+		if (self::compareResults(self::resultForCompare($r1), self::resultForCompare($r2), $format) <= 0) {
+			return array('better'=>$r1, 'betterRound'=>'r1');
+		}
+		return array('better'=>$r2, 'betterRound'=>'r2');
+	}
+
+	/**
+	 * Combine dual-round pairs per competitor, pick the better result, optionally
+	 * filter invalid bests, and sort best to worst.
+	 *
+	 * @param array $pairsByCompetitor competitorKey => ['r1'=>..., 'r2'=>...]
+	 * @param callable $tieBreaker function(array $a, array $b): int
+	 * @return array list of ['key', 'r1', 'r2', 'better', 'betterRound']
+	 */
+	public static function rankCombinedPairs($pairsByCompetitor, $format, $tieBreaker, $requireValidBest = true) {
+		$format = self::getRankingFormat($format);
+		$combined = array();
+		foreach ($pairsByCompetitor as $key=>$pair) {
+			$r1 = isset($pair['r1']) ? $pair['r1'] : null;
+			$r2 = isset($pair['r2']) ? $pair['r2'] : null;
+			$picked = self::pickBetterDualResult($r1, $r2, $format);
+			if ($picked === null) {
+				continue;
+			}
+			$better = $picked['better'];
+			if ($requireValidBest) {
+				$best = is_array($better) ? $better['best'] : $better->best;
+				if ($best <= 0) {
+					continue;
+				}
+			}
+			$combined[] = array(
+				'key'=>$key,
+				'r1'=>$r1,
+				'r2'=>$r2,
+				'better'=>$better,
+				'betterRound'=>$picked['betterRound'],
+			);
+		}
+		usort($combined, function($a, $b) use ($format, $tieBreaker) {
+			$temp = self::compareResults(
+				self::resultForCompare($a['better']),
+				self::resultForCompare($b['better']),
+				$format
+			);
+			if ($temp != 0) {
+				return $temp;
+			}
+			return $tieBreaker($a, $b);
+		});
+		return $combined;
+	}
+
+	public static function tieBreakByNumberKey($a, $b) {
+		return $a['key'] - $b['key'];
+	}
+
+	public static function tieBreakByCompetitorKey($a, $b) {
+		return strcmp($a['key'], $b['key']);
+	}
+
+	private static function resultForCompare($result) {
+		if (is_array($result)) {
+			return (object) array(
+				'best'=>(int) $result['best'],
+				'average'=>(int) $result['average'],
+			);
+		}
+		return $result;
+	}
+
 	public function getCalculatedPos() {
 		if ($this->best == 0) {
 			return '-';

@@ -77,10 +77,6 @@ class Competitions extends ActiveRecord {
 			'condition'=>'best > 0',
 			'order'=>'event.`rank`, round.`rank`, t.pos'
 		));
-		$events = array();
-		foreach ($winners as $result) {
-			$events[$result->event_id] = $result->event_id;
-		}
 		$top3 = Results::model()->with(array(
 			'person',
 			'person.country',
@@ -173,6 +169,15 @@ class Competitions extends ActiveRecord {
 		), array(
 			'order'=>'event.`rank`, round.`rank`, t.group_id, t.is_extra, t.scramble_num',
 		));
+		list($resultsByEvent, $roundRanksByEvent) = $this->indexResultsByEvent($all);
+		$dualEvents = $this->getDualEventRoundTypes($id, $roundRanksByEvent);
+		if ($dualEvents !== array()) {
+			$this->applyDualRoundPodiums($winners, $top3, $resultsByEvent, $dualEvents);
+		}
+		$events = array();
+		foreach ($winners as $result) {
+			$events[$result->event_id] = $result->event_id;
+		}
 		return array(
 			'winners'=>$winners,
 			'top3'=>$top3,
@@ -443,6 +448,128 @@ class Competitions extends ActiveRecord {
 				'defaultOrder'=>'t.year DESC, t.month DESC, t.day DESC, t.end_month DESC, t.end_day DESC',
 			),
 		));
+	}
+
+	private function indexResultsByEvent($all) {
+		$resultsByEvent = array();
+		$roundRanksByEvent = array();
+		foreach ($all as $result) {
+			if ($result->round === null) {
+				continue;
+			}
+			$eventId = $result->event_id;
+			$resultsByEvent[$eventId][] = $result;
+			$roundRanksByEvent[$eventId][$result->round_type_id] = $result->round->rank;
+		}
+		return array($resultsByEvent, $roundRanksByEvent);
+	}
+
+	private function getDualEventRoundTypes($wcaCompetitionId, $roundRanksByEvent) {
+		$competition = $this->c;
+		if ($competition === null) {
+			$competition = Competition::model()->findByAttributes(array(
+				'wca_competition_id'=>$wcaCompetitionId,
+				'status'=>Competition::STATUS_SHOW,
+			));
+		}
+		if ($competition === null) {
+			return array();
+		}
+		$dualEvents = array();
+		foreach (CompetitionEvent::model()->findAllByAttributes(array(
+			'competition_id'=>$competition->id,
+			'dual'=>1,
+		)) as $competitionEvent) {
+			$eventId = $competitionEvent->event;
+			if (!isset($roundRanksByEvent[$eventId])) {
+				continue;
+			}
+			$roundTypes = $this->resolveDualRoundTypes($roundRanksByEvent[$eventId]);
+			if ($roundTypes === null) {
+				continue;
+			}
+			if (!LiveResult::isWcaCombinedDualPodium($roundRanksByEvent[$eventId], $roundTypes[1])) {
+				continue;
+			}
+			$dualEvents[$eventId] = $roundTypes;
+		}
+		return $dualEvents;
+	}
+
+	private function resolveDualRoundTypes($roundRanks) {
+		if (count($roundRanks) < 2) {
+			return null;
+		}
+		$sortedRanks = $roundRanks;
+		asort($sortedRanks);
+		$roundTypes = array_map('strval', array_keys($sortedRanks));
+		return array($roundTypes[0], $roundTypes[1]);
+	}
+
+	private function buildCombinedDualResults($eventResults, $round1, $round2) {
+		$byPerson = array();
+		$format = null;
+		foreach ($eventResults as $result) {
+			if ($result->round_type_id === $round1) {
+				$byPerson[$result->person_id]['r1'] = $result;
+				if ($format === null) {
+					$format = $result->format_id;
+				}
+			} elseif ($result->round_type_id === $round2) {
+				$byPerson[$result->person_id]['r2'] = $result;
+				if ($format === null) {
+					$format = $result->format_id;
+				}
+			}
+		}
+		if ($format === null) {
+			return array(array(), null);
+		}
+		$ranked = LiveResult::rankCombinedPairs($byPerson, $format, array('LiveResult', 'tieBreakByCompetitorKey'));
+		return array(array_column($ranked, 'better'), $format);
+	}
+
+	private function applyDualRoundPodiums(&$winners, &$top3, $resultsByEvent, $dualEvents) {
+		$dualEventIds = array_flip(array_keys($dualEvents));
+		$winners = array_values(array_filter($winners, function($result) use ($dualEventIds) {
+			return !isset($dualEventIds[$result->event_id]);
+		}));
+		$top3 = array_values(array_filter($top3, function($result) use ($dualEventIds) {
+			return !isset($dualEventIds[$result->event_id]);
+		}));
+		foreach ($dualEvents as $eventId=>$roundTypes) {
+			list($round1, $round2) = $roundTypes;
+			$eventResults = isset($resultsByEvent[$eventId]) ? $resultsByEvent[$eventId] : array();
+			list($combined, $format) = $this->buildCombinedDualResults($eventResults, $round1, $round2);
+			if ($combined === array()) {
+				continue;
+			}
+			LiveResult::assignPositions($combined, $format);
+			foreach ($combined as $result) {
+				if ($result->pos > 3) {
+					continue;
+				}
+				$podiumResult = clone $result;
+				if ($result->pos === 1) {
+					$winners[] = $podiumResult;
+				}
+				$top3[] = $podiumResult;
+			}
+		}
+		usort($winners, function($resultA, $resultB) {
+			$temp = $resultA->event->rank <=> $resultB->event->rank;
+			if ($temp === 0) {
+				$temp = $resultB->round->rank <=> $resultA->round->rank;
+			}
+			return $temp;
+		});
+		usort($top3, function($resultA, $resultB) {
+			$temp = $resultA->event->rank <=> $resultB->event->rank;
+			if ($temp === 0) {
+				$temp = $resultA->pos <=> $resultB->pos;
+			}
+			return $temp;
+		});
 	}
 
 	/**
