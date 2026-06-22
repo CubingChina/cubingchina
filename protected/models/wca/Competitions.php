@@ -37,12 +37,12 @@ class Competitions extends ActiveRecord {
 
 	public static function getResultsTypes() {
 		return array(
-			'winners'=>Yii::t('competitions', 'Winners'),
-			'top3'=>Yii::t('competitions', 'Top 3'),
-			'all'=>Yii::t('competitions', 'All Results'),
-			'byPerson'=>Yii::t('competitions', 'By Person'),
+			'winners'=>Yii::t('Competitions', 'Winners'),
+			'top3'=>Yii::t('Competitions', 'Top 3'),
+			'all'=>Yii::t('Competitions', 'All Results'),
+			'byPerson'=>Yii::t('Competitions', 'By Person'),
 			'records'=>Yii::t('common', 'Records'),
-			'scrambles'=>Yii::t('competitions', 'Scrambles'),
+			'scrambles'=>Yii::t('Competitions', 'Scrambles'),
 		);
 	}
 
@@ -327,27 +327,27 @@ class Competitions extends ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return array(
-			'id' => Yii::t('competitions', 'ID'),
-			'name' => Yii::t('competitions', 'Name'),
-			'city_name' => Yii::t('competitions', 'City Name'),
-			'country_id' => Yii::t('competitions', 'Country'),
-			'information' => Yii::t('competitions', 'Information'),
-			'year' => Yii::t('competitions', 'Year'),
-			'month' => Yii::t('competitions', 'Month'),
-			'day' => Yii::t('competitions', 'Day'),
-			'end_year' => Yii::t('competitions', 'End Year'),
-			'end_month' => Yii::t('competitions', 'End Month'),
-			'end_day' => Yii::t('competitions', 'End Day'),
-			'event_specs' => Yii::t('competitions', 'Event Specs'),
-			'delegates' => Yii::t('competitions', 'Wca Delegate'),
-			'organizers' => Yii::t('competitions', 'Organiser'),
-			'venue' => Yii::t('competitions', 'Venue'),
-			'venue_address' => Yii::t('competitions', 'Venue Address'),
-			'venue_details' => Yii::t('competitions', 'Venue Details'),
-			'external_website' => Yii::t('competitions', 'Website'),
-			'cell_name' => Yii::t('competitions', 'Cell Name'),
-			'latitude_microdegrees' => Yii::t('competitions', 'Latitude'),
-			'longitude_microdegrees' => Yii::t('competitions', 'Longitude'),
+			'id' => Yii::t('Competitions', 'ID'),
+			'name' => Yii::t('Competitions', 'Name'),
+			'city_name' => Yii::t('Competitions', 'City Name'),
+			'country_id' => Yii::t('Competitions', 'Country'),
+			'information' => Yii::t('Competitions', 'Information'),
+			'year' => Yii::t('Competitions', 'Year'),
+			'month' => Yii::t('Competitions', 'Month'),
+			'day' => Yii::t('Competitions', 'Day'),
+			'end_year' => Yii::t('Competitions', 'End Year'),
+			'end_month' => Yii::t('Competitions', 'End Month'),
+			'end_day' => Yii::t('Competitions', 'End Day'),
+			'event_specs' => Yii::t('Competitions', 'Event Specs'),
+			'delegates' => Yii::t('Competitions', 'Wca Delegate'),
+			'organizers' => Yii::t('Competitions', 'Organiser'),
+			'venue' => Yii::t('Competitions', 'Venue'),
+			'venue_address' => Yii::t('Competitions', 'Venue Address'),
+			'venue_details' => Yii::t('Competitions', 'Venue Details'),
+			'external_website' => Yii::t('Competitions', 'Website'),
+			'cell_name' => Yii::t('Competitions', 'Cell Name'),
+			'latitude_microdegrees' => Yii::t('Competitions', 'Latitude'),
+			'longitude_microdegrees' => Yii::t('Competitions', 'Longitude'),
 		);
 	}
 
