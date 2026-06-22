@@ -421,11 +421,11 @@ class Competition extends ActiveRecord {
 
 	public static function getExplanationLabels() {
 		return array(
-			self::EXPLANATION_OTHER=>Yii::t('competition', 'Other'),
-			self::EXPLANATION_TRIAL=>Yii::t('competition', 'Trial competition'),
-			self::EXPLANATION_NEWER=>Yii::t('competition', 'Competition with new organizers'),
-			self::EXPLANATION_LARGE=>Yii::t('competition', 'Large-scale competition'),
-			self::EXPLANATION_RUNNER=>Yii::t('competition', 'Runner competition'),
+			self::EXPLANATION_OTHER=>Yii::t('Competition', 'Other'),
+			self::EXPLANATION_TRIAL=>Yii::t('Competition', 'Trial competition'),
+			self::EXPLANATION_NEWER=>Yii::t('Competition', 'Competition with new organizers'),
+			self::EXPLANATION_LARGE=>Yii::t('Competition', 'Large-scale competition'),
+			self::EXPLANATION_RUNNER=>Yii::t('Competition', 'Runner competition'),
 		);
 	}
 
