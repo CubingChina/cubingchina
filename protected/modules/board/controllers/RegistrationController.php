@@ -47,6 +47,7 @@ class RegistrationController extends AdminController {
 					'index',
 					'cancel',
 					'exportLiveData',
+					'exportLiveWcif',
 					'export',
 					'scoreCard',
 					'previewNotice',
@@ -136,6 +137,19 @@ class RegistrationController extends AdminController {
 			'model'=>$model,
 			'competition'=>$model,
 		));
+	}
+
+	public function actionExportLiveWcif() {
+		$id = $this->iGet('id');
+		$model = Competition::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		if ($this->user->isOrganizer() && !isset($model->organizers[$this->user->id]) && !Yii::app()->user->checkPermission('caqa')) {
+			Yii::app()->user->setFlash('danger', '权限不足！');
+			$this->redirect(array('/board/registration/index'));
+		}
+		$this->exportLiveWcif($model);
 	}
 
 	public function actionLiveScoreCard() {
@@ -546,6 +560,259 @@ class RegistrationController extends AdminController {
 			}
 		}
 		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx, true);
+	}
+
+	public function exportLiveWcif($competition) {
+		$liveResults = LiveResult::model()->with(array('user', 'eventRound'))->findAllByAttributes(array(
+			'competition_id'=>$competition->id,
+		), array(
+			'condition'=>'best != 0',
+		));
+		$persons = array();
+		$events = array();
+		foreach ($liveResults as $liveResult) {
+			$user = $liveResult->user;
+			$key = $liveResult->user_type . '_' . $user->id;
+			if (!isset($persons[$key])) {
+				$persons[$key] = array(
+					'registrantId'=>(int)$liveResult->number,
+					'name'=>$user->getCompetitionName(),
+					'wcaUserId'=>(int)$user->id,
+					'wcaId'=>$user->wcaid ?: null,
+					'countryIso2'=>$this->getUserCountryIso2($user),
+					'gender'=>$user->getWcaGender(),
+					'birthdate'=>$user->birthday ? date('Y-m-d', $user->birthday) : null,
+					'email'=>$user->email,
+					'avatar'=>null,
+					'roles'=>array(),
+					'registration'=>array(
+						'wcaRegistrationId'=>(int)$liveResult->number,
+						'eventIds'=>array(),
+						'status'=>'accepted',
+						'guests'=>0,
+						'comments'=>'',
+						'administrativeNotes'=>'',
+						'isCompeting'=>true,
+					),
+					'assignments'=>array(),
+					'personalBests'=>array(),
+					'extensions'=>array(),
+				);
+			}
+			$persons[$key]['registration']['eventIds'][$liveResult->event] = $liveResult->event;
+			if (!isset($events[$liveResult->event])) {
+				$events[$liveResult->event] = array(
+					'event'=>$liveResult->wcaEvent,
+					'rounds'=>array(),
+				);
+			}
+			if (!isset($events[$liveResult->event]['rounds'][$liveResult->round])) {
+				$events[$liveResult->event]['rounds'][$liveResult->round] = array(
+					'round'=>$liveResult->wcaRound,
+					'eventRound'=>$liveResult->eventRound,
+					'results'=>array(),
+				);
+			}
+			$events[$liveResult->event]['rounds'][$liveResult->round]['results'][] = $liveResult;
+		}
+		usort($persons, function($personA, $personB) {
+			return $personA['registrantId'] - $personB['registrantId'];
+		});
+		foreach ($persons as &$person) {
+			$person['registration']['eventIds'] = array_values($person['registration']['eventIds']);
+			sort($person['registration']['eventIds']);
+		}
+		unset($person);
+		uasort($events, function($eventA, $eventB) {
+			if ($eventA['event'] && $eventB['event']) {
+				return $eventA['event']->rank - $eventB['event']->rank;
+			}
+			if ($eventA['event'] && !$eventB['event']) {
+				return -1;
+			}
+			if (!$eventA['event'] && $eventB['event']) {
+				return 1;
+			}
+			return 0;
+		});
+		$scrambleSetCounts = $this->getWcaScrambleSetCounts($competition);
+		$wcifEvents = array();
+		foreach ($events as $eventId=>$event) {
+			uasort($event['rounds'], function($roundA, $roundB) {
+				if ($roundA['round'] && $roundB['round']) {
+					return $roundA['round']->rank - $roundB['round']->rank;
+				}
+				if ($roundA['round'] && !$roundB['round']) {
+					return -1;
+				}
+				if (!$roundA['round'] && $roundB['round']) {
+					return 1;
+				}
+				return 0;
+			});
+			$wcifRounds = array();
+			$roundNumber = 1;
+			foreach ($event['rounds'] as $round) {
+				$eventRound = $round['eventRound'];
+				$roundId = "{$eventId}-r{$roundNumber}";
+				$wcifRounds[] = array(
+					'id'=>$roundId,
+					'format'=>$eventRound ? $eventRound->format : 'a',
+					'timeLimit'=>$this->getLiveWcifTimeLimit($eventId, $eventRound),
+					'cutoff'=>$this->getLiveWcifCutoff($eventId, $eventRound),
+					'advancementCondition'=>null,
+					'results'=>$this->getLiveWcifResults($round['results']),
+					'scrambleSetCount'=>isset($scrambleSetCounts[$roundId]) ? $scrambleSetCounts[$roundId] : 1,
+					'scrambleSets'=>array(),
+					'extensions'=>array(),
+				);
+				$roundNumber++;
+			}
+			$wcifEvents[] = array(
+				'id'=>"$eventId",
+				'rounds'=>$wcifRounds,
+				'competitorLimit'=>null,
+				'qualification'=>null,
+				'extensions'=>array(),
+			);
+		}
+		$wcif = array(
+			'formatVersion'=>'1.1',
+			'id'=>$competition->wca_competition_id ?: (string)$competition->id,
+			'name'=>$competition->name,
+			'shortName'=>$competition->name_zh ?: $competition->name,
+			'series'=>null,
+			'persons'=>$persons,
+			'events'=>$wcifEvents,
+			'schedule'=>array(
+				'startDate'=>date('Y-m-d', $competition->date),
+				'numberOfDays'=>(int)$competition->days,
+				'venues'=>array(),
+			),
+			'registrationInfo'=>array(
+				'openTime'=>$this->formatWcifDateTime($competition->reg_start),
+				'closeTime'=>$this->formatWcifDateTime($competition->reg_end),
+				'baseEntryFee'=>(int)$competition->entry_fee,
+				'currencyCode'=>'CNY',
+				'onTheSpotRegistration'=>false,
+				'useWcaRegistration'=>false,
+			),
+			'competitorLimit'=>$competition->person_num > 0 ? (int)$competition->person_num : null,
+			'extensions'=>array(),
+		);
+		$this->exportJson($wcif, $competition->name . '-live-wcif');
+	}
+
+	private function getLiveWcifResults($results) {
+		usort($results, function($resultA, $resultB) {
+			$temp = LiveResult::compareResults($resultA, $resultB, $resultA->eventRound ? $resultA->eventRound->format : 'a');
+			if ($temp == 0) {
+				$temp = $resultA->number - $resultB->number;
+			}
+			return $temp;
+		});
+		$wcifResults = array();
+		$previous = null;
+		$ranking = 0;
+		foreach ($results as $index=>$result) {
+			if ($previous === null || LiveResult::compareResults($previous, $result, $result->eventRound ? $result->eventRound->format : 'a') != 0) {
+				$ranking = $index + 1;
+			}
+			$wcifResults[] = array(
+				'personId'=>(int)$result->number,
+				'ranking'=>$ranking,
+				'attempts'=>$this->getLiveWcifAttempts($result),
+				'best'=>(int)$result->best,
+				'average'=>(int)$result->average,
+			);
+			$previous = $result;
+		}
+		return $wcifResults;
+	}
+
+	private function getWcaScrambleSetCounts($competition) {
+		if ($competition->wca_competition_id == '') {
+			return array();
+		}
+		$url = 'https://www.worldcubeassociation.org/api/v0/competitions/' . rawurlencode($competition->wca_competition_id) . '/wcif/public';
+		$context = stream_context_create(array(
+			'http'=>array(
+				'timeout'=>5,
+				'ignore_errors'=>true,
+			),
+		));
+		$response = @file_get_contents($url, false, $context);
+		if ($response === false) {
+			return array();
+		}
+		$wcif = json_decode($response, true);
+		if (!is_array($wcif) || !isset($wcif['events']) || !is_array($wcif['events'])) {
+			return array();
+		}
+		$counts = array();
+		foreach ($wcif['events'] as $event) {
+			if (!isset($event['rounds']) || !is_array($event['rounds'])) {
+				continue;
+			}
+			foreach ($event['rounds'] as $round) {
+				if (isset($round['id'], $round['scrambleSetCount'])) {
+					$counts[$round['id']] = (int)$round['scrambleSetCount'];
+				}
+			}
+		}
+		return $counts;
+	}
+
+	private function getLiveWcifAttempts($result) {
+		$attempts = array();
+		$num = Formats::getFormatNum($result->eventRound ? $result->eventRound->format : $result->format);
+		for ($i = 1; $i <= $num; $i++) {
+			$attempts[] = array(
+				'result'=>(int)$result->{'value' . $i},
+				'reconstruction'=>null,
+			);
+		}
+		return $attempts;
+	}
+
+	private function getLiveWcifTimeLimit($eventId, $eventRound) {
+		if ($eventRound === null || in_array($eventId, array('333fm', '333mbf')) || $eventRound->time_limit <= 0) {
+			return null;
+		}
+		return array(
+			'centiseconds'=>(int)$eventRound->time_limit * 100,
+			'cumulativeRoundIds'=>array(),
+		);
+	}
+
+	private function getLiveWcifCutoff($eventId, $eventRound) {
+		if ($eventRound === null || $eventRound->cut_off <= 0) {
+			return null;
+		}
+		return array(
+			'numberOfAttempts'=>$eventRound->format == 'm' ? 1 : 2,
+			'attemptResult'=>$eventId === '333fm' ? (int)$eventRound->cut_off : (int)$eventRound->cut_off * 100,
+		);
+	}
+
+	private function getUserCountryIso2($user) {
+		if ($user->country && $user->country->wcaCountry && $user->country->wcaCountry->iso2) {
+			return $user->country->wcaCountry->iso2;
+		}
+		return 'CN';
+	}
+
+	private function formatWcifDateTime($time) {
+		return $time > 0 ? date('Y-m-d\TH:i:s+08:00', $time) : null;
+	}
+
+	private function exportJson($data, $filename) {
+		$this->setIsAjaxRequest(true);
+		$filename = preg_replace('/[^\w.-]+/', '_', $filename);
+		header('Content-Type: application/json; charset=UTF-8');
+		header('Content-Disposition: attachment;filename="' . $filename . '.json"');
+		echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+		exit;
 	}
 
 	public function exportLiveScoreCard($competition, $event, $round) {

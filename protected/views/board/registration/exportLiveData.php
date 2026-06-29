@@ -8,7 +8,7 @@
     <div class="portlet portlet-default">
       <div class="portlet-heading">
         <div class="portlet-title">
-          <h4>导出直播成绩到EXCEL</h4>
+          <h4>导出直播成绩</h4>
         </div>
         <div class="clearfix"></div>
       </div>
@@ -32,6 +32,7 @@
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
               <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
+              <?php echo CHtml::link('导出WCIF', array('/board/registration/exportLiveWcif', 'id'=>$competition->id), array('class'=>'btn btn-default btn-square')); ?>
             </div>
           </div>
           <?php $this->endWidget(); ?>

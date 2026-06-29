@@ -107,6 +107,11 @@
               <input type="hidden" value="1" name="xlsx">
               <button type="submit" class="btn btn-theme" @click="checkRounds"><?php echo Yii::t('live', 'Export'); ?></button>
               <?php $this->endWidget(); ?>
+              <?php echo CHtml::link('Export WCIF', array('/board/registration/exportLiveWcif', 'id'=>$competition->id), array(
+                'class'=>'btn btn-theme',
+                'v-if'=>'hasPermission',
+                '@click'=>'checkRounds',
+              )); ?>
             </div>
             <div class="modal-footer">
               <button data-dismiss="modal" class="btn btn-default" type="button"><?php echo Yii::t('common', 'Close'); ?></button>
