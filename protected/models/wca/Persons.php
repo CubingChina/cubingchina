@@ -260,6 +260,18 @@ class Persons extends ActiveRecord {
 		$personalBestResults[$year][$eventId]['best'] = $lastBest;
 		$personalBestResults[$year][$eventId]['average'] = $lastAverage;
 		krsort($personalBestResults);
+		//dual round 比赛的奖牌按 dual 合并后的排名修正（WCA Reg 9v4）
+		$dualMedalAdjustments = self::getDualMedalAdjustments($id, $results);
+		foreach ($dualMedalAdjustments as $eventId=>$delta) {
+			if (isset($personRanks[$eventId]) && isset($personRanks[$eventId]->medals)) {
+				$personRanks[$eventId]->medals['gold'] += $delta['gold'];
+				$personRanks[$eventId]->medals['silver'] += $delta['silver'];
+				$personRanks[$eventId]->medals['bronze'] += $delta['bronze'];
+			}
+			$overAllMedals['gold'] += $delta['gold'];
+			$overAllMedals['silver'] += $delta['silver'];
+			$overAllMedals['bronze'] += $delta['bronze'];
+		}
 		$podiums = Results::getChampionshipPodiums($id);
 		//WR们
 		$historyWR = Results::model()->with(array(
@@ -504,6 +516,146 @@ class Persons extends ActiveRecord {
 			'seenCubers'=>array_values($seenCubers),
 			'visitedProvinces'=>array_values($visitedProvinces),
 		);
+	}
+
+	/**
+	 * Compute per-event medal deltas for dual-round competitions: the c/f round
+	 * (second dual round) pos is replaced by the combined dual ranking pos so
+	 * medal counts follow WCA Reg 9v4.
+	 * @return array event_id => {gold,silver,bronze} deltas for the given person
+	 */
+	private static function getDualMedalAdjustments($personId, $personResults) {
+		$personRounds = array();
+		$competitionIds = array();
+		foreach ($personResults as $result) {
+			$compId = $result->competition_id;
+			$eventId = $result->event_id;
+			$personRounds[$compId][$eventId][$result->round_type_id] = $result;
+			$competitionIds[$compId] = true;
+		}
+		$dualEventKeys = self::getDualEventKeys(array_keys($competitionIds));
+		if ($dualEventKeys === array()) {
+			return array();
+		}
+		$adjustments = array();
+		foreach ($dualEventKeys as $compId=>$events) {
+			foreach (array_keys($events) as $eventId) {
+				if (!isset($personRounds[$compId][$eventId])) {
+					continue;
+				}
+				$roundRanks = self::getRoundRanks($compId, $eventId);
+				$roundTypes = LiveResult::resolveDualRoundTypes($roundRanks);
+				if ($roundTypes === null) {
+					continue;
+				}
+				list($round1, $round2) = $roundTypes;
+				if (!LiveResult::isWcaCombinedDualPodium($roundRanks, $round2)) {
+					continue;
+				}
+				$combinedPos = self::getCombinedDualPos($compId, $eventId, $round1, $round2, $personId);
+				$cfResults = array();
+				foreach ($personRounds[$compId][$eventId] as $rtId=>$result) {
+					if ($rtId === 'c' || $rtId === 'f') {
+						$cfResults[] = $result;
+					}
+				}
+				$delta = self::computeMedalDelta($combinedPos, $cfResults);
+				if ($delta['gold'] === 0 && $delta['silver'] === 0 && $delta['bronze'] === 0) {
+					continue;
+				}
+				if (!isset($adjustments[$eventId])) {
+					$adjustments[$eventId] = array('gold'=>0, 'silver'=>0, 'bronze'=>0);
+				}
+				$adjustments[$eventId]['gold'] += $delta['gold'];
+				$adjustments[$eventId]['silver'] += $delta['silver'];
+				$adjustments[$eventId]['bronze'] += $delta['bronze'];
+			}
+		}
+		return $adjustments;
+	}
+
+	private static function getDualEventKeys($wcaCompetitionIds) {
+		if ($wcaCompetitionIds === array()) {
+			return array();
+		}
+		$competitions = Competition::model()->findAllByAttributes(array(
+			'wca_competition_id'=>$wcaCompetitionIds,
+			'status'=>Competition::STATUS_SHOW,
+		));
+		$dualEventKeys = array();
+		foreach ($competitions as $competition) {
+			$dualEvents = CompetitionEvent::model()->findAllByAttributes(array(
+				'competition_id'=>$competition->id,
+				'dual'=>1,
+			));
+			if ($dualEvents === array()) {
+				continue;
+			}
+			$compId = $competition->wca_competition_id;
+			foreach ($dualEvents as $competitionEvent) {
+				$dualEventKeys[$compId][$competitionEvent->event] = true;
+			}
+		}
+		return $dualEventKeys;
+	}
+
+	private static function getRoundRanks($competitionId, $eventId) {
+		$roundRanks = array();
+		$rows = Yii::app()->wcaDb->createCommand()
+			->select('r.round_type_id, MAX(rt.rank) AS rank')
+			->from('results r')
+			->leftJoin('round_types rt', 'r.round_type_id=rt.id')
+			->where('r.competition_id=:cid AND r.event_id=:eid', array(
+				':cid'=>$competitionId,
+				':eid'=>$eventId,
+			))
+			->group('r.round_type_id')
+			->queryAll();
+		foreach ($rows as $row) {
+			$roundRanks[$row['round_type_id']] = (int) $row['rank'];
+		}
+		return $roundRanks;
+	}
+
+	private static function getCombinedDualPos($competitionId, $eventId, $round1, $round2, $personId) {
+		$results = Results::model()->findAllByAttributes(array(
+			'competition_id'=>$competitionId,
+			'event_id'=>$eventId,
+			'round_type_id'=>array($round1, $round2),
+		), array(
+			'condition'=>'best>0',
+		));
+		if ($results === array()) {
+			return 0;
+		}
+		list($combined, $format) = LiveResult::buildCombinedDualResults($results, $round1, $round2);
+		if ($combined === array() || $format === null) {
+			return 0;
+		}
+		LiveResult::assignPositions($combined, $format);
+		foreach ($combined as $result) {
+			if ($result->person_id === $personId) {
+				return (int) $result->pos;
+			}
+		}
+		return 0;
+	}
+
+	private static function computeMedalDelta($combinedPos, $cfResults) {
+		$delta = array('gold'=>0, 'silver'=>0, 'bronze'=>0);
+		if ($combinedPos >= 1 && $combinedPos <= 3) {
+			$key = $combinedPos === 1 ? 'gold' : ($combinedPos === 2 ? 'silver' : 'bronze');
+			$delta[$key]++;
+		}
+		foreach ($cfResults as $result) {
+			$pos = (int) $result->pos;
+			$best = (int) $result->best;
+			if ($pos >= 1 && $pos <= 3 && $best > 0) {
+				$key = $pos === 1 ? 'gold' : ($pos === 2 ? 'silver' : 'bronze');
+				$delta[$key]--;
+			}
+		}
+		return $delta;
 	}
 
 	public function getCompetitionNum() {

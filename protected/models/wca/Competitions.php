@@ -484,7 +484,7 @@ class Competitions extends ActiveRecord {
 			if (!isset($roundRanksByEvent[$eventId])) {
 				continue;
 			}
-			$roundTypes = $this->resolveDualRoundTypes($roundRanksByEvent[$eventId]);
+			$roundTypes = LiveResult::resolveDualRoundTypes($roundRanksByEvent[$eventId]);
 			if ($roundTypes === null) {
 				continue;
 			}
@@ -494,39 +494,6 @@ class Competitions extends ActiveRecord {
 			$dualEvents[$eventId] = $roundTypes;
 		}
 		return $dualEvents;
-	}
-
-	private function resolveDualRoundTypes($roundRanks) {
-		if (count($roundRanks) < 2) {
-			return null;
-		}
-		$sortedRanks = $roundRanks;
-		asort($sortedRanks);
-		$roundTypes = array_map('strval', array_keys($sortedRanks));
-		return array($roundTypes[0], $roundTypes[1]);
-	}
-
-	private function buildCombinedDualResults($eventResults, $round1, $round2) {
-		$byPerson = array();
-		$format = null;
-		foreach ($eventResults as $result) {
-			if ($result->round_type_id === $round1) {
-				$byPerson[$result->person_id]['r1'] = $result;
-				if ($format === null) {
-					$format = $result->format_id;
-				}
-			} elseif ($result->round_type_id === $round2) {
-				$byPerson[$result->person_id]['r2'] = $result;
-				if ($format === null) {
-					$format = $result->format_id;
-				}
-			}
-		}
-		if ($format === null) {
-			return array(array(), null);
-		}
-		$ranked = LiveResult::rankCombinedPairs($byPerson, $format, array('LiveResult', 'tieBreakByCompetitorKey'));
-		return array(array_column($ranked, 'better'), $format);
 	}
 
 	private function applyDualRoundPodiums(&$winners, &$top3, $resultsByEvent, $dualEvents) {
@@ -540,7 +507,7 @@ class Competitions extends ActiveRecord {
 		foreach ($dualEvents as $eventId=>$roundTypes) {
 			list($round1, $round2) = $roundTypes;
 			$eventResults = isset($resultsByEvent[$eventId]) ? $resultsByEvent[$eventId] : array();
-			list($combined, $format) = $this->buildCombinedDualResults($eventResults, $round1, $round2);
+			list($combined, $format) = LiveResult::buildCombinedDualResults($eventResults, $round1, $round2);
 			if ($combined === array()) {
 				continue;
 			}
