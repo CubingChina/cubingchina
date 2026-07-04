@@ -291,6 +291,49 @@ class LiveResult extends ActiveRecord {
 		return strcmp($a['key'], $b['key']);
 	}
 
+	/**
+	 * Pick the two lowest-rank round type ids from a roundTypeId => rank map.
+	 * @return array{0:string,1:string}|null null when fewer than two rounds
+	 */
+	public static function resolveDualRoundTypes($roundRanks) {
+		if (count($roundRanks) < 2) {
+			return null;
+		}
+		$sortedRanks = $roundRanks;
+		asort($sortedRanks);
+		$roundTypes = array_map('strval', array_keys($sortedRanks));
+		return array($roundTypes[0], $roundTypes[1]);
+	}
+
+	/**
+	 * Pair dual-round results by competitor, pick the better of each pair
+	 * (WCA Reg 9v4), and sort best to worst.
+	 * @param array $eventResults results with round_type_id, person_id, format_id
+	 * @return array{0:array,1:string|null} list of better results and the format id
+	 */
+	public static function buildCombinedDualResults($eventResults, $round1, $round2) {
+		$byPerson = array();
+		$format = null;
+		foreach ($eventResults as $result) {
+			if ($result->round_type_id === $round1) {
+				$byPerson[$result->person_id]['r1'] = $result;
+				if ($format === null) {
+					$format = $result->format_id;
+				}
+			} elseif ($result->round_type_id === $round2) {
+				$byPerson[$result->person_id]['r2'] = $result;
+				if ($format === null) {
+					$format = $result->format_id;
+				}
+			}
+		}
+		if ($format === null) {
+			return array(array(), null);
+		}
+		$ranked = self::rankCombinedPairs($byPerson, $format, array('LiveResult', 'tieBreakByCompetitorKey'));
+		return array(array_column($ranked, 'better'), $format);
+	}
+
 	private static function resultForCompare($result) {
 		if (is_array($result)) {
 			return (object) array(
