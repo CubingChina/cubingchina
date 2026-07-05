@@ -151,8 +151,8 @@ class Persons extends ActiveRecord {
 			// $sumOfRank->getRanks();
 		}
 		//奖牌数量
-		$command = $db->createCommand();
-		$command->select(array(
+		$command = $db->createCommand()
+		->select(array(
 			'event_id',
 			'sum(CASE WHEN pos=1 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
 			'sum(CASE WHEN pos=2 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
@@ -165,8 +165,20 @@ class Persons extends ActiveRecord {
 			':person_id'=>$id,
 		));
 		$command2 = clone $command;
-		$overAllMedals = $command->queryRow();
 		$command2->group('event_id');
+		$overAllMedals = $db->createCommand()
+		->select(array(
+			'sum(CASE WHEN pos=1 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS gold',
+			'sum(CASE WHEN pos=2 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS silver',
+			'sum(CASE WHEN pos=3 AND round_type_id IN ("c", "f") AND best>0 THEN 1 ELSE 0 END) AS bronze',
+			'sum(solve) AS solve',
+			'sum(attempt) AS attempt',
+		))
+		->from('results')
+		->where('person_id=:person_id', array(
+			':person_id'=>$id,
+		))
+		->queryRow();
 		foreach ($command2->queryAll() as $row) {
 			if (isset($personRanks[$row['event_id']])) {
 				$personRanks[$row['event_id']]->medals = $row;
@@ -407,7 +419,7 @@ class Persons extends ActiveRecord {
 		))
 		->from('results')
 		->where(array('in', 'competition_id', $competitionIds))
-		->group('person_id')
+		->group('person_id, person_name')
 		->having('count>1')
 		->order('count ASC, person_name DESC')
 		// ->limit(21)
