@@ -568,9 +568,13 @@ class RegistrationController extends AdminController {
 		), array(
 			'condition'=>'best != 0',
 		));
+		$wcaEvents = Events::getNormalEvents();
 		$persons = array();
 		$events = array();
 		foreach ($liveResults as $liveResult) {
+			if (!isset($wcaEvents[$liveResult->event])) {
+				continue;
+			}
 			$user = $liveResult->user;
 			$key = $liveResult->user_type . '_' . $user->id;
 			if (!isset($persons[$key])) {
@@ -723,11 +727,18 @@ class RegistrationController extends AdminController {
 				'ranking'=>$ranking,
 				'attempts'=>$this->getLiveWcifAttempts($result),
 				'best'=>(int)$result->best,
-				'average'=>(int)$result->average,
+				'average'=>$this->getLiveWcifAverage($result),
 			);
 			$previous = $result;
 		}
 		return $wcifResults;
+	}
+
+	private function getLiveWcifAverage($result) {
+		if (in_array($result->event, array('333bf', '444bf', '555bf')) && $result->average == 0) {
+			return -1;
+		}
+		return (int)$result->average;
 	}
 
 	private function getWcaScrambleSetCounts($competition) {

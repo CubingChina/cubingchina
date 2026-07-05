@@ -614,7 +614,7 @@ class Persons extends ActiveRecord {
 	private static function getRoundRanks($competitionId, $eventId) {
 		$roundRanks = array();
 		$rows = Yii::app()->wcaDb->createCommand()
-			->select('r.round_type_id, MAX(rt.rank) AS rank')
+			->select('r.round_type_id, MAX(rt.`rank`) AS `rank`')
 			->from('results r')
 			->leftJoin('round_types rt', 'r.round_type_id=rt.id')
 			->where('r.competition_id=:cid AND r.event_id=:eid', array(
