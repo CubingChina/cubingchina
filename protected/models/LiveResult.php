@@ -331,7 +331,13 @@ class LiveResult extends ActiveRecord {
 			return array(array(), null);
 		}
 		$ranked = self::rankCombinedPairs($byPerson, $format, array('LiveResult', 'tieBreakByCompetitorKey'));
-		return array(array_column($ranked, 'better'), $format);
+		// Clone objects so assignPositions cannot overwrite per-round pos on shared Results.
+		$betters = array();
+		foreach ($ranked as $row) {
+			$better = $row['better'];
+			$betters[] = is_object($better) ? clone $better : $better;
+		}
+		return array($betters, $format);
 	}
 
 	private static function resultForCompare($result) {

@@ -463,7 +463,8 @@ class Competition extends ActiveRecord {
 			'order'=>'date DESC',
 			'select'=>'date',
 		));
-		for ($year = intval(date('Y', $lastCompetition->date)); $year >= 2006; $year--) {
+		$startYear = $lastCompetition === null ? intval(date('Y')) : intval(date('Y', $lastCompetition->date));
+		for ($year = $startYear; $year >= 2006; $year--) {
 			$years[$year] = $year;
 		}
 		return $years;
