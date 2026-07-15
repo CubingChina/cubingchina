@@ -47,7 +47,7 @@ class SumOfRanks extends Statistics {
 					$rankSum[$person_id] = $row;
 					$rankSum[$person_id]['sum'] = $allPenalties;
 				}
-				$rankSum[$person_id]['sum'] += $row['rank'] - $penalty[$event_id];
+				$rankSum[$person_id]['sum'] += $row['rank_val'] - $penalty[$event_id];
 			}
 			$columns[] = array(
 				'header'=>"Events::getEventIcon('$event_id')",
@@ -78,9 +78,9 @@ class SumOfRanks extends Statistics {
 		foreach (array_slice($rankSum, ($page - 1) * self::$limit, self::$limit) as $person_id=>$row) {
 			foreach ($eventIds as $event_id) {
 				$row[$event_id] = isset($ranks[$event_id][$person_id])
-								 ? $ranks[$event_id][$person_id]['rank']
+								 ? $ranks[$event_id][$person_id]['rank_val']
 								 : $penalty[$event_id];
-				if (isset($ranks[$event_id][$person_id]) && $ranks[$event_id][$person_id]['rank'] <= 10) {
+				if (isset($ranks[$event_id][$person_id]) && $ranks[$event_id][$person_id]['rank_val'] <= 10) {
 					$row[$event_id] = CHtml::tag('span', array('class'=>'top10'), $row[$event_id]);
 				} elseif (!isset($ranks[$event_id][$person_id])) {
 					$row[$event_id] = CHtml::tag('span', array('class'=>'penalty'), $row[$event_id]);
@@ -125,7 +125,7 @@ class SumOfRanks extends Statistics {
 				$field = 'country_rank';
 				break;
 		}
-		$select[] = $field . ' AS rank';
+		$select[] = $field . ' AS rank_val';
 		$command = Yii::app()->wcaDb->createCommand()
 		->select($select)
 		->from(sprintf('ranks_%s r', $type))
