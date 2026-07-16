@@ -206,7 +206,7 @@
       ?>
       <li>
         <b>O<?php echo $age; ?>：</b>为<?php echo $age; ?>岁（含）<?php if ($lastAge): ?>至<?php echo $lastAge; ?>岁（不含）<?php else: ?>以上<?php endif; ?>选手，即在<?php
-        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($lastAge)), '至', date('Y年m月d日', $competition->getYearsAgosDate($age, 86400));
+        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($lastAge, 86400)), '至', date('Y年m月d日', $competition->getYearsAgosDate($age));
         else: echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '之前'; endif; ?>出生的选手。
       </li>
       <?php endforeach; ?>

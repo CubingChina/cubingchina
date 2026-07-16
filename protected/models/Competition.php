@@ -2016,9 +2016,9 @@ class Competition extends ActiveRecord {
 							break;
 						}
 					}
-					// that logic here is different from U the above. GetPodiumOldAges has already filtered the data once.
+					// O groups include the exact age boundary (N岁含); U groups use exclusive upper bound via >
 					foreach ($o_ages as $age) {
-						if ($birthday < $dobs[$age] ) {
+						if ($birthday <= $dobs[$age]) {
 							$temp['O' . $age][] = clone $result;
 							break;
 						}
