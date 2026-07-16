@@ -184,15 +184,16 @@
     </p>
     <ol>
       <!--      U group-->
-      <?php $lastAge = 0; ?>
+      <?php $lastUAge = 0; ?>
       <?php foreach (Competition::getPodiumAges() as $age): ?>
       <?php if ($competition->{'podiums_u' . $age}): ?>
       <li>
-        <b>U<?php echo $age; ?>：</b>为<?php if ($lastAge): echo $lastAge; ?>岁（含）至<?php echo $age; ?>岁（不含）<?php else: echo $age; ?>岁（不含）以下<?php endif; ?>选手，即在<?php
-        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '至', date('Y年m月d日', $competition->getYearsAgosDate($lastAge));
-        else: echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '及之后'; endif; ?>出生的选手。
+        <b>U<?php echo $age; ?>：</b>为<?php if ($lastUAge): echo $lastUAge; ?>岁（含）至<?php echo $age; ?>岁（不含）<?php else: echo $age; ?>岁（不含）以下<?php endif; ?>选手，即在<?php
+        // N岁不含上界 => youngerThan(N)；M岁含下界 => exact(M)
+        if ($lastUAge): echo date('Y年m月d日', $competition->getYoungerThanAgeBirthDate($age)), '至', date('Y年m月d日', $competition->getExactAgeBirthDate($lastUAge));
+        else: echo date('Y年m月d日', $competition->getYoungerThanAgeBirthDate($age)), '及之后'; endif; ?>出生的选手。
       </li>
-      <?php $lastAge = $age; ?>
+      <?php $lastUAge = $age; ?>
       <?php endif; ?>
       <?php endforeach; ?>
 
@@ -200,18 +201,18 @@
       <!-- O group -->
       <?php
       $oldAges = $competition->getPodiumOldAges('asc');
-      $total = count($oldAges);
       foreach ($oldAges as $index => $age):
-        $lastAge = $oldAges[$index + 1] ?? 0;
+        $nextOAge = $oldAges[$index + 1] ?? 0;
       ?>
       <li>
-        <b>O<?php echo $age; ?>：</b>为<?php echo $age; ?>岁（含）<?php if ($lastAge): ?>至<?php echo $lastAge; ?>岁（不含）<?php else: ?>以上<?php endif; ?>选手，即在<?php
-        if ($lastAge): echo date('Y年m月d日', $competition->getYearsAgosDate($lastAge, 86400)), '至', date('Y年m月d日', $competition->getYearsAgosDate($age));
-        else: echo date('Y年m月d日', $competition->getYearsAgosDate($age, 86400)), '之前'; endif; ?>出生的选手。
+        <b>O<?php echo $age; ?>：</b>为<?php echo $age; ?>岁（含）<?php if ($nextOAge): ?>至<?php echo $nextOAge; ?>岁（不含）<?php else: ?>以上<?php endif; ?>选手，即在<?php
+        // N岁含下界 => exact(N)；M岁不含上界 => youngerThan(M)
+        if ($nextOAge): echo date('Y年m月d日', $competition->getYoungerThanAgeBirthDate($nextOAge)), '至', date('Y年m月d日', $competition->getExactAgeBirthDate($age));
+        else: echo date('Y年m月d日', $competition->getExactAgeBirthDate($age)), '及之前'; endif; ?>出生的选手。
       </li>
       <?php endforeach; ?>
 
-      <?php if ($competition->podiums_children && $lastAge === 0): ?>
+      <?php if ($competition->podiums_children && $lastUAge === 0): ?>
       <li>
         <b>少儿组</b>：12岁（不含）以下选手。
       </li>

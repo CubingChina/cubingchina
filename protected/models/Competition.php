@@ -1918,12 +1918,35 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getYearsAgosDate($year, $offset = 0) {
-		$lastDate = $this->end_date ?: $this->date;
+		$lastDate = $this->getAgeReferenceDate();
 		$date = strtotime(date('Y-m-d', $lastDate + $offset) . " {$year} years ago");
 		if ($offset === 0 && date('m-d', $lastDate) === '02-29' && date('m-d', $date) === '03-01') {
 			$date -= 86400;
 		}
 		return $date;
+	}
+
+	/**
+	 * Date used to evaluate age groups (last day of competition when available).
+	 */
+	public function getAgeReferenceDate() {
+		return $this->end_date ?: $this->date;
+	}
+
+	/**
+	 * Birth date of someone who turns $years old exactly on the reference date.
+	 * N岁（含）: birthday <= this; used as N岁（不含）upper bound via birthday > this.
+	 */
+	public function getExactAgeBirthDate($years) {
+		return $this->getYearsAgosDate($years);
+	}
+
+	/**
+	 * Earliest birth date that is still younger than $years on the reference date.
+	 * Age < N (N岁不含 as upper bound): birthday >= this.
+	 */
+	public function getYoungerThanAgeBirthDate($years) {
+		return $this->getYearsAgosDate($years, 86400);
 	}
 
 	public function getLivePodiums() {
@@ -1979,22 +2002,20 @@ class Competition extends ActiveRecord {
 					Yii::t('live', 'Females')=>[],
 					Yii::t('live', 'New Comers')=>[],
 				];
-				$year = date('Y', $this->date);
-				$monthAndDay = date('-m-d', $this->date);
 				$podiumsChildren = $this->podiums_children;
 				$dobs = [];
 				foreach ($ages as $age) {
 					$temp['U' . $age] = [];
 					$podiumsChildren = $podiumsChildren && !($this->{'podiums_u' . $age});
-					$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
+					$dobs[$age] = $this->getExactAgeBirthDate($age);
 				}
 				foreach ($o_ages as $age) {
 					$temp['O'.$age] = [];
-					$dobs[$age] = strtotime(($year - $age) . $monthAndDay);
+					$dobs[$age] = $this->getExactAgeBirthDate($age);
 				}
 
-				$u12 = strtotime(($year - 12) . $monthAndDay);
-				$currentYear = date('Y', $this->date);
+				$u12 = $this->getExactAgeBirthDate(12);
+				$currentYear = date('Y', $this->getAgeReferenceDate());
 				foreach ($results as $result) {
 					//ignore non greater chinese user
 					if ($this->podiums_greater_china && !$result->user->isGreaterChinese()) {
@@ -2004,19 +2025,21 @@ class Competition extends ActiveRecord {
 					if ($result->user->gender == User::GENDER_FEMALE && $this->podiums_females) {
 						$temp[Yii::t('live', 'Females')][] = clone $result;
 					}
+					// 12岁（不含）以下: birthday > exact(12)
 					if ($birthday > $u12 && $podiumsChildren) {
 						$temp[Yii::t('live', 'Children')][] = clone $result;
 					}
 					if (($result->user->wcaid === '' || ($this->newcomer && substr($result->user->wcaid, 0, 4) == $currentYear)) && $this->podiums_new_comers) {
 						$temp[Yii::t('live', 'New Comers')][] = clone $result;
 					}
+					// U: upper age N岁（不含）=> birthday > exact(N); first matching (youngest) group wins
 					foreach ($ages as $age) {
 						if ($birthday > $dobs[$age] && $this->{'podiums_u' . $age}) {
 							$temp['U' . $age][] = clone $result;
 							break;
 						}
 					}
-					// O groups include the exact age boundary (N岁含); U groups use exclusive upper bound via >
+					// O: lower age N岁（含）=> birthday <= exact(N); oldest matching group wins
 					foreach ($o_ages as $age) {
 						if ($birthday <= $dobs[$age]) {
 							$temp['O' . $age][] = clone $result;
