@@ -192,7 +192,7 @@ class Events extends ActiveRecord {
 			return self::$_normalEvents;
 		}
 		$events = self::model()->cache(86500 * 7)->findAll(array(
-			'condition'=>'`rank`<900',
+			'condition'=>'`rank`<800',
 			'order'=>'`rank`',
 		));
 		$events = CHtml::listData($events, 'id', 'name');
