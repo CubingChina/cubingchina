@@ -33,6 +33,7 @@ return array (
   'Skewb' => '斜转',
   'Square-1' => 'SQ1',
   'Clock' => '魔表',
+  'Face Turning Octahedron' => '八面体',
   '3x3x3 Cube' => '三阶',
   '3x3x3 Blindfolded' => '三盲',
   '3x3x3 Fewest Moves' => '最少步',
