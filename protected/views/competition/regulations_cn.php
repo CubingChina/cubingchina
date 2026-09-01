@@ -102,7 +102,7 @@
   </li>
   <?php endif; ?>
   <li>
-    <?php if ($competition->guest_limit): ?>本次比赛有陪同人员限制，费用详见本页下面。<?php endif; ?>陪同人员仅可停留在观众区，不能进入选手候赛区和比赛区。
+    <?php if ($competition->guest_limit): ?>本次比赛不设免费入场名额，所有观众及陪同人员均须购买入场券入场，请谨慎决定是否报名。<?php endif; ?>陪同人员仅可停留在观众区，不能进入选手候赛区和比赛区。
   </li>
 </ol>
 <h3>三、关于比赛</h3>
