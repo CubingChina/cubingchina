@@ -234,13 +234,14 @@
 <?php
 $regulations = Yii::app()->params->regulations;
 $commonRegulations = [
-  Yii::t('Competition', 'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.', [
-    '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('regulations'), ['target'=>'_blank']),
-  ]),
+  // Yii::t('Competition', 'Click {here} to read the regulations for this competition. Please read the regulations before registering, and contact the organizers if you have any questions.', [
+  //   '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('regulations'), ['target'=>'_blank']),
+  // ]),
 ];
 if ($competition->guest_limit) {
   $commonRegulations[] = Yii::t('Competition', 'This competition does not provide free spectator admission. All spectators and accompanying persons must purchase entry tickets to enter the venue. Please consider carefully before registering.');
 }
+$commonRegulations[] = Yii::t('Competition', 'Disclaimer: If a competitor completes registration and payment without fully understanding the competition information, event rules, refund policy, registration guidelines and other relevant contents, Cubing China and the organizing team shall not be liable for any resulting financial losses.');
 $options = json_encode([
   'multiCountries'=>!!$competition->multi_countries,
   'complexMultiLocation'=>!!$competition->complex_multi_location,
@@ -250,8 +251,10 @@ $options = json_encode([
   'wcaDuesFee' => 0,
   'entourageFee' => intval($competition->entourage_fee),
   'regulations'=>[
-    'common'=>array_merge($commonRegulations, ActiveRecord::getModelAttributeValue($regulations, 'common')),
-    'special'=>ActiveRecord::getModelAttributeValue($regulations, 'special'),
+    'common'=>$commonRegulations,
+    // 'common'=>array_merge($commonRegulations, ActiveRecord::getModelAttributeValue($regulations, 'common')),
+    // 'special'=>ActiveRecord::getModelAttributeValue($regulations, 'special'),
+    'special'=>[],
   ],
   'unmetEvents'=>$unmetEvents,
   'qualifyingEnd'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),

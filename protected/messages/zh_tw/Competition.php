@@ -151,4 +151,5 @@ return array (
   'This competition is participating in the official WCA Newcomer Month.'=>'該比賽為WCA新人月賽。',
   'This competition is participating in the official {newcomer}. Please wait in patience after completing the registration and payment.'=>'該比賽為{newcomer}，請在報名支付完成後耐心等待審核。',
   'This competition does not provide free spectator admission. All spectators and accompanying persons must purchase entry tickets to enter the venue. Please consider carefully before registering.'=>'本次比賽不設免費入場名額，所有觀眾及陪同人員均須購買入場券入場，請謹慎決定是否報名。',
+  'Disclaimer: If a competitor completes registration and payment without fully understanding the competition information, event rules, refund policy, registration guidelines and other relevant contents, Cubing China and the organizing team shall not be liable for any resulting financial losses.'=>'免責聲明：選手如在未充分了解比賽信息、賽事規則、退費政策及報名須知等內容的情況下完成報名並支付費用，因此產生的任何費用損失，粗餅網及賽事主辦方概不承擔。',
 );
