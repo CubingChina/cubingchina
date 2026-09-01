@@ -150,4 +150,5 @@ return array (
   'You can only buy {num} tickets.' => '您最多只能購買{num}張入場券。',
   'This competition is participating in the official WCA Newcomer Month.'=>'該比賽為WCA新人月賽。',
   'This competition is participating in the official {newcomer}. Please wait in patience after completing the registration and payment.'=>'該比賽為{newcomer}，請在報名支付完成後耐心等待審核。',
+  'This competition does not provide free spectator admission. All spectators and accompanying persons must purchase entry tickets to enter the venue. Please consider carefully before registering.'=>'本次比賽不設免費入場名額，所有觀眾及陪同人員均須購買入場券入場，請謹慎決定是否報名。',
 );

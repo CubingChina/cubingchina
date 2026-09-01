@@ -103,7 +103,7 @@
   </li>
   <?php endif; ?>
   <li>
-    <?php if ($competition->guest_limit): ?>There's a limit for guests. Please see the bottom of this page for details. <?php endif; ?>Accompanying spectators may enter the venue, but must not enter the competition area.
+    <?php if ($competition->guest_limit): ?>This competition does not provide free spectator admission. All spectators and accompanying persons must purchase entry tickets to enter the venue. Please consider carefully before registering. <?php endif; ?>Accompanying spectators may enter the venue, but must not enter the competition area.
   </li>
 </ol>
 <h3>3. About the competition</h3>
