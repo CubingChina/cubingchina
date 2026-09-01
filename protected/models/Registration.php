@@ -395,14 +395,17 @@ class Registration extends ActiveRecord {
 				$registrationEvent->paid = $this->paid;
 				if ($isAccepted) {
 					if ($competition->isLimitByEvent()) {
-						if ($competition->isEventRegistrationFull($competition->associatedEvents[$registrationEvent->event])) {
+						// countByEvent includes this row; an already-accepted event
+						// would otherwise be demoted every time accept() is re-entered.
+						if ($registrationEvent->isAccepted()
+							|| !$competition->isEventRegistrationFull($competition->associatedEvents[$registrationEvent->event])) {
+							$registrationEvent->accept();
+						} else {
 							$registrationEvent->status = RegistrationEvent::STATUS_WAITING;
 							if ($registrationEvent->accept_time == 0) {
 								$registrationEvent->accept_time = time();
 							}
 							$registrationEvent->save();
-						} else {
-							$registrationEvent->accept();
 						}
 					} else {
 						$registrationEvent->accept();

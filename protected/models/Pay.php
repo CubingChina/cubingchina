@@ -416,6 +416,10 @@ class Pay extends ActiveRecord {
 				default:
 					return $result;
 			}
+			// Partial refund keeps TRADE_SUCCESS and re-notifies the original URL.
+			if (!empty($params['gmt_refund']) || (isset($params['refund_fee']) && floatval($params['refund_fee']) > 0)) {
+				return $result;
+			}
 			$this->updateStatus($status, $paidAmount);
 		}
 		return $result;
@@ -444,7 +448,8 @@ class Pay extends ActiveRecord {
 	}
 
 	public function updateStatus($status = self::STATUS_PAID, $paidAmount = 0) {
-		if (!$this->isPaid()) {
+		$alreadyPaid = $this->isPaid();
+		if (!$alreadyPaid) {
 			if ($this->paid_time == 0) {
 				$this->paid_time = time();
 				$this->paid_amount = $paidAmount;
@@ -464,6 +469,11 @@ class Pay extends ActiveRecord {
 			case self::TYPE_REGISTRATION:
 				$registration = $this->registration;
 				if ($registration !== null) {
+					// Duplicate/refund notify must not re-run accept() on an
+					// already-accepted entry (updateEventsStatus would re-check limits).
+					if ($alreadyPaid && $registration->isAccepted()) {
+						break;
+					}
 					$registration->paid = Registration::PAID;
 					$registration->accept($this);
 					$registration->total_fee = $registration->getTotalFee(true);
