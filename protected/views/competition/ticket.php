@@ -132,8 +132,17 @@ Yii::app()->clientScript->registerScript('edit',
 <<<EOT
   $(document).on('change', '#UserTicket_passport_type', function() {
     changePassportType(true);
+    updateSubmitButton();
+  }).on('change', 'input[name="UserTicket[ticket_id]"]', updateSubmitButton)
+    .on('input change', '#UserTicket_passport_name, #UserTicket_passport_number, #UserTicket_repeatPassportNumber', updateSubmitButton);
+  $('#buy-ticket-form').on('submit', function(e) {
+    if (!canSubmitTicket()) {
+      e.preventDefault();
+      return false;
+    }
   });
   changePassportType();
+  updateSubmitButton();
   function changePassportType(focus) {
     var type = $('#UserTicket_passport_type').val();
     if (type == 3) {
@@ -144,6 +153,23 @@ Yii::app()->clientScript->registerScript('edit',
     } else {
       $('#UserTicket_passport_name').parent().addClass('hide');
     }
+  }
+  function canSubmitTicket() {
+    var type = $('#UserTicket_passport_type').val();
+    if (!$('input[name="UserTicket[ticket_id]"]:checked:enabled').length) {
+      return false;
+    }
+    if (!type || !$.trim($('#UserTicket_passport_number').val()) || !$.trim($('#UserTicket_repeatPassportNumber').val())) {
+      return false;
+    }
+    if (type == 3 && !$.trim($('#UserTicket_passport_name').val())) {
+      return false;
+    }
+    return true;
+  }
+  function updateSubmitButton() {
+    var ok = canSubmitTicket();
+    $('#submit-button').prop('disabled', !ok).toggleClass('disabled', !ok);
   }
 EOT
 );
