@@ -64,6 +64,14 @@
           'encodeLabel'=>false,
           'items'=>array(
             array(
+              'label'=>'<i class="fa fa-external-link"></i> ' . Yii::t('common', 'New Cubing China'),
+              'url'=>ArchiveMode::newSiteUrl(),
+              'linkOptions'=>array(
+                'target'=>'_blank',
+                'rel'=>'noopener',
+              ),
+            ),
+            array(
               'label'=>'<i class="fa fa-home"></i> 前台',
               'url'=>array('/site/index'),
             ),

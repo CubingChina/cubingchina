@@ -151,6 +151,17 @@ class Controller extends CController {
 		if ($this->_navibar === null) {
 			$this->setNavibar(array(
 				array(
+					'label'=>Html::fontAwesome('external-link', 'a') . Yii::t('common', 'New Cubing China'),
+					'url'=>ArchiveMode::newSiteUrl(),
+					'itemOptions'=>array(
+						'class'=>'nav-item archive-new-site',
+					),
+					'linkOptions'=>array(
+						'target'=>'_blank',
+						'rel'=>'noopener',
+					),
+				),
+				array(
 					'label'=>Html::fontAwesome('home', 'a') . Yii::t('common', 'Home'),
 					'url'=>array('/site/index'),
 					'itemOptions'=>array(
@@ -324,7 +335,7 @@ class Controller extends CController {
 					array(
 						'label'=>Yii::t('common', 'Apply for Competition'),
 						'url'=>array('/board/competition/apply'),
-						'visible'=>!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && Yii::app()->user->checkRole(User::ROLE_CHECKED) && !$applied,
+						'visible'=>false,
 					),
 					array(
 						'label'=>Yii::t('common', 'Logout'),
@@ -347,7 +358,7 @@ class Controller extends CController {
 				'itemOptions'=>array(
 					'class'=>'nav-item visible-xs',
 				),
-				'visible'=>$isGuest,
+				'visible'=>false,
 			),
 			array(
 				'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),
@@ -403,6 +414,7 @@ class Controller extends CController {
 			}
 		}
 		parent::init();
+		ArchiveMode::rejectWriteRequests($this);
 	}
 
 	public function setLanguage($language, $setCookie = false) {
@@ -624,6 +636,12 @@ class Controller extends CController {
 			return $this->_user;
 		}
 		return $this->_user = User::model()->findByPk(Yii::app()->user->id);
+	}
+
+	protected function renderArchiveClosed() {
+		$this->pageTitle = array('Read-only notice');
+		$this->title = Yii::t('common', 'Read-only notice');
+		$this->render('//site/archiveClosed');
 	}
 
 	public function ajaxReturn($status, $data, $message = null) {

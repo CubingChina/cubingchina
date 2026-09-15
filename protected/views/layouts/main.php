@@ -15,7 +15,7 @@
         <div class="contact pull-right">
           <?php if (Yii::app()->user->isGuest): ?>
           <p class="phone"><?php echo CHtml::link(Html::fontAwesome('sign-in') . Yii::t('common', 'Login'), array('/site/login')); ?></p>
-          <p class="email"><?php echo CHtml::link(Html::fontAwesome('user') . Yii::t('common', 'Register'), array('/site/register')); ?></p>
+          <p class="email"><?php echo CHtml::link(Html::fontAwesome('external-link') . Yii::t('common', 'New Cubing China'), ArchiveMode::newSiteUrl(), array('target'=>'_blank', 'rel'=>'noopener')); ?></p>
           <?php else: ?>
           <p class="phone"><?php echo CHtml::link(Html::fontAwesome('user') . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
           <p class="email"><?php echo CHtml::link(Html::fontAwesome('sign-out') . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
@@ -59,7 +59,7 @@
   <div class="bottom-bar">
     <div class="container">
       <div class="row">
-        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备2021016168号</a></small>
+        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> · <?php echo ArchiveMode::newSiteLink(Yii::t('common', 'New Cubing China')); ?> <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备2021016168号</a></small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
           <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>

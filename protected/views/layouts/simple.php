@@ -26,6 +26,7 @@
   <![endif]-->
 </head>
 <body class="<?php echo $this->id; ?> <?php echo $this->id; ?>-<?php echo $this->action->id; ?>">
+  <?php $this->renderPartial('//common/archiveNotice'); ?>
   <?php echo $content; ?>
 </body>
 </html>

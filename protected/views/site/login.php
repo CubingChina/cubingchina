@@ -4,6 +4,11 @@
         <h3 class="panel-title"><?php echo Yii::t('common', 'Login'); ?></h3>
     </div>
     <div class="panel-body">
+      <div class="alert alert-warning">
+        <?php echo Yii::t('common', 'This legacy version of Cubing China is now read-only. Please visit the new site at {url}.', [
+          '{url}'=>ArchiveMode::newSiteLink(ArchiveMode::newSiteUrl()),
+        ]); ?>
+      </div>
       <?php $form = $this->beginWidget('ActiveForm', array(
         'id'=>'login-form',
         'htmlOptions'=>array(
@@ -27,10 +32,11 @@
           <label for="<?php echo Html::activeId($model, 'rememberMe'); ?>">
             <?php echo $form->checkBox($model, 'rememberMe'); ?> <?php echo $model->getAttributeLabel('rememberMe'); ?>
           </label>
-          <a href="<?php echo $this->createUrl('/site/forgetPassword'); ?>" class="btn btn-xs btn-theme"><?php echo Yii::t('common', 'Lost password?'); ?></a>
         </div>
         <button type="submit" class="btn btn-theme"><?php echo Yii::t('common', 'Submit'); ?></button>
-        <?php echo CHtml::link(Yii::t('common', 'Register'), array('/site/register'), array('class'=>'btn btn-info')); ?>
+        <?php echo ArchiveMode::newSiteLink(Yii::t('common', 'Go to the new Cubing China'), [
+          'class'=>'btn btn-info',
+        ]); ?>
       <?php $this->endWidget(); ?>
     </div>
   </div>

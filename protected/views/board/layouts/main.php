@@ -25,6 +25,7 @@
   <![endif]-->
 </head>
 <body>
+  <?php $this->renderPartial('//common/archiveNotice'); ?>
   <div id="wrapper">
     <?php $this->widget('Navibar'); ?>
     <?php $this->widget('Sidebar'); ?>
